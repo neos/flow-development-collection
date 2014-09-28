@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -140,8 +141,13 @@ class Package implements PackageInterface {
 		$this->packageKey = $packageKey;
 		$this->packagePath = Files::getNormalizedPath($packagePath);
 		$autoloadType = $this->getAutoloadType();
+
 		if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
-			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{$autoloadType}->{$this->getNamespace()});
+			$autoloadPath = $this->getComposerManifest()->autoload->{$autoloadType}->{$this->getNamespace()};
+			if (is_array($autoloadPath)) {
+				$autoloadPath = $autoloadPath[0];
+			}
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $autoloadPath);
 		} else {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
@@ -150,10 +156,10 @@ class Package implements PackageInterface {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+	public function boot(Bootstrap $bootstrap) {
 	}
 
 	/**
