@@ -119,6 +119,18 @@ class PackageTest extends UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function constructorSetsTheClassesPathToFirstConfiguredPsr0Mapping() {
+		$packagePath = 'vfs://Packages/Vendor.TestPackage/';
+		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "flow-test", "autoload": { "psr-0": { "Psr0Namespace": ["Psr0/Path", "Psr0/Foo"] } }}');
+
+		$package = new Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Some/Classes/Path');
+		$this->assertSame('vfs://Packages/Vendor.TestPackage/Psr0/Path/', $package->getClassesPath());
+	}
+
+	/**
 	 */
 	public function validPackageKeys() {
 		return array(
