@@ -1199,19 +1199,20 @@ EOD;
 	/**
 	 * @test
 	 */
-	public function buildSubrouteConfigurationsRemovesTrailingSlashFromEmptySubrouteUriPatterns() {
+	public function buildSubrouteConfigurationsMergesSubRoutesAndProcessesPlaceholders() {
 		$routesConfiguration = array(
 			array(
 				'name' => 'Welcome',
 				'uriPattern' => 'welcome/<WelcomeSubroutes>',
 				'defaults' => array(
-					'@package' => 'Welcome'
+					'@package' => 'Welcome',
 				),
-				'subRoutes' => array(
-					'WelcomeSubroutes' => array(
-						'package' => 'Welcome'
-					)
-				),
+			)
+		);
+		$subRouteOptions = array(
+			'package' => 'Welcome',
+			'variables' => array(
+				'someVariable' => 'someValue'
 			)
 		);
 		$subRoutesConfiguration = array(
@@ -1221,7 +1222,7 @@ EOD;
 				'defaults' => array(
 					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
-					'@action' => 'index'
+					'@action' => '<someVariable>'
 				)
 			),
 			array(
@@ -1240,7 +1241,7 @@ EOD;
 				'defaults' => array(
 					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
-					'@action' => 'index'
+					'@action' => 'someValue'
 				),
 			),
 			array(
@@ -1254,7 +1255,7 @@ EOD;
 			)
 		);
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
-		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', array());
+		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}
