@@ -12,9 +12,11 @@ namespace TYPO3\Flow\Cli;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
- * Represents a Command
+ * Represents a command
  */
 class Command {
 
@@ -39,10 +41,14 @@ class Command {
 	protected $commandMethodReflection;
 
 	/**
-	 * Reflection service
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 * @var ReflectionService
 	 */
-	private $reflectionService;
+	protected $reflectionService;
+
+	/**
+	 * @var ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * Constructor
@@ -64,10 +70,17 @@ class Command {
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService Reflection service
+	 * @param ReflectionService $reflectionService Reflection service
 	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param ObjectManagerInterface $objectManager
+	 */
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -99,8 +112,14 @@ class Command {
 	 * @return string A short description
 	 */
 	public function getShortDescription() {
-		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
-		return ((count($lines) > 0) ? trim($lines[0]) : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
+		$commandMethodReflection = $this->getCommandMethodReflection();
+		$lines = explode(chr(10), $commandMethodReflection->getDescription());
+		$shortDescription = ((count($lines) > 0) ? trim($lines[0]) : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
+
+		if ($commandMethodReflection->getDeclaringClass()->implementsInterface('TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface')) {
+			$shortDescription = call_user_func(array($this->controllerClassName, 'processDescription'), $this->controllerCommandName, $shortDescription, $this->objectManager);
+		}
+		return $shortDescription;
 	}
 
 	/**
@@ -111,7 +130,8 @@ class Command {
 	 * @return string A longer description of this command
 	 */
 	public function getDescription() {
-		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
+		$commandMethodReflection = $this->getCommandMethodReflection();
+		$lines = explode(chr(10), $commandMethodReflection->getDescription());
 		array_shift($lines);
 		$descriptionLines = array();
 		foreach ($lines as $line) {
@@ -120,7 +140,11 @@ class Command {
 				$descriptionLines[] = $trimmedLine;
 			}
 		}
-		return implode(chr(10), $descriptionLines);
+		$description = implode(chr(10), $descriptionLines);
+		if ($commandMethodReflection->getDeclaringClass()->implementsInterface('TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface')) {
+			$description = call_user_func(array($this->controllerClassName, 'processDescription'), $this->controllerCommandName, $description, $this->objectManager);
+		}
+		return $description;
 	}
 
 	/**
