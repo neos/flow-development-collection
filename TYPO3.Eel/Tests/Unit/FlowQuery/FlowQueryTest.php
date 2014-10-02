@@ -287,11 +287,13 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$person4->name = 'Somebody without address';
 
 		return array(
-			'children() on empty array returns empty flowquery object' => array(
+			'children() on empty array always returns empty flowquery object' => array(
 				'sourceObjects' => array(),
 				'expressions' => array(
 					'$query->children("foo[bar]")',
-					'$query->children("foo")'
+					'$query->children("foo")',
+					'$query->children("[instanceof Something]")',
+					'$query->children()'
 				),
 				'expectedResult' => array()
 			),

@@ -37,6 +37,10 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 * @throws \TYPO3\Eel\FlowQuery\FizzleException
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
+		if (count($flowQuery->getContext()) === 0) {
+			return;
+		}
+
 		if (!isset($arguments[0]) || empty($arguments[0])) {
 			if ($flowQuery->peekOperationName() === 'filter') {
 				$filterOperation = $flowQuery->popOperation();
