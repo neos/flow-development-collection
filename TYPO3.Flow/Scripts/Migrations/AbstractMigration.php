@@ -335,10 +335,13 @@ abstract class AbstractMigration {
 
 			if (substr($oldPath, -1) === '*') {
 				$oldPath = substr($oldPath, 0, -1);
+				if (!file_exists($oldPath)) {
+					continue;
+				}
 				if (!file_exists($newPath)) {
 					Files::createDirectoryRecursively($newPath);
 				}
-				if (!is_dir($newPath) || !file_exists($oldPath)) {
+				if (!is_dir($newPath)) {
 					continue;
 				}
 				foreach ($allPathsAndFilenames as $pathAndFilename) {
