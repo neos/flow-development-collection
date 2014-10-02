@@ -124,11 +124,11 @@ class HelpCommandController extends CommandController {
 		foreach ($commandsByPackagesAndControllers as $packageKey => $commandControllers) {
 			$this->outputLine('');
 			$this->outputLine('PACKAGE "%s":', array(strtoupper($packageKey)));
-			$this->outputLine(str_repeat('-', self::MAXIMUM_LINE_LENGTH));
+			$this->outputLine(str_repeat('-', $this->output->getMaximumLineLength()));
 			foreach ($commandControllers as $commands) {
 				/** @var Command $command */
 				foreach ($commands as $command) {
-					$description = wordwrap($command->getShortDescription(), self::MAXIMUM_LINE_LENGTH - 43, PHP_EOL . str_repeat(' ', 43), TRUE);
+					$description = wordwrap($command->getShortDescription(), $this->output->getMaximumLineLength() - 43, PHP_EOL . str_repeat(' ', 43), TRUE);
 					$shortCommandIdentifier = $this->commandManager->getShortestIdentifierForCommand($command);
 					$compileTimeSymbol = ($this->bootstrap->isCompileTimeCommand($shortCommandIdentifier) ? '*' : '');
 					$this->outputLine('%-2s%-40s %s', array($compileTimeSymbol, $shortCommandIdentifier , $description));
@@ -177,7 +177,7 @@ class HelpCommandController extends CommandController {
 		if ($command->hasArguments()) {
 			foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
 				$argumentDescription = $commandArgumentDefinition->getDescription();
-				$argumentDescription = wordwrap($argumentDescription, self::MAXIMUM_LINE_LENGTH - 23, PHP_EOL . str_repeat(' ', 23), TRUE);
+				$argumentDescription = wordwrap($argumentDescription, $this->output->getMaximumLineLength() - 23, PHP_EOL . str_repeat(' ', 23), TRUE);
 				if ($commandArgumentDefinition->isRequired()) {
 					$argumentDescriptions[] = vsprintf('  %-20s %s', array($commandArgumentDefinition->getDashedName(), $argumentDescription));
 				} else {

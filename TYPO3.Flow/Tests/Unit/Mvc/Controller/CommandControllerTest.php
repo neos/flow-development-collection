@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Symfony\Component\Console\Output\ConsoleOutput;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -33,7 +32,7 @@ class CommandControllerTest extends UnitTestCase {
 	protected $mockReflectionService;
 
 	/**
-	 * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+	 * @var \TYPO3\Flow\Cli\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockConsoleOutput;
 
@@ -44,7 +43,7 @@ class CommandControllerTest extends UnitTestCase {
 		$this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
 		$this->inject($this->commandController, 'reflectionService', $this->mockReflectionService);
 
-		$this->mockConsoleOutput = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutput')->disableOriginalConstructor()->getMock();
+		$this->mockConsoleOutput = $this->getMockBuilder('TYPO3\Flow\Cli\ConsoleOutput')->disableOriginalConstructor()->getMock();
 		$this->inject($this->commandController, 'output', $this->mockConsoleOutput);
 	}
 
@@ -92,7 +91,7 @@ class CommandControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function outputWritesGivenStringToTheConsoleOutput() {
-		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text');
+		$this->mockConsoleOutput->expects($this->once())->method('output')->with('some text');
 		$this->commandController->_call('output', 'some text');
 	}
 
@@ -100,15 +99,7 @@ class CommandControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function outputReplacesArgumentsInGivenString() {
-		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text');
+		$this->mockConsoleOutput->expects($this->once())->method('output')->with('%2$s %1$s', array('text', 'some'));
 		$this->commandController->_call('output', '%2$s %1$s', array('text', 'some'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function outputLineAppendsGivenStringAndNewlineToTheResponseContent() {
-		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text' . PHP_EOL);
-		$this->commandController->_call('outputLine', 'some text');
 	}
 }
