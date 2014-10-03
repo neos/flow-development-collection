@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Proxy\Proxy;
+
 /**
  * PHP type handling functions
  *
@@ -161,5 +163,24 @@ class TypeHandling {
 			$binaryData .=  pack('C', hexdec(substr($hexadecimalData, $i, 2)));
 		}
 		return $binaryData;
+	}
+
+	/**
+	 * Return simple type or class for object
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	static public function getTypeForValue($value) {
+		if (is_object($value)) {
+			if ($value instanceof Proxy) {
+				$type = get_parent_class($value);
+			} else {
+				$type = get_class($value);
+			}
+		} else {
+			$type = gettype($value);
+		}
+		return $type;
 	}
 }
