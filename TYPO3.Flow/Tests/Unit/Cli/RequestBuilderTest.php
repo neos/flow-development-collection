@@ -380,4 +380,40 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedArguments, $request->getArguments());
 	}
 
+	/**
+	 * Data provider
+	 *
+	 * @return array
+	 */
+	public function quotedValues() {
+		return array(
+			array("'value with spaces'", 'value with spaces'),
+			array("'value with spaces and \\' escaped'", 'value with spaces and \' escaped'),
+			array('"value with spaces"', 'value with spaces'),
+			array('"value with spaces and \\" escaped"', 'value with spaces and " escaped'),
+			array('value\\ with\\ spaces', 'value with spaces'),
+			array('no\\"spaces\\\'here', 'no"spaces\'here'),
+			array("nospaces\\'here", "nospaces'here"),
+			array('no\\"spaceshere', 'no"spaceshere'),
+			array('no\\\\spaceshere', 'no\\spaceshere')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider quotedValues
+	 */
+	public function quotedArgumentValuesAreCorrectlyParsedWhenPassingTheCommandAsString($quotedArgument, $expectedResult) {
+		$methodParameters = array(
+			'requiredArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'requiredArgument2' => array('optional' => FALSE, 'type' => 'string'),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedArguments = array('requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => $expectedResult);
+
+		$request = $this->requestBuilder->build('acme.test:default:list firstArgumentValue ' . $quotedArgument);
+		$this->assertEquals($expectedArguments, $request->getArguments());
+	}
+
 }

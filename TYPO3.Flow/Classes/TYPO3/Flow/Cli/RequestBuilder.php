@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cli;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException;
 
 /**
  * Builds a CLI request object from the raw command call
@@ -19,6 +20,24 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  */
 class RequestBuilder {
+
+	/**
+	 * This is used to parse the command line, when it's passed as a string
+	 */
+	const ARGUMENT_MATCHING_EXPRESSION = '/     # An argument is either...
+		\'(?P<SingleQuotes>                     # a single-quoted string
+			(?:\\\\\'|[^\'])*                   # (internally: contains escaped single quotes or everything not being single quotes)
+		)\'
+		|"(?P<DoubleQuotes>                     # OR a double-quoted string
+			(?:\\\"|[^"])*                      # (internally: contains escaped double quotes or everything not being double quotes)
+		)"
+		|(?P<NoQuotes>                          # OR a non-quoted string
+			(?:
+				\\\\[ "\']                      # (internally: either the backslash escape followed by space, single or double quote or another backslash,
+				|[^\'" ]                        #  or all other characters than the above ones)
+			)+
+		)
+		/x';
 
 	/**
 	 * @var \TYPO3\Flow\Utility\Environment
@@ -99,7 +118,23 @@ class RequestBuilder {
 		$request = new Request();
 		$request->setControllerObjectName('TYPO3\Flow\Command\HelpCommandController');
 
-		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
+		if (is_array($commandLine) === TRUE) {
+			$rawCommandLineArguments = $commandLine;
+		} else {
+			preg_match_all(self::ARGUMENT_MATCHING_EXPRESSION, $commandLine, $commandLineMatchings, PREG_SET_ORDER);
+			$rawCommandLineArguments = array();
+			foreach ($commandLineMatchings as $match) {
+				if (isset($match['NoQuotes'])) {
+					$rawCommandLineArguments[] = str_replace(array('\ ', '\"', "\\'", '\\\\'), array(' ', '"', "'", '\\'), $match['NoQuotes']);
+				} elseif (isset($match['DoubleQuotes'])) {
+					$rawCommandLineArguments[] = str_replace('\\"', '"', $match['DoubleQuotes']);
+				} elseif (isset($match['SingleQuotes'])) {
+					$rawCommandLineArguments[] = str_replace('\\\'', '\'', $match['SingleQuotes']);
+				} else {
+					throw new InvalidArgumentNameException(sprintf('Could not parse the command line "%s" - specifically the part "%s".', $commandLine, $match[0]));
+				}
+			}
+		}
 		if (count($rawCommandLineArguments) === 0) {
 			$request->setControllerCommandName('helpStub');
 			return $request;
