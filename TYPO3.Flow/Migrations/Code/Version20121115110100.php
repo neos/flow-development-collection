@@ -47,12 +47,18 @@ class Version20121115110100 extends AbstractMigration {
 						continue;
 					}
 					foreach ($roleConfiguration as $parentRoleIdentifier) {
+						if (!is_string($parentRoleIdentifier)) {
+							continue;
+						}
 						if (strpos($parentRoleIdentifier, ':') === FALSE && !in_array($parentRoleIdentifier, $localRoles, TRUE)) {
 							$policyExaminationResult[] = '"' . $parentRoleIdentifier . '" is used as parent role for "' . $roleIdentifier . '"';
 						}
 					}
 				}
 
+				if (!isset($configuration['acls']) || !is_array($configuration['acls'])) {
+					return;
+				}
 				foreach ($configuration['acls'] as $roleIdentifier => $acl) {
 					if (strpos($roleIdentifier, ':') === FALSE && !in_array($roleIdentifier, $localRoles, TRUE)) {
 							$policyExaminationResult[] = '"' . $roleIdentifier . '" is used in ACL definition';

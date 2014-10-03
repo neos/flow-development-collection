@@ -674,16 +674,179 @@ deviate from this procedure.
 Authorization
 =============
 
-In this section we will deal with the authorization features of TYPO3 Flow. You won't find any
-advices, how to configure access rights here, please refer to the next section about
-:ref:`Access Control Lists`, which form the default method to model and configure access
-rules.
+This section covers the authorization features of TYPO3 Flow and how those can be leveraged in
+order to configure fine grained access rights.
 
-Authorize method invocations
+.. note::
+
+	With version 2.3 of Flow the security framework was subject to a major refactoring.
+	In that process the format of the policy configuration was adjusted in order to gain
+	flexibility.
+	Amongst others the term ``resource`` has been renamed to ``privilege`` and ACLs are
+	now configured directly with the respective role.
+	All changes are covered by code migrations, so make sure to run the ``./flow core:migrate``
+ 	command when upgrading from a previous version.
+
+Privileges
 ----------------------------
 
-The most general thing, which you want to protect in every
-application is the invocation of certain methods. By controlling, which
+In a complex web application there are different elements you might want to protect.
+This could be the permission to execute certain actions or the retrieval of certain data that has been
+stored in the system.
+In order to distinguish between the different types the concept of ``Privilege Types`` has been introduced.
+Privilege Types are responsible to protect the different parts of an application. Flow provides the two
+generic types ``MethodPrivilege`` and ``EntityPrivilege``, which will be explained in detail in the sections
+below.
+
+.. _Access Control Lists:
+
+Defining Privileges (Policies)
+========================================
+
+This section will introduce the recommended and default way of connecting authentication
+with authorization. In TYPO3 Flow policies are defined in a declarative way. This is very powerful and gives
+you the possibility to change the security policy of your application without touching any PHP code.
+The policy system deals with two major objects, which are explained below: ``Roles`` and ``Privilege Targets``.
+All policy definitions are configured in the ``Policy.yaml`` files.
+
+*Privilege Targets*
+
+In general a Privilege Target is the definition pointing to something you want to protect.
+It consists of a **Privilege Type**, a **unique name** and a **matcher expression** defining which
+things should be protected by this target.
+
+The privilege type defines the nature of the element to protect. This could be the execution of a certain action in your system, the retrieval of objects from the database, or any other kind of action you want to supervise in your application.
+The following example defines a Privilege Target for the ``MethodPrivilege`` type to protect the execution of some methods.
+
+*Example: privilege target definition in the Policy.yaml file*
+
+.. code-block:: yaml
+
+     privilegeTargets:
+
+        'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+
+          'Acme.MyPackage:RestrictedController.customerAction':
+            matcher: 'method(Acme\MyPackage\Controller\RestrictedController->customerAction())'
+
+           'Acme.MyPackage:RestrictedController.adminAction':
+            matcher: 'method(Acme\MyPackage\Controller\RestrictedController->adminAction())'
+
+          'Acme.MyPackage:editOwnPost':
+            matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.securityContext.party))'
+
+
+
+Privilege targets are defined in the ``Policy.yaml`` file of your package and are grouped by their respective types, which are define by the fully qualified classname of the privilege type to be used (e.g. ``TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege``). Besides the type each privilege target is given a unique name [#]_ and a so called matcher expression, which would be a pointcut expression in case of the Method Privilege.
+
+.. note:
+
+	Practically a pointcut expression is a regular expression that matches on certain methods.
+	There are more pointcut expressions you can use to describe the methods addressed by a
+	specific resource, the whole syntax is described in detail in the chapter about AOP.
+
+Looking back to the example above, there are three privilege targets defined, matching different methods, which should be protected. You even can use runtime evaluations to specify method arguments, which have to match when the method is called.
+
+
+*Roles and privileges*
+
+In the section about authentication roles have been introduced. A role are
+attached to a user's security context by the authentication system, to determine which privileges should be granted to
+her. I.e. the access rights of a user are decoupled from the user object itself, making it
+a lot more flexible, if you want to change them. In TYPO3 Flow roles are defined in the
+``Policy.yaml`` files, and are unique within your package namespace. The full identifier
+for a role would be ``<PackageKey>:<RoleName>``.
+
+For the following examples the context is the ``Policy.yaml`` file of the ``Acme.MyPackage`` package.
+
+Following is an example of a simple policy configuration, that will proclaim the roles
+``Acme.MyPackage:Administrator``, ``Acme.MyPackage:Customer``, and
+``Acme.MyPackage:PrivilegedCustomer`` to the system and assign certain
+privileges to them.
+
+*Example: Simple roles definition in the Policy.yaml file*
+
+.. code-block:: yaml
+
+	roles:
+	  ‘Acme.MyPackage:Administrator’:
+                 privileges: []
+
+	  ‘Acme.MyPackage:Customer’:
+                 privileges: []
+
+	  ‘Acme.MyPackage:PrivilegedCustomer’:
+                 parentRoles: [‘Acme.MyPackage:Customer’]
+                 privileges: []
+
+The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
+``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
+``Acme.MyPackage:Customer`` role.
+
+TYPO3 Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
+configure yourself. This role will also be present, if no account is authenticated.
+
+Likewise, the magic role ``TYPO3.Flow:Anonymous`` is added to the security context if no user
+is authenticated and ``TYPO3.Flow:AuthenticatedUser`` if there is an authenticated user.
+
+*Defining Privileges and Permissions*
+
+The last step is to connect privilege targets with roles by assigning permissions. Let's
+extends our roles definition accordingly:
+
+*Example: Defining privileges and permissions*
+
+.. code-block:: yaml
+
+	roles:
+	  ‘Acme.MyPackage:Administrator’:
+                 privileges:
+                   -
+                     privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+                     permission: GRANT
+                   -
+                     privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
+                     permission: GRANT
+                   -
+                     privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+                     permission: GRANT
+
+	  ‘Acme.MyPackage:Customer’:
+                 privileges:
+                   -
+                     privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+                     permission: GRANT
+
+	  ‘Acme.MyPackage:PrivilegedCustomer’:
+                 parentRoles: [‘Acme.MyPackage:Customer’]
+                 privileges:
+                   -
+                     privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+                     permission: GRANT
+
+
+This will end up in ``Administrators`` being able to call all the methods matched by the
+three privilege targets from above. However, ``Customers`` are only able to call the ``customerAction``, while ``PrivilegedCustomers`` are also allowed to edit their own posts.
+And all this without touching one line of PHP code, isn't that convenient?
+
+*Privilege evaluation*
+
+Privilege evaluation is a really complex task, when you think carefully about it. However,
+if you remember the following two rules, you will have no problems or unexpected behaviour
+when writing your policies:
+
+1. If a DENY permission is configured for one of the user's roles, access will be denied
+	no matter how many grant privileges there are in other roles.
+
+2. If no privilege has been defined for any of the user's roles, access will be denied implicitly.
+
+This leads to the following best practice when writing policies: Use the implicit deny feature as much as possible! By defining privilege targets, all matched subjects (methods, entities, resources, etc.) will be denied implicitly. Use grant permissions to whitelist access to them for certain roles. The use of a deny permission should be the ultimate last resort for edge cases. Be careful, there is no way to override a deny, if you use it anyways!
+
+Internal workings of method invocation authorization (MethodPrivilege)
+----------------------------
+
+One of the generic privilege types shipped with Flow is the MethodPrivilege,
+which protects the invocation of certain methods. By controlling, which
 methods are allowed to be called and which not, it can be globally
 ensured, that no unprivileged action will be executed at any time. This
 is what you would usually do, by adding an access check at the beginning
@@ -711,49 +874,32 @@ in a so called advice, which resides in an aspect class. Here we are: the
 
 The next thing to be called is a security interceptor. This interceptor calls the
 authentication manager before it continues with the authorization process, to make sure
-that the authentication status is up to date. Then an access decision manager is called,
-which has to decide, if it is allowed to call the intercepted method. If not it throws an
-access denied exception. If you want, you could implement your own access decision manager.
-However, there is a very flexible one shipped with TYPO3 Flow
-(``TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager``), which uses the
-following voting process to meet its decision:
+that the authentication status is up to date. Then the privilege manager is called,
+which has to decide, if it is allowed to call the intercepted method. If not an
+access denied exception is thrown by the security interceptor.
 
-#. Check for registered access decision voters.
+The privilege manager uses the following voting process to meet its decision:
 
-#. Ask every voter, to vote for the given method call (or join point in AOP nomenclature).
+#. Check for registered privilege types, responsible for methods (this is privileges implementing ``TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface``).
+
+#. Ask every privilege type to vote for the given method call (or join point in AOP nomenclature).
 
 #. Count the votes and grant access, if there is at least one ``VOTE_GRANT`` vote and no
-   ``VOTE_DENY`` vote. In all other cases an access denied exception will be thrown.
+   ``VOTE_DENY`` vote. In all other cases the execution of the method will not be permitted.
 
-*On access decision voters*
+*On decision voting*
 
 As you have seen, the default way of deciding on access is done by voting. This makes the
 whole authorization process very flexible and very easily extensible. You can at any time
-write your own voter classes and register them, just make sure to implement the interface
-``TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface``. Then you have to
-register your custom voter as shown below:
+write your own privilege classes and implement your own vote method.
 
-.. code-block:: yaml
-
-	security:
-	  authorization:
-	    accessDecisionVoters: [TYPO3\Flow\Security\Authorization\Voter\Policy, MyCompany\MyPackage\Security\MyCustomVoter]
-
-.. note::
-
-	By default there is always one voter registered:
-	``TYPO3\Flow\Security\Authorization\Voter\Policy``. This voter connects the
-	authorization system to the policy component, by returning a vote depending on the
-	configured security policy. Read the section about Policies, to learn more about the
-	default policy handling in TYPO3 Flow.
-
-If asked, each voter has to return one of the three possibles votes: grant, deny or
-abstain. There are appropriate constants defined in the voter interface, which you should
-use for that. You might imagine that a voter has to return an abstain vote, if it is not
+If asked, each vote method has to return one of the three possibles votes: grant, deny or
+abstain. There are appropriate constants defined in the privilege vote result class, which you should
+use for that. You might imagine that an abstain vote has to be returned, if the privilege is not
 able to give a proper grant or deny vote.
 
-Now it could be the case that all registered voters abstain. Usually the access decision
-manager will deny access then. However, you can change that behavior by configuring the
+Now it could be the case that all available privileges vote to abstain. Usually the privilege
+manager will then deny the privilege in question. However, you can change that behavior by configuring the
 following option:
 
 .. code-block:: yaml
@@ -761,6 +907,21 @@ following option:
 	security:
 	  authorization:
 	    allowAccessIfAllVotersAbstain: FALSE
+
+.. _Content security:
+
+
+Content security (EntityPrivilege)
+================
+
+… to be written
+
+
+Security for files aka secure downloads (ResourcePrivilege)
+---------------------------------------
+
+… to be written
+
 
 Request Integrity (HMAC)
 ------------------------
@@ -855,216 +1016,6 @@ security interceptors.
 	only request which are explicitly allowed by a request filter will be able
 	to pass the firewall.
 
-.. _Access Control Lists:
-
-Policies aka Access Control Lists (ACLs)
-========================================
-
-This section will introduce the recommended and default way of connecting authentication
-with authorization. The special and really powerful part of TYPO3 Flow's way is the possibility
-to do that completely declarative. This gives you the possibility to change the security
-policy of your application without touching any PHP code. The policy system deals with
-three major objects, which are explained below: roles, resources and acl entries. All
-policy definitions are configured in the ``Policy.yaml`` files.
-
-*Roles*
-
-In the section about authentication so called roles were introduced. A role can be
-attached to a user's security context, to determine which privileges should be granted to
-her. I.e. the access rights of a user are decoupled from the user object itself, making it
-a lot more flexible, if you want to change them. In TYPO3 Flow roles are defined in the
-``Policy.yaml`` files, and are unique within your package namespace. The full identifier
-for a role would be ``<PackageKey>:<RoleName>``.
-
-The built-in system roles ``Anonymous`` and ``Everybody`` are not prepended with a package key.
-
-There are two ways to configure roles. A simple configuration and an extended configuration.
-For the following examples the context is the ``Policy.yaml`` file of the ``Acme.MyPackage``
-package.
-
-Following is an example of the simple configuration. that will proclaim the roles
-``Acme.MyPackage:Administrator``, ``Acme.MyPackage:Customer``, and
-``Acme.MyPackage:PrivilegedCustomer`` to the system.
-
-*Example: simple roles definition in the Policy.yaml file*
-
-.. code-block:: yaml
-
-	roles:
-	  Administrator: []
-	  Customer: []
-	  PrivilegedCustomer: [Customer]
-
-As you see no package key is set in this example. This package key is automatically prepended
-by the ``ConfigurationManager`` of TYPO3 Flow.
-
-The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
-``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
-``Acme.MyPackage:Customer`` role.
-
-*Example: extended role definition in the Policy.yaml file*
-
-.. code-block:: yaml
-
-	roles:
-	  Administrator: []
-	  Customer: ['Acme.SomeOtherPackage:Customer']
-	  PrivilegedCustomer: ['Customer']
-
-This results in the exact same roles as above with the addition of the ``Acme.MyPackage:Customer``
-role inheriting rights from the ``Acme.SomeOtherPackage:Customer`` role.
-
-TYPO3 Flow will always add the magic ``Everybody`` role, which you don't have to
-configure yourself. This role will also be present, if no account is authenticated.
-
-Likewise, the magic role ``Anonymous`` is added to the security context if a user
-is not authenticated.
-
-*Resources*
-
-The counterpart to roles are resources. A resource in general is an object, you want to
-protect, for example you want to configure which roles are allowed to access a certain
-resource. The policy configuration deals with method and entity resources.
-
-Entity resources are related to content security, which are explained in the
-:ref:`Content security` section below. In this section we will deal with method
-resources only.
-
-*Example: resources definition in the Policy.yaml file*
-
-.. code-block:: yaml
-
-	resources:
-	  methods:
-	    listMethods: 'method(TYPO3\FooPackage\SomeClass->list.*())'
-	    updateMethods: 'method(TYPO3\FooPackage\SomeClass->update.*())'
-	    deleteMethods: 'method(TYPO3\FooPackage\.*->delete.*(force == TRUE))'
-	    modifyMethods: 'TYPO3_FooPackage_update || TYPO3_FooPackage_delete'
-
-Each resource is defined by a unique name [#]_ and a so called pointcut expression.
-Practically a pointcut expression is a regular expression that matches on certain methods.
-There are more pointcut expressions you can use to describe the methods addressed by a
-specific resource, the whole syntax is described in detail in the chapter about AOP.
-
-.. tip:
-
-	To make your resource definitions better readable you can cascade them by connecting
-	two or more via logical operators. In the above example this is shown in the
-	configuration of the third resource. Again the details about combined pointcuts are
-	described in the AOP reference.
-
-*ACL entries*
-
-The last step is to connect resources with roles by assigning access privileges. Let's
-have a look at an example for such ACL entries:
-
-*Example: ACL entry definitions in the Policy.yaml file*
-
-.. code-block:: yaml
-
-	acls:
-	  Administrator:
-	    methods:
-	      listMethods:         GRANT
-	      updateMethods:       GRANT
-	      deleteMethods:       GRANT
-	  Customer:
-	    methods:
-	      listMethods:         GRANT
-	  PrivilegedCustomer:
-	    methods:
-	      updateMethods:       GRANT
-	      deleteMethods:       DENY
-
-This will end up in ``Administrators`` being able to call all ``update*`` and ``list*``
-methods in the class ``SomeClass`` and all ``delete*`` methods no matter which class in
-the whole package ``FooPackage``. However, ``Customers`` are only able to call the ``list*``
-methods, while ``PrivilegedCustomers`` are also allowed to call the ``update*`` methods.
-And all this without touching one line of PHP code, isn't that convenient?
-
-*Privilege evaluation*
-
-Privilege evaluation is a really complex task, when you think carefully about it. However,
-if you remember the following two rules, you will have no problems or unexpected behaviour
-when writing your policies:
-
-1. If a DENY privilege is configured for one of the user's roles, access will be denied
-	no matter how many grant privileges there are in other roles.
-
-2. If no privilege has been defined for any of the user's roles, access will be denied.
-
-*Runtime constraints*
-
-Runtime constraints are a very powerful feature of TYPO3 Flow's AOP framework. A full reference
-of the possibilities can be found in the AOP chapter of this documentation. However, this
-features was mainly implemented to support sophisticated policy definitions and therefore
-here is a short introduction by two simple examples on how to use it:
-
-*Example: runtime constraints usage in the security policy*
-
-.. code-block:: yaml
-
-	-
-	  resources:
-	    methods:
-	      TYPO3_FooPackage_firstResource: 'method(TYPO3\FooPackage\SomeClass->updateProject(title != "TYPO3 Flow"))'
-	      TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource && evaluate(current.securityContext.party.name == "Andi")
-
-The above configuration defines a resource that matches on the ``updateProject`` method
-only if it is not called with the ``title`` argument equal to "TYPO3 Flow". The second resource
-matches if the first one matches and the ``name`` property of the currently authenticated
-``party`` is equal to "Andi".
-
-.. _Content security:
-
-Content security
-================
-
-Security for persisted objects
-------------------------------
-
-.. warning::
-
-	**This section is not complete yet!**
-
-	* TODO: Explain query rewriting via aspect to the persistence layer
-	* NOTE: Content security not working for DQL queries currently (only QOM!)
-
-.. code-block:: yaml
-
-	resources:
-	  entities:
-	    'Acme\MyPackage\Domain\Model\Customer':
-	      Acme_MyPackage_Customers_All: 'ANY'
-	      Acme_MyPackage_Customers_Vip: 'this.vip == TRUE'
-	      Acme_MyPackage_Customers_Me: 'current.securityContext.account == this.account && this.account != NULL'
-
-The ``Acme_MyPackage_Customer_All`` resource will match any customer object.
-The ``Acme_MyPackage_Customer_Vip`` resource matches all customer's which have their
-``vip`` attribute set.
-The ``Acme_MyPackage_Customer_Me`` resource matches any customer object whose account
-property matches the currently logged in account.
-
-* If an entity resource is defined, access is denied automatically to all who don't
-  have access granted to that new resource explicitly defined in the ACLs.
-* If there is no ``ANY`` resource defined, only objects explicitly matched by one of
-  the other resources are denied by default.
-* If there is a ``ANY`` resource define, all objects of this type will be denied for
-  all users not have a grant privilege for this ``ANY`` resource.
-* The key ``Acme\MyPackage\Domain\Model\Customer`` has to reflect the full qualified
-  class name of your entity.
-* The ``DENY`` privilege works the same as for methods. If it is set for one of the
-  resources you will never see entities matched by this resource, no matter how many
-  ``GRANT`` privileges there might be set for other roles you also have.
-
-
-Security for files aka secure downloads
----------------------------------------
-
-* add publishing configuration to resource objects
-* publishing in subfolder named like session id
-* optimization with role subdirs -> only publish once for a role
-* server specific restriction publishing like .htaccess files for apache
 
 Fluid (view) integration
 ========================
@@ -1088,11 +1039,11 @@ example, which should be more or less self-explanatory:
 
 .. code-block:: xml
 
-	<f:security.ifAccess resource="someResource">
+	<f:security.ifAccess privilegeTarget="somePrivilegeTargetIdentifier">
 		This is being shown in case you have access to the given resource
 	</f:security.ifAccess>
 
-	<f:security.ifAccess resource="someResource">
+	<f:security.ifAccess privilegeTarget="somePrivilegeTargetIdentifier">
 		<f:then>
 			This is being shown in case you have access.
 		</f:then>
@@ -1193,4 +1144,5 @@ RSA wallet service
 	``findActiveByAccountIdentifierAndAuthenticationProviderName()``
 	for this task.
 
-.. [#] As a convention you have to prefix at least your package's namespace to avoid ambiguity.
+.. [#] By convention the privilege target identifier is to be prefixed with the respective package key to avoid ambiguity.
+

@@ -191,7 +191,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function flushSystemCachesByChangedFilesFlushesPolicyCacheIfAPolicyFileHasBeenModified() {
 		$this->registerCache('Flow_Object_Classes');
 		$this->registerCache('Flow_Object_Configuration');
-		$policyCache = $this->registerCache('Flow_Security_Policy');
+		$policyCache = $this->registerCache('Flow_Security_Authorization_Privilege_Method');
 		$policyCache->expects($this->once())->method('flush');
 
 		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(

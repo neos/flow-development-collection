@@ -52,10 +52,6 @@ properties:
     additionalProperties: FALSE
     required: TRUE
     properties:
-      'accessDecisionVoters':
-        type: array
-        required: TRUE
-        items: { type: string, format: class-name }
       'allowAccessIfAllVotersAbstain': { type: boolean, required: TRUE }
 
   'csrf':

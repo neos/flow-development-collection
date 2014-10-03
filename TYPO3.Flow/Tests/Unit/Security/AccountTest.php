@@ -33,63 +33,76 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * Setup function for the testcase
 	 */
 	public function setUp() {
-		$this->administratorRole = new Role('TYPO3.Flow:Administrator');
-		$this->customerRole = new Role('TYPO3.Flow:Customer');
+		$administratorRole = new Role('TYPO3.Flow:Administrator');
+		$this->administratorRole = $administratorRole;
+		$customerRole = new Role('TYPO3.Flow:Customer');
+		$this->customerRole = $customerRole;
+
+		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
+		$mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function($roleIdentifier) use ($administratorRole, $customerRole) {
+			switch($roleIdentifier) {
+				case 'TYPO3.Flow:Administrator':
+					return $administratorRole;
+					break;
+				case 'TYPO3.Flow:Customer':
+					return $customerRole;
+					break;
+				default:
+					return new Role($roleIdentifier);
+			}
+		}));
+
+		$this->account = $this->getAccessibleMock('TYPO3\Flow\Security\Account', array('dummy'));
+		$this->account->_set('policyService', $mockPolicyService);
 	}
 
 	/**
 	 * @test
 	 */
 	public function addRoleAddsRoleToAccountIfNotAssigned() {
-		$account = new Account();
-		$account->setRoles(array($this->administratorRole));
-		$account->addRole($this->customerRole);
-
-		$this->assertCount(2, $account->getRoles());
+		$this->account->setRoles(array($this->administratorRole));
+		$this->account->addRole($this->customerRole);
+		$this->assertCount(2, $this->account->getRoles());
 	}
 
 	/**
 	 * @test
 	 */
 	public function addRoleSkipsRoleIfAssigned() {
-		$account = new Account();
-		$account->setRoles(array($this->administratorRole));
-		$account->addRole($this->administratorRole);
+		$this->account->setRoles(array($this->administratorRole));
+		$this->account->addRole($this->administratorRole);
 
-		$this->assertCount(1, $account->getRoles());
+		$this->assertCount(1, $this->account->getRoles());
 	}
 
 	/**
 	 * @test
 	 */
 	public function removeRoleRemovesRoleFromAccountIfAssigned() {
-		$account = new Account();
-		$account->setRoles(array($this->administratorRole, $this->customerRole));
-		$account->removeRole($this->customerRole);
+		$this->account->setRoles(array($this->administratorRole, $this->customerRole));
+		$this->account->removeRole($this->customerRole);
 
-		$this->assertCount(1, $account->getRoles());
+		$this->assertCount(1, $this->account->getRoles());
 	}
 
 	/**
 	 * @test
 	 */
 	public function removeRoleSkipsRemovalIfRoleNotAssigned() {
-		$account = new Account();
-		$account->setRoles(array($this->administratorRole));
-		$account->removeRole($this->customerRole);
+		$this->account->setRoles(array($this->administratorRole));
+		$this->account->removeRole($this->customerRole);
 
-		$this->assertCount(1, $account->getRoles());
+		$this->assertCount(1, $this->account->getRoles());
 	}
 
 	/**
 	 * @test
 	 */
 	public function hasRoleWorks() {
-		$account = new Account();
-		$account->setRoles(array($this->administratorRole));
+		$this->account->setRoles(array($this->administratorRole));
 
-		$this->assertTrue($account->hasRole($this->administratorRole));
-		$this->assertFalse($account->hasRole($this->customerRole));
+		$this->assertTrue($this->account->hasRole($this->administratorRole));
+		$this->assertFalse($this->account->hasRole($this->customerRole));
 	}
 
 	/**
@@ -98,22 +111,19 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setRolesWorks() {
 		$roles = array($this->administratorRole, $this->customerRole);
 		$expectedRoles = array($this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole);
-		$account = new Account();
-		$account->setRoles($roles);
+		$this->account->setRoles($roles);
 
-		$this->assertSame($expectedRoles, $account->getRoles());
+		$this->assertSame($expectedRoles, $this->account->getRoles());
 	}
 
 	/**
 	 * @test
 	 */
 	public function expirationDateCanBeSetNull() {
-		$account = new Account();
+		$this->account->setExpirationDate(new \DateTime());
+		$this->account->setExpirationDate(NULL);
 
-		$account->setExpirationDate(new \DateTime());
-		$account->setExpirationDate(NULL);
-
-		$this->assertEquals(NULL, $account->getExpirationDate());
+		$this->assertEquals(NULL, $this->account->getExpirationDate());
 	}
 
 }

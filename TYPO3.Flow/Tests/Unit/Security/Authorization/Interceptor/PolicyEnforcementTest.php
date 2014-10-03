@@ -21,13 +21,14 @@ class PolicyEnforcementTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function invokeCallsTheAuthenticationManager() {
+		$securityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$authenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-		$accessDecisionManager = $this->getMock('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
+		$privilegeManager = $this->getMock('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
 		$joinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
+		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement($securityContext, $authenticationManager, $privilegeManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}
@@ -36,14 +37,15 @@ class PolicyEnforcementTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
+	public function invokeCallsThePrivilegeManagerToDecideOnTheCurrentJoinPoint() {
+		$securityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$authenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-		$accessDecisionManager = $this->getMock('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
+		$privilegeManager = $this->getMock('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
 		$joinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
 
-		$accessDecisionManager->expects($this->once())->method('decideOnJoinPoint')->with($joinPoint);
+		$privilegeManager->expects($this->once())->method('isGranted')->with('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $joinPoint);
 
-		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
+		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement($securityContext, $authenticationManager, $privilegeManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}

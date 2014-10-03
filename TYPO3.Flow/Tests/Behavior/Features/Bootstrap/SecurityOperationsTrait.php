@@ -120,8 +120,8 @@ trait SecurityOperationsTrait {
 	 * @return void
 	 */
 	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
-		$this->accessDecisionManager->setOverrideDecision(NULL);
+		$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
+		$this->privilegeManager->setOverrideDecision(NULL);
 
 		$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
 

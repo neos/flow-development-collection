@@ -329,9 +329,6 @@ TYPO3:
         authenticationStrategy: atLeastOneToken
 
       authorization:
-        # An array of access decision voters that should vote when access decisions are made
-        accessDecisionVoters: [TYPO3\Flow\Security\Authorization\Voter\Policy]
-
         # If this is set to TRUE access will be granted even if all voters abstain
         allowAccessIfAllVotersAbstain: FALSE
 

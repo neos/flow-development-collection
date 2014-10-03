@@ -12,9 +12,14 @@ namespace TYPO3\Flow\Security;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SecurityLoggerInterface;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Party\Domain\Model\AbstractParty;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -26,7 +31,7 @@ class Context {
 
 	/**
 	 * Authenticate as many tokens as possible but do not require
-	 * an authenticated token (e.g. for guest users with role Everybody).
+	 * an authenticated token (e.g. for guest users with role TYPO3.Flow:Everybody).
 	 */
 	const AUTHENTICATE_ANY_TOKEN = 1;
 
@@ -90,7 +95,7 @@ class Context {
 
 	/**
 	 * Array of tokens currently active
-	 * @var array
+	 * @var TokenInterface[]
 	 * @Flow\Transient
 	 */
 	protected $activeTokens = array();
@@ -109,36 +114,36 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 * @var ActionRequest
 	 * @Flow\Transient
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+	 * @var Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\SessionManager
+	 * @var SessionManager
 	 */
 	protected $sessionManager;
 
 	/**
-	 * @var \TYPO3\Flow\Log\SecurityLoggerInterface
+	 * @var SecurityLoggerInterface
 	 * @Flow\Inject
 	 */
 	protected $securityLogger;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @var Policy\PolicyService
 	 * @Flow\Inject
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @var Cryptography\HashService
 	 * @Flow\Inject
 	 */
 	protected $hashService;
@@ -155,13 +160,13 @@ class Context {
 	protected $csrfProtectionTokens = array();
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\RequestInterface
+	 * @var RequestInterface
 	 */
 	protected $interceptedRequest;
 
 	/**
 	 * @Flow\Transient
-	 * @var array<\TYPO3\Flow\Security\Policy\Role>
+	 * @var Role[]
 	 */
 	protected $roles = NULL;
 
@@ -173,9 +178,19 @@ class Context {
 	protected $authorizationChecksDisabled = FALSE;
 
 	/**
+	 * @var string
+	 */
+	protected $contextHash = NULL;
+
+	/**
+	 * @var array of strings
+	 */
+	protected $contextHashComponents = array();
+
+	/**
 	 * Inject the authentication manager
 	 *
-	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
+	 * @param Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 */
 	public function injectAuthenticationManager(Authentication\AuthenticationManagerInterface $authenticationManager) {
@@ -199,6 +214,7 @@ class Context {
 	public function withoutAuthorizationChecks(\Closure $callback) {
 		$this->authorizationChecksDisabled = TRUE;
 		try {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$callback->__invoke();
 		} catch (\Exception $exception) {
 			$this->authorizationChecksDisabled = FALSE;
@@ -224,7 +240,7 @@ class Context {
 	 * This method is called manually by the request handler which created the HTTP
 	 * request.
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $request The current ActionRequest
+	 * @param ActionRequest $request The current ActionRequest
 	 * @return void
 	 * @Flow\Autowiring(FALSE)
 	 */
@@ -237,7 +253,7 @@ class Context {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @throws \TYPO3\Flow\Exception
+	 * @throws Exception
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['authentication']['authenticationStrategy'])) {
@@ -256,7 +272,7 @@ class Context {
 					$this->authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 					break;
 				default:
-					throw new \TYPO3\Flow\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
+					throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
 			}
 		}
 
@@ -273,7 +289,7 @@ class Context {
 					$this->csrfProtectionStrategy = self::CSRF_ONE_PER_URI;
 					break;
 				default:
-					throw new \TYPO3\Flow\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
+					throw new Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
 			}
 		}
 	}
@@ -282,14 +298,14 @@ class Context {
 	 * Initializes the security context for the given request.
 	 *
 	 * @return void
-	 * @throws \TYPO3\Flow\Exception
+	 * @throws Exception
 	 */
 	public function initialize() {
 		if ($this->initialized === TRUE) {
 			return;
 		}
 		if ($this->canBeInitialized() === FALSE) {
-			throw new \TYPO3\Flow\Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
+			throw new Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
 		}
 
 		if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
@@ -328,7 +344,7 @@ class Context {
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens
+	 * @return TokenInterface[] Array of set tokens
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->initialized === FALSE) {
@@ -344,7 +360,7 @@ class Context {
 	 * against the current request it is determined as not active.
 	 *
 	 * @param string $className The class name
-	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens of the specified type
+	 * @return TokenInterface[] Array of set tokens of the specified type
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		if ($this->initialized === FALSE) {
@@ -366,9 +382,9 @@ class Context {
 	 *
 	 * If no authenticated roles could be found the "Anonymous" role is returned.
 	 *
-	 * The "Everybody" roles is always returned.
+	 * The "TYPO3.Flow:Everybody" roles is always returned.
 	 *
-	 * @return array<\TYPO3\Flow\Security\Policy\Role>
+	 * @return Role[]
 	 */
 	public function getRoles() {
 		if ($this->initialized === FALSE) {
@@ -376,28 +392,32 @@ class Context {
 		}
 
 		if ($this->roles === NULL) {
-			$this->roles = array('Everybody' => $this->policyService->getRole('Everybody'));
+			$this->roles = array('TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody'));
 
 			if ($this->authenticationManager->isAuthenticated() === FALSE) {
-				$this->roles['Anonymous'] = $this->policyService->getRole('Anonymous');
+				$this->roles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
 			} else {
-				$this->roles['AuthenticatedUser'] = $this->policyService->getRole('AuthenticatedUser');
+				$this->roles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
 				/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 				foreach ($this->getAuthenticationTokens() as $token) {
-					if ($token->isAuthenticated() === TRUE) {
-						$account = $token->getAccount();
-						if ($account !== NULL) {
-							$accountRoles = $account->getRoles();
-							/** @var $currentRole Role */
-							foreach ($accountRoles as $currentRole) {
-								if (!in_array($currentRole, $this->roles)) {
-									$this->roles[$currentRole->getIdentifier()] = $currentRole;
-								}
-								/** @var $currentParentRole Role */
-								foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
-									if (!in_array($currentParentRole, $this->roles)) {
-										$this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
-									}
+					if ($token->isAuthenticated() !== TRUE) {
+						continue;
+					}
+					$account = $token->getAccount();
+					if ($account === NULL) {
+						continue;
+					}
+					if ($account !== NULL) {
+						$accountRoles = $account->getRoles();
+						/** @var $currentRole Role */
+						foreach ($accountRoles as $currentRole) {
+							if (!in_array($currentRole, $this->roles)) {
+								$this->roles[$currentRole->getIdentifier()] = $currentRole;
+							}
+							/** @var $currentParentRole Role */
+							foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
+								if (!in_array($currentParentRole, $this->roles)) {
+									$this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
 								}
 							}
 						}
@@ -410,6 +430,15 @@ class Context {
 	}
 
 	/**
+	 * Generates a hash that is unique for the currently authenticated roles
+	 *
+	 * @return string
+	 */
+	public function getRolesHash() {
+		return md5(implode('|', array_keys($this->getRoles())));
+	}
+
+	/**
 	 * Returns TRUE, if at least one of the currently authenticated accounts holds
 	 * a role with the given identifier, also recursively.
 	 *
@@ -417,13 +446,13 @@ class Context {
 	 * @return boolean TRUE, if a role with the given string representation was found
 	 */
 	public function hasRole($roleIdentifier) {
-		if ($roleIdentifier === 'Everybody') {
+		if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
 			return TRUE;
 		}
-		if ($roleIdentifier === 'Anonymous') {
+		if ($roleIdentifier === 'TYPO3.Flow:Anonymous') {
 			return (!$this->authenticationManager->isAuthenticated());
 		}
-		if ($roleIdentifier === 'AuthenticatedUser') {
+		if ($roleIdentifier === 'TYPO3.Flow:AuthenticatedUser') {
 			return ($this->authenticationManager->isAuthenticated());
 		}
 
@@ -437,7 +466,7 @@ class Context {
 	 * if you need it you'll have to fetch it directly from the token.
 	 * (@see getAuthenticationTokens())
 	 *
-	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
+	 * @return AbstractParty The authenticated party
 	 */
 	public function getParty() {
 		if ($this->initialized === FALSE) {
@@ -457,7 +486,7 @@ class Context {
 	 * Returns the first authenticated party of the given type.
 	 *
 	 * @param string $className Class name of the party to find
-	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
+	 * @return AbstractParty The authenticated party
 	 */
 	public function getPartyByType($className) {
 		if ($this->initialized === FALSE) {
@@ -570,7 +599,7 @@ class Context {
 	 * Sets an action request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $interceptedRequest
+	 * @param ActionRequest $interceptedRequest
 	 * @return void
 	 * @Flow\Session(autoStart=true)
 	 */
@@ -582,7 +611,7 @@ class Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;
@@ -741,5 +770,29 @@ class Context {
 			return FALSE;
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Returns a hash that is unique for the current context, depending on hash components, @see setContextHashComponent()
+	 *
+	 * @return string
+	 */
+	public function getContextHash() {
+		if ($this->contextHash === NULL) {
+			$this->contextHash = md5(implode('|', $this->contextHashComponents));
+		}
+		return $this->contextHash;
+	}
+
+	/**
+	 * Register a value that affects the context hash. @see getContextHash()
+	 *
+	 * @param string $key a key that uniquely identifies the hash component
+	 * @param string $value
+	 * @return void
+	 */
+	public function setContextHashComponent($key, $value) {
+		$this->contextHash = NULL;
+		$this->contextHashComponents[$key] = $value;
 	}
 }

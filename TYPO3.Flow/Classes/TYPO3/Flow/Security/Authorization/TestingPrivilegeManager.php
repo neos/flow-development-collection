@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class TestingAccessDecisionManager extends \TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager {
+class TestingPrivilegeManager extends PrivilegeManager {
 
 	/**
 	 * @var boolean
@@ -27,35 +27,40 @@ class TestingAccessDecisionManager extends \TYPO3\Flow\Security\Authorization\Ac
 	protected $overrideDecision = NULL;
 
 	/**
-	 * Decides on a joinpoint
+	 * Returns TRUE, if the given privilege type is granted for the given subject based
+	 * on the current security context or if set based on the override decision value.
 	 *
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
-	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
+	 * @param string $privilegeType
+	 * @param mixed $subject
+	 * @param array $voteResults This variable will be filled by PrivilegeVoteResult objects, giving information about the reasons for the result of this method
+	 * @return boolean
 	 */
-	public function decideOnJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function isGranted($privilegeType, $subject, &$voteResults = array()) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			$voteResults[] = new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_DENY, 'Voting has been overriden to "DENY" by the testing privilege manager!');
+			return FALSE;
 		} elseif ($this->overrideDecision === TRUE) {
-			return;
+			$voteResults[] = new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_GRANT, 'Voting has been overriden to "GRANT" by the testing privilege manager!');
+			return TRUE;
 		}
-		parent::decideOnJoinPoint($joinPoint);
+		return parent::isGranted($privilegeType, $subject, $voteResults);
 	}
 
 	/**
-	 * Decides on a resource.
+	 * Returns TRUE if access is granted on the given privilege target in the current security context
+	 * or if set based on the override decision value.
 	 *
-	 * @param string $resource The resource to decide on
-	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
+	 * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
+	 * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
+	 * @return boolean TRUE if access is granted, FALSE otherwise
 	 */
-	public function decideOnResource($resource) {
+	public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array()) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			return FALSE;
 		} elseif ($this->overrideDecision === TRUE) {
-			return;
+			return TRUE;
 		}
-		parent::decideOnResource($resource);
+		return parent::isPrivilegeTargetGranted($privilegeTargetIdentifier, $privilegeParameters);
 	}
 
 	/**

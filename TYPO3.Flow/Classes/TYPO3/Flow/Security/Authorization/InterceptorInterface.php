@@ -13,12 +13,11 @@ namespace TYPO3\Flow\Security\Authorization;
 
 /**
  * Contract for a security interceptor.
- *
  */
 interface InterceptorInterface {
 
 	/**
-	 * Invokes the security interception (e.g. calls a \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface)
+	 * Invokes the security interception (e.g. calls a \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 */

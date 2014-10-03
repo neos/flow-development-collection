@@ -95,9 +95,9 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @var \TYPO3\Flow\Security\Policy\PolicyService
@@ -143,8 +143,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 			}
 			$this->persistenceManager = $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		} else {
-			$accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
-			$accessDecisionManager->setOverrideDecision(TRUE);
+			$privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+			$privilegeManager->setOverrideDecision(TRUE);
 		}
 
 		// HTTP must be initialized before Session and Security because they rely
@@ -169,8 +169,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @return void
 	 */
 	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
-		$this->accessDecisionManager->setOverrideDecision(NULL);
+		$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+		$this->privilegeManager->setOverrideDecision(NULL);
 
 		$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
 
@@ -249,14 +249,11 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @return void
 	 */
 	protected function tearDownSecurity() {
-		if ($this->accessDecisionManager !== NULL) {
-			$this->accessDecisionManager->reset();
+		if ($this->privilegeManager !== NULL) {
+			$this->privilegeManager->reset();
 		}
 		if ($this->policyService !== NULL) {
 			$this->policyService->reset();
-			// the following should be removed as soon as RoleRepository is cleaned up #43192
-			$roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
-			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($roleRepository, 'newRoles', array(), TRUE);
 		}
 		if ($this->testingProvider !== NULL) {
 			$this->testingProvider->reset();
@@ -347,7 +344,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @api
 	 */
 	protected function disableAuthorization() {
-		$this->accessDecisionManager->setOverrideDecision(TRUE);
+		$this->privilegeManager->setOverrideDecision(TRUE);
 	}
 
 	/**

@@ -46,4 +46,13 @@ class RestrictedController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function adminAction() {
 		return 'admin';
 	}
+
+	/**
+	 * @param string $argument1
+	 * @param string $argument2
+	 * @return string
+	 */
+	public function argumentsAction($argument1, $argument2 = 'default') {
+		return sprintf('argument1: %s, argument2: %s', $argument1, $argument2);
+	}
 }

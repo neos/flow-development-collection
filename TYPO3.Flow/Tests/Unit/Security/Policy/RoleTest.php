@@ -26,7 +26,7 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function roleIdentifiersAndPackageKeysAndNames() {
 		return array(
-			array('Everybody', 'Everybody', NULL),
+			array('TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'),
 			array('Acme.Demo:Test', 'Test', 'Acme.Demo'),
 			array('Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub')
 		);
@@ -38,7 +38,6 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setNameAndPackageKeyWorks($roleIdentifier, $name, $packageKey) {
 		$role = new Role($roleIdentifier);
-		$role->initializeObject();
 
 		$this->assertEquals($name, $role->getName());
 		$this->assertEquals($packageKey, $role->getPackageKey());
@@ -48,14 +47,15 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setParentRolesMakesSureThatParentRolesDontContainDuplicates() {
-		$role = new Role('Acme.Demo:Test');
-		$role->initializeObject();
+		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $role */
+		$role = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Test'));
 
-		$parentRole1 = new Role('Acme.Demo:Parent1');
-		$parentRole2 = new Role('Acme.Demo:Parent2');
+		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole1 */
+		$parentRole1 = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Parent1'));
+		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole2 */
+		$parentRole2 = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Parent2'));
 
 		$parentRole2->addParentRole($parentRole1);
-
 		$role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));
 
 		$expectedParentRoles = array(
@@ -63,12 +63,7 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'Acme.Demo:Parent2' => $parentRole2
 		);
 
-		// Internally, parentRoles might contain duplicates which Doctrine will try
-		// to persist - even though getParentRoles() will return an array which
-		// does not contain duplicates:
-		$internalParentRolesCollection = ObjectAccess::getProperty($role, 'parentRoles', TRUE);
-		$this->assertEquals(2, count($internalParentRolesCollection->toArray()));
-
+		$this->assertEquals(2, count($role->getParentRoles()));
 		$this->assertEquals($expectedParentRoles, $role->getParentRoles());
 	}
 

@@ -11,91 +11,72 @@ namespace TYPO3\Flow\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
 /**
  * A role. These roles can be structured in a tree.
- *
- * @Flow\Entity
- * @ORM\HasLifecycleCallbacks
  */
 class Role {
-
-	/**
-	 * @var string
-	 */
-	const SOURCE_SYSTEM = 'system';
-	const SOURCE_POLICY = 'policy';
-	const SOURCE_USER = 'user';
 
 	/**
 	 * The identifier of this role
 	 *
 	 * @var string
-	 * @Flow\Identity
-	 * @ORM\Id
 	 */
 	protected $identifier;
 
 	/**
+	 * The name of this role (without package key)
+	 *
 	 * @var string
-	 * @Flow\Transient
 	 */
 	protected $name;
 
 	/**
+	 * The package key this role belongs to (extracted from the identifier)
+	 *
 	 * @var string
-	 * @Flow\Transient
 	 */
 	protected $packageKey;
 
 	/**
-	 * One of the SOURCE_* constants, recording where a role comes from (policy file,
-	 * user created).
+	 * Whether or not the role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
 	 *
-	 * @var string
-	 * @ORM\Column(length = 6)
+	 * @var boolean
 	 */
-	protected $sourceHint;
+	protected $abstract = FALSE;
 
 	/**
-	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Security\Policy\Role>
-	 * @ORM\ManyToMany
-	 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="parent_role")})
+	 * @Flow\Transient
+	 * @var Role[]
 	 */
 	protected $parentRoles;
 
 	/**
-	 * Constructor.
-	 *
+	 * @var PrivilegeInterface[]
+	 */
+	protected $privileges = array();
+
+	/**
 	 * @param string $identifier The fully qualified identifier of this role (Vendor.Package:Role)
-	 * @param string $sourceHint One of the SOURCE_* constants, indicating where a role comes from
+	 * @param Role[] $parentRoles
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct($identifier, $sourceHint = self::SOURCE_USER) {
+	public function __construct($identifier, array $parentRoles = array()) {
 		if (!is_string($identifier)) {
 			throw new \InvalidArgumentException('The role identifier must be a string, "' . gettype($identifier) . '" given. Please check the code or policy configuration creating or defining this role.', 1296509556);
 		}
 		if (preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)?$/', $identifier) !== 1) {
+
+		}
+		if (preg_match('/^([\w]+(?:\.[\w]+)*)\:([\w]+)+$/', $identifier, $matches) !== 1) {
 			throw new \InvalidArgumentException('The role identifier must follow the pattern "Vendor.Package:RoleName", but "' . $identifier . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
 		}
-		if (!in_array($sourceHint, array(self::SOURCE_POLICY, self::SOURCE_SYSTEM, self::SOURCE_USER))) {
-			throw new \InvalidArgumentException('The source hint of a role must be one of the built-in SOURCE_* constants.', 1365446550);
-		}
-
 		$this->identifier = $identifier;
-		$this->sourceHint = $sourceHint;
-		$this->parentRoles = new \Doctrine\Common\Collections\ArrayCollection();
-	}
-
-	/**
-	 * Initialize the object - sets name and packageKey properties.
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->setNameAndPackageKey();
+		$this->packageKey = $matches[1];
+		$this->name = $matches[2];
+		$this->parentRoles = $parentRoles;
 	}
 
 	/**
@@ -104,15 +85,6 @@ class Role {
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return $this->identifier;
-	}
-
-	/**
-	 * Returns the string representation of this role (the identifier)
-	 *
-	 * @return string the string representation of this role
-	 */
-	public function __toString() {
 		return $this->identifier;
 	}
 
@@ -135,85 +107,157 @@ class Role {
 	}
 
 	/**
-	 * Returns one of the SOURCE_* constants, recording where a role comes from
-	 * (policy file, user created).
-	 *
-	 * @return string
+	 * @param boolean $abstract
+	 * @return void
 	 */
-	public function getSourceHint() {
-		return $this->sourceHint;
+	public function setAbstract($abstract) {
+		$this->abstract = $abstract;
+	}
+
+	/**
+	 * Whether or not this role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
+	 *
+	 * @return boolean
+	 */
+	public function isAbstract() {
+		return $this->abstract;
 	}
 
 	/**
 	 * Assign parent roles to this role.
 	 *
-	 * @param array<\TYPO3\Flow\Security\Policy\Role> $parentRoles
+	 * @param Role[] $parentRoles indexed by role identifier
 	 * @return void
 	 */
 	public function setParentRoles(array $parentRoles) {
-		$this->parentRoles->clear();
-		foreach ($parentRoles as $role) {
-			$this->addParentRole($role);
+		$this->parentRoles = array();
+		foreach ($parentRoles as $parentRole) {
+			$this->addParentRole($parentRole);
 		}
 	}
 
 	/**
 	 * Returns an array of all directly assigned parent roles.
 	 *
-	 * @return array<\TYPO3\Flow\Security\Policy\Role> Array of direct parent roles, indexed by role identifier
+	 * @return Role[] Array of direct parent roles, indexed by role identifier
 	 */
 	public function getParentRoles() {
-		$roles = array();
-		foreach ($this->parentRoles->toArray() as $role) {
-			$roles[$role->getIdentifier()] = $role;
+		return $this->parentRoles;
+	}
+
+	/**
+	 * Returns all (directly and indirectly reachable) parent roles for the given role.
+	 *
+	 * @return Role[] Array of parent roles, indexed by role identifier
+	 */
+	public function getAllParentRoles() {
+		$result = array();
+
+		foreach ($this->parentRoles as $parentRoleIdentifier => $currentParentRole) {
+			if (isset($result[$parentRoleIdentifier])) {
+				continue;
+			}
+			$result[$parentRoleIdentifier] = $currentParentRole;
+
+			$currentGrandParentRoles = $currentParentRole->getAllParentRoles();
+			foreach ($currentGrandParentRoles as $currentGrandParentRoleIdentifier => $currentGrandParentRole) {
+				if (!isset($result[$currentGrandParentRoleIdentifier])) {
+					$result[$currentGrandParentRoleIdentifier] = $currentGrandParentRole;
+				}
+			}
 		}
-		return $roles;
+
+		return $result;
 	}
 
 	/**
 	 * Add a (direct) parent role to this role.
 	 *
-	 * @param \TYPO3\Flow\Security\Policy\Role $role
+	 * @param Role $parentRole
 	 * @return void
 	 */
-	public function addParentRole(\TYPO3\Flow\Security\Policy\Role $role) {
-		if (!$this->parentRoles->contains($role)) {
-			$this->parentRoles->add($role);
+	public function addParentRole(Role $parentRole) {
+		if (!$this->hasParentRole($parentRole)) {
+			$parentRoleIdentifier = $parentRole->getIdentifier();
+			$this->parentRoles[$parentRoleIdentifier] = $parentRole;
 		}
 	}
 
 	/**
 	 * Returns TRUE if the given role is a directly assigned parent of this role.
 	 *
-	 * @param \TYPO3\Flow\Security\Policy\Role $role
+	 * @param Role $role
 	 * @return boolean
 	 */
-	public function hasParentRole(\TYPO3\Flow\Security\Policy\Role $role) {
-		return $this->parentRoles->contains($role);
+	public function hasParentRole(Role $role) {
+		return isset($this->parentRoles[$role->getIdentifier()]);
 	}
 
 	/**
-	 * Returns TRUE if this roles has any directly assigned parent roles.
+	 * Assign privileges to this role.
 	 *
-	 * @return boolean
-	 */
-	public function hasParentRoles() {
-		return $this->parentRoles->isEmpty() === FALSE;
-	}
-
-	/**
-	 * Sets name and packageKey from the identifier.
-	 *
+	 * @param PrivilegeInterface[] $privileges
 	 * @return void
-	 * @ORM\PostLoad
-	 * @todo: Remove PostLoad as soon as #47975 is solved
 	 */
-	public function setNameAndPackageKey() {
-		if (preg_match('/^([\w]+(?:\.[\w]+)*)\:([\w]+)+$/', $this->identifier, $matches) === 1) {
-			$this->packageKey = $matches[1];
-			$this->name = $matches[2];
-		} else {
-			$this->name = $this->identifier;
+	public function setPrivileges(array $privileges) {
+		$this->privileges = $privileges;
+	}
+
+	/**
+	 * @return PrivilegeInterface[] Array of privileges assigned to this role
+	 */
+	public function getPrivileges() {
+		return $this->privileges;
+	}
+
+	/**
+	 * @param string $className Fully qualified name of the Privilege class to filter for
+	 * @return PrivilegeInterface[]
+	 */
+	public function getPrivilegesByType($className) {
+		$privileges = array();
+		foreach ($this->privileges as $privilege) {
+			if ($privilege instanceof $className) {
+				$privileges[] = $privilege;
+			}
 		}
+		return $privileges;
+	}
+
+	/**
+	 * @param string $privilegeTargetIdentifier
+	 * @param array $privilegeParameters
+	 * @return PrivilegeInterface the matching privilege or NULL if no privilege exists for the given constraints
+	 */
+	public function getPrivilegeForTarget($privilegeTargetIdentifier, array $privilegeParameters = array()) {
+		foreach ($this->privileges as $privilege) {
+			if ($privilege->getPrivilegeTargetIdentifier() !== $privilegeTargetIdentifier) {
+				continue;
+			}
+			if (array_diff_assoc($privilege->getParameters(), $privilegeParameters) !== array()) {
+				continue;
+			}
+			return $privilege;
+		}
+		return NULL;
+	}
+
+	/**
+	 * Add a privilege to this role.
+	 *
+	 * @param PrivilegeInterface $privilege
+	 * @return void
+	 */
+	public function addPrivilege($privilege) {
+		$this->privileges[] = $privilege;
+	}
+
+	/**
+	 * Returns the string representation of this role (the identifier)
+	 *
+	 * @return string the string representation of this role
+	 */
+	public function __toString() {
+		return $this->identifier;
 	}
 }

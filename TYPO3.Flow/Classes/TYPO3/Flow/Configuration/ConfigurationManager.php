@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Configuration;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Arrays;
@@ -422,7 +421,7 @@ class ConfigurationManager {
 				}
 
 				$settings = array();
-				/** @var $package \TYPO3\Flow\Package\PackageInterface */
+				/** @var $package PackageInterface */
 				foreach ($packages as $packageKey => $package) {
 					if (Arrays::getValueByPath($settings, $packageKey) === NULL) {
 						$settings = Arrays::setValueByPath($settings, $packageKey, array());
@@ -432,7 +431,7 @@ class ConfigurationManager {
 				$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
-					/** @var $package \TYPO3\Flow\Package\PackageInterface */
+					/** @var $package PackageInterface */
 					foreach ($packages as $package) {
 						$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
 					}
@@ -449,7 +448,7 @@ class ConfigurationManager {
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
 				$this->configurations[$configurationType] = array();
-				/** @var $package \TYPO3\Flow\Package\PackageInterface */
+				/** @var $package PackageInterface */
 				foreach ($packages as $packageKey => $package) {
 
 					$configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
@@ -463,22 +462,6 @@ class ConfigurationManager {
 					$this->configurations[$configurationType][$packageKey] = $configuration;
 				}
 			break;
-			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-				$this->configurations[$configurationType] = array();
-				/** @var $package \TYPO3\Flow\Package\PackageInterface */
-				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
-				}
-				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
-
-				foreach ($this->orderedListOfContextNames as $contextName) {
-					/** @var $package \TYPO3\Flow\Package\PackageInterface */
-					foreach ($packages as $package) {
-						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
-					}
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
-				}
-			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
 				if ($this->context->isTesting()) {
 					$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy';
@@ -490,20 +473,36 @@ class ConfigurationManager {
 				$this->configurations[$configurationType] = array();
 				/** @var $package PackageInterface */
 				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->loadPolicyConfigurationFile($package->getConfigurationPath() . $configurationType, $package));
+					$packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
+					$this->validatePolicyConfiguration($packagePolicyConfiguration, $package);
+					$this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
 				}
-				if ($this->configurationSource->has(FLOW_PATH_CONFIGURATION . $configurationType)) {
-					throw new InvalidConfigurationException('Global policy configuration is not allowed (but the file "' . FLOW_PATH_CONFIGURATION . $configurationType . '" exists).', 1352985128);
-				};
+				$this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
-					/** @var $package \TYPO3\Flow\Package\PackageInterface */
+					/** @var $package PackageInterface */
 					foreach ($packages as $package) {
-						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->loadPolicyConfigurationFile($package->getConfigurationPath() . $contextName . '/' . $configurationType, $package));
+						$packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource);
+						$this->validatePolicyConfiguration($packagePolicyConfiguration, $package);
+						$this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
 					}
-					if ($this->configurationSource->has(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType)) {
-						throw new InvalidConfigurationException('Global policy configuration is not allowed (but the file "' . FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType . '" exists).', 1352985129);
-					};
+					$this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
+				}
+			break;
+			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+				$this->configurations[$configurationType] = array();
+				/** @var $package PackageInterface */
+				foreach ($packages as $package) {
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
+				}
+				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
+
+				foreach ($this->orderedListOfContextNames as $contextName) {
+					/** @var $package PackageInterface */
+					foreach ($packages as $package) {
+						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
+					}
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
@@ -519,7 +518,7 @@ class ConfigurationManager {
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
 				$this->configurations[$configurationType] = array();
-				/** @var $package \TYPO3\Flow\Package\PackageInterface */
+				/** @var $package PackageInterface */
 				foreach ($packages as $package) {
 					$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
 				}
@@ -537,78 +536,6 @@ class ConfigurationManager {
 		}
 
 		$this->postProcessConfiguration($this->configurations[$configurationType]);
-	}
-
-	/**
-	 * Loads a Policy.yaml file and transforms the roles configuration
-	 *
-	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
-	 * @param \TYPO3\Flow\Package\PackageInterface $package
-	 * @throws InvalidConfigurationException
-	 * @return array
-	 */
-	protected function loadPolicyConfigurationFile($pathAndFilename, PackageInterface $package = NULL) {
-		$packageKeyOfCurrentPackage = ($package !== NULL ? $package->getPackageKey() : NULL);
-
-		$configuration = $this->configurationSource->load($pathAndFilename);
-
-		// Read roles
-		if (isset($configuration['roles']) && is_array($configuration['roles'])) {
-			$localRoles = array_keys($configuration['roles']);
-			foreach ($configuration['roles'] as $roleIdentifier => $parentRoles) {
-				$packageKey = $packageKeyOfCurrentPackage;
-				if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous' || $roleIdentifier === 'AuthenticatedUser') {
-					throw new InvalidConfigurationException('You must not redefine the built-in "' . $roleIdentifier . '" role. Please check the configuration of package "' . $packageKeyOfCurrentPackage . '" (' . $pathAndFilename . ').', 1352986475);
-				}
-				if (strpos($roleIdentifier, '.') !== FALSE || strpos($roleIdentifier, ':') !== FALSE) {
-					throw new InvalidConfigurationException('Roles defined in a package policy must not be qualified (that is, using the dot notation), but the role "' . $roleIdentifier . '" is (in package "' . $packageKeyOfCurrentPackage . '"). Please use the short notation with only the role name (for example "Administrator").', 1365447412);
-				}
-
-				// Add packageKey to parentRoles
-				if ($parentRoles !== array()) {
-					$parentRoles = array_map(function ($roleIdentifier) use ($packageKey, $localRoles) {
-						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous' || $roleIdentifier === 'AuthenticatedUser') {
-							return $roleIdentifier;
-						}
-						if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE && in_array($roleIdentifier, $localRoles)) {
-							return $packageKey . ':' . $roleIdentifier;
-						}
-						return $roleIdentifier;
-					}, $parentRoles, array($packageKey));
-				}
-
-				$configuration['roles'][$packageKey . ':' . $roleIdentifier] = $parentRoles;
-				unset($configuration['roles'][$roleIdentifier]);
-			}
-		}
-
-		// Read acls
-		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
-			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
-				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous' || $aclIndex === 'AuthenticatedUser'
-					|| preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1
-				) {
-					$roleIdentifier = $aclIndex;
-				} elseif (preg_match('/^[\w]+$/', $aclIndex) === 1) {
-					$roleIdentifier = $packageKeyOfCurrentPackage . ':' . $aclIndex;
-				} else {
-					throw new InvalidConfigurationException('Detected invalid role syntax in the acls section of the policy file ' . $pathAndFilename . ': "' . $aclIndex . '" is not a valid role identifier.', 1365516177);
-				}
-
-				if (!isset($configuration['acls'][$roleIdentifier])) {
-					$configuration['acls'][$roleIdentifier] = array();
-				}
-
-				$configuration['acls'][$roleIdentifier] = Arrays::arrayMergeRecursiveOverrule($configuration['acls'][$roleIdentifier], $aclConfiguration);
-
-				if ($roleIdentifier !== $aclIndex) {
-					unset($configuration['acls'][$aclIndex]);
-				}
-
-			}
-		}
-
-		return $configuration;
 	}
 
 	/**
@@ -802,5 +729,47 @@ EOD;
 			$string = str_replace('<' . $variableName . '>', $variableValue, $string);
 		}
 		return $string;
+	}
+
+	/**
+	 * Merges two policy configuration arrays.
+	 *
+	 * @param array $firstConfigurationArray
+	 * @param array $secondConfigurationArray
+	 * @return array
+	 */
+	protected function mergePolicyConfiguration(array $firstConfigurationArray, array $secondConfigurationArray) {
+		$result = Arrays::arrayMergeRecursiveOverrule($firstConfigurationArray, $secondConfigurationArray);
+		if (!isset($result['roles'])) {
+			return $result;
+		}
+		foreach ($result['roles'] as $roleIdentifier => $roleConfiguration) {
+			if (!isset($firstConfigurationArray['roles'][$roleIdentifier]['privileges']) || !isset($secondConfigurationArray['roles'][$roleIdentifier]['privileges'])) {
+				continue;
+			}
+			$result['roles'][$roleIdentifier]['privileges'] = array_merge($firstConfigurationArray['roles'][$roleIdentifier]['privileges'], $secondConfigurationArray['roles'][$roleIdentifier]['privileges']);
+		}
+		return $result;
+	}
+
+	/**
+	 * Validates the given $policyConfiguration and throws an exception if its not valid
+	 *
+	 * @param array $policyConfiguration
+	 * @param PackageInterface $package
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function validatePolicyConfiguration(array $policyConfiguration, PackageInterface $package) {
+		$errors = array();
+		if (isset($policyConfiguration['resources'])) {
+			$errors[] = 'deprecated "resources" options';
+		}
+		if (isset($policyConfiguration['acls'])) {
+			$errors[] = 'deprecated "acls" options';
+		}
+		if ($errors !== array()) {
+			throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)),  1415717875);
+		}
 	}
 }

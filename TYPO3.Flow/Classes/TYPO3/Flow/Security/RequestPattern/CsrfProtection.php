@@ -12,7 +12,16 @@ namespace TYPO3\Flow\Security\RequestPattern;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
+use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
@@ -22,38 +31,38 @@ use TYPO3\Flow\Security\RequestPatternInterface;
 class CsrfProtection implements RequestPatternInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Security\Context
 	 * @Flow\Inject
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 * @Flow\Inject
+	 * @var AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 * @Flow\Inject
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 * @Flow\Inject
+	 * @var ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Policy\PolicyService
 	 * @Flow\Inject
+	 * @var PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 * @Flow\Inject
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -76,11 +85,11 @@ class CsrfProtection implements RequestPatternInterface {
 	 * Matches a \TYPO3\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
 	 * searches for invalid csrf tokens. If this returns TRUE, the request is invalid!
 	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+	 * @param RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @throws AuthenticationRequiredException
 	 */
-	public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request) {
+	public function matchRequest(RequestInterface $request) {
 		if (!$request instanceof ActionRequest || $request->getHttpRequest()->isMethodSafe()) {
 			$this->systemLogger->log('No CSRF required, safe request', LOG_DEBUG);
 			return FALSE;
@@ -96,7 +105,18 @@ class CsrfProtection implements RequestPatternInterface {
 
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
 		$actionName = $request->getControllerActionName() . 'Action';
-		if (!$this->policyService->hasPolicyEntryForMethod($controllerClassName, $actionName)) {
+
+		$hasPolicyEntryForMethod = FALSE;
+		$methodPrivileges = $this->policyService->getAllPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		/** @var MethodPrivilegeInterface $privilege */
+		foreach ($methodPrivileges as $privilege) {
+			if ($privilege->matchesMethod($controllerClassName, $actionName)) {
+				$hasPolicyEntryForMethod = TRUE;
+				break;
+			}
+		}
+
+		if ($hasPolicyEntryForMethod === FALSE) {
 			$this->systemLogger->log(sprintf('CSRF protection filter: allowed %s request without requiring CSRF token because action "%s" in controller "%s" is not restricted by a policy.', $request->getHttpRequest()->getMethod(), $actionName, $controllerClassName), LOG_NOTICE);
 			return FALSE;
 		}
@@ -118,7 +138,7 @@ class CsrfProtection implements RequestPatternInterface {
 		}
 
 		if (!$this->securityContext->hasCsrfProtectionTokens()) {
-			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('No tokens in security context, possible session timeout', 1317309673);
+			throw new AuthenticationRequiredException('No tokens in security context, possible session timeout', 1317309673);
 		}
 
 		if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) {

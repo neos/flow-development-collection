@@ -332,14 +332,10 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'accountIdentifier' => 'someAccountIdentifier',
 			'credentialsSource' => 'someEncryptedStuff',
 			'authenticationProviderName' => 'DefaultProvider',
-			'roles' => array('Anonymous', 'Some.Package:Customer', 'Some.Package:Administrator')
+			'roles' => array('TYPO3.Flow:Customer', 'TYPO3.Flow:Administrator')
 		);
 
-		$roles = array('Anonymous', 'Some.Package:Customer', 'Some.Package:Administrator');
-
-		foreach ($roles as $role) {
-			$this->persistenceManager->add(new \TYPO3\Flow\Security\Policy\Role($role));
-		}
+		$expectedRoleIdentifiers = array('TYPO3.Flow:Customer', 'TYPO3.Flow:Administrator');
 
 		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
 		$configuration->forProperty('roles.*')->allowProperties();
@@ -347,8 +343,8 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$account = $this->propertyMapper->convert($source, 'TYPO3\Flow\Security\Account', $configuration);
 
 		$this->assertInstanceOf('\TYPO3\Flow\Security\Account', $account);
-		$this->assertEquals(3, count($account->getRoles()));
-		$this->assertEquals($roles, array_keys($account->getRoles()));
+		$this->assertEquals(2, count($account->getRoles()));
+		$this->assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
 	}
 
 	/**

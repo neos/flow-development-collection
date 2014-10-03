@@ -26,7 +26,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Utility\Environment;
@@ -68,9 +68,9 @@ class BehatHelperCommandController extends CommandController {
 	protected $mockActionRequest;
 
 	/**
-	 * @var AccessDecisionManagerInterface
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @var PolicyService
@@ -110,6 +110,8 @@ class BehatHelperCommandController extends CommandController {
 	}
 
 	/**
+	 * Calls a behat step method
+	 *
 	 * @Flow\Internal
 	 * @param string $methodName
 	 * @param boolean $withoutSecurityChecks

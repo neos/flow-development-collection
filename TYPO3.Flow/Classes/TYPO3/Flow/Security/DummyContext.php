@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Security;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * This is dummy implementation of a security context, which holds
@@ -49,7 +51,7 @@ class DummyContext extends Context {
 
 	/**
 	 * @Flow\Transient
-	 * @var array<\TYPO3\Flow\Security\Policy\Role>
+	 * @var Role[]
 	 */
 	protected $roles = NULL;
 
@@ -80,7 +82,7 @@ class DummyContext extends Context {
 	/**
 	 * Sets the \TYPO3\Flow\Security\Authentication\Tokens of the security context which should be active.
 	 *
-	 * @param array<\TYPO3\Flow\Security\Authentication\TokenInterface> $tokens Array of set tokens
+	 * @param TokenInterface[] $tokens Array of set tokens
 	 * @return array
 	 */
 	public function setAuthenticationTokens(array $tokens) {
@@ -92,7 +94,7 @@ class DummyContext extends Context {
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens
+	 * @return TokenInterface[] Array of set tokens
 	 */
 	public function getAuthenticationTokens() {
 		return $this->tokens;
@@ -104,7 +106,7 @@ class DummyContext extends Context {
 	 * against the current request it is determined as not active.
 	 *
 	 * @param string $className The class name
-	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens of the specified type
+	 * @return TokenInterface[] Array of set tokens of the specified type
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		$tokens = array();
@@ -122,9 +124,9 @@ class DummyContext extends Context {
 	 *
 	 * If no authenticated roles could be found the "Anonymous" role is returned.
 	 *
-	 * The "Everybody" roles is always returned.
+	 * The "TYPO3.Flow:Everybody" roles is always returned.
 	 *
-	 * @return array<\TYPO3\Flow\Security\Policy\Role>
+	 * @return Role[]
 	 */
 	public function getRoles() {
 		return $this->roles;
@@ -133,7 +135,7 @@ class DummyContext extends Context {
 	/**
 	 * Set an array of role objects.
 	 *
-	 * @param array $roles
+	 * @param Role[] $roles
 	 * @return void
 	 */
 	public function setRoles($roles) {
@@ -148,13 +150,13 @@ class DummyContext extends Context {
 	 * @return boolean TRUE, if a role with the given string representation was found
 	 */
 	public function hasRole($roleIdentifier) {
-		if ($roleIdentifier === 'Everybody') {
+		if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
 			return TRUE;
 		}
-		if ($roleIdentifier === 'Anonymous') {
+		if ($roleIdentifier === 'TYPO3.Flow:Anonymous') {
 			return (!empty($this->roles));
 		}
-		if ($roleIdentifier === 'AuthenticatedUser') {
+		if ($roleIdentifier === 'TYPO3.Flow:AuthenticatedUser') {
 			return (empty($this->roles));
 		}
 
@@ -203,7 +205,7 @@ class DummyContext extends Context {
 	 * Sets an action request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $interceptedRequest
+	 * @param ActionRequest $interceptedRequest
 	 * @return void
 	 * @Flow\Session(autoStart=true)
 	 */
@@ -215,7 +217,7 @@ class DummyContext extends Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;

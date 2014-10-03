@@ -12,17 +12,19 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPoint;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager;
+use TYPO3\Flow\Security\Authorization\PrivilegeVoteResult;
 use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
-use TYPO3\Flow\Security\DummyContext;
-use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
+use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Command controller for tasks related to security
@@ -58,7 +60,7 @@ class SecurityCommandController extends CommandController {
 	/**
 	 * @var VariableFrontend
 	 */
-	protected $policyCache;
+	protected $methodPermissionCache;
 
 	/**
 	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
@@ -67,7 +69,7 @@ class SecurityCommandController extends CommandController {
 	 * @return void
 	 */
 	public function injectCacheManager(CacheManager $cacheManager) {
-		$this->policyCache = $cacheManager->getCache('Flow_Security_Policy');
+		$this->methodPermissionCache = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method');
 	}
 
 	/**
@@ -119,130 +121,87 @@ class SecurityCommandController extends CommandController {
 	}
 
 	/**
-	 * Shows the effective policy rules currently active in the system
+	 * Shows a list of all defined privilege targets and the effective permissions for the given groups.
 	 *
-	 * @param boolean $grantsOnly Only list methods effectively granted to the given roles
-	 * @return void
+	 * @param string $privilegeType The privilege type (entity or method)
+	 * @param string $roleIdentifiers A comma separated list of roleIdentifiers. Shows policy for an unauthenticated user when left empty.
 	 */
-	public function showEffectivePolicyCommand($grantsOnly = FALSE) {
-		$roles = array();
-		$roleIdentifiers = $this->request->getExceedingArguments();
+	public function showEffectivePolicyCommand($privilegeType, $roleIdentifiers = '') {
 
-		if (empty($roleIdentifiers) === TRUE) {
-			$this->outputLine('Please specify at leas one role, to calculate the effective privileges for!');
+		$systemRoleIdentifiers = array('TYPO3.Flow:Everybody', 'TYPO3.Flow:Anonymous', 'TYPO3.Flow:AuthenticatedUser');
+
+		if(interface_exists($privilegeType)) {
+			$privilegeTypeInterfaceName = $privilegeType;
+		} else {
+			$privilegeTypeInterfaceName = sprintf('\TYPO3\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst(strtolower($privilegeType)), ucfirst(strtolower($privilegeType)));
+		}
+		if(!interface_exists($privilegeTypeInterfaceName)) {
+			$this->outputLine('The privilege type %s was not defined.', array($privilegeTypeInterfaceName));
 			$this->quit(1);
 		}
 
-		foreach ($roleIdentifiers as $roleIdentifier) {
-			if ($this->policyService->hasRole($roleIdentifier)) {
-				$currentRole = $this->policyService->getRole($roleIdentifier);
-				$roles[$roleIdentifier] = $currentRole;
-				foreach ($this->policyService->getAllParentRoles($currentRole) as $parentRoleIdentifier => $parentRole) {
-					if (!isset($roles[$parentRoleIdentifier])) {
-						$roles[$parentRoleIdentifier] = $parentRole;
-					}
+		$requestedRoles = array();
+		foreach (Arrays::trimExplode(',', $roleIdentifiers) as $roleIdentifier) {
+			try {
+				if(!in_array($roleIdentifier, $systemRoleIdentifiers)) {
+					$requestedRoles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
 				}
+			} catch (NoSuchRoleException $exception) {
+				$this->outputLine('The role %s was not defined.', array($roleIdentifier));
+				$this->quit(1);
 			}
 		}
-
-		if (count($roles) === 0) {
-			$this->outputLine('The specified role(s) do not exist.');
-			$this->quit(1);
+		if(count($requestedRoles) > 0) {
+			$requestedRoles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
+		} else {
+			$requestedRoles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
 		}
+		$requestedRoles['TYPO3.Flow:Everybody'] = $this->policyService->getRole('TYPO3.Flow:Everybody');
 
-		$this->outputLine(PHP_EOL . 'The following roles will be used for calculating the effective privileges (retrieved from the configured roles hierarchy):' . PHP_EOL);
-		foreach($roles as $roleIdentifier => $role) {
-			$this->outputLine($roleIdentifier);
-		}
+		$this->outputLine('Effective Permissions for the roles <b>%s</b> ', array(implode(', ', $requestedRoles)));
+		$this->outputLine(str_repeat('-', $this->output->getMaximumLineLength()));
 
-		$dummySecurityContext = new DummyContext();
-		$dummySecurityContext->setRoles($roles);
-		$accessDecisionManager = new AccessDecisionVoterManager($this->objectManager, $dummySecurityContext);
+		$definedPrivileges = $this->policyService->getAllPrivilegesByType($privilegeTypeInterfaceName);
+		$permissions = array();
 
-		if ($this->policyCache->has('acls')) {
-			$classes = array();
-			$acls = $this->policyCache->get('acls');
-			foreach($acls as $classAndMethodName => $aclEntry) {
-				if (strpos($classAndMethodName, '->') === FALSE) {
+		/** @var PrivilegeInterface $definedPrivilege */
+		foreach($definedPrivileges as $definedPrivilege) {
+
+			$accessGrants = 0;
+			$accessDenies = 0;
+
+			$permission = sprintf('%s', PrivilegeVoteResult::VOTE_ABSTAIN);
+
+			/** @var Role $requestedRole */
+			foreach($requestedRoles as $requestedRole) {
+				$privilege = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->getIdentifier());
+
+				if ($privilege === NULL) {
 					continue;
 				}
-				list($className, $methodName) = explode('->', $classAndMethodName);
-				$className = $this->objectManager->getCaseSensitiveObjectName($className);
-				$reflectionClass = new \ReflectionClass($className);
-				foreach ($reflectionClass->getMethods() as $casSensitiveMethodName) {
-					if ($methodName === strtolower($casSensitiveMethodName->getName())) {
-						$methodName = $casSensitiveMethodName->getName();
-						break;
-					}
-				}
-				$runtimeEvaluationsInPlace = FALSE;
-				foreach($aclEntry as $role => $resources) {
-					if (in_array($role, $roles) === FALSE) {
-						continue;
-					}
 
-					if (!isset($classes[$className])) {
-						$classes[$className] = array();
-					}
-					if (!isset($classes[$className][$methodName])) {
-						$classes[$className][$methodName] = array();
-						$classes[$className][$methodName]['resources'] = array();
-					}
-
-					foreach($resources as $resourceName => $privilege) {
-						$classes[$className][$methodName]['resources'][$resourceName] = $privilege;
-						if ($privilege['runtimeEvaluationsClosureCode'] !== FALSE) {
-							$runtimeEvaluationsInPlace = TRUE;
-						}
-					}
-				}
-
-				if ($runtimeEvaluationsInPlace === FALSE) {
-					try {
-						$accessDecisionManager->decideOnJoinPoint(new JoinPoint(NULL, $className, $methodName, array()));
-					} catch (AccessDeniedException $e) {
-						$classes[$className][$methodName]['effectivePrivilege'] = $e->getMessage();
-					}
-					if (!isset($classes[$className][$methodName]['effectivePrivilege'])) {
-						$classes[$className][$methodName]['effectivePrivilege'] = 'Access granted';
-					}
-				} else {
-					$classes[$className][$methodName]['effectivePrivilege'] = 'Could not be calculated. Runtime evaluations in place!';
+				if ($privilege->isGranted()) {
+					$accessGrants++;
+				} elseif ($privilege->isDenied()) {
+					$accessDenies++;
 				}
 			}
 
-			foreach ($classes as $className => $methods) {
-				$classNamePrinted = FALSE;
-				foreach ($methods as $methodName => $resources) {
-					if ($grantsOnly === TRUE && $resources['effectivePrivilege'] !== 'Access granted') {
-						continue;
-					}
-					if ($classNamePrinted === FALSE) {
-						$this->outputLine(PHP_EOL . PHP_EOL . ' <b>' . $className . '</b>');
-						$classNamePrinted = TRUE;
-					}
-
-					$this->outputLine(PHP_EOL . '  ' . $methodName);
-					if (isset($resources['resources']) === TRUE && is_array($resources['resources']) === TRUE) {
-						foreach ($resources['resources'] as $resourceName => $privilege) {
-							switch ($privilege['privilege']) {
-								case PolicyService::PRIVILEGE_GRANT:
-									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access granted');
-									break;
-								case PolicyService::PRIVILEGE_DENY:
-									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access denied');
-									break;
-								case PolicyService::PRIVILEGE_ABSTAIN:
-									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Vote abstained (no acl entry for given roles)');
-									break;
-							}
-						}
-					}
-					$this->outputLine('   <b>Effective privilege for given roles: ' . $resources['effectivePrivilege'] . '</b>');
-				}
+			if ($accessDenies > 0) {
+				$permission = sprintf('<error>%s</error>', PrivilegeVoteResult::VOTE_DENY);
 			}
-		} else {
-			$this->outputLine('Could not find any policy entries, please warmup caches...');
+			if ($accessGrants > 0 && $accessDenies === 0) {
+				$permission = sprintf('<success>%s</success>', PrivilegeVoteResult::VOTE_GRANT);
+			}
+
+			$permissions[$definedPrivilege->getPrivilegeTarget()->getIdentifier()] = $permission;
+		}
+
+		ksort($permissions);
+
+		foreach($permissions as $privilegeTargetIdentifier => $permission) {
+			$formattedPrivilegeTargetIdentifier = wordwrap($privilegeTargetIdentifier, $this->output->getMaximumLineLength() - 10, PHP_EOL . str_repeat(' ', 10), TRUE);
+			$this->outputLine('%-70s %s', array($formattedPrivilegeTargetIdentifier, $permission));
 		}
 	}
 
@@ -252,8 +211,12 @@ class SecurityCommandController extends CommandController {
 	 * @return void
 	 */
 	public function showUnprotectedActionsCommand() {
-		$controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
+		$methodPrivileges = array();
+		foreach ($this->policyService->getRoles(TRUE) as $role) {
+			$methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface'));
+		}
 
+		$controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
 		$allActionsAreProtected = TRUE;
 		foreach ($controllerClassNames as $controllerClassName) {
 			if ($this->reflectionService->isClassAbstract($controllerClassName)) {
@@ -261,21 +224,24 @@ class SecurityCommandController extends CommandController {
 			}
 
 			$methodNames = get_class_methods($controllerClassName);
-
 			$foundUnprotectedAction = FALSE;
 			foreach ($methodNames as $methodName) {
 				if (preg_match('/.*Action$/', $methodName) === 0 || $this->reflectionService->isMethodPublic($controllerClassName, $methodName) === FALSE) {
 					continue;
 				}
-
-				if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $methodName) === FALSE) {
-					if ($foundUnprotectedAction === FALSE) {
-						$this->outputLine(PHP_EOL . '<b>' . $controllerClassName . '</b>');
-						$foundUnprotectedAction = TRUE;
-						$allActionsAreProtected = FALSE;
+				/** @var MethodPrivilegeInterface $methodPrivilege */
+				foreach ($methodPrivileges as $methodPrivilege) {
+					if ($methodPrivilege->matchesMethod($controllerClassName, $methodName)) {
+						continue 2;
 					}
-					$this->outputLine('  ' . $methodName);
 				}
+
+				if ($foundUnprotectedAction === FALSE) {
+					$this->outputLine(PHP_EOL . '<b>' . $controllerClassName . '</b>');
+					$foundUnprotectedAction = TRUE;
+					$allActionsAreProtected = FALSE;
+				}
+				$this->outputLine('  ' . $methodName);
 			}
 		}
 
@@ -285,49 +251,59 @@ class SecurityCommandController extends CommandController {
 	}
 
 	/**
-	 * Shows the methods represented by the given security resource
+	 * Shows the methods represented by the given security privilege target
 	 *
-	 * @param string $resourceName The name of the resource as stated in the policy
+	 * If the privilege target has parameters those can be specified separated by a colon
+	 * for example "parameter1:value1" "parameter2:value2".
+	 * But be aware that this only works for parameters that have been specified in the policy
+	 *
+	 * @param string $privilegeTarget The name of the privilegeTarget as stated in the policy
 	 * @return void
 	 */
-	public function showMethodsForResourceCommand($resourceName) {
-		if ($this->policyCache->has('acls')) {
-			$classes = array();
-			$acls = $this->policyCache->get('acls');
-			foreach($acls as $classAndMethodName => $aclEntry) {
-				if (strpos($classAndMethodName, '->') === FALSE) {
-					continue;
-				}
-				list($className, $methodName) = explode('->', $classAndMethodName);
-				$className = $this->objectManager->getCaseSensitiveObjectName($className);
+	public function showMethodsForPrivilegeTargetCommand($privilegeTarget) {
+		$privilegeTargetInstance = $this->policyService->getPrivilegeTargetByIdentifier($privilegeTarget);
+		if ($privilegeTargetInstance === NULL) {
+			$this->outputLine('The privilegeTarget "%s" is not defined', array($privilegeTarget));
+			$this->quit(1);
+		}
+		$privilegeParameters = array();
+		foreach ($this->request->getExceedingArguments() as $argument) {
+			list($argumentName, $argumentValue) = explode(':', $argument, 2);
+			$privilegeParameters[$argumentName] = $argumentValue;
+		}
+		$privilege = $privilegeTargetInstance->createPrivilege(PrivilegeInterface::GRANT, $privilegeParameters);
+		if (!$privilege instanceof MethodPrivilegeInterface) {
+			$this->outputLine('The privilegeTarget "%s" does not refer to a MethodPrivilege but to a privilege of type "%s"', array($privilegeTarget, $privilege->getPrivilegeTarget()->getPrivilegeClassName()));
+			$this->quit(1);
+		}
+
+		$matchedClassesAndMethods = array();
+		foreach ($this->reflectionService->getAllClassNames() as $className) {
+			try {
 				$reflectionClass = new \ReflectionClass($className);
-				foreach ($reflectionClass->getMethods() as $casSensitiveMethodName) {
-					if ($methodName === strtolower($casSensitiveMethodName->getName())) {
-						$methodName = $casSensitiveMethodName->getName();
-						break;
-					}
-				}
-				foreach($aclEntry as $resources) {
-					if (array_key_exists($resourceName, $resources)) {
-						$classes[$className][$methodName] = $methodName;
-						break;
-					}
+			} catch (\ReflectionException $exception) {
+				continue;
+			}
+			foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+				$methodName = $reflectionMethod->getName();
+				if ($privilege->matchesMethod($className, $methodName)) {
+					$matchedClassesAndMethods[$className][$methodName] = $methodName;
 				}
 			}
+		}
 
-			if (count($classes) === 0) {
-				$this->outputLine('The given Resource did not match any method or is unknown.');
-				$this->quit(1);
-			}
+		if (count($matchedClassesAndMethods) === 0) {
+			$this->outputLine('The given Resource did not match any method or is unknown.');
+			$this->quit(1);
+		}
 
-			foreach ($classes as $className => $methods) {
-				$this->outputLine(PHP_EOL . $className);
-				foreach ($methods as $methodName) {
-					$this->outputLine('  ' . $methodName);
-				}
+
+		foreach ($matchedClassesAndMethods as $className => $methods) {
+			$this->outputLine($className);
+			foreach ($methods as $methodName) {
+				$this->outputLine('  ' . $methodName);
 			}
-		} else {
-			$this->outputLine('Could not find any policy entries, please warmup caches!');
+			$this->outputLine();
 		}
 	}
 }

@@ -107,7 +107,7 @@ Flow_Resource_Status:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
 
 # Flow_Security_*
-Flow_Security_Policy: []
+Flow_Security_Authorization_Privilege_Method: []
 Flow_Security_Cryptography_RSAWallet:
   backendOptions:
     defaultLifetime: 30

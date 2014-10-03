@@ -11,9 +11,11 @@ namespace TYPO3\Flow\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Party\Domain\Model\AbstractParty;
 
 /**
  * An account model
@@ -44,7 +46,7 @@ class Account {
 	protected $credentialsSource;
 
 	/**
-	 * @var \TYPO3\Party\Domain\Model\AbstractParty
+	 * @var AbstractParty
 	 * @ORM\ManyToOne(inversedBy="accounts")
 	 */
 	protected $party;
@@ -61,17 +63,43 @@ class Account {
 	protected $expirationDate;
 
 	/**
-	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Security\Policy\Role>
-	 * @ORM\ManyToMany
+	 * @var array of strings
+	 * @ORM\Column(type="simple_array", nullable=true)
+	 */
+	protected $roleIdentifiers = array();
+
+	/**
+	 * @Flow\Transient
+	 * @var array<Role>
 	 */
 	protected $roles;
+
+	/**
+	 * @Flow\Inject
+	 * @var PolicyService
+	 */
+	protected $policyService;
 
 	/**
 	 * Upon creation the creationDate property is initialized.
 	 */
 	public function __construct() {
 		$this->creationDate = new \DateTime();
-		$this->roles = new \Doctrine\Common\Collections\ArrayCollection();
+	}
+
+	/**
+	 * Initializes the roles field by fetching the role objects referenced by the roleIdentifiers
+	 *
+	 * @return void
+	 */
+	protected function initializeRoles() {
+		if ($this->roles !== NULL) {
+			return;
+		}
+		$this->roles = array();
+		foreach ($this->roleIdentifiers as $roleIdentifier) {
+			$this->roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+		}
 	}
 
 	/**
@@ -134,7 +162,7 @@ class Account {
 	/**
 	 * Returns the party object this account corresponds to
 	 *
-	 * @return \TYPO3\Party\Domain\Model\AbstractParty The party object
+	 * @return AbstractParty The party object
 	 */
 	public function getParty() {
 		return $this->party;
@@ -143,77 +171,83 @@ class Account {
 	/**
 	 * Sets the corresponding party for this account
 	 *
-	 * @param \TYPO3\Party\Domain\Model\AbstractParty $party The party object
+	 * @param AbstractParty $party The party object
 	 * @return void
 	 */
-	public function setParty(\TYPO3\Party\Domain\Model\AbstractParty $party) {
+	public function setParty(AbstractParty $party) {
 		$this->party = $party;
 	}
 
 	/**
 	 * Returns the roles this account has assigned
 	 *
-	 * @return array<\TYPO3\Flow\Security\Policy\Role> The assigned roles, indexed by role identifier
+	 * @return array<Role> The assigned roles, indexed by role identifier
 	 */
 	public function getRoles() {
-		$roles = array();
-		foreach ($this->roles->toArray() as $role) {
-			$roles[$role->getIdentifier()] = $role;
-		}
-		return $roles;
+		$this->initializeRoles();
+		return $this->roles;
 	}
 
 	/**
 	 * Sets the roles for this account
 	 *
-	 * @param array|\Doctrine\Common\Collections\Collection $roles A Collection of TYPO3\Flow\Security\Policy\Role objects
-	 * @throws \InvalidArgumentException
+	 * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects or role identifiers
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
-	public function setRoles($roles) {
-		if ($roles instanceof Collection) {
-			$this->roles = clone $roles;
-		} elseif (is_array($roles)) {
-			$this->roles->clear();
-			foreach ($roles as $role) {
-				$this->roles->add($role);
+	public function setRoles(array $roles) {
+		$this->roleIdentifiers = array();
+		$this->roles = array();
+		foreach ($roles as $role) {
+			if (!$role instanceof Role) {
+				throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of \TYPO3\Flow\Security\Policy\Role instances, given: "%s"', gettype($role)), 1397125997);
 			}
-		} else {
-			throw new \InvalidArgumentException(sprintf('setRoles() expects an array or Doctrine Collection, %s given.', is_object($roles) ? get_class($roles) : gettype($roles)), 1366103284);
+			$this->addRole($role);
 		}
 	}
 
 	/**
 	 * Return if the account has a certain role
 	 *
-	 * @param \TYPO3\Flow\Security\Policy\Role $role
+	 * @param Role $role
 	 * @return boolean
 	 */
-	public function hasRole(\TYPO3\Flow\Security\Policy\Role $role) {
-		return $this->roles->contains($role);
+	public function hasRole(Role $role) {
+		return in_array($role->getIdentifier(), $this->roleIdentifiers);
 	}
 
 	/**
 	 * Adds a role to this account
 	 *
-	 * @param \TYPO3\Flow\Security\Policy\Role $role
+	 * @param Role $role
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
-	public function addRole(\TYPO3\Flow\Security\Policy\Role $role) {
+	public function addRole(Role $role) {
+		if ($role->isAbstract()) {
+			throw new \InvalidArgumentException(sprintf('Abstract roles can\'t be assigned to accounts directly, but the role "%s" is marked abstract', $role->getIdentifier()), 1399900657);
+		}
+		$this->initializeRoles();
 		if (!$this->hasRole($role)) {
-			$this->roles->add($role);
+			$roleIdentifier = $role->getIdentifier();
+			$this->roleIdentifiers[] = $roleIdentifier;
+			$this->roles[$roleIdentifier] = $role;
 		}
 	}
 
 	/**
 	 * Removes a role from this account
 	 *
-	 * @param \TYPO3\Flow\Security\Policy\Role $role
+	 * @param Role $role
 	 * @return void
 	 */
-	public function removeRole(\TYPO3\Flow\Security\Policy\Role $role) {
+	public function removeRole(Role $role) {
+		$this->initializeRoles();
 		if ($this->hasRole($role)) {
-			$this->roles->removeElement($role);
+			$roleIdentifier = $role->getIdentifier();
+			unset($this->roles[$roleIdentifier]);
+			$identifierIndex = array_search($roleIdentifier, $this->roleIdentifiers);
+			unset($this->roleIdentifiers[$identifierIndex]);
 		}
 	}
 
@@ -238,5 +272,4 @@ class Account {
 	public function setExpirationDate(\DateTime $expirationDate = NULL) {
 		$this->expirationDate = $expirationDate;
 	}
-
 }

@@ -260,8 +260,8 @@ TYPO3\Flow\Security\Cryptography\RsaWalletServiceInterface:
           1:
             value: Flow_Security_Cryptography_RSAWallet
 
-TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface:
-  className: TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager
+TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
+  className: TYPO3\Flow\Security\Authorization\PrivilegeManager
 
 TYPO3\Flow\Security\Authorization\FirewallInterface:
   className: TYPO3\Flow\Security\Authorization\FilterFirewall
@@ -284,6 +284,14 @@ TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy:
     1:
       setting: TYPO3.Flow.security.cryptography.BCryptHashingStrategy.cost
 
+TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser:
+  scope: singleton
+
+TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter:
+  scope: singleton
+  properties:
+    objectManager:
+      object: TYPO3\Flow\Object\ObjectManagerInterface
 
 #                                                                          #
 # Session                                                                  #

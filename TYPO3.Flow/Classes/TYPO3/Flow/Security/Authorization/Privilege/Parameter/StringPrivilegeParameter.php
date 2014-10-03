@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Security\Authorization\Resource;
+namespace TYPO3\Flow\Security\Authorization\Privilege\Parameter;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -14,33 +14,29 @@ namespace TYPO3\Flow\Security\Authorization\Resource;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Special configuration like access restrictions for persistent resources
- *
- * @Flow\Entity
+ * A privilege parameter of type string
  */
-class SecurityPublishingConfiguration extends \TYPO3\Flow\Resource\Publishing\AbstractPublishingConfiguration {
+class StringPrivilegeParameter extends AbstractPrivilegeParameter {
 
 	/**
-	 * @var array
+	 * @return array
 	 */
-	protected $allowedRoles = array();
-
-	/**
-	 * Sets the roles that are allowed to see the corresponding resource
-	 *
-	 * @param array<\TYPO3\Flow\Security\Policy\Role> $allowedRoles An array of roles
-	 * @return void
-	 */
-	public function setAllowedRoles(array $allowedRoles) {
-		$this->allowedRoles = $allowedRoles;
+	public function getPossibleValues() {
+		return NULL;
 	}
 
 	/**
-	 * Returns the roles that are allowed to see the corresponding resource
-	 *
-	 * @return array An array of roles
+	 * @param mixed $value
+	 * @return boolean
 	 */
-	public function getAllowedRoles() {
-		return $this->allowedRoles;
+	public function validate($value) {
+		return is_string($value);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getType() {
+		return 'String';
 	}
 }

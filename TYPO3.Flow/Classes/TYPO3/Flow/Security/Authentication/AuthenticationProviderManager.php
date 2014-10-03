@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Security\Authentication;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Security\Exception;
 use TYPO3\Flow\Security\RequestPatternResolver;
+use TYPO3\Flow\Session\SessionInterface;
 
 /**
  * The default authentication manager, which relies on Authentication Providers
@@ -29,12 +31,12 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SecurityLoggerInterface
+	 * @var SecurityLoggerInterface
 	 */
 	protected $securityLogger;
 
 	/**
-	 * @var \TYPO3\Flow\Session\SessionInterface
+	 * @var SessionInterface
 	 * @Flow\Inject
 	 */
 	protected $session;
@@ -42,21 +44,21 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 	/**
 	 * The provider resolver
 	 *
-	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver
+	 * @var AuthenticationProviderResolver
 	 */
 	protected $providerResolver;
 
 	/**
 	 * The security context of the current request
 	 *
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * The request pattern resolver
 	 *
-	 * @var \TYPO3\Flow\Security\RequestPatternResolver
+	 * @var RequestPatternResolver
 	 */
 	protected $requestPatternResolver;
 
@@ -80,10 +82,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 	protected $isAuthenticated = NULL;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
-	 * @param \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param AuthenticationProviderResolver $providerResolver The provider resolver
+	 * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 */
 	public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
@@ -107,7 +107,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 	/**
 	 * Sets the security context
 	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The security context of the current request
+	 * @param Context $securityContext The security context of the current request
 	 * @return void
 	 */
 	public function setSecurityContext(Context $securityContext) {
@@ -117,7 +117,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 	/**
 	 * Returns the security context
 	 *
-	 * @return \TYPO3\Flow\Security\Context $securityContext The security context of the current request
+	 * @return Context $securityContext The security context of the current request
 	 */
 	public function getSecurityContext() {
 		return $this->securityContext;
@@ -160,8 +160,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 
 		/** @var $token TokenInterface */
 		foreach ($tokens as $token) {
-			/** @var $provider \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
-			foreach ($this->providers as $providerName => $provider) {
+			/** @var $provider AuthenticationProviderInterface */
+			foreach ($this->providers as $provider) {
 				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
 					if ($token->isAuthenticated()) {
@@ -176,6 +176,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 				}
 				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
+					$this->securityContext->setContextHashComponent('TYPO3.Flow:Roles', $this->securityContext->getRolesHash());
 					return;
 				}
 				$anyTokenAuthenticated = TRUE;
@@ -191,6 +192,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 		}
 
 		$this->isAuthenticated = $anyTokenAuthenticated;
+		$this->securityContext->setContextHashComponent('TYPO3.Flow:Roles', $this->securityContext->getRolesHash());
 	}
 
 	/**
@@ -279,7 +281,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 				$providerOptions = $providerConfiguration['providerOptions'];
 			}
 
-			/** @var $providerInstance \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
+			/** @var $providerInstance AuthenticationProviderInterface */
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[$providerName] = $providerInstance;
 

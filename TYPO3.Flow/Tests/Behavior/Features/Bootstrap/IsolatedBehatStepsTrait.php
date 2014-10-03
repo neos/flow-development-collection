@@ -36,8 +36,8 @@ trait IsolatedBehatStepsTrait {
 		if ($this->subProcess === NULL) {
 			/** @var CacheManager $cacheManager */
 			$cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
-			if ($cacheManager->hasCache('Flow_Security_Policy_Privilege_Method')) {
-				$cacheManager->getCache('Flow_Security_Policy_Privilege_Method')->flush();
+			if ($cacheManager->hasCache('Flow_Security_Authorization_Privilege_Method')) {
+				$cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
 			}
 
 			$objectConfigurationCache = $cacheManager->getCache('Flow_Object_Configuration');

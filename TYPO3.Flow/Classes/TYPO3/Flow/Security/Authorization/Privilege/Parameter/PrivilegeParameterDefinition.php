@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Security\Authorization\Resource;
+namespace TYPO3\Flow\Security\Authorization\Privilege\Parameter;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,18 +11,43 @@ namespace TYPO3\Flow\Security\Authorization\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * Interface for access restriction publishers
- *
+ * A privilege parameter definition
  */
-interface AccessRestrictionPublisherInterface {
+class PrivilegeParameterDefinition {
 
 	/**
-	 * Publishes access restrictions for file path.
-	 * This could be a e.g. .htaccess file to deny public access for the directory or its files
-	 *
-	 * @param string $path The path to publish the restrictions for
-	 * @return void
+	 * @var string
 	 */
-	public function publishAccessRestrictionsForPath($path);
+	protected $name;
+
+	/**
+	 * @var string
+	 */
+	protected $parameterClassName;
+
+	/**
+	 * @param string $name
+	 * @param string $parameterClassName
+	 */
+	public function __construct($name, $parameterClassName) {
+		$this->name = $name;
+		$this->parameterClassName = $parameterClassName;
+	}
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getParameterClassName() {
+		return $this->parameterClassName;
+	}
+
 }

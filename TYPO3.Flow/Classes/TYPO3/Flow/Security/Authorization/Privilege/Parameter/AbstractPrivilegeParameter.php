@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Security\Exception;
+namespace TYPO3\Flow\Security\Authorization\Privilege\Parameter;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,10 +11,48 @@ namespace TYPO3\Flow\Security\Exception;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * A "NoEntryInPolicy" Exception
- *
- * @api
+ * A privilege parameter
  */
-class NoEntryInPolicyException extends \TYPO3\Flow\Security\Exception {
+abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface {
+
+	/**
+	 * @var string
+	 */
+	protected $name;
+
+	/**
+	 * @var mixed
+	 */
+	protected $value;
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	function __construct($name, $value) {
+		$this->name = $name;
+		$this->value = $value;
+	}
+
+	/**
+	 * Name of this parameter
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * The value of this parameter
+	 *
+	 * @return mixed
+	 */
+	public function getValue() {
+		return $this->value;
+	}
+
 }

@@ -29,20 +29,20 @@ class PolicyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$hasAnonymousRole = FALSE;
 
 		foreach ($this->securityContext->getRoles() as $role) {
-			if ((string)$role === 'Everybody') {
+			if ((string)$role === 'TYPO3.Flow:Everybody') {
 				$hasEverybodyRole = TRUE;
 			}
-			if ((string)$role === 'Anonymous') {
+			if ((string)$role === 'TYPO3.Flow:Anonymous') {
 				$hasAnonymousRole = TRUE;
 			}
 		}
 
 		$this->assertEquals(2, count($this->securityContext->getRoles()));
 
-		$this->assertTrue($this->securityContext->hasRole('Everybody'), 'Everybody - hasRole()');
+		$this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Everybody'), 'Everybody - hasRole()');
 		$this->assertTrue($hasEverybodyRole, 'Everybody - getRoles()');
 
-		$this->assertTrue($this->securityContext->hasRole('Anonymous'), 'Anonymous - hasRole()');
+		$this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Anonymous'), 'Anonymous - hasRole()');
 		$this->assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
 	}
 }

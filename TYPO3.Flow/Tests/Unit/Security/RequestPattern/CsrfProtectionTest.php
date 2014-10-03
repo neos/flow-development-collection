@@ -48,8 +48,11 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will($this->returnValue(TRUE));
 
+		$mockPrivilege = $this->getMock('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$mockPrivilege->expects($this->once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, 'listAction')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array($mockPrivilege)));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 
@@ -87,7 +90,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with($controllerObjectName)->will($this->returnValue($controllerObjectName));
 
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(FALSE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array()));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 
@@ -128,8 +131,11 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will($this->returnValue(FALSE));
 
+		$mockPrivilege = $this->getMock('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$mockPrivilege->expects($this->once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array($mockPrivilege)));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 
@@ -171,8 +177,11 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will($this->returnValue(FALSE));
 
+		$mockPrivilege = $this->getMock('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$mockPrivilege->expects($this->once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array($mockPrivilege)));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will($this->returnValue(FALSE));
@@ -216,8 +225,11 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will($this->returnValue(FALSE));
 
+		$mockPrivilege = $this->getMock('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$mockPrivilege->expects($this->once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array($mockPrivilege)));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('validToken')->will($this->returnValue(TRUE));
@@ -262,8 +274,11 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will($this->returnValue(FALSE));
 
+		$mockPrivilege = $this->getMock('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$mockPrivilege->expects($this->once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->once())->method('getAllPrivilegesByType')->will($this->returnValue(array($mockPrivilege)));
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('validToken')->will($this->returnValue(TRUE));

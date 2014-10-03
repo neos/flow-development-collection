@@ -12,7 +12,13 @@ namespace TYPO3\Flow\Security\Authentication\Provider;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Authentication\Token\PasswordToken;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Cryptography\FileBasedSimpleKeyService;
+use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
+use TYPO3\Flow\Security\Policy\PolicyService;
 
 /**
  * An authentication provider that authenticates
@@ -37,23 +43,23 @@ use TYPO3\Flow\Security\Policy\Role;
  *               keyName: AdminKey
  *               authenticateRoles: ['TYPO3.Flow.SomeRole']
  */
-class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
+class FileBasedSimpleKeyProvider extends AbstractProvider {
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 * @Flow\Inject
+	 * @var HashService
 	 */
 	protected $hashService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\FileBasedSimpleKeyService
 	 * @Flow\Inject
+	 * @var FileBasedSimpleKeyService
 	 */
 	protected $fileBasedSimpleKeyService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Policy\PolicyService
 	 * @Flow\Inject
+	 * @var PolicyService
 	 */
 	protected $policyService;
 
@@ -69,31 +75,31 @@ class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Pro
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
+	 * @throws UnsupportedAuthenticationTokenException
 	 */
-	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \TYPO3\Flow\Security\Authentication\Token\PasswordToken)) {
-			throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof PasswordToken)) {
+			throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
 		}
 
 		$credentials = $authenticationToken->getCredentials();
 		if (is_array($credentials) && isset($credentials['password'])) {
 			if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
-				$account = new \TYPO3\Flow\Security\Account();
+				$authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$account = new Account();
 				$roles = array();
 				foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
-					$roles[] = new Role($roleIdentifier, Role::SOURCE_SYSTEM);
+					$roles[] = $this->policyService->getRole($roleIdentifier);
 				}
 				$account->setRoles($roles);
 				$authenticationToken->setAccount($account);
 			} else {
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+				$authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 			}
-		} elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
-			$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		} elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 

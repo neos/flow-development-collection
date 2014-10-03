@@ -6,51 +6,12 @@
 # options to the Policy.yaml file in the in global Configuration/        #
 # directory instead.                                                     #
 
-# The security policy resources configuration. Note: As a convention you have to prefix
-# your package's namespace for your resource definitions!
-#
-# Here is an example configuration array:
-#
-# resources:
-#   methods:
-#     TYPO3_FooPackage_PropertySetter:  'method(TYPO3\FooPackage\SomeClass->setSomeProperty())'
-#     TYPO3_FooPackage_BasicValidator: 'method(TYPO3\FooPackage\BasicClassValidator->.*())'
-#     TYPO3_FooPackage_CombinedResource: 'theOneAndOnlyResource || theOtherLonelyResource'
-#
-#   entities:
-#     'TYPO3\FooPackage\Model\MyModelClass':
-#       TYPO3_FooPackage_MyModelClassResource: this.property == TRUE
-#
-resources:
-  entities: []
-  methods: []
+roles:
+  'TYPO3.Flow:Everybody':
+    abstract: TRUE
 
-# The security policy roles configuration. Here is an example configuration array:
-#
-# roles:
-#   Administrator: []
-#   Developer: []
-#   Customer:
-#   PrivilegedCustomer: [Customer]
-#
-roles: []
+  'TYPO3.Flow:Anonymous':
+    abstract: TRUE
 
-# The security policy acls configuration connects the resources with the roles by assigning
-# privileges. Here is an example configuration array:
-#
-# acls:
-#   Administrator:
-#     methods:
-#       deleteMethods:           GRANT
-#       MyPackageUpdateMethods:  DENY
-#     entities:
-#       TYPO3_FooPackage_MyModelClassResource: GRANT
-#
-#   Customer:
-#     methods:
-#       deleteMethods:          DENY
-#       MyPackageUpdateMethods: DENY
-#     entities:
-#       TYPO3_FooPackage_MyModelClassResource: DENY
-#
-acls: []
+  'TYPO3.Flow:AuthenticatedUser':
+    abstract: TRUE

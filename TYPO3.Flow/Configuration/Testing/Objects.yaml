@@ -19,8 +19,8 @@ TYPO3\Flow\Http\Client\Browser:
 #
 # Security and Resource handling need specialized testing classes:
 #
-TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface:
-  className: TYPO3\Flow\Security\Authorization\TestingAccessDecisionManager
+TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
+  className: TYPO3\Flow\Security\Authorization\TestingPrivilegeManager
 
 TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
   className: TYPO3\Flow\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
