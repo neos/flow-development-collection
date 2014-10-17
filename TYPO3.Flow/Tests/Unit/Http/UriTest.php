@@ -68,6 +68,18 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Checks round trips for various URIs
+	 *
+	 * @test
+	 */
+	public function settingSchemeAndHostOnUriDoesNotConfuseToString() {
+		$uri = new Uri('/no/scheme/or/host');
+		$uri->setScheme('http');
+		$uri->setHost('localhost');
+		$this->assertSame('http://localhost/no/scheme/or/host', (string)$uri);
+	}
+
+	/**
 	 * @test
 	 */
 	public function toStringOmitsStandardPorts() {
