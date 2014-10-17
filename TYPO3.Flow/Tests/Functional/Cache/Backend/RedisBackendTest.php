@@ -134,15 +134,16 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function flushByTagFlushesEntryByTag() {
 		for ($i = 0; $i < 10; $i++) {
-			$this->backend->set('entry_' . $i, 'foo', array('tag1'));
+			$this->backend->set('entry_' . $i, 'foo', array('tag1', 'tag2'));
 		}
 		for ($i = 10; $i < 20; $i++) {
 			$this->backend->set('entry_' . $i, 'foo', array('tag2'));
 		}
 		$this->assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
-		$this->assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
+		$this->assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
 
-		$this->backend->flushByTag('tag1');
+		$count = $this->backend->flushByTag('tag1');
+		$this->assertEquals(10, $count, 'flushByTag returns amount of flushed entries');
 		$this->assertCount(0, $this->backend->findIdentifiersByTag('tag1'));
 		$this->assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
 	}
