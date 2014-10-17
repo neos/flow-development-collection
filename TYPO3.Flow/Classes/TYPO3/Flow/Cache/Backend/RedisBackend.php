@@ -160,15 +160,19 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		if ($this->isFrozen()) {
 			throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
 		}
-		$tags = $this->getTagsForIdentifier($entryIdentifier);
-		$this->redis->multi();
-		$this->redis->del($this->buildKey('entry:' . $entryIdentifier));
-		foreach ($tags as $tag) {
-			$this->redis->sRem($this->buildKey('tag:' . $tag), $entryIdentifier);
-		}
-		$this->redis->del($this->buildKey('tags:' . $entryIdentifier));
-		$this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
-		$this->redis->exec();
+		do {
+			$tagsKey = $this->buildKey('tags:' . $entryIdentifier);
+			$this->redis->watch($tagsKey);
+			$tags = $this->redis->sMembers($tagsKey);
+			$this->redis->multi();
+			$this->redis->del($this->buildKey('entry:' . $entryIdentifier));
+			foreach ($tags as $tag) {
+				$this->redis->sRem($this->buildKey('tag:' . $tag), $entryIdentifier);
+			}
+			$this->redis->del($this->buildKey('tags:' . $entryIdentifier));
+			$this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
+			$result = $this->redis->exec();
+		} while ($result === FALSE);
 		return TRUE;
 	}
 
@@ -204,15 +208,6 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 	private function buildKey($identifier) {
 		return $this->cacheIdentifier . ':' . $identifier;
 	}
-
-	/**
-	 * @param string $identifier
-	 * @return array
-	 */
-	private function getTagsForIdentifier($identifier) {
-		return $this->redis->sMembers($this->buildKey('tags:' . $identifier));
-	}
-
 
 	/**
 	 * Removes all cache entries of this cache which are tagged by the specified tag.
@@ -296,13 +291,17 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		if ($this->isFrozen()) {
 			throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
 		}
-		$entries = $this->redis->lRange($this->buildKey('entries'), 0, -1);
-		$this->redis->multi();
-		foreach ($entries as $entryIdentifier) {
-			$this->redis->persist($this->buildKey('entry:' . $entryIdentifier));
-		}
-		$this->redis->set($this->buildKey('frozen'), 1);
-		$this->redis->exec();
+		do {
+			$entriesKey = $this->buildKey('entries');
+			$this->redis->watch($entriesKey);
+			$entries = $this->redis->lRange($entriesKey, 0, -1);
+			$this->redis->multi();
+			foreach ($entries as $entryIdentifier) {
+				$this->redis->persist($this->buildKey('entry:' . $entryIdentifier));
+			}
+			$this->redis->set($this->buildKey('frozen'), 1);
+			$result = $this->redis->exec();
+		} while ($result === FALSE);
 		$this->frozen = TRUE;
 	}
 
