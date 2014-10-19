@@ -32,7 +32,7 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setPassesPhpSourceCodeTagsAndLifetimeToBackend() {
 		$originalSourceCode = 'return "hello world!";';
-		$modifiedSourceCode = '<?php' . chr(10) . $originalSourceCode . chr(10) . '#';
+		$modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
 		$mockBackend = $this->getMock('TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
