@@ -15,6 +15,7 @@ use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Lock\Lock;
 
 /**
  * A caching backend which stores cache entries in files, but does not support or
@@ -158,14 +159,13 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756736);
 		}
 
-		$temporaryCacheEntryPathAndFilename = $this->generateTemporaryPathAndFilename($entryIdentifier);
-		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data);
-		if ($result === FALSE) {
-			throw new \TYPO3\Flow\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1334756737);
-		}
-
 		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-		rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename);
+		$lock = new Lock($cacheEntryPathAndFilename);
+		$result = file_put_contents($cacheEntryPathAndFilename, $data);
+		$lock->release();
+		if ($result === FALSE) {
+			throw new \TYPO3\Flow\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1334756737);
+		}
 	}
 
 	/**
@@ -182,10 +182,16 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		}
 
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+
 		if (!file_exists($pathAndFilename)) {
 			return FALSE;
 		}
-		return file_get_contents($pathAndFilename);
+
+		$lock = new Lock($pathAndFilename, FALSE);
+		$result = file_get_contents($pathAndFilename);
+		$lock->release();
+
+		return $result;
 	}
 
 	/**
@@ -220,8 +226,12 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
 		}
 
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+
 		try {
-			unlink($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
+			$lock = new Lock($pathAndFilename);
+			unlink($pathAndFilename);
+			$lock->release();
 		} catch (\Exception $e) {
 			return FALSE;
 		}
@@ -302,7 +312,13 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		if ($this->cacheFilesIterator === NULL) {
 			$this->rewind();
 		}
-		return file_get_contents($this->cacheFilesIterator->getPathname());
+
+		$pathAndFilename = $this->cacheFilesIterator->getPathname();
+
+		$lock = new Lock($pathAndFilename, FALSE);
+		$result = file_get_contents($pathAndFilename);
+		$lock->release();
+		return $result;
 	}
 
 	/**

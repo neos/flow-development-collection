@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Lock\Lock;
 
 /**
  * A caching backend which stores cache entries in files
@@ -75,14 +76,22 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 				$entryIdentifier = $directoryIterator->getFilename();
 			}
 			$this->cacheEntryIdentifiers[$entryIdentifier] = TRUE;
-			file_put_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension, $this->get($entryIdentifier));
+
+			$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+			$lock = new Lock($cacheEntryPathAndFilename);
+			file_put_contents($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, FALSE));
+			$lock->release();
 		}
 
+		$cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
+		$lock = new Lock($cachePathAndFileName);
 		if ($this->useIgBinary === TRUE) {
-			file_put_contents($this->cacheDirectory . 'FrozenCache.data', igbinary_serialize($this->cacheEntryIdentifiers));
+			file_put_contents($cachePathAndFileName, igbinary_serialize($this->cacheEntryIdentifiers));
 		} else {
-			file_put_contents($this->cacheDirectory . 'FrozenCache.data', serialize($this->cacheEntryIdentifiers));
+			file_put_contents($cachePathAndFileName, serialize($this->cacheEntryIdentifiers));
 		}
+		$lock->release();
+
 		$this->frozen = TRUE;
 	}
 
@@ -111,11 +120,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
 		if (file_exists($this->cacheDirectory . 'FrozenCache.data')) {
 			$this->frozen = TRUE;
+			$cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
+			$lock = new Lock($cachePathAndFileName, FALSE);
+			$data = file_get_contents($cachePathAndFileName);
+			$lock->release();
 			if ($this->useIgBinary === TRUE) {
-				$this->cacheEntryIdentifiers = igbinary_unserialize(file_get_contents($this->cacheDirectory . 'FrozenCache.data'));
+				$this->cacheEntryIdentifiers = igbinary_unserialize($data);
 			} else {
-				$this->cacheEntryIdentifiers = unserialize(file_get_contents($this->cacheDirectory . 'FrozenCache.data'));
+				$this->cacheEntryIdentifiers = unserialize($data);
 			}
+
 		}
 	}
 
@@ -147,22 +161,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
 		}
 
-		$this->remove($entryIdentifier);
-
-		$temporaryCacheEntryPathAndFilename = $this->generateTemporaryPathAndFilename($entryIdentifier);
+		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;
 		$expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
 		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
-		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data . $metaData);
 
-		if ($result === FALSE) {
-			throw new \TYPO3\Flow\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1204026251);
-		}
-		$i = 0;
-		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-		while (($result = rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename)) === FALSE && $i < 5) {
-			$i++;
-		}
+		$lock = new Lock($cacheEntryPathAndFilename);
+		$result = file_put_contents($cacheEntryPathAndFilename, $data . $metaData);
+		$lock->release();
+
 		if ($result === FALSE) {
 			throw new \TYPO3\Flow\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
 		}
@@ -177,21 +184,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		if ($this->frozen === TRUE) {
-			return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : FALSE);
-		}
-
-		if ($entryIdentifier !== basename($entryIdentifier)) {
-			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);
-		}
-
-		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-		if ($this->isCacheFileExpired($pathAndFilename)) {
-			return FALSE;
-		}
-		$cacheData = file_get_contents($pathAndFilename);
-		$dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
-		return substr($cacheData, 0, $dataSize);
+		return $this->internalGet($entryIdentifier);
 	}
 
 	/**
@@ -261,8 +254,10 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			}
 
 			$cacheEntryPathAndFilename = $directoryIterator->getPathname();
+			$lock = new Lock($cacheEntryPathAndFilename, FALSE);
 			$index = (integer)file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
 			$metaData = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index);
+			$lock->release();
 
 			$expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
 			if ($expiryTime !== 0 && $expiryTime < $now) {
@@ -317,17 +312,25 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * lifetime has exceeded.
 	 *
 	 * @param string $cacheEntryPathAndFilename
+	 * @param boolean $acquireLock
 	 * @return boolean
 	 * @api
 	 */
-	protected function isCacheFileExpired($cacheEntryPathAndFilename) {
+	protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = TRUE) {
 		if (file_exists($cacheEntryPathAndFilename) === FALSE) {
 			return TRUE;
 		}
 
+		if ($acquireLock) {
+			$lock = new Lock($cacheEntryPathAndFilename, FALSE);
+		}
 		$cacheData = file_get_contents($cacheEntryPathAndFilename);
+		if ($acquireLock) {
+			$lock->release();
+		}
 		$index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
 		$expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
+
 		return ($expiryTime !== 0 && $expiryTime < time());
 	}
 
@@ -398,5 +401,45 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			}
 			return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : require_once($pathAndFilename);
 		}
+	}
+
+	/**
+	 * Internal get method, allows to nest locks by using the $acquireLock flag
+	 *
+	 * @param string $entryIdentifier
+	 * @param boolean $acquireLock
+	 * @return bool|string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function internalGet($entryIdentifier, $acquireLock = TRUE) {
+		if ($entryIdentifier !== basename($entryIdentifier)) {
+			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);
+		}
+
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+		if ($this->frozen === TRUE) {
+			if ($acquireLock) {
+				$lock = new Lock($pathAndFilename, FALSE);
+			}
+			$result = (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : FALSE);
+			if ($acquireLock) {
+				$lock->release();
+			}
+			return $result;
+		}
+
+		if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
+			return FALSE;
+		}
+		if ($acquireLock) {
+			$lock = new Lock($pathAndFilename, FALSE);
+		}
+		$cacheData = file_get_contents($pathAndFilename);
+		if ($acquireLock) {
+			$lock->release();
+		}
+
+		$dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+		return substr($cacheData, 0, $dataSize);
 	}
 }
