@@ -50,12 +50,6 @@ class ActionController extends AbstractController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService
 	 */
 	protected $mvcPropertyMappingConfigurationService;
@@ -187,7 +181,8 @@ class ActionController extends AbstractController {
 		if (!is_callable(array($this, $actionMethodName))) {
 			throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
 		}
-		if (!$this->reflectionService->isMethodPublic(get_class($this), $actionMethodName)) {
+		$publicActionMethods = static::getPublicActionMethods($this->objectManager);
+		if (!isset($publicActionMethods[$actionMethodName])) {
 			throw new InvalidActionVisibilityException(sprintf('The action "%s" in controller "%s" is not public!', $actionMethodName, get_class($this)), 1186669086);
 		}
 		return $actionMethodName;
@@ -476,6 +471,30 @@ class ActionController extends AbstractController {
 	}
 
 	/**
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of all public action method names, indexed by method name
+	 * @Flow\CompileStatic
+	 */
+	static public function getPublicActionMethods($objectManager) {
+		/** @var \TYPO3\Flow\Reflection\ReflectionService $reflectionService */
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+
+		$result = array();
+
+		$className = get_called_class();
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+				if ($reflectionService->isMethodPublic($className, $methodName)) {
+					$result[$methodName] = TRUE;
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Prepares a view for the current action and stores it in $this->view.
 	 * By default, this method tries to locate a view with a name matching
 	 * the current action.
@@ -656,4 +675,5 @@ class ActionController extends AbstractController {
 	protected function getErrorFlashMessage() {
 		return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
 	}
+
 }
