@@ -31,7 +31,7 @@ class LoggerFactory {
 	 * @return \TYPO3\Flow\Log\LoggerInterface The created logger frontend
 	 * @api
 	 */
-	static public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
+	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
 		$logger = new $loggerObjectName;
 
 		if (is_array($backendObjectNames)) {
