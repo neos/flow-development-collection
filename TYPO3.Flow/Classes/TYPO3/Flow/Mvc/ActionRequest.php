@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Mvc;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Represents an internal request targeted to a controller action
@@ -443,7 +444,15 @@ class ActionRequest implements RequestInterface {
 		}
 
 		if (substr($argumentName, 0, 2) === '__') {
-			$this->internalArguments[$argumentName] = $value;
+			if (isset($this->internalArguments[$argumentName])) {
+				if (is_array($this->internalArguments[$argumentName]) && is_array($value)) {
+					$this->internalArguments[$argumentName] = Arrays::arrayMergeRecursiveOverrule($this->internalArguments[$argumentName], $value);
+				} else {
+					$this->internalArguments[$argumentName] = $value;
+				}
+			} else {
+				$this->internalArguments[$argumentName] = $value;
+			}
 			return;
 		}
 
@@ -452,7 +461,16 @@ class ActionRequest implements RequestInterface {
 		}
 
 		if (substr($argumentName, 0, 2) === '--') {
-			$this->pluginArguments[substr($argumentName, 2)] = $value;
+			$argumentNameWithoutPrefix = substr($argumentName, 2);
+			if (isset($this->pluginArguments[$argumentNameWithoutPrefix])) {
+				if (is_array($this->pluginArguments[$argumentNameWithoutPrefix]) && is_array($value)) {
+					$this->pluginArguments[$argumentNameWithoutPrefix] = Arrays::arrayMergeRecursiveOverrule($this->pluginArguments[$argumentNameWithoutPrefix], $value);
+				} else {
+					$this->pluginArguments[$argumentNameWithoutPrefix] = $value;
+				}
+			} else {
+				$this->pluginArguments[$argumentNameWithoutPrefix] = $value;
+			}
 			return;
 		}
 
