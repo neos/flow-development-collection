@@ -510,7 +510,7 @@ class RequestTest extends UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = new Request(array(), array(), array(), array(), $server);
+		$request = new Request(array(), array(), array(), $server);
 
 		$baseUri = new \TYPO3\Flow\Http\Uri('http://prod.blog.rob/');
 		$request->setBaseUri($baseUri);
@@ -1135,6 +1135,35 @@ class RequestTest extends UnitTestCase {
 		$relativePath = $request->getRelativePath();
 
 		$this->assertSame($relativePath, '');
+	}
+
+	/**
+	 * @return array
+	 */
+	public function constructorCorrectlyStripsOffIndexPhpFromRequestUriDataProvider() {
+		return array(
+			array('host' => NULL, 'requestUri' => NULL, 'expectedUri' => 'http://localhost/'),
+			array('host' => NULL, 'requestUri' => '/index.php', 'expectedUri' => 'http://localhost/'),
+			array('host' => 'localhost', 'requestUri' => '/foo/bar/index.php', 'expectedUri' => 'http://localhost/foo/bar/index.php'),
+			array('host' => 'dev.blog.rob', 'requestUri' => '/index.phpx', 'expectedUri' => 'http://dev.blog.rob/x'),
+			array('host' => 'dev.blog.rob', 'requestUri' => '/index.php?someParameter=someValue', 'expectedUri' => 'http://dev.blog.rob/?someParameter=someValue'),
+		);
+	}
+
+	/**
+	 * @param string $host
+	 * @param string $requestUri
+	 * @param string $expectedUri
+	 * @test
+	 * @dataProvider constructorCorrectlyStripsOffIndexPhpFromRequestUriDataProvider
+	 */
+	public function constructorCorrectlyStripsOffIndexPhpFromRequestUri($host, $requestUri, $expectedUri) {
+		$server = array (
+			'HTTP_HOST' => $host,
+			'REQUEST_URI' => $requestUri
+		);
+		$request = new Request(array(), array(), array(), $server);
+		$this->assertEquals($expectedUri, (string)$request->getUri());
 	}
 
 }
