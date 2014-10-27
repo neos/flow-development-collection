@@ -84,8 +84,15 @@ class Request extends Message {
 			}
 		}
 		$this->setMethod($method);
+
 		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
-		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php' , '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
+		$host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
+		$requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
+		if (substr($requestUri, 0, 10) === '/index.php') {
+			$requestUri = '/' . ltrim(substr($requestUri, 10), '/');
+		}
+		$this->uri = new Uri($protocol . '://' . $host . $requestUri);
+
 		$this->server = $server;
 		$this->arguments = $this->buildUnifiedArguments($get, $post, $files);
 	}
