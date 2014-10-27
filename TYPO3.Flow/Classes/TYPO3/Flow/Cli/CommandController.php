@@ -171,7 +171,7 @@ class CommandController implements ControllerInterface {
 			}
 			$argumentValue = NULL;
 			while ($argumentValue === NULL) {
-				$argumentValue = $this->ask(sprintf('<comment>Please specify the required argument "%s":</comment> ', $argumentName));
+				$argumentValue = $this->output->ask(sprintf('<comment>Please specify the required argument "%s":</comment> ', $argumentName));
 			}
 
 			if ($argumentValue === NULL) {
