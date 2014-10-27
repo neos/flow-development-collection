@@ -90,7 +90,9 @@ class Request extends Message {
 		}
 		$host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
 		$requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
-		$requestUri = str_replace('/index.php', '', $requestUri);
+		if (substr($requestUri, 0, 10) === '/index.php') {
+			$requestUri = '/' . ltrim(substr($requestUri, 10), '/');
+		}
 		$this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
 		if ($this->headers->has('X-Forwarded-Port')) {
