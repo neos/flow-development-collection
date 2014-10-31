@@ -189,7 +189,7 @@ class Compiler {
 	 */
 	protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode) {
 		$classCode = file_get_contents($pathAndFilename);
-		$classCode = preg_replace('/^<\\?php[ \\t]*(.*)$/m', '$1', $classCode);
+		$classCode = $this->stripOpeningPhpTag($classCode);
 
 		$classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
 		$classCode = preg_replace_callback('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function($matches) use ($pathAndFilename, $classNameSuffix) {
@@ -203,6 +203,16 @@ class Compiler {
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
 		$this->classesCache->set(str_replace('\\', '_', $className), $classCode . $proxyClassCode);
+	}
+
+	/**
+	 * Removes the first opening php tag ("<?php") from the given $classCode if there is any
+	 *
+	 * @param string $classCode
+	 * @return string the original class code without opening php tag
+	 */
+	protected function stripOpeningPhpTag($classCode) {
+		return preg_replace('/^\s*\\<\\?php(.*\n|.*)/', '$1', $classCode, 1);
 	}
 
 
