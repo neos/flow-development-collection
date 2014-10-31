@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Resource\Resource;
+
 /**
  * Resource publishing targets provide methods to publish resources to a certain
  * channel, such as the local file system or a content delivery network.
  *
  */
-abstract class AbstractResourcePublishingTarget implements \TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface {
+abstract class AbstractResourcePublishingTarget implements ResourcePublishingTargetInterface {
 
 	/**
 	 * Rewrites the given resource filename to a human readable but still URI compatible string.
@@ -25,16 +27,24 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\Flow\Resource\
 	 * @return string The rewritten title
 	 */
 	protected function rewriteFilenameForUri($filename) {
-		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
+		$filename = preg_replace(array('/ /', '/_/', '/[^-\w0-9.]/iu'), array('-', '-', ''), $filename);
+		$pathInfo = pathinfo($filename);
+		if ($pathInfo['filename'] === '') {
+			$filename = 'unnamed';
+			if (isset($pathInfo['extension'])) {
+				$filename .= '.' . $pathInfo['extension'];
+			}
+		}
+		return $filename;
 	}
 
 	/**
 	 * Returns the private path to the source of the given resource.
 	 *
-	 * @param \TYPO3\Flow\Resource\Resource $resource
+	 * @param Resource $resource
 	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\TYPO3\Flow\Resource\Resource $resource) {
+	protected function getPersistentResourceSourcePathAndFilename(Resource $resource) {
 		$pathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
 		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
 	}
