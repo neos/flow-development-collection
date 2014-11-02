@@ -136,4 +136,31 @@ class Functions {
 		return mb_strpos($haystack, $needle, $offset, 'UTF-8');
 	}
 
+	/**
+	 * PHP6 variant of pathinfo()
+	 * pathinfo() function is not unicode-friendly
+	 * if setlocale is not set. It's sufficient to set it
+	 * to any UTF-8 locale to correctly handle unicode strings.
+	 * This wrapper function temporarily sets locale to 'en_US.UTF-8'
+	 * and then restores original locale.
+	 * It's not necessary to use this function in cases,
+	 * where only file extension is determined, as it's
+	 * hard to imagine a unicode file extension.
+	 * @see http://www.php.net/manual/en/function.pathinfo.php
+	 *
+	 * @param string $path
+	 * @param integer $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
+	 * @return string|array
+	 * @api
+	 */
+	static public function pathinfo($path, $options = NULL) {
+		$currentLocale = setlocale(LC_CTYPE, 0);
+		// Before we have a setting for setlocale, his should suffice for pathinfo
+		// to work correctly on Unicode strings
+		setlocale(LC_CTYPE, 'en_US.UTF-8');
+		$pathinfo = $options == NULL ? pathinfo($path) : pathinfo($path, $options);
+		setlocale(LC_CTYPE, $currentLocale);
+		return $pathinfo;
+	}
+
 }

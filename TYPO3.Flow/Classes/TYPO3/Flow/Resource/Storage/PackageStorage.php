@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A resource storage which stores and retrieves resources from active Flow packages.
@@ -76,7 +77,7 @@ class PackageStorage extends FileSystemStorage {
 		foreach ($directories as $packageKey => $packageDirectories) {
 			foreach ($packageDirectories as $directoryPath) {
 				foreach (Files::readDirectoryRecursively($directoryPath) as $resourcePathAndFilename) {
-					$pathInfo = pathinfo($resourcePathAndFilename);
+					$pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
 
 					$object = new Object();
 					$object->setFilename($pathInfo['basename']);
