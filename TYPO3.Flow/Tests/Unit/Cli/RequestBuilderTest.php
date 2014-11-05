@@ -395,7 +395,8 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('no\\"spaces\\\'here', 'no"spaces\'here'),
 			array("nospaces\\'here", "nospaces'here"),
 			array('no\\"spaceshere', 'no"spaceshere'),
-			array('no\\\\spaceshere', 'no\\spaceshere')
+			array('no\\\\spaceshere', 'no\\spaceshere'),
+			array("''", '')
 		);
 	}
 

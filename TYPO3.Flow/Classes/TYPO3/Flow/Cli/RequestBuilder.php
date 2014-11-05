@@ -194,7 +194,7 @@ class RequestBuilder {
 
 			$rawArgument = array_shift($rawCommandLineArguments);
 
-			if ($rawArgument[0] === '-') {
+			if ($rawArgument !== '' && $rawArgument[0] === '-') {
 				if ($rawArgument[1] === '-') {
 					$rawArgument = substr($rawArgument, 2);
 				} else {
