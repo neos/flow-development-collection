@@ -23,7 +23,7 @@ class TableNode {
 	protected $hash;
 
 	/**
-	 * @param $hash The table source hash string
+	 * @param string $hash The table source hash string
 	 */
 	public function __construct($hash) {
 		$this->hash = $hash;

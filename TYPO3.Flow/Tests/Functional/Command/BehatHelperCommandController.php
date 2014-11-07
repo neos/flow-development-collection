@@ -24,7 +24,6 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
 use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;

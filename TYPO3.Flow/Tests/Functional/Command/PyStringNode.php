@@ -23,7 +23,7 @@ class PyStringNode {
 	protected $rawString;
 
 	/**
-	 * @param $rawString The raw string as written in the behat feature file
+	 * @param string $rawString The raw string as written in the behat feature file
 	 */
 	public function __construct($rawString) {
 		$this->rawString = $rawString;
