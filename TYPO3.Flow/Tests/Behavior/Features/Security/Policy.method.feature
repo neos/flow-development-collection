@@ -13,6 +13,7 @@ Feature: Method policy enforcement
         entities: []
 
       roles:
+        'TYPO3.Flow:Everybody': []
         'TYPO3.Flow:Customer': []
         'TYPO3.Flow:Administrator': []
 
@@ -29,38 +30,47 @@ Feature: Method policy enforcement
             TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction:    GRANT
       """
 
+  @Isolated
   Scenario: Public action is granted for everybody
     Given I am not authenticated
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: public action is granted for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: public action is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: customer action is denied for everybody
     Given I am not authenticated
     Then I can not call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: customer action is granted for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: customer action is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: admin action is denied for everybody
     Given I am not authenticated
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: admin action is denied for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
+  @Isolated
   Scenario: admin action is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
