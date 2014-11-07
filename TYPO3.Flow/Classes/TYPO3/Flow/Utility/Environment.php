@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Utility;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * Abstraction methods which return system environment variables.
@@ -93,10 +94,8 @@ class Environment {
 	 * @return boolean
 	 */
 	public function isRewriteEnabled() {
-		if (getenv('REDIRECT_FLOW_REWRITEURLS')) {
-			return TRUE;
-		}
-		return (boolean)getenv('FLOW_REWRITEURLS');
+		return (boolean)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS');
+
 	}
 
 	/**
