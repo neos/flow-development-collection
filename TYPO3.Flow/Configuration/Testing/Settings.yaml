@@ -57,6 +57,15 @@ TYPO3:
             events: ['onFlush', 'preFlush', 'postFlush']
             listener: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener'
 
+    resource:
+
+      # Setting the storage to a separate directory. Warning! This directory will be cleaned up while running tests!
+      storages:
+        defaultPersistentResourcesStorage:
+          storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/TestResources/'
+
     security:
       authentication:
         authenticationStrategy: anyToken

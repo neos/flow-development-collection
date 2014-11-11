@@ -12,13 +12,15 @@ namespace TYPO3\Flow\Resource\Streams;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
- * A stream wrapper for package resources.
+ * A stream wrapper for resources.
  */
-class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrapperInterface {
+class ResourceStreamWrapper implements StreamWrapperInterface {
 
 	/**
+	 * @const string
 	 */
 	const SCHEME = 'resource';
 
@@ -66,7 +68,7 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 * Any resources which were locked, or allocated, during opening and use of
 	 * the directory stream should be released.
 	 *
-	 * @return boolean always TRUE
+	 * @return boolean Always TRUE
 	 */
 	public function closeDirectory() {
 		closedir($this->handle);
@@ -83,8 +85,11 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function openDirectory($path, $options) {
-		$resourcePath = $this->evaluateResourcePath($path);
-		$handle = ($resourcePath !== FALSE) ? opendir($resourcePath) : FALSE;
+		$resourceUriOrStream = $this->evaluateResourcePath($path);
+		if (!is_string($resourceUriOrStream)) {
+			return FALSE;
+		}
+		$handle = ($resourceUriOrStream !== FALSE) ? opendir($resourceUriOrStream) : FALSE;
 		if ($handle !== FALSE) {
 			$this->handle = $handle;
 			return TRUE;
@@ -130,8 +135,10 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 * @return void
 	 */
 	public function makeDirectory($path, $mode, $options) {
-		$path = $this->evaluateResourcePath($path, FALSE);
-		mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
+		$resourceUriOrStream = $this->evaluateResourcePath($path, FALSE);
+		if (is_string($resourceUriOrStream)) {
+			mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
+		}
 	}
 
 	/**
@@ -148,7 +155,7 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 * @throws \BadMethodCallException
 	 */
 	public function removeDirectory($path, $options) {
-		throw new \BadMethodCallException(__CLASS__ . ' does not support rmdir.', 1256827649);
+		throw new \BadMethodCallException(__CLASS__ . ' does not support removeDirectory().', 1256827649);
 	}
 
 	/**
@@ -272,15 +279,19 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 		// w, a or x should try to create the file
 		// x should fail if file exists - fopen handles that below!
 		if (strpos($mode, 'w') !== FALSE || strpos($mode, 'a') !== FALSE || strpos($mode, 'x') !== FALSE) {
-			$resourcePathAndFilename = $this->evaluateResourcePath($path, FALSE);
+			$resourceUriOrStream = $this->evaluateResourcePath($path, FALSE);
 		} else {
-			$resourcePathAndFilename = $this->evaluateResourcePath($path);
+			$resourceUriOrStream = $this->evaluateResourcePath($path);
 		}
 
-		$handle = ($resourcePathAndFilename !== FALSE) ? fopen($resourcePathAndFilename, $mode) : FALSE;
+		if (is_resource($resourceUriOrStream)) {
+			return $resourceUriOrStream;
+		}
+
+		$handle = ($resourceUriOrStream !== FALSE) ? fopen($resourceUriOrStream, $mode) : FALSE;
 		if ($handle !== FALSE) {
 			$this->handle = $handle;
-			$openedPathAndFilename = $resourcePathAndFilename;
+			$openedPathAndFilename = $resourceUriOrStream;
 			return TRUE;
 		}
 		return FALSE;
@@ -425,13 +436,17 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 *     this flag is not set, you are responsible for reporting errors using
 	 *     the trigger_error() function during stating of the path.
 	 *
+	 * Note: The stat() call is silenced through the shut-up operator because this method would issue a warning if the
+	 *       file does not exist - but file_exists() will call pathStat() in order to check exactly that. So without
+	 *       the "@" operator it wouldn't be possible to run file_exists() on a resource without issuing a warning and
+	 *       the resulting exception.
+	 *
 	 * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
 	 * @param integer $flags Holds additional flags set by the streams API.
 	 * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
 	 */
 	public function pathStat($path, $flags) {
-		$resourcePath = $this->evaluateResourcePath($path);
-		return ($resourcePath !== FALSE) ? stat($resourcePath) : FALSE;
+		return @stat($this->evaluateResourcePath($path));
 	}
 
 	/**
@@ -448,19 +463,14 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
 			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
 		}
-
 		$uriParts = parse_url($requestedPath);
 		if (!is_array($uriParts) || !isset($uriParts['host'])) {
 			return FALSE;
 		}
 
 		if (strlen($uriParts['host']) === 40) {
-			$resourcePath = $this->resourceManager->getPersistentResourcesStorageBaseUri() . $uriParts['host'];
-			if ($checkForExistence === FALSE || file_exists($resourcePath)) {
-				return $resourcePath;
-			} else {
-				return FALSE;
-			}
+			$resource = $this->resourceManager->getResourceBySha1($uriParts['host']);
+			return $this->resourceManager->getStreamByResource($resource);
 		}
 
 		if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
@@ -468,10 +478,10 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 		}
 
 		$package = $this->packageManager->getPackage($uriParts['host']);
-		$resourcePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
+		$resourceUri = Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
 
-		if ($checkForExistence === FALSE || file_exists($resourcePath)) {
-			return $resourcePath;
+		if ($checkForExistence === FALSE || file_exists($resourceUri)) {
+			return $resourceUri;
 		}
 
 		return FALSE;

@@ -219,10 +219,16 @@ TYPO3:
         password: NULL
         charset: 'utf8'
       cacheAllQueryResults: FALSE
+
       doctrine:
         # By default Doctrine proxy compilation is done in the Flow bootstrap
         enable: TRUE
         sqlLogger: NULL
+
+        # Doctrine ORM Lifecycle events and their subscribers and listeners.
+        # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
+        eventSubscribers: []
+        eventListeners: []
 
     reflection:
 
@@ -235,18 +241,55 @@ TYPO3:
 
     resource:
 
-      publishing:
+      # Definition of resource storages provided by the Flow core.
+      # Storages are used for storing and retrieving resources.
+      storages:
 
-        # If enabled, the publisher will check if the static resources of active packages
-        # have changed and if so publishes them again. If disabled, static package resources
-        # are only published once and changes are unnoticed until the related cache is flushed.
-        detectPackageResourceChanges: FALSE
+        #
+        defaultPersistentResourcesStorage:
+          storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/Resources/'
 
-        # Options for the File System publishing target
-        fileSystem:
+        #
+        defaultStaticResourcesStorage:
+          storage: 'TYPO3\Flow\Resource\Storage\PackageStorage'
 
-          # Strategy for mirroring files: Either "copy" or "link"
-          mirrorMode: link
+      # Definition of the default resource collections.
+      # Collections are used to bundle / group static or persistent resources
+      # for common processing and publication.
+      collections:
+
+        # Collection which contains all static resources
+        static:
+          storage: 'defaultStaticResourcesStorage'
+          target: 'localWebDirectoryStaticResourcesTarget'
+          pathPatterns:
+            - '*/Resources/Public/*'
+
+        # Collection which contains all persistent resources
+        persistent:
+          storage: 'defaultPersistentResourcesStorage'
+          target: 'localWebDirectoryPersistentResourcesTarget'
+
+      # Definition of the basic resource publication targets.
+      targets:
+        # Target for publishing static resources to the local web directory
+        localWebDirectoryStaticResourcesTarget:
+          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
+            baseUri: '_Resources/Static/Packages/'
+
+        # Target for publishing persistent resources to the local web directory
+        localWebDirectoryPersistentResourcesTarget:
+          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Persistent/'
+            baseUri: '_Resources/Persistent/'
+
+            # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
+            subdivideHashPathSegment: false
 
     security:
 

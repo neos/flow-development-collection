@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Resource\Publishing;
+namespace TYPO3\Flow\Resource\Filter;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,11 +11,12 @@ namespace TYPO3\Flow\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * Interface implemented by special publishing configuration objects for persistent resources
- *
- * implementations must be tagged entity
+ * Interface for a resource processing filter
  */
-interface PublishingConfigurationInterface {
+interface FilterInterface {
 
 }
+

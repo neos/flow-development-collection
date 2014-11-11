@@ -237,9 +237,6 @@ TYPO3\Flow\Resource\ResourceManager:
           1:
             value: Flow_Resource_Status
 
-TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
-  className: TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget
-
 #                                                                          #
 # Security                                                                 #
 #                                                                          #

@@ -118,6 +118,8 @@ class ObjectArray extends Types\ArrayType {
 
 			if (isset($value['__flow_object_type'])) {
 				$value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
+			} else {
+				$this->decodeObjectReferences($value);
 			}
 		}
 	}
@@ -132,6 +134,9 @@ class ObjectArray extends Types\ArrayType {
 	 */
 	protected function encodeObjectReferences(array &$array) {
 		foreach ($array as &$value) {
+			if (is_array($value)) {
+				$this->encodeObjectReferences($value);
+			}
 			if (!is_object($value) || (is_object($value) && $value instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy)) {
 				continue;
 			}
