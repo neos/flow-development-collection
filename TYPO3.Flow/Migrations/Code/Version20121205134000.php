@@ -16,7 +16,18 @@ use TYPO3\Flow\Utility\Files;
 /**
  * Change entity resource definitions from using _ to \
  */
-class Version201212051340 extends AbstractMigration {
+class Version20121205134000 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Flow-201212051340';
+	}
 
 	/**
 	 * @return void

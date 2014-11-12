@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Replace DataNotSerializeableException with DataNotSerializableException.
  */
-class Version201206271128 extends AbstractMigration {
+class Version20120627112800 extends AbstractMigration {
 
 	/**
 	 * Returns the identifier of this migration.
