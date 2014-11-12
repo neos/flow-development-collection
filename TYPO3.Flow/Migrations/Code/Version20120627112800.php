@@ -12,28 +12,26 @@ namespace TYPO3\Flow\Core\Migrations;
  *                                                                        */
 
 /**
- * Change entity resource definitions from using _ to \
+ * Replace DataNotSerializeableException with DataNotSerializableException.
  */
-class Version201212051340 extends AbstractMigration {
+class Version20120627112800 extends AbstractMigration {
+
+	/**
+	 * Returns the identifier of this migration.
+	 *
+	 * Hardcoded to be stable after the rename to TYPO3 Flow.
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.FLOW3-201206271128';
+	}
 
 	/**
 	 * @return void
 	 */
 	public function up() {
-		$this->processConfiguration(
-			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY,
-			function (&$configuration) {
-				if (isset($configuration['resources']['entities'])) {
-					$updatedResourcesEntities = array();
-					foreach ($configuration['resources']['entities'] as $entityType => $entityConfiguration) {
-						$entityType = str_replace('_', '\\', $entityType);
-						$updatedResourcesEntities[$entityType] = $entityConfiguration;
-					}
-					$configuration['resources']['entities'] = $updatedResourcesEntities;
-				}
-			},
-			TRUE
-		);
+		$this->searchAndReplace('Session\Exception\DataNotSerializeableException', 'Session\Exception\DataNotSerializableException');
 	}
 
 }

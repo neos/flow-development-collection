@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -54,10 +55,10 @@ abstract class AbstractMigration {
 	protected $warnings = array();
 
 	/**
-	 * @param \TYPO3\Flow\Core\Migrations\Manager $manager
+	 * @param Manager $manager
 	 * @param string $packageKey
 	 */
-	public function __construct(\TYPO3\Flow\Core\Migrations\Manager $manager, $packageKey) {
+	public function __construct(Manager $manager, $packageKey) {
 		$this->migrationsManager = $manager;
 		$this->sourcePackageKey = $packageKey;
 	}
@@ -83,12 +84,12 @@ abstract class AbstractMigration {
 	}
 
 	/**
-	 * Returns the identifier of this migration, e.g. 'TYPO3.Flow-201201261636'.
+	 * Returns the identifier of this migration, e.g. 'TYPO3.Flow-20120126163610'.
 	 *
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return $this->sourcePackageKey . '-' . substr(get_class($this), -12);
+		return $this->sourcePackageKey . '-' . substr(strrchr(get_class($this), 'Version'), 7);
 	}
 
 	/**
@@ -281,7 +282,7 @@ abstract class AbstractMigration {
 			}
 		);
 
-		$yamlSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$yamlSource = new YamlSource();
 		foreach ($configurationPathsAndFilenames as $pathAndFilename) {
 			$configuration = $yamlSource->load(substr($pathAndFilename, 0, -5));
 			$processor($configuration);
