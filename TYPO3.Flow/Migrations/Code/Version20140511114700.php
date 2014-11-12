@@ -14,9 +14,21 @@ namespace TYPO3\Flow\Core\Migrations;
 use TYPO3\Flow\Utility\Files;
 
 /**
- *
+ * This migration does not actually change any code. It just displays a warning if a TypeConverters canConvertFrom() is
+ * overridden in custom code.
  */
-class Version201405111147 extends AbstractMigration {
+class Version20140511114700 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Flow-201405111147';
+	}
 
 	/**
 	 * @return void

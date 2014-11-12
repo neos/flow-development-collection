@@ -14,7 +14,18 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Check for globally defined role identifiers in Policy.yaml files
  */
-class Version201211151101 extends AbstractMigration {
+class Version20121115110100 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Flow-201211151101';
+	}
 
 	/**
 	 * @return void

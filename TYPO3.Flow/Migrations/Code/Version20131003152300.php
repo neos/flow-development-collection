@@ -15,7 +15,18 @@ namespace TYPO3\Flow\Core\Migrations;
  * Change TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException to
  * TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
  */
-class Version201310031523 extends AbstractMigration {
+class Version20131003152300 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Flow-201310031523';
+	}
 
 	/**
 	 * @return void
