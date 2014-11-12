@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Replace FileTypes use with MediaTypes use.
  */
-class Version201205292145 extends AbstractMigration {
+class Version20120529214500 extends AbstractMigration {
 
 	/**
 	 * Returns the identifier of this migration.
