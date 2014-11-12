@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Adjust to the major changes in FLOW3 1.1 when coming from 1.0.
  */
-class Version201201261636 extends AbstractMigration {
+class Version20120126163600 extends AbstractMigration {
 
 	/**
 	 * Returns the identifier of this migration.

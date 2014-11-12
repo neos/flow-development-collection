@@ -17,7 +17,7 @@ use TYPO3\Flow\Utility\Files;
  * Move all code to PSR-0 compatible directory structure, remove Package.xml,
  * add composer.json.
  */
-class Version201209201112 extends AbstractMigration {
+class Version20120920111200 extends AbstractMigration {
 
 	/**
 	 * Returns the identifier of this migration.
