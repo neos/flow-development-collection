@@ -55,4 +55,11 @@ abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
 		return $this->value;
 	}
 
+	/**
+	 * Returns the string representation of this parameter
+	 * @return string
+	 */
+	public function __toString() {
+		return (string)$this->getValue();
+	}
 }

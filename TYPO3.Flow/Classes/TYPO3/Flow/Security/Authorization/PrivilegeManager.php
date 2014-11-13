@@ -13,8 +13,9 @@ namespace TYPO3\Flow\Security\Authorization;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * An access decision voter manager
@@ -27,11 +28,6 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
-
-	/**
-	 * @var ReflectionService
-	 */
-	protected $reflectionService;
 
 	/**
 	 * @var Context
@@ -47,12 +43,10 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 
 	/**
 	 * @param ObjectManagerInterface $objectManager The object manager
-	 * @param ReflectionService $reflectionService
 	 * @param Context $securityContext The current security context
 	 */
-	public function __construct(ObjectManagerInterface $objectManager, ReflectionService $reflectionService, Context $securityContext) {
+	public function __construct(ObjectManagerInterface $objectManager, Context $securityContext) {
 		$this->objectManager = $objectManager;
-		$this->reflectionService = $reflectionService;
 		$this->securityContext = $securityContext;
 	}
 
@@ -70,41 +64,57 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	 *
 	 * @param string $privilegeType The type of privilege that should be evaluated
 	 * @param mixed $subject The subject to check privileges for
-	 * @param array $voteResults This variable will be filled by PrivilegeVoteResult objects, giving information about the reasons for the result of this method
+	 * @param string $reason This variable will be filled by a message giving information about the reasons for the result of this method
 	 * @return boolean
 	 */
-	public function isGranted($privilegeType, $subject, &$voteResults = array()) {
-		$votes = array(
-			PrivilegeVoteResult::VOTE_DENY => 0,
-			PrivilegeVoteResult::VOTE_GRANT => 0,
-			PrivilegeVoteResult::VOTE_ABSTAIN => 0
-		);
-		$voteResults = array();
+	public function isGranted($privilegeType, $subject, &$reason = '') {
+		$effectivePrivilegeIdentifiersWithPermission = array();
+		$accessGrants = 0;
+		$accessDenies = 0;
+		$accessAbstains = 0;
+		/** @var Role $role */
+		foreach ($this->securityContext->getRoles() as $role) {
+			/** @var PrivilegeInterface[] $availablePrivileges */
+			$availablePrivileges = $role->getPrivilegesByType($privilegeType);
+			/** @var PrivilegeInterface[] $effectivePrivileges */
+			$effectivePrivileges = array();
+			foreach ($availablePrivileges as $privilege) {
+				if ($privilege->matchesSubject($subject)) {
+					$effectivePrivileges[] = $privilege;
+				}
+			}
 
-		if (interface_exists($privilegeType) === TRUE) {
-			$privilegeClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface($privilegeType);
-		} else {
-			$privilegeClassNames = $this->reflectionService->getAllSubClassNamesForClass($privilegeType);
-			$privilegeClassNames[] = $privilegeType;
-		}
+			foreach ($effectivePrivileges as $effectivePrivilege) {
+				$privilegeName = $effectivePrivilege->getPrivilegeTargetIdentifier();
+				$parameterStrings = array();
+				foreach ($effectivePrivilege->getParameters() as $parameter) {
+					$parameterStrings[] = sprintf('%s: "%s"', $parameter->getName(), $parameter->getValue());
+				}
+				if ($parameterStrings !== array()) {
+					$privilegeName .= ' (with parameters: ' . implode(', ', $parameterStrings) . ')';
+				}
 
-		foreach ($privilegeClassNames as $privilegeClassName) {
-			if ($this->reflectionService->isClassAbstract($privilegeClassName) === FALSE) {
-				$currentVoteResult = call_user_func_array(array($privilegeClassName, 'vote'), array($subject));
-				$voteResults[] = $currentVoteResult;
-
-				if (isset($votes[$currentVoteResult->getVote()])) {
-					$votes[$currentVoteResult->getVote()]++;
+				$effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, strtoupper($effectivePrivilege->getPermission()));
+				if ($effectivePrivilege->isGranted()) {
+					$accessGrants ++;
+				} elseif ($effectivePrivilege->isDenied()) {
+					$accessDenies ++;
+				} else {
+					$accessAbstains ++;
 				}
 			}
 		}
 
-		if ($votes[PrivilegeVoteResult::VOTE_DENY] === 0 && $votes[PrivilegeVoteResult::VOTE_GRANT] > 0) {
+		if (count($effectivePrivilegeIdentifiersWithPermission) === 0) {
+			$reason = 'No privilege of type "' . $privilegeType . '" matched.';
 			return TRUE;
+		} else {
+			$reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)', count($effectivePrivilegeIdentifiersWithPermission), implode(chr(10), $effectivePrivilegeIdentifiersWithPermission), $accessGrants, $accessDenies, $accessAbstains);
 		}
-		if ($votes[PrivilegeVoteResult::VOTE_DENY] === 0
-			&& $votes[PrivilegeVoteResult::VOTE_GRANT] === 0
-			&& $votes[PrivilegeVoteResult::VOTE_ABSTAIN] > 0 && $this->allowAccessIfAllAbstain === TRUE) {
+		if ($accessDenies > 0) {
+			return FALSE;
+		}
+		if ($accessGrants > 0) {
 			return TRUE;
 		}
 

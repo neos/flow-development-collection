@@ -41,6 +41,14 @@ Feature: Method policy enforcement
               parameters:
                 'controller': 'Restricted'
                 'action': 'admin'
+              permission: GRANT
+
+            #This should override the permission set in previous lines!
+            -
+              privilegeTarget: 'TYPO3.Flow:Tests.ArbitraryController.arbitraryAction'
+              parameters:
+                'controller': 'Restricted'
+                'action': 'admin'
               permission: DENY
 
         'TYPO3.Flow:Administrator':
@@ -95,7 +103,7 @@ Feature: Method policy enforcement
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
-  Scenario: admin action is denied for customer
+  Scenario: admin action is denied for customer (grant permission is overridden, due to a second equivalent privilege definition in the same role)
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 

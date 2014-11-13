@@ -43,7 +43,7 @@ class PolicyEnforcementTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$privilegeManager = $this->getMock('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
 		$joinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
 
-		$privilegeManager->expects($this->once())->method('isGranted')->with('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $joinPoint);
+		$privilegeManager->expects($this->once())->method('isGranted')->with('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $joinPoint);
 
 		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement($securityContext, $authenticationManager, $privilegeManager);
 		$interceptor->setJoinPoint($joinPoint);

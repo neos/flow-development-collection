@@ -17,7 +17,6 @@ use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Authorization\InterceptorInterface;
-use TYPO3\Flow\Security\Authorization\PrivilegeVoteResult;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
@@ -86,7 +85,7 @@ class PolicyEnforcement implements InterceptorInterface {
 	 * @throws NoTokensAuthenticatedException if no tokens could be found and the accessDecisionManager denied access to the privilege target, causing a redirect to the authentication entrypoint
 	 */
 	public function invoke() {
-		$voteResults = array();
+		$reason = '';
 
 		try {
 			$this->authenticationManager->authenticate();
@@ -94,41 +93,29 @@ class PolicyEnforcement implements InterceptorInterface {
 			throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
 		} catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {
 			// We still need to check if the privilege is available to "TYPO3.Flow:Everybody".
-			if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $this->joinPoint, $voteResults) === FALSE) {
-				throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $this->getVotingResultMessage($voteResults), $noTokensAuthenticatedException->getCode());
+			if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->joinPoint, $reason) === FALSE) {
+				throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $reason, $noTokensAuthenticatedException->getCode());
 			}
 		}
 
-		if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $this->joinPoint, $voteResults) === FALSE) {
-			throw new AccessDeniedException($this->getVotingResultMessage($voteResults), 1222268609);
+		if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->joinPoint, $reason) === FALSE) {
+			throw new AccessDeniedException($this->renderDecisionReasonMessage($reason), 1222268609);
 		}
 	}
 
 	/**
-	 * Returns a string message, giving insights what happened during privilege voting.
+	 * Returns a string message, giving insights what happened during privilege evaluation.
 	 *
-	 * @param array<PrivilegeVoteResult> $voteResults Array of vote result objects
+	 * @param string $privilegeReasonMessage
 	 * @return string
 	 */
-	protected function getVotingResultMessage(array $voteResults) {
-		$reasonsMessage = 'Reasons: ' . chr(10) . '* ' . implode(chr(10) . '* ', $voteResults);
+	protected function renderDecisionReasonMessage($privilegeReasonMessage) {
 		if (count($this->securityContext->getRoles()) === 0) {
 			$rolesMessage = 'No authenticated roles';
 		} else {
 			$rolesMessage = 'Authenticated roles: ' . implode(', ', array_keys($this->securityContext->getRoles()));
 		}
 
-		$votes = array(
-				PrivilegeVoteResult::VOTE_DENY => 0,
-				PrivilegeVoteResult::VOTE_GRANT => 0,
-				PrivilegeVoteResult::VOTE_ABSTAIN => 0
-		);
-		/** @var PrivilegeVoteResult $voteResult */
-		foreach ($voteResults as $voteResult) {
-			$votes[] = $voteResult->getVote();
-		}
-
-		return sprintf('Access denied for method (%d denied, %d granted, %d abstained)' . chr(10) . 'Method: %s::%s()' . chr(10) . '%s' . chr(10) . '%s',
-				$votes[PrivilegeVoteResult::VOTE_DENY], $votes[PrivilegeVoteResult::VOTE_GRANT], $votes[PrivilegeVoteResult::VOTE_ABSTAIN], $this->joinPoint->getClassName(), $this->joinPoint->getMethodName(), $reasonsMessage, $rolesMessage);
+		return sprintf('Access denied for method' . chr(10) . 'Method: %s::%s()' . chr(10) . chr(10) . '%s' . chr(10) . chr(10) . '%s', $this->joinPoint->getClassName(), $this->joinPoint->getMethodName(), $privilegeReasonMessage, $rolesMessage);
 	}
 }

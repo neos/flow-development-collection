@@ -134,7 +134,7 @@ class BehatHelperCommandController extends CommandController {
 				$result = call_user_func_array(array($this, $methodName), $mappedArguments);
 			}
 		} catch (\Exception $exception) {
-			$this->outputLine('EXCEPTION: %s %s', array($exception->getMessage(), $exception->getTraceAsString()));
+			$this->outputLine('EXCEPTION: %s %d %s in %s:%s %s', array(get_class($exception), $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString()));
 			return;
 		}
 		$this->output('SUCCESS: %s', array($result));

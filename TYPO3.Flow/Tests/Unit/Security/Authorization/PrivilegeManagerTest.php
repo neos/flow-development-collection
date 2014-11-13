@@ -37,29 +37,9 @@ class PrivilegeManagerTest extends UnitTestCase {
 	protected $mockObjectManager;
 
 	/**
-	 * @var ReflectionService
-	 */
-	protected $mockReflectionService;
-
-	/**
 	 * @var JoinPointInterface|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockJoinPoint;
-
-	/**
-	 * @var PrivilegeInterface|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPrivilege1;
-
-	/**
-	 * @var PrivilegeInterface|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPrivilege2;
-
-	/**
-	 * @var PrivilegeInterface|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPrivilege3;
 
 	/**
 	 * @var PrivilegeInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -87,69 +67,46 @@ class PrivilegeManagerTest extends UnitTestCase {
 	public function setUp() {
 		$this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->disableOriginalConstructor()->getMock();
 		$this->mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManagerInterface')->getMock();
+		$this->mockJoinPoint = $this->getMockBuilder('TYPO3\Flow\Aop\JoinPoint')->disableOriginalConstructor()->getMock();
 
-		$this->mockJoinPoint = $this->getMockBuilder('TYPO3\Flow\Aop\JoinPointInterface')->getMock();
+		$this->privilegeManager = new PrivilegeManager($this->mockObjectManager, $this->mockSecurityContext);
 
-		$mockPrivilege1ClassName = 'mockPrivilege1';
-		$this->mockPrivilege1 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface')->setMockClassName($mockPrivilege1ClassName)->getMock();
-		$mockPrivilege2ClassName = 'mockPrivilege2';
-		$this->mockPrivilege2 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface')->setMockClassName($mockPrivilege2ClassName)->getMock();
-		$mockPrivilege3ClassName = 'mockPrivilege3';
-		$this->mockPrivilege3 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface')->setMockClassName($mockPrivilege3ClassName)->getMock();
+		$this->grantPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->getMock();
+		$this->grantPrivilege->expects($this->any())->method('getPermission')->will($this->returnValue(PrivilegeInterface::GRANT));
+		$this->grantPrivilege->expects($this->any())->method('matchesSubject')->will($this->returnValue(TRUE));
+		$this->grantPrivilege->expects($this->any())->method('getParameters')->will($this->returnValue(array()));
+		$this->grantPrivilege->expects($this->any())->method('isGranted')->will($this->returnValue(TRUE));
+		$this->grantPrivilege->expects($this->any())->method('isDenied')->will($this->returnValue(FALSE));
 
-		$this->mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->getMock();
-		$this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array($mockPrivilege1ClassName, $mockPrivilege2ClassName, $mockPrivilege3ClassName)));
-		$this->mockReflectionService->expects($this->any())->method('isClassAbstract')->will($this->returnValue(FALSE));
+		$this->denyPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->getMock();
+		$this->denyPrivilege->expects($this->any())->method('getPermission')->will($this->returnValue(PrivilegeInterface::DENY));
+		$this->denyPrivilege->expects($this->any())->method('matchesSubject')->will($this->returnValue(TRUE));
+		$this->denyPrivilege->expects($this->any())->method('getParameters')->will($this->returnValue(array()));
+		$this->denyPrivilege->expects($this->any())->method('isGranted')->will($this->returnValue(FALSE));
+		$this->denyPrivilege->expects($this->any())->method('isDenied')->will($this->returnValue(TRUE));
 
-		$this->privilegeManager = new PrivilegeManager($this->mockObjectManager, $this->mockReflectionService, $this->mockSecurityContext);
-
-		$this->grantPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->setMethods(array('vote'))->getMock();
-		$this->inject($this->grantPrivilege, 'permission', PrivilegeInterface::GRANT);
-
-		$this->denyPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->setMethods(array('vote'))->getMock();
-		$this->inject($this->denyPrivilege, 'permission', PrivilegeInterface::DENY);
-
-		$this->abstainPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->setMethods(array('vote'))->getMock();
-		$this->inject($this->abstainPrivilege, 'permission', PrivilegeInterface::ABSTAIN);
+		$this->abstainPrivilege = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege')->disableOriginalConstructor()->getMock();
+		$this->abstainPrivilege->expects($this->any())->method('getPermission')->will($this->returnValue(PrivilegeInterface::ABSTAIN));
+		$this->abstainPrivilege->expects($this->any())->method('matchesSubject')->will($this->returnValue(TRUE));
+		$this->abstainPrivilege->expects($this->any())->method('getParameters')->will($this->returnValue(array()));
+		$this->abstainPrivilege->expects($this->any())->method('isGranted')->will($this->returnValue(FALSE));
+		$this->abstainPrivilege->expects($this->any())->method('isDenied')->will($this->returnValue(FALSE));
 	}
 
 	/**
 	 * @test
 	 */
-	public function isGrantedReturnsFalseIfOneVoterReturnsADenyVote() {
-		$this->markTestIncomplete('Uses staticExpetcs');
+	public function isGrantedGrantsIfNoPrivilegeWasConfigured() {
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
 
-		$this->mockPrivilege1->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_GRANT)));
-		$this->mockPrivilege2->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege3->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_DENY)));
+		$mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
+		$mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
-		$this->assertFalse($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
-	}
+		$mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
+		$mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
-	/**
-	 * @test
-	 */
-	public function isGrantedReturnsFalseIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
-		$this->markTestIncomplete('Uses staticExpetcs');
-
-		$this->mockPrivilege1->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege2->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege3->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-
-		$this->assertFalse($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
-	}
-
-	/**
-	 * @test
-	 */
-	public function isGrantedReturnsTrueIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
-		$this->markTestIncomplete('Uses staticExpetcs');
-
-		$this->mockPrivilege1->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege2->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege3->staticExpects($this->any())->method('vote')->with($this->mockJoinPoint)->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-
-		$this->inject($this->privilegeManager, 'allowAccessIfAllAbstain', TRUE);
+		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
 		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
 	}
@@ -157,12 +114,56 @@ class PrivilegeManagerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function isGrantedReturnsTrueIfThereIsNoDenyVoteAndOneGrantVote() {
-		$this->markTestIncomplete('Uses staticExpetcs');
+	public function isGrantedGrantsAccessIfNoRolesAreAvailable() {
+		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
-		$this->mockPrivilege1->staticExpects($this->any())->method('vote')->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
-		$this->mockPrivilege2->staticExpects($this->any())->method('vote')->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_GRANT)));
-		$this->mockPrivilege3->staticExpects($this->any())->method('vote')->will($this->returnValue(new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_ABSTAIN)));
+		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isGrantedGrantsAccessIfNoPolicyEntryCouldBeFound() {
+		$testRole1 = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('getPrivilegesByType'), array('Acme.Demo:TestRole1'));
+		$testRole1->expects($this->once())->method('getPrivilegesByType')->with('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface')->will($this->returnValue(array()));
+
+		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($testRole1)));
+
+		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isGrantedDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
+
+		$mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
+		$mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->denyPrivilege)));
+
+		$mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
+		$mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
+
+		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
+
+		$this->assertFalse($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isGrantedGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
+
+		$mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
+		$mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->grantPrivilege)));
+
+		$mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
+		$mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
+
+		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
 		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
 	}

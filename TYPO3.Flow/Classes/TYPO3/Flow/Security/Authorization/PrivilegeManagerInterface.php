@@ -25,10 +25,10 @@ interface PrivilegeManagerInterface {
 	 *
 	 * @param string $privilegeType The type of privilege that should be evaluated
 	 * @param mixed $subject The subject to check privileges for
-	 * @param array $voteResults This variable will be filled by PrivilegeVoteResult objects, giving information about the reasons for the result of this method
+	 * @param string $reason This variable will be filled by a message giving information about the reasons for the result of this method
 	 * @return boolean
 	 */
-	public function isGranted($privilegeType, $subject, &$voteResults = array());
+	public function isGranted($privilegeType, $subject, &$reason = '');
 
 	/**
 	 * Returns TRUE if access is granted on the given privilege target in the current security context

@@ -22,14 +22,6 @@ use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 interface MethodPrivilegeInterface extends PrivilegeInterface {
 
 	/**
-	 * Returns TRUE, if this privilege covers the given join point
-	 *
-	 * @param JoinPointInterface $joinPoint
-	 * @return bool
-	 */
-	public function matchesJoinpoint(JoinPointInterface $joinPoint);
-
-	/**
 	 * Returns TRUE, if this privilege covers the given method
 	 *
 	 * @param string $className

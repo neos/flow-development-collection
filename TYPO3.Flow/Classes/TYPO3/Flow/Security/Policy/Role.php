@@ -200,7 +200,9 @@ class Role {
 	 * @return void
 	 */
 	public function setPrivileges(array $privileges) {
-		$this->privileges = $privileges;
+		foreach ($privileges as $privilege) {
+			$this->privileges[$privilege->getCacheEntryIdentifier()] = $privilege;
+		}
 	}
 
 	/**
@@ -249,7 +251,7 @@ class Role {
 	 * @return void
 	 */
 	public function addPrivilege($privilege) {
-		$this->privileges[] = $privilege;
+		$this->privileges[$privilege->getCacheEntryIdentifier()] = $privilege;
 	}
 
 	/**

@@ -42,7 +42,13 @@ Feature: Method policy enforcement
           privileges:
             -
               privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
+              permission: DENY
+
+            #This should override the permission set in previous lines!
+            -
+              privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
               permission: GRANT
+
             -
               privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.adminAction'
               permission: GRANT
@@ -56,12 +62,12 @@ Feature: Method policy enforcement
     Given I am not authenticated
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: public action is granted for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: public action is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
@@ -71,13 +77,13 @@ Feature: Method policy enforcement
     Given I am not authenticated
     Then I can not call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: customer action is granted for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated @fixtures
-  Scenario: customer action is granted for administrator
+  Scenario: customer action is granted for administrator (deny permission is overridden, due to a second equivalent privilege definition in the same role)
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
@@ -86,12 +92,12 @@ Feature: Method policy enforcement
     Given I am not authenticated
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: admin action is denied for customer
     Given I am authenticated with role "TYPO3.Flow:Customer"
     Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: admin action is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
@@ -102,9 +108,9 @@ Feature: Method policy enforcement
     Then I can not call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "Robbie"
 
   @Isolated
-  Scenario: arguments action with different arguments is denied for everybody
+  Scenario: arguments action with different arguments is granted for everybody
     Given I am not authenticated
-    Then I can not call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "NotRobbie"
+    Then I can call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "NotRobbie"
 
   @Isolated
   Scenario: arguments action with specified arguments is denied for customer
@@ -112,16 +118,6 @@ Feature: Method policy enforcement
     Then I can not call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "Robbie"
 
   @Isolated
-  Scenario: arguments action with different arguments is denied for customer
-    Given I am authenticated with role "TYPO3.Flow:Customer"
-    Then I can not call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "NotRobbie"
-
-  @Isolated
   Scenario: arguments action with specified arguments is granted for administrator
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "Robbie"
-
-  @Isolated
-  Scenario: arguments action with different arguments is denied for administrator
-    Given I am authenticated with role "TYPO3.Flow:Administrator"
-    Then I can not call the method "argumentsAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "NotRobbie"

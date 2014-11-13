@@ -32,18 +32,18 @@ class TestingPrivilegeManager extends PrivilegeManager {
 	 *
 	 * @param string $privilegeType
 	 * @param mixed $subject
-	 * @param array $voteResults This variable will be filled by PrivilegeVoteResult objects, giving information about the reasons for the result of this method
+	 * @param string $reason This variable will be filled by a message giving information about the reasons for the result of this method
 	 * @return boolean
 	 */
-	public function isGranted($privilegeType, $subject, &$voteResults = array()) {
+	public function isGranted($privilegeType, $subject, &$reason = '') {
 		if ($this->overrideDecision === FALSE) {
-			$voteResults[] = new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_DENY, 'Voting has been overriden to "DENY" by the testing privilege manager!');
+			$reason = 'Voting has been overriden to "DENY" by the testing privilege manager!';
 			return FALSE;
 		} elseif ($this->overrideDecision === TRUE) {
-			$voteResults[] = new PrivilegeVoteResult(PrivilegeVoteResult::VOTE_GRANT, 'Voting has been overriden to "GRANT" by the testing privilege manager!');
+			$reason = 'Voting has been overriden to "GRANT" by the testing privilege manager!';
 			return TRUE;
 		}
-		return parent::isGranted($privilegeType, $subject, $voteResults);
+		return parent::isGranted($privilegeType, $subject, $reason);
 	}
 
 	/**

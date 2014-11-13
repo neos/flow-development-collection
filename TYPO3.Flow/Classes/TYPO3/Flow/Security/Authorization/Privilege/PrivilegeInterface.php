@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
-use TYPO3\Flow\Security\Authorization\PrivilegeVoteResult;
+use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
 
 /**
  * Contract for a privilege
@@ -96,19 +96,12 @@ interface PrivilegeInterface extends CacheAwareInterface {
 	public function hasParameters();
 
 	/**
-	 * Returns a vote for this privilege type for the given $subject, based on the
-	 * current security context (authenticated roles). The type of $subject is
-	 * specific to the privilege type and might be e.g. a join point object for method
-	 * privileges or an entity object for entity privileges, etc.
-	 *
-	 * The result of this method is a vote stating that this privilege type should be
-	 * "granted", "denied" or is not responsible ("abstain") for the given subject. It
-	 * is evaluated by taking all privileges of this type into account, which are set
-	 * in the currently effective roles.
+	 * Returns TRUE, if this privilege covers the given subject
 	 *
 	 * @param mixed $subject
-	 * @return PrivilegeVoteResult
+	 * @return boolean
+	 * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
 	 */
-	static public function vote($subject);
+	public function matchesSubject($subject);
 
 }

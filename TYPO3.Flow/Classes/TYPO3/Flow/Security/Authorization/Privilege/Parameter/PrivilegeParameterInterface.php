@@ -55,4 +55,10 @@ interface PrivilegeParameterInterface {
 	 * @return string
 	 */
 	public function getType();
+
+	/**
+	 * Returns the string representation of this parameter
+	 * @return string
+	 */
+	public function __toString();
 }

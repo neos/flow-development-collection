@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Security\Exception;
  *                                                                        */
 
 /**
- * A "VoterNotFound" Exception
+ * An "InvalidPrivilegeTypeException" Exception
  *
  * @api
  */
-class VoterNotFoundException extends \TYPO3\Flow\Security\Exception {
+class InvalidPrivilegeTypeException extends \TYPO3\Flow\Security\Exception {
 
 }
