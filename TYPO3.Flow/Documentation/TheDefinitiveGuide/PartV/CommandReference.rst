@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-05-15
+The following reference was automatically generated from code on 2014-11-14
 
 
 Package *TYPO3.FLOW*
@@ -60,6 +60,39 @@ Related commands
   Freeze a package
 ``typo3.flow:package:refreeze``
   Refreeze a package
+
+
+
+``typo3.flow:cache:flushone``
+*****************************
+
+**Flushes a particular cache by its identifier**
+
+Given a cache identifier, this flushes just that one cache. To find
+the cache identifiers, you can use the configuration:show command with
+the type set to "Caches".
+
+Note that this does not have a force-flush option since it's not
+meant to remove temporary code data, resulting into a broken state if
+code files lack.
+
+Arguments
+^^^^^^^^^
+
+``--identifier``
+  Cache identifier to flush cache for
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:cache:flush``
+  Flush all caches
+``typo3.flow:configuration:show``
+  Show the active configuration settings
 
 
 
@@ -631,6 +664,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--package-type``
+  The package type of the package to create
+
 
 
 Related commands
@@ -871,6 +910,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--method``
+  The request method (GET, POST, PUT, DELETE, ...) to simulate
+
 
 
 
@@ -878,7 +923,7 @@ Arguments
 ``typo3.flow:routing:show``
 ***************************
 
-**Show informations for a route**
+**Show information for a route**
 
 This command displays the configuration of a route specified by index number.
 
@@ -938,6 +983,71 @@ Related commands
 
 ``typo3.flow:security:importprivatekey``
   Import a private key
+
+
+
+``typo3.flow:security:showeffectivepolicy``
+*******************************************
+
+**Shows the effective policy rules currently active in the system**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--grants-only``
+  Only list methods effectively granted to the given roles
+
+
+
+
+
+``typo3.flow:security:showmethodsforresource``
+**********************************************
+
+**Shows the methods represented by the given security resource**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--resource-name``
+  The name of the resource as stated in the policy
+
+
+
+
+
+
+
+``typo3.flow:security:showunprotectedactions``
+**********************************************
+
+**Lists all public controller actions not covered by the active security policy**
+
+
+
+
+
+
+
+
+
+``typo3.flow:typeconverter:list``
+*********************************
+
+**Lists all currently active and registered type converters**
+
+All active converters are listed with ordered by priority and grouped by
+source type first and target type second.
+
+
+
+
 
 
 
