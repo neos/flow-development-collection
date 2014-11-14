@@ -2,7 +2,7 @@ Upgrading instructions
 ======================
 
 This file contains instructions for upgrading your Flow 2.2 based
-applications to TYPO3 Flow x.y.
+applications to TYPO3 Flow 2.3.
 
 What has changed
 ----------------
