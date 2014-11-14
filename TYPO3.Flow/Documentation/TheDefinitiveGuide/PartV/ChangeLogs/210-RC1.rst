@@ -1,0 +1,86 @@
+====================
+2.1.0-RC1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix create-branch dependency handling
+-----------------------------------------------------------------------------------------
+
+* Commit: `2c1a07c <https://git.typo3.org/Flow/Distributions/Base.git/commit/2c1a07c8573fceab82bc926340a3a41c2608a0b1>`_
+
+[TASK] Some tweaks to the release scripts
+-----------------------------------------------------------------------------------------
+
+* Commit: `1e7dac4 <https://git.typo3.org/Flow/Distributions/Base.git/commit/1e7dac4a5ebd97007337a79db95f7952dabeed8c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[!!!][FEATURE] Use JavaScript semantics of || and && operators
+-----------------------------------------------------------------------------------------
+
+This change updates the handling of the boolean short circuit operators
+for disjunction and conjunction to the JavaScript semantics of returning
+one of the left or right side values instead of a boolean.
+
+This is only breaking if the code using Eel relied on the exact type
+e.g. by using a strict comparison.
+
+* Commit: `573c100 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/573c1008e339e3d01617f8d9002698acf343d203>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/6/
+
+* Commit: `42b85ca <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/42b85cacfddb51a4688eabcfd9ce13b1dda077ae>`_
+
+[TASK] Add dependencies to newly created composer manifests
+-----------------------------------------------------------------------------------------
+
+Newly created composer manifests had a single dependency to
+Flow before this change. Now the dependencies from package
+meta data are added to the manifest.
+
+* Commit: `a19225d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a19225d6ecce263d86057ffc372610c9ef5d6658>`_
+
+[TASK] Update contributors list in guide
+-----------------------------------------------------------------------------------------
+
+* Commit: `ada13c7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ada13c7047718aad1ff417e2812589f4dad183d1>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix “flush() on a non-object” in TemplateCompiler
+-----------------------------------------------------------------------------------------
+
+* Commit: `5f57d1b <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5f57d1b8327f310cdb497ddc05feeeb96455b09e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
