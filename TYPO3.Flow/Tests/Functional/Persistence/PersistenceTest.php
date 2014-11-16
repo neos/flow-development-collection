@@ -333,6 +333,22 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @expectedException \TYPO3\Flow\Persistence\Exception
+	 * @test
+	 */
+	public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+
+		/** @var TestEntity $testEntity */
+		$testEntity = $this->testEntityRepository->findAll()->getFirst();
+		$testEntity->setName('Another name');
+		$this->testEntityRepository->update($testEntity);
+		$this->persistenceManager->persistAll(TRUE);
+	}
+
+	/**
 	 * @test
 	 */
 	public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet() {
@@ -343,6 +359,21 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->whitelistObject($testEntity);
 		$this->persistenceManager->persistAll(TRUE);
 		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasUnpersistedChangesReturnsTrueAfterObjectUpdate() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+
+		/** @var TestEntity $testEntity */
+		$testEntity = $this->testEntityRepository->findAll()->getFirst();
+		$testEntity->setName('Another name');
+		$this->testEntityRepository->update($testEntity);
+		$this->assertTrue($this->persistenceManager->hasUnpersistedChanges());
 	}
 
 	/**
