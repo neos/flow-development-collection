@@ -132,6 +132,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		if ($onlyWhitelistedObjects) {
 			$unitOfWork = $this->entityManager->getUnitOfWork();
 			/** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
+			$unitOfWork->computeChangeSets();
 			$objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
 			foreach ($objectsToBePersisted as $object) {
 				$this->throwExceptionIfObjectIsNotWhitelisted($object);
@@ -360,6 +361,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 */
 	public function hasUnpersistedChanges() {
 		$unitOfWork = $this->entityManager->getUnitOfWork();
+		$unitOfWork->computeChangeSets();
 
 		if ($unitOfWork->getScheduledEntityInsertions() !== array()
 			|| $unitOfWork->getScheduledEntityUpdates() !== array()
