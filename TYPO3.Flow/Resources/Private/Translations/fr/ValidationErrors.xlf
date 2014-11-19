@@ -9,22 +9,22 @@
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="fr">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="fr">La valeur devrait être {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="fr">Le sujet n'est pas une collection</target></trans-unit>
+			<target xml:lang="fr">Le sujet n'est pas une collection</target><alt-trans><target xml:lang="fr">La valeur n'est pas une collection</target></alt-trans></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="fr">Le sujet n'est pas dénombrable</target></trans-unit>
+			<target xml:lang="fr">Le sujet n'est pas dénombrable</target><alt-trans><target xml:lang="fr">La valeur n'est pas dénombrable</target></alt-trans></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
 			<target xml:lang="fr">Ce nombre doit être compris entre {0, number} et {1, number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="fr">Ce n'est pas une date valide</target></trans-unit>
+			<target xml:lang="fr">Ce n'est pas une date valide</target><alt-trans><target xml:lang="fr">La valeur n'est pas une date valide</target></alt-trans></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
 			<target xml:lang="fr">La date doit être comprise entre {0} et {1}</target></trans-unit>
@@ -40,13 +40,13 @@
 			<target xml:lang="fr">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="fr">Un heure valide est attendue</target></trans-unit>
+			<target xml:lang="fr">Un heure valide est attendue</target><alt-trans><target xml:lang="fr">Une heure valide est requise</target></alt-trans></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="fr">Une date et heure valide est attendue</target></trans-unit>
+			<target xml:lang="fr">Une date et heure valide est attendue</target><alt-trans><target xml:lang="fr">Une date et heure valide est requise</target></alt-trans></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="fr">Une date valide est attendue</target></trans-unit>
+			<target xml:lang="fr">Une date valide est attendue</target><alt-trans><target xml:lang="fr">Une date valide est requise</target></alt-trans></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
@@ -61,7 +61,7 @@
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="fr">Objet attendu, {0} fourni</target></trans-unit>
+			<target xml:lang="fr">Objet attendu, {0} fourni</target><alt-trans><target xml:lang="fr">Un objet est attendu, {0} fourni</target></alt-trans></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
