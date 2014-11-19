@@ -21,7 +21,7 @@ use TYPO3\Flow\Resource\ResourceManager;
  * NOTE: Although this class never belonged to the public API, the method
  *       getPersistentResourceWebUri() has been used in various packages.
  *       In order to keep backwards compatibility, we decided to leave this class
- *       containing the two methods in 2.x.x versions of Flow and mark them as deprecated.
+ *       containing the two methods in 3.0.x versions of Flow and mark them as deprecated.
  *
  *       Please make sure to use the new ResourceManager API instead!
  *
