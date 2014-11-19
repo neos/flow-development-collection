@@ -77,7 +77,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$pathHash = substr(md5(FLOW_PATH_ROOT . $this->context .  $cache->getIdentifier()), 0, 12);
+		$pathHash = substr(md5(FLOW_PATH_ROOT . $this->context . $cache->getIdentifier()), 0, 12);
 		$this->identifierPrefix = 'Flow_' . $pathHash . '_';
 	}
 

@@ -158,7 +158,9 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	 */
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
-		$this->identifierPrefix = 'Flow_' . md5($cache->getIdentifier() . \TYPO3\Flow\Utility\Files::getUnixStylePath($_SERVER['SCRIPT_FILENAME']) . PHP_SAPI) . '_';
+
+		$pathHash = substr(md5(FLOW_PATH_ROOT . $this->context . $cache->getIdentifier()), 0, 12);
+		$this->identifierPrefix = 'Flow_' . $pathHash . '_';
 	}
 
 	/**
