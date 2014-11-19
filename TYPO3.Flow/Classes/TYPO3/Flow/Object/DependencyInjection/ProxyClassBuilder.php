@@ -199,7 +199,10 @@ class ProxyClassBuilder {
 
 	/**
 	 * Renders code to set related entities in an object from identifier/type information.
-	 * Used in wakeup methods.
+	 * Used in __wakeup() methods.
+	 *
+	 * Note: This method adds code which ignores objects of type TYPO3\Flow\Resource\ResourcePointer in order to provide
+	 *       backwards compatibility data generated with Flow 2.2.x which still provided that class.
 	 *
 	 * @return string
 	 */
@@ -208,6 +211,7 @@ class ProxyClassBuilder {
 	if (property_exists(\$this, 'Flow_Persistence_RelatedEntities') && is_array(\$this->Flow_Persistence_RelatedEntities)) {
 		\$persistenceManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface');
 		foreach (\$this->Flow_Persistence_RelatedEntities as \$entityInformation) {
+			if(\$entityInformation['entityType'] === 'TYPO3\Flow\Resource\ResourcePointer') continue;
 			\$entity = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
 			if (isset(\$entityInformation['entityPath'])) {
 				\$this->\$entityInformation['propertyName'] = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->\$entityInformation['propertyName'], \$entityInformation['entityPath'], \$entity);

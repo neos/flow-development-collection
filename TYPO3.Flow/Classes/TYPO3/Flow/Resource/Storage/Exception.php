@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Resource\Publishing;
+namespace TYPO3\Flow\Resource\Storage;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,15 +11,10 @@ namespace TYPO3\Flow\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * Abstract class extended by special publishing configuration objects for persistent resources
+ * Generic Storage Exception
  *
- * @Flow\Entity
- * @ORM\InheritanceType("JOINED")
+ * @api
  */
-abstract class AbstractPublishingConfiguration implements PublishingConfigurationInterface {
-
+class Exception extends \TYPO3\Flow\Resource\Exception {
 }

@@ -12,11 +12,14 @@ namespace TYPO3\Flow\Tests;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A base test case for functional tests
@@ -37,7 +40,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @var Bootstrap
 	 * @api
 	 */
 	protected static $bootstrap;
@@ -128,6 +131,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->objectManager = self::$bootstrap->getObjectManager();
+
+		$this->cleanupPersistentResourcesDirectory();
 
 		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
 		if ($session->isStarted()) {
@@ -240,6 +245,12 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		}
 
 		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Http\Client\InternalRequestEngine');
+		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect');
+		$this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceRepository'), 'addedResources', new \SplObjectStorage());
+		$this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceRepository'), 'removedResources', new \SplObjectStorage());
+		$this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceTypeConverter'), 'convertedResources', array());
+
+		$this->cleanupPersistentResourcesDirectory();
 		$this->emitFunctionalTestTearDown();
 	}
 
@@ -423,6 +434,23 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$requestHandler->setHttpRequest(Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
 		$requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
+	}
+
+	/**
+	 * Cleans up the directory for storing persistent resources during testing
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function cleanupPersistentResourcesDirectory() {
+		$settings = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+		$resourcesStoragePath = $settings['TYPO3']['Flow']['resource']['storages']['defaultPersistentResourcesStorage']['storageOptions']['path'];
+		if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === FALSE) {
+			throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, FLOW_PATH_DATA), 1382018388);
+		}
+		if (file_exists($resourcesStoragePath)) {
+			Files::removeDirectoryRecursively($resourcesStoragePath);
+		}
 	}
 
 	/**

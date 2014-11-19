@@ -10,18 +10,19 @@ namespace TYPO3\Flow\Tests\Unit\Resource;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Resource class
- *
+ * Test case for the Resource class
  */
-class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ResourceTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function setFilenameStoresTheFileExtensionInLowerCase() {
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename('Something.Jpeg');
 		$this->assertSame('jpeg', $resource->getFileExtension());
 		$this->assertSame('Something.jpeg', $resource->getFilename());
@@ -30,8 +31,24 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setFilenameSetsTheMediaType() {
+		$resource = new Resource();
+
+		$resource->setFilename('Something.jpg');
+		$this->assertSame('image/jpeg', $resource->getMediaType());
+
+		$resource->setFilename('Something.png');
+		$this->assertSame('image/png', $resource->getMediaType());
+
+		$resource->setFilename('Something.Jpeg');
+		$this->assertSame('image/jpeg', $resource->getMediaType());
+	}
+
+	/**
+	 * @test
+	 */
 	public function setFilenameDoesNotAppendFileExtensionIfItIsEmpty() {
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename('FileWithoutExtension');
 		$this->assertSame('', $resource->getFileExtension());
 		$this->assertSame('FileWithoutExtension', $resource->getFilename());
@@ -41,38 +58,17 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getMediaTypeReturnsMediaTypeBasedOnFileExtension() {
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename('file.jpg');
 		$this->assertSame('image/jpeg', $resource->getMediaType());
 
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename('file.zip');
 		$this->assertSame('application/zip', $resource->getMediaType());
 
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename('file.someunknownextension');
 		$this->assertSame('application/octet-stream', $resource->getMediaType());
 	}
 
-	/**
-	 * @test
-	 */
-	public function getUriReturnsResourceWrapperUri() {
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('fakeSha1'));
-		$resource = new \TYPO3\Flow\Resource\Resource();
-		$resource->setResourcePointer($mockResourcePointer);
-		$this->assertEquals('resource://fakeSha1', $resource->getUri());
-	}
-
-	/**
-	 * @test
-	 */
-	public function toStringReturnsResourcePointerStringRepresentation() {
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('fakeSha1'));
-		$resource = new \TYPO3\Flow\Resource\Resource();
-		$resource->setResourcePointer($mockResourcePointer);
-		$this->assertEquals('fakeSha1', (string) $resource);
-	}
 }

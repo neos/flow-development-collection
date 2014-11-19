@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
- * Testcase for the ResourceTypeConverter class
- *
+ * Test case for the ResourceTypeConverter class
  */
-class ResourceTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ResourceTypeConverterTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Flow\Resource\ResourceTypeConverter
@@ -88,29 +90,42 @@ class ResourceTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'error' => \UPLOAD_ERR_NO_FILE,
 			'submittedFile' => array(
 				'filename' => 'SomeFilename',
-				'resourcePointer' => 'someResourcePointer',
+			),
+			'originallySubmittedResource' => array(
+				'__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
 			)
 		);
-		$mockResourcePointer = $this->getMockBuilder('TYPO3\Flow\Resource\ResourcePointer')->disableOriginalConstructor()->getMock();
-		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('someResourcePointer', 'TYPO3\Flow\Resource\ResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$resource = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
-		$this->assertInstanceOf('TYPO3\Flow\Resource\Resource', $resource);
-		$this->assertSame($mockResourcePointer, $resource->getResourcePointer());
+
+		$expectedResource = new Resource();
+		$this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', 'TYPO3\Flow\Resource\Resource')->will($this->returnValue($expectedResource));
+
+		$actualResource = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+
+		$this->assertInstanceOf('TYPO3\Flow\Resource\Resource', $actualResource);
+		$this->assertSame($expectedResource, $actualResource);
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertFromReturnsNullIfSpecifiedResourcePointerCantBeFound() {
+	public function convertFromReturnsNullIfSpecifiedResourceCantBeFound() {
 		$source = array(
 			'error' => \UPLOAD_ERR_NO_FILE,
 			'submittedFile' => array(
-				'filename' => 'SomeFilename',
-				'resourcePointer' => 'someNonExistingResourcePointer',
+					'filename' => 'SomeFilename',
+			),
+			'originallySubmittedResource' => array(
+					'__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
 			)
 		);
-		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('someNonExistingResourcePointer', 'TYPO3\Flow\Resource\ResourcePointer')->will($this->returnValue(NULL));
-		$this->assertNull($this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource'));
+
+		$this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', 'TYPO3\Flow\Resource\Resource')->will($this->returnValue(NULL));
+
+		$actualResource = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+
+		$this->assertNull($actualResource);
 	}
 
 	/**

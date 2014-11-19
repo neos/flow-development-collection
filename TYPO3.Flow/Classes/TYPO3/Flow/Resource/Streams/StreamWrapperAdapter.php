@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Resource\Streams;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
  * \TYPO3\Flow\Resource\Streams\StreamWrapperInterface.
@@ -21,8 +20,6 @@ namespace TYPO3\Flow\Resource\Streams;
  *
  * Instances of this class are created by PHP itself and therefore are unknown
  * to Flow's object registry.
- *
- *
  */
 class StreamWrapperAdapter {
 

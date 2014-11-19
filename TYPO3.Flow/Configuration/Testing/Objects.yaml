@@ -22,9 +22,6 @@ TYPO3\Flow\Http\Client\Browser:
 TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
   className: TYPO3\Flow\Security\Authorization\TestingPrivilegeManager
 
-TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
-  className: TYPO3\Flow\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
-
 #
 # Configuration of fixture classes:
 #

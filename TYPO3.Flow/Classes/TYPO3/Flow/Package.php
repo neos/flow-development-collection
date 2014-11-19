@@ -12,10 +12,10 @@ namespace TYPO3\Flow;
  *                                                                        */
 
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Resource\ResourceManager;
 
 /**
  * The TYPO3 Flow Package
- *
  */
 class Package extends BasePackage {
 
@@ -51,8 +51,43 @@ class Package extends BasePackage {
 			}
 		});
 		$dispatcher->connect('TYPO3\Flow\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\Flow\Persistence\PersistenceManagerInterface', 'persistAll');
+
+		$context = $bootstrap->getContext();
+		if (!$context->isProduction()) {
+			$dispatcher->connect('TYPO3\Flow\Core\Booting\Sequence', 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+				if ($step->getIdentifier() === 'typo3.flow:resources') {
+					$publicResourcesFileMonitor = \TYPO3\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
+					$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+					foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+						if ($packageManager->isPackageFrozen($packageKey)) {
+							continue;
+						}
+
+						$publicResourcesPath = $package->getResourcesPath() . 'Public/';
+						if (is_dir($publicResourcesPath)) {
+							$publicResourcesFileMonitor->monitorDirectory($publicResourcesPath);
+						}
+					}
+					$publicResourcesFileMonitor->detectChanges();
+					$publicResourcesFileMonitor->shutdownObject();
+				}
+			});
+		}
+
+		$publishResources = function($identifier, $changedFiles) use ($bootstrap) {
+			if ($identifier !== 'Flow_PublicResourcesFiles') {
+				return;
+			}
+			$objectManager = $bootstrap->getObjectManager();
+			$resourceManager = $objectManager->get('TYPO3\Flow\Resource\ResourceManager');
+			$resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
+		};
+
+		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', $publishResources);
+
 		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Configuration\ConfigurationManager', 'shutdown');
 		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Object\ObjectManagerInterface', 'shutdown');
+
 		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Reflection\ReflectionService', 'saveToCache');
 
 		$dispatcher->connect('TYPO3\Flow\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter', 'savePolicyCache');

@@ -13,14 +13,16 @@ namespace TYPO3\Flow\Resource;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Property\Exception;
+use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Utility\Files;
 
 /**
- * An type converter for converting strings, array and uploaded files to Resource objects.
+ * A type converter for converting strings, array and uploaded files to Resource objects.
  *
- * Has two big working modes:
+ * Has two major working modes:
  *
  * 1. File Uploads by PHP
  *
@@ -28,7 +30,7 @@ use TYPO3\Flow\Utility\Files;
  *    temporary upload file is then imported through the resource manager.
  *
  *    To enable the handling of files that have already been uploaded earlier, the special fields ['submittedFile'],
- *    ['submittedFile']['filename'] and ['submittedFile']['resourcePointer'] are checked. If set, they are used to
+ *    ['submittedFile']['filename'] and ['submittedFile']['hash'] are checked. If set, they are used to
  *    fetch a file that has already been uploaded even if no file has been actually uploaded in the current request.
  *
  *
@@ -44,14 +46,13 @@ use TYPO3\Flow\Utility\Files;
  *    - is a string looking like a SHA1 (40 characters [0-9a-f]) or
  *    - is an array and contains the key 'hash' with a value looking like a SHA1 (40 characters [0-9a-f])
  *
- *    the converter will look up an existing Resource(Pointer) with that hash and return it if found. If that fails,
+ *    the converter will look up an existing Resource with that hash and return it if found. If that fails,
  *    the converter will try to import a file named like that hash from the configured CONFIGURATION_RESOURCE_LOAD_PATH.
  *
  *    If no hash is given in an array source but the key 'data' is set, the content of that key is assumed a binary string
  *    and a Resource representing this content is created and returned.
  *
  *    The imported Resource will be given a 'filename' if set in the source array in both cases (import from file or data).
-
  *
  * @Flow\Scope("singleton")
  */
@@ -90,6 +91,12 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceRepository
+	 */
+	protected $resourceRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -108,9 +115,12 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	/**
 	 * Converts the given string or array to a Resource object.
 	 *
-	 * This method expects an array input and assumes the resource to be a
+	 * If the input format is an array, this method assumes the resource to be a
 	 * fresh file upload and imports the temporary upload file through the
-	 * resource manager.
+	 * ResourceManager.
+	 *
+	 * Note that $source['error'] will also be present if a file was successfully
+	 * uploaded. In that case its value will be \UPLOAD_ERR_OK.
 	 *
 	 * @param array $source The upload info (expected keys: error, name, tmp_name)
 	 * @param string $targetType
@@ -137,14 +147,8 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	 */
 	protected function handleFileUploads(array $source) {
 		if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
-			if (isset($source['submittedFile']) && isset($source['submittedFile']['filename']) && isset($source['submittedFile']['resourcePointer'])) {
-				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\Flow\Resource\ResourcePointer');
-				if ($resourcePointer) {
-					$resource = new Resource();
-					$resource->setFilename($source['submittedFile']['filename']);
-					$resource->setResourcePointer($resourcePointer);
-					return $resource;
-				}
+			if (isset($source['originallySubmittedResource']) && isset($source['originallySubmittedResource']['__identity'])) {
+				return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], 'TYPO3\Flow\Resource\Resource');
 			}
 			return NULL;
 		}
@@ -165,9 +169,10 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 			return $this->convertedResources[$source['tmp_name']];
 		}
 
-		$resource = $this->resourceManager->importUploadedResource($source);
+		$collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
+		$resource = $this->resourceManager->importUploadedResource($source, $collectionName);
 		if ($resource === FALSE) {
-			return new Error('The resource manager could not create a Resource instance.', 1264517906);
+			return new Error('The Resource Manager could not create a Resource instance for an uploaded file. See log for more details.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;
@@ -178,22 +183,23 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	 * @param array $source
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return Resource|Error
+	 * @throws Exception
+	 * @throws InvalidPropertyMappingConfigurationException
 	 */
 	protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$hash = NULL;
 		$resource = FALSE;
 		$givenResourceIdentity = NULL;
-
 		if (isset($source['__identity'])) {
 			$givenResourceIdentity = $source['__identity'];
 			unset($source['__identity']);
-			$resource = $this->persistenceManager->getObjectByIdentifier($givenResourceIdentity, 'TYPO3\Flow\Resource\Resource');
-			if ($resource instanceof \TYPO3\Flow\Resource\Resource) {
+			$resource = $this->resourceRepository->findByIdentifier($givenResourceIdentity);
+			if ($resource instanceof Resource) {
 				return $resource;
 			}
 
 			if ($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== TRUE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
+				throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
 			}
 		}
 
@@ -201,46 +207,26 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 			$hash = $source['hash'];
 		}
 
-		if ($hash !== NULL) {
-			$resourcePointer = $this->persistenceManager->getObjectByIdentifier($hash, 'TYPO3\Flow\Resource\ResourcePointer');
-			if ($resourcePointer) {
-				$resource = new Resource();
-				$resource->setFilename($source['filename']);
-				$resource->setResourcePointer($resourcePointer);
-			}
+		if ($hash !== NULL && count($source) === 1) {
+			$resource = $this->resourceManager->getResourceBySha1($hash);
 		}
 
 		if ($resource === NULL) {
 			if (isset($source['data'])) {
-				$resource = $this->resourceManager->createResourceFromContent($source['data'], $source['filename']);
+				$resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $givenResourceIdentity);
 			} elseif ($hash !== NULL) {
-				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
+				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $givenResourceIdentity);
 				if (is_array($source) && isset($source['filename'])) {
 					$resource->setFilename($source['filename']);
 				}
 			}
 		}
 
-		if ($resource instanceof \TYPO3\Flow\Resource\Resource) {
-			if ($givenResourceIdentity !== NULL) {
-				$this->setIdentity($resource, $givenResourceIdentity);
-			}
+		if ($resource instanceof Resource) {
 			return $resource;
 		} else {
 			return new Error('The resource manager could not create a Resource instance.', 1404312901);
 		}
-	}
-
-	/**
-	 * Set the given $identity on the created $object.
-	 *
-	 * @param object $object
-	 * @param string|array $identity
-	 * @return void
-	 * @todo set identity properly if it is composite or custom property
-	 */
-	protected function setIdentity($object, $identity) {
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, 'Persistence_Object_Identifier', $identity, TRUE);
 	}
 
 }
