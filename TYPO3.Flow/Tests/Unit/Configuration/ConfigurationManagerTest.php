@@ -720,7 +720,7 @@ EOD;
 			'baz' => '%TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY%',
 			'inspiring' => array(
 				'people' => array(
-					'to' => '%TYPO3\Flow\Core\Bootstrap::MAXIMUM_PHP_VERSION%',
+					'to' => '%TYPO3\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION%',
 					'share' => '%TYPO3\Flow\Package\PackageInterface::DIRECTORY_CLASSES%'
 				)
 			)
@@ -730,7 +730,7 @@ EOD;
 		$configurationManager->_callRef('postProcessConfiguration', $settings);
 
 		$this->assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
-		$this->assertSame(\TYPO3\Flow\Core\Bootstrap::MAXIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
+		$this->assertSame(\TYPO3\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
 		$this->assertSame(\TYPO3\Flow\Package\PackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
 	}
 

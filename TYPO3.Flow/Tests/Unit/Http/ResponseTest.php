@@ -37,7 +37,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'),
 				array(
 					'Server' => 'Apache/2.2.17 (Ubuntu)',
-					'X-Powered-By' => 'PHP/5.3.5-1ubuntu7.2',
+					'X-Powered-By' => 'PHP/5.5.1-1ubuntu7.2',
 					'X-Flow-Powered' => 'Flow/1.2',
 					'Cache-Control' => 'public, s-maxage=600',
 					'Vary' => 'Accept-Encoding',

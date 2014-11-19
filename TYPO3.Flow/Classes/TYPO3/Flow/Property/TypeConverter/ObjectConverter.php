@@ -181,13 +181,8 @@ class ObjectConverter extends AbstractTypeConverter {
 				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
 			}
 
-			// FIXME: The following check and the checkInheritanceChainWithoutIsA() method should be removed if we raise the PHP requirement to 5.3.9 or higher
-			if (version_compare(phpversion(), '5.3.8', '>')) {
-				if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, TRUE) === FALSE) {
-					throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
-				}
-			} else {
-				$targetType = $this->checkInheritanceChainWithoutIsA($targetType, $originalTargetType);
+			if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, TRUE) === FALSE) {
+				throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
 			}
 		}
 
@@ -226,26 +221,6 @@ class ObjectConverter extends AbstractTypeConverter {
 		} else {
 			return new $className();
 		}
-	}
-
-	/**
-	 * This is a replacement for the functionality provided by is_a() with 3 parameters which is only available from
-	 * PHP 5.3.9. It can be removed if the TYPO3.Flow PHP version requirement is raised to 5.3.9 or above.
-	 *
-	 * @param string $targetType
-	 * @param string $originalTargetType
-	 * @return string
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
-	 */
-	protected function checkInheritanceChainWithoutIsA($targetType, $originalTargetType) {
-		$targetTypeToCompare = $targetType;
-		do {
-			if ($targetTypeToCompare === $originalTargetType) {
-				return $targetType;
-			}
-		} while ($targetTypeToCompare = get_parent_class($targetTypeToCompare));
-
-		throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1360928582);
 	}
 
 }

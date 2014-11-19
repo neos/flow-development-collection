@@ -43,7 +43,7 @@ class RequestTest extends UnitTestCase {
 			'HTTP_CONNECTION' => 'keep-alive',
 			'PATH' => '/usr/bin:/bin:/usr/sbin:/sbin',
 			'SERVER_SIGNATURE' => '',
-			'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/5.3.8',
+			'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/5.5.1',
 			'SERVER_NAME' => 'dev.blog.rob',
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => '80',

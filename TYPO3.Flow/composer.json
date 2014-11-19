@@ -11,7 +11,8 @@
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
-        "ext-session": "*",
+        "ext-mbstring": "*",
+        "ext-reflection": "*",
 
         "typo3/fluid": "*",
         "typo3/party": "*",

@@ -38,8 +38,7 @@ class Bootstrap {
 	/**
 	 * Required PHP version
 	 */
-	const MINIMUM_PHP_VERSION = '5.3.2';
-	const MAXIMUM_PHP_VERSION = '5.99.9';
+	const MINIMUM_PHP_VERSION = '5.5.0';
 
 	/**
 	 * The application context
@@ -516,12 +515,8 @@ class Bootstrap {
 			echo('Flow requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)' . PHP_EOL);
 			exit(1);
 		}
-		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
-			echo('Flow requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)' . PHP_EOL);
-			exit(1);
-		}
-		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
-			echo('Flow requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)' . PHP_EOL);
+		if (!extension_loaded('mbstring')) {
+			echo('Flow requires the PHP extension "mbstring" (Error #1207148809)' . PHP_EOL);
 			exit(1);
 		}
 		if (DIRECTORY_SEPARATOR !== '/' && PHP_WINDOWS_VERSION_MAJOR < 6) {
@@ -540,18 +535,9 @@ class Bootstrap {
 		}
 
 		set_time_limit(0);
-		ini_set('unicode.output_encoding', 'utf-8');
-		ini_set('unicode.stream_encoding', 'utf-8');
-		ini_set('unicode.runtime_encoding', 'utf-8');
 
 		if (ini_get('date.timezone') === '') {
-			echo('Flow requires the PHP setting "date.timezone" to be set. (Error #1342087777)');
-			exit(1);
-		}
-
-		if (version_compare(PHP_VERSION, '5.4', '<') && get_magic_quotes_gpc() === 1) {
-			echo('Flow requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
-			exit(1);
+			ini_set('date.timezone', 'UTC');
 		}
 
 		if (!is_dir(FLOW_PATH_DATA) && !is_link(FLOW_PATH_DATA)) {
