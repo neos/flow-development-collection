@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Resource\Publishing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 
@@ -32,18 +33,25 @@ class ResourcePublisher {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Resource\ResourceManager
+	 * @var ResourceManager
 	 */
 	protected $resourceManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Returns the URI pointing to the published persistent resource
 	 *
 	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
-	 * @deprecated use ResourceManager->getStaticResourcesWebBaseUri($resource) instead
+	 * @deprecated since Flow 3.0. Use ResourceManager->getPublicPersistentResourceUri($resource) instead
 	 */
 	public function getPersistentResourceWebUri(Resource $resource) {
+		$this->systemLogger->log('The deprecated method ResourcePublisher->getPersistentResourceWebUri() has been called' . $this->getCallee() . '. Please use ResourceManager->getPublicPersistentResourceUri() instead!', LOG_WARNING);
 		return $this->resourceManager->getPublicPersistentResourceUri($resource);
 	}
 
@@ -59,14 +67,36 @@ class ResourcePublisher {
 	 *
 	 * This method will work for the default Flow setup using only the local file system.
 	 *
-	 * Make sure to refactor your client code to use the new resource management API instead.
+	 * Make sure to refactor your client code to use the new resource management API instead. There is no direct
+	 * replacement for this method in the new API, but if you are dealing with static resources, use the resource stream
+	 * wrapper instead (through URLs like "resource://TYPO3.Flow/Public/Error/Debugger.css") or use
+	 * ResourceManager->getPublicPackageResourceUri() if you know the package key and relative path.
+	 *
 	 * Don't use this method. Ne pas utiliser cette méthode. No utilice este método. Finger weg!
 	 * U bent gewaarschuwd! You have been warned! Mēs jūs brīdinām! Mir hams euch fei gsagd! ;-)
 	 *
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
-	 * @deprecated
+	 * @deprecated since Flow 3.0. You cannot retrieve a base path for static resources anymore, please use resource://* instead or call ResourceManager->getPublicPackageResourceUri()
 	 */
 	public function getStaticResourcesWebBaseUri() {
-		return $this->resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->getTarget()->getPublicStaticResourceUri('');
+		$this->systemLogger->log('The deprecated method ResourcePublisher->getStaticResourcesWebBaseUri() has been called' . $this->getCallee() . '. You cannot retrieve a base path for static resources anymore, please use resource://* instead or call ResourceManager->getPublicPackageResourceUri().', LOG_WARNING);
+		return preg_replace('/\/Packages\/$/', '/', $this->resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->getTarget()->getPublicStaticResourceUri(''));
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getCallee() {
+		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		$backtraceStep = $backtrace[2];
+		if (isset($backtraceStep['file']) && strpos($backtraceStep['file'], 'DependencyProxy') !== FALSE) {
+			$backtraceStep = $backtrace[3];
+		}
+
+		if (isset($backtraceStep['file'])) {
+			return sprintf(' in file %s, line %s', $backtraceStep['file'], $backtraceStep['line']);
+		} else {
+			return '';
+		}
 	}
 }
