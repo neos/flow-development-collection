@@ -37,6 +37,7 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	/**
 	 * If set to TRUE access will be granted for objects where all voters abstain from decision.
 	 *
+	 * @Flow\Inject(setting="security.authorization.allowAccessIfAllVotersAbstain")
 	 * @var boolean
 	 */
 	protected $allowAccessIfAllAbstain = FALSE;
@@ -51,14 +52,6 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	}
 
 	/**
-	 * @param array $settings
-	 * @return void
-	 */
-	public function injectSettings(array $settings) {
-		$this->allowAccessIfAllAbstain = $settings['security']['authorization']['allowAccessIfAllVotersAbstain'];
-	}
-
-	/**
 	 * Returns TRUE, if the given privilege type is granted for the given subject based
 	 * on the current security context.
 	 *
@@ -68,12 +61,25 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	 * @return boolean
 	 */
 	public function isGranted($privilegeType, $subject, &$reason = '') {
+		return $this->isGrantedForRoles($this->securityContext->getRoles(), $privilegeType, $subject, $reason);
+	}
+
+	/**
+	 * Returns TRUE, if the given privilege type would be granted for the given roles and subject
+	 *
+	 * @param array<Role> $roles The roles that should be evaluated
+	 * @param string $privilegeType The type of privilege that should be evaluated
+	 * @param mixed $subject The subject to check privileges for
+	 * @param string $reason This variable will be filled by a message giving information about the reasons for the result of this method
+	 * @return boolean
+	 */
+	public function isGrantedForRoles(array $roles, $privilegeType, $subject, &$reason = '') {
 		$effectivePrivilegeIdentifiersWithPermission = array();
 		$accessGrants = 0;
 		$accessDenies = 0;
 		$accessAbstains = 0;
 		/** @var Role $role */
-		foreach ($this->securityContext->getRoles() as $role) {
+		foreach ($roles as $role) {
 			/** @var PrivilegeInterface[] $availablePrivileges */
 			$availablePrivileges = $role->getPrivilegesByType($privilegeType);
 			/** @var PrivilegeInterface[] $effectivePrivileges */
@@ -106,7 +112,7 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 		}
 
 		if (count($effectivePrivilegeIdentifiersWithPermission) === 0) {
-			$reason = 'No privilege of type "' . $privilegeType . '" matched.';
+			$reason = sprintf('No privilege of type "%s" matched.', $privilegeType);
 			return TRUE;
 		} else {
 			$reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)', count($effectivePrivilegeIdentifiersWithPermission), implode(chr(10), $effectivePrivilegeIdentifiersWithPermission), $accessGrants, $accessDenies, $accessAbstains);
@@ -129,10 +135,23 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	 * @return boolean TRUE if access is granted, FALSE otherwise
 	 */
 	public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array()) {
+		return $this->isPrivilegeTargetGrantedForRoles($this->securityContext->getRoles(), $privilegeTargetIdentifier, $privilegeParameters);
+	}
+
+	/**
+	 * Returns TRUE if access is granted on the given privilege target in the current security context
+	 *
+	 * @param array<Role> $roles The roles that should be evaluated
+	 * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
+	 * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
+	 * @return boolean TRUE if access is granted, FALSE otherwise
+	 */
+	public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = array()) {
 		$privilegeFound = FALSE;
 		$accessGrants = 0;
 		$accessDenies = 0;
-		foreach ($this->securityContext->getRoles() as $role) {
+		/** @var Role $role */
+		foreach ($roles as $role) {
 			$privilege = $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
 			if ($privilege === NULL) {
 				continue;

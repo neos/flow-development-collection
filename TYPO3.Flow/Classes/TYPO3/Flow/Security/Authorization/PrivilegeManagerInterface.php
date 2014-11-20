@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Security\Authorization;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
+use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * Contract for a privilege manager
@@ -31,6 +33,17 @@ interface PrivilegeManagerInterface {
 	public function isGranted($privilegeType, $subject, &$reason = '');
 
 	/**
+	 * Returns TRUE, if the given privilege type would be granted for the given roles and subject
+	 *
+	 * @param array<Role> $roles The roles that should be evaluated
+	 * @param string $privilegeType The type of privilege that should be evaluated
+	 * @param mixed $subject The subject to check privileges for
+	 * @param string $reason This variable will be filled by a message giving information about the reasons for the result of this method
+	 * @return boolean
+	 */
+	public function isGrantedForRoles(array $roles, $privilegeType, $subject, &$reason = '');
+
+	/**
 	 * Returns TRUE if access is granted on the given privilege target in the current security context
 	 *
 	 * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
@@ -39,4 +52,13 @@ interface PrivilegeManagerInterface {
 	 */
 	public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array());
 
+	/**
+	 * Returns TRUE if access is granted on the given privilege target in the current security context
+	 *
+	 * @param array<Role> $roles The roles that should be evaluated
+	 * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
+	 * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
+	 * @return boolean TRUE if access is granted, FALSE otherwise
+	 */
+	public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = array());
 }
