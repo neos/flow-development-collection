@@ -2,7 +2,7 @@
 Resource Management
 ===================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Christian Müller <christian.mueller@typo3.org>
 
 
 Traditionally a PHP application deals directly with all kinds of files. Realizing a file
@@ -18,15 +18,96 @@ a wide range of scenarios, starting from simple publication to the local file sy
 fine grained access control and distribution to one or more content delivery networks.
 This all works without any further ado by you, the application developer.
 
-Static Resources
-================
+Storage
+=======
+
+The file contents belonging to a specific ``Resource`` need to be stored in some place, they
+are not stored in the database together with the object. Applications should be able to store this
+content in several places as needed, therefor the concept of a *Storage* exists.
+A *Storage* is configured via ``Settings.yaml``:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        storages:
+          defaultPersistentResourcesStorage:
+            storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+            storageOptions:
+              path: '%FLOW_PATH_DATA%Persistent/Resources/'
+
+The configuration for the ``defaultPersistentResourceStorage`` (naming for further storages is up
+to the developer) uses a specific Storage implementation class that abstracts the operations needed
+for a storage. In this case it is the ``WritableFileSystemStorage`` which stores data in a given ``path``
+on the local file system of the application. Custom implementations allow you to store their resource
+contents in other places as needed. You can configure as many storages as you want to separate
+different types of resources, like your users avatars, generated invoices or any other type of resource
+you have.
+
+Flow comes configured with two storages by default:
+
+* *defaultStaticResourcesStorage* is the storage for static resources from your packages. This storage
+  is readonly and does not operate on ``Resource`` objects. See additional information about package
+  resources below.
+* *defaultPersistentResourcesStorage* is the general storage for ``Resource`` object content. This
+  storage is used as default if nothing else is specified. Custom storages will most likely be similar
+  to this storage so all of the information below applies.
+
+Target
+======
+
+TYPO3 Flow is a web application framework and as such some (or most) of the resources in the system need
+to be made accessible online. The resource storages are not meant to be accessible so a ``Target`` is a
+configured way of telling how resources are to be published to the web. The default target for our
+persistent storage above is configured like this:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        targets:
+          localWebDirectoryPersistentResourcesTarget:
+            target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+            targetOptions:
+              path: '%FLOW_PATH_WEB%_Resources/Persistent/'
+              baseUri: '_Resources/Persistent/'
+
+This configures the ``Target`` named ``localWebDirectoryPersistentResourcesTarget``. Resources using this
+target will be published into the the given ``path`` which is inside the public web folder of Flow.
+The class ``TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget`` is the implementation responsible for
+publishing the resources and providing public URIs to it. From the name you can guess that it creates
+symlinks to the resources stored on the local filesystem to save space. Other ``Target`` implementations
+could publish the resources to CDNs or other external locations that are publicly accessible.
+
+Collections
+===========
+
+TYPO3 Flow bundles your ``Resource`` objects into collections to allow separation of different types of
+resources. A ``Collection`` is the binding between a ``Storage`` and a ``Target`` and each ``Resource``
+belongs to exactly one ``Collection`` and by that is stored in the matching storage and published to the
+matching target. You can configure as many collections as you need for specific parts of your application.
+Flow comes preconfigured with two default collections:
+
+* *static* which is the collection using the ``defaultStaticResourcesStorage`` and
+  ``localWebDirectoryStaticResourcesTarget`` to work with (static) package resources. This Collection
+  is meant read-only, which is reflected by the storage used. In this Collection all resources from all
+  packages ``Resources/Public/`` folders reside.
+* *persistent* which is the collection using the ``Storage`` and ``Target`` described in the respective
+  section above to store any ``Resource`` object contents by default. Any new ``Resource`` you create will
+  end up in this storage if not set differently.
+
+
+Package Resources
+=================
 
 TYPO3 Flow packages may provide any amount of static resources. They might be images,
 stylesheets, javascripts, templates or any other file which is used within the application
 or published to the web. Static resources may either be public or private:
 
-* *public resources* are automatically mirrored to the public web directory and are publicly
-  accessible without any restrictions (provided you know the filename)
+* *public resources* are represented by the ``static`` ``Collection`` described above and published to
+  a web accessible path.
 * *private resources* are not published by default. They can either be used internally (for
   example as templates) or published with certain access restrictions.
 
@@ -35,6 +116,8 @@ directory. For a package *Acme.Demo* the public resources reside in a folder cal
 *Acme.Demo/Resources/Public/* while the private resources are stored in
 *Acme.Demo/Resources/Private/*. The directory structure below *Public* and *Private* is up
 to you but there are some suggestions in the :doc:`chapter about package management <PackageManagement>`.
+Both private and public package resources are not represented by ``Resource`` objects in the database.
+
 
 Persistent Resources
 ====================
@@ -44,17 +127,14 @@ resource*. Although these resources are usually stored as files, they are never 
 to by their path and filename directly but are represented by ``Resource`` objects.
 
 .. note::
-
 	It is important to completely ignore the fact that resources are stored as files
-	somewhere in TYPO3 Flow's directory structure – you should only deal with resource objects.
+	somewhere – you should only deal with resource objects, this allows your application to scale by
+    using remote resource storages.
 
 New persistent resources can be created by either importing or uploading a file. In either
-case the result is a new ``Resource`` object which can be attached to any other object. A
-resource exists as long as the ``Resource`` object is connected to another entity or value
-object which is persisted. If a resource is not attached to any other persisted object,
-its data will be permanently removed by a cleanup task.
-
-.. note:: Garbage collection of unused files is not yet implemented.
+case the result is a new ``Resource`` object which can be attached to any other object. As soon as the
+``Resource`` object is removed (can happen by cascade operations of related domain objects if you want)
+the file data is removed too if it is no longer needed by another ``Resource`` object.
 
 Importing Resources
 -------------------
@@ -100,18 +180,25 @@ This is what happens in detail while executing the ``importImageAction`` method:
 
 #. The URI (in our case an absolute path and filename) is passed to the ``importResource()``
    method which analyzes the file found at that location.
-#. The file is imported into TYPO3 Flow's persistent resources storage  using the sha1 hash over
+#. The file is imported into TYPO3 Flow's persistent resources storage using the sha1 hash over
    the file content as its filename. If a file with exactly the same content is imported
-   it will reuse the already stored resource.
+   it will reuse the already stored file data.
 #. The Resource Manager returns a new ``Resource`` object which refers to the newly
    imported file.
 #. A new ``Image`` object is created and the resource is attached to it.
-#. The image is added to the ``ImageRepository``. Only from now on the new image and the
-   related resource will be persisted. If we omitted that step, the image, the resource
-   and in the end the imported file would be discarded at the end of the script run.
+#. The image is added to the ``ImageRepository`` to persist it.
 
 In order to delete a resource just disconnect the resource object from the persisted
-object, for example by unsetting ``originalResource`` in the ``Image`` object.
+object, for example by unsetting ``originalResource`` in the ``Image`` object and call the
+``deleteResource()`` method in the ResourceManager.
+
+The ``importResource()`` method also accepts stream resources instead of file URIs to fetch the
+content from and you can give the name of the resource ``Collection`` as second argument to define
+where to store your new resource.
+
+If you already have the new resource`s content available as a string you can use
+``importResourceFromContent()`` to create a resource object from that.
+
 
 Resource Uploads
 ----------------
@@ -198,36 +285,76 @@ above code will work just as expected::
 	   }
 	}
 
+All resources are imported into the default *persistent* ``Collection`` if nothing else was configured.
+You can either set an alternative collection name in the template.
+
+.. code-block:: xml
+
+	<f:form method="post" action="create" object="{newImage}" objectName="newImage"
+		enctype="multipart/form-data">
+		<f:form.textfield property="title" value="My image title" />
+		<f:form.upload property="originalResource" collection="images" />
+		<f:form.submit value="Submit new image"/>
+	</f:form>
+
+Or you can define it in your property mapping configuration like this::
+
+	$propertyMappingConfiguration
+		->forProperty('originalResource')
+		->setTypeConverterOption(
+			'TYPO3\Flow\Resource\ResourceTypeConverter',
+			\TYPO3\Flow\Resource\ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
+			'images'
+		);
+
+Both variants would import the uploaded resource into a collection named *images*.
+All import methods in the ``ResourceManager`` described above allow setting the collection as well.
+
 .. tip::
+	If you want to see the internals of file uploads you can check the ``ResourceTypeConverter`` code.
 
-	There are more API functions in TYPO3 Flow's ``ResourceManager`` which allow for retrieving
-	additional information about the circumstances of resource uploads. Please refer to
-	the API documentation for further details.
 
-Resource Publishing
+Accessing Resources
 ===================
 
-The process of *resource publishing* makes the resources in the system available,
-and to provide an URL by which the given resource can be retrieved by the client.
+There are multiple ways of accessing your resource`s data depending on what you want to do.
+Either you need a web accessible URI to a resource to display or link to it or you need the raw data
+to process it further (like image manipulation for example).
 
-.. admonition:: Why TYPO3 Flow requires your OS to support symbolic links
+To provide URIs your resources have to be published. For newly created ``Resource`` objects this happens
+automatically. Package resources have to be published at least once by running the ``resource:publish``
+command:
 
-  Publishing resources basically means copying files from a private location to the public
-  web directory. TYPO3 Flow instead creates symbolic links, making the resource publishing
-  process consume less disk space and work faster.
+.. code-block:: none
 
-Static Resources
-----------------
+	path$ ./flow resource:publish
 
-Static resources (provided by packages) are published to the web directory on the first
-script run and whenever packages are activated or deactivated.
+This will publish all collections, you can also just publish the *static* ``Collection`` by using the
+``--collection`` argument.
 
-.. note:: Internally, we do not copy all the resource files but just generate a symlink
-	by default. This makes sure all changes you do in the *Resources/Public/* folder
-	of your package are automatically visible.
 
-Published static resources can be used in Fluid templates via the built-in resource view
-helper:
+.. admonition:: Why TYPO3 Flow uses symbolic links by default
+
+  Publishing resources basically means copying files from the ``Storage`` location to the ``Target``.
+  In the default configuration TYPO3 Flow instead creates symbolic links, making the resources
+  consume less disk space and work faster. By changing the ``Target`` configuration you can change this.
+
+Package Resources
+-----------------
+
+Static resources (provided by packages) need to be published by the ``resource:publish`` command.
+If you do not change the default configuration the whole ``Resources/Public/`` folder is symlinked, which
+means you probably never need to publish again. If you configure some other ``Target`` make sure to
+publish the *static* collection whenever your package resources change.
+
+To get the URI to a published package resource you can use the ``getPublicPersistentResourceUri()``
+method in the ``ResourceManager`` like this:
+
+.. code-block:: php
+
+	$resourceUri = $this->resourceManager->getPublicPackageResourceUri('Acme.Demo', 'Images/Icons/FooIcon.png');
+
+The same can be done in Fluid templates by using the the built-in resource ViewHelper:
 
 .. code-block:: html
 
@@ -246,27 +373,32 @@ package containing the currently active controller.
 Persistent Resources
 --------------------
 
-Persistent resources are published on demand because TYPO3 Flow cannot know which resources are
-meant to be public and which ones need to be kept private. The trigger for publishing
-persistent resources is the generation of its public web URI. A very common way to do that
-is displaying a resource in a Fluid template:
+Persistent resources are published on creation to the configured ``Target``. To get the URI for it
+you can rely on the ``ResourceManager`` and use the ``getPublicPersistentResourceUri`` method with
+your resource object::
+
+	$resourceUri = $this->resourceManager->getPublicPersistentResourceUri($image->getOriginalResource());
+
+Again in a Fluid template the resource ViewHelper generates the URI for you:
 
 .. code-block: html
 
 	<img src="{f:uri.resource(resource: image.originalResource)}" />
 
-The resource view helper (``f:uri.resource`` ) will ask the ``ResourcePublisher`` for the
-web URI of the resource stored in ``image.originalResource``. The publisher checks if the
-given resource has already been published and if not publishes it right away.
+A persistent resource published to the default ``Target`` is accessible through a web URI like
+``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab/your_filename.jpg``.
+One advantage of using the sha1 hash of the resource content as part of the path is that once the
+resource changes it gets a new path and is displayed correctly regardless of the cache
+settings in the user's web browser.
 
-A published persistent resource is accessible through a web URI like
-``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab.jpg``.
-One advantage of using the sha1 hash of the resource content as a filename is that once the
-resource changes it gets a new filename and is displayed correctly regardless of the cache
-settings in the user's web browser. Search engines on the other hand prefer more meaningful
-file names. That is why TYPO3 Flow adds a "virtual" file name to the resource, like this:
-``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab/my-speaking-title.jpg``.
-TYPO3 Flow ships with a *mod_rewrite* rule to map the speaking titles to the hash files.
+If you need to access a resource`s data directly in your code you can aquire a stream via the ``getStream()``
+method of the ``Resource`` object. If a stream is not enough and you need a file path to work with
+the ``createTemporaryLocalCopy()`` will return one for you.
+
+.. warning::
+	The file in the path returned by ``createTemporaryLocalCopy()`` is just valid for the current
+    request and also just for reading. You should neither delete nor write to this temporary file.
+    Also don't store this path.
 
 Resource Stream Wrapper
 =======================
@@ -275,7 +407,7 @@ Static resources are often used by packages internally. Typical use cases are te
 XML, YAML or other data files and images for further processing. You might be tempted to
 refer to these files by using one of the ``FLOW_PATH_*`` constants or by creating a path
 relative to your package. A much better and more convenient way is using TYPO3 Flow's built-in
-stream package resources wrapper.
+package resources stream wrapper.
 
 The following example reads the content of the file
 ``Acme.Demo/Resources/Private/Templates/SomeTemplate.html`` into a variable:
@@ -283,8 +415,8 @@ The following example reads the content of the file
 *Example: Accessing static resources* ::
 
 	$template = file_get_contents(
-		'resource://Acme.Demo/Private/Templates/SomeTemplate.html
-	');
+		'resource://Acme.Demo/Private/Templates/SomeTemplate.html'
+	);
 
 Some situations might require access to persistent resources. The resource stream wrapper also supports this. To use this feature, just pass the resource hash:
 
@@ -294,7 +426,7 @@ Some situations might require access to persistent resources. The resource strea
 
 Note that you need to have a ``Resource`` object in order to access its file and that the
 above example only works because ``Resource`` provides a ``__toString()`` method which
-returns the resource's hash.
+returns the resource's hash. This hash can also be accessed by using ``$resource->getSha1()``.
 
 You are encouraged to use this stream wrapper wherever you need to access a static or
 persistent resource in your PHP code.
