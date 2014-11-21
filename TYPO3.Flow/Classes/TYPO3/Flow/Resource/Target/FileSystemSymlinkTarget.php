@@ -42,13 +42,13 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 	/**
 	 * Publishes the given source stream to this target, with the given relative path.
 	 *
-	 * @param resource $sourceHandle An URI or path / filename pointing to the data to publish
+	 * @param resource $sourceStream Stream of the source to publish
 	 * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
 	 * @throws Exception
 	 * @throws \TYPO3\Flow\Utility\Exception
 	 */
-	protected function publishFile($sourceHandle, $relativeTargetPathAndFilename) {
-		$streamMetaData = stream_get_meta_data($sourceHandle);
+	protected function publishFile($sourceStream, $relativeTargetPathAndFilename) {
+		$streamMetaData = stream_get_meta_data($sourceStream);
 
 		if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO') {
 			throw new Exception(sprintf('Could not publish stream "%s" into resource publishing target "%s" because the source is not a local file.', $streamMetaData['uri'], $this->name), 1416242392);
@@ -71,8 +71,6 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 			$result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
 		} catch (\Exception $exception) {
 			$result = FALSE;
-		} finally {
-			fclose($sourceHandle);
 		}
 		if ($result === FALSE) {
 			throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be symlinked at target location.', $sourcePathAndFilename, $this->name), 1415716368, (isset($exception) ? $exception : NULL));

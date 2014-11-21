@@ -144,7 +144,9 @@ class FileSystemTarget implements TargetInterface {
 	public function publishCollection(Collection $collection) {
 		foreach ($collection->getObjects() as $object) {
 			/** @var \TYPO3\Flow\Resource\Storage\Object $object */
-			$this->publishFile($object->getStream(), $this->getRelativePublicationPathAndFilename($object));
+			$sourceStream = $object->getStream();
+			$this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
+			fclose($sourceStream);
 		}
 	}
 
@@ -162,6 +164,7 @@ class FileSystemTarget implements TargetInterface {
 			throw new Exception(sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName()), 1375258146);
 		}
 		$this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($resource));
+		fclose($sourceStream);
 	}
 
 	/**
@@ -202,18 +205,18 @@ class FileSystemTarget implements TargetInterface {
 	/**
 	 * Publishes the given source stream to this target, with the given relative path.
 	 *
-	 * @param resource $sourceHandle An URI or path / filename pointing to the data to publish
+	 * @param resource $sourceStream Stream of the source to publish
 	 * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
 	 * @return void
 	 * @throws Exception
 	 * @throws \Exception
 	 * @throws \TYPO3\Flow\Utility\Exception
 	 */
-	protected function publishFile($sourceHandle, $relativeTargetPathAndFilename) {
+	protected function publishFile($sourceStream, $relativeTargetPathAndFilename) {
 		$targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
 
-		if (@fstat($sourceHandle) === FALSE) {
-			throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceHandle, $this->name), 1375258499);
+		if (@fstat($sourceStream) === FALSE) {
+			throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
 		}
 
 		if (!file_exists(dirname($targetPathAndFilename))) {
@@ -222,15 +225,13 @@ class FileSystemTarget implements TargetInterface {
 
 		try {
 			$targetFileHandle = fopen($targetPathAndFilename, 'w');
-			$result = stream_copy_to_stream($sourceHandle, $targetFileHandle);
+			$result = stream_copy_to_stream($sourceStream, $targetFileHandle);
 			fclose($targetFileHandle);
 		} catch (\Exception $exception) {
 			$result = FALSE;
-		} finally {
-			fclose($sourceHandle);
 		}
 		if ($result === FALSE) {
-			throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceHandle, $this->name), 1375258399, (isset($exception) ? $exception : NULL));
+			throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : NULL));
 		}
 
 		$this->systemLogger->log(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
