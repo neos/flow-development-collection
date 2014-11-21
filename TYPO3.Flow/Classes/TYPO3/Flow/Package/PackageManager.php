@@ -475,25 +475,27 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @return void
 	 */
 	protected function writeComposerManifest($manifestPath, $packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL) {
-		$manifest = array();
+		$manifest = array(
+			'name' => $this->getComposerPackageNameFromPackageKey($packageKey)
+		);
 
-		$nameParts = explode('.', $packageKey);
-		$vendor = array_shift($nameParts);
-		$manifest['name'] = strtolower($vendor . '/' . implode('-', $nameParts));
 		if ($packageMetaData !== NULL) {
 			$manifest['type'] = $packageMetaData->getPackageType();
 			$manifest['description'] = $packageMetaData->getDescription() ?: 'Add description here';
 			if ($packageMetaData->getVersion()) {
 				$manifest['version'] = $packageMetaData->getVersion();
 			}
-			$manifest['require'] = array();
-			$dependencies = $packageMetaData->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
-			foreach ($dependencies as $dependencyConstraint) {
-				if ($dependencyConstraint instanceof \TYPO3\Flow\Package\MetaData\PackageConstraint) {
-					if (isset($this->packageStatesConfiguration['packages'][$dependencyConstraint->getValue()]['composerName'])) {
-						$manifest['require'][$this->packageStatesConfiguration['packages'][$dependencyConstraint->getValue()]['composerName']] = '*';
-					}
-				}
+			$dependsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, $packageMetaData);
+			if ($dependsConstraints !== array()) {
+				$manifest['require'] = $dependsConstraints;
+			}
+			$suggestsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_SUGGESTS, $packageMetaData);
+			if ($suggestsConstraints !== array()) {
+				$manifest['suggest'] = $suggestsConstraints;
+			}
+			$conflictsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_CONFLICTS, $packageMetaData);
+			if ($conflictsConstraints !== array()) {
+				$manifest['conflict'] = $conflictsConstraints;
 			}
 		} else {
 			$manifest['type'] = 'typo3-flow-package';
@@ -509,6 +511,38 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		} else {
 			file_put_contents(Files::concatenatePaths(array($manifestPath, 'composer.json')), json_encode($manifest));
 		}
+	}
+
+	/**
+	 * Returns the composer manifest constraints ("require", "suggest" or "conflict") from the given package meta data
+	 *
+	 * @param string $constraintType one of the MetaDataInterface::CONSTRAINT_TYPE_* constants
+	 * @param MetaData $packageMetaData
+	 * @return array in the format array('<ComposerPackageName>' => '*', ...)
+	 */
+	protected function getComposerManifestConstraints($constraintType, MetaData $packageMetaData) {
+		$composerManifestConstraints = array();
+		$constraints = $packageMetaData->getConstraintsByType($constraintType);
+		foreach ($constraints as $constraint) {
+			if (!$constraint instanceof MetaData\PackageConstraint) {
+				continue;
+			}
+			$composerName = isset($this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName']) ? $this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName'] : $this->getComposerPackageNameFromPackageKey($constraint->getValue());
+			$composerManifestConstraints[$composerName] = '*';
+		}
+		return $composerManifestConstraints;
+	}
+
+	/**
+	 * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
+	 *
+	 * @param string $packageKey
+	 * @return string
+	 */
+	protected function getComposerPackageNameFromPackageKey($packageKey) {
+		$nameParts = explode('.', $packageKey);
+		$vendor = array_shift($nameParts);
+		return strtolower($vendor . '/' . implode('-', $nameParts));
 	}
 
 	/**
@@ -987,7 +1021,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			$unsortedPackages[$packageKey] = 1;
 			$dependentPackageConstraints = $package->getPackageMetaData()->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
 			foreach ($dependentPackageConstraints as $constraint) {
-				if ($constraint instanceof \TYPO3\Flow\Package\MetaData\PackageConstraint) {
+				if ($constraint instanceof MetaData\PackageConstraint) {
 					$dependentPackageKey = $constraint->getValue();
 					if (isset($unsortedPackages[$dependentPackageKey])) {
 						$this->sortPackagesByDependencies($dependentPackageKey, $sortedPackages, $unsortedPackages);
