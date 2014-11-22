@@ -69,6 +69,14 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	const CONFIGURATION_IDENTITY_CREATION_ALLOWED = 1;
 
 	/**
+	 * Sets the default resource collection name (see Settings: TYPO3.Flow.resource.collections) to use for this resource,
+	 * will fallback to \TYPO3\Flow\Resource\ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
+	 *
+	 * @var string
+	 */
+	const CONFIGURATION_COLLECTION_NAME = 'collectionName';
+
+	/**
 	 * @var array<string>
 	 */
 	protected $sourceTypes = array('string', 'array');
@@ -135,7 +143,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 
 		// $source is ALWAYS an array at this point
 		if (isset($source['error']) || isset($source['submittedFile'])) {
-			return $this->handleFileUploads($source);
+			return $this->handleFileUploads($source, $configuration);
 		} elseif (isset($source['hash']) || isset($source['data'])) {
 			return $this->handleHashAndData($source, $configuration);
 		}
@@ -143,9 +151,11 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 
 	/**
 	 * @param array $source
-	 * @return Resource|Error|NULL
+	 * @param PropertyMappingConfigurationInterface $configuration
+	 * @return Resource|Error
+	 * @throws Exception
 	 */
-	protected function handleFileUploads(array $source) {
+	protected function handleFileUploads(array $source, PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['originallySubmittedResource']) && isset($source['originallySubmittedResource']['__identity'])) {
 				return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], 'TYPO3\Flow\Resource\Resource');
@@ -169,8 +179,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 			return $this->convertedResources[$source['tmp_name']];
 		}
 
-		$collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
-		$resource = $this->resourceManager->importUploadedResource($source, $collectionName);
+		$resource = $this->resourceManager->importUploadedResource($source, $this->getCollectionName($source, $configuration));
 		if ($resource === FALSE) {
 			return new Error('The Resource Manager could not create a Resource instance for an uploaded file. See log for more details.' , 1264517906);
 		} else {
@@ -210,12 +219,12 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 		if ($hash !== NULL && count($source) === 1) {
 			$resource = $this->resourceManager->getResourceBySha1($hash);
 		}
-
 		if ($resource === NULL) {
+			$collectionName = $this->getCollectionName($source, $configuration);
 			if (isset($source['data'])) {
-				$resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $givenResourceIdentity);
+				$resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], $collectionName, $givenResourceIdentity);
 			} elseif ($hash !== NULL) {
-				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $givenResourceIdentity);
+				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
 				if (is_array($source) && isset($source['filename'])) {
 					$resource->setFilename($source['filename']);
 				}
@@ -227,6 +236,32 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 		} else {
 			return new Error('The resource manager could not create a Resource instance.', 1404312901);
 		}
+	}
+
+	/**
+	 * Get the collection name this resource will be stored in. Default will be ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
+	 * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is TRUE
+	 * and __collectionName is in the $source this will finally be the value.
+	 *
+	 * @param array $source
+	 * @param PropertyMappingConfigurationInterface $configuration
+	 * @return string
+	 * @throws InvalidPropertyMappingConfigurationException
+	 */
+	protected function getCollectionName($source, PropertyMappingConfigurationInterface $configuration = NULL) {
+		if ($configuration === NULL) {
+			return ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
+		}
+		$collectionName = $configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
+		if (isset($source['__collectionName']) && $source['__collectionName'] !== '') {
+			$collectionName = $source['__collectionName'];
+		}
+
+		if ($this->resourceManager->getCollection($collectionName) === NULL) {
+			throw new InvalidPropertyMappingConfigurationException(sprintf('The selected resource collection named "%s" does not exist, a resource could not be imported.', $collectionName), 1416687475);
+		}
+
+		return $collectionName;
 	}
 
 }
