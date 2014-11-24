@@ -131,7 +131,7 @@ class ResourceManager {
 	 *
 	 * @param string | resource $source A URI (can therefore also be a path and filename) or a PHP resource stream(!) pointing to the Resource to import
 	 * @param string $collectionName Name of the collection this new resource should be added to. By default the standard collection for persistent resources is used.
-	 * @param string $forcedPersistenceObjectIdentifier Force the object identifier for this resource to the given UUID
+	 * @param string $forcedPersistenceObjectIdentifier INTERNAL: Force the object identifier for this resource to the given UUID
 	 * @return \TYPO3\Flow\Resource\Resource A resource object representing the imported resource
 	 * @throws Exception
 	 * @api
@@ -172,8 +172,10 @@ class ResourceManager {
 	 * @param string $content The binary content to import
 	 * @param string $filename The filename to use for the newly generated resource
 	 * @param string $collectionName Name of the collection this new resource should be added to. By default the standard collection for persistent resources is used.
+	 * @param string $forcedPersistenceObjectIdentifier INTERNAL: Force the object identifier for this resource to the given UUID
 	 * @return Resource A resource object representing the imported resource
 	 * @throws Exception
+	 * @api
 	 */
 	public function importResourceFromContent($content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = NULL) {
 		if (!is_string($content)) {
@@ -376,6 +378,7 @@ class ResourceManager {
 	 * @param string $packageKey Package key
 	 * @param string $relativePathAndFilename A relative path below the "Resources" directory of the package
 	 * @return string
+	 * @api
 	 */
 	public function getPublicPackageResourceUri($packageKey, $relativePathAndFilename) {
 		/** @var TargetInterface $target */
@@ -398,6 +401,7 @@ class ResourceManager {
 	 *
 	 * @param string $collectionName Name of the collection as defined in the settings
 	 * @return \TYPO3\Flow\Resource\CollectionInterface or NULL
+	 * @api
 	 */
 	public function getCollection($collectionName) {
 		return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : NULL;
