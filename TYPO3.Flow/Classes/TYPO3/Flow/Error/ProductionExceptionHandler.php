@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Response as CliResponse;
+use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Http\Response;
 
 /**
  * A quite exception handler which catches but ignores any exception.
@@ -28,19 +31,18 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof FlowException) {
 			$statusCode = $exception->getStatusCode();
 		}
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
-		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
+		$statusMessage = Response::getStatusMessageByCode($statusCode);
+		$referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : NULL;
 		if (!headers_sent()) {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
 
 		try {
-			$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-			if (isset($renderingOptions['templatePathAndFilename'])) {
-				echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
+			if (isset($this->renderingOptions['templatePathAndFilename'])) {
+				echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
 			} else {
 				echo $this->renderStatically($statusCode, $referenceCode);
 			}
@@ -57,7 +59,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 	 * @return string
 	 */
 	protected function renderStatically($statusCode, $referenceCode) {
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = Response::getStatusMessageByCode($statusCode);
 		$referenceCodeMessage = ($referenceCode !== NULL) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
 		return '<!DOCTYPE html>
@@ -156,9 +158,8 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 	 * @return void
 	 */
 	protected function echoExceptionCli(\Exception $exception) {
-		$response = new \TYPO3\Flow\Cli\Response();
+		$response = new CliResponse();
 
-		$backtraceSteps = $exception->getTrace();
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
 		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
@@ -173,7 +174,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
 		}
 		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof FlowException) {
 			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 		$exceptionMessage .= PHP_EOL;
