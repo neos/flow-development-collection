@@ -352,9 +352,9 @@ the form. The only thing we need to assign here is the ``blog``, otherwise the t
 and description in our header (defined in ``Master.html``) would be empty.
 
 The second component is the actual form. Adjust the template  ``New.html`` in
-the ``Resources/Public/Templates/Post/`` folder:
+the ``Resources/Private/Templates/Post/`` folder:
 
-*Resources/Public/Templates/Post/New.html*:
+*Resources/Private/Templates/Post/New.html*:
 
 .. code-block:: xml
 
@@ -457,7 +457,7 @@ on its part assigns the blog to the template.
 
 First you need to add the "edit" link to the post index template:
 
-*Resources/Public/Templates/Post/Index.html*:
+*Resources/Private/Templates/Post/Index.html*:
 
 .. code-block:: xml
 
@@ -481,7 +481,7 @@ The modified template will now render a little pencil next to each post:
 Adjust the template ``Templates/Post/Edit.html`` and insert the following
 HTML code:
 
-*Resources/Public/Templates/Post/Edit.html*:
+*Resources/Private/Templates/Post/Edit.html*:
 
 .. code-block:: html
 
