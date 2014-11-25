@@ -23,8 +23,8 @@ class Version20130319131400 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("CREATE TABLE typo3_flow_security_account_roles_join (flow_security_account VARCHAR(40) NOT NULL, flow_policy_role VARCHAR(255) NOT NULL, INDEX IDX_ADF11BBC58842EFC (flow_security_account), INDEX IDX_ADF11BBC23A1047C (flow_policy_role), PRIMARY KEY(flow_security_account, flow_policy_role)) ENGINE = InnoDB");
-		$this->addSql("CREATE TABLE typo3_flow_security_policy_role_parentroles_join (flow_policy_role VARCHAR(255) NOT NULL, parent_role VARCHAR(255) NOT NULL, INDEX IDX_D459C58E23A1047C (flow_policy_role), INDEX IDX_D459C58E6A8ABCDE (parent_role), PRIMARY KEY (flow_policy_role, parent_role)) ENGINE = InnoDB");
+		$this->addSql("CREATE TABLE typo3_flow_security_account_roles_join (flow_security_account VARCHAR(40) NOT NULL, flow_policy_role VARCHAR(255) NOT NULL, INDEX IDX_ADF11BBC58842EFC (flow_security_account), INDEX IDX_ADF11BBC23A1047C (flow_policy_role), PRIMARY KEY(flow_security_account, flow_policy_role)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+		$this->addSql("CREATE TABLE typo3_flow_security_policy_role_parentroles_join (flow_policy_role VARCHAR(255) NOT NULL, parent_role VARCHAR(255) NOT NULL, INDEX IDX_D459C58E23A1047C (flow_policy_role), INDEX IDX_D459C58E6A8ABCDE (parent_role), PRIMARY KEY (flow_policy_role, parent_role)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
 
 		$this->addSql("ALTER TABLE typo3_flow_security_account_roles_join ADD CONSTRAINT FK_ADF11BBC58842EFC FOREIGN KEY (flow_security_account) REFERENCES typo3_flow_security_account (persistence_object_identifier)");
 		$this->addSql("ALTER TABLE typo3_flow_security_account_roles_join ADD CONSTRAINT FK_ADF11BBC23A1047C FOREIGN KEY (flow_policy_role) REFERENCES typo3_flow_security_policy_role (identifier)");
