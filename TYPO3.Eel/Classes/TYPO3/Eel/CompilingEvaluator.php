@@ -55,7 +55,7 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 			 */
 			foreach ($this->newExpressions as $functionName => $newExpression) {
 				if (strpos($codeToBeCached, $functionName) === FALSE) {
-					$codeToBeCached .= $newExpression . chr(10);
+					$codeToBeCached .= 'if (!function_exists(\'' . $functionName . '\')) { ' . $newExpression . ' }' . chr(10);
 					$changesToPersist = TRUE;
 				}
 			}
