@@ -1,0 +1,330 @@
+#                                                                         #
+# Object Configuration for the TYPO3 Flow Framework                       #
+#                                                                         #
+# This file contains the default object configuration for the TYPO3 Flow  #
+# Framework. Because it is loaded at a very early stage during ini-       #
+# tialization, this configuration cannot be overridden by other con-      #
+# figuration files.                                                       #
+#                                                                         #
+
+DateTime:
+  scope: prototype
+  autowiring: off
+
+#                                                                          #
+# Cache                                                                    #
+#                                                                          #
+
+TYPO3\Flow\Cache\CacheFactory:
+  arguments:
+    1:
+      setting: TYPO3.Flow.context
+
+
+#                                                                          #
+# I18n                                                                     #
+#                                                                          #
+
+TYPO3\Flow\I18n\Service:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_AvailableLocalesCache
+TYPO3\Flow\I18n\Cldr\CldrModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_CldrModelCache
+TYPO3\Flow\I18n\Xliff\XliffModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_XmlModelCache
+TYPO3\Flow\I18n\Cldr\Reader\DatesReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_DatesReaderCache
+TYPO3\Flow\I18n\Cldr\Reader\NumbersReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_NumbersReaderCache
+TYPO3\Flow\I18n\Cldr\Reader\PluralsReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+
+#                                                                          #
+# Log                                                                      #
+#                                                                          #
+
+TYPO3\Flow\Log\Backend\FileBackend:
+  autowiring: off
+TYPO3\Flow\Log\Backend\NullBackend:
+  autowiring: off
+TYPO3\Flow\Log\SystemLoggerInterface:
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+  arguments:
+    1:
+      # Note: This cannot be changed, it is hardcoded
+      value: 'SystemLogger'
+    2:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: TYPO3.Flow.log.systemLogger.logger
+    3:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: TYPO3.Flow.log.systemLogger.backend
+    4:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: TYPO3.Flow.log.systemLogger.backendOptions
+
+TYPO3\Flow\Log\SecurityLoggerInterface:
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+  arguments:
+    1:
+      value: 'Flow_Security'
+    2:
+      value: 'TYPO3\Flow\Log\Logger'
+    3:
+      setting: TYPO3.Flow.log.securityLogger.backend
+    4:
+      setting: TYPO3.Flow.log.securityLogger.backendOptions
+
+#                                                                          #
+# Monitor                                                                  #
+#                                                                          #
+
+TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Monitor
+
+TYPO3\Flow\Monitor\FileMonitor:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Monitor
+
+#                                                                          #
+# HTTP                                                                     #
+#                                                                          #
+
+TYPO3\Flow\Http\Component\ComponentChain:
+  factoryObjectName: TYPO3\Flow\Http\Component\ComponentChainFactory
+  arguments:
+    1:
+      setting: TYPO3.Flow.http.chain
+
+#                                                                          #
+# MVC                                                                      #
+#                                                                          #
+
+TYPO3\Flow\Mvc\Routing\RouterCachingService:
+  properties:
+    routeCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_Routing_Route
+    resolveCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_Routing_Resolve
+
+TYPO3\Flow\Mvc\ViewConfigurationManager:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_ViewConfigurations
+#                                                                          #
+# Object                                                                   #
+#                                                                          #
+
+TYPO3\Flow\Object\ObjectManagerInterface:
+  className: TYPO3\Flow\Object\ObjectManager
+  scope: singleton
+  autowiring: off
+
+TYPO3\Flow\Object\ObjectManager:
+  autowiring: off
+
+TYPO3\Flow\Object\CompileTimeObjectManager:
+  autowiring: off
+
+#                                                                          #
+# Persistence                                                              #
+#                                                                          #
+
+Doctrine\Common\Persistence\ObjectManager:
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory
+
+TYPO3\Flow\Persistence\PersistenceManagerInterface:
+  className: TYPO3\Flow\Persistence\Doctrine\PersistenceManager
+
+TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger:
+  properties:
+    logger:
+      object:
+        factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Sql_Queries'
+          2:
+            value: 'TYPO3\Flow\Log\Logger'
+          3:
+            value: 'TYPO3\Flow\Log\Backend\FileBackend'
+          4:
+            setting: TYPO3.Flow.log.sqlLogger.backendOptions
+
+#                                                                          #
+# Resource                                                                 #
+#                                                                          #
+
+TYPO3\Flow\Resource\ResourceManager:
+  properties:
+    statusCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Resource_Status
+
+TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget
+
+#                                                                          #
+# Security                                                                 #
+#                                                                          #
+
+TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface:
+  className: TYPO3\Flow\Security\Authentication\AuthenticationProviderManager
+
+
+TYPO3\Flow\Security\Cryptography\RsaWalletServiceInterface:
+  className: TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
+  scope: singleton
+  properties:
+    keystoreCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_RSAWallet
+
+TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface:
+  className: TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager
+
+TYPO3\Flow\Security\Authorization\FirewallInterface:
+  className: TYPO3\Flow\Security\Authorization\FilterFirewall
+
+TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: TYPO3.Flow.security.cryptography.Pbkdf2HashingStrategy.dynamicSaltLength
+    2:
+      setting: TYPO3.Flow.security.cryptography.Pbkdf2HashingStrategy.iterationCount
+    3:
+      setting: TYPO3.Flow.security.cryptography.Pbkdf2HashingStrategy.derivedKeyLength
+    4:
+      setting: TYPO3.Flow.security.cryptography.Pbkdf2HashingStrategy.algorithm
+
+TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: TYPO3.Flow.security.cryptography.BCryptHashingStrategy.cost
+
+
+#                                                                          #
+# Session                                                                  #
+#                                                                          #
+
+TYPO3\Flow\Session\SessionInterface:
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Session\SessionManager
+  factoryMethodName: getCurrentSession
+
+TYPO3\Flow\Session\Session:
+  properties:
+    metaDataCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_MetaData
+    storageCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_Storage
+
+TYPO3\Flow\Session\SessionManager:
+  properties:
+    metaDataCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_MetaData
+
+#                                                                          #
+# Utility                                                                  #
+#                                                                          #
+
+TYPO3\Flow\Utility\PdoHelper:
+  autowiring: off
+  scope: prototype
