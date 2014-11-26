@@ -34,14 +34,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	protected $backupStaticAttributes = FALSE;
 
 	/**
-	 * @return void
-	 */
-	public function runBare() {
-		\PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-		parent::runBare();
-	}
-
-	/**
 	 * Returns a mock object which allows for calling protected methods and access
 	 * of protected properties.
 	 *
