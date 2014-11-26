@@ -241,6 +241,8 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 				}
 			}
 			return $array;
+		} elseif (is_object($value) && $value instanceof \JsonSerializable) {
+			return $this->transformValue($value->jsonSerialize(), $configuration);
 		} elseif (is_object($value)) {
 			return $this->transformObject($value, $configuration);
 		} else {

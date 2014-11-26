@@ -414,4 +414,24 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$actualResult = $this->view->render();
 		$this->assertEquals($expectedResult, $actualResult);
 	}
+
+	/**
+	 * @test
+	 */
+	public function renderTransformsJsonSerializableValues() {
+		$value = $this->getMock('JsonSerializable', array('jsonSerialize'));
+		$value->expects($this->any())->method('jsonSerialize')->will($this->returnValue(array('name' => 'Foo', 'age' => 42)));
+
+		$this->view->assign('value', $value);
+		$this->view->setConfiguration(array(
+			'value' => array(
+				'_only' => array('name')
+			)
+		));
+
+		$expectedResult = '{"name":"Foo"}';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
 }
