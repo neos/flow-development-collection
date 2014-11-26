@@ -11,6 +11,12 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Fluid\View\StandaloneView;
+
 require_once('Exception.php');
 
 /**
@@ -19,7 +25,7 @@ require_once('Exception.php');
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -29,12 +35,17 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	protected $options = array();
 
 	/**
+	 * @var array
+	 */
+	protected $renderingOptions;
+
+	/**
 	 * Injects the system logger
 	 *
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+	 * @param SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -69,11 +80,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			return;
 		}
 
-		if (is_object($this->systemLogger)) {
-			$options = $this->resolveCustomRenderingOptions($exception);
-			if (isset($options['logException']) && $options['logException']) {
-				$this->systemLogger->logException($exception);
-			}
+		$this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
+
+		if (is_object($this->systemLogger) && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
+			$this->systemLogger->logException($exception);
 		}
 
 		switch (PHP_SAPI) {
@@ -107,18 +117,19 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 *
 	 * @param \Exception $exception
 	 * @param array $renderingOptions Rendering options as defined in the settings
-	 * @return \TYPO3\Fluid\View\StandaloneView
+	 * @return StandaloneView
 	 */
 	protected function buildCustomFluidView(\Exception $exception, array $renderingOptions) {
 		$statusCode = 500;
 		$referenceCode = NULL;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof FlowException) {
 			$statusCode = $exception->getStatusCode();
 			$referenceCode = $exception->getReferenceCode();
 		}
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = Response::getStatusMessageByCode($statusCode);
 
-		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
+		$fluidView = new StandaloneView();
+		$fluidView->getRequest()->setControllerPackageKey('TYPO3.Flow');
 		$fluidView->setTemplatePathAndFilename($renderingOptions['templatePathAndFilename']);
 		if (isset($renderingOptions['layoutRootPath'])) {
 			$fluidView->setLayoutRootPath($renderingOptions['layoutRootPath']);
@@ -153,30 +164,36 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 		if (isset($this->options['defaultRenderingOptions'])) {
 			$renderingOptions = $this->options['defaultRenderingOptions'];
 		}
-		if (!isset($this->options['renderingGroups'])) {
-			return $renderingOptions;
+		$renderingGroup = $this->resolveRenderingGroup($exception);
+		if ($renderingGroup !== NULL) {
+			$renderingOptions = Arrays::arrayMergeRecursiveOverrule($renderingOptions, $this->options['renderingGroups'][$renderingGroup]['options']);
+			$renderingOptions['renderingGroup'] = $renderingGroup;
 		}
-		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
+		return $renderingOptions;
+	}
+
+	/**
+	 * @param \Exception $exception
+	 * @return string name of the resolved renderingGroup or NULL if no group could be resolved
+	 */
+	protected function resolveRenderingGroup(\Exception $exception) {
+		if (!isset($this->options['renderingGroups'])) {
+			return NULL;
+		}
+		foreach ($this->options['renderingGroups'] as $renderingGroupName => $renderingGroupSettings) {
 			if (isset($renderingGroupSettings['matchingExceptionClassNames'])) {
 				foreach ($renderingGroupSettings['matchingExceptionClassNames'] as $exceptionClassName) {
 					if ($exception instanceof $exceptionClassName) {
-						$renderingOptions = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($renderingOptions, $renderingGroupSettings['options']);
-						return $renderingOptions;
+						return $renderingGroupName;
 					}
 				}
 			}
-		}
-		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
-			if ($exception instanceof \TYPO3\Flow\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
-				foreach ($renderingGroupSettings['matchingStatusCodes'] as $statusCode) {
-					if ($statusCode === $exception->getStatusCode()) {
-						$renderingOptions = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($renderingOptions, $renderingGroupSettings['options']);
-						return $renderingOptions;
-					}
+			if (isset($renderingGroupSettings['matchingStatusCodes']) && $exception instanceof FlowException) {
+				if (in_array($exception->getStatusCode(), $renderingGroupSettings['matchingStatusCodes'])) {
+					return $renderingGroupName;
 				}
 			}
 		}
-		return $renderingOptions;
 	}
 
 }

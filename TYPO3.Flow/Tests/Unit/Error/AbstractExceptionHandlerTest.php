@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  *                                                                        */
 use TYPO3\Flow\Error\AbstractExceptionHandler;
 use TYPO3\Flow\Exception;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -21,7 +23,6 @@ class AbstractExceptionHandlerTest extends UnitTestCase {
 
 	/**
 	 * @test
-	 * @return void
 	 */
 	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
 		$options = array(
@@ -46,7 +47,6 @@ class AbstractExceptionHandlerTest extends UnitTestCase {
 
 	/**
 	 * @test
-	 * @return void
 	 */
 	public function handleExceptionDoesNotLogInformationAboutTheExceptionInTheSystemLogIfLogExceptionWasTurnedOff() {
 		$options = array(
@@ -69,11 +69,12 @@ class AbstractExceptionHandlerTest extends UnitTestCase {
 			)
 		);
 
-		$exception = $this->getAccessibleMock('TYPO3\Flow\Exception', array('dummy'), array('Not Found ...', 1407751877));
-		$exception->_set('statusCode', 404);
+		/** @var Exception|\PHPUnit_Framework_MockObject_MockObject $exception */
+		$exception = new NoMatchingRouteException();
 
-		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->never())->method('logException')->with($exception);
+		/** @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject $mockSystemLogger */
+		$mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+		$mockSystemLogger->expects($this->never())->method('logException');
 
 		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
 		/** @var AbstractExceptionHandler $exceptionHandler */

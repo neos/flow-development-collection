@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Response as CliResponse;
+use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 
 /**
@@ -31,7 +33,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof FlowException) {
 			$statusCode = $exception->getStatusCode();
 		}
 		$statusMessage = Response::getStatusMessageByCode($statusCode);
@@ -39,9 +41,8 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
 
-		$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-		if (isset($renderingOptions['templatePathAndFilename'])) {
-			echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
+		if (isset($this->renderingOptions['templatePathAndFilename'])) {
+			echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
 		} else {
 			$this->renderStatically($statusCode, $exception);
 		}
@@ -54,7 +55,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 * @param \Exception $exception
 	 * @return void
 	 */
-	protected function renderStatically($statusCode, $exception) {
+	protected function renderStatically($statusCode, \Exception $exception) {
 		$statusMessage = Response::getStatusMessageByCode($statusCode);
 		$exceptionHeader = '';
 		while (TRUE) {
@@ -73,7 +74,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
-			if ($exception instanceof \TYPO3\Flow\Exception) {
+			if ($exception instanceof FlowException) {
 				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
 			}
 
@@ -146,7 +147,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 * @return void
 	 */
 	protected function echoExceptionCli(\Exception $exception) {
-		$response = new \TYPO3\Flow\Cli\Response();
+		$response = new CliResponse();
 
 		$backtraceSteps = $exception->getTrace();
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
@@ -163,7 +164,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
 		}
 		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof FlowException) {
 			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 
@@ -180,7 +181,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				$exceptionMessage .= $indent . '  Exception code ' . $exception->getCode() . PHP_EOL;
 			}
 			$exceptionMessage .= $indent . '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-			if ($exception instanceof \TYPO3\Flow\Exception) {
+			if ($exception instanceof FlowException) {
 				$exceptionMessage .= $indent . '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
 			}
 
