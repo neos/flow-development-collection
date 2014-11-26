@@ -17,6 +17,7 @@ use TYPO3\Eel\Context as EelContext;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 
 /**
@@ -84,10 +85,10 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
 	 * in SQL and not by the voting process, this method will always
 	 * return FALSE.
 	 *
-	 * @param mixed $subject
+	 * @param PrivilegeSubjectInterface $subject
 	 * @return boolean
 	 */
-	public function matchesSubject($subject) {
+	public function matchesSubject(PrivilegeSubjectInterface $subject) {
 		return FALSE;
 	}
 }

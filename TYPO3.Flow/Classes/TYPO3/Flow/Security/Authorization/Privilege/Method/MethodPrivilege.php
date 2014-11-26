@@ -12,11 +12,11 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Method;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilter;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
 
 /**
@@ -49,18 +49,19 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 	/**
 	 * Returns TRUE, if this privilege covers the given subject (join point)
 	 *
-	 * @param mixed $subject
+	 * @param PrivilegeSubjectInterface $subject
 	 * @return boolean
 	 * @throws InvalidPrivilegeTypeException
 	 */
-	public function matchesSubject($subject) {
-		if ($subject instanceof JoinPointInterface === FALSE) {
-			throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface" only support subjects of type "TYPO3\Flow\Aop\JoinPointInterface", but we got a subject of type: "%s".', get_class($subject)), 1416241148);
+	public function matchesSubject(PrivilegeSubjectInterface $subject) {
+		if ($subject instanceof MethodPrivilegeSubject === FALSE) {
+			throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface" only support subjects of type "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1416241148);
 		}
 
 		$this->initialize();
+		$joinPoint = $subject->getJoinPoint();
 
-		$methodIdentifier = strtolower($subject->getClassName() . '->' . $subject->getMethodName());
+		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 
 		if (isset($this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
 			if ($this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['runtimeEvaluationsClosureCode'] !== FALSE) {
@@ -69,7 +70,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 				$objectManager = $this->objectManager;
 				eval('$runtimeEvaluator = ' . $this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['runtimeEvaluationsClosureCode'] . ';');
 				/** @noinspection PhpUndefinedVariableInspection */
-				if ($runtimeEvaluator->__invoke($subject) === FALSE) {
+				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) {
 					return FALSE;
 				}
 			}

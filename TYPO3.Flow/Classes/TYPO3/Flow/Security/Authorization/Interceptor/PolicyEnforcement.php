@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Authorization\InterceptorInterface;
 use TYPO3\Flow\Security\Context;
@@ -87,18 +88,20 @@ class PolicyEnforcement implements InterceptorInterface {
 	public function invoke() {
 		$reason = '';
 
+		$privilegeSubject = new MethodPrivilegeSubject($this->joinPoint);
+
 		try {
 			$this->authenticationManager->authenticate();
 		} catch (EntityNotFoundException $exception) {
 			throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
 		} catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {
 			// We still need to check if the privilege is available to "TYPO3.Flow:Everybody".
-			if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->joinPoint, $reason) === FALSE) {
+			if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $privilegeSubject, $reason) === FALSE) {
 				throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $reason, $noTokensAuthenticatedException->getCode());
 			}
 		}
 
-		if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->joinPoint, $reason) === FALSE) {
+		if ($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $privilegeSubject, $reason) === FALSE) {
 			throw new AccessDeniedException($this->renderDecisionReasonMessage($reason), 1222268609);
 		}
 	}

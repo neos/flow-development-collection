@@ -13,9 +13,8 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
 
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
-use TYPO3\Flow\Security\Authorization\PrivilegeVoteResult;
 use TYPO3\Flow\Security\Authorization\PrivilegeManager;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -147,7 +146,7 @@ class PrivilegeManagerTest extends UnitTestCase {
 
 		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
-		$this->assertFalse($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
+		$this->assertFalse($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', new MethodPrivilegeSubject($this->mockJoinPoint)));
 	}
 
 	/**
@@ -165,7 +164,7 @@ class PrivilegeManagerTest extends UnitTestCase {
 
 		$this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
-		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', $this->mockJoinPoint));
+		$this->assertTrue($this->privilegeManager->isGranted('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface', new MethodPrivilegeSubject($this->mockJoinPoint)));
 	}
 
 	/**
