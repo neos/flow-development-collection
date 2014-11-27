@@ -26,17 +26,30 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
 	protected $reflectionService;
 
 	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+
+	/**
 	 * @var string The tag of an annotation to match against
 	 */
 	protected $annotation;
 
 	/**
+	 * @var array
+	 */
+	protected $annotationValueConstraints;
+
+	/**
 	 * The constructor - initializes the method annotation filter with the expected annotation class
 	 *
 	 * @param string $annotation An annotation class (for example "TYPO3\Flow\Annotations\Lazy") which defines which method annotations should match
+	 * @param array $annotationValueConstraints
 	 */
-	public function __construct($annotation) {
+	public function __construct($annotation, array $annotationValueConstraints = array()) {
 		$this->annotation = $annotation;
+		$this->annotationValueConstraints = $annotationValueConstraints;
 	}
 
 	/**
@@ -47,6 +60,14 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
 	 */
 	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -62,7 +83,29 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
 		if ($methodDeclaringClassName === NULL || !method_exists($methodDeclaringClassName, $methodName)) {
 			return FALSE;
 		}
-		return ($this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName, $this->annotation) !== array());
+
+		$designatedAnnotations = $this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName, $this->annotation);
+		if ($designatedAnnotations !== array() || $this->annotationValueConstraints === array()) {
+			$matches = ($designatedAnnotations !== array());
+		} else {
+			// It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
+			$firstFoundAnnotation = $designatedAnnotations;
+			$annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
+			foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
+				if (!array_key_exists($propertyName, $annotationProperties)) {
+					$this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
+					return FALSE;
+				}
+
+				if ($firstFoundAnnotation->$propertyName === $expectedValue) {
+					$matches = TRUE;
+				} else {
+					return FALSE;
+				}
+			}
+		}
+
+		return $matches;
 	}
 
 	/**
