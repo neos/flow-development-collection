@@ -176,7 +176,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 				}
 				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
-					$this->securityContext->setContextHashComponent('TYPO3.Flow:Roles', $this->securityContext->getRolesHash());
+					$this->securityContext->updateContextHashComponents();
 					return;
 				}
 				$anyTokenAuthenticated = TRUE;
@@ -192,7 +192,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 		}
 
 		$this->isAuthenticated = $anyTokenAuthenticated;
-		$this->securityContext->setContextHashComponent('TYPO3.Flow:Roles', $this->securityContext->getRolesHash());
+		$this->securityContext->updateContextHashComponents();
 	}
 
 	/**
@@ -229,6 +229,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 		if ($this->session->isStarted()) {
 			$this->session->destroy('Logout through AuthenticationProviderManager');
 		}
+		$this->securityContext->refreshTokens();
+		$this->securityContext->updateContextHashComponents();
 	}
 
 	/**
