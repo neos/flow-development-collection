@@ -461,10 +461,14 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	/**
 	 * Takes care of removing a possibly existing temporary local copy on destruction of this object.
 	 *
+	 * Note: we can't use __destruct() here because this would lead Doctrine to create a proxy method __destruct() which
+	 *       will run __load(), which in turn will triger the SQL protection in Flow Security, which will then discover
+	 *       that a possibly previously existing session has been half-destroyed already (see FLOW-121).
+	 *
 	 * @return void
 	 */
-	public function __destruct() {
-		if ($this->temporaryLocalCopyPathAndFilename) {
+	public function shutdownObject() {
+		if ($this->temporaryLocalCopyPathAndFilename !== NULL) {
 			unlink($this->temporaryLocalCopyPathAndFilename);
 		}
 	}
