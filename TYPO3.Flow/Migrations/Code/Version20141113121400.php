@@ -22,12 +22,11 @@ class Version20141113121400 extends AbstractMigration {
 	 * @return void
 	 */
 	public function up() {
-		$self = $this; // PHP 5.3 compatibility
 		$this->processConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY,
-			function (array &$configuration) use ($self) {
-				$self->processRoles($configuration);
-				$self->processResources($configuration);
-				$self->processAcls($configuration);
+			function (array &$configuration) use ($this) {
+				$this->processRoles($configuration);
+				$this->processResources($configuration);
+				$this->processAcls($configuration);
 
 				// remove empty arrays as they would reset previously defined values
 				if (isset($configuration['privilegeTargets']) && $configuration['privilegeTargets'] === array()) {

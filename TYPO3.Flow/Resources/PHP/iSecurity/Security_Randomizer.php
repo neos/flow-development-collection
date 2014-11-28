@@ -154,7 +154,7 @@ class Security_Randomizer
 		if ($length < 1)
 			throw new Exception('Length cannot be less than 1.');
 
-		// Works on systems that have OpenSSL installed, PHP 5.3 and OpenSSL extension loaded.
+		// Works on systems that have OpenSSL installed and OpenSSL extension loaded.
 		if (function_exists('openssl_random_pseudo_bytes'))
 		{
 			$random = openssl_random_pseudo_bytes($length, $strong);
@@ -172,17 +172,6 @@ class Security_Randomizer
 				$random = fread($fp, $length);
 				fclose($fp);
 				return (binary) $random;
-			}
-
-			// Works on servers with OpenSSL installed and PHP < 5.3.
-			// TODO: Make it to work when the install path is different.
-			$fp = @popen("/usr/bin/openssl rand $length", 'rb');
-			if ($fp)
-			{
-				$random = @stream_get_contents($fp);
-				pclose($fp);
-				if ($random)
-					return (binary) $random;
 			}
 		}
 
