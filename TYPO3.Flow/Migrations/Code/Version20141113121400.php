@@ -23,7 +23,7 @@ class Version20141113121400 extends AbstractMigration {
 	 */
 	public function up() {
 		$this->processConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY,
-			function (array &$configuration) use ($this) {
+			function (array &$configuration) {
 				$this->processRoles($configuration);
 				$this->processResources($configuration);
 				$this->processAcls($configuration);
