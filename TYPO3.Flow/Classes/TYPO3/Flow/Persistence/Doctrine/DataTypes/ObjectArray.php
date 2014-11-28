@@ -67,13 +67,41 @@ class ObjectArray extends Types\ArrayType {
 	public function convertToPHPValue($value, AbstractPlatform $platform) {
 		$this->initializeDependencies();
 
-		$array = parent::convertToPHPValue($value, $platform);
+		switch ($platform->getName()) {
+			case 'postgresql':
+				$value = (is_resource($value)) ? stream_get_contents($value) : $value;
+				$array = parent::convertToPHPValue($this->hex2bin($value), $platform);
+				break;
+			default:
+				$array = parent::convertToPHPValue($value, $platform);
+		}
 		$this->decodeObjectReferences($array);
 
 		return $array;
 	}
 
 	/**
+	 * Make hex2bin available for PHP versions < 5.4
+	 *
+	 * @param string $hexInput
+	 * @return string
+	 */
+	protected function hex2bin($hexInput) {
+		if (!function_exists('hex2bin')) {
+			$binary = '';
+			$inputLength = strlen($hexInput);
+
+			for ($i = 0; $i < $inputLength; $i += 2) {
+				$binary .= pack('H*', substr($hexInput, $i, 2));
+			}
+
+			return $binary;
+		} else {
+			return \hex2bin($hexInput);
+		}
+	}
+
+/**
 	 * Converts a value from its PHP representation to its database representation
 	 * of this type.
 	 *
@@ -86,7 +114,12 @@ class ObjectArray extends Types\ArrayType {
 
 		$this->encodeObjectReferences($array);
 
-		return parent::convertToDatabaseValue($array, $platform);
+		switch ($platform->getName()) {
+			case 'postgresql':
+				return bin2hex(parent::convertToDatabaseValue($array, $platform));
+			default:
+				return parent::convertToDatabaseValue($array, $platform);
+		}
 	}
 
 	/**
