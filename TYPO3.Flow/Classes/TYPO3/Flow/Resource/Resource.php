@@ -91,6 +91,12 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	protected $protected = FALSE;
 
 	/**
+	 * @Flow\Transient
+	 * @var boolean
+	 */
+	protected $lifecycleEventsActive = TRUE;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
@@ -421,8 +427,10 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * @ORM\PostPersist
 	 */
 	public function postPersist() {
-		$collection = $this->resourceManager->getCollection($this->collectionName);
-		$collection->getTarget()->publishResource($this, $collection);
+		if ($this->lifecycleEventsActive) {
+			$collection = $this->resourceManager->getCollection($this->collectionName);
+			$collection->getTarget()->publishResource($this, $collection);
+		}
 	}
 
 	/**
@@ -433,7 +441,21 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * @ORM\PreRemove
 	 */
 	public function preRemove() {
-		$this->resourceManager->deleteResource($this);
+		if ($this->lifecycleEventsActive) {
+			$this->resourceManager->deleteResource($this);
+		}
+	}
+
+	/**
+	 * A very internal function which disables the Doctrine lifecycle events for this Resource.
+	 *
+	 * This is needed when some low-level operations need to be done, for example deleting a Resource from the
+	 * ResourceRepository without unpublishing the (probably not existing) data from the storage.
+	 *
+	 * @return void
+	 */
+	public function disableLifecycleEvents() {
+		$this->lifecycleEventsActive = FALSE;
 	}
 
 	/**
