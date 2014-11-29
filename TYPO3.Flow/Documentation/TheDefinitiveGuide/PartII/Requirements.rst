@@ -33,14 +33,13 @@ PHP
 ===
 
 TYPO3 Flow was one of the first PHP projects taking advantage of namespaces and
-other features introduced in PHP version 5.3. So, make sure you have PHP 5.3.2 or later
-available on your web server. Make sure your PHP CLI binary is the same version!
+other features introduced in PHP version 5.3. By now we started using features of
+PHP 5.5, so make sure you have PHP 5.5.0 or later available on your web server. Make
+sure your PHP CLI binary is the same version!
 
 The default settings and extensions of the PHP distribution should work fine
 with TYPO3 Flow but it doesn't hurt checking if the PHP modules ``mbstring``, ``tokenizer``
 and ``pdo_mysql`` are enabled, especially if you compiled PHP yourself.
-You should (not only because of TYPO3 Flow) turn off magic quotes in your *php.ini*
-(``magic_quotes_gpc = off``).
 
 .. note::
 
