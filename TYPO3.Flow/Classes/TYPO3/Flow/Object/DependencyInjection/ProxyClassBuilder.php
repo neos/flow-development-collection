@@ -356,10 +356,16 @@ class ProxyClassBuilder {
 					case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
 						if ($argumentValue instanceof Configuration) {
 							$argumentValueObjectName = $argumentValue->getObjectName();
-							if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-								$assignments[] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
+							$argumentValueClassName = $argumentValue->getClassName();
+							if ($argumentValueClassName === NULL) {
+								$preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
+								$assignments[] = $assignmentPrologue . $preparedArgument;
 							} else {
-								$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
+								if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+									$assignments[] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
+								} else {
+									$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
+								}
 							}
 						} else {
 							if (strpos($argumentValue, '.') !== FALSE) {

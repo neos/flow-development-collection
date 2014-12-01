@@ -108,6 +108,17 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function singletonCanHandleConstructorArgumentWithCustomFactory() {
+		$objectG = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassG');
+
+		// Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
+		$this->assertNotNull($objectG->prototypeA);
+		$this->assertSame('Constructor injection with factory', $objectG->prototypeA->getSomeProperty());
+	}
+
+	/**
+	 * @test
+	 */
 	public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce() {
 		$prototypeDsub = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassDsub');
 		$this->assertSame(1, $prototypeDsub->injectionRuns);

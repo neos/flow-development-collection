@@ -11,21 +11,23 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * A factory which creates PrototypeClassA instances
+ * A class that is declared singleton from Objects.yaml with constructor injection
  */
-class PrototypeClassAFactory {
+class SingletonClassG {
 
 	/**
-	 * Creates a new instance of PrototypeClassA
-	 *
-	 * @param string $someProperty
-	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA
+	 * @var PrototypeClassAishInterface
 	 */
-	public function create($someProperty) {
-		$object = new PrototypeClassA();
-		$object->setSomeProperty($someProperty);
-		return $object;
+	public $prototypeA;
+
+	/**
+	 * @param PrototypeClassAishInterface $prototypeA
+	 */
+	public function __construct(PrototypeClassAishInterface $prototypeA) {
+		$this->prototypeA = $prototypeA;
 	}
 
 }
