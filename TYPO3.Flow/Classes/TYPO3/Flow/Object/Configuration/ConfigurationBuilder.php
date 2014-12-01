@@ -295,8 +295,16 @@ class ConfigurationBuilder {
 	 */
 	protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint) {
 		if (is_array($objectNameOrConfiguration)) {
-			$objectName = $objectNameOrConfiguration['name'];
-			unset($objectNameOrConfiguration['name']);
+			if (isset($objectNameOrConfiguration['name'])) {
+				$objectName = $objectNameOrConfiguration['name'];
+				unset($objectNameOrConfiguration['name']);
+			} else {
+				if (isset($objectNameOrConfiguration['factoryObjectName'])) {
+					$objectName = NULL;
+				} else {
+					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object name in ' . $configurationSourceHint, 1417431742);
+				}
+			}
 			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
 			$argument = new ConfigurationArgument($argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 		} else {
