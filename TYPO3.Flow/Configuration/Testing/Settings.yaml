@@ -61,12 +61,56 @@ TYPO3:
 
     resource:
 
-      # Setting the storage to a separate directory. Warning! This directory will be cleaned up while running tests!
+    resource:
+
+      # Definition of resource storages provided by the Flow core.
+      # Storages are used for storing and retrieving resources.
       storages:
+
+        #
         defaultPersistentResourcesStorage:
           storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
           storageOptions:
             path: '%FLOW_PATH_DATA%Persistent/TestResources/'
+
+        #
+        defaultStaticResourcesStorage:
+          storage: 'TYPO3\Flow\Resource\Storage\PackageStorage'
+
+      # Definition of the default resource collections.
+      # Collections are used to bundle / group static or persistent resources
+      # for common processing and publication.
+      collections:
+
+        # Collection which contains all static resources
+        static:
+          storage: 'defaultStaticResourcesStorage'
+          target: 'localWebDirectoryStaticResourcesTarget'
+          pathPatterns:
+            - '*/Resources/Public/*'
+
+        # Collection which contains all persistent resources
+        persistent:
+          storage: 'defaultPersistentResourcesStorage'
+          target: 'localWebDirectoryPersistentResourcesTarget'
+
+      # Definition of the basic resource publication targets.
+      targets:
+        # Target for publishing static resources to the local web directory
+        localWebDirectoryStaticResourcesTarget:
+          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Testing/Static/Packages/'
+            baseUri: '_Resources/Testing/Static/Packages/'
+
+        # Target for publishing persistent resources to the local web directory
+        localWebDirectoryPersistentResourcesTarget:
+          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Testing/Persistent/'
+            baseUri: '_Resources/Testing/Persistent/'
+            # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
+            subdivideHashPathSegment: false
 
     security:
       authentication:
