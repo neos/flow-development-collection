@@ -91,36 +91,27 @@ class CsrfProtection implements RequestPatternInterface {
 	 */
 	public function matchRequest(RequestInterface $request) {
 		if (!$request instanceof ActionRequest || $request->getHttpRequest()->isMethodSafe()) {
-			$this->systemLogger->log('No CSRF required, safe request', LOG_DEBUG);
+			$this->systemLogger->log('CSRF: No token required, safe request', LOG_DEBUG);
 			return FALSE;
 		}
 		if ($this->authenticationManager->isAuthenticated() === FALSE) {
-			$this->systemLogger->log('No CSRF required, not authenticated', LOG_DEBUG);
+			$this->systemLogger->log('CSRF: No token required, not authenticated', LOG_DEBUG);
 			return FALSE;
 		}
 		if ($this->securityContext->areAuthorizationChecksDisabled() === TRUE) {
-			$this->systemLogger->log('No CSRF required, authorization checks are disabled', LOG_DEBUG);
+			$this->systemLogger->log('CSRF: No token required, authorization checks are disabled', LOG_DEBUG);
 			return FALSE;
 		}
 
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
-		$actionName = $request->getControllerActionName() . 'Action';
+		$actionMethodName = $request->getControllerActionName() . 'Action';
 
-		$hasPolicyEntryForMethod = FALSE;
-		$methodPrivileges = $this->policyService->getAllPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
-		/** @var MethodPrivilegeInterface $privilege */
-		foreach ($methodPrivileges as $privilege) {
-			if ($privilege->matchesMethod($controllerClassName, $actionName)) {
-				$hasPolicyEntryForMethod = TRUE;
-				break;
-			}
-		}
-
-		if ($hasPolicyEntryForMethod === FALSE) {
-			$this->systemLogger->log(sprintf('CSRF protection filter: allowed %s request without requiring CSRF token because action "%s" in controller "%s" is not restricted by a policy.', $request->getHttpRequest()->getMethod(), $actionName, $controllerClassName), LOG_NOTICE);
+		if (!$this->hasPolicyEntryForMethod($controllerClassName, $actionMethodName)) {
+			$this->systemLogger->log(sprintf('CSRF: No token required, method %s::%s() is not restricted by a policy.', $controllerClassName, $actionMethodName), LOG_DEBUG);
 			return FALSE;
 		}
-		if ($this->reflectionService->isMethodTaggedWith($controllerClassName, $actionName, 'skipcsrfprotection')) {
+		if ($this->reflectionService->isMethodTaggedWith($controllerClassName, $actionMethodName, 'skipcsrfprotection')) {
+			$this->systemLogger->log(sprintf('CSRF: No token required, method %s::%s() is tagged with a "skipcsrfprotection" annotation', $controllerClassName, $actionMethodName), LOG_DEBUG);
 			return FALSE;
 		}
 
@@ -133,20 +124,36 @@ class CsrfProtection implements RequestPatternInterface {
 		}
 
 		if (empty($csrfToken)) {
-			$this->systemLogger->log('CSRF token was empty', LOG_DEBUG);
+			$this->systemLogger->log(sprintf('CSRF: token was empty but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
 			return TRUE;
 		}
 
 		if (!$this->securityContext->hasCsrfProtectionTokens()) {
-			throw new AuthenticationRequiredException('No tokens in security context, possible session timeout', 1317309673);
+			throw new AuthenticationRequiredException(sprintf('CSRF: No CSRF tokens in security context, possible session timeout. A valid token is required for %s::%s()', $controllerClassName, $actionMethodName), 1317309673);
 		}
 
 		if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) {
-			$this->systemLogger->log('CSRF token was invalid', LOG_DEBUG);
+			$this->systemLogger->log(sprintf('CSRF: token was invalid but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
 			return TRUE;
 		}
 
-		// the CSRF token was necessary and is valid
+		$this->systemLogger->log(sprintf('CSRF: Successfully verified token for %s::%s()', $controllerClassName, $actionMethodName),  LOG_DEBUG);
+		return FALSE;
+	}
+
+	/**
+	 * @param string $className
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	protected function hasPolicyEntryForMethod($className, $methodName) {
+		$methodPrivileges = $this->policyService->getAllPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		/** @var MethodPrivilegeInterface $privilege */
+		foreach ($methodPrivileges as $privilege) {
+			if ($privilege->matchesMethod($className, $methodName)) {
+				return TRUE;
+			}
+		}
 		return FALSE;
 	}
 }
