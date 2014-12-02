@@ -12,11 +12,22 @@ namespace TYPO3\Flow\Mvc;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Request as CliRequest;
 use TYPO3\Flow\Configuration\Exception\NoSuchOptionException;
+use TYPO3\Flow\Http\Response as HttpResponse;
+use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Mvc\Controller\ControllerInterface;
+use TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException;
+use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Authorization\FirewallInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
@@ -64,15 +75,74 @@ class Dispatcher {
 	 * @param RequestInterface $request The request to dispatch
 	 * @param ResponseInterface $response The response, to be modified by the controller
 	 * @return void
-	 * @throws Exception\InfiniteLoopException
+	 * @throws AuthenticationRequiredException|AccessDeniedException
 	 * @api
 	 */
 	public function dispatch(RequestInterface $request, ResponseInterface $response) {
+		if ($request instanceof CliRequest) {
+			$this->initiateDispatchLoop($request, $response);
+			return;
+		}
+
+		// NOTE: The dispatcher is used for both Action- and CLI-Requests. For the latter case dispatching might happen during compile-time, that's why we can't inject the following dependencies
+
+		/** @var Context $securityContext */
+		$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+		if ($securityContext->areAuthorizationChecksDisabled()) {
+			$this->initiateDispatchLoop($request, $response);
+			return;
+		}
+
+		/** @var FirewallInterface $firewall */
+		$firewall = $this->objectManager->get('TYPO3\Flow\Security\Authorization\FirewallInterface');
+		/** @var SecurityLoggerInterface $securityLogger */
+		$securityLogger = $this->objectManager->get('TYPO3\Flow\Log\SecurityLoggerInterface');
+
+		try {
+			/** @var ActionRequest $request */
+			$firewall->blockIllegalRequests($request);
+			$this->initiateDispatchLoop($request, $response);
+		} catch (AuthenticationRequiredException $exception) {
+			$entryPointFound = FALSE;
+			/** @var $token TokenInterface */
+			foreach ($securityContext->getAuthenticationTokens() as $token) {
+				$entryPoint = $token->getAuthenticationEntryPoint();
+				if ($entryPoint === NULL) {
+					continue;
+				}
+				$entryPointFound = TRUE;
+				if ($entryPoint instanceof WebRedirect) {
+					$securityLogger->log('Redirecting to authentication entry point', LOG_INFO, $entryPoint->getOptions());
+				} else {
+					$securityLogger->log(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LOG_INFO);
+				}
+				$securityContext->setInterceptedRequest($request->getMainRequest());
+				/** @var HttpResponse $response */
+				$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+			}
+			if ($entryPointFound === FALSE) {
+				$securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
+				throw $exception;
+			}
+		} catch (AccessDeniedException $exception) {
+			$securityLogger->log('Access denied', LOG_WARNING);
+			throw $exception;
+		}
+	}
+
+	/**
+	 * Try processing the request until it is successfully marked "dispatched"
+	 *
+	 * @param RequestInterface $request
+	 * @param ResponseInterface $response
+	 * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
+	 */
+	protected function initiateDispatchLoop(RequestInterface $request, ResponseInterface $response) {
 		$dispatchLoopCount = 0;
 		/** @var ActionRequest $request */
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) {
-				throw new Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+				throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
 			}
 			$controller = $this->resolveController($request);
 			try {
@@ -83,7 +153,7 @@ class Dispatcher {
 				$this->emitAfterControllerInvocation($request, $response, $controller);
 				if ($exception instanceof ForwardException) {
 					$request = $exception->getNextRequest();
-				} elseif ($request->isMainRequest() === FALSE) {
+				} elseif (!$request->isMainRequest()) {
 					$request = $request->getParentRequest();
 				}
 			}

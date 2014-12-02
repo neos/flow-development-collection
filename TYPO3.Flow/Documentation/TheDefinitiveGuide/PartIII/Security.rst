@@ -17,10 +17,8 @@ chapter describes how you can use TYPO3 Flow's security features and how they wo
 Security context
 ----------------
 
-The first security advice (``initializeSecurity`` in the
-``TYPO3\Flow\Security\Aspect\RequestDispatchingAspect``) initializes the security context
-for the current request. The security context (``TYPO3\Flow\Security\Context``) shipped
-with TYPO3 Flow, lies in session scope and holds context data like the current authentication
+The security context (``TYPO3\Flow\Security\Context``) is initialized as soon as an HTTP request
+is being dispatched. It lies in session scope and holds context data like the current authentication
 status. That means, if you need data related to security, the security context (you can
 get it easily with dependency injection) will be your main information source. The details
 of the context's data will be described in the next chapters.
@@ -129,9 +127,8 @@ The following sequence diagram shows the participating components and their inte
 
 	Internal authentication process
 
-As already explained, the security framework is initialized in the dispatcher by vowing in
-an AOP advice, which resides in the ``RequestDispatchingAspect`` class. This advice
-intercepts the request dispatching before any controller is called. Regarding
+As already explained, the security framework is initialized in the ``TYPO3\Flow\Mvc\Dispatcher``.
+It intercepts the request dispatching before any controller is called. Regarding
 authentication, you can see, that a so called authentication token will be stored in the
 security context and some credentials will be updated in it.
 
