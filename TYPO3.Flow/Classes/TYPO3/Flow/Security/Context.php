@@ -549,6 +549,7 @@ class Context {
 	 * protection strategy.
 	 *
 	 * @return string
+	 * @Flow\Session(autoStart=true)
 	 */
 	public function getCsrfProtectionToken() {
 		if ($this->initialized === FALSE) {
