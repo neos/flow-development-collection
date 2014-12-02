@@ -70,6 +70,12 @@ class FormViewHelper extends AbstractFormViewHelper {
 	protected $mvcPropertyMappingConfigurationService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager;
+
+	/**
 	 * @var string
 	 */
 	protected $formActionUri;
@@ -144,9 +150,7 @@ class FormViewHelper extends AbstractFormViewHelper {
 		$content .= $this->renderEmptyHiddenFields();
 		// Render the trusted list of all properties after everything else has been rendered
 		$content .= $this->renderTrustedPropertiesField();
-		if (strtolower($this->arguments['method']) !== 'get') {
-			$content .= $this->renderCsrfTokenField();
-		}
+		$content .= $this->renderCsrfTokenField();
 		$content .= chr(10) . '</div>' . chr(10);
 		$content .= $formContent;
 
@@ -483,7 +487,10 @@ class FormViewHelper extends AbstractFormViewHelper {
 	 * @return string the CSRF token field
 	 */
 	protected function renderCsrfTokenField() {
-		if (!$this->securityContext->isInitialized()) {
+		if (strtolower($this->arguments['method']) === 'get') {
+			return '';
+		}
+		if (!$this->securityContext->isInitialized() || !$this->authenticationManager->isAuthenticated()) {
 			return '';
 		}
 		$csrfToken = $this->securityContext->getCsrfProtectionToken();
