@@ -8,9 +8,20 @@ properties:
     type: dictionary
     required: TRUE
     additionalProperties:
-      type: dictionary
+      type: [dictionary, 'null']
       additionalProperties: FALSE
       properties:
-        'position': { type: [string, number], required: TRUE }
-        'component': { type: string, required: TRUE, format: class-name }
+        'position': { type: [string, number] }
+        'component': { type: string, format: class-name }
         'componentOptions': { type: dictionary }
+        'chain':
+          type: [dictionary, 'null']
+          additionalProperties:
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+              'position': { type: [string, number] }
+              'component': { type: string, format: class-name }
+              'componentOptions': { type: dictionary }
+              'chain':
+                type: dictionary
