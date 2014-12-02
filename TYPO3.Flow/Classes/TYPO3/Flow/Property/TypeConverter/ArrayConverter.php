@@ -146,7 +146,9 @@ class ArrayConverter extends AbstractTypeConverter {
 						'data' => base64_encode(file_get_contents('resource://' . $source->getResourcePointer()->getHash()))
 					);
 				case self::RESOURCE_EXPORT_TYPE_FILE:
-					copy('resource://' . $source->getResourcePointer()->getHash(), $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getResourcePointer()->getHash());
+					$targetStream = fopen($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
+					stream_copy_to_stream($source->getStream(), $targetStream);
+					fclose($targetStream);
 					return array(
 						'filename' => $source->getFilename(),
 						'hash' => $source->getResourcePointer()->getHash(),
