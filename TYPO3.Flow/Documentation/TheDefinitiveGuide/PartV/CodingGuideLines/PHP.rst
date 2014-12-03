@@ -262,6 +262,51 @@ their own sub-namespace end with the word ``Exception``.
 * ``\MyCompany\MyPackage\MyObject\Exception``
 * ``\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException``
 
+On consistent naming of classes, interfaces and friends
+-------------------------------------------------------
+
+At times, the question comes up, why we use a naming scheme that is inconsistent with
+what we write in the PHP sources. Here is the best explanation we have:
+
+  At first glance this feels oddly inconsistent; We do, after all, put each
+  of those at the same position within php code.
+
+  But, I think leaving Abstract as a prefix, and Interface/Trait as suffixes
+  makes sense. Consider the opposite of how we do it: "Interface Foo", "Trait
+  Foo" both feel slightly odd when I say them out loud, and "Foo Abstract"
+  feels very wrong. I think that is because of the odd rules of grammar in
+  English (Oh! English. What an ugly inconsistent language! And yet, it is my
+  native tongue).
+
+  Consider the phrase "the poor man". 'poor' is an adjective that describes
+  'man', a noun. Poor happens to also work as a noun, but the definition
+  changes slightly when you use it as a noun instead of an adjective. And, if
+  you were to flip the phrase around, it would not make much sense, or could
+  have (sometimes funny) alternative meanings: "the man poor" (Would that
+  mean someone without a boyfriend?)
+
+  The word "Abstract" works quite well as an adjective, but has the wrong
+  meaning as a noun. An "Abstract" (noun) is "an abridgement or summary" or a
+  kind of legal document, or any other summary-like document. But we're not
+  talking about a document, we're talking about the computing definition
+  which is an adjective: "abstract type". (
+  http://en.wiktionary.org/wiki/abstract)
+
+  "Abstract" can be a noun, an adjective, or a verb. But, we want the
+  adjective form. "Interface" is a noun or a verb. "Trait" is always a noun.
+  So, based on current English rules, "Abstract Foo", "Foo Interface" and
+  "Foo Trait" feel the most natural. English is a living language where words
+  can move from one part of speech to another, so we could get away with
+  using the words in different places in the sentence. But that would, at
+  least to begin with, feel awkward.
+
+  So, I blame the inconsistent placement of Abstract, Interface, and Trait on
+  the English language.
+
+  […]
+
+  -- Jacob Floyd, http://lists.typo3.org/pipermail/flow/2014-November/005625.html
+
 Method names
 ------------
 
