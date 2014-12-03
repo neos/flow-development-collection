@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2014-11-26
+This reference was automatically generated from code on 2014-12-03
 
 
 f:alias
@@ -509,31 +509,7 @@ Expected result::
 f:form
 ------
 
-Form view helper. Generates a <form> Tag.
-
-= Basic usage =
-
-Use <f:form> to output an HTML <form> tag which is targeted at the specified action, in the current controller and package.
-It will submit the form data via a POST request. If you want to change this, use method="get" as an argument.
-<code title="Example">
-<f:form action="...">...</f:form>
-</code>
-
-= A complex form with a specified encoding type =
-
-<code title="Form with enctype set">
-<f:form action=".." controller="..." package="..." enctype="multipart/form-data">...</f:form>
-</code>
-
-= A Form which should render a domain object =
-
-<code title="Binding a domain object to a form">
-<f:form action="..." name="customer" object="{customer}">
-  <f:form.hidden property="id" />
-  <f:form.textfield property="name" />
-</f:form>
-</code>
-This automatically inserts the value of {customer.name} inside the textbox and adjusts the name of the textbox accordingly.
+Used to output an HTML <form> tag which is targeted at the specified action, in the current controller and package.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\FormViewHelper
 
@@ -606,6 +582,55 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+
+
+
+Examples
+********
+
+**Basic usage, POST method**::
+
+	<f:form action="...">...</f:form>
+
+
+Expected result::
+
+	<form action="...">...</form>
+
+
+**Basic usage, GET method**::
+
+	<f:form action="..." method="get">...</f:form>
+
+
+Expected result::
+
+	<form method="GET" action="...">...</form>
+
+
+**Form with a sepcified encoding type**::
+
+	<f:form action=".." controller="..." package="..." enctype="multipart/form-data">...</f:form>
+
+
+Expected result::
+
+	<form enctype="multipart/form-data" action="...">...</form>
+
+
+**Binding a domain object to a form**::
+
+	<f:form action="..." name="customer" object="{customer}">
+	  <f:form.hidden property="id" />
+	  <f:form.textfield property="name" />
+	</f:form>
+
+
+Expected result::
+
+	A form where the value of {customer.name} is automatically inserted inside the textbox; the name of the textbox is
+	set to match the property name.
 
 
 
@@ -1008,28 +1033,17 @@ Expected result::
 f:form.select
 -------------
 
-This view helper generates a <select> dropdown list for the use with a form.
+This ViewHelper generates a <select> dropdown list for the use with a form.
 
-= Basic usage =
+**Basic usage**
 
 The most straightforward way is to supply an associative array as the "options" parameter.
-The array key is used as option key, and the value is used as human-readable name.
+The array key is used as option key, and the array value is used as human-readable name.
 
-<code title="Basic usage">
-<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" />
-</code>
+To pre-select a value, set "value" to the option key which should be selected. If the select box is a multi-select
+box (multiple="true"), then "value" can be an array as well.
 
-= Pre-select a value =
-
-To pre-select a value, set "value" to the option key which should be selected.
-<code title="Default value">
-<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" value="visa" />
-</code>
-Generates a dropdown box like above, except that "VISA Card" is selected.
-
-If the select box is a multi-select box (multiple="true"), then "value" can be an array as well.
-
-= Usage on domain objects =
+**Usage on domain objects**
 
 If you want to output domain objects, you can just pass them as array into the "options" parameter.
 To define what domain object value should be used as option key, use the "optionValueField" variable. Same goes for optionLabelField.
@@ -1041,32 +1055,13 @@ If the optionLabelField variable is set, the getter named after that value is us
 If the prependOptionLabel variable is set, an option item is added in first position, bearing an empty string
 or - if specified - the value of the prependOptionValue variable as value.
 
-<code title="Domain objects">
-<f:form.select name="users" options="{userArray}" optionValueField="id" optionLabelField="firstName" />
-</code>
-In the above example, the userArray is an array of "User" domain objects, with no array key specified.
+In the example below, the userArray is an array of "User" domain objects, with no array key specified. Thus the
+method $user->getId() is called to retrieve the key, and $user->getFirstName() to retrieve the displayed value of
+each entry. The "value" property now expects a domain object, and tests for object equivalence.
 
-So, in the above example, the method $user->getId() is called to retrieve the key, and $user->getFirstName() to retrieve the displayed value of each entry.
+**Translation of select content**
 
-The "value" property now expects a domain object, and tests for object equivalence.
-
-<code title="Prepend option">
-<f:form.select property="salutation" options="{salutations}" prependOptionLabel="- select one -" />
-</code>
-<output>
-<select name="salutation">
-  <option value="">- select one -</option>
-  <option value="Mr">Mr</option>
-  <option value="Mrs">Mrs</option>
-  <option value="Ms">Ms</option>
-  <option value="Dr">Dr</option>
-</select>
-(depending on variable "salutations")
-</output>
-
-= Translation of select content =
-
-The view helper can be given a "translate" argument with configuration on how to translate option labels.
+The ViewHelper can be given a "translate" argument with configuration on how to translate option labels.
 The array can have the following keys:
 - "by" defines if translation by message id or original label is to be used ("id" or "label")
 - "using" defines if the option tag's "value" or "label" should be used as translation input, defaults to "value"
@@ -1074,18 +1069,6 @@ The array can have the following keys:
 - "source" defines the translation source name, optional, defaults to "Main"
 - "package" defines the package key of the translation source, optional, defaults to current package
 - "prefix" defines a prefix to use for the message id – only works in combination with "by id"
-
-<code title="Label translation">
-<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id'}" />
-</code>
-
-The above example would use the values "payPal" and "visa" to look up translations for those ids in the current package's "Main" XLIFF file.
-
-<code title="Label translation">
-<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id', prefix: 'shop.paymentOptions.'}" />
-</code>
-
-The above example would use the translation ids "shop.paymentOptions.payPal" and "shop.paymentOptions.visa" for translating the labels.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\SelectViewHelper
 
@@ -1139,9 +1122,9 @@ Arguments
 
 * ``selectAllByDefault`` (boolean, *optional*): If specified options are selected if none was set before.
 
-* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this ViewHelper
 
-* ``translate`` (array, *optional*): Configures translation of view helper output.
+* ``translate`` (array, *optional*): Configures translation of ViewHelper output.
 
 * ``prependOptionLabel`` (string, *optional*): If specified, will provide an option at first position with the specified label.
 
@@ -1156,40 +1139,38 @@ Examples
 **Basic usage**::
 
 	<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" />
-	</code>
-	
-	= Pre-select a value =
-	
-	To pre-select a value, set "value" to the option key which should be selected.
-	<code title="Default value">
+
+
+Expected result::
+
+	<select name="paymentOptions">
+	  <option value="payPal">PayPal International Services</option>
+	  <option value="visa">VISA Card</option>
+	</select>
+
+
+**Preselect a default value**::
+
 	<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" value="visa" />
-	</code>
-	Generates a dropdown box like above, except that "VISA Card" is selected.
-	
-	If the select box is a multi-select box (multiple="true"), then "value" can be an array as well.
-	
-	= Usage on domain objects =
-	
-	If you want to output domain objects, you can just pass them as array into the "options" parameter.
-	To define what domain object value should be used as option key, use the "optionValueField" variable. Same goes for optionLabelField.
-	If neither is given, the Identifier (UUID/uid) and the __toString() method are tried as fallbacks.
-	
-	If the optionValueField variable is set, the getter named after that value is used to retrieve the option key.
-	If the optionLabelField variable is set, the getter named after that value is used to retrieve the option value.
-	
-	If the prependOptionLabel variable is set, an option item is added in first position, bearing an empty string
-	or - if specified - the value of the prependOptionValue variable as value.
-	
-	<code title="Domain objects">
+
+
+Expected result::
+
+	(Generates a dropdown box like above, except that "VISA Card" is selected.)
+
+
+**Use with domain objects**::
+
 	<f:form.select name="users" options="{userArray}" optionValueField="id" optionLabelField="firstName" />
-	</code>
-	In the above example, the userArray is an array of "User" domain objects, with no array key specified.
-	
-	So, in the above example, the method $user->getId() is called to retrieve the key, and $user->getFirstName() to retrieve the displayed value of each entry.
-	
-	The "value" property now expects a domain object, and tests for object equivalence.
-	
-	<code title="Prepend option">
+
+
+Expected result::
+
+	(Generates a dropdown box, using ids and first names of the User instances.)
+
+
+**Prepend a fixed option**::
+
 	<f:form.select property="salutation" options="{salutations}" prependOptionLabel="- select one -" />
 
 
@@ -1200,9 +1181,31 @@ Expected result::
 	  <option value="Mr">Mr</option>
 	  <option value="Mrs">Mrs</option>
 	  <option value="Ms">Ms</option>
-	  <option value="Dr">Dr</option>
 	</select>
 	(depending on variable "salutations")
+
+
+**Label translation**::
+
+	<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id'}" />
+
+
+Expected result::
+
+	(Generates a dropdown box and uses the values "payPal" and "visa" to look up
+	translations for those ids in the current package's "Main" XLIFF file.)
+
+
+**Label translation usign a prefix**::
+
+	<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id', prefix: 'shop.paymentOptions.'}" />
+
+
+Expected result::
+
+	(Generates a dropdown box and uses the values "shop.paymentOptions.payPal"
+	and "shop.paymentOptions.visa" to look up translations for those ids in the
+	current package's "Main" XLIFF file.)
 
 
 
@@ -2701,7 +2704,7 @@ Expected result::
 f:render
 --------
 
-ViewHelper that renders a section or a specified partial
+A ViewHelper to render a section or a specified partial in a template.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\RenderViewHelper
 
@@ -2840,7 +2843,7 @@ Expected result::
 f:section
 ---------
 
-A Section view helper
+A ViewHelper to declare sections in templates for later use with e.g. the RenderViewHelper.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\SectionViewHelper
 
