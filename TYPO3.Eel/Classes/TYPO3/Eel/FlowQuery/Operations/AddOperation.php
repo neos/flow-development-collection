@@ -38,8 +38,12 @@ class AddOperation extends AbstractOperation {
 			$output[] = $element;
 		}
 		if (isset($arguments[0])) {
-			foreach ($arguments[0] as $element) {
-				$output[] = $element;
+			if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
+				foreach ($arguments[0] as $element) {
+					$output[] = $element;
+				}
+			} else {
+				$output[] = $arguments[0];
 			}
 		}
 		$flowQuery->setContext($output);
