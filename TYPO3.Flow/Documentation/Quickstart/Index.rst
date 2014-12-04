@@ -275,11 +275,14 @@ action method like this one::
 
 .. important::
 
-	Always make sure to properly document all your functions and class properties. This
+	For the sake of simplicity the above example does not contain any input/output sanitation.
+	If your controller action directly returns something, make sure to filter the data!
+
+.. tip::
+
+	You should always properly document all your functions and class properties. This
 	will not only help other developers to understand your code, but is also essential for
-	TYPO3 Flow to work properly: In the above example TYPO3 Flow will, for example, determine that
-	the expected type of the parameter *$name* is *string* and adjust some validation
-	rules accordingly.
+	TYPO3 Flow to work properly.
 
 Now test the new action by passing it a name like in the following URL:
 
@@ -380,6 +383,12 @@ structure to the database, just run the :command:`doctrine:update` command:
 
 	$ ./flow doctrine:update
 	Executed a database schema update.
+
+.. tip::
+
+	In a real project you should avoid the :command:`doctrine:update` command and instead
+	work with migrations. See the "Persistence" section of the
+	:doc:`The Definitive Guide <../TheDefinitiveGuide/Index>` for more details
 
 A quick glance at the table structure (using your preferred database management tool) will
 reveal that a new table for coffee beans has been created.
