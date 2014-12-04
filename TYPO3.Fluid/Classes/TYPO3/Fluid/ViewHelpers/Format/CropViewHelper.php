@@ -12,6 +12,7 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  *                                                                        */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeUtilityFunctions;
 
 /**
  * Use this view helper to crop the text between its opening and closing tags.
@@ -60,8 +61,8 @@ class CropViewHelper extends AbstractViewHelper {
 			$value = $this->renderChildren();
 		}
 
-		if (strlen($value) > $maxCharacters) {
-			return substr($value, 0, $maxCharacters) . $append;
+		if (UnicodeUtilityFunctions::strlen($value) > $maxCharacters) {
+			return UnicodeUtilityFunctions::substr($value, 0, $maxCharacters) . $append;
 		} else {
 			return $value;
 		}
