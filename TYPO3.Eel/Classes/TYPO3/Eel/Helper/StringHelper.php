@@ -505,6 +505,16 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Get the length of a string
+	 *
+	 * @param string $string The input string
+	 * @return integer Length of the string
+	 */
+	public function length($string) {
+		return UnicodeFunctions::strlen($string);
+	}
+
+	/**
 	 * All methods are considered safe
 	 *
 	 * @param string $methodName

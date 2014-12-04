@@ -476,4 +476,22 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
 	}
 
+	public function lengthExamples() {
+		return array(
+			'null' => array(NULL, 0),
+			'empty' => array('', 0),
+			'non-empty' => array('Foo', 3),
+			'UTF-8' => array('Cäche Flüsh', 11)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider lengthExamples
+	 */
+	public function lengthWorks($input, $expected) {
+		$helper = new StringHelper();
+		$result = $helper->length($input);
+		$this->assertSame($expected, $result);
+	}
 }
