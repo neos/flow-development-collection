@@ -10,6 +10,8 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+use Doctrine\ORM\Tools\SchemaTool;
 use TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 
 /**
@@ -200,7 +202,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function doctrineIndexByAnnotationIsObserved() {
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation', $classMetadata);
 
@@ -227,5 +229,45 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertContains('introducedProtectedProperty', $fieldNames);
 		$this->assertContains('introducedPublicProperty', $fieldNames);
 		$this->assertNotContains('introducedTransientProperty', $fieldNames);
+	}
+
+	/**
+	 * @test
+	 */
+	public function oneToOneRelationsAreMappedCorrectly() {
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\OneToOneEntity');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\OneToOneEntity', $classMetadata);
+
+		$selfReferencingMapping = $classMetadata->getAssociationMapping('selfReferencing');
+		$this->assertNotEmpty($selfReferencingMapping['joinColumns']);
+		$this->assertTrue($selfReferencingMapping['isOwningSide']);
+
+		$bidirectionalMapping = $classMetadata->getAssociationMapping('bidirectionalRelation');
+		$this->assertNotEmpty($bidirectionalMapping['joinColumns']);
+		$this->assertEquals('bidirectionalRelation', $bidirectionalMapping['inversedBy']);
+		$this->assertTrue($bidirectionalMapping['isOwningSide']);
+
+		$classMetadata2 = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\OneToOneEntity2');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\OneToOneEntity2', $classMetadata2);
+		$bidirectionalMapping2 = $classMetadata2->getAssociationMapping('bidirectionalRelation');
+		$this->assertFalse(isset($bidirectionalMapping2['joinColumns']));
+		$this->assertEquals('bidirectionalRelation', $bidirectionalMapping2['mappedBy']);
+		$this->assertFalse($bidirectionalMapping2['isOwningSide']);
+
+		$unidirectionalMapping = $classMetadata->getAssociationMapping('unidirectionalRelation');
+		$this->assertNotEmpty($unidirectionalMapping['joinColumns']);
+		$this->assertTrue($unidirectionalMapping['isOwningSide']);
+
+		/* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
+		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+		$schemaTool = new SchemaTool($entityManager);
+		$schema = $schemaTool->getSchemaFromMetadata(array($entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\OneToOneEntity2')));
+		/* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
+		foreach ($schema->getTable('persistence_onetooneentity2')->getForeignKeys() as $foreignKey) {
+			if ($foreignKey->getForeignTableName() === 'persistence_onetooneentity') {
+				$this->assertTrue(false);
+			}
+		}
 	}
 }

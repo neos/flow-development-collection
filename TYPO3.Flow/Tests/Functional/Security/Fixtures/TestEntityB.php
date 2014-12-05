@@ -28,7 +28,7 @@ class TestEntityB {
 
 	/**
 	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
-	 * @ORM\OneToOne(inversedBy="relatedEntityB")
+	 * @ORM\OneToOne(mappedBy="relatedEntityB")
 	 */
 	protected $relatedEntityA;
 
