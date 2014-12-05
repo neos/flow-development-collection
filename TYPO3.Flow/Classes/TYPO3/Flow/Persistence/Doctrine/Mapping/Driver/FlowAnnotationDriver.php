@@ -499,7 +499,9 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				if ($oneToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
 				}
-				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
+				if ($oneToOneAnnotation->inversedBy !== NULL || $oneToOneAnnotation->mappedBy === NULL) {
+					$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
+				}
 				$mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
 				if ($oneToOneAnnotation->cascade) {
