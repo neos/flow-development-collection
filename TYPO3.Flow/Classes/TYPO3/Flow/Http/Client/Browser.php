@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Http\Client;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
 use Symfony\Component\DomCrawler\Crawler;
@@ -58,9 +59,21 @@ class Browser {
 	protected $redirectionStack = array();
 
 	/**
+	 * @var Headers
+	 */
+	protected $automaticRequestHeaders;
+
+	/**
 	 * @var \TYPO3\Flow\Http\Client\RequestEngineInterface
 	 */
 	protected $requestEngine;
+
+	/**
+	 * Construct the Browser instance.
+	 */
+	public function __construct() {
+		$this->automaticRequestHeaders = new Headers();
+	}
 
 	/**
 	 * Inject the request engine
@@ -70,6 +83,28 @@ class Browser {
 	 */
 	public function setRequestEngine(RequestEngineInterface $requestEngine) {
 		$this->requestEngine = $requestEngine;
+	}
+
+	/**
+	 * Allows to add headers to be sent with every request the browser executes.
+	 *
+	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
+	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field
+	 * @return void
+	 * @see Message::setHeader()
+	 */
+	public function addAutomaticRequestHeader($name, $values) {
+		$this->automaticRequestHeaders->set($name, $values, TRUE);
+	}
+
+	/**
+	 * Allows to remove headers that were added with addAutomaticRequestHeader.
+	 *
+	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
+	 * @return void
+	 */
+	public function removeAutomaticRequestHeader($name) {
+		$this->automaticRequestHeaders->remove($name);
 	}
 
 	/**
@@ -133,6 +168,10 @@ class Browser {
 	 * @api
 	 */
 	public function sendRequest(Request $request) {
+		foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
+			$request->setHeader($name, $values);
+		}
+
 		$this->lastRequest = $request;
 		$this->lastResponse = $this->requestEngine->sendRequest($request);
 		return $this->lastResponse;

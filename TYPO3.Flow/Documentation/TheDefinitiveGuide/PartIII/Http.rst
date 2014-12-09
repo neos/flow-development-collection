@@ -445,6 +445,18 @@ Dependency Injection techniques (through Objects.yaml) for injecting an engine i
 Also note that the virtual browser is of scope Prototype in order to support multiple browsers with possibly different
 request engines.
 
+Automatic Headers
+~~~~~~~~~~~~~~~~~
+
+The virtual browser allows for automatically sending specified headers along with every request. Simply pass the header
+to the browser as follows::
+
+	$browser->addAutomaticRequestHeader('Accept-Language', 'lv');
+
+You can remove automatic headers likewise::
+
+	$browser->removeAutomaticRequestHeader('Accept-Language');
+
 Functional Testing
 ~~~~~~~~~~~~~~~~~~
 

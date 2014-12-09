@@ -49,6 +49,42 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function automaticHeadersAreSetOnEachRequest() {
+		$requestEngine = $this->getMock('TYPO3\Flow\Http\Client\RequestEngineInterface');
+		$requestEngine
+			->expects($this->any())
+			->method('sendRequest')
+			->will($this->returnValue(new Response()));
+		$this->browser->setRequestEngine($requestEngine);
+
+		$this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
+		$this->browser->request('http://localhost/foo');
+
+		$this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+		$this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
+	}
+
+	/**
+	 * @test
+	 * @depends automaticHeadersAreSetOnEachRequest
+	 */
+	public function automaticHeadersCanBeRemovedAgain() {
+		$requestEngine = $this->getMock('TYPO3\Flow\Http\Client\RequestEngineInterface');
+		$requestEngine
+			->expects($this->once())
+			->method('sendRequest')
+			->will($this->returnValue(new Response()));
+		$this->browser->setRequestEngine($requestEngine);
+
+		$this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
+		$this->browser->removeAutomaticRequestHeader('X-Test-Header');
+		$this->browser->request('http://localhost/foo');
+		$this->assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function browserFollowsRedirectionIfResponseTellsSo() {
 		$initialUri = new Uri('http://localhost/foo');
 		$redirectUri = new Uri('http://localhost/goToAnotherFoo');
