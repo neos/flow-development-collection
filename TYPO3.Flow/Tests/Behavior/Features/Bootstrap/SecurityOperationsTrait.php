@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\Flow\Tests\Behavior\Features\Bootstrap;
 
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Http\Request;

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\Flow\Tests\Behavior\Features\Bootstrap;
 
 require_once(__DIR__ . '/SubProcess/SubProcess.php');
 
@@ -59,7 +60,8 @@ trait IsolatedBehatStepsTrait {
 			$stepMethodName = substr($stepMethodName, strpos($stepMethodName, '::') + 2);
 		}
 		$withoutSecurityChecks = ($withoutSecurityChecks === TRUE ? '--without-security-checks ' : '');
-		$subProcessCommand = sprintf('typo3.flow.tests.functional:behathelper:callbehatstep %s%s%s', $withoutSecurityChecks, $stepMethodName, $encodedStepArguments);
+		$subProcessCommand = sprintf('typo3.flow.tests.functional:behathelper:callbehatstep %s%s %s%s', $withoutSecurityChecks, escapeshellarg($this->behatTestHelperObjectName), $stepMethodName, $encodedStepArguments);
+
 		$subProcessResponse = $this->getSubProcess()->execute($subProcessCommand);
 
 		Assert::assertStringStartsWith('SUCCESS:', $subProcessResponse, 'We called "' . $subProcessCommand . '" and got: '  . $subProcessResponse);
