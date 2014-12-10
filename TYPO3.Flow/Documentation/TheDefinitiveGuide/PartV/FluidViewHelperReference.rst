@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2014-12-03
+This reference was automatically generated from code on 2014-12-11
 
 
 f:alias
@@ -3082,7 +3082,7 @@ Expected result::
 
 **Inline notation**::
 
-	{f:translate(id: 'some.label.id', default: 'fallback result')}
+	{f:translate(id: 'some.label.id', value: 'fallback result')}
 
 
 Expected result::
@@ -3092,7 +3092,7 @@ Expected result::
 
 **Custom source and locale**::
 
-	<f:translate id="some.label.id" somesource="SomeLabelsCatalog" locale="de_DE"/>
+	<f:translate id="some.label.id" source="LabelsCatalog" locale="de_DE"/>
 
 
 Expected result::
