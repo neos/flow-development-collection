@@ -12,7 +12,10 @@ namespace TYPO3\Flow;
  *                                                                        */
 
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Fluid\Core\Parser\TemplateParser;
 
 /**
  * The TYPO3 Flow Package
@@ -107,5 +110,14 @@ class Package extends BasePackage {
 			$configurationManager->registerConfigurationType('Views', Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
 		});
 		$dispatcher->connect('TYPO3\Flow\Command\CacheCommandController', 'warmupCaches', 'TYPO3\Flow\Configuration\ConfigurationManager', 'warmup');
+
+		$dispatcher->connect('TYPO3\Fluid\Core\Parser\TemplateParser', 'initializeNamespaces', function(TemplateParser $templateParser) use($bootstrap) {
+			/** @var PackageManagerInterface $packageManager */
+			$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+			/** @var PackageInterface $package */
+			foreach ($packageManager->getActivePackages() as $package) {
+				$templateParser->registerNamespace(strtolower($package->getPackageKey()), $package->getNamespace() . '\\ViewHelpers');
+			}
+		});
 	}
 }
