@@ -12,12 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class FilesTest extends UnitTestCase {
 
 	/**
 	 * @var string
@@ -146,6 +147,8 @@ class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @param string $path
+	 * @param string $expected
 	 * @dataProvider pathsWithProtocol
 	 */
 	public function getUnixStylePathWorksForPathWithProtocol($path, $expected) {
@@ -399,5 +402,201 @@ class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', TRUE);
 		$this->assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+	}
+
+	/**
+	 * @return array
+	 */
+	public function bytesToSizeStringDataProvider() {
+		return array(
+
+			// invalid values
+			array(
+				'bytes' => 'invalid',
+				'decimals' => NULL,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '0 B'
+			),
+			array(
+				'bytes' => '-100',
+				'decimals' => 2,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '0.00 B'
+			),
+			array(
+				'bytes' => -100,
+				'decimals' => 2,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '0.00 B'
+			),
+			array(
+				'bytes' => '',
+				'decimals' => 2,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '0.00 B'
+			),
+			array(
+				'bytes' => array(),
+				'decimals' => 2,
+				'decimalSeparator' => ',',
+				'thousandsSeparator' => NULL,
+				'expected' => '0,00 B'
+			),
+
+			// valid values
+			array(
+				'bytes' => 123,
+				'decimals' => NULL,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '123 B'
+			),
+			array(
+				'bytes' => '43008',
+				'decimals' => 1,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '42.0 KB'
+			),
+			array(
+				'bytes' => 1024,
+				'decimals' => 1,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '1.0 KB'
+			),
+			array(
+				'bytes' => 1023,
+				'decimals' => 2,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '1,023.00 B'
+			),
+			array(
+				'bytes' => 1073741823,
+				'decimals' => NULL,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '1,024 MB'
+			),
+			array(
+				'bytes' => 1073741823,
+				'decimals' => 1,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => '.',
+				'expected' => '1.024.0 MB'
+			),
+			array(
+				'bytes' => pow(1024, 5),
+				'decimals' => 1,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '1.0 PB'
+			),
+			array(
+				'bytes' => pow(1024, 8),
+				'decimals' => 1,
+				'decimalSeparator' => NULL,
+				'thousandsSeparator' => NULL,
+				'expected' => '1.0 YB'
+			)
+		);
+	}
+
+	/**
+	 * @param $bytes
+	 * @param $decimals
+	 * @param $decimalSeparator
+	 * @param $thousandsSeparator
+	 * @param $expected
+	 * @test
+	 * @dataProvider bytesToSizeStringDataProvider
+	 */
+	public function bytesToSizeStringTests($bytes, $decimals, $decimalSeparator, $thousandsSeparator, $expected) {
+		$actualResult = Files::bytesToSizeString($bytes, $decimals, $decimalSeparator, $thousandsSeparator);
+		$this->assertSame($expected, $actualResult);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function sizeStringToBytesDataProvider() {
+		return array(
+
+			// invalid values
+			array(
+				'sizeString' => 'invalid',
+				'expected' => 0.0
+			),
+			array(
+				'sizeString' => '',
+				'expected' => 0.0
+			),
+			array(
+				'sizeString' => FALSE,
+				'expected' => 0.0
+			),
+
+			// valid values
+			array(
+				'sizeString' => '12345',
+				'expected' => 12345.0
+			),
+			array(
+				'sizeString' => '54321 b',
+				'expected' => 54321.0
+			),
+			array(
+				'sizeString' => '1024M',
+				'expected' => 1073741824.0
+			),
+			array(
+				'sizeString' => '1024.0 MB',
+				'expected' => 1073741824.0
+			),
+			array(
+				'sizeString' => '500 MB',
+				'expected' => 524288000.0
+			),
+			array(
+				'sizeString' => '500m',
+				'expected' => 524288000.0
+			),
+			array(
+				'sizeString' => '1.0 KB',
+				'expected' => 1024.0
+			),
+			array(
+				'sizeString' => '1 GB',
+				'expected' => (float)pow(1024, 3)
+			),
+			array(
+				'sizeString' => '1 Z',
+				'expected' => (float)pow(1024, 7)
+			)
+		);
+	}
+
+	/**
+	 * @param string $sizeString
+	 * @param float $expected
+	 * @test
+	 * @dataProvider sizeStringToBytesDataProvider
+	 */
+	public function sizeStringToBytesTests($sizeString, $expected) {
+		$actualResult = Files::sizeStringToBytes($sizeString);
+		$this->assertSame($expected, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Utility\Exception
+	 */
+	public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown() {
+		Files::sizeStringToBytes('123 UnknownUnit');
 	}
 }

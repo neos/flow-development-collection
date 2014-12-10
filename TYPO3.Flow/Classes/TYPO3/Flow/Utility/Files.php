@@ -367,4 +367,68 @@ class Files {
 			return FALSE;
 		}
 	}
+
+	/**
+	 * Supported filesize units for the byte conversion functions below
+	 *
+	 * @var array
+	 */
+	static protected $sizeUnits = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+
+	/**
+	 * Converts an integer with a byte count into human-readable form
+	 *
+	 * @param float|integer $bytes
+	 * @param integer $decimals number of decimal places in the resulting string
+	 * @param string $decimalSeparator decimal separator of the resulting string
+	 * @param string $thousandsSeparator thousands separator of the resulting string
+	 * @return string the size string, e.g. "1,024 MB"
+	 */
+	static public function bytesToSizeString($bytes, $decimals = 0, $decimalSeparator = '.', $thousandsSeparator = ',') {
+		if (!is_integer($bytes) && !is_float($bytes)) {
+			if (is_numeric($bytes)) {
+				$bytes = (float)$bytes;
+			} else {
+				$bytes = 0;
+			}
+		}
+
+		$bytes = max($bytes, 0);
+		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+		$pow = min($pow, count(self::$sizeUnits) - 1);
+		$bytes /= pow(2, (10 * $pow));
+
+		return sprintf(
+			'%s %s',
+			number_format(round($bytes, 4 * $decimals), $decimals, $decimalSeparator, $thousandsSeparator),
+			self::$sizeUnits[$pow]
+		);
+	}
+
+	/**
+	 * Converts a size string (e.g. "1024.0 MB") to the number of bytes it represents
+	 *
+	 * @param string $sizeString the human-readable size string (e.g. ini_get('upload_max_filesize'))
+	 * @return float The number of bytes the $sizeString represents or 0 if the number could not be parsed
+	 * @throws Exception if the specified unit could not be resolved
+	 */
+	static public function sizeStringToBytes($sizeString) {
+		preg_match('/(?P<size>\d+\.*\d*)(?P<unit>.*)/', $sizeString, $matches);
+		if (empty($matches['size'])) {
+			return 0.0;
+		}
+		$size = (float)$matches['size'];
+		if (empty($matches['unit'])) {
+			return (float)round($size);
+		}
+		$unit = strtoupper(trim($matches['unit']));
+		if ($unit !== 'B' && strlen($unit) === 1) {
+			$unit .= 'B';
+		}
+		$pow = array_search($unit, self::$sizeUnits, TRUE);
+		if ($pow === FALSE) {
+			throw new Exception(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
+		}
+		return $size * pow(2, (10 * $pow));
+	}
 }
