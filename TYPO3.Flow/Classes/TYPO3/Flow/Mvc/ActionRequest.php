@@ -347,7 +347,14 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getControllerSubpackageKey() {
-		return $this->controllerSubpackageKey;
+		$controllerObjectName = $this->getControllerObjectName();
+		if ($this->controllerSubpackageKey !== NULL && $controllerObjectName !== '') {
+
+			// Extract the subpackage key from the controller object name to assure that the case is correct.
+			return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen($this->controllerSubpackageKey));
+		} else {
+			return $this->controllerSubpackageKey;
+		}
 	}
 
 	/**
@@ -381,8 +388,7 @@ class ActionRequest implements RequestInterface {
 		$controllerObjectName = $this->getControllerObjectName();
 		if ($controllerObjectName !== '') {
 
-			// Extract the controller name from the controller object name to assure that
-			// the case is correct.
+			// Extract the controller name from the controller object name to assure that the case is correct.
 			// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
 			return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
 		} else {

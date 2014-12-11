@@ -13,10 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Mvc\Exception\NoSuchArgumentException;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfiguration;
-use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Security\Exception\InvalidHashException;
 use TYPO3\Flow\Tests\UnitTestCase;
 
@@ -207,6 +204,8 @@ class ActionRequestTest extends UnitTestCase {
 
 	/**
 	 * @test
+	 * @param string $objectName
+	 * @param array $parts
 	 * @dataProvider caseSensitiveObjectNames
 	 */
 	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
@@ -238,7 +237,7 @@ class ActionRequestTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
+	public function getControllerNameExtractsTheControllerNameFromTheControllerObjectNameToAssureTheCorrectCase() {
 		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
 		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
@@ -250,13 +249,66 @@ class ActionRequestTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function ifNoControllerObjectNameCouldBeDeterminedTheUnknownCasesControllerNameIsReturned() {
+	public function getControllerNameReturnsTheUnknownCasesControllerNameIfNoControllerObjectNameCouldBeDetermined() {
 		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
 		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$actionRequest->setControllerName('foo\bar');
 		$this->assertEquals('foo\bar', $actionRequest->getControllerName());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getControllerSubpackageKeyExtractsTheSubpackageKeyFromTheControllerObjectNameToAssureTheCorrectCase() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
+
+		/** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('typo3.mypackage')->will($this->returnValue('Typo3.MyPackage'));
+		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
+
+		$actionRequest->setControllerPackageKey('typo3.mypackage');
+		$actionRequest->setControllerSubpackageKey('some\subpackage');
+		$this->assertEquals('Some\SubPackage', $actionRequest->getControllerSubpackageKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getControllerSubpackageKeyReturnsNullIfNoSubpackageKeyIsSet() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
+
+		/** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('typo3.mypackage')->will($this->returnValue('Typo3.MyPackage'));
+		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
+
+		$actionRequest->setControllerPackageKey('typo3.mypackage');
+		$this->assertNull($actionRequest->getControllerSubpackageKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getControllerSubpackageKeyReturnsTheUnknownCasesPackageKeyIfNoControllerObjectNameCouldBeDetermined() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
+
+		/** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('typo3.mypackage')->will($this->returnValue(FALSE));
+		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
+
+		$actionRequest->setControllerPackageKey('typo3.mypackage');
+		$actionRequest->setControllerSubpackageKey('some\subpackage');
+		$this->assertEquals('some\subpackage', $actionRequest->getControllerSubpackageKey());
 	}
 
 	/**
@@ -272,6 +324,7 @@ class ActionRequestTest extends UnitTestCase {
 
 	/**
 	 * @test
+	 * @param mixed $invalidControllerName
 	 * @dataProvider invalidControllerNames
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
 	 */
@@ -304,6 +357,7 @@ class ActionRequestTest extends UnitTestCase {
 
 	/**
 	 * @test
+	 * @param mixed $invalidActionName
 	 * @dataProvider invalidActionNames
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidActionNameException
 	 */
