@@ -39,7 +39,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected $packageFactory;
 
 	/**
-	 * Array of available packages, indexed by package key
+	 * Array of available packages, indexed by package key (case sensitive)
 	 * @var array
 	 */
 	protected $packages = array();
@@ -156,6 +156,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @api
 	 */
 	public function isPackageAvailable($packageKey) {
+		$packageKey = $this->getCaseSensitivePackageKey($packageKey);
 		return (isset($this->packages[$packageKey]));
 	}
 
@@ -673,8 +674,9 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 */
 	public function registerPackage(PackageInterface $package, $sortAndSave = TRUE) {
 		$packageKey = $package->getPackageKey();
-		if ($this->isPackageAvailable($packageKey)) {
-			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered.', 1338996122);
+		$caseSensitivePackageKey = $this->getCaseSensitivePackageKey($packageKey);
+		if ($this->isPackageAvailable($caseSensitivePackageKey)) {
+			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered as "' . $caseSensitivePackageKey .  '".', 1338996122);
 		}
 
 		$this->packages[$packageKey] = $package;
