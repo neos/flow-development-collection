@@ -51,15 +51,13 @@ TYPO3:
       doctrine:
         cacheImplementation: NULL
 
-      doctrine:
         eventSubscribers:
-          - 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber'
+          'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber':
+            'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber'
         eventListeners:
-          -
+          'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener':
             events: ['onFlush', 'preFlush', 'postFlush']
             listener: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener'
-
-    resource:
 
     resource:
 
