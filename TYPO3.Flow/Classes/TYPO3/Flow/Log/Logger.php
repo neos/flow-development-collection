@@ -11,8 +11,10 @@ namespace TYPO3\Flow\Log;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Core\RequestHandlerInterface;
+use TYPO3\Flow\Error\Debugger;
+use TYPO3\Flow\Exception;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
+use TYPO3\Flow\Log\Exception\NoSuchBackendException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 
 
@@ -21,7 +23,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
  *
  * @api
  */
-class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\SecurityLoggerInterface {
+class Logger implements SystemLoggerInterface, SecurityLoggerInterface {
 
 	/**
 	 * @var \SplObjectStorage
@@ -41,11 +43,11 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 	 *
 	 * This method allows for conveniently injecting a backend through some Objects.yaml configuration.
 	 *
-	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @api
 	 */
-	public function setBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
+	public function setBackend(Backend\BackendInterface $backend) {
 		$this->backends = new \SplObjectStorage();
 		$this->backends->attach($backend);
 	}
@@ -53,11 +55,11 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 	/**
 	 * Adds the backend to which the logger sends the logging data
 	 *
-	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @api
 	 */
-	public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
+	public function addBackend(Backend\BackendInterface $backend) {
 		$this->backends->attach($backend);
 		$backend->open();
 	}
@@ -66,14 +68,14 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 	 * Runs the close() method of a backend and removes the backend
 	 * from the logger.
 	 *
-	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
+	 * @param Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \TYPO3\Flow\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
+	 * @throws NoSuchBackendException if the given backend is unknown to this logger
 	 * @api
 	 */
-	public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
+	public function removeBackend(Backend\BackendInterface $backend) {
 		if (!$this->backends->contains($backend)) {
-			throw new \TYPO3\Flow\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
+			throw new NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
 		}
 		$backend->close();
 		$this->backends->detach($backend);
@@ -131,15 +133,44 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 			mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
 		}
 		if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+			$referenceCode = ($exception instanceof Exception) ? $exception->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
 			$exceptionDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
-			file_put_contents($exceptionDumpPathAndFilename, $this->renderPostMortemInfo($message, $backTrace));
+			file_put_contents($exceptionDumpPathAndFilename, $this->renderExceptionInfo($exception));
 			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
 		} else {
 			$this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'Flow', __CLASS__, __FUNCTION__);
 		}
 
 		$this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);
+	}
+
+	/**
+	 * Get current exception post mortem informations with support for exception chaining
+	 *
+	 * @param \Exception $exception
+	 * @return string
+	 */
+	protected function renderExceptionInfo(\Exception $exception) {
+		$maximumDepth = 100;
+		$backTrace = $exception->getTrace();
+		$message = $this->getExceptionLogMessage($exception);
+		$postMortemInfo = $this->renderBacktrace($message, $backTrace);
+		$depth = 0;
+		while ($exception->getPrevious() instanceof \Exception && $depth < $maximumDepth) {
+			$exception = $exception->getPrevious();
+			$message = 'Previous exception: ' . $this->getExceptionLogMessage($exception);
+			$backTrace = $exception->getTrace();
+			$postMortemInfo .= PHP_EOL . $this->renderBacktrace($message, $backTrace);
+			++$depth;
+		}
+
+		$postMortemInfo .= $this->renderRequestInfo();
+
+		if ($depth === $maximumDepth) {
+			$postMortemInfo .= PHP_EOL . 'Maximum chainging depth reached ...';
+		}
+
+		return $postMortemInfo;
 	}
 
 	/**
@@ -156,11 +187,21 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 	/**
 	 * Renders background information about the circumstances of the exception.
 	 *
+	 * @param string $message
 	 * @param array $backTrace
 	 * @return string
 	 */
-	protected function renderPostMortemInfo($message, $backTrace) {
-		$output = $message . PHP_EOL . PHP_EOL . \TYPO3\Flow\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE);
+	protected function renderBacktrace($message, $backTrace) {
+		return $message . PHP_EOL . PHP_EOL . Debugger::getBacktraceCode($backTrace, FALSE, TRUE);
+	}
+
+	/**
+	 * Render information about the current request, if possible
+	 *
+	 * @return string
+	 */
+	protected function renderRequestInfo() {
+		$output = '';
 		if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
 			$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
 			/* @var Bootstrap $bootstrap */
@@ -172,6 +213,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 				$output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
 			}
 		}
+
 		return $output;
 	}
 
