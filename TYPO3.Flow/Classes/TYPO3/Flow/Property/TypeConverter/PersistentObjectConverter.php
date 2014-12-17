@@ -12,6 +12,14 @@ namespace TYPO3\Flow\Property\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\Exception\DuplicateObjectException;
+use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use TYPO3\Flow\Property\Exception\InvalidSourceException;
+use TYPO3\Flow\Property\Exception\InvalidTargetException;
+use TYPO3\Flow\Property\Exception\TargetNotFoundException;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * This converter transforms arrays or strings to persistent objects. It does the following:
@@ -64,7 +72,7 @@ class PersistentObjectConverter extends ObjectConverter {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -104,18 +112,18 @@ class PersistentObjectConverter extends ObjectConverter {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
+	 * @throws InvalidTargetException
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
 
 		$schema = $this->reflectionService->getClassSchema($targetType);
-		$setterMethodName = \TYPO3\Flow\Reflection\ObjectAccess::buildSetterMethodName($propertyName);
+		$setterMethodName = ObjectAccess::buildSetterMethodName($propertyName);
 		if ($schema->hasProperty($propertyName)) {
 			$propertyInformation = $schema->getProperty($propertyName);
 			return $propertyInformation['type'] . ($propertyInformation['elementType'] !== NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
@@ -123,12 +131,12 @@ class PersistentObjectConverter extends ObjectConverter {
 			$methodParameters = $this->reflectionService->getMethodParameters($targetType, $setterMethodName);
 			$methodParameter = current($methodParameters);
 			if (!isset($methodParameter['type'])) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
+				throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
 			} else {
 				return $methodParameter['type'];
 			}
 		} else {
-			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
+			throw new InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
 		}
 	}
 
@@ -138,12 +146,11 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return object the target type
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
-	 * @throws \InvalidArgumentException
+	 * @param PropertyMappingConfigurationInterface $configuration
+	 * @return object the converted entity or value object
+	 * @throws \InvalidArgumentException|InvalidTargetException|TargetNotFoundException
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
 			if ($this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\ValueObject')) {
 				// Unset identity for valueobject to use constructor mapping, since the identity is determined from
@@ -157,13 +164,13 @@ class PersistentObjectConverter extends ObjectConverter {
 			}
 			$object = $this->fetchObjectFromPersistence($source, $targetType);
 			if ($object === NULL) {
-				throw new \TYPO3\Flow\Property\Exception\TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, $source), 1412283033);
+				throw new TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, $source), 1412283033);
 			}
 		} else {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
-			$result = \TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+			$result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
 				$exceptionMessage = sprintf(
 					'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
@@ -171,7 +178,7 @@ class PersistentObjectConverter extends ObjectConverter {
 					(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
 					$targetType
 				);
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1297935345);
+				throw new InvalidTargetException($exceptionMessage, 1297935345);
 			}
 		}
 
@@ -184,14 +191,14 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param array $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return object
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+	 * @throws InvalidPropertyMappingConfigurationException|TargetNotFoundException
 	 */
-	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['__identity'])) {
 			if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
+				throw new InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
 			}
 			$object = $this->buildObject($convertedChildProperties, $targetType);
 		} elseif ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) === TRUE) {
@@ -204,11 +211,11 @@ class PersistentObjectConverter extends ObjectConverter {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
 			if ($object === NULL) {
-				throw new \TYPO3\Flow\Property\Exception\TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
+				throw new TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
 			}
 
 			if (count($source) > 1 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
+				throw new InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 			}
 		}
 
@@ -224,7 +231,7 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @todo set identity properly if it is composite or custom property
 	 */
 	protected function setIdentity($object, $identity) {
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, 'Persistence_Object_Identifier', $identity, TRUE);
+		ObjectAccess::setProperty($object, 'Persistence_Object_Identifier', $identity, TRUE);
 	}
 
 	/**
@@ -233,8 +240,8 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param mixed $identity
 	 * @param string $targetType
 	 * @return object
-	 * @throws \TYPO3\Flow\Property\Exception\TargetNotFoundException
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidSourceException
+	 * @throws TargetNotFoundException
+	 * @throws InvalidSourceException
 	 */
 	protected function fetchObjectFromPersistence($identity, $targetType) {
 		if (is_string($identity)) {
@@ -242,7 +249,7 @@ class PersistentObjectConverter extends ObjectConverter {
 		} elseif (is_array($identity)) {
 			$object = $this->findObjectByIdentityProperties($identity, $targetType);
 		} else {
-			throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is neither a string nor an array.', 1297931020);
+			throw new InvalidSourceException(sprintf('The identity property is neither a string nor an array but of type "%s".', gettype($identity)), 1297931020);
 		}
 
 		return $object;
@@ -254,7 +261,7 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param array $identityProperties Property names and values to search for
 	 * @param string $type The object type to look for
 	 * @return object Either the object matching the identity or NULL if no object was found
-	 * @throws \TYPO3\Flow\Property\Exception\DuplicateObjectException if more than one object was found
+	 * @throws DuplicateObjectException if more than one object was found
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
 		$query = $this->persistenceManager->createQueryForType($type);
@@ -287,7 +294,7 @@ class PersistentObjectConverter extends ObjectConverter {
 		} elseif ($numberOfResults === 0) {
 			return NULL;
 		} else {
-			throw new \TYPO3\Flow\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
+			throw new DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}
 	}
 }
