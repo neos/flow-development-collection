@@ -99,7 +99,19 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 
 		$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
 
-		$this->dispatcher->dispatch($this->request, $this->response);
+		if ($runLevel === 'Runtime') {
+			/** @var \TYPO3\Flow\Security\Context $securityContext */
+			$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+			$dispatcher = $this->dispatcher;
+			$request = $this->request;
+			$response = $this->response;
+			$securityContext->withoutAuthorizationChecks(function() use ($dispatcher, $request, $response) {
+				$dispatcher->dispatch($request, $response);
+			});
+		} else {
+			$this->dispatcher->dispatch($this->request, $this->response);
+		}
+
 		$this->response->send();
 
 		$this->shutdown($runLevel);
