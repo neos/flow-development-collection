@@ -25,6 +25,9 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
 use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
+use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * General purpose central core hyper Flow bootstrap class
@@ -40,9 +43,11 @@ class Bootstrap {
 	 */
 	const MINIMUM_PHP_VERSION = '5.5.0';
 
+	const RUNLEVEL_COMPILETIME = 'Compiletime';
+	const RUNLEVEL_RUNTIME = 'Runtime';
+
 	/**
-	 * The application context
-	 * @var \TYPO3\Flow\Core\ApplicationContext
+	 * @var ApplicationContext
 	 */
 	protected $context;
 
@@ -57,14 +62,14 @@ class Bootstrap {
 	protected $preselectedRequestHandlerClassName;
 
 	/**
-	 * @var \TYPO3\Flow\Core\RequestHandlerInterface
+	 * @var RequestHandlerInterface
 	 */
 	protected $activeRequestHandler;
 
 	/**
 	 * The same instance like $objectManager, but static, for use in the proxy classes.
 	 *
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	static public $staticObjectManager;
 
@@ -115,16 +120,16 @@ class Bootstrap {
 	 * Control is returned to the request handler which can exit the application
 	 * as it sees fit.
 	 *
-	 * @param string $runlevel The runlevel the request ran in – must be either "Runtime" or "Compiletime"
+	 * @param string $runlevel one of the RUNLEVEL_* constants
 	 * @return void
 	 * @api
 	 */
 	public function shutdown($runlevel) {
 		switch($runlevel) {
-			case 'Compiletime':
+			case self::RUNLEVEL_COMPILETIME:
 				$this->emitFinishedCompiletimeRun();
 			break;
-			case 'Runtime':
+			case self::RUNLEVEL_RUNTIME:
 				$this->emitFinishedRuntimeRun();
 			break;
 		}
@@ -134,7 +139,7 @@ class Bootstrap {
 	/**
 	 * Returns the context this bootstrap was started in.
 	 *
-	 * @return \TYPO3\Flow\Core\ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
+	 * @return ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
 	 * @api
 	 */
 	public function getContext() {
@@ -143,11 +148,10 @@ class Bootstrap {
 
 	/**
 	 * Registers a request handler which can possibly handle a request.
-	 *
 	 * All registered request handlers will be queried if they can handle a request
 	 * when the bootstrap's run() method is called.
 	 *
-	 * @param \TYPO3\Flow\Core\RequestHandlerInterface $requestHandler
+	 * @param RequestHandlerInterface $requestHandler
 	 * @return void
 	 * @api
 	 */
@@ -169,7 +173,7 @@ class Bootstrap {
 	/**
 	 * Returns the request handler (if any) which is currently handling the request.
 	 *
-	 * @return \TYPO3\Flow\Core\RequestHandlerInterface
+	 * @return RequestHandlerInterface
 	 */
 	public function getActiveRequestHandler() {
 		return $this->activeRequestHandler;
@@ -184,10 +188,10 @@ class Bootstrap {
 	 * test case can then set the active request handler to one which simulates, for
 	 * example, an HTTP request.
 	 *
-	 * @param \TYPO3\Flow\Core\RequestHandlerInterface $requestHandler
+	 * @param RequestHandlerInterface $requestHandler
 	 * @return void
 	 */
-	public function setActiveRequestHandler(\TYPO3\Flow\Core\RequestHandlerInterface $requestHandler) {
+	public function setActiveRequestHandler(RequestHandlerInterface $requestHandler) {
 		$this->activeRequestHandler = $requestHandler;
 	}
 
@@ -345,12 +349,12 @@ class Bootstrap {
 	 *
 	 * @param string $objectName Object name of the registered instance
 	 * @return object
-	 * @throws \TYPO3\Flow\Exception
+	 * @throws FlowException
 	 * @api
 	 */
 	public function getEarlyInstance($objectName) {
 		if (!isset($this->earlyInstances[$objectName])) {
-			throw new \TYPO3\Flow\Exception('Unknown early instance "' . $objectName . '"', 1322581449);
+			throw new FlowException('Unknown early instance "' . $objectName . '"', 1322581449);
 		}
 		return $this->earlyInstances[$objectName];
 	}
@@ -367,13 +371,13 @@ class Bootstrap {
 	/**
 	 * Returns the object manager instance
 	 *
-	 * @return \TYPO3\Flow\Object\ObjectManagerInterface
-	 * @throws \TYPO3\Flow\Exception
+	 * @return ObjectManagerInterface
+	 * @throws FlowException
 	 */
 	public function getObjectManager() {
 		if (!isset($this->earlyInstances['TYPO3\Flow\Object\ObjectManagerInterface'])) {
 			debug_print_backtrace();
-			throw new \TYPO3\Flow\Exception('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
+			throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
 		}
 		return $this->earlyInstances['TYPO3\Flow\Object\ObjectManagerInterface'];
 	}
@@ -381,22 +385,24 @@ class Bootstrap {
 	/**
 	 * Iterates over the registered request handlers and determines which one fits best.
 	 *
-	 * @return \TYPO3\Flow\Core\RequestHandlerInterface A request handler
-	 * @throws \TYPO3\Flow\Exception
+	 * @return RequestHandlerInterface A request handler
+	 * @throws FlowException
 	 */
 	protected function resolveRequestHandler() {
 		if ($this->preselectedRequestHandlerClassName !== NULL && isset($this->requestHandlers[$this->preselectedRequestHandlerClassName])) {
+			/** @var RequestHandlerInterface $requestHandler */
 			$requestHandler = $this->requestHandlers[$this->preselectedRequestHandlerClassName];
 			if ($requestHandler->canHandleRequest()) {
 				return $requestHandler;
 			}
 		}
 
+		/** @var RequestHandlerInterface $requestHandler */
 		foreach ($this->requestHandlers as $requestHandler) {
 			if ($requestHandler->canHandleRequest() > 0) {
 				$priority = $requestHandler->getPriority();
 				if (isset($suitableRequestHandlers[$priority])) {
-					throw new \TYPO3\Flow\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
+					throw new FlowException('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
 				}
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
@@ -466,9 +472,9 @@ class Bootstrap {
 				}
 			}
 			if ($rootPath !== FALSE) {
-				$rootPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
-				$testPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3.Flow')))) . '/';
-				$expectedPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(FLOW_PATH_FLOW)) . '/';
+				$rootPath = Files::getUnixStylePath(realpath($rootPath)) . '/';
+				$testPath = Files::getUnixStylePath(realpath(Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3.Flow')))) . '/';
+				$expectedPath = Files::getUnixStylePath(realpath(FLOW_PATH_FLOW)) . '/';
 				if ($testPath !== $expectedPath) {
 					echo('Flow: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath . '"' . PHP_EOL);
 					exit(1);
@@ -486,16 +492,16 @@ class Bootstrap {
 			}
 			if (!defined('FLOW_PATH_WEB')) {
 				if (isset($_SERVER['FLOW_WEBPATH']) && is_dir($_SERVER['FLOW_WEBPATH'])) {
-					define('FLOW_PATH_WEB', \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW_WEBPATH'])) . '/');
+					define('FLOW_PATH_WEB', Files::getUnixStylePath(realpath($_SERVER['FLOW_WEBPATH'])) . '/');
 				} else {
 					define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
 				}
 			}
 		} else {
 			if (!defined('FLOW_PATH_ROOT')) {
-				define('FLOW_PATH_ROOT', \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
+				define('FLOW_PATH_ROOT', Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
 			}
-			define('FLOW_PATH_WEB', \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
+			define('FLOW_PATH_WEB', Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
 		}
 
 		define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');

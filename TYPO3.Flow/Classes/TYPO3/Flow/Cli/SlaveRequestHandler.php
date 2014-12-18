@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Cli;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\RequestHandlerInterface;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * A special request handler which handles "slave" command requests as used by
@@ -21,7 +23,7 @@ use TYPO3\Flow\Core\Bootstrap;
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
  */
-class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
+class SlaveRequestHandler implements RequestHandlerInterface {
 
 	/**
 	 * @var \TYPO3\Flow\Core\Bootstrap
@@ -80,8 +82,9 @@ class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 				if ($commandLine === "QUIT\n") {
 					break;
 				}
+				/** @var Request $request */
 				$request = $objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build($trimmedCommandLine);
-				$response = new \TYPO3\Flow\Cli\Response();
+				$response = new Response();
 				if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
 					echo "This command must be executed during compiletime.\n";
 				} else {
@@ -94,7 +97,7 @@ class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 			}
 
 			$systemLogger->log('Exiting sub process loop.', LOG_DEBUG);
-			$this->bootstrap->shutdown('Runtime');
+			$this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
 			exit($response->getExitCode());
 		} catch (\Exception $exception) {
 			$this->handleException($exception);
@@ -119,13 +122,13 @@ class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 	 * @return void
 	 */
 	protected function handleException(\Exception $exception) {
-		$response = new \TYPO3\Flow\Cli\Response();
+		$response = new Response();
 
 		$exceptionMessage = '';
 		$exceptionReference = "\n<b>More Information</b>\n";
 		$exceptionReference .= "  Exception code      #" . $exception->getCode() . "\n";
 		$exceptionReference .= "  File                " . $exception->getFile() . ($exception->getLine() ? ' line ' . $exception->getLine() : '') . "\n";
-		$exceptionReference .= ($exception instanceof \TYPO3\Flow\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
+		$exceptionReference .= ($exception instanceof FlowException ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
 		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
 			 $exceptionMessage .= "  $messageLine\n";
 		}

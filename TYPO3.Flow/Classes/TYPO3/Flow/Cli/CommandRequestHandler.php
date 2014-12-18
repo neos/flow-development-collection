@@ -13,6 +13,9 @@ namespace TYPO3\Flow\Cli;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\RequestHandlerInterface;
+use TYPO3\Flow\Mvc\Dispatcher;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * A request handler which can handle command line requests.
@@ -20,37 +23,35 @@ use TYPO3\Flow\Core\Bootstrap;
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
  */
-class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
+class CommandRequestHandler implements RequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Dispatcher
+	 * @var Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \TYPO3\Flow\Cli\Request
+	 * @var Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\Flow\Cli\Response
+	 * @var Response
 	 */
 	protected $response;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	* @param Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -85,7 +86,7 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 	 * @return void
 	 */
 	public function handleRequest() {
-		$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
+		$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? Bootstrap::RUNLEVEL_COMPILETIME : Bootstrap::RUNLEVEL_RUNTIME;
 		$this->boot($runLevel);
 
 		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
@@ -106,38 +107,38 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 	 *
 	 * This happens if the user doesn't specify the full command identifier.
 	 *
-	 * @param string $runlevel
+	 * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
 	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidCommandIdentifierException
 	 */
 	public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel) {
-		if ($runlevel === 'Runtime') {
-			$command = $this->request->getCommand();
-			if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
-				$this->response->appendContent(sprintf(
-					"<b>Unrecognized Command</b>\n\n" .
-					"Sorry, but he command \"%s\" must be specified by its full command\n" .
-					"identifier because it is a compile time command which cannot be resolved\n" .
-					"from an abbreviated command identifier.\n\n",
-					$command->getCommandIdentifier())
-				);
-				$this->response->send();
-				$this->shutdown($runlevel);
-				exit(1);
-			}
+		if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
+			return;
+		}
+		$command = $this->request->getCommand();
+		if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
+			$this->response->appendContent(sprintf(
+				"<b>Unrecognized Command</b>\n\n" .
+				"Sorry, but he command \"%s\" must be specified by its full command\n" .
+				"identifier because it is a compile time command which cannot be resolved\n" .
+				"from an abbreviated command identifier.\n\n",
+				$command->getCommandIdentifier())
+			);
+			$this->response->send();
+			$this->shutdown($runlevel);
+			exit(1);
 		}
 	}
 
 	/**
 	 * Initializes the matching boot sequence depending on the type of the command
-	 * (runtime or compiletime) and manually injects the necessary dependencies of
+	 * (RUNLEVEL_RUNTIME or RUNLEVEL_COMPILETIME) and manually injects the necessary dependencies of
 	 * this request handler.
 	 *
-	 * @param string $runlevel Either "Compiletime" or "Runtime"
+	 * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
 	 * @return void
 	 */
 	protected function boot($runlevel) {
-		$sequence = ($runlevel === 'Compiletime') ? $this->bootstrap->buildCompiletimeSequence() : $this->bootstrap->buildRuntimeSequence();
+		$sequence = ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) ? $this->bootstrap->buildCompiletimeSequence() : $this->bootstrap->buildRuntimeSequence();
 		$sequence->invoke($this->bootstrap);
 
 		$this->objectManager = $this->bootstrap->getObjectManager();
@@ -147,12 +148,12 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 	/**
 	 * Starts the shutdown sequence
 	 *
-	 * @param string $runlevel Either "Compiletime" or "Runtime"
+	 * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
 	 * @return void
 	 */
 	protected function shutdown($runlevel) {
 		$this->bootstrap->shutdown($runlevel);
-		if ($runlevel === 'Compiletime') {
+		if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
 			$this->objectManager->get('TYPO3\Flow\Core\LockManager')->unlockSite();
 		}
 		exit($this->response->getExitCode());

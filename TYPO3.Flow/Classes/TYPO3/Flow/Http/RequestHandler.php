@@ -108,7 +108,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 		$this->response->send();
 
-		$this->bootstrap->shutdown('Runtime');
+		$this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
 		$this->exit->__invoke();
 	}
 
