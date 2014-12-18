@@ -16,6 +16,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Context;
 
 /**
  * A request handler which can handle command line requests.
@@ -95,7 +96,16 @@ class CommandRequestHandler implements RequestHandlerInterface {
 
 		$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
 
-		$this->dispatcher->dispatch($this->request, $this->response);
+		if ($runLevel === Bootstrap::RUNLEVEL_RUNTIME) {
+			/** @var Context $securityContext */
+			$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+			$securityContext->withoutAuthorizationChecks(function() {
+				$this->dispatcher->dispatch($this->request, $this->response);
+			});
+		} else {
+			$this->dispatcher->dispatch($this->request, $this->response);
+		}
+
 		$this->response->send();
 
 		$this->shutdown($runLevel);
