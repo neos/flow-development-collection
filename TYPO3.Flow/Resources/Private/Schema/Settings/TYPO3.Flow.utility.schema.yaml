@@ -7,3 +7,7 @@ properties:
     additionalProperties: FALSE
     properties:
       'temporaryDirectoryBase': { type: string, required: TRUE }
+  'lockStrategyClassName':
+    type: string
+    required: TRUE
+    format: class-name
