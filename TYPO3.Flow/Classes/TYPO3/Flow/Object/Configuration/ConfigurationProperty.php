@@ -23,7 +23,7 @@ class ConfigurationProperty {
 
 	const PROPERTY_TYPES_STRAIGHTVALUE = 0;
 	const PROPERTY_TYPES_OBJECT = 1;
-	const PROPERTY_TYPES_SETTING = 2;
+	const PROPERTY_TYPES_CONFIGURATION = 2;
 
 	/**
 	 * @var string Name of the property

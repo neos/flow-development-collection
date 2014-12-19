@@ -731,15 +731,38 @@ setting value into a class property:
 
 		/**
 		 * @var string
-		 * @Flow\Inject(setting="administrator.name")
+		 * @Flow\InjectConfiguration("administrator.name")
 		 */
 		protected $name;
 
 		/**
 		 * @var string
-		 * @Flow\Inject(setting="email", package="SomeOther.Package")
+		 * @Flow\InjectConfiguration(path="email", package="SomeOther.Package")
 		 */
-		protected $email;
+		protected $emailAddress;
+
+	}
+
+The ``InjectConfiguration`` annotation also supports for injecting all settings of a package. And it can also be used
+to inject any other registered configuration type:
+
+.. code-block:: php
+
+	namespace Acme\Demo;
+
+	class SomeClass {
+
+		/**
+		 * @var array
+		 * @Flow\InjectConfiguration(package="SomeOther.Package")
+		 */
+		protected $allSettingsOfSomeOtherPackage;
+
+		/**
+		 * @var array
+		 * @Flow\InjectConfiguration(type="Views")
+		 */
+		protected $viewsConfiguration;
 
 	}
 

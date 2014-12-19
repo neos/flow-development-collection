@@ -769,7 +769,7 @@ the order given here should be kept for the sake of consistency.
 * @Flow\Lazy
 * @Flow\IgnoreValidation
 * @Flow\Inject
-* @Flow\InjectSettings
+* @Flow\InjectConfiguration
 * @Flow\Validate
 * @var
 * @api

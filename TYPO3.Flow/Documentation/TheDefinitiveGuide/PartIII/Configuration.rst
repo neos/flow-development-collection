@@ -287,13 +287,14 @@ of a classes' package and output some option value:
 Injection of single settings into properties
 --------------------------------------------
 
-TYPO3 Flow provides a way to inject specific settings through the InjectSettings annotation directly into your properties.
-The annotation provides two options related to settings injection:
+TYPO3 Flow provides a way to inject specific settings through the ``InjectConfiguration`` annotation directly into your
+properties.
+The annotation provides three optional attributes related to configuration injection:
 
-* ``package`` is optional and specifies the package to get the setting from. Defaults to the package the current
-  class belongs to.
-* ``path`` is optional and specifies the path to the setting that should be injected. If it's not set all settings of
-  the current (or specified) package are injected.
+* ``type`` ...
+* ``package`` specifies the package to get the configuration from. Defaults to the package the current class belongs to.
+* ``path`` specifies the path to the setting that should be injected. If it's not set all settings of the current (or
+specified) package are injected.
 
 .. note::
   As a best-practice for testing and extensibility you should also provide setters for
@@ -322,19 +323,19 @@ The annotation provides two options related to settings injection:
 	class SomeClass {
 
 		/**
-		 * @Flow\InjectSettings(path="administrator.name")
+		 * @Flow\InjectConfiguration(path="administrator.name")
 		 * @var string
 		 */
 		protected $name;
 
 		/**
-		 * @Flow\InjectSettings(package="SomeOther.Package", path="email")
+		 * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
 		 * @var string
 		 */
 		protected $email;
 
 		/**
-		 * @Flow\InjectSettings(package="SomeOther.Package")
+		 * @Flow\InjectConfiguration(package="SomeOther.Package")
 		 * @var array
 		 */
 		protected $someOtherPackageSettings = array();

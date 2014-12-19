@@ -337,7 +337,10 @@ class CompileTimeObjectManager extends ObjectManager {
 		$this->objectNameBuildStack[] = $objectName;
 
 		$object = parent::get($objectName);
-		foreach ($this->objectConfigurations[$objectName]->getProperties() as $propertyName => $property) {
+		/** @var Configuration $objectConfiguration */
+		$objectConfiguration = $this->objectConfigurations[$objectName];
+		/** @var Property $property */
+		foreach ($objectConfiguration->getProperties() as $propertyName => $property) {
 			if ($property->getAutowiring() !== Configuration::AUTOWIRING_MODE_ON) {
 				continue;
 			}
@@ -345,8 +348,9 @@ class CompileTimeObjectManager extends ObjectManager {
 				case Property::PROPERTY_TYPES_STRAIGHTVALUE:
 					$value = $property->getValue();
 				break;
-				case Property::PROPERTY_TYPES_SETTING:
-					$value = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
+				case Property::PROPERTY_TYPES_CONFIGURATION:
+					$propertyValue = $property->getValue();
+					$value = $this->configurationManager->getConfiguration($propertyValue['type'], $propertyValue['path']);
 				break;
 				case Property::PROPERTY_TYPES_OBJECT:
 					$propertyObjectName = $property->getValue();
