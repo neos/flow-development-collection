@@ -727,7 +727,7 @@ Using widgets inside your templates is really simple: Just use them like standar
 ViewHelpers, and consult their documentation for usage examples. An example for
 the ``<f:widget.paginate>`` follows below::
 
-	<f:widget.paginate itemsPerPage="10" objects="{blogs}" as="paginatedBlogs">
+	<f:widget.paginate objects="{blogs}" as="paginatedBlogs" configuration="{itemsPerPage: 10}">
 	  // use {paginatedBlogs} as you used {blogs} before, most certainly inside
 	  // a <f:for> loop.
 	</f:widget.paginate>
