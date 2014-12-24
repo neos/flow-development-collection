@@ -88,12 +88,20 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	protected function evaluatePropertyNameFilter(\TYPO3\Eel\FlowQuery\FlowQuery $query, $propertyNameFilter) {
 		$resultObjects = array();
 		$resultObjectHashes = array();
-
 		foreach ($query->getContext() as $element) {
 			$subProperty = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyNameFilter);
-			if (is_object($subProperty) && !isset($resultObjectHashes[spl_object_hash($subProperty)])) {
-				$resultObjectHashes[spl_object_hash($subProperty)] = TRUE;
-				$resultObjects[] = $subProperty;
+			if (is_object($subProperty) || is_array($subProperty)) {
+				if (is_array($subProperty) || $subProperty instanceof \Traversable) {
+					foreach ($subProperty as $childElement) {
+						if (!isset($resultObjectHashes[spl_object_hash($childElement)])) {
+							$resultObjectHashes[spl_object_hash($childElement)] = TRUE;
+							$resultObjects[] = $childElement;
+						}
+					}
+				} elseif (!isset($resultObjectHashes[spl_object_hash($subProperty)])) {
+					$resultObjectHashes[spl_object_hash($subProperty)] = TRUE;
+					$resultObjects[] = $subProperty;
+				}
 			}
 		}
 
