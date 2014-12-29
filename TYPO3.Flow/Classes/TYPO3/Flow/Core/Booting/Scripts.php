@@ -535,10 +535,40 @@ class Scripts {
 	 * @param string $commandIdentifier E.g. typo3.flow:cache:flush
 	 * @param array $settings The TYPO3.Flow settings
 	 * @param array $commandArguments Command arguments
-	 *
 	 * @return string A command line command ready for being exec()uted
 	 */
-	protected static function buildSubprocessCommand($commandIdentifier, $settings, array $commandArguments = array()) {
+	protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = array()) {
+		$command = self::buildPhpCommand($settings);
+
+		if (isset($settings['core']['subRequestIniEntries']) && is_array($settings['core']['subRequestIniEntries'])) {
+			foreach ($settings['core']['subRequestIniEntries'] as $entry => $value) {
+				$command .= ' -d ' . escapeshellarg($entry);
+				if (trim($value) !== '') {
+					$command .= '=' . escapeshellarg(trim($value));
+				}
+			}
+		}
+
+		$escapedArguments = '';
+		if ($commandArguments !== array()) {
+			foreach ($commandArguments as $argument=>$argumentValue) {
+				$escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
+				if (trim($argumentValue) !== '') {
+					$escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
+				}
+			}
+		}
+
+		$command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
+
+		return trim($command);
+	}
+
+	/**
+	 * @param array $settings The TYPO3.Flow settings
+	 * @return string A command line command for PHP, which can be extended and then exec()uted
+	 */
+	public static function buildPhpCommand(array $settings) {
 		$subRequestEnvironmentVariables = array(
 			'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
 			'FLOW_CONTEXT' => $settings['core']['context']
@@ -570,28 +600,6 @@ class Scripts {
 			$command .= ' -c ' . escapeshellarg($useIniFile);
 		}
 
-		if (isset($settings['core']['subRequestIniEntries'])
-				&& is_array($settings['core']['subRequestIniEntries'])) {
-			foreach ($settings['core']['subRequestIniEntries'] as $entry => $value) {
-				$command .= ' -d ' . escapeshellarg($entry);
-				if (trim($value) !== '') {
-					$command .= '=' . escapeshellarg(trim($value));
-				}
-			}
-		}
-
-		$escapedArguments = '';
-		if ($commandArguments !== array()) {
-			foreach ($commandArguments as $argument=>$argumentValue) {
-				$escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
-				if (trim($argumentValue) !== '') {
-					$escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
-				}
-			}
-		}
-
-		$command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
-
-		return trim($command);
+		return $command;
 	}
 }
