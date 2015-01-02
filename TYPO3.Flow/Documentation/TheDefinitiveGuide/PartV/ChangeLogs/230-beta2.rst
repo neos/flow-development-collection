@@ -1,0 +1,117 @@
+====================
+2.3.0-beta2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/25/
+
+* Commit: `1cdd6a9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1cdd6a92ddb730650a6f8641949300cfc00bab24>`_
+
+[FEATURE] Respect implementation of JsonSerializable interface
+-----------------------------------------------------------------------------------------
+
+The JsonView will call jsonSerialize() in transformValue()
+for objects implementing the JsonSerializable interface. This is useful
+if a domain model or data transfer object needs custom serialization
+logic for JSON.
+
+The implementation also works in PHP 5.3 where the JsonSerializable
+interface is not yet present and will be ignored.
+
+* Resolves: `#54092 <http://forge.typo3.org/issues/54092>`_
+* Commit: `78efef8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/78efef805dd14517758222f5cefdb51da0d5e491>`_
+
+[BUGFIX] Fix postPackageUpdateAndInstall() in Flow
+-----------------------------------------------------------------------------------------
+
+When a package declares it has some resource to install by defining::
+
+  "extra": {
+      "typo3/flow": {
+          "manage-resources" : true
+      }
+  }
+
+in the composer manifest, the contents of the `Defaults` and `Essentials`
+folders in `Resources/Private/Installer` is supposed to be copied to the
+project root.
+
+This was broken, the files were copied to their own source location
+instead, breaking changes like https://review.typo3.org/34312
+
+Fixes: FLOW-120
+
+* Commit: `3443cc6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3443cc61917b29b0278da091bf1b47203ba73b85>`_
+
+[BUGFIX] Memcached backend not cleared across Cli/Web requests
+-----------------------------------------------------------------------------------------
+
+This is because the backend is bound to the executing script + SAPI mode
+and not the installation path + Flow context. This makes it
+impossible to clear entries created in the Web with the
+Cli cache flush commands, and vice versa.
+
+Additionally the Flow context is not taking into account so
+the Development/Production share the same cache, which can
+lead to undesired behavior.
+
+Fixes: FLOW-116
+
+* Commit: `301abc7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/301abc73a29a86bf375005c21d6aec03c5e3dffe>`_
+
+[TASK] Update FLOW_VERSION_BRANCH to 2.3
+-----------------------------------------------------------------------------------------
+
+* Commit: `ae22a0e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ae22a0e3b0c015d2fac5fdd8043fc9573287bfe9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[!!!][TASK] Remove usage of ReflectionService in ViewHelpers
+-----------------------------------------------------------------------------------------
+
+The ``AbstractViewHelper`` now uses compile static to get all
+needed information about the render method of ViewHelper implementations.
+
+As the AbstractViewHelper doesn't use the ReflectionService
+anymore it was removed. This is breaking if a ViewHelper implementation
+relies on the fact that ``$this->reflectionService`` is available. A
+code migration warns about the possible usage of it.
+
+* Commit: `5a992b7 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5a992b74e4450326b86846daec40176185ce0d69>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
