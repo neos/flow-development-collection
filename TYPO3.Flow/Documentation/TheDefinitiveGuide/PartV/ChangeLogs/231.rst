@@ -1,0 +1,76 @@
+====================
+2.3.1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/28/
+
+* Commit: `037bb93 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/037bb93970c7142dfd210de6e1d862ad21eb421e>`_
+
+[BUGFIX] Documentation: Correct pagination widget example
+-----------------------------------------------------------------------------------------
+
+The example code for a fluid widgets uses a
+not working syntax of the pagination widget.
+
+Move the configuration for "itemsPerPage" into
+the correct attribute.
+
+Fixes: FLOW-100
+
+(cherry picked from commit 3c271dccf3341b0601497a3c066773c4f03b8877)
+
+* Commit: `a6a29f0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a6a29f0662fc60ab288e36600642d3cbc0f4fe15>`_
+
+[BUGFIX] Adjust settings schema to "Add a generic lock class"
+-----------------------------------------------------------------------------------------
+
+This fixes the ``TYPO3.Flow.utility.schema.yaml`` according to the
+"Add a generic lock class" change introduced with
+Ib5cacb4e8a0784814bd863ae19b591acd540e4ef
+
+Besides this puts the lockStrategyClassName setting in quotes as
+suggested in the original change.
+
+* Commit: `e609009 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e60900923c98254341ee7814a00bfe2f00de2461>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
