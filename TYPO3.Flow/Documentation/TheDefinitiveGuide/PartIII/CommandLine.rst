@@ -440,7 +440,7 @@ Symfony/Console Methods
 -----------------------
 
 The CommandController makes use of Symfony/Console internally and
-provides various methods directly from the CommandController:
+provides various methods directly from the CommandController's ``output`` member:
 
 * TableHelper
 
@@ -481,7 +481,7 @@ Here's an example showing of some of those functions:
 		 */
 		public function myCommand() {
 			// render a table
-			$this->outputTable(array(
+			$this->output->outputTable(array(
 				array('Bob', 34, 'm'),
 				array('Sally', 21, 'f'),
 				array('Blake', 56, 'm')
@@ -490,26 +490,26 @@ Here's an example showing of some of those functions:
 
 			// select
 			$colors = array('red', 'blue', 'yellow');
-			$selectedColorIndex = $this->select('Please select one color', $colors, 'red');
+			$selectedColorIndex = $this->output->select('Please select one color', $colors, 'red');
 			$this->outputLine('You choose the color %s.', array($colors[$selectedColorIndex]));
 
 			// ask
-			$name = $this->ask('What is your name?' . PHP_EOL, 'Bob', array('Bob', 'Sally', 'Blake'));
+			$name = $this->output->ask('What is your name?' . PHP_EOL, 'Bob', array('Bob', 'Sally', 'Blake'));
 			$this->outputLine('Hello %s.', array($name));
 
 			// prompt
-			$likesDogs = $this->askConfirmation('Do you like dogs?');
+			$likesDogs = $this->output->askConfirmation('Do you like dogs?');
 			if ($likesDogs) {
 				$this->outputLine('You do like dogs!');
 			}
 
 			// progress
-			$this->progressStart(600);
+			$this->output->progressStart(600);
 			for ($i = 0; $i < 300; $i ++) {
-				$this->progressAdvance();
+				$this->output->progressAdvance();
 				usleep(5000);
 			}
-			$this->progressFinish();
+			$this->output->progressFinish();
 
 		}
 	}
