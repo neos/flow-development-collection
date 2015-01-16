@@ -280,7 +280,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 				$operandAlias = key($this->operandDefinition);
 			}
 			$currentReferencedOperandName = $operandAlias . $joinColumn['referencedColumnName'];
-
 			if (is_object($this->operand)) {
 				$operandMetadataInfo = $this->entityManager->getClassMetadata($this->reflectionService->getClassNameByObject($this->operand));
 				$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($this->operand, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
@@ -292,6 +291,8 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 						$operandMetadataInfo = $this->entityManager->getClassMetadata($this->reflectionService->getClassNameByObject($singleOperandValue));
 						$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($singleOperandValue, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
 						$sqlFilter->setParameter($operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);
+					} elseif ($singleOperandValue === NULL) {
+						$sqlFilter->setParameter($operandIterator, NULL, $associationMapping['type']);
 					}
 				}
 			}
@@ -375,22 +376,34 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	}
 
 	/**
-	 *
+	 * @param SQLFilter $sqlFilter
+	 * @param string $propertyPointer
+	 * @param string $operandDefinition
+	 * @return string
 	 */
 	protected function getConstraintStringForSimpleProperty(SQLFilter $sqlFilter, $propertyPointer, $operandDefinition = NULL) {
 		$operandDefinition = ($operandDefinition === NULL ? $this->operandDefinition : $operandDefinition);
 		$parameter = NULL;
+		$addNullExpression = FALSE;
 		try {
 			if (is_array($this->operandDefinition)) {
 				$parameters = array();
 				foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
-					$parameters[] = $sqlFilter->getParameter($operandIterator);
+					if ($singleOperandValue !== NULL) {
+						$parameters[] = $sqlFilter->getParameter($operandIterator);
+					} else {
+						$addNullExpression = TRUE;
+					}
 				}
 				$parameter = implode(',', $parameters);
 			} else {
 				$parameter = $sqlFilter->getParameter($operandDefinition);
 			}
 		} catch (\InvalidArgumentException $e) {}
+
+		if ($parameter === NULL || $parameter === '') {
+			$addNullExpression = TRUE;
+		}
 
 		switch ($this->operator) {
 			case '==':
@@ -415,7 +428,9 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 				return $propertyPointer . ' LIKE ' . $parameter;
 				break;
 			case 'in':
-				return $propertyPointer . ' IN (' . $parameter . ') ';
+				$inPart = $parameter !== NULL && $parameter !== '' ? $propertyPointer . ' IN (' . $parameter . ') ' : '';
+				$nullPart = $addNullExpression ? $propertyPointer . ' IS NULL' : '';
+				return $inPart . ($inPart !== '' && $nullPart !== '' ? ' OR ' : '') . $nullPart;
 				break;
 		}
 	}

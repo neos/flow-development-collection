@@ -44,6 +44,11 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $testEntityCDoctrineRepository;
 
 	/**
+	 * @var Fixtures\TestEntityDDoctrineRepository
+	 */
+	protected $testEntityDDoctrineRepository;
+
+	/**
 	 * @var \TYPO3\Flow\Tests\Functional\Aop\Fixtures\TestContext
 	 */
 	protected $globalObjectTestContext;
@@ -442,10 +447,19 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function inOperatorWorksWithSimpleArrays() {
+		// These relations are needed to fulfill the policy that is tested in "inOperatorWorksWithGlobalObjectAccess" as the globalObject has an empty array in this test, the query will do a "(NOT) IS NULL" constraint for this relation.
+		$testEntityD = new Fixtures\TestEntityD();
+		$testEntityD2 = new Fixtures\TestEntityD();
+		$this->testEntityDDoctrineRepository->add($testEntityD);
+		$this->testEntityDDoctrineRepository->add($testEntityD2);
+
+
 		$testEntityC = new Fixtures\TestEntityC();
 		$testEntityC->setSimpleStringProperty('Christopher');
+		$testEntityC->setRelatedEntityD($testEntityD);
 		$testEntityC2 = new Fixtures\TestEntityC();
 		$testEntityC2->setSimpleStringProperty('Andi');
+		$testEntityC2->setRelatedEntityD($testEntityD2);
 		$this->testEntityCDoctrineRepository->add($testEntityC);
 		$this->testEntityCDoctrineRepository->add($testEntityC2);
 
@@ -460,7 +474,33 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC'));
 		$this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC'));
+		$this->restrictableEntityDoctrineRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
 
+	/**
+	 * @test
+	 */
+	public function inOperatorWorksWithEmptyArray() {
+		$testEntityC = new Fixtures\TestEntityC();
+		$testEntityC->setSimpleStringProperty('Christopher');
+		$testEntityC2 = new Fixtures\TestEntityC();
+		$testEntityC2->setSimpleStringProperty('Andi');
+		$this->testEntityCDoctrineRepository->add($testEntityC);
+		$this->testEntityCDoctrineRepository->add($testEntityC2);
+
+		$testEntityCIdentifier = $this->persistenceManager->getIdentifierByObject($testEntityC);
+		$testEntityC2Identifier = $this->persistenceManager->getIdentifierByObject($testEntityC2);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->testEntityCDoctrineRepository->findAllWithDql();
+		$this->assertTrue(count($result) === 0);
+
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC'));
 		$this->restrictableEntityDoctrineRepository->removeAll();
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
