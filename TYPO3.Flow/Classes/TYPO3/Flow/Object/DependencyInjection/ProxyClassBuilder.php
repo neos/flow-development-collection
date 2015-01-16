@@ -448,8 +448,12 @@ class ProxyClassBuilder {
 					}
 					$commands[] = '$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';';
 				break;
-				case ConfigurationProperty::PROPERTY_TYPES_SETTING:
-					$commands = array_merge($commands, $this->buildPropertyInjectionCodeBySettingPath($objectConfiguration, $propertyName, $propertyValue));
+				case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
+					$configurationType = $propertyValue['type'];
+					if (!in_array($configurationType, $this->configurationManager->getAvailableConfigurationTypes())) {
+						throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $configurationType . '".', 1420736211);
+					}
+					$commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfigurationTypeAndPath($objectConfiguration, $propertyName, $configurationType, $propertyValue['path']));
 				break;
 			}
 			$injectedProperties[] = $propertyName;
@@ -550,17 +554,21 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Builds code which assigns the value stored in the specified setting into the given
-	 * class property.
+	 * Builds code which assigns the value stored in the specified configuration into the given class property.
 	 *
 	 * @param Configuration $objectConfiguration Configuration of the object to inject into
 	 * @param string $propertyName Name of the property to inject
-	 * @param string $settingPath Path with "." as separator specifying the setting value to inject
+	 * @param string $configurationType the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
+	 * @param string $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
 	 * @return array PHP code
 	 */
-	public function buildPropertyInjectionCodeBySettingPath(Configuration $objectConfiguration, $propertyName, $settingPath) {
+	public function buildPropertyInjectionCodeByConfigurationTypeAndPath(Configuration $objectConfiguration, $propertyName, $configurationType, $configurationPath = NULL) {
 		$className = $objectConfiguration->getClassName();
-		$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $settingPath . '\')';
+		if ($configurationPath !== NULL) {
+			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\'' . $configurationType . '\', \'' . $configurationPath . '\')';
+		} else {
+			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\'' . $configurationType . '\')';
+		}
 
 		$result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
 		if ($result !== NULL) {

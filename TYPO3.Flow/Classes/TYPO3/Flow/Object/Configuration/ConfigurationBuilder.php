@@ -14,7 +14,8 @@ namespace TYPO3\Flow\Object\Configuration;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Annotations\Inject;
-use TYPO3\Flow\Annotations\InjectSettings;
+use TYPO3\Flow\Annotations\InjectConfiguration;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 
 /**
  * Object Configuration Builder which can build object configuration objects
@@ -176,7 +177,7 @@ class ConfigurationBuilder {
 							} elseif (array_key_exists('object', $propertyValue)) {
 								$property = $this->parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $configurationSourceHint);
 							} elseif (array_key_exists('setting', $propertyValue)) {
-								$property = new ConfigurationProperty($propertyName, $propertyValue['setting'], ConfigurationProperty::PROPERTY_TYPES_SETTING);
+								$property = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $propertyValue['setting']), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
 							} else {
 								throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
@@ -369,6 +370,7 @@ class ConfigurationBuilder {
 	 * @throws \TYPO3\Flow\Object\Exception if an injected property is private
 	 */
 	protected function autowireProperties(array &$objectConfigurations) {
+		/** @var Configuration $objectConfiguration */
 		foreach ($objectConfigurations as $objectConfiguration) {
 			$className = $objectConfiguration->getClassName();
 			$properties = $objectConfiguration->getProperties();
@@ -393,7 +395,7 @@ class ConfigurationBuilder {
 					if ($methodName === 'injectSettings') {
 						$packageKey = $objectConfiguration->getPackageKey();
 						if ($packageKey !== NULL) {
-							$properties[$propertyName] = new ConfigurationProperty($propertyName, $packageKey, ConfigurationProperty::PROPERTY_TYPES_SETTING);
+							$properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $packageKey), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
 						}
 					} else {
 						if (array_key_exists($propertyName, $properties)) {
@@ -416,18 +418,16 @@ class ConfigurationBuilder {
 
 			foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\Inject') as $propertyName) {
 				if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
-					$exceptionMessage = 'The property "' . $propertyName . '" in class "' . $className . '" must not be private when annotated for injection.';
-					throw new \TYPO3\Flow\Object\Exception($exceptionMessage, 1328109641);
+					throw new \TYPO3\Flow\Object\Exception(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
 				}
 				if (!array_key_exists($propertyName, $properties)) {
 					/** @var Inject $injectAnnotation */
 					$injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
+					// TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0. Injecting settings by annotation should be done using the InjectConfiguration annotation
 					if ($injectAnnotation->setting !== NULL) {
-						// TODO: Should be removed at 2.5. Inject settings by Inject-Annotation is deprecated since 2.3. Injecting settings by annotation is done since 2.3 by InjectSettings-Annotation.
-						$settingPackagePathArray = $injectAnnotation->package !== NULL ? explode('.', $injectAnnotation->package) : explode('.', $objectConfiguration->getPackageKey());
-						$settingPathArray = $injectAnnotation->setting === '' ? array() : explode('.', $injectAnnotation->setting);
-						$settingPathArray = array_merge($settingPackagePathArray, $settingPathArray);
-						$properties[$propertyName] = new ConfigurationProperty($propertyName, implode('.', $settingPathArray), ConfigurationProperty::PROPERTY_TYPES_SETTING);
+						$packageKey = $injectAnnotation->package !== NULL ? $injectAnnotation->package : $objectConfiguration->getPackageKey();
+						$configurationPath = rtrim($packageKey . '.' . $injectAnnotation->setting, '.');
+ 						$properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
 					} else {
 						$objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 						$configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, NULL, $injectAnnotation->lazy);
@@ -436,23 +436,25 @@ class ConfigurationBuilder {
 				}
 			}
 
-			foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\InjectSettings') as $propertyName) {
+			foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\InjectConfiguration') as $propertyName) {
 				if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
-					$exceptionMessage = 'The property "' . $propertyName . '" in class "' . $className . '" must not be private when annotated for settings injection.';
-					throw new \TYPO3\Flow\Object\Exception($exceptionMessage, 1416765599);
+					throw new \TYPO3\Flow\Object\Exception(sprintf('The property "%s" in class "%s" must not be private when annotated for configuration injection.', $propertyName, $className), 1416765599);
 				}
-				if (!array_key_exists($propertyName, $properties)) {
-					/** @var InjectSettings $injectSettingsAnnotation */
-					$injectSettingsAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\InjectSettings');
-					$packageArray = $injectSettingsAnnotation->package !== NULL ? explode('.', $injectSettingsAnnotation->package) : explode('.', $objectConfiguration->getPackageKey());
-					$pathArray = array();
-					if ($injectSettingsAnnotation->path !== NULL && $injectSettingsAnnotation->path !== '') {
-						$pathArray = explode('.', $injectSettingsAnnotation->path);
+				if (array_key_exists($propertyName, $properties)) {
+					continue;
+				}
+				/** @var InjectConfiguration $injectConfigurationAnnotation */
+				$injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\InjectConfiguration');
+				if ($injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+					$packageKey = $injectConfigurationAnnotation->package !== NULL ? $injectConfigurationAnnotation->package : $objectConfiguration->getPackageKey();
+					$configurationPath = rtrim($packageKey . '.' . $injectConfigurationAnnotation->path, '.');
+				} else {
+					if ($injectConfigurationAnnotation->package !== NULL) {
+						throw new \TYPO3\Flow\Object\Exception(sprintf('The InjectConfiguration annotation for property "%s" in class "%s" specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $propertyName, $className, $injectConfigurationAnnotation->type), 1420811958);
 					}
-					$pathArray = array_merge($packageArray, $pathArray);
-					$configurationProperty = new ConfigurationProperty($propertyName, implode('.', $pathArray), ConfigurationProperty::PROPERTY_TYPES_SETTING);
-					$properties[$propertyName] = $configurationProperty;
+					$configurationPath = $injectConfigurationAnnotation->path;
 				}
+				$properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
 			}
 			$objectConfiguration->setProperties($properties);
 		}

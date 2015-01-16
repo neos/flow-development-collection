@@ -16,34 +16,40 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class for testing setting injection
  */
-class ClassWithSettings {
+class ClassWithInjectedConfiguration {
 
 	/**
-	 * @Flow\InjectSettings(path="some.nonExisting.setting")
+	 * @Flow\InjectConfiguration(path="some.nonExisting.setting")
 	 * @var string
 	 */
-	protected $nonExistingSetting;
+	protected $nonExistingSetting = 'defaultValue';
 
 	/**
-	 * @Flow\InjectSettings(path="tests.functional.settingInjection.someSetting")
+	 * @Flow\InjectConfiguration(path="tests.functional.settingInjection.someSetting")
 	 * @var string
 	 */
 	protected $injectedSettingA;
 
 	/**
-	 * @Flow\InjectSettings(path="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
+	 * @Flow\InjectConfiguration(path="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
 	 * @var string
 	 */
 	protected $injectedSettingB;
 
 	/**
-	 * @Flow\InjectSettings(package="TYPO3.Flow")
+	 * @Flow\InjectConfiguration(path="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
+	 * @var string
+	 */
+	protected $injectedSettingWithSetter;
+
+	/**
+	 * @Flow\InjectConfiguration(package="TYPO3.Flow")
 	 * @var array
 	 */
 	protected $injectedSpecifiedPackageSettings;
 
 	/**
-	 * @Flow\InjectSettings
+	 * @Flow\InjectConfiguration
 	 * @var array
 	 */
 	protected $injectedCurrentPackageSettings;
@@ -52,6 +58,18 @@ class ClassWithSettings {
 	 * @var array
 	 */
 	protected $settings;
+
+	/**
+	 * @Flow\InjectConfiguration(type="Views")
+	 * @var array
+	 */
+	protected $injectedViewsConfiguration;
+
+	/**
+	 * @Flow\Inject(setting="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
+	 * @var string
+	 */
+	protected $legacySetting;
 
 	/**
 	 * @param array $settings
@@ -83,6 +101,21 @@ class ClassWithSettings {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getInjectedSettingWithSetter() {
+		return $this->injectedSettingWithSetter;
+	}
+
+	/**
+	 * @param string $injectedSettingWithSetter
+	 * @return void
+	 */
+	public function setInjectedSettingWithSetter($injectedSettingWithSetter) {
+		$this->injectedSettingWithSetter = strtoupper($injectedSettingWithSetter);
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getSettings() {
@@ -103,5 +136,18 @@ class ClassWithSettings {
 		return $this->injectedCurrentPackageSettings;
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getInjectedViewsConfiguration() {
+		return $this->injectedViewsConfiguration;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLegacySetting() {
+		return $this->legacySetting;
+	}
 
 }

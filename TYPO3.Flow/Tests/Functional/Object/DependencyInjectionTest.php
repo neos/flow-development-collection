@@ -188,9 +188,9 @@ class DependencyInjectionTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function injectionOfAllSettings() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
 		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
-		$this->assertSame($actualSettings, $classWithSettings->getSettings());
+		$this->assertSame($actualSettings, $classWithInjectedConfiguration->getSettings());
 	}
 
 
@@ -198,44 +198,69 @@ class DependencyInjectionTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function injectionOfSpecifiedPackageSettings() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
 
 		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
-		$this->assertSame($actualSettings, $classWithSettings->getInjectedSpecifiedPackageSettings());
+		$this->assertSame($actualSettings, $classWithInjectedConfiguration->getInjectedSpecifiedPackageSettings());
 	}
 
 	/**
 	 * @test
 	 */
 	public function injectionOfCurrentPackageSettings() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
 
 		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
-		$this->assertSame($actualSettings, $classWithSettings->getInjectedCurrentPackageSettings());
+		$this->assertSame($actualSettings, $classWithInjectedConfiguration->getInjectedCurrentPackageSettings());
 	}
 
 	/**
 	 * @test
 	 */
-	public function injectionOfNonExistingSettings() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
-		$this->assertNull($classWithSettings->getNonExistingSetting());
+	public function injectionOfNonExistingSettingsOverridesDefaultValue() {
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertNull($classWithInjectedConfiguration->getNonExistingSetting());
 	}
 
 	/**
 	 * @test
 	 */
 	public function injectionOfSingleSettings() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
-		$this->assertSame('injected setting', $classWithSettings->getInjectedSettingA());
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingA());
 	}
 
 	/**
 	 * @test
 	 */
 	public function injectionOfSingleSettingsFromSpecificPackage() {
-		$classWithSettings = new Fixtures\ClassWithSettings();
-		$this->assertSame('injected setting', $classWithSettings->getInjectedSettingB());
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingB());
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfConfigurationCallsRespectiveSetterIfItExists() {
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertSame('INJECTED SETTING', $classWithInjectedConfiguration->getInjectedSettingWithSetter());
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfOtherConfigurationTypes() {
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertSame($this->configurationManager->getConfiguration('Views'), $classWithInjectedConfiguration->getInjectedViewsConfiguration());
+	}
+
+	/**
+	 * // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0
+	 * @test
+	 */
+	public function injectionViaInjectAnnotation() {
+		$classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+		$this->assertSame('injected setting', $classWithInjectedConfiguration->getLegacySetting());
 	}
 
 }
