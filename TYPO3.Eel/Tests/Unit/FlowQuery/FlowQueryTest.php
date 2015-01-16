@@ -98,6 +98,9 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject6 = new \stdClass();
 		$myObject6->aNumber = 42;
 
+		$myObject7 = new \stdClass();
+		$myObject7->aNumber = 142;
+
 		return array(
 			'Property existance test works' => array(
 				'sourceObjects' => array($myObject, $myObject2),
@@ -220,6 +223,30 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '[ myProperty != asdf ]',
 				'expectedResult' => array($myObject2, $myObject3, $myObject4)
+			),
+
+			'Less than query match' => array(
+				'sourceObjects' => array($myObject6, $myObject7),
+				'filter' => '[ aNumber < 50 ]',
+				'expectedResult' => array($myObject6)
+			),
+
+			'Less than or equal to query match' => array(
+				'sourceObjects' => array($myObject6, $myObject7),
+				'filter' => '[ aNumber <= 42 ]',
+				'expectedResult' => array($myObject6)
+			),
+
+			'Greater than query match' => array(
+				'sourceObjects' => array($myObject6, $myObject7),
+				'filter' => '[ aNumber > 50 ]',
+				'expectedResult' => array($myObject7)
+			),
+
+			'Greater than or equal to query match' => array(
+				'sourceObjects' => array($myObject6, $myObject7),
+				'filter' => '[ aNumber >= 42 ]',
+				'expectedResult' => array($myObject6, $myObject7)
 			)
 		);
 	}

@@ -26,6 +26,14 @@ use TYPO3\Flow\Annotations as Flow;
  *   Strict equality of value and operand
  * !=
  *   Strict inequality of value and operand
+ * <
+ *   Value is less than operand
+ * <=
+ *   Value is less than or equal to operand
+ * >
+ *   Value is greater than operand
+ * >=
+ *   Value is greater than or equal to operand
  * $=
  *   Value ends with operand (string-based)
  * ^=
@@ -199,6 +207,14 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 				return $value === $operand;
 			case '!=':
 				return $value !== $operand;
+			case '<':
+				return $value < $operand;
+			case '<=':
+				return $value <= $operand;
+			case '>':
+				return $value > $operand;
+			case '>=':
+				return $value >= $operand;
 			case '$=':
 				return strrpos($value, $operand) === strlen($value) - strlen($operand);
 			case '^=':
