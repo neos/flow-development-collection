@@ -51,4 +51,23 @@ class AopProxyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame('I won\'t take any advice', $targetClass01->someStaticMethod());
 	}
 
+	/**
+	 * @test
+	 */
+	public function canCallAdvicedParentMethodNotDeclaredInChild() {
+		$targetClass = new Fixtures\ChildClassOfTargetClass01();
+		$greeting = $targetClass->greet('Flow');
+		$this->assertEquals('Hello, me', $greeting);
+	}
+
+	/**
+	 * @test
+	 */
+	public function cloneCanCallParentCloneMethod() {
+		$entity = new Fixtures\PrototypeClassGsubsub();
+		$this->assertSame('real', $entity->realOrCloned);
+		$clone = clone $entity;
+		$this->assertSame('cloned!', $clone->realOrCloned);
+	}
+
 }
