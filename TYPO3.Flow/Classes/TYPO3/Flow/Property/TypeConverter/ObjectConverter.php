@@ -67,6 +67,13 @@ class ObjectConverter extends AbstractTypeConverter {
 	protected $reflectionService;
 
 	/**
+	 * As it is very likely that the constructor arguments are needed twice we should cache them for the request.
+	 *
+	 * @var array
+	 */
+	protected $constructorReflectionFirstLevelCache = array();
+
+	/**
 	 * Only convert non-persistent types
 	 *
 	 * @param mixed $source
@@ -207,16 +214,16 @@ class ObjectConverter extends AbstractTypeConverter {
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException if a required constructor argument is missing
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
+		$constructorArguments = array();
 		$className = $this->objectManager->getClassNameByObjectName($objectType);
-		if ($this->reflectionService->hasMethod($className, '__construct')) {
-			$constructorSignature = $this->reflectionService->getMethodParameters($className, '__construct');
-			$constructorArguments = array();
-			foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
+		$constructorSignature = $this->getConstructorArgumentsForClass($className);
+		if (count($constructorSignature)) {
+			foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentReflection) {
 				if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
 					$constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
 					unset($possibleConstructorArgumentValues[$constructorArgumentName]);
-				} elseif ($constructorArgumentInformation['optional'] === TRUE) {
-					$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
+				} elseif ($constructorArgumentReflection['optional'] === TRUE) {
+					$constructorArguments[] = $constructorArgumentReflection['defaultValue'];
 				} else {
 					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
 				}
@@ -226,6 +233,27 @@ class ObjectConverter extends AbstractTypeConverter {
 		} else {
 			return new $className();
 		}
+	}
+
+	/**
+	 * Get the constructor argument reflection for the given object type.
+	 *
+	 * @param string $className
+	 * @return array<array>
+	 */
+	protected function getConstructorArgumentsForClass($className) {
+		if (!isset($this->constructorReflectionFirstLevelCache[$className])) {
+			$constructorSignature = array();
+
+			// TODO: Check if we can get rid of this reflection service usage, directly reflecting doesn't work as the proxy class __construct has no arguments.
+			if ($this->reflectionService->hasMethod($className, '__construct')) {
+				$constructorSignature = $this->reflectionService->getMethodParameters($className, '__construct');
+			}
+
+			$this->constructorReflectionFirstLevelCache[$className] = $constructorSignature;
+		}
+
+		return $this->constructorReflectionFirstLevelCache[$className];
 	}
 
 	/**

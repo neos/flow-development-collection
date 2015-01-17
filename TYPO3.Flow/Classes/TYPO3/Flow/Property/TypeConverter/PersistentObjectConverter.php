@@ -162,7 +162,26 @@ class PersistentObjectConverter extends ObjectConverter {
 		} else {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
+
+
+		$objectConstructorArguments = $this->getConstructorArgumentsForClass(get_class($object));
+
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
+			// We need to check for "immutable" constructor arguments that have no setter and remove them.
+			if (isset($objectConstructorArguments[$propertyName]) && !\TYPO3\Flow\Reflection\ObjectAccess::isPropertySettable($object, $propertyName)) {
+				$currentPropertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
+				if ($currentPropertyValue === $propertyValue) {
+					continue;
+				} else {
+					$exceptionMessage = sprintf(
+						'Property "%s" having a value of type "%s" could not be set in target object of type "%s". The property has no setter and is not equal to the value in the object, in that case it would have been skipped.',
+						$propertyName,
+						(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
+						$targetType
+					);
+					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1421498771);
+				}
+			}
 			$result = \TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
 				$exceptionMessage = sprintf(
