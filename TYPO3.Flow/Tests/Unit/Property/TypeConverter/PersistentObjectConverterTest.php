@@ -211,7 +211,7 @@ class PersistentObjectConverterTest extends UnitTestCase {
 			'foo' => 'bar'
 		);
 		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
-		$this->converter->convertFrom($source, 'MySpecialType');
+		$this->converter->convertFrom($source, 'MySpecialType', array('foo' => 'bar'));
 	}
 
 	/**

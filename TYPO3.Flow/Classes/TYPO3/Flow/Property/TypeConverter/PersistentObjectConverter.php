@@ -214,7 +214,7 @@ class PersistentObjectConverter extends ObjectConverter {
 				throw new TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
 			}
 
-			if (count($source) > 1 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
+			if (count($convertedChildProperties) > 0 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
 				throw new InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 			}
 		}
