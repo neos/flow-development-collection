@@ -17,6 +17,7 @@ use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * Model representing a persistable resource
@@ -174,7 +175,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	public function setFilename($filename) {
 		$this->throwExceptionIfProtected();
 
-		$pathInfo = pathInfo($filename);
+		$pathInfo = UnicodeFunctions::pathinfo($filename);
 		$extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
 		$this->filename = $pathInfo['filename'] . $extension;
 		$this->mediaType = MediaTypes::getMediaTypeFromFilename($this->filename);

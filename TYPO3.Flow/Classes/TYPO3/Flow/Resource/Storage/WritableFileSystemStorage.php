@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Resource\Storage;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A resource storage based on the (local) file system
@@ -60,7 +61,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 				throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
 			}
 		} else {
-			$pathInfo = pathinfo($source);
+			$pathInfo = UnicodeFunctions::pathinfo($source);
 			$filename = $pathInfo['basename'];
 			try {
 				copy($source, $temporaryTargetPathAndFilename);
@@ -151,7 +152,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 	 * @throws Exception
 	 */
 	public function importUploadedResource(array $uploadInfo, $collectionName) {
-		$pathInfo = pathinfo($uploadInfo['name']);
+		$pathInfo = UnicodeFunctions::pathinfo($uploadInfo['name']);
 		$temporaryTargetPathAndFilename = $uploadInfo['tmp_name'];
 
 		if (!file_exists($temporaryTargetPathAndFilename)) {
