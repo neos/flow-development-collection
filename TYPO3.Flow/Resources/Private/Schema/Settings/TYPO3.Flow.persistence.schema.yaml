@@ -69,6 +69,11 @@ properties:
           properties:
             'events': { type: [string, array], items: { type: string } }
             'listener': { type: string, format: class-name }
+      'filters':
+        type: dictionary
+        additionalProperties:
+          type: string
+          additionalProperties: TRUE
       'dql':
         type: dictionary
         required: FALSE
