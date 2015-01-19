@@ -61,6 +61,11 @@ class SingletonClassC {
 	protected $protectedBooleanFalsePropertySetViaObjectsYaml;
 
 	/**
+	 * @var array
+	 */
+	protected $protectedArrayPropertyWithSetterSetViaObjectsYaml = array('has' => 'some default value');
+
+	/**
 	 * @param string $requiredArgument
 	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
 	 * @param string $settingsArgument
@@ -110,6 +115,20 @@ class SingletonClassC {
 	 */
 	public function getProtectedBooleanFalsePropertySetViaObjectsYaml() {
 		return $this->protectedBooleanFalsePropertySetViaObjectsYaml;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getProtectedArrayPropertyWithSetterSetViaObjectsYaml() {
+		return $this->protectedArrayPropertyWithSetterSetViaObjectsYaml;
+	}
+
+	/**
+	 * @param array $protectedArrayPropertyWithSetterSetViaObjectsYaml
+	 */
+	public function setProtectedArrayPropertyWithSetterSetViaObjectsYaml($protectedArrayPropertyWithSetterSetViaObjectsYaml) {
+		$this->protectedArrayPropertyWithSetterSetViaObjectsYaml = array_merge($this->protectedArrayPropertyWithSetterSetViaObjectsYaml, $protectedArrayPropertyWithSetterSetViaObjectsYaml);
 	}
 
 }

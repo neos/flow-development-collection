@@ -37,7 +37,8 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
       value: TRUE
     protectedBooleanFalsePropertySetViaObjectsYaml:
       value: FALSE
-
+    protectedArrayPropertyWithSetterSetViaObjectsYaml:
+      value: {'and': 'something from Objects.yaml'}
   arguments:
     1:
       value: 'this is required'
