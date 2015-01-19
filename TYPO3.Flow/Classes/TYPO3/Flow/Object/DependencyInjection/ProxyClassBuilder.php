@@ -442,7 +442,7 @@ class ProxyClassBuilder {
 					} else {
 						$preparedSetterArgument = $propertyValue;
 					}
-					$commands[] = '$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';';
+					$commands[] = 'if (\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === FALSE) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
 				break;
 				case ConfigurationProperty::PROPERTY_TYPES_SETTING:
 					$commands = array_merge($commands, $this->buildPropertyInjectionCodeBySettingPath($objectConfiguration, $propertyName, $propertyValue));
