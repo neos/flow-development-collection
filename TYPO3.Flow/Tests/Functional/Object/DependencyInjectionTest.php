@@ -69,6 +69,16 @@ class DependencyInjectionTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function ifItExistsASetterIsUsedToInjectPrimitiveTypePropertiesFromConfiguration() {
+		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
+
+		// Note: The argument is defined in the Objects.yaml of the Flow package (testing context)
+		$this->assertSame(array('has' => 'some default value', 'and' => 'something from Objects.yaml'), $objectC->getProtectedArrayPropertyWithSetterSetViaObjectsYaml());
+	}
+
+	/**
+	 * @test
+	 */
 	public function propertiesAreReinjectedIfTheObjectIsUnserialized() {
 		$className = 'TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA';
 
