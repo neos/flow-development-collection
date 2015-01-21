@@ -5,195 +5,195 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="da">Kun tegnene a-z og tal er tilladt</target><alt-trans><target xml:lang="da">Kun tegnene, a-z og tal er tilladt</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Kun tegnene a-z og tal er tilladt</target><alt-trans><target xml:lang="da">Kun tegnene, a-z og tal er tilladt</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="da">Den angivne værdi forventes at være {0}.</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi forventes at være {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="da">Givet emne er ikke en samling</target></trans-unit>
+			<target xml:lang="da" state="translated">Givet emne er ikke en samling</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="da">Givet emne er ikke tællelig</target></trans-unit>
+			<target xml:lang="da" state="translated">Givet emne er ikke tællelig</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="da">Optællingen skal være mellem {0,number} og {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Optællingen skal være mellem {0,number} og {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="da">Den angivne værdi er ikke en gyldig dato</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi er ikke en gyldig dato</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="da">Den angivne dato skal være mellem {0} og {1}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne dato skal være mellem {0} og {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="da">Den angivne dato skal være efter {0}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne dato skal være efter {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="da">Den angivne dato skal være før {0}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne dato skal være før {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="da">Indstillingen "locale" kan kun indstilles til streng-id, eller Locale objekt</target></trans-unit>
+			<target xml:lang="da" state="translated">Indstillingen "locale" kan kun indstilles til streng-id, eller Locale objekt</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="da">En gyldig tid forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig tid forventes</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="da">En gyldig dato og tid er forventet</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig dato og tid er forventet</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="da">En gyldig dato forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig dato forventes</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="da">Angiv en gyldig e-mail-adresse</target></trans-unit>
+			<target xml:lang="da" state="translated">Angiv en gyldig e-mail-adresse</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="da">En gyldig heltal forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig heltal forventes</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="da">"{0}" kan ikke konverteres til en heltals-værdi</target></trans-unit>
+			<target xml:lang="da" state="translated">"{0}" kan ikke konverteres til en heltals-værdi</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="da">Objekt forventet, {0} givet</target><alt-trans><target xml:lang="da">Object forventet, {0} givet</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Objekt forventet, {0} givet</target><alt-trans><target xml:lang="da">Object forventet, {0} givet</target></alt-trans></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="da">Et gyldigt heltal forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">Et gyldigt heltal forventes</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="da">"{0}" er ikke et heltal.</target><alt-trans><target xml:lang="da">"{0}" er ingen heltal.</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">"{0}" er ikke et heltal.</target><alt-trans><target xml:lang="da">"{0}" er ingen heltal.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="da">Kun bogstaver, tal, mellemrum og visse skilletegn forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">Kun bogstaver, tal, mellemrum og visse skilletegn forventes</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="da">Værdien er ikke et gyldigt I18n landestandard-id</target><alt-trans><target xml:lang="da">Værdien er ikke gyldig I18n landestandard-id</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Værdien er ikke et gyldigt I18n landestandard-id</target><alt-trans><target xml:lang="da">Værdien er ikke gyldig I18n landestandard-id</target></alt-trans></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="da">Denne egenskab er påkrævet</target></trans-unit>
+			<target xml:lang="da" state="translated">Denne egenskab er påkrævet</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="da">Denne egenskab er påkrævet</target></trans-unit>
+			<target xml:lang="da" state="translated">Denne egenskab er påkrævet</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="da">Et gyldigt tal forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">Et gyldigt tal forventes</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="da">Angiv et gyldigt tal mellem {0,number} og {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Angiv et gyldigt tal mellem {0,number} og {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="da">Indstillingen "locale" kan kun indstilles til streng-id, eller Locale objekt</target></trans-unit>
+			<target xml:lang="da" state="translated">Indstillingen "locale" kan kun indstilles til streng-id, eller Locale objekt</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target xml:lang="da">En gyldig procent antallet forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig procent antallet forventes</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="da">Et gyldigt decimaltal forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">Et gyldigt decimaltal forventes</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="da">Den angivne værdi passer ikke med mønsteret. Modtog: {0}</target><alt-trans><target xml:lang="da">Given genstand ikke matche mønsteret. Fik: {0}</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi passer ikke med mønsteret. Modtog: {0}</target><alt-trans><target xml:lang="da">Given genstand ikke matche mønsteret. Fik: {0}</target></alt-trans></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-			<target xml:lang="da">Det angivne objekt kunne ikke konverteres til en streng</target></trans-unit>
+			<target xml:lang="da" state="translated">Det angivne objekt kunne ikke konverteres til en streng</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target xml:lang="da">Den angivne værdi er ikke en gyldig streng</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi er ikke en gyldig streng</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target xml:lang="da">Længden af denne tekst skal være mellem {0,number} og {1,number} tegn</target></trans-unit>
+			<target xml:lang="da" state="translated">Længden af denne tekst skal være mellem {0,number} og {1,number} tegn</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]" xml:space="preserve">
 					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="da">Dette felt skal indeholde mindst {0, nummer} tegn</target><alt-trans><target xml:lang="da">Dette felt skal indeholde mindst {0,number} karakter</target></alt-trans></trans-unit>
+				<target xml:lang="da" state="translated">Dette felt skal indeholde mindst {0, nummer} tegn</target><alt-trans><target xml:lang="da">Dette felt skal indeholde mindst {0,number} karakter</target></alt-trans></trans-unit>
         <trans-unit id="1238108068[1]" xml:space="preserve">
 					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="da">Dette felt skal indeholde mindst {0,number} tegn</target></trans-unit>
+				<target xml:lang="da" state="translated">Dette felt skal indeholde mindst {0,number} tegn</target></trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" xml:space="preserve">
 					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="da">Denne tekst må ikke overstige {0,number} tegn</target></trans-unit>
+				<target xml:lang="da" state="translated">Denne tekst må ikke overstige {0,number} tegn</target></trans-unit>
         <trans-unit id="1238108069[1]" xml:space="preserve">
 					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="da">Denne tekst må ikke overstige {0,number} tegn</target></trans-unit>
+				<target xml:lang="da" state="translated">Denne tekst må ikke overstige {0,number} tegn</target></trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="da">En gyldig streng forventes</target></trans-unit>
+			<target xml:lang="da" state="translated">En gyldig streng forventes</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="da">Gyldig tekst uden XML-koder er forventet</target></trans-unit>
+			<target xml:lang="da" state="translated">Gyldig tekst uden XML-koder er forventet</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="da">Givet emne er ikke en gyldig UUID</target></trans-unit>
+			<target xml:lang="da" state="translated">Givet emne er ikke en gyldig UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="da">Ingen validator fundet for en elektronisk adresse af typen "{0}"</target></trans-unit>
+			<target xml:lang="da" state="translated">Ingen validator fundet for en elektronisk adresse af typen "{0}"</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="da">Personnavn må ikke være tomt</target></trans-unit>
+			<target xml:lang="da" state="translated">Personnavn må ikke være tomt</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="da">Den angivne værdi er ikke en forekomst af et Image objekt</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi er ikke en forekomst af et Image objekt</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="da">Billedtypen "{0}" er ikke tilladt</target><alt-trans><target xml:lang="da">Billede typen "{0}" er ikke tilladt</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Billedtypen "{0}" er ikke tilladt</target><alt-trans><target xml:lang="da">Billede typen "{0}" er ikke tilladt</target></alt-trans></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="da">Den uploadede fil er ikke gyldigt billede</target></trans-unit>
+			<target xml:lang="da" state="translated">Den uploadede fil er ikke gyldigt billede</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="da">Den angivne værdi er ikke et Image objekt</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi er ikke et Image objekt</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="da">Den faktiske billedbredde {0,number} er mindre end den tilladte minimums bredde {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den faktiske billedbredde {0,number} er mindre end den tilladte minimums bredde {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="da">Den faktiske billedbredde {0,number} er højere end den tilladte maksimale bredde af {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den faktiske billedbredde {0,number} er højere end den tilladte maksimale bredde af {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="da">Den faktiske billedhøjde {0,number} er mindre end den tilladte minimumshøjde {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den faktiske billedhøjde {0,number} er mindre end den tilladte minimumshøjde {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="da">Den faktiske billedhøjde {0,number} er højere end den tilladte maksimale højde {1,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Den faktiske billedhøjde {0,number} er højere end den tilladte maksimale højde {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="da">Billedets størrelse på {0,number} x {1,number} er mindre end den mindst tilladte opløsning på {2,number}</target><alt-trans><target xml:lang="da">Den givne billedstørrelse for {0,number} x {1,number} er for lavt for den påkrævede minimumopløsning {2,number}</target></alt-trans></trans-unit>
+			<target xml:lang="da" state="translated">Billedets størrelse på {0,number} x {1,number} er mindre end den mindst tilladte opløsning på {2,number}</target><alt-trans><target xml:lang="da">Den givne billedstørrelse for {0,number} x {1,number} er for lavt for den påkrævede minimumopløsning {2,number}</target></alt-trans></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="da">Billedets størrelse på {0,number} x {1,number} er større end den maksimalt tilladte opløsning på {2,number}</target></trans-unit>
+			<target xml:lang="da" state="translated">Billedets størrelse på {0,number} x {1,number} er større end den maksimalt tilladte opløsning på {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="da">Den angivne værdi er ikke et billede (Image instans)</target></trans-unit>
+			<target xml:lang="da" state="translated">Den angivne værdi er ikke et billede (Image instans)</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="da">Billedets orientering skal være "{0}"</target></trans-unit>
+			<target xml:lang="da" state="translated">Billedets orientering skal være "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="da">Billed-orienteringen "{0}" er ikke tilladt</target></trans-unit>
+			<target xml:lang="da" state="translated">Billed-orienteringen "{0}" er ikke tilladt</target></trans-unit>
     </body>
   </file>
 </xliff>

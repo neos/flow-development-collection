@@ -2,28 +2,28 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="fr">
     <body>
-      <trans-unit id="authentication.required" xml:space="preserve">
+      <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
 			<target xml:lang="fr">Authentication obligatoire</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target xml:lang="fr">Mot de passe</target></trans-unit>
-      <trans-unit id="authentication.new-password" xml:space="preserve">
+      <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
 			<target xml:lang="fr">Nouveau mot de passe</target></trans-unit>
-      <trans-unit id="authentication.login" xml:space="preserve">
+      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
 			<target xml:lang="fr">Identifiant</target></trans-unit>
-      <trans-unit id="authentication.logout" xml:space="preserve">
+      <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="fr">Déconnexion</target></trans-unit>
-      <trans-unit id="update" xml:space="preserve">
+      <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
 			<target xml:lang="fr">Mise à jour</target></trans-unit>
-      <trans-unit id="submit" xml:space="preserve">
+      <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
 			<target xml:lang="fr">Soumettre</target></trans-unit>
     </body>

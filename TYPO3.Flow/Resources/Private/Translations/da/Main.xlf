@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="da">Godkendelse kræves</target></trans-unit>
+			<target xml:lang="da" state="translated">Godkendelse kræves</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="da">Brugernavn</target></trans-unit>
+			<target xml:lang="da" state="translated">Brugernavn</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="da">Adgangskode</target></trans-unit>
+			<target xml:lang="da" state="translated">Adgangskode</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="da">Ny adgangskode</target></trans-unit>
+			<target xml:lang="da" state="translated">Ny adgangskode</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="da">Log ind</target></trans-unit>
+			<target xml:lang="da" state="translated">Log ind</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="da">Log ud</target></trans-unit>
+			<target xml:lang="da" state="translated">Log ud</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="da">Opdater</target></trans-unit>
+			<target xml:lang="da" state="translated">Opdater</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="da">Indsend</target></trans-unit>
+			<target xml:lang="da" state="translated">Indsend</target></trans-unit>
     </body>
   </file>
 </xliff>

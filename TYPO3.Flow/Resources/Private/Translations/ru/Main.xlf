@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="ru">Требуется авторизация</target></trans-unit>
+			<target xml:lang="ru" state="translated">Требуется авторизация</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ru">Имя пользователя</target></trans-unit>
+			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ru">Пароль</target></trans-unit>
+			<target xml:lang="ru" state="translated">Пароль</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="ru">Новый пароль</target></trans-unit>
+			<target xml:lang="ru" state="translated">Новый пароль</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="ru">Вход в систему</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вход в систему</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="ru">Выйти из профиля</target></trans-unit>
+			<target xml:lang="ru" state="translated">Выйти из профиля</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="ru">Обновить</target></trans-unit>
+			<target xml:lang="ru" state="translated">Обновить</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="ru">Отправить</target></trans-unit>
+			<target xml:lang="ru" state="translated">Отправить</target></trans-unit>
     </body>
   </file>
 </xliff>

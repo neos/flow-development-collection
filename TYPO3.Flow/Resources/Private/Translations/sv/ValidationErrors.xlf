@@ -5,195 +5,195 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="sv-SE">Endast tecknen ifrån a till z och siffror tillåts</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Endast tecknen ifrån a till z och siffror tillåts</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="sv-SE">Det angivna värdet förväntas vara {0}.</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet förväntas vara {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="sv-SE">Det givna ämnet är inte en samling</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det givna ämnet är inte en samling</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="sv-SE">Det givna ämnet är inte räknebart</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det givna ämnet är inte räknebart</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="sv-SE">Antalet måste vara mellan {0,number} och {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Antalet måste vara mellan {0,number} och {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="sv-SE">Det angivna värdet är inte ett giltigt datum</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet är inte ett giltigt datum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="sv-SE">Det givna datumet måste vara mellan {0} och {1}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det givna datumet måste vara mellan {0} och {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="sv-SE">Det givna datumet måste vara efter {0}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det givna datumet måste vara efter {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="sv-SE">Det givna datumet måste vara innan {0}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det givna datumet måste vara innan {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="sv-SE">Alternativet "locale" kan endast anges som sträng-ID eller ett Locale objekt</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Alternativet "locale" kan endast anges som sträng-ID eller ett Locale objekt</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="sv-SE">En giltig tid förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">En giltig tid förväntas</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt datum och tid förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt datum och tid förväntas</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt datum förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt datum förväntas</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="sv-SE">Ange en giltig e-postadress</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ange en giltig e-postadress</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt decimalt nummer förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt decimalt nummer förväntas</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="sv-SE">{0}"kan inte konverteras till ett decimalt värde</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">{0}"kan inte konverteras till ett decimalt värde</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="sv-SE">Objekt förväntas, {0} har angetts</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Objekt förväntas, {0} har angetts</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt heltal förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt heltal förväntas</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="sv-SE">{0}"är inget heltal.</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">{0}"är inget heltal.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="sv-SE">Endast bokstäver, siffror, blanksteg och vissa skiljetecken förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Endast bokstäver, siffror, blanksteg och vissa skiljetecken förväntas</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="sv-SE">Värdet är inte en giltig I18n språkidentifierare</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Värdet är inte en giltig I18n språkidentifierare</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="sv-SE">Denna egenskap krävs</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Denna egenskap krävs</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="sv-SE">Denna egenskap krävs</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Denna egenskap krävs</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt tal förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt tal förväntas</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="sv-SE">Vänligen ange ett giltigt nummer mellan {0,number} och {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Vänligen ange ett giltigt nummer mellan {0,number} och {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="sv-SE">Alternativet "locale" kan endast anges som sträng ID eller ett Locale objekt</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Alternativet "locale" kan endast anges som sträng ID eller ett Locale objekt</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt procent tal förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt procent tal förväntas</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="sv-SE">Ett giltigt decimaltal förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ett giltigt decimaltal förväntas</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="sv-SE">Givet ämnet matchar inte mönstret. Fick: {0}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Givet ämnet matchar inte mönstret. Fick: {0}</target></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-			<target xml:lang="sv-SE">Det angivna objektet kunde inte konverteras till en sträng</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna objektet kunde inte konverteras till en sträng</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target xml:lang="sv-SE">Det angivna värdet är inte en giltig sträng</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet är inte en giltig sträng</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target xml:lang="sv-SE">Längden på denna text måste vara mellan {0,number} och {1,number} tecken</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Längden på denna text måste vara mellan {0,number} och {1,number} tecken</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]" xml:space="preserve">
 					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="sv-SE">Det här fältet måste innehålla minst {0,number} tecken</target></trans-unit>
+				<target xml:lang="sv-SE" state="translated">Det här fältet måste innehålla minst {0,number} tecken</target></trans-unit>
         <trans-unit id="1238108068[1]" xml:space="preserve">
 					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="sv-SE">Det här fältet måste innehålla minst {0,number} tecken</target></trans-unit>
+				<target xml:lang="sv-SE" state="translated">Det här fältet måste innehålla minst {0,number} tecken</target></trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" xml:space="preserve">
 					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="sv-SE">Denna text får inte överstiga {0,number} tecken</target></trans-unit>
+				<target xml:lang="sv-SE" state="translated">Denna text får inte överstiga {0,number} tecken</target></trans-unit>
         <trans-unit id="1238108069[1]" xml:space="preserve">
 					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="sv-SE">Denna text får inte överstiga {0,number} tecken</target></trans-unit>
+				<target xml:lang="sv-SE" state="translated">Denna text får inte överstiga {0,number} tecken</target></trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="sv-SE">En giltig sträng förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">En giltig sträng förväntas</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="sv-SE">Giltig text utan några XML-taggar förväntas</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Giltig text utan några XML-taggar förväntas</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="sv-SE">Givet ämnet är inte en giltig UUID</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Givet ämnet är inte en giltig UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="sv-SE">Ingen validerare har hittats för elektronisk adress av typen {0}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ingen validerare har hittats för elektronisk adress av typen {0}</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="sv-SE">Personens namn kan inte vara tomt</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Personens namn kan inte vara tomt</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="sv-SE">Det angivna värdet är inte en Image instans</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet är inte en Image instans</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="sv-SE">Image type {0}"är inte tillåtet</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Image type {0}"är inte tillåtet</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="sv-SE">Den uppladdade filen är ingen giltig bild</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den uppladdade filen är ingen giltig bild</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="sv-SE">Det angivna värdet är inte en Image instans</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet är inte en Image instans</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="sv-SE">Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="sv-SE">Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="sv-SE">Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="sv-SE">Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="sv-SE">Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="sv-SE">Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="sv-SE">Det angivna värdet är inte en Image instans</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Det angivna värdet är inte en Image instans</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="sv-SE">Bildriktning måste vara {0}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Bildriktning måste vara {0}</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="sv-SE">Bildriktning "{0}"är inte tillåtet</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Bildriktning "{0}"är inte tillåtet</target></trans-unit>
     </body>
   </file>
 </xliff>

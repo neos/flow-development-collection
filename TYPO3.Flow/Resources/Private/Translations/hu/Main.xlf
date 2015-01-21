@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="hu">Authentication required</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu">Username</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="hu">Password</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="hu">New password</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">New password</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="hu">Login</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="hu">Logout</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Logout</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="hu">Update</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Update</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="hu">Submit</target></trans-unit>
+			<target xml:lang="hu" state="needs-translation">Submit</target></trans-unit>
     </body>
   </file>
 </xliff>
