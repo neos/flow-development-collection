@@ -232,10 +232,12 @@ class CoreCommandController extends CommandController {
 	 * @param boolean $status Show the migration status, do not run migrations
 	 * @param string $packagesPath If set, use the given path as base when looking for packages
 	 * @param string $packageKey If set, migrate only the given package
+	 * @param string $version If set, execute only the migration with the given version (e.g. "20150119114100")
+	 * @param boolean $verbose If set, notes and skipped migrations will be rendered
 	 * @return void
 	 * @see typo3.flow:doctrine:migrate
 	 */
-	public function migrateCommand($status = FALSE, $packagesPath = NULL, $packageKey = NULL) {
+	public function migrateCommand($status = FALSE, $packagesPath = NULL, $packageKey = NULL, $version = NULL, $verbose = FALSE) {
 		// This command will never be really called. It rather acts as a stub for rendering the
 		// documentation for this command. In reality, the "flow" command line script will already
 		// check if this command is supposed to be called and invoke the migrate script

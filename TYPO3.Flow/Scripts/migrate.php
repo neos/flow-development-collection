@@ -10,6 +10,9 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Core\Migrations\AbstractMigration;
+use TYPO3\Flow\Core\Migrations\Manager;
+
 // if installed through composer, use it's autoloading
 if (file_exists(__DIR__ . '/../../../Libraries/autoload.php')) {
 	require (__DIR__ . '/../../../Libraries/autoload.php');
@@ -35,6 +38,8 @@ define('FLOW_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath
 define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
 define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');
 define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
+define('MAXIMUM_LINE_LENGTH', 84);
+
 
 if(flagIsSet('packages-path')) {
 	define('FLOW_PATH_PACKAGES', getFlagValue('packages-path'));
@@ -43,29 +48,113 @@ if(flagIsSet('packages-path')) {
 }
 
 if (\TYPO3\Flow\Core\Migrations\Git::isGitAvailable() === FALSE) {
-	echo 'No executable git binary found, exiting.';
+	outputLine('No executable git binary found, exiting.');
 	exit(255);
 }
 
-$migrationsManager = new \TYPO3\Flow\Core\Migrations\Manager();
+$migrationsManager = new Manager();
+
+$packageKey = getFlagValue('package-key');
+$versionNumber = flagIsSet('version') ? preg_replace('/[^0-9]/', '', getFlagValue('version')) : NULL;
+// see https://jira.typo3.org/browse/FLOW-110
+if (strlen($versionNumber) === 12) {
+	$versionNumber .= '00';
+}
+$verbose = flagIsSet('verbose');
 
 if (flagIsSet('status')) {
-	$status = $migrationsManager->getStatus();
+	outputLine('Fetching migration status...');
+	try {
+		$status = $migrationsManager->getStatus($packageKey, $versionNumber);
+	} catch (\Exception $exception) {
+		outputLine('EXCEPTION: %s', array($exception->getMessage()));
+		exit(255);
+	}
 
-	$output = PHP_EOL . ' == Migration status' . PHP_EOL;
+	outputHeadline('Migration status', 1);
+	foreach ($status as $packageKey => $migrationsStatus) {
+		outputHeadline('for package "%s"', 2, array($packageKey));
+		foreach ($migrationsStatus as $migrationVersionNumber => $migrationStatus) {
+			if ($versionNumber !== NULL && $versionNumber != $migrationVersionNumber) {
+				continue;
+			}
+			/** @var AbstractMigration $migration */
+			$migration = $migrationStatus['migration'];
+			$status = $migrationStatus['state'] === Manager::STATE_MIGRATED ? 'migrated' : 'not migrated/skipped';
 
-	foreach ($status as $packageKey => $migrations) {
-		$output .= PHP_EOL . ' ==  for ' . $packageKey . PHP_EOL;
-		foreach ($migrations as $versionNumber => $migration) {
-			$status = $migration['state'] === \TYPO3\Flow\Core\Migrations\Manager::STATE_MIGRATED ? 'migrated' : 'not migrated';
-			$output .= '    >> ' . formatVersion($versionNumber) . ' (' . $migration['source'] . ')' . str_repeat(' ', 30 - strlen($status)) . $status . PHP_EOL;
+			$migrationTitle = sprintf('%s (%s)', formatVersion($migrationVersionNumber), $migration->getIdentifier());
+			outputLine('>> %s %s', array(str_pad($migrationTitle, MAXIMUM_LINE_LENGTH - 24), $status), MAXIMUM_LINE_LENGTH - 16);
+			if ($verbose) {
+				$description = $migration->getDescription();
+				if ($description !== NULL) {
+					outputLine('     %s', array($migration->getDescription()), 5);
+					outputLine();
+				}
+			}
 		}
 	}
-	echo $output;
 	exit(0);
 }
 
-$migrationsManager->migrate(getFlagValue('package-key'));
+$migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function(AbstractMigration $migration) use ($verbose) {
+
+	if ($verbose || $migration->hasWarnings()) {
+		outputMigrationHeadline($migration);
+	}
+
+	if ($verbose && $migration->hasNotes()) {
+		outputHeadline('Notes', 2);
+		outputBulletList($migration->getNotes());
+		outputSeparator();
+	}
+	if ($migration->hasWarnings()) {
+		outputHeadline('Warnings', 2);
+		outputBulletList($migration->getWarnings());
+		outputSeparator();
+	}
+	if ($verbose) {
+		outputLine('Done with %s', array($migration->getIdentifier()));
+		outputLine();
+	}
+});
+
+if ($verbose) {
+	$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED, function (AbstractMigration $migration, $packageKey, $reason) {
+		outputMigrationHeadline($migration);
+		outputLine('  Skipping %s: %s', array($packageKey, $reason));
+		outputLine();
+	});
+}
+
+$migrationsManager->on(Manager::EVENT_MIGRATION_EXECUTED, function(AbstractMigration $migration, $packageKey, $migrationResult) {
+	outputMigrationHeadline($migration);
+	outputLine('  Migrated %s:', array($packageKey));
+	outputLine();
+	outputLine($migrationResult);
+});
+
+$lastMigration = NULL;
+function outputMigrationHeadline(AbstractMigration $migration) {
+	global $lastMigration;
+	if ($migration !== $lastMigration) {
+		outputHeadline('Migration %s (%s)', 1, array($migration->getIdentifier(), formatVersion($migration->getVersionNumber())));
+		$description = $migration->getDescription();
+		if ($description !== NULL) {
+			outputLine($description);
+			outputLine();
+		}
+		$lastMigration = $migration;
+	}
+}
+
+outputLine('Migrating...');
+try {
+	$migrationsManager->migrate($packageKey, $versionNumber);
+} catch (\Exception $exception) {
+	outputLine('EXCEPTION: %s', array($exception->getMessage()));
+	exit(255);
+}
+outputLine('Done.');
 
 /**
  * Check if the given flag is in $GLOBALS['argv'].
@@ -84,12 +173,11 @@ function flagIsSet($flag) {
  * @return mixed
  */
 function getFlagValue($flag) {
-	if (flagIsSet($flag)) {
-		$index = array_search('--' . $flag, $GLOBALS['argv']);
-		return $GLOBALS['argv'][$index +1];
-	} else {
+	if (!flagIsSet($flag)) {
 		return NULL;
 	}
+	$index = array_search('--' . $flag, $GLOBALS['argv']);
+	return $GLOBALS['argv'][$index +1];
 }
 
 /**
@@ -106,4 +194,59 @@ function formatVersion($timestamp) {
 		substr($timestamp, 8, 2),
 		substr($timestamp, 10, 2)
 	);
+}
+
+/**
+ * @param string $text Text to output
+ * @param array $arguments Optional arguments to use for sprintf
+ * @param integer $indention
+ * @return void
+ */
+function outputLine($text = '', array $arguments = array(), $indention = 0) {
+	if ($arguments !== array()) {
+		$text = vsprintf($text, $arguments);
+	}
+	if ($indention > 0) {
+		$wrappedLines = explode(PHP_EOL, wordwrap($text, MAXIMUM_LINE_LENGTH, PHP_EOL, TRUE));
+		echo implode(PHP_EOL . str_repeat(' ', $indention), $wrappedLines);
+	} else {
+		echo wordwrap($text, MAXIMUM_LINE_LENGTH, PHP_EOL, TRUE);
+	}
+	echo PHP_EOL;
+}
+
+/**
+ * @param string $headline
+ * @param integer $level headline level (1-4)
+ * @param array $arguments Optional arguments to use for sprintf
+ * @return void
+ */
+function outputHeadline($headline, $level = 1, array $arguments = array()) {
+	outputLine();
+	$separatorCharacters = array('=', '-', '=', '-');
+	$separatorCharacter = isset($separatorCharacters[$level - 1]) ? $separatorCharacters[$level - 1] : $separatorCharacters[0];
+	if ($level === 1) {
+		outputSeparator($separatorCharacter);
+	}
+	outputLine($headline, $arguments);
+	outputSeparator($separatorCharacter);
+}
+
+/**
+ * @param string $character
+ * @return void
+ */
+function outputSeparator($character = '-') {
+	echo str_repeat($character, MAXIMUM_LINE_LENGTH);
+	echo PHP_EOL;
+}
+
+/**
+ * @param array $items
+ * @return void
+ */
+function outputBulletList(array $items) {
+	foreach ($items as $item) {
+		outputLine('  * ' . $item, array(), 4);
+	}
 }

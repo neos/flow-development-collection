@@ -29,6 +29,20 @@ class Git {
 	}
 
 	/**
+	 * Check whether the given $path points to the top-level of a git repository
+	 *
+	 * @param string $path
+	 * @return boolean
+	 */
+	public static function isWorkingCopy($path) {
+		chdir($path);
+		$output = array();
+
+		exec('git rev-parse --show-cdup', $output);
+		return implode('', $output) === '';
+	}
+
+	/**
 	 * Check whether the working copy is clean.
 	 *
 	 * @param string $path
@@ -80,7 +94,7 @@ class Git {
 	/**
 	 * @param string $path
 	 * @param string $message
-	 * @return array
+	 * @return array in the format [<returnCode>, '<output>']
 	 */
 	static public function commitAll($path, $message) {
 		chdir($path);
@@ -90,49 +104,23 @@ class Git {
 
 		$temporaryPathAndFilename = tempnam(sys_get_temp_dir(), 'flow-commitmsg');
 		file_put_contents($temporaryPathAndFilename, $message);
-		exec('git commit -F ' . escapeshellarg($temporaryPathAndFilename), $output, $returnCode);
+		exec('git commit --allow-empty -F ' . escapeshellarg($temporaryPathAndFilename), $output, $returnCode);
 		unlink($temporaryPathAndFilename);
 
 		return array($returnCode, $output);
 	}
 
 	/**
-	 * Checks if the current git repository has the given migration applied.
+	 * Checks if the git repository for the given $path has a log entry matching $searchTerm
 	 *
-	 * @param string $packagePath
-	 * @param string $migrationIdentifier
-	 * @return bool
+	 * @param string $path
+	 * @param string $searchTerm
+	 * @return boolean
 	 */
-	static public function hasMigrationApplied($packagePath, $migrationIdentifier) {
+	static public function logContains($path, $searchTerm) {
 		$output = array();
-		chdir($packagePath);
-		exec('git log -F --oneline --grep=' . escapeshellarg('Migration: ' . $migrationIdentifier), $output);
+		chdir($path);
+		exec('git log -F --oneline --grep=' . escapeshellarg($searchTerm), $output);
 		return $output !== array();
-	}
-
-	/**
-	 * Commit changes done to the package described by $packageData. The migration
-	 * that was did the changes is given with $versionNumber and $versionPackageKey
-	 * and will be recorded in the commit message.
-	 *
-	 * @param string $packagePath
-	 * @param string $migrationIdentifier
-	 * @return string
-	 */
-	static public function commitMigration($packagePath, $migrationIdentifier) {
-		$message = '[TASK] Apply migration ' . $migrationIdentifier . '
-
-This commit contains the result of applying migration
- ' . $migrationIdentifier . '.
-to this package.
-
-Migration: ' . $migrationIdentifier;
-
-		list ($returnCode, $output) = self::commitAll($packagePath, $message);
-		if ($returnCode === 0) {
-			return '    ' . implode(PHP_EOL . '    ', $output) . PHP_EOL;
-		} else {
-			return '    No changes were committed.' . PHP_EOL;
-		}
 	}
 }

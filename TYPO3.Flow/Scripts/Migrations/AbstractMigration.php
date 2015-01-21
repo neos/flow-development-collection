@@ -20,6 +20,7 @@ use TYPO3\Flow\Utility\Files;
 abstract class AbstractMigration {
 
 	/**
+	 * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
 	 * @var integer
 	 */
 	const MAXIMUM_LINE_LENGTH = 79;
@@ -89,7 +90,33 @@ abstract class AbstractMigration {
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return $this->sourcePackageKey . '-' . substr(strrchr(get_class($this), 'Version'), 7);
+		return $this->sourcePackageKey . '-' . $this->getVersionNumber();
+	}
+
+	/**
+	 * Returns the version of this migration, e.g. '20120126163610'.
+	 *
+	 * @return string
+	 */
+	public function getVersionNumber() {
+		return substr(strrchr(get_class($this), 'Version'), 7);
+	}
+
+	/**
+	 * Returns the first line of the migration class doc comment
+	 *
+	 * @return string
+	 */
+	public function getDescription() {
+		$reflectionClass = new \ReflectionClass($this);
+		$lines = explode(chr(10), $reflectionClass->getDocComment());
+		foreach ($lines as $line) {
+			$line = trim($line);
+			if ($line === '' || $line === '/**' || $line === '*' || $line === '*/' || strpos($line, '* @') !== FALSE) {
+				continue;
+			}
+			return preg_replace('/\s*\\/?[\\\\*]*\s?(.*)$/', '$1', $line);
+		}
 	}
 
 	/**
@@ -112,28 +139,6 @@ abstract class AbstractMigration {
 	}
 
 	/**
-	 * Will show all notes and warnings accumulated.
-	 *
-	 * @return void
-	 */
-	public function outputNotesAndWarnings() {
-		foreach (array('notes', 'warnings') as $type) {
-			if ($this->$type === array()) {
-				continue;
-			}
-
-			$this->outputLine();
-			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
-			$this->outputLine('   ' . ucfirst($type));
-			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
-			foreach ($this->$type as $note) {
-				$this->outputLine('  * ' . $this->wrapAndPrefix($note));
-			}
-			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
-		}
-	}
-
-	/**
 	 * This can be used to show a note to the developer.
 	 *
 	 * If changes cannot be automated or something needs to be
@@ -147,7 +152,21 @@ abstract class AbstractMigration {
 	 * @api
 	 */
 	protected function showNote($note) {
-		$this->notes[sha1($note)] = $note;
+		$this->notes[md5($note)] = $note;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasNotes() {
+		return $this->notes !== array();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getNotes() {
+		return $this->notes;
 	}
 
 	/**
@@ -163,7 +182,21 @@ abstract class AbstractMigration {
 	 * @api
 	 */
 	protected function showWarning($warning) {
-		$this->warnings[sha1($warning)] = $warning;
+		$this->warnings[md5($warning)] = $warning;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasWarnings() {
+		return $this->warnings !== array();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getWarnings() {
+		return $this->warnings;
 	}
 
 	/**
@@ -172,12 +205,12 @@ abstract class AbstractMigration {
 	 *
 	 * @param string $search
 	 * @param string $replacement
-	 * @param array $filter
+	 * @param array|string $filter either an array with file extensions to consider or the full path to a single file to process
 	 * @return void
 	 * @api
 	 */
-	protected function searchAndReplace($search, $replacement, array $filter = array('php', 'yaml', 'html')) {
-		$this->operations['searchAndReplace'][] = array($search, $replacement, $filter);
+	protected function searchAndReplace($search, $replacement, $filter = array('php', 'yaml', 'html')) {
+		$this->operations['searchAndReplace'][] = array($search, $replacement, $filter, FALSE);
 	}
 
 	/**
@@ -191,12 +224,12 @@ abstract class AbstractMigration {
 	 *
 	 * @param string $search
 	 * @param string|\Closure $replacement
-	 * @param array $filter
+	 * @param array|string $filter either an array with file extensions to consider or the full path to a single file to process
 	 * @return void
 	 * @api
 	 */
-	protected function searchAndReplaceRegex($search, $replacement, array $filter = array('php', 'yaml', 'html')) {
-		$this->operations['searchAndReplaceRegex'][] = array($search, $replacement, $filter);
+	protected function searchAndReplaceRegex($search, $replacement, $filter = array('php', 'yaml', 'html')) {
+		$this->operations['searchAndReplace'][] = array($search, $replacement, $filter, TRUE);
 	}
 
 	/**
@@ -284,16 +317,16 @@ abstract class AbstractMigration {
 
 		$yamlSource = new YamlSource();
 		foreach ($configurationPathsAndFilenames as $pathAndFilename) {
-			$configuration = $yamlSource->load(substr($pathAndFilename, 0, -5));
+			$originalConfiguration = $configuration = $yamlSource->load(substr($pathAndFilename, 0, -5));
 			$processor($configuration);
-			if ($saveResult === TRUE) {
+			if ($saveResult === TRUE && $configuration !== $originalConfiguration) {
 				$yamlSource->save(substr($pathAndFilename, 0, -5), $configuration);
 			}
 		}
 	}
 
 	/**
-	 * Applies all registered searchAndReplace and searchAndReplaceRegex operations.
+	 * Applies all registered searchAndReplace operations.
 	 *
 	 * @return void
 	 */
@@ -305,20 +338,15 @@ abstract class AbstractMigration {
 			if (strpos($pathAndFilename, 'Migrations/Code') !== FALSE) continue;
 
 			foreach ($this->operations['searchAndReplace'] as $operation) {
-				if ($operation[2] !== array()) {
-					if (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $operation[2], TRUE)) {
+				list($search, $replacement, $filter, $regularExpression) = $operation;
+				if (is_array($filter)) {
+					if ($filter !== array() && (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $filter, TRUE))) {
 						continue;
 					}
+				} elseif ($pathAndFilename !== $filter) {
+					continue;
 				}
-				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename);
-			}
-			foreach ($this->operations['searchAndReplaceRegex'] as $operation) {
-				if ($operation[2] !== array()) {
-					if (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $operation[2], TRUE)) {
-						continue;
-					}
-				}
-				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename, TRUE);
+				Tools::searchAndReplace($search, $replacement, $pathAndFilename, $regularExpression);
 			}
 		}
 	}
@@ -373,6 +401,7 @@ abstract class AbstractMigration {
 	 * The given text is word-wrapped and each line after the first one is
 	 * prefixed with $prefix.
 	 *
+	 * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
 	 * @param string $text
 	 * @param string $prefix
 	 * @return string
@@ -387,6 +416,7 @@ abstract class AbstractMigration {
 	 *
 	 * You can specify arguments that will be passed to the text via sprintf
 	 *
+	 * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
 	 * @param string $text Text to output
 	 * @param array $arguments Optional arguments to use for sprintf
 	 * @return void
