@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Validation;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 use TYPO3\Flow\Validation\Validator\GenericObjectValidator;
 use TYPO3\Flow\Validation\Validator\ConjunctionValidator;
@@ -265,7 +266,7 @@ class ValidatorResolver {
 	protected function buildBaseValidatorConjunction($indexKey, $targetClassName, array $validationGroups) {
 		$conjunctionValidator = new ConjunctionValidator();
 		$this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
-		if (class_exists($targetClassName)) {
+		if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
 			// Model based validator
 			$objectValidator = new GenericObjectValidator(array());
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
@@ -275,7 +276,7 @@ class ValidatorResolver {
 					throw new \InvalidArgumentException(sprintf('There is no @var annotation for property "%s" in class "%s".', $classPropertyName, $targetClassName), 1363778104);
 				}
 				try {
-					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
+					$parsedType = TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
 				} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744, $exception);
 				}
@@ -285,10 +286,10 @@ class ValidatorResolver {
 				}
 
 				$propertyTargetClassName = $parsedType['type'];
-				if (\TYPO3\Flow\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
+				if (TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
 					$collectionValidator = $this->createValidator('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
 					$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
-				} elseif (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+				} elseif (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
 					if (count($validatorForProperty) > 0) {
 						$objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
