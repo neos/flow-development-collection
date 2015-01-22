@@ -118,7 +118,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		if (file_exists($this->cacheDirectory . 'FrozenCache.data')) {
+		if (is_file($this->cacheDirectory . 'FrozenCache.data')) {
 			$this->frozen = TRUE;
 			$cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
 			$lock = new Lock($cachePathAndFileName, FALSE);
@@ -227,7 +227,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		}
 
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-		if (file_exists($pathAndFilename) === FALSE) {
+		if (is_file($pathAndFilename) === FALSE) {
 			return FALSE;
 		}
 		if (unlink($pathAndFilename) === FALSE) {
@@ -317,7 +317,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * @api
 	 */
 	protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = TRUE) {
-		if (file_exists($cacheEntryPathAndFilename) === FALSE) {
+		if (is_file($cacheEntryPathAndFilename) === FALSE) {
 			return TRUE;
 		}
 

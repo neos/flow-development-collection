@@ -200,7 +200,7 @@ class ClassLoader {
 		foreach ($possiblePaths as $possiblePathData) {
 			$pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
 			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packagenamespacePartCount);
-			if (file_exists($possibleFilePath)) {
+			if (is_file($possibleFilePath)) {
 				$result = include($possibleFilePath);
 				if ($result !== FALSE) {
 					return TRUE;
@@ -353,14 +353,14 @@ class ClassLoader {
 	 * @return void
 	 */
 	protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = NULL) {
-		if (file_exists($composerPath . 'autoload_classmap.php')) {
+		if (is_file($composerPath . 'autoload_classmap.php')) {
 			$classMap = include($composerPath . 'autoload_classmap.php');
 			if ($classMap !== FALSE) {
 				$this->classMap = $classMap;
 			}
 		}
 
-		if (file_exists($composerPath . 'autoload_namespaces.php')) {
+		if (is_file($composerPath . 'autoload_namespaces.php')) {
 			$namespaceMap = include($composerPath . 'autoload_namespaces.php');
 			if ($namespaceMap !== FALSE) {
 				foreach ($namespaceMap as $namespace => $paths) {
@@ -378,7 +378,7 @@ class ClassLoader {
 			}
 		}
 
-		if (file_exists($composerPath . 'autoload_psr4.php')) {
+		if (is_file($composerPath . 'autoload_psr4.php')) {
 			$psr4Map = include($composerPath . 'autoload_psr4.php');
 			if ($psr4Map !== FALSE) {
 				foreach ($psr4Map as $namespace => $possibleClassPaths) {
@@ -396,7 +396,7 @@ class ClassLoader {
 			}
 		}
 
-		if (file_exists($composerPath . 'include_paths.php')) {
+		if (is_file($composerPath . 'include_paths.php')) {
 			$includePaths = include($composerPath . 'include_paths.php');
 			if ($includePaths !== FALSE) {
 				array_push($includePaths, get_include_path());
@@ -404,7 +404,7 @@ class ClassLoader {
 			}
 		}
 
-		if (file_exists($composerPath . 'autoload_files.php')) {
+		if (is_file($composerPath . 'autoload_files.php')) {
 			$includeFiles = include($composerPath . 'autoload_files.php');
 			if ($includeFiles !== FALSE) {
 				foreach ($includeFiles as $file) {

@@ -50,13 +50,13 @@ class YamlSource {
 			$pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
 			if ($pathsAndFileNames !== FALSE) {
 				foreach ($pathsAndFileNames as $pathAndFilename) {
-					if (file_exists($pathAndFilename)) {
+					if (is_file($pathAndFilename)) {
 						return TRUE;
 					}
 				}
 			}
 		}
-		if (file_exists($pathAndFilename . '.yaml')) {
+		if (is_file($pathAndFilename . '.yaml')) {
 			return TRUE;
 		}
 		return FALSE;
@@ -83,7 +83,7 @@ class YamlSource {
 		}
 		$configuration = array();
 		foreach ($pathsAndFileNames as $pathAndFilename) {
-			if (file_exists($pathAndFilename)) {
+			if (is_file($pathAndFilename)) {
 				try {
 					if ($this->usePhpYamlExtension) {
 						$loadedConfiguration = @yaml_parse_file($pathAndFilename);
