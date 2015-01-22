@@ -128,7 +128,7 @@ class FloatConverter extends AbstractTypeConverter {
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		if ($source === NULL || strlen($source) === 0) {
+		if ($source === NULL || $source === '') {
 			return NULL;
 		} elseif (is_string($source) && $configuration instanceof \TYPO3\Flow\Property\PropertyMappingConfigurationInterface) {
 			$source = $this->parseUsingLocaleIfConfigured($source, $configuration);

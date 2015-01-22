@@ -134,7 +134,7 @@ class DateTimeConverter extends AbstractTypeConverter {
 			} else {
 				throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Could not convert the given source into a DateTime object because it was not an array with a valid date as a string', 1308003914);
 			}
-			if (isset($source['dateFormat']) && strlen($source['dateFormat']) > 0) {
+			if (isset($source['dateFormat']) && $source['dateFormat'] !== '') {
 				$dateFormat = $source['dateFormat'];
 			}
 		}
