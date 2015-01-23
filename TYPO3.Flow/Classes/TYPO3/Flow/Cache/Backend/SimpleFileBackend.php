@@ -294,10 +294,11 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		if ($entryIdentifier !== basename($entryIdentifier)) {
 			throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
 		}
-		try {
+
+		if (is_file($pathAndFilename)) {
 			return include_once($pathAndFilename);
-		} catch (\Exception $e) {
-			 return FALSE;
+		} else {
+			return FALSE;
 		}
 	}
 
