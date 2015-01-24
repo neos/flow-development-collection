@@ -487,13 +487,8 @@ class ReflectionService {
 		if (!$this->initialized) {
 			$this->initialize();
 		}
-		if ($object instanceof Proxy) {
-			$className = get_parent_class($object);
-		} else {
-			$className = get_class($object);
-		}
 
-		return $className;
+		return TypeHandling::getTypeForValue($object);
 	}
 
 	/**
