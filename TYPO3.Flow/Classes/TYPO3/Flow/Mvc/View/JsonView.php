@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * A JSON view
@@ -43,12 +44,6 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * See EXPOSE_CLASSNAME_FULL for the meaning of the constant at all.
 	 */
 	const EXPOSE_CLASSNAME_UNQUALIFIED = 2;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
@@ -299,7 +294,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 				$propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
 			}
 			if (isset($configuration['_exposeClassName']) && ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED || $configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_UNQUALIFIED)) {
-				$className = $this->reflectionService->getClassNameByObject($object);
+				$className = TypeHandling::getTypeForValue($object);
 				$classNameParts = explode('\\', $className);
 				$propertiesToRender['__class'] = ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED ? $className : array_pop($classNameParts));
 			}

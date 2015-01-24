@@ -19,11 +19,11 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\InvalidPolicyException;
 use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * A sql generator to create a sql condition for an entity property.
@@ -90,12 +90,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	 * @var PersistenceManager
 	 */
 	protected $persistenceManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var ReflectionService
-	 */
-	protected $reflectionService;
 
 	/**
 	 * @param string $path Property path the currently parsed expression relates to
@@ -281,14 +275,14 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 			}
 			$currentReferencedOperandName = $operandAlias . $joinColumn['referencedColumnName'];
 			if (is_object($this->operand)) {
-				$operandMetadataInfo = $this->entityManager->getClassMetadata($this->reflectionService->getClassNameByObject($this->operand));
+				$operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($this->operand));
 				$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($this->operand, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
 				$sqlFilter->setParameter($currentReferencedOperandName, $currentReferencedValueOfOperand, $associationMapping['type']);
 
 			} elseif (is_array($this->operandDefinition)) {
 				foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
 					if (is_object($singleOperandValue)) {
-						$operandMetadataInfo = $this->entityManager->getClassMetadata($this->reflectionService->getClassNameByObject($singleOperandValue));
+						$operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($singleOperandValue));
 						$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($singleOperandValue, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
 						$sqlFilter->setParameter($operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);
 					} elseif ($singleOperandValue === NULL) {

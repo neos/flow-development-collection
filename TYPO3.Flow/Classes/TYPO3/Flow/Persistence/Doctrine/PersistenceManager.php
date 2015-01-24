@@ -15,6 +15,7 @@ use Doctrine\DBAL\Connection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Error\Exception;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -70,7 +71,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		$validatedInstancesContainer = new \SplObjectStorage();
 		$knownValueObjects = array();
 		foreach ($entityInsertions as $entity) {
-			$className = $this->reflectionService->getClassNameByObject($entity);
+			$className = TypeHandling::getTypeForValue($entity);
 			if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
 				$identifier = $this->getIdentifierByObject($entity);
 
