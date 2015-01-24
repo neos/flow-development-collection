@@ -486,12 +486,9 @@ class ReflectionService {
 	 *
 	 * @param object $object
 	 * @return string The class name of the given object
+	 * @deprecated since 3.0 use \TYPO3\Flow\Utility\TypeHandling::getTypeForValue() instead
 	 */
 	public function getClassNameByObject($object) {
-		if (!$this->initialized) {
-			$this->initialize();
-		}
-
 		return TypeHandling::getTypeForValue($object);
 	}
 
@@ -1191,9 +1188,6 @@ class ReflectionService {
 	 * @return \TYPO3\Flow\Reflection\ClassSchema
 	 */
 	public function getClassSchema($classNameOrObject) {
-		if (!$this->initialized) {
-			$this->initialize();
-		}
 		if (is_object($classNameOrObject)) {
 			$className = get_class($classNameOrObject);
 		} else {

@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * The default TYPO3 Package Manager
@@ -207,10 +207,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @return PackageInterface The package the given object belongs to or NULL if it could not be found
 	 */
 	public function getPackageOfObject($object) {
-		/** @var $reflectionService ReflectionService */
-		$reflectionService = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService');
-		$className = $reflectionService->getClassNameByObject($object);
-		return $this->getPackageByClassName($className);
+		return $this->getPackageByClassName(TypeHandling::getTypeForValue($object));
 	}
 
 	/**
