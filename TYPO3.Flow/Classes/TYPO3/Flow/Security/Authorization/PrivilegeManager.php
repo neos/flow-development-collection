@@ -37,7 +37,7 @@ class PrivilegeManager implements PrivilegeManagerInterface {
 	/**
 	 * If set to TRUE access will be granted for objects where all voters abstain from decision.
 	 *
-	 * @Flow\Inject(setting="security.authorization.allowAccessIfAllVotersAbstain")
+	 * @Flow\InjectConfiguration("security.authorization.allowAccessIfAllVotersAbstain")
 	 * @var boolean
 	 */
 	protected $allowAccessIfAllAbstain = FALSE;

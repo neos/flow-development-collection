@@ -56,7 +56,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	/**
 	 * Array of registered global objects that can be accessed as operands
 	 *
-	 * @Flow\Inject(setting="aop.globalObjects")
+	 * @Flow\InjectConfiguration("aop.globalObjects")
 	 * @var array
 	 */
 	protected $globalObjects = array();
