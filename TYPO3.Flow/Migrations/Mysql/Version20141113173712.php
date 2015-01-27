@@ -7,7 +7,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * Remove table and relations for Role entity, instead role identifiers are now stored as simple comma separated list in the account table
  */
-class Version20140328173712 extends AbstractMigration {
+class Version20141113173712 extends AbstractMigration {
 
 	/**
 	 * @param Schema $schema
@@ -15,6 +15,11 @@ class Version20140328173712 extends AbstractMigration {
 	 */
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+
+		// skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
+		if (array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account'))) {
+			return;
+		}
 
 		$this->addSql("ALTER TABLE typo3_flow_security_account ADD roleidentifiers LONGTEXT DEFAULT NULL COMMENT '(DC2Type:simple_array)'");
 		$this->addSql("ALTER TABLE typo3_flow_security_account_roles_join DROP FOREIGN KEY FK_ADF11BBC23A1047C");
