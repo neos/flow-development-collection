@@ -343,7 +343,12 @@ class DoctrineCommandController extends CommandController {
 			if ($add === FALSE && $delete === FALSE) {
 				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
 			}
-			$this->doctrineService->markAsMigrated($version, $add ?: FALSE);
+			try {
+				$this->doctrineService->markAsMigrated($version, $add ?: FALSE);
+			} catch (\Doctrine\DBAL\Migrations\MigrationException $exception) {
+				$this->outputLine($exception->getMessage());
+				$this->quit(1);
+			}
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);

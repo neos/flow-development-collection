@@ -371,17 +371,16 @@ class Service {
 			}
 
 			$version = $configuration->getVersion($version);
-			if ($markAsMigrated === TRUE && $configuration->hasVersionMigrated($version) === TRUE) {
-				throw new \LogicException(sprintf('The version "%s" already exists in the version table.', $version));
-			}
-
-			if ($markAsMigrated === FALSE && $configuration->hasVersionMigrated($version) === FALSE) {
-				throw new \LogicException(sprintf('The version "%s" does not exists in the version table.', $version));
-			}
 
 			if ($markAsMigrated === TRUE) {
+				if ($configuration->hasVersionMigrated($version) === TRUE) {
+					throw new \Doctrine\DBAL\Migrations\MigrationException(sprintf('The version "%s" already exists in the version table.', $version));
+				}
 				$version->markMigrated();
 			} else {
+				if ($configuration->hasVersionMigrated($version) === FALSE) {
+					throw new \Doctrine\DBAL\Migrations\MigrationException(sprintf('The version "%s" does not exist in the version table.', $version));
+				}
 				$version->markNotMigrated();
 			}
 		}
