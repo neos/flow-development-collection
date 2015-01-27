@@ -10,6 +10,9 @@ The lifecycle of objects are managed centrally by the object framework. It offer
 convenient support for Dependency Injection and provides some additional features such as
 a caching mechanism for objects. Because all packages are built on this foundation it is
 important to understand the general concept of objects in TYPO3 Flow.
+Note, the object management features of Flow are by default only enabled for classes in
+packages belonging to one of the `typo3-flow-*`` package types. All other classes are not
+considered by default. If you need that (see :ref:`sect-enabling-non-flow-packages`).
 
 .. tip::
 
@@ -1319,6 +1322,29 @@ and so on, the performance in production context can be improved::
 The results of methods annotated with ``CompileStatic`` will only be compile in
 ``Production`` context. When Flow is started in a different context, the method
 will be executed during each run.
+
+.. _sect-enabling-non-flow-packages:
+
+Enabling Other Package Classes For Object Management
+====================================================
+
+As stated in the beginning of this part, all classes in packages not in one of the ``typo3-flow-*``
+types is not recognized for object management by default. If you still want that you can include
+those classes via configuration in settings. The configuration consists of a map of package keys to
+arrays of expressions which match classes to be included. In the following example we include all
+classes of the ``Acme.Objects`` package::
+
+  TYPO3:
+    Flow:
+      object:
+        includeClasses:
+          'Acme.Objects' : ['.*']
+
+.. note::
+	If you use the ``includeClasses`` setting on a flow package (which is already enabled for object
+	management) then only the classes that match at least one of the filter expressions are going to
+	be object managed. This can also be used to remove classes inside flow packages from object
+	management by specifying a non-matching expression or an empty array.
 
 .. note::
 	The static method must except exactly one argument which is the TYPO3 Flow

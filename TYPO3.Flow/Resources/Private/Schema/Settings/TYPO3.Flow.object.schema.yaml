@@ -2,6 +2,6 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'registerFunctionalTestClasses': { type: boolean, required: TRUE }
-  'excludeClasses':
+  'includeClasses':
     type: dictionary
     items: { type: string, required: TRUE }

@@ -316,26 +316,6 @@ Using 3rd Party Packages
 
 When using 3rd party packages via `Composer`_ a variety of issues can come up.
 
-Reflection errors
------------------
-
-When a package includes tests and other resources Flow might run into trouble
-when trying to reflect those. Since in most cases "fixing" such packages does
-not make sense, a configuration option is provided to selectively ignore classes
-from reflection. This allows a fine control going beyong simply disabling object
-management (and thus features like DI and AOP) completely.
-
-To exclude classes from object management (Reflection and Configuration building)
-a sequence of package keys can be provided, each with a sequence of regular
-expressions. Each regular expression will be tested against the list of fully
-qualified class names in the package and classes will be excluded if matching::
-
-  TYPO3:
-    Flow:
-      object:
-        excludeClasses:
-          'Acme.Broken' : ['.*']
-          'other.weird.package' : ['Other\\Weird\\Package\\Tests\\.*']
 
 Class loading
 -------------

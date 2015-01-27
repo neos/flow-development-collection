@@ -97,6 +97,7 @@ class Package implements PackageInterface {
 	/**
 	 * If enabled, the files in the Classes directory are registered and Reflection, Dependency Injection, AOP etc. are supported.
 	 * Disable this flag if you don't need object management for your package and want to save some memory.
+	 *
 	 * @var boolean
 	 * @api
 	 */
@@ -143,7 +144,7 @@ class Package implements PackageInterface {
 		$autoloadType = $this->getAutoloadType();
 
 		if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
-			$autoloadPath = $this->getComposerManifest()->autoload->{$autoloadType}->{$this->getNamespace()};
+			$autoloadPath = $this->getComposerManifest('autoload')->{$autoloadType}->{$this->getNamespace()};
 			if (is_array($autoloadPath)) {
 				$autoloadPath = $autoloadPath[0];
 			}
@@ -240,10 +241,10 @@ class Package implements PackageInterface {
 	 */
 	public function getNamespace() {
 		if (!$this->namespace) {
-			$manifest = $this->getComposerManifest();
+			$autoloadConfiguration = $this->getComposerManifest('autoload');
 			$autoloadType = $this->getAutoloadType();
 			if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
-				$namespaces = (array)$manifest->autoload->{$autoloadType};
+				$namespaces = (array)$autoloadConfiguration->{$autoloadType};
 				$namespace = key($namespaces);
 			} else {
 				$namespace = str_replace('.', '\\', $this->getPackageKey());
@@ -260,17 +261,17 @@ class Package implements PackageInterface {
 	 * @api
 	 */
 	public function getAutoloadType() {
-		$manifest = $this->getComposerManifest();
-		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
+		$autoloadConfiguration = $this->getComposerManifest('autoload');
+		if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_PSR0})) {
 			return self::AUTOLOADER_TYPE_PSR0;
 		}
-		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR4})) {
+		if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_PSR4})) {
 			return self::AUTOLOADER_TYPE_PSR4;
 		}
-		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_CLASSMAP})) {
+		if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_CLASSMAP})) {
 			return self::AUTOLOADER_TYPE_CLASSMAP;
 		}
-		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_FILES})) {
+		if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_FILES})) {
 			return self::AUTOLOADER_TYPE_FILES;
 		}
 

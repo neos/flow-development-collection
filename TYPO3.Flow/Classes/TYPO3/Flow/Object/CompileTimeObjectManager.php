@@ -181,15 +181,26 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param array $packages A list of packages to consider
 	 * @return array A list of class names which were discovered in the given packages
+	 *
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
 	 */
 	protected function registerClassFiles(array $packages) {
-		$availableClassNames = array('' => array('DateTime'));
+		$includeClassesConfiguration = array();
+		if (isset($this->allSettings['TYPO3']['Flow']['object']['includeClasses'])) {
+			if (!is_array($this->allSettings['TYPO3']['Flow']['object']['includeClasses'])) {
+				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.Flow.object.includeClasses" is invalid, it must be an array if set. Check the syntax in the YAML file.', 1422357285);
+			}
 
+			$includeClassesConfiguration = $this->allSettings['TYPO3']['Flow']['object']['includeClasses'];
+		}
+
+		$availableClassNames = array('' => array('DateTime'));
+		/** @var \TYPO3\Flow\Package\Package $package */
 		foreach ($packages as $packageKey => $package) {
-			if ($package->isObjectManagementEnabled()) {
+			if ($package->isObjectManagementEnabled() && (strpos($package->getComposerManifest('type'), 'typo3-flow') === 0 || isset($includeClassesConfiguration[$packageKey]))) {
 				$classFiles = $package->getClassFiles();
 				if (count($classFiles) > 0) {
-					if ($this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses'] === TRUE) {
+					if (isset($this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses'] === TRUE) {
 						$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
 					}
 					foreach (array_keys($classFiles) as $fullClassName) {
@@ -201,59 +212,105 @@ class CompileTimeObjectManager extends ObjectManager {
 				}
 			}
 		}
-
-		return $this->filterClassNamesFromConfiguration($availableClassNames);
+		return $this->filterClassNamesFromConfiguration($availableClassNames, $includeClassesConfiguration);
 	}
 
 	/**
-	 * Given an array of class names by package key this filters out all classes that
-	 * have been configured to be excluded from object management.
+	 * Given an array of class names by package key this filters out classes that
+	 * have been configured to be excluded or included by object management.
 	 *
 	 * @param array $classNames 2-level array - key of first level is package key, value of second level is classname (FQN)
+	 * @param array $includeClassesConfiguration array of includeClasses configurations
 	 * @return array The input array with all configured to be excluded from object management filtered out
 	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
 	 * @throws \TYPO3\Flow\Configuration\Exception\NoSuchOptionException
 	 */
-	protected function filterClassNamesFromConfiguration(array $classNames) {
-		if (isset($this->allSettings['TYPO3']['Flow']['object']) && isset($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'])) {
+	protected function filterClassNamesFromConfiguration(array $classNames, $includeClassesConfiguration) {
+		if (isset($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'])) {
+			$this->systemLogger->log('Using "TYPO3.Flow.object.excludeClasses" is deprecated. Non flow packages are no longer enabled for object management by default, you can use "TYPO3.Flow.object.includeClasses" to add them. You can also use it to remove classes of flow packages from object management as any classes that do not match the given expression(s) are excluded if it is configured for a package.');
 			if (!is_array($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'])) {
-				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.Flow.object.excludeClasses" is invalid. Check the syntax in the YAML file.');
+				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.Flow.object.excludeClasses" is invalid, it must be an array if set. Check the syntax in the YAML file.', 1422357311);
 			}
 
-			$excludeClasses = array();
-			$registeredPackageKeys = array_keys($classNames);
-			foreach ($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
-				if (strpos($packageKey, '*') === FALSE) {
-					$excludeClasses[$packageKey] = $filterExpressions;
-					continue;
-				}
-				$packageKey = rtrim($packageKey, '*');
-				foreach ($registeredPackageKeys as $registeredPackageKey) {
-					if (strpos($registeredPackageKey, $packageKey) === 0) {
-						$excludeClasses[$registeredPackageKey] = $filterExpressions;
-					}
-				}
-			}
+			$excludeClasses = $this->collectExcludedPackages(array_keys($classNames));
+			$classNames = $this->applyClassFilterConfiguration($classNames, $excludeClasses, 'exclude');
+		}
 
-			foreach ($excludeClasses as $packageKey => $filterExpressions) {
-				if (!array_key_exists($packageKey, $classNames)) {
-					$this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "TYPO3.Flow.object.excludeClasses" does not exist or is not active.', LOG_DEBUG);
-					continue;
-				}
-				if (!is_array($filterExpressions)) {
-					throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.Flow.object.excludeClasses.\'' . $packageKey . '\'" is  invalid. Check the syntax in the YAML file.');
-				}
-				foreach ($filterExpressions as $filterExpression) {
-					$classNames[$packageKey] = array_filter(
-						$classNames[$packageKey],
-						function ($className) use ($filterExpression) {
-							$match = preg_match('/' . $filterExpression . '/', $className);
-							return $match !== 1;
-						}
-					);
+		$classNames = $this->applyClassFilterConfiguration($classNames, $includeClassesConfiguration);
+
+		return $classNames;
+	}
+
+	/**
+	 * Explodes the regular expressions for package name in excludeClasses configuration to full package names.
+	 *
+	 * @param array $registeredPackageKeys
+	 * @return array
+	 */
+	protected function collectExcludedPackages($registeredPackageKeys) {
+		$excludeClasses = array();
+		foreach ($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
+			if (strpos($packageKey, '*') === FALSE) {
+				$excludeClasses[$packageKey] = $filterExpressions;
+				continue;
+			}
+			$packageKey = rtrim($packageKey, '*');
+			foreach ($registeredPackageKeys as $registeredPackageKey) {
+				if (strpos($registeredPackageKey, $packageKey) === 0) {
+					$excludeClasses[$registeredPackageKey] = $filterExpressions;
 				}
 			}
 		}
+
+		return $excludeClasses;
+	}
+
+	/**
+	 * Filters the classnames available for object management by filter expressions that either include or exclude classes.
+	 *
+	 * @param array $classNames All classnames per package
+	 * @param array $filterConfiguration The filter configuration to apply
+	 * @param string $includeOrExclude if this is an "include" or "exclude" filter
+	 * @return array the remaining class
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
+	 */
+	protected function applyClassFilterConfiguration($classNames, $filterConfiguration, $includeOrExclude = 'include') {
+		if (!in_array($includeOrExclude, array('include', 'exclude'))) {
+			throw new \InvalidArgumentException('The argument $includeOrExclude must be one of "include" or "exclude", the given value was not allowed.', 1423726253);
+		}
+		foreach ($filterConfiguration as $packageKey => $filterExpressions) {
+			if (!array_key_exists($packageKey, $classNames)) {
+				$this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "TYPO3.Flow.object.' . $includeOrExclude . 'Classes" was either excluded or is not loaded.', LOG_DEBUG);
+				continue;
+			}
+			if (!is_array($filterExpressions)) {
+				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.Flow.object.' . $includeOrExclude . 'Classes.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
+			}
+
+			$classesForPackageUnderInspection = $classNames[$packageKey];
+			$classNames[$packageKey] = array();
+
+			foreach ($filterExpressions as $filterExpression) {
+				$classesForPackageUnderInspection = array_filter(
+					$classesForPackageUnderInspection,
+					function($className) use ($filterExpression, $includeOrExclude) {
+						$match = preg_match('/' . $filterExpression . '/', $className);
+						return ($includeOrExclude === 'include' ? $match === 1 : $match !== 1);
+					}
+				);
+				if ($includeOrExclude === 'include') {
+					$classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
+					$classesForPackageUnderInspection = $classNames[$packageKey];
+				} else {
+					$classNames[$packageKey] = $classesForPackageUnderInspection;
+				}
+			}
+
+			if ($classNames[$packageKey] === array()) {
+				unset ($classNames[$packageKey]);
+			}
+		}
+
 		return $classNames;
 	}
 

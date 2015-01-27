@@ -308,10 +308,10 @@ class PackageTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function isObjectManagementEnabledTellsIfObjectManagementShouldBeEnabledForThePackage() {
+	public function isObjectManagementEnabledTellsIfObjectManagementShouldBeEnabledForPackages() {
 		$packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
 		mkdir($packagePath, 0700, TRUE);
-		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "flow-test"}');
+		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "typo3-flow-test"}');
 		$package = new Package($this->mockPackageManager, 'Vendor.Dummy', $packagePath);
 
 		$this->assertTrue($package->isObjectManagementEnabled());

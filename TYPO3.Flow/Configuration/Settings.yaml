@@ -188,21 +188,19 @@ TYPO3:
       # testing context.
       registerFunctionalTestClasses: FALSE
 
-      # Exclude classes from object management (Reflection and Configuration building).
-      # Sequence of package keys (a * as wildcard as last character is allowed) each
-      # with a sequence of regular expressions.
-      # The package key must match the key found in PackageStates.php regarding case,
-      # so it might be needed to add two inclusions (like for Doctrine below).
+      # Explicitly include classes to object management (Reflection and Configuration building).
+      # Sequence of package keys with an array of regular expressions.
+      # The package key must match the key found in PackageStates.php regarding case.
+      #
       # Each regular expression will be tested against the list of fully qualified
-      # class names in the package and classes will be excluded if matching.
-      excludeClasses:
-        'Doctrine.*': ['.*']
-        'doctrine.*': ['.*']
-        'symfony.*': ['.*']
-        'phpunit.*': ['.*']
-        'mikey179.vfsStream': ['.*']
-        # workaround, should rather be deactivated
-        'Composer.Installers': ['.*']
+      # class names in the package and classes will be included if matching.
+      #
+      # For Flow packages (type = "typo3-flow-*") this setting is not required as they're
+      # reflected by default. You can however exclude specific (or all) classes from Flow packages
+      # by specifying corresponding regular expressions that don't match classes to exclude.
+      #
+      # Note: The previous setting "excludeClasses" has been deprecated with Flow 3.0
+      includeClasses: []
 
     package:
 
