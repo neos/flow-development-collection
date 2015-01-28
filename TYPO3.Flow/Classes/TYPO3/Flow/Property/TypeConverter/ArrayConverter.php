@@ -129,8 +129,6 @@ class ArrayConverter extends AbstractTypeConverter {
 						return explode($this->getStringDelimiter($configuration), $source);
 					case self::STRING_FORMAT_JSON:
 						return json_decode($source, TRUE);
-					case self::STRING_FORMAT_SERIALIZED:
-						return unserialize($source);
 					default:
 						throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from string to array failed due to invalid string format setting "%s"', $stringFormat), 1404903208);
 				}
