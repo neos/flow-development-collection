@@ -63,29 +63,11 @@ interface CollectionInterface {
 	 *
 	 * Note that this collection must have a writable storage in order to import resources.
 	 *
-	 * The specified filename will be used when presenting the resource to a user. Its file extension is
-	 * important because the resource management will derive the IANA Media Type from it.
-	 *
 	 * @param string $content The actual content to import
-	 * @param string $filename The filename to use for the newly generated resource
 	 * @return Resource A resource object representing the imported resource
 	 * @throws Exception
 	 */
-	public function importResourceFromContent($content, $filename);
-
-	/**
-	 * Imports a resource (file) from the given upload info array into this collection.
-	 *
-	 * On a successful import this method returns a Resource object representing
-	 * the newly imported persistent resource.
-	 *
-	 * Note that this collection must have a writable storage in order to import resources.
-	 *
-	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
-	 * @return mixed A resource object representing the imported resource or a string containing an error message if an error ocurred
-	 * @throws Exception
-	 */
-	public function importUploadedResource(array $uploadInfo);
+	public function importResourceFromContent($content);
 
 	/**
 	 * Publishes the whole collection to the corresponding publishing target

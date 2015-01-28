@@ -45,27 +45,11 @@ interface WritableStorageInterface extends StorageInterface {
 	 *
 	 * @param string $content The actual content to import
 	 * @param string $collectionName Name of the collection the new Resource belongs to
-	 * @param string $filename The filename to use for the newly generated resource
 	 * @return Resource A resource object representing the imported resource
 	 * @throws Exception
 	 * @api
 	 */
-	public function importResourceFromContent($content, $collectionName, $filename);
-
-	/**
-	 * Imports a resource (file) as specified in the given upload info array as a
-	 * persistent resource.
-	 *
-	 * On a successful import this method returns a Resource object representing
-	 * the newly imported persistent resource.
-	 *
-	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
-	 * @param string $collectionName Name of the collection this uploaded resource should be part of
-	 * @return Resource A resource object representing the imported resource
-	 * @throws Exception
-	 * @api
-	 */
-	public function importUploadedResource(array $uploadInfo, $collectionName);
+	public function importResourceFromContent($content, $collectionName);
 
 	/**
 	 * Deletes the storage data related to the given Resource object
