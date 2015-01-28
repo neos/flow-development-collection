@@ -98,10 +98,10 @@ interface PrivilegeInterface extends CacheAwareInterface {
 	/**
 	 * Returns TRUE, if this privilege covers the given subject
 	 *
-	 * @param mixed $subject
+	 * @param PrivilegeSubjectInterface $subject
 	 * @return boolean
 	 * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
 	 */
-	public function matchesSubject($subject);
+	public function matchesSubject(PrivilegeSubjectInterface $subject);
 
 }
