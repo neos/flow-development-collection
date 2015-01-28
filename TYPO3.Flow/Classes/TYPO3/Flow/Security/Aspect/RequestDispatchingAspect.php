@@ -63,7 +63,7 @@ class RequestDispatchingAspect {
 	 * dispatchable request implementing RequestInterface. Note that we don't deal
 	 * with HTTP requests here.
 	 *
-	 * @Flow\Around("setting(TYPO3.Flow.security.enable) && method(TYPO3\Flow\Mvc\Dispatcher->dispatch())")
+	 * @Flow\Around("method(TYPO3\Flow\Mvc\Dispatcher->dispatch())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @throws \Exception|\TYPO3\Flow\Security\Exception\AccessDeniedException

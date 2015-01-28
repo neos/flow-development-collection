@@ -14,25 +14,6 @@ framework. Besides other functionality, this includes especially features like
 authentication, authorization, channel security and a powerful policy component. This
 chapter describes how you can use TYPO3 Flow's security features and how they work internally.
 
-Activation and initialization
-=============================
-
-All the described features in this chapter can be enable or disabled by setting the
-following value in *Settings.yaml* configuration file:
-
-*Example: Enable the security features in the Settings.yaml configuration file*
-
-.. code-block:: yaml
-
-	Flow:
-	  security:
-	    enable:
-		  TRUE
-
-If set to "yes", which is the default, the security framework engages with TYPO3 Flow
-by vowing in two AOP advices into the MVC dispatcher and another two into the
-persistence layer classes.
-
 Security context
 ----------------
 

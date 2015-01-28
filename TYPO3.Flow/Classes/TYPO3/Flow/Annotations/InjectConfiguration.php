@@ -29,7 +29,7 @@ final class InjectConfiguration {
 	 *
 	 * For type "Settings" this refers to the relative path (excluding the package key)
 	 *
-	 * Example: security.enable
+	 * Example: session.name
 	 *
 	 * @var string
 	 */
