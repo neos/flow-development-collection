@@ -141,7 +141,7 @@ class ArrayConverter extends AbstractTypeConverter {
 				case self::RESOURCE_EXPORT_TYPE_BASE64:
 					return array(
 						'filename' => $source->getFilename(),
-						'data' => base64_encode(file_get_contents('resource://' . $source->getResourcePointer()->getHash()))
+						'data' => base64_encode(file_get_contents('resource://' . $source->getSha1()))
 					);
 				case self::RESOURCE_EXPORT_TYPE_FILE:
 					$targetStream = fopen($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
@@ -149,7 +149,7 @@ class ArrayConverter extends AbstractTypeConverter {
 					fclose($targetStream);
 					return array(
 						'filename' => $source->getFilename(),
-						'hash' => $source->getResourcePointer()->getHash(),
+						'hash' => $source->getSha1(),
 					);
 				default:
 					throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from Resource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);

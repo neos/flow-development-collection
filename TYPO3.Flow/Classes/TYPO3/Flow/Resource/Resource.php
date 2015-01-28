@@ -274,7 +274,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 *
 	 * @return string The sha1 hash
 	 * @api
-	 * @deprecated please use getSha1() instead
+	 * @deprecated Since version 3.0, please use getSha1() instead
 	 */
 	public function getHash() {
 		return $this->sha1;
@@ -286,7 +286,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * @param string $hash The sha1 hash
 	 * @return void
 	 * @api
-	 * @deprecated please use setSha1() instead
+	 * @deprecated Since version 3.0, please use setSha1() instead
 	 */
 	public function setHash($hash) {
 		$this->setSha1($hash);
@@ -385,11 +385,11 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	/**
 	 * Sets the resource pointer
 	 *
-	 * Deprecated – use setHash() instead!
+	 * Deprecated – use setSha1() instead!
 	 *
 	 * @param \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
 	 * @return void
-	 * @deprecated
+	 * @deprecated Since version 3.0, use setSha1() to set the raw hash of the resourcePointer
 	 * @see setSha1()
 	 */
 	public function setResourcePointer(ResourcePointer $resourcePointer) {
@@ -400,11 +400,12 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	/**
 	 * Returns the resource pointer
 	 *
-	 * Deprecated – use getHash() instead!
+	 * Deprecated – use getSha1() instead!
 	 *
 	 * @return \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
 	 * @api
-	 * @deprecated
+	 * @deprecated Since version 3.0, use getSha1() which is the same value
+	 * @see getSha1()
 	 */
 	public function getResourcePointer() {
 		return new ResourcePointer($this->sha1);
@@ -414,7 +415,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * Returns the SHA1 of the content this Resource is related to
 	 *
 	 * @return string
-	 * @deprecated
+	 * @deprecated Since version 3.0. Use getSha1() to get a textual representation
 	 */
 	public function __toString() {
 		return $this->sha1;
