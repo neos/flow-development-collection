@@ -1,36 +1,43 @@
 type: dictionary
 additionalProperties: FALSE
 properties:
-  'acls':
+  'privilegeTargets':
+    type: dictionary
+    required: TRUE
+    additionalProperties:
+      type: dictionary
+      additionalProperties:
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          'matcher':
+            type: string
+            required: TRUE
+          'parameters':
+            type: dictionary
+            additionalProperties:
+              type: dictionary
+              additionalProperties: FALSE
+              properties:
+                'className': {type: string, format: class-name}
+
+  'roles':
     type: dictionary
     required: TRUE
     additionalProperties:
       type: dictionary
       additionalProperties: FALSE
       properties:
-        'methods':
-          type: dictionary
-          additionalProperties: { type: string, enum: ['GRANT', 'DENY']}
-        'entities':
-          type: dictionary
-          additionalProperties: { type: string, enum: ['GRANT', 'DENY']}
-
-  'resources':
-    type: dictionary
-    required: TRUE
-    additionalProperties: FALSE
-    properties:
-      'entities':
-        type: dictionary
-        additionalProperties:
-          type: dictionary
-          additionalProperties: {type: string}
-      'methods':
-        type: dictionary
-        additionalProperties: {type: string}
-
-  'roles':
-    type: dictionary
-    required: TRUE
-    additionalProperties:
-      type: array
+        'abstract': {type: boolean}
+        'parentRoles':
+          type: array
+          items: {type: string}
+        'privileges':
+          type: array
+          items:
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+              'privilegeTarget': {type: string}
+              'parameters': {type: dictionary}
+              'permission': {type: string, enum: ['GRANT', 'DENY', 'ABSTAIN']}
