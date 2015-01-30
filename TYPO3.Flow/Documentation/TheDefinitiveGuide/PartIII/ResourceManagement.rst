@@ -44,9 +44,8 @@ resource*. Although these resources are usually stored as files, they are never 
 to by their path and filename directly but are represented by ``Resource`` objects.
 
 .. note::
-
-	It is important to completely ignore the fact that resources are stored as files
-	somewhere in TYPO3 Flow's directory structure – you should only deal with resource objects.
+  It is important to completely ignore the fact that resources are stored as files
+  somewhere in TYPO3 Flow's directory structure – you should only deal with resource objects.
 
 New persistent resources can be created by either importing or uploading a file. In either
 case the result is a new ``Resource`` object which can be attached to any other object. A

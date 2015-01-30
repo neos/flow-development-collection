@@ -360,8 +360,7 @@ specified as a regular expression.
    pointcut expression. Instead of ``method(InterfaceName->methodName())``, use
    ``within(InterfaceName) && method(.*->methodName())``.
 
- Here are some examples for matching method
-executions:
+Here are some examples for matching method executions:
 
 *Example: method() pointcut designator*
 
@@ -634,8 +633,7 @@ conveniently in advice declarations:
 		 * PointcutTestingTargetClasses except those from Target
 		 * Class number 3.
 		 *
-		 * @Flow\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && ⏎
-		  !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
+		 * @Flow\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
 		 */
 		public function pointcutTestingTargetClasses() {}
 
@@ -650,8 +648,7 @@ conveniently in advice declarations:
 		/**
 		 * A combination of both above pointcuts
 		 *
-		 * @Flow\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses ⏎
-		  || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
+		 * @Flow\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
 		 */
 		public function bothPointcuts() {}
 
@@ -701,8 +698,7 @@ can it take influence on other before advices at the same join point.
 	 *
 	 * @Flow\Before("class(Example\News\.*->.*())")
 	 */
-	public function myBeforeAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myBeforeAdvice(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -718,11 +714,9 @@ advices may read the result of the target method, but can't modify it.
 	/**
 	 * After returning advice
 	 *
-	 * @Flow\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) ⏎
-		  || Example\MyPackage\MyAspect->someOtherPointcut")
+	 * @Flow\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) || Example\MyPackage\MyAspect->someOtherPointcut")
 	 */
-	public function myAfterReturningAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myAfterReturningAdvice(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -739,8 +733,7 @@ after method execution, but only if an exception was thrown.
 	 *
 	 * @Flow\AfterThrowing("within(Example\News\ImportantLayer)")
 	 */
-	public function myAfterThrowingAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myAfterThrowingAdvice(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -848,8 +841,7 @@ code will just do that:
 		 * @param \TYPO3\Flow\Log\SystemLoggerInterface $logger The System Logger
 		 * @return void
 		 */
-		public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface ⏎
-			$systemLogger) {
+		public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 			$this->logger = $systemLogger;
 		}
 
