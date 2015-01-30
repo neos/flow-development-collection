@@ -12,13 +12,18 @@ namespace TYPO3\Flow\Security;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Flow\Session\SessionManagerInterface;
 
 /**
  * The repository for accounts
  *
  * @Flow\Scope("singleton")
  */
-class AccountRepository extends \TYPO3\Flow\Persistence\Repository {
+class AccountRepository extends Repository {
 
 	/**
 	 * @var string
@@ -28,7 +33,33 @@ class AccountRepository extends \TYPO3\Flow\Persistence\Repository {
 	/**
 	 * @var array
 	 */
-	protected $defaultOrderings = array('creationDate' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING);
+	protected $defaultOrderings = array('creationDate' => QueryInterface::ORDER_DESCENDING);
+
+	/**
+	 * @Flow\Inject
+	 * @var SessionManagerInterface
+	 */
+	protected $sessionManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
+	 * Removes an account
+	 *
+	 * @param object $object The account to remove
+	 * @return void
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+	 */
+	public function remove($object) {
+		parent::remove($object);
+		/** @var Account $object */
+		$tag = 'TYPO3-Flow-Security-Account-' . md5($object->getAccountIdentifier());
+		$this->sessionManager->destroySessionsByTag($tag, sprintf('The account %s (%s) was deleted', $object->getAccountIdentifier(), $object->getAuthenticationProviderName()));
+	}
 
 	/**
 	 * Returns the account for a specific authentication provider with the given identifier
