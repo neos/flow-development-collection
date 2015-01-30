@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Session;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 
 /**
  * Session Manager
@@ -21,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class SessionManager implements SessionManagerInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Session\SessionInterface
+	 * @var SessionInterface
 	 */
 	protected $currentSession;
 
@@ -34,7 +35,7 @@ class SessionManager implements SessionManagerInterface {
 	 * Meta data cache used by sessions
 	 *
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var VariableFrontend
 	 */
 	protected $metaDataCache;
 
@@ -42,7 +43,7 @@ class SessionManager implements SessionManagerInterface {
 	 * Returns the currently active session which stores session data for the
 	 * current HTTP request on this local system.
 	 *
-	 * @return \TYPO3\Flow\Session\SessionInterface
+	 * @return SessionInterface
 	 * @api
 	 */
 	public function getCurrentSession() {
@@ -57,7 +58,7 @@ class SessionManager implements SessionManagerInterface {
 	 * NULL is returned.
 	 *
 	 * @param string $sessionIdentifier The session identifier
-	 * @return \TYPO3\Flow\Session\Session
+	 * @return SessionInterface
 	 * @api
 	 */
 	public function getSession($sessionIdentifier) {
@@ -77,7 +78,7 @@ class SessionManager implements SessionManagerInterface {
 	/**
 	 * Returns all active sessions, even remote ones.
 	 *
-	 * @return array<\TYPO3\Flow\Session\Session>
+	 * @return array<\TYPO3\Flow\Session\SessionInterface>
 	 * @api
 	 */
 	public function getActiveSessions() {

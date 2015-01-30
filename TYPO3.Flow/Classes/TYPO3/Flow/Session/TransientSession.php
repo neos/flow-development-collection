@@ -50,6 +50,11 @@ class TransientSession implements SessionInterface {
 	protected $lastActivityTimestamp;
 
 	/**
+	 * @var array
+	 */
+	protected $tags;
+
+	/**
 	 * Tells if the session has been started already.
 	 *
 	 * @return boolean
@@ -103,11 +108,11 @@ class TransientSession implements SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws Exception\SessionNotStartedException
 	 */
 	public function getId() {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
 		}
 		return $this->sessionId;
 	}
@@ -117,11 +122,11 @@ class TransientSession implements SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The data associated with the given key or NULL
-	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws Exception\SessionNotStartedException
 	 */
 	public function getData($key) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
 		}
 		return (array_key_exists($key, $this->data)) ? $this->data[$key] : NULL;
 	}
@@ -142,11 +147,11 @@ class TransientSession implements SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param object $data The data to be stored
 	 * @return void
-	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
 		}
 		$this->data[$key] = $data;
 	}
@@ -155,11 +160,11 @@ class TransientSession implements SessionInterface {
 	 * Closes the session
 	 *
 	 * @return void
-	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws Exception\SessionNotStartedException
 	 */
 	public function close() {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
 		}
 		$this->started = FALSE;
 	}
@@ -170,11 +175,11 @@ class TransientSession implements SessionInterface {
 	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
 	 * @throws \TYPO3\Flow\Session\Exception
-	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
 		}
 		$this->data = array();
 		$this->started = FALSE;
@@ -218,4 +223,53 @@ class TransientSession implements SessionInterface {
 		$this->lastActivityTimestamp = time();
 	}
 
+	/**
+	 * Tags this session with the given tag.
+	 *
+	 * Note that third-party libraries might also tag your session. Therefore it is
+	 * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @throws Exception\SessionNotStartedException
+	 * @throws \InvalidArgumentException
+	 * @api
+	 */
+	public function addTag($tag) {
+		if ($this->started !== TRUE) {
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551048);
+		}
+		$this->tags[$tag] = TRUE;
+	}
+
+	/**
+	 * Removes the specified tag from this session.
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @throws Exception\SessionNotStartedException
+	 * @api
+	 */
+	public function removeTag($tag) {
+		if ($this->started !== TRUE) {
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551049);
+		}
+		if (isset($this->tags[$tag])) {
+			unset ($this->tags[$tag]);
+		}
+	}
+
+	/**
+	 * Returns the tags this session has been tagged with.
+	 *
+	 * @return array The tags or an empty array if there aren't any
+	 * @throws Exception\SessionNotStartedException
+	 * @api
+	 */
+	public function getTags() {
+		if ($this->started !== TRUE) {
+			throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551050);
+		}
+		return array_keys($this->tags);
+	}
 }

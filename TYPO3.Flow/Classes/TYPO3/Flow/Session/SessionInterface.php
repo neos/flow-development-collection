@@ -90,6 +90,39 @@ interface SessionInterface {
 	public function putData($key, $data);
 
 	/**
+	 * Tags this session with the given tag.
+	 *
+	 * Note that third-party libraries might also tag your session. Therefore it is
+	 * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws \InvalidArgumentException
+	 * @api
+	 */
+	public function addTag($tag);
+
+	/**
+	 * Removes the specified tag from this session.
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @api
+	 */
+	public function removeTag($tag);
+
+	/**
+	 * Returns the tags this session has been tagged with.
+	 *
+	 * @return array The tags or an empty array if there aren't any
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @api
+	 */
+	public function getTags();
+
+	/**
 	 * Updates the last activity time to "now".
 	 *
 	 * @return void
