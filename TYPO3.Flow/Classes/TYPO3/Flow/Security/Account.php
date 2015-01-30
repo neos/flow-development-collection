@@ -98,7 +98,9 @@ class Account {
 		}
 		$this->roles = array();
 		foreach ($this->roleIdentifiers as $roleIdentifier) {
-			$this->roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+			if ($this->policyService->hasRole($roleIdentifier)) {
+				$this->roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+			}
 		}
 	}
 
