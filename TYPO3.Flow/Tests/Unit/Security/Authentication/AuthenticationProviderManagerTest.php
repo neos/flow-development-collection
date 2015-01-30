@@ -10,11 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Security\Account;
 
 /**
- * Testcase for authentication provider manager
+ * Test case for authentication provider manager
  */
-class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AuthenticationProviderManagerTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationProviderManager
@@ -68,6 +70,29 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function authenticateTagsSessionWithAccountIdentifier() {
+		$account = new Account();
+		$account->setAccountIdentifier('admin');
+
+		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+
+		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+		$token->expects($this->any())->method('getAccount')->will($this->returnValue($account));
+
+		$token->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+
+		$this->mockSession->expects($this->once())->method('addTag')->with('TYPO3-Flow-Security-Account-21232f297a57a5a743894a0e4a801fc3');
+
+		$this->authenticationProviderManager->_set('providers', array());
+		$this->authenticationProviderManager->_set('securityContext', $securityContext);
+
+		$this->authenticationProviderManager->authenticate();
+	}
+
+	/**
+	 * @test
+	 */
 	public function authenticateAuthenticatesOnlyTokensWithStatusAuthenticationNeeded() {
 		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
 		$mockProvider = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface');
@@ -97,7 +122,7 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated() {
 		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -118,7 +143,7 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated() {
 		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -345,7 +370,7 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException
 	 */
 	public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist() {
 		$providerConfiguration = array(

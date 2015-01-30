@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\Authentication;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
+use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -171,8 +172,14 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 				}
 			}
 			if ($token->isAuthenticated()) {
-				if (!$token instanceof SessionlessTokenInterface && !$this->session->isStarted()) {
-					$this->session->start();
+				if (!$token instanceof SessionlessTokenInterface) {
+					if (!$this->session->isStarted()) {
+						$this->session->start();
+					}
+					$account = $token->getAccount();
+					if ($account !== NULL) {
+						$this->session->addTag('TYPO3-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+					}
 				}
 				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
