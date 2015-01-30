@@ -30,6 +30,11 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $customerRole;
 
 	/**
+	 * @var Account
+	 */
+	protected $account;
+
+	/**
 	 * Setup function for the testcase
 	 */
 	public function setUp() {
@@ -48,7 +53,17 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					return $customerRole;
 					break;
 				default:
-					return new Role($roleIdentifier);
+					throw new NoSuchRoleException();
+			}
+		}));
+		$mockPolicyService->expects($this->any())->method('hasRole')->will($this->returnCallback(function($roleIdentifier) use ($administratorRole, $customerRole) {
+			switch($roleIdentifier) {
+				case 'TYPO3.Flow:Administrator':
+				case 'TYPO3.Flow:Customer':
+					return TRUE;
+					break;
+				default:
+					return FALSE;
 			}
 		}));
 
@@ -103,6 +118,27 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertTrue($this->account->hasRole($this->administratorRole));
 		$this->assertFalse($this->account->hasRole($this->customerRole));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getRolesReturnsOnlyExistingRoles() {
+		$this->inject($this->account, 'roleIdentifiers', array('Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()));
+
+		$roles = $this->account->getRoles();
+		$this->assertCount(1, $roles);
+		$this->assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasRoleReturnsFalseForAssignedButNonExistentRole() {
+		$this->inject($this->account, 'roleIdentifiers', array('Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()));
+
+		$this->assertTrue($this->account->hasRole($this->administratorRole));
+		$this->assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
 	}
 
 	/**
