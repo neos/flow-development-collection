@@ -47,7 +47,7 @@ class Configuration {
 	protected $packageKey;
 
 	/**
-	 * If set, specifies the factory class used to create this object
+	 * If set, specifies the factory object name used to create this object
 	 * @var string
 	 */
 	protected $factoryObjectName = '';
@@ -118,6 +118,16 @@ class Configuration {
 	}
 
 	/**
+	 * Sets the object name
+	 *
+	 * @param string object name
+	 * @return void
+	 */
+	public function setObjectName($objectName) {
+		$this->objectName = $objectName;;
+	}
+
+	/**
 	 * Returns the object name
 	 *
 	 * @return string object name
@@ -167,15 +177,11 @@ class Configuration {
 	/**
 	 * Sets the class name of a factory which is in charge of instantiating this object
 	 *
-	 * @param string $className Valid class name of a factory
+	 * @param string $objectName Valid object name of a factory
 	 * @return void
-	 * @throws \TYPO3\Flow\Object\Exception\InvalidClassException
 	 */
-	public function setFactoryObjectName($className) {
-		if (!class_exists($className, TRUE)) {
-			throw new \TYPO3\Flow\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
-		}
-		$this->factoryObjectName = $className;
+	public function setFactoryObjectName($objectName) {
+		$this->factoryObjectName = $objectName;
 	}
 
 	/**
@@ -208,6 +214,15 @@ class Configuration {
 	 */
 	public function getFactoryMethodName() {
 		return $this->factoryMethodName;
+	}
+
+	/**
+	 * Returns true if factoryObjectName and factoryMethodName are defined.
+	 *
+	 * @return boolean
+	 */
+	public function isCreatedByFactory() {
+		return ($this->factoryObjectName !== '' && $this->factoryMethodName !== '');
 	}
 
 	/**
