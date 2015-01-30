@@ -944,8 +944,7 @@ code. However, inline comments can often be a sign for a bad code structure or m
 naming. [#]_ As an example, consider the example for a coding smell::
 
   // We only allow valid persons
- if (is_object($p) && strlen($p->lastN) > 0 && $p->hidden === FALSE && ⏎
-  $this->environment->moonPhase === MOON_LIB::CRESCENT) {
+ if (is_object($p) && strlen($p->lastN) > 0 && $p->hidden === FALSE && $this->environment->moonPhase === MOON_LIB::CRESCENT) {
   $xmM = $thd;
  }
 

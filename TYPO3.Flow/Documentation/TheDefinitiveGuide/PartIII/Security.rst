@@ -843,7 +843,7 @@ when writing your policies:
 This leads to the following best practice when writing policies: Use the implicit deny feature as much as possible! By defining privilege targets, all matched subjects (methods, entities, resources, etc.) will be denied implicitly. Use grant permissions to whitelist access to them for certain roles. The use of a deny permission should be the ultimate last resort for edge cases. Be careful, there is no way to override a deny, if you use it anyways!
 
 Internal workings of method invocation authorization (MethodPrivilege)
-----------------------------
+----------------------------------------------------------------------
 
 One of the generic privilege types shipped with Flow is the MethodPrivilege,
 which protects the invocation of certain methods. By controlling, which
@@ -910,15 +910,14 @@ following option:
 
 .. _Content security:
 
-
 Content security (EntityPrivilege)
-================
+==================================
 
 … to be written
 
 
 Security for files aka secure downloads (ResourcePrivilege)
----------------------------------------
+-----------------------------------------------------------
 
 … to be written
 

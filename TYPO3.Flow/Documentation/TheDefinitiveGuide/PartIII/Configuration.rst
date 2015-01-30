@@ -294,7 +294,7 @@ The annotation provides three optional attributes related to configuration injec
 * ``type`` ...
 * ``package`` specifies the package to get the configuration from. Defaults to the package the current class belongs to.
 * ``path`` specifies the path to the setting that should be injected. If it's not set all settings of the current (or
-specified) package are injected.
+  specified) package are injected.
 
 .. note::
   As a best-practice for testing and extensibility you should also provide setters for

@@ -42,7 +42,7 @@ The basic walk through a TYPO3 Flow-based web application is as follows:
   controller and action is responsible for processing the request. This information (controller name, action name,
   arguments) is stored in the :abbr:`ComponentContext (\\TYPO3\\Flow\\Http\\Component\\ComponentContext)`
 * the ``dispatching`` component tries to invoke the corresponding controller action via the
-  :abbr:`Dispatcher (TYPO3\\Flow\\Mvc\\Dispatcher)
+  :abbr:`Dispatcher (TYPO3\\Flow\\Mvc\\Dispatcher)`
 * the controller, usually an :abbr:`Action Controller (\\TYPO3\\Flow\\Mvc\\Controller\\ActionController)`, processes the
   request and modifies the given HTTP Response object which will, in the end, contain the content to display (body) as
   well as any headers to be passed back to the client

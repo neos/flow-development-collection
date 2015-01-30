@@ -127,9 +127,9 @@ resource*. Although these resources are usually stored as files, they are never 
 to by their path and filename directly but are represented by ``Resource`` objects.
 
 .. note::
-	It is important to completely ignore the fact that resources are stored as files
-	somewhere – you should only deal with resource objects, this allows your application to scale by
-    using remote resource storages.
+  It is important to completely ignore the fact that resources are stored as files
+  somewhere – you should only deal with resource objects, this allows your application to scale by
+  using remote resource storages.
 
 New persistent resources can be created by either importing or uploading a file. In either
 case the result is a new ``Resource`` object which can be attached to any other object. As soon as the
@@ -396,9 +396,9 @@ method of the ``Resource`` object. If a stream is not enough and you need a file
 the ``createTemporaryLocalCopy()`` will return one for you.
 
 .. warning::
-	The file in the path returned by ``createTemporaryLocalCopy()`` is just valid for the current
-    request and also just for reading. You should neither delete nor write to this temporary file.
-    Also don't store this path.
+  The file in the path returned by ``createTemporaryLocalCopy()`` is just valid for the current
+  request and also just for reading. You should neither delete nor write to this temporary file.
+  Also don't store this path.
 
 Resource Stream Wrapper
 =======================

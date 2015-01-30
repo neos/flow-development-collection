@@ -837,8 +837,8 @@ setting introduced with #27117
 -----------------------------------------------------------------------------------------
 
 The usage of the SecurityPublishingConfiguration in combination with
-the fluid resource viewhelper generates a link which includes the 
-users sessions id. This session id includes uppercase characters. 
+the fluid resource viewhelper generates a link which includes the
+users sessions id. This session id includes uppercase characters.
 The mod_rewrite rule for this private resources doesnt allow uppercase
 characters for the session id, so the user gets a 404.
 
@@ -1013,8 +1013,11 @@ Will render::
 Moves the validationResults ViewHelper to the ``validation`` namespace
 for consistency reasons.
 If you use this ViewHelper you should update your Fluid templates from::
+
  <f:form.validationResults>...</f:form.validationResults>
+
 to::
+
  <f:validation.results></f:validation.results>
 
 * Related: `#54196 <http://forge.typo3.org/issues/54196>`_
