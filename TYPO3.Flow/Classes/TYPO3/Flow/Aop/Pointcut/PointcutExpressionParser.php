@@ -209,7 +209,6 @@ class PointcutExpressionParser {
 	 * @param string $annotationPattern The pattern expression as configuration for the method annotation filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
 	 * @return void
-	 * @deprecated since 1.0
 	 */
 	protected function parseDesignatorMethodAnnotatedWith($operator, $annotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$annotationPropertyConstraints = array();
@@ -238,21 +237,6 @@ class PointcutExpressionParser {
 			$annotationPropertiesPattern = $matches['MethodArguments'];
 			$annotationPropertyConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($annotationPropertiesPattern);
 		}
-	}
-
-	/**
-	 * Takes a method tag filter pattern and adds a so configured method tag filter to the
-	 * filter composite object.
-	 *
-	 * @param string $operator The operator
-	 * @param string $methodTagPattern The pattern expression as configuration for the method tag filter
-	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method tag filter) will be added to this composite object.
-	 * @return void
-	 */
-	protected function parseDesignatorMethodTaggedWith($operator, $methodTagPattern, PointcutFilterComposite $pointcutFilterComposite) {
-		$filter = new PointcutMethodTaggedWithFilter($methodTagPattern);
-		$filter->injectReflectionService($this->reflectionService);
-		$pointcutFilterComposite->addFilter($operator, $filter);
 	}
 
 	/**
