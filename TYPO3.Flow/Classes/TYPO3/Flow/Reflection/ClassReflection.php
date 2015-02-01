@@ -21,20 +21,18 @@ use TYPO3\Flow\Annotations as Flow;
 class ClassReflection extends \ReflectionClass {
 
 	/**
-	 * Constructor
-	 *
 	 * @param mixed $classNameOrObject the name of the class or the object to be reflected.
-	 * @throws \TYPO3\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
+	 * @throws Exception\ClassLoadingForReflectionFailedException
 	 */
 	public function __construct($classNameOrObject) {
 		$throwExceptionOnUnloadedClasses =
-			function ($className) {
-				throw new Exception\ClassLoadingForReflectionFailedException('Required class "' . $className . '" could not be loaded properly for reflection, possibly requiring non-existent classes or using non-supported annotations.');
+			function($className) {
+				throw new Exception\ClassLoadingForReflectionFailedException(sprintf('Required class "%s" could not be loaded properly for reflection.%2$s%2$sPossible reasons are:%2$s%2$s * Requiring non-existent classes%2$s * Using non-supported annotations%2$s * Class-/filename missmatch.%2$s%2$sThe "TYPO3.Flow.object.excludeClasses" setting can be used to skip classes from being reflected.', $className, chr(10)));
 			};
 		spl_autoload_register($throwExceptionOnUnloadedClasses);
 		try {
 			parent::__construct($classNameOrObject);
-		} catch (\TYPO3\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException $exception) {
+		} catch (Exception\ClassLoadingForReflectionFailedException $exception) {
 			spl_autoload_unregister($throwExceptionOnUnloadedClasses);
 			throw $exception;
 		}
