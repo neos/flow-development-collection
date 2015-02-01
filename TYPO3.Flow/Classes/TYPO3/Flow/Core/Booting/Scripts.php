@@ -570,6 +570,16 @@ class Scripts {
 			$command .= ' -c ' . escapeshellarg($useIniFile);
 		}
 
+		if (isset($settings['core']['subRequestIniEntries'])
+				&& is_array($settings['core']['subRequestIniEntries'])) {
+			foreach ($settings['core']['subRequestIniEntries'] as $entry => $value) {
+				$command .= ' -d ' . escapeshellarg($entry);
+				if (trim($value) !== '') {
+					$command .= '=' . escapeshellarg(trim($value));
+				}
+			}
+		}
+
 		$escapedArguments = '';
 		if ($commandArguments !== array()) {
 			foreach ($commandArguments as $argument=>$argumentValue) {
