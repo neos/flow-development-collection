@@ -35,6 +35,47 @@ class TestClass {
 	protected $signedCla;
 
 	/**
+	 * This has no var annotation by intention.
+	 */
+	public $somePublicPropertyWithoutVarAnnotation;
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::getTypeOfChildPropertyReturnsCorrectTypeIfThatPropertyIsPubliclyPresent
+	 * @var float
+	 */
+	public $somePublicProperty;
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @var string
+	 */
+	public $propertyMeantForConstructorUsage = 'default';
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @var string
+	 */
+	public $propertyMeantForSetterUsage = 'default';
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @var string
+	 */
+	public $propertyMeantForPublicUsage = 'default';
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::getTypeOfChildPropertyReturnsCorrectTypeIfAConstructorArgumentForThatPropertyIsPresent
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @param float $dummy
+	 * @param string $propertyMeantForConstructorUsage
+	 */
+	public function __construct($dummy = NULL, $propertyMeantForConstructorUsage = NULL) {
+		if ($propertyMeantForConstructorUsage !== NULL) {
+			$this->propertyMeantForConstructorUsage = $propertyMeantForConstructorUsage . ' set via Constructor';
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getName() {
@@ -77,6 +118,29 @@ class TestClass {
 	 */
 	public function setSignedCla($signedCla) {
 		$this->signedCla = $signedCla;
+	}
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::getTypeOfChildPropertyReturnsCorrectTypeIfASetterForThatPropertyIsPresent
+	 * @param string $value
+	 */
+	public function setAttributeWithStringTypeAnnotation($value) {
+	}
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @param string $value
+	 */
+	public function setPropertyMeantForConstructorUsage($value) {
+		$this->propertyMeantForConstructorUsage = $value . ' set via Setter';
+	}
+
+	/**
+	 * @see \TYPO3\Flow\Tests\Functional\Property\TypeConverter\ObjectConverterTest::convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic
+	 * @param string $value
+	 */
+	public function setPropertyMeantForSetterUsage($value) {
+		$this->propertyMeantForSetterUsage = $value . ' set via Setter';
 	}
 
 }
