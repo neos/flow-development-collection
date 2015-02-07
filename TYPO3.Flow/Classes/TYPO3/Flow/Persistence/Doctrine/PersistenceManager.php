@@ -67,6 +67,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      */
     public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $eventArgs)
     {
+        /* @var $unitOfWork \Doctrine\ORM\UnitOfWork */
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
@@ -84,12 +85,15 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 
                 $knownValueObjects[$className][$identifier] = true;
             }
+            // TODO: Should we use the same $changeSet aproach like below here?
             $this->validateObject($entity, $validatedInstancesContainer);
         }
 
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
 
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
+            $changeSet = $unitOfWork->getEntityChangeSet($entity);
+            // TODO: Traverse changeset and mark this object and all sub objects with changes for validation
             $this->validateObject($entity, $validatedInstancesContainer);
         }
     }

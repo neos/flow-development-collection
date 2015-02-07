@@ -21,6 +21,13 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     /**
      * @var array
      */
+    protected $supportedOptions = array(
+        'validationGroups' => array(array(), 'The validation groups to link to', 'array'),
+    );
+
+    /**
+     * @var array
+     */
     protected $propertyValidators = array();
 
     /**

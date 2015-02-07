@@ -159,6 +159,8 @@ class ActionController extends AbstractController
 
         $this->mapRequestArgumentsToControllerArguments();
 
+        // TODO: We could do the validation initialization and invocation here and then make use of change information inside the propertyMapper
+
         if ($this->view === null) {
             $this->view = $this->resolveView();
         }
@@ -297,7 +299,7 @@ class ActionController extends AbstractController
         } else {
             $validateAnnotations = array();
         }
-        $parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
+        $parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations, $validationGroups);
 
         if (isset($actionIgnoredArguments[$this->actionMethodName])) {
             $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];

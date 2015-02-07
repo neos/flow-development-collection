@@ -145,12 +145,13 @@ class ValidatorResolver
      * @param string $methodName
      * @param array $methodParameters Optional pre-compiled array of method parameters
      * @param array $methodValidateAnnotations Optional pre-compiled array of validate annotations (as array)
+     * @param array $validationGroups The validation groups to build the validator for
      * @return array An Array of ValidatorConjunctions for each method parameters.
      * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
      * @throws \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
      * @throws \TYPO3\Flow\Validation\Exception\InvalidTypeHintException
      */
-    public function buildMethodArgumentsValidatorConjunctions($className, $methodName, array $methodParameters = null, array $methodValidateAnnotations = null)
+    public function buildMethodArgumentsValidatorConjunctions($className, $methodName, array $methodParameters = null, array $methodValidateAnnotations = null, array $validationGroups = array('Default'))
     {
         $validatorConjunctions = array();
 
@@ -200,7 +201,7 @@ class ValidatorResolver
             } elseif (strpos($annotationParameters['argumentName'], '.') !== false) {
                 $objectPath = explode('.', $annotationParameters['argumentName']);
                 $argumentName = array_shift($objectPath);
-                $validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
+                $validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator, $validationGroups));
             } else {
                 throw new Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $annotationParameters['argumentName'] . '", but this argument does not exist.', 1253172726);
             }
@@ -226,15 +227,16 @@ class ValidatorResolver
      *
      * @param array $objectPath The object path
      * @param \TYPO3\Flow\Validation\Validator\ValidatorInterface $propertyValidator The validator which should be added to the property specified by objectPath
+     * @param array $validationGroups The validation groups to build the validator for
      * @return \TYPO3\Flow\Validation\Validator\GenericObjectValidator
      */
-    protected function buildSubObjectValidator(array $objectPath, \TYPO3\Flow\Validation\Validator\ValidatorInterface $propertyValidator)
+    protected function buildSubObjectValidator(array $objectPath, \TYPO3\Flow\Validation\Validator\ValidatorInterface $propertyValidator, array $validationGroups)
     {
-        $rootObjectValidator = new GenericObjectValidator(array());
+        $rootObjectValidator = new GenericObjectValidator(array('validationGroups' => $validationGroups));
         $parentObjectValidator = $rootObjectValidator;
 
         while (count($objectPath) > 1) {
-            $subObjectValidator = new GenericObjectValidator(array());
+            $subObjectValidator = new GenericObjectValidator(array('validationGroups' => $validationGroups));
             $subPropertyName = array_shift($objectPath);
             $parentObjectValidator->addPropertyValidator($subPropertyName, $subObjectValidator);
             $parentObjectValidator = $subObjectValidator;
@@ -274,7 +276,7 @@ class ValidatorResolver
         $this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
         if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
             // Model based validator
-            $objectValidator = new GenericObjectValidator(array());
+            $objectValidator = new GenericObjectValidator(array('validationGroups' => $validationGroups));
             $conjunctionValidator->addValidator($objectValidator);
             foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
                 $classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);

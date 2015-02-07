@@ -284,6 +284,8 @@ class Argument
             return $this;
         }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
+        // TODO: Should we better resolve validation after this, so we can use the change information from property mapping to
+        //       build an optimal validator chain?
         $this->validationResults = $this->propertyMapper->getMessages();
         if ($this->validator !== null) {
             $validationMessages = $this->validator->validate($this->value);
