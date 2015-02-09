@@ -76,7 +76,7 @@ class Service {
 
 	/**
 	 * Creates the needed DB schema using Doctrine's SchemaTool. If tables already
-	 * exist, this will thow an exception.
+	 * exist, this will throw an exception.
 	 *
 	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
 	 * @return string
