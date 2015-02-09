@@ -129,7 +129,7 @@ class ObjectArray extends Types\ArrayType {
 			}
 
 			if (isset($value['__flow_object_type'])) {
-				$value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
+				$value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], TRUE);
 			} else {
 				$this->decodeObjectReferences($value);
 			}
