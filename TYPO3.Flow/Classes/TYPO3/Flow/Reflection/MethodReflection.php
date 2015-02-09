@@ -37,7 +37,7 @@ class MethodReflection extends \ReflectionMethod {
 	/**
 	 * Replacement for the original getParameters() method which makes sure
 	 * that \TYPO3\Flow\Reflection\ParameterReflection objects are returned instead of the
-	 * orginal ReflectionParameter instances.
+	 * original ReflectionParameter instances.
 	 *
 	 * @return array of \TYPO3\Flow\Reflection\ParameterReflection objects of the parameters of this method
 	 */
