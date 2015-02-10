@@ -1,7 +1,6 @@
 type: dictionary
 additionalProperties: FALSE
 properties:
-  'enable': { type: boolean, required: TRUE }
   'firewall':
     type: dictionary
     additionalProperties: FALSE

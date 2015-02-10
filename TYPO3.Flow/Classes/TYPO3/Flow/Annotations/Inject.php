@@ -32,7 +32,7 @@ final class Inject {
 
 	/**
 	 * Path of a setting (without the package key) which should be injected into the property.
-	 * Example: security.enable
+	 * Example: session.name
 	 *
 	 * @var string
 	 * @deprecated since 3.0. Use the InjectConfigurations annotation instead.

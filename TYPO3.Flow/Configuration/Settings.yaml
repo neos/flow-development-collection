@@ -302,8 +302,6 @@ TYPO3:
 
     security:
 
-      enable: TRUE
-
       firewall:
 
         # If set to TRUE, the firewall will reject any request that is not
