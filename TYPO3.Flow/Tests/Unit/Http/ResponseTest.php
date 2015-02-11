@@ -77,6 +77,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createFromRawSetsHeadersAndStatusCodeCorrectly($rawResponse, $expectedHeaders, $expectedStatusCode) {
 		$response = Response::createFromRaw($rawResponse);
+		$this->assertEquals("HTTP/1.1", $response->getVersion());
 
 		foreach ($expectedHeaders as $fieldName => $fieldValue) {
 			$this->assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));
@@ -124,6 +125,25 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createFromRawThrowsExceptionOnFirstLine() {
 		Response::createFromRaw('No valid response');
+	}
+
+	/**
+	 * @test
+	 */
+	public function startLineEqualsStatusLine() {
+		$response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
+		$this->assertEquals($response->getStartLine(), $response->getStatusLine());
+	}
+
+	/**
+	 * @test
+	 */
+	public function settingVersionHasExpectedImplications() {
+		$response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
+		$response->setVersion('HTTP/1.0');
+
+		$this->assertEquals('HTTP/1.0', $response->getVersion());
+		$this->assertStringStartsWith('HTTP/1.0', $response->getStatusLine());
 	}
 
 	/**

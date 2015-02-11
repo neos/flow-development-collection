@@ -11,19 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Message;
+use TYPO3\Flow\Http\AbstractMessage;
 use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Http Message class
+ * Test case for the Http Message class
  */
-class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractMessageTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function aHeaderCanBeSetAndRetrieved() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$this->assertFalse($message->hasHeader('MyHeader'));
 
@@ -37,7 +38,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function byDefaultHeadersOfTheSameNameAreReplaced() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 		$message->setHeader('MyHeader', 'MyValue');
 		$message->setHeader('MyHeader', 'OtherValue');
 
@@ -49,7 +50,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function multipleHeadersOfTheSameNameMayBeDefined() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 		$message->setHeader('MyHeader', 'MyValue', FALSE);
 		$message->setHeader('MyHeader', 'OtherValue', FALSE);
 
@@ -61,7 +62,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getHeaderReturnsAStringOrAnArray() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$message->setHeader('MyHeader', 'MyValue');
 		$this->assertEquals('MyValue', $message->getHeader('MyHeader'));
@@ -76,7 +77,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setHeaderAddsCharsetToMediaTypeIfNoneWasSpecifiedAndTypeIsText() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$message->setHeader('Content-Type', 'text/plain', TRUE);
 		$this->assertEquals('text/plain; charset=UTF-8', $message->getHeader('Content-Type'));
@@ -95,7 +96,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theDefaultCharacterSetIsUtf8() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$this->assertEquals('UTF-8', $message->getCharset());
 	}
@@ -106,7 +107,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setCharsetSetsTheCharsetAndAlsoUpdatesContentTypeHeader() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 		$message->setHeader('Content-Type', 'text/html; charset=UTF-8');
 
 		$message->setCharset('UTF-16');
@@ -130,7 +131,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setCharsetAlsoUpdatesContentTypeHeaderIfSpaceIsMissing() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$message->setHeader('Content-Type', 'text/plain;charset=UTF-16');
 		$message->setCharset('ISO-8859-1');
@@ -143,7 +144,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setCharsetUpdatesContentTypeHeaderAndLeavesAdditionalInformationIntact() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$message->setHeader('Content-Type', 'text/plain; charSet=UTF-16; x-foo=bar');
 		$message->setCharset('ISO-8859-1');
@@ -154,7 +155,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function contentCanBeSetAndRetrieved() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 
 		$message->setContent('Two households, both alike in dignity, In fair Verona, where we lay our scene');
 		$this->assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $message->getContent());
@@ -164,7 +165,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setterMethodsAreChainable() {
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 		$this->assertSame($message,
 			$message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
 		);
@@ -175,7 +176,7 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function cookieConvenienceMethodsUseMethodsOfHeadersObject() {
 		$cookie = new Cookie('foo', 'bar');
-		$message = new Message();
+		$message = $this->getAbstractMessageMock();
 		$message->setCookie($cookie);
 
 		$this->assertSame($cookie, $message->getCookie('foo'));
@@ -184,5 +185,12 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($message->hasCookie('foo'));
 		$message->removeCookie('foo');
 		$this->assertFalse($message->hasCookie('foo'));
+	}
+
+	/**
+	 * @return AbstractMessage|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function getAbstractMessageMock() {
+		return $this->getMockForAbstractClass('TYPO3\Flow\Http\AbstractMessage');
 	}
 }
