@@ -127,6 +127,9 @@ class StreamWrapperAdapterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function stream_castTest() {
+		if (defined('HHVM_VERSION')) {
+			$this->markTestSkipped('stream_cast is not supported in HHVM (see http://docs.hhvm.com/manual/en/streamwrapper.stream-cast.php)');
+		}
 		$castAs = STREAM_CAST_FOR_SELECT;
 
 		$this->mockStreamWrapper->expects($this->once())->method('cast')->with($castAs)->will($this->returnValue(TRUE));
@@ -226,6 +229,9 @@ class StreamWrapperAdapterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function stream_set_optionTest() {
+		if (defined('HHVM_VERSION')) {
+			$this->markTestSkipped('stream_set_option is not supported in HHVM (see http://docs.hhvm.com/manual/en/streamwrapper.stream-set-option.php)');
+		}
 		$option = STREAM_OPTION_READ_TIMEOUT;
 		$arg1 = 123;
 		$arg2 = 123000000;

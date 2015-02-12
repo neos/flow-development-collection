@@ -47,7 +47,7 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	 */
 	public function __construct(\Doctrine\Common\Persistence\ObjectManager $entityManager, \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata = NULL) {
 		if ($classMetadata === NULL) {
-			if (static::ENTITY_CLASSNAME === NULL) {
+			if (defined('static::ENTITY_CLASSNAME') === FALSE) {
 				$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
 			} else {
 				$this->objectType = static::ENTITY_CLASSNAME;

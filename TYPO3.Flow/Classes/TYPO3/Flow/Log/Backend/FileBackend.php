@@ -146,7 +146,7 @@ class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 			$this->fileHandle = fopen($this->logFileUrl, 'ab');
 		} else {
 			$logPath = dirname($this->logFileUrl);
-			if (!is_dir($logPath) && !is_link($logPath)) {
+			if (!file_exists($logPath) || (!is_dir($logPath) && !is_link($logPath))) {
 				if ($this->createParentDirectories === FALSE) {
 					throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
 				}
