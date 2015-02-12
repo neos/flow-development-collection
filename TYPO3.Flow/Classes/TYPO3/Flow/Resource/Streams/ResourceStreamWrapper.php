@@ -463,7 +463,8 @@ class ResourceStreamWrapper implements StreamWrapperInterface {
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
 			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
 		}
-		$uriParts = parse_url($requestedPath);
+
+		$uriParts = \TYPO3\Flow\Utility\Unicode\Functions::parse_url($requestedPath);
 		if (!is_array($uriParts) || !isset($uriParts['host'])) {
 			return FALSE;
 		}
