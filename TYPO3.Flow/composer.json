@@ -28,6 +28,7 @@
         "composer/installers": "~1.0.2"
     },
     "suggest": {
+        "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM"
     },
     "autoload": {
