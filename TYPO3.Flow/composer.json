@@ -18,7 +18,7 @@
         "typo3/party": "*",
         "typo3/eel": "*",
 
-        "doctrine/orm": "2.3.*",
+        "doctrine/orm": "2.4.*",
         "doctrine/migrations": "dev-master",
 
         "symfony/yaml": "2.5.*",
