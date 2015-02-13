@@ -102,6 +102,46 @@ class Arrays {
 	}
 
 	/**
+	 * Merges two arrays recursively and "binary safe" (integer keys are overridden as well), overruling similar values in the first array ($firstArray) with the values of the second array ($secondArray)
+	 * In case of identical keys, ie. keeping the values of the second. The given $toArray closure will be used if one of the two array keys contains an array and the other not. It should return an array.
+	 *
+	 * @param array $firstArray First array
+	 * @param array $secondArray Second array, overruling the first array
+	 * @param callable $toArray The given closure will get a value that is not an array and has to return an array. This is to allow custom merging of simple types with (sub) arrays
+	 * @return array Resulting array where $secondArray values has overruled $firstArray values
+	 */
+	static public function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray) {
+		$data = array(&$firstArray, $secondArray);
+		$entryCount = 1;
+		for ($i = 0; $i < $entryCount; $i++) {
+			$firstArrayInner = &$data[$i * 2];
+			$secondArrayInner = $data[$i * 2 + 1];
+			foreach ($secondArrayInner as $key => $value) {
+				if (!isset($firstArrayInner[$key]) || (!is_array($firstArrayInner[$key]) && !is_array($value))) {
+					$firstArrayInner[$key] = $value;
+				} else {
+					if (!is_array($value)) {
+						$value = $toArray($value);
+					}
+					if (!is_array($firstArrayInner[$key])) {
+						$firstArrayInner[$key] = $toArray($firstArrayInner[$key]);
+					}
+
+					if (is_array($firstArrayInner[$key]) && is_array($value)) {
+						$data[] = &$firstArrayInner[$key];
+						$data[] = $value;
+						$entryCount++;
+					} else {
+						$firstArrayInner[$key] = $value;
+					}
+				}
+			}
+		}
+		reset($firstArray);
+		return $firstArray;
+	}
+
+	/**
 	 * Returns TRUE if the given array contains elements of varying types
 	 *
 	 * @param array $array

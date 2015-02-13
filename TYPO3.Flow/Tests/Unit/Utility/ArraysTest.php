@@ -475,4 +475,68 @@ class ArraysTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
 		$this->assertSame($expected, $actual);
 	}
+
+	/**
+	 * @test
+	 */
+	public function arrayMergeRecursiveCallbackConvertsSimpleValuesWithGivenClosure() {
+		$inputArray1 = array(
+			'k1' => 'v1',
+			'k2' => array(
+				'k2.1' => 'v2.1'
+			),
+		);
+		$inputArray2 = array(
+			'k2' => 'v2.2',
+			'k3' => 'v3'
+		);
+		$expected = array (
+			'k1' => 'v1',
+			'k2' => array(
+				'k2.1' => 'v2.1',
+				'__convertedValue' => 'v2.2'
+			),
+			'k3' => 'v3'
+		);
+
+		$actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function($simpleType) {
+			return array('__convertedValue' => $simpleType);
+		});
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function arrayMergeRecursiveCallbackConvertsSimpleValuesWithGivenClosureAndReturnedSimpleTypesOverwrite() {
+		$inputArray1 = array(
+			'k1' => 'v1',
+			'k2' => array(
+				'k2.1' => 'v2.1'
+			),
+			'k3' => array(
+				'k3.1' => 'value'
+			)
+		);
+		$inputArray2 = array(
+			'k2' => 'v2.2',
+			'k3' => NULL
+		);
+		$expected = array (
+			'k1' => 'v1',
+			'k2' => array(
+				'k2.1' => 'v2.1',
+				'__convertedValue' => 'v2.2'
+			),
+			'k3' => NULL
+		);
+
+		$actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function($simpleType) {
+			if ($simpleType === NULL) {
+				return NULL;
+			}
+			return array('__convertedValue' => $simpleType);
+		});
+		$this->assertSame($expected, $actual);
+	}
 }
