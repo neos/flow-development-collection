@@ -127,7 +127,7 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Bar.Baz';
 
 		$configurationBuilder = $this->getAccessibleMock('TYPO3\Flow\Object\Configuration\ConfigurationBuilder', array('dummy'));
-		$dummyObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__);
+		$dummyObjectConfiguration = array($configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__));
 
 		$reflectionServiceMock = $this->getMock('\TYPO3\Flow\Reflection\ReflectionService');
 		$reflectionServiceMock
@@ -143,7 +143,7 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				->will($this->returnValue(TRUE));
 
 		$configurationBuilder->injectReflectionService($reflectionServiceMock);
-		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
+		$configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
 	}
 
 	/**
@@ -156,9 +156,9 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationArray['properties']['someProperty']['object']['className'] = 'foobar';
 
 		$configurationBuilder = $this->getAccessibleMock('TYPO3\Flow\Object\Configuration\ConfigurationBuilder', array('dummy'));
-		$dummyObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__);
+		$dummyObjectConfiguration = array($configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__));
 
-		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
+		$configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
 	}
 
 	/**
