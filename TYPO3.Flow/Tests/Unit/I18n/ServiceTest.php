@@ -157,7 +157,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockLocaleCollection = $this->getMock('TYPO3\Flow\I18n\LocaleCollection');
 		$mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
-		$mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array()));
+		$mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => FALSE, 'order' => array())));
 
 		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(FALSE));
