@@ -423,7 +423,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with($highPriorityValidatorClassName)->will($this->returnValue($mockHighPriorityValidator));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with($lowPriorityValidatorClassName)->will($this->returnValue($mockLowPriorityValidator));
 
-		$validatorResolver->_call('addCustomValidators', $modelClassName, $mockConjunctionValidator);
+		$validatorResolver->_callRef('addCustomValidators', $modelClassName, $mockConjunctionValidator);
 	}
 
 	/**
