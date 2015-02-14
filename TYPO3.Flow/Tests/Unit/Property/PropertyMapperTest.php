@@ -356,7 +356,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$targetType = 'ArrayObject';
 		$propertyPath = '';
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
-		$this->assertSame($source, $propertyMapper->_call('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
+		$this->assertSame($source, $propertyMapper->_callRef('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
 	}
 
 	/**
@@ -367,7 +367,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$targetType = 'ArrayObject<SomeEntity>';
 		$propertyPath = '';
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
-		$this->assertSame($source, $propertyMapper->_call('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
+		$this->assertSame($source, $propertyMapper->_callRef('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
 	}
 
 	/**
