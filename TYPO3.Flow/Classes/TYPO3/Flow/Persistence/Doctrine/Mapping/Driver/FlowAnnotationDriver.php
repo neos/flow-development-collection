@@ -517,6 +517,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				$metadata->mapOneToOne($mapping);
 			} elseif ($oneToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToMany')) {
 				$mapping['mappedBy'] = $oneToManyAnnotation->mappedBy;
+				$mapping['indexBy'] = $oneToManyAnnotation->indexBy;
 				if ($oneToManyAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToManyAnnotation->targetEntity;
 				} elseif (isset($propertyMetaData['elementType'])) {
@@ -578,6 +579,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				$mapping['joinTable'] = $joinTable;
 				$mapping['mappedBy'] = $manyToManyAnnotation->mappedBy;
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
+				$mapping['indexBy'] = $manyToManyAnnotation->indexBy;
 				if ($manyToManyAnnotation->cascade) {
 					$mapping['cascade'] = $manyToManyAnnotation->cascade;
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {

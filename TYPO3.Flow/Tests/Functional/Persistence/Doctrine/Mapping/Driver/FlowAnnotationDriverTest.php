@@ -193,4 +193,25 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		}
 	}
 
+	/**
+	 * The "indexBy" annotation of EntityWithIndexedRelation must be kept
+	 *
+	 * @test
+	 */
+	public function doctrineIndexByAnnotationIsObserved() {
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation', $classMetadata);
+
+		/* The annotation should be available at ManyToMany relations */
+		$relatedAssociationMapping = $classMetadata->getAssociationMapping('annotatedIdentitiesEntities');
+		$this->assertArrayHasKey('indexBy', $relatedAssociationMapping);
+		$this->assertEquals('author', $relatedAssociationMapping['indexBy']);
+
+		/* The annotation should be available at OneToMany relations */
+		$relatedAssociationMapping = $classMetadata->getAssociationMapping('relatedIndexEntities');
+		$this->assertArrayHasKey('indexBy', $relatedAssociationMapping);
+		$this->assertEquals('sorting', $relatedAssociationMapping['indexBy']);
+	}
+
 }
