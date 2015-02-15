@@ -10,14 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Security\Account;
-
 use TYPO3\Flow\Security\Authentication\AuthenticationProviderManager;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\SessionInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for authentication provider manager
