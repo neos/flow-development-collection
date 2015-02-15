@@ -97,9 +97,12 @@ class Account {
 			return;
 		}
 		$this->roles = array();
-		foreach ($this->roleIdentifiers as $roleIdentifier) {
+		foreach ($this->roleIdentifiers as $key => $roleIdentifier) {
+			// check for and clean up roles no longer available
 			if ($this->policyService->hasRole($roleIdentifier)) {
 				$this->roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+			} else {
+				unset($this->roleIdentifiers[$key]);
 			}
 		}
 	}
@@ -193,7 +196,7 @@ class Account {
 	/**
 	 * Sets the roles for this account
 	 *
-	 * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects or role identifiers
+	 * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
@@ -215,7 +218,8 @@ class Account {
 	 * @return boolean
 	 */
 	public function hasRole(Role $role) {
-		return in_array($role->getIdentifier(), $this->roleIdentifiers);
+		$this->initializeRoles();
+		return array_key_exists($role->getIdentifier(), $this->roles);
 	}
 
 	/**
