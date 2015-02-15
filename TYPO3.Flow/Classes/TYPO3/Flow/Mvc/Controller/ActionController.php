@@ -12,9 +12,12 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use TYPO3\Flow\Mvc\Exception\NoSuchActionException;
+use TYPO3\Flow\Property\Exception\TargetNotFoundException;
+use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 
 /**
  * An HTTP based multi-action controller.
@@ -411,19 +414,19 @@ class ActionController extends AbstractController {
 				$ignoredArguments = array();
 			}
 
-			// if there exists more errors than in ignoreValidationAnnotations_=> call error method
+			// if there exists more errors than in ignoreValidationAnnotations => call error method
 			// else => call action method
 			$shouldCallActionMethod = TRUE;
+			/** @var Result $subValidationResult */
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
 				if (!$subValidationResult->hasErrors()) {
 					continue;
 				}
-
-				if (isset($ignoredArguments[$argumentName])) {
+				if (isset($ignoredArguments[$argumentName]) && $subValidationResult->getErrors('TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError') === array()) {
 					continue;
 				}
-
 				$shouldCallActionMethod = FALSE;
+				break;
 			}
 
 			if ($shouldCallActionMethod) {
@@ -553,17 +556,49 @@ class ActionController extends AbstractController {
 	 * A special action which is called if the originally intended action could
 	 * not be called, for example if the arguments were not valid.
 	 *
-	 * The default implementation sets a flash message, request errors and forwards back
+	 * The default implementation checks for TargetNotFoundErrors, sets a flash message, request errors and forwards back
 	 * to the originating action. This is suitable for most actions dealing with form input.
 	 *
 	 * @return string
 	 * @api
 	 */
 	protected function errorAction() {
+		$this->handleTargetNotFoundError();
 		$this->addErrorFlashMessage();
 		$this->redirectToReferringRequest();
 
 		return $this->getFlattenedValidationErrorMessage();
+	}
+
+	/**
+	 * Checks if the arguments validation result contain errors of type TargetNotFoundError and throws a TargetNotFoundException if that's the case for a top-level object.
+	 * You can override this method (or the errorAction()) if you need a different behavior
+	 *
+	 * @return void
+	 * @throws TargetNotFoundException
+	 * @api
+	 */
+	protected function handleTargetNotFoundError() {
+		foreach (array_keys($this->request->getArguments()) as $argumentName) {
+			/** @var TargetNotFoundError $targetNotFoundError */
+			$targetNotFoundError = $this->arguments->getValidationResults()->forProperty($argumentName)->getFirstError('TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError');
+			if ($targetNotFoundError !== FALSE) {
+				throw new TargetNotFoundException($targetNotFoundError->getMessage(), $targetNotFoundError->getCode());
+			}
+		}
+	}
+
+	/**
+	 * If an error occurred during this request, this adds a flash message describing the error to the flash
+	 * message container.
+	 *
+	 * @return void
+	 */
+	protected function addErrorFlashMessage() {
+		$errorFlashMessage = $this->getErrorFlashMessage();
+		if ($errorFlashMessage !== FALSE) {
+			$this->flashMessageContainer->addMessage($errorFlashMessage);
+		}
 	}
 
 	/**
@@ -589,19 +624,6 @@ class ActionController extends AbstractController {
 		$argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
 
 		$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageKey, $argumentsForNextController);
-	}
-
-	/**
-	 * If an error occurred during this request, this adds a flash message describing the error to the flash
-	 * message container.
-	 *
-	 * @return void
-	 */
-	protected function addErrorFlashMessage() {
-		$errorFlashMessage = $this->getErrorFlashMessage();
-		if ($errorFlashMessage !== FALSE) {
-			$this->flashMessageContainer->addMessage($errorFlashMessage);
-		}
 	}
 
 	/**

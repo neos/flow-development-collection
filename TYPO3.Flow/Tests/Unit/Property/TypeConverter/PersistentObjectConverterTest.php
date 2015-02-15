@@ -265,16 +265,15 @@ class PersistentObjectConverterTest extends UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\Flow\Property\Exception\TargetNotFoundException
 	 */
-	public function convertFromShouldReturnExceptionIfNoMatchingObjectWasFound() {
+	public function convertFromShouldReturnTargetNotFoundErrorIfNoMatchingObjectWasFound() {
 		$this->setupMockQuery(0, $this->never());
 
 		$source = array(
 			'__identity' => array('key1' => 'value1', 'key2' => 'value2')
 		);
 		$actual = $this->converter->convertFrom($source, 'SomeType');
-		$this->assertNull($actual);
+		$this->assertInstanceOf('TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError', $actual);
 	}
 
 	/**

@@ -19,6 +19,7 @@ use TYPO3\Flow\Property\Exception\InvalidSourceException;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
@@ -147,8 +148,8 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return object the converted entity or value object
-	 * @throws \InvalidArgumentException|InvalidTargetException|TargetNotFoundException
+	 * @return object|TargetNotFoundError the converted entity/value object or an instance of TargetNotFoundError if the object could not be resolved
+	 * @throws \InvalidArgumentException|InvalidTargetException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
@@ -164,7 +165,7 @@ class PersistentObjectConverter extends ObjectConverter {
 			}
 			$object = $this->fetchObjectFromPersistence($source, $targetType);
 			if ($object === NULL) {
-				throw new TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, $source), 1412283033);
+				return new TargetNotFoundError(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, $source), 1412283033);
 			}
 		} else {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
@@ -192,8 +193,8 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return object
-	 * @throws InvalidPropertyMappingConfigurationException|TargetNotFoundException
+	 * @return object|TargetNotFoundError
+	 * @throws InvalidPropertyMappingConfigurationException
 	 */
 	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['__identity'])) {
@@ -211,7 +212,7 @@ class PersistentObjectConverter extends ObjectConverter {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
 			if ($object === NULL) {
-				throw new TargetNotFoundException(sprintf('Object of type "%s" with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
+				return new TargetNotFoundError(sprintf('Object with identity "%s" not found.', print_r($source['__identity'], TRUE)), 1412283038);
 			}
 
 			if (count($source) > 1 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
