@@ -143,10 +143,6 @@ class Manager {
 	 */
 	protected function migratePackage($packageKey, array $packageData, AbstractMigration $migration) {
 		$packagePath = $packageData['path'];
-		if (!Git::isWorkingCopy($packagePath)) {
-			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, $packageKey, 'not a working copy'));
-			return;
-		}
 		if (!Git::isWorkingCopyClean($packagePath)) {
 			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, $packageKey, 'working copy contains local changes'));
 			return;
