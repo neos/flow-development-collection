@@ -19,6 +19,8 @@ use TYPO3\Flow\Annotations as Flow;
  * In order to stay compatible with future features and create more portable apps,
  * make sure to inject this interface instead of the concrete SessionManager
  * implementation.
+ *
+ * @api
  */
 interface SessionManagerInterface {
 
@@ -27,6 +29,7 @@ interface SessionManagerInterface {
 	 * current HTTP request on this local system.
 	 *
 	 * @return \TYPO3\Flow\Session\SessionInterface
+	 * @api
 	 */
 	public function getCurrentSession();
 
@@ -36,6 +39,7 @@ interface SessionManagerInterface {
 	 *
 	 * @param string $sessionIdentifier The session identifier
 	 * @return \TYPO3\Flow\Session\SessionInterface
+	 * @api
 	 */
 	public function getSession($sessionIdentifier);
 
@@ -55,5 +59,15 @@ interface SessionManagerInterface {
 	 * @api
 	 */
 	public function getSessionsByTag($tag);
+
+	/**
+	 * Destroys all sessions which are tagged with the specified tag.
+	 *
+	 * @param string $tag A valid Cache Frontend tag
+	 * @param string $reason A reason to mention in log output for why the sessions have been destroyed. For example: "The corresponding account was deleted"
+	 * @return integer Number of sessions which have been destroyed
+	 * @api
+	 */
+	public function destroySessionsByTag($tag, $reason = '');
 
 }

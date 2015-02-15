@@ -105,4 +105,20 @@ class SessionManager implements SessionManagerInterface {
 		}
 		return $taggedSessions;
 	}
+
+	/**
+	 * Destroys all sessions which are tagged with the specified tag.
+	 *
+	 * @param string $tag A valid Cache Frontend tag
+	 * @param string $reason A reason to mention in log output for why the sessions have been destroyed. For example: "The corresponding account was deleted"
+	 * @return integer Number of sessions which have been destroyed
+	 */
+	public function destroySessionsByTag($tag, $reason = '') {
+		$sessions = $this->getSessionsByTag($tag);
+		foreach ($sessions as $session) {
+			/** @var SessionInterface $session */
+			$session->destroy($reason);
+		}
+		return count($sessions);
+	}
 }
