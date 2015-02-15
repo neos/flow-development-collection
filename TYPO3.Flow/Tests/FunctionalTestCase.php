@@ -276,40 +276,6 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Calls the given action of the given controller
-	 *
-	 * @param string $controllerName The name of the controller to be called
-	 * @param string $controllerPackageKey The package key the controller resides in
-	 * @param string $controllerActionName The name of the action to be called, e.g. 'index'
-	 * @param array $arguments Optional arguments passed to controller
-	 * @param string $format The request format, defaults to 'html'
-	 * @return string The result of the controller action
-	 * @deprecated since 1.1
-	 */
-	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
-		$this->setupHttp();
-
-		$route = new \TYPO3\Flow\Mvc\Routing\Route();
-		$route->setName('sendWebRequest Route');
-
-		$uriPattern = 'test/' . uniqid();
-		$route->setUriPattern($uriPattern);
-		$route->setDefaults(array(
-			'@package' => $controllerPackageKey,
-			'@controller' => $controllerName,
-			'@action' => $controllerActionName,
-			'@format' => $format
-		));
-		$route->setAppendExceedingArguments(TRUE);
-		$this->router->addRoute($route);
-
-		$uri = new \TYPO3\Flow\Http\Uri('http://baseuri/' . $uriPattern);
-		$response = $this->browser->request($uri, 'POST', $arguments);
-
-		return $response->getContent();
-	}
-
-	/**
 	 * Creates a new account, assigns it the given roles and authenticates it.
 	 * The created account is returned for further modification, for example for attaching a Party object to it.
 	 *

@@ -67,7 +67,6 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->expects($this->once())->method('parseDesignatorClassAnnotatedWith')->with('&&', 'TYPO3\Flow\Annotations\Aspect');
 		$parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo');
 		$parser->expects($this->once())->method('parseDesignatorMethodAnnotatedWith')->with('&&', 'TYPO3\Flow\Annotations\Session');
-		$parser->expects($this->once())->method('parseDesignatorMethodTaggedWith')->with('&&', 'foo');
 		$parser->expects($this->once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar()');
 		$parser->expects($this->once())->method('parseDesignatorWithin')->with('&&', 'Bar');
 		$parser->expects($this->once())->method('parseDesignatorFilter')->with('&&', '\Foo\Bar\Baz');
@@ -78,7 +77,6 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->parse('classAnnotatedWith(TYPO3\Flow\Annotations\Aspect)', 'Unit Test');
 		$parser->parse('class(Foo)', 'Unit Test');
 		$parser->parse('methodAnnotatedWith(TYPO3\Flow\Annotations\Session)', 'Unit Test');
-		$parser->parse('methodTaggedWith(foo)', 'Unit Test');
 		$parser->parse('method(Foo->Bar())', 'Unit Test');
 		$parser->parse('within(Bar)', 'Unit Test');
 		$parser->parse('filter(\Foo\Bar\Baz)', 'Unit Test');
@@ -157,19 +155,6 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->injectObjectManager($this->mockObjectManager);
 
 		$parser->_call('parseDesignatorMethodAnnotatedWith', '&&', 'foo', $mockPointcutFilterComposite);
-	}
-
-	/**
-	 * @test
-	 */
-	public function parseDesignatorMethodTaggedWithAddsAFilterToTheGivenFilterComposite() {
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
-		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&');
-
-		$parser = $this->getAccessibleMock('TYPO3\Flow\Aop\Pointcut\PointcutExpressionParser', array('dummy'), array(), '', FALSE);
-		$parser->injectReflectionService($this->mockReflectionService);
-
-		$parser->_call('parseDesignatorMethodTaggedWith', '&&', 'foo', $mockPointcutFilterComposite);
 	}
 
 	/**
