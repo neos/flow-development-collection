@@ -169,7 +169,9 @@ class Scripts {
 		if (!isset($settings['log']['systemLogger']['logger'])) {
 			$settings['log']['systemLogger']['logger'] = 'TYPO3\Flow\Log\Logger';
 		}
-		$systemLogger = \TYPO3\Flow\Log\LoggerFactory::create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
+		$loggerFactory = new \TYPO3\Flow\Log\LoggerFactory();
+		$bootstrap->setEarlyInstance('TYPO3\Flow\Log\LoggerFactory', $loggerFactory);
+		$systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface', $systemLogger);
 		$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
 		$packageManager->injectSystemLogger($systemLogger);
