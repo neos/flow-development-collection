@@ -11,26 +11,43 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Cache\Cache;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Security\Context;
 
 /**
  * Cache adapter to use Flow caches as Doctrine cache
  */
-class CacheAdapter implements \Doctrine\Common\Cache\Cache {
+class CacheAdapter implements Cache {
 
 	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
+	 * @var FrontendInterface
 	 */
 	protected $cache;
 
 	/**
+	 * @Flow\Inject
+	 * @var Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * Set the cache this adapter should use.
 	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache
+	 * @param FrontendInterface $cache
 	 * @return void
 	 */
-	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
+	public function setCache(FrontendInterface $cache) {
 		$this->cache = $cache;
+	}
+
+	/**
+	 * @param string $id
+	 * @return string
+	 */
+	protected function convertCacheIdentifier($id) {
+		return md5($id . '|' . $this->securityContext->getContextHash());
 	}
 
 	/**
@@ -40,7 +57,7 @@ class CacheAdapter implements \Doctrine\Common\Cache\Cache {
 	 * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
 	 */
 	public function fetch($id) {
-		return $this->cache->get(md5($id));
+		return $this->cache->get($this->convertCacheIdentifier($id));
 	}
 
 	/**
@@ -50,7 +67,7 @@ class CacheAdapter implements \Doctrine\Common\Cache\Cache {
 	 * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.
 	 */
 	public function contains($id) {
-		return $this->cache->has(md5($id));
+		return $this->cache->has($this->convertCacheIdentifier($id));
 	}
 
 	/**
@@ -62,7 +79,7 @@ class CacheAdapter implements \Doctrine\Common\Cache\Cache {
 	 * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
 	 */
 	public function save($id, $data, $lifeTime = 0) {
-		$this->cache->set(md5($id), $data, array(), $lifeTime);
+		$this->cache->set($this->convertCacheIdentifier($id), $data, array(), $lifeTime);
 	}
 
 	/**
@@ -72,7 +89,7 @@ class CacheAdapter implements \Doctrine\Common\Cache\Cache {
 	 * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
 	 */
 	public function delete($id) {
-		return $this->cache->remove(md5($id));
+		return $this->cache->remove($this->convertCacheIdentifier($id));
 	}
 
 	/**

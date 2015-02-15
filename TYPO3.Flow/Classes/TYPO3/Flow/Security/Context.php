@@ -779,6 +779,14 @@ class Context {
 	 * @return string
 	 */
 	public function getContextHash() {
+		if ($this->initialized === FALSE) {
+			if (!$this->canBeInitialized()) {
+				return '__uninitialized__';
+			} else {
+				$this->initialize();
+			}
+
+		}
 		if ($this->contextHash === NULL) {
 			$this->contextHash = md5(implode('|', $this->contextHashComponents));
 		}
@@ -795,5 +803,12 @@ class Context {
 	public function setContextHashComponent($key, $value) {
 		$this->contextHash = NULL;
 		$this->contextHashComponents[$key] = $value;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function updateContextHashComponents() {
+		$this->setContextHashComponent('TYPO3.Flow:Roles', $this->getRolesHash());
 	}
 }
