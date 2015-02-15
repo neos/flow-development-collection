@@ -1099,7 +1099,7 @@ EOD;
 
 		$mockPackages = $this->getMockPackages();
 		$configurationManager->setPackages($mockPackages);
-		$configurationManager->_call('mergeRoutesWithSubRoutes', $mockRoutesConfiguration);
+		$configurationManager->_callRef('mergeRoutesWithSubRoutes', $mockRoutesConfiguration);
 	}
 
 	/**
