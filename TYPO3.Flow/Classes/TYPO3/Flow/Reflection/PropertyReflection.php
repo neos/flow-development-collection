@@ -26,6 +26,13 @@ class PropertyReflection extends \ReflectionProperty {
 	protected $docCommentParser;
 
 	/**
+	 * Whether this property represents an AOP-introduced property
+	 *
+	 * @var boolean
+	 */
+	protected $isAopIntroduced = FALSE;
+
+	/**
 	 * Checks if the doc comment of this property is tagged with
 	 * the specified tag
 	 *
@@ -127,4 +134,20 @@ class PropertyReflection extends \ReflectionProperty {
 		}
 		return $this->docCommentParser;
 	}
+
+	/**
+	 * @param boolean $isAopIntroduced
+	 * @return void
+	 */
+	public function setIsAopIntroduced($isAopIntroduced) {
+		$this->isAopIntroduced = $isAopIntroduced;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isAopIntroduced() {
+		return $this->isAopIntroduced;
+	}
+
 }

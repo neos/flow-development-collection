@@ -1321,28 +1321,7 @@ class ReflectionService {
 
 		/** @var $property \TYPO3\Flow\Reflection\PropertyReflection */
 		foreach ($class->getProperties() as $property) {
-			$propertyName = $property->getName();
-			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = array();
-
-			$visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
-			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
-
-			foreach ($property->getTagsValues() as $tagName => $tagValues) {
-				if ($this->isTagIgnored($tagName)) {
-					continue;
-				}
-				if ($tagName === 'var' && isset($tagValues[0])) {
-					if ($property->getDeclaringClass()->getName() !== $className && isset($this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName])) {
-						$tagValues = $this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName];
-					} else {
-						$tagValues[0] = $this->expandType($class, $tagValues[0]);
-					}
-				}
-				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
-			}
-			foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
-				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
-			}
+			$this->reflectClassProperty($className, $property);
 		}
 
 		/** @var $method \TYPO3\Flow\Reflection\MethodReflection */
@@ -1390,6 +1369,38 @@ class ReflectionService {
 		ksort($this->classReflectionData);
 
 		$this->updatedReflectionData[$className] = TRUE;
+	}
+
+	/**
+	 * @param string $className
+	 * @param PropertyReflection $property
+	 * @return integer visibility
+	 */
+	public function reflectClassProperty($className, PropertyReflection $property) {
+		$propertyName = $property->getName();
+		$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = array();
+
+		$visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
+		$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
+
+		foreach ($property->getTagsValues() as $tagName => $tagValues) {
+			if ($this->isTagIgnored($tagName)) {
+				continue;
+			}
+			if ($tagName === 'var' && isset($tagValues[0])) {
+				if ($property->getDeclaringClass()->getName() !== $className && isset($this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName])) {
+					$tagValues = $this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName];
+				} else {
+					$tagValues[0] = $this->expandType($property->getDeclaringClass(), $tagValues[0]);
+				}
+			}
+			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
+		}
+		foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
+			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
+		}
+
+		return $visibility;
 	}
 
 	/**
@@ -1509,7 +1520,6 @@ class ReflectionService {
 		);
 
 		$className = $classSchema->getClassName();
-		$needsArtificialIdentity = TRUE;
 		foreach ($this->getClassPropertyNames($className) as $propertyName) {
 			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
 				$varTagValues = $this->getPropertyTagValues($className, $propertyName, 'var');
@@ -1517,10 +1527,6 @@ class ReflectionService {
 					throw new InvalidPropertyTypeException('More than one @var annotation given for "' . $className . '::$' . $propertyName . '"', 1367334366);
 				} else {
 					$declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-				}
-
-				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'Doctrine\ORM\Mapping\Id')) {
-					$needsArtificialIdentity = FALSE;
 				}
 
 				try {
@@ -1541,9 +1547,6 @@ class ReflectionService {
 					$classSchema->markAsIdentityProperty($propertyName);
 				}
 			}
-		}
-		if ($needsArtificialIdentity === TRUE) {
-			$classSchema->addProperty('Persistence_Object_Identifier', 'string');
 		}
 	}
 
@@ -1576,9 +1579,8 @@ class ReflectionService {
 			}
 		}
 
-		/** @var $classSchema \TYPO3\Flow\Reflection\ClassSchema */
 		foreach (array_values($this->classSchemata) as $classSchema) {
-			if (class_exists($classSchema->getClassName()) && $classSchema->isAggregateRoot()) {
+			if ($classSchema instanceof ClassSchema && class_exists($classSchema->getClassName()) && $classSchema->isAggregateRoot()) {
 				$this->makeChildClassesAggregateRoot($classSchema);
 			}
 		}
@@ -1611,7 +1613,7 @@ class ReflectionService {
 	 */
 	protected function ensureAggregateRootInheritanceChainConsistency() {
 		foreach ($this->classSchemata as $className => $classSchema) {
-			if (!class_exists($className) || $classSchema->isAggregateRoot() === FALSE) {
+			if (!class_exists($className) || ($classSchema instanceof ClassSchema && $classSchema->isAggregateRoot() === FALSE)) {
 				continue;
 			}
 

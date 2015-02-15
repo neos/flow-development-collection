@@ -11,10 +11,13 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A target class for testing introductions
+ * A target class for testing introductions. Set as being an entity to check if
+ * property introductions are correctly picked up by the persistence.
  *
+ * @Flow\Entity
  */
 class TargetClass04 {
 

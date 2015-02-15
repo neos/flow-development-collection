@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Aop\Builder;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\PropertyIntroduction;
+use TYPO3\Flow\Reflection\ClassReflection;
+use TYPO3\Flow\Reflection\PropertyReflection;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -375,7 +378,7 @@ class ProxyClassBuilder {
 			if ($introduceAnnotation !== NULL) {
 				$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $propertyName, 'TYPO3\Flow\Annotations\Introduce'));
 				$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-				$introduction = new \TYPO3\Flow\Aop\PropertyIntroduction($aspectClassName, $propertyName, $pointcut);
+				$introduction = new PropertyIntroduction($aspectClassName, $propertyName, $pointcut);
 				$aspectContainer->addPropertyIntroduction($introduction);
 			}
 		}
@@ -419,8 +422,22 @@ class ProxyClassBuilder {
 
 		$proxyClass->addInterfaces($introducedInterfaces);
 
+		/** @var $propertyIntroduction PropertyIntroduction */
 		foreach ($propertyIntroductions as $propertyIntroduction) {
-			$proxyClass->addProperty($propertyIntroduction->getPropertyName(), 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
+			$propertyName = $propertyIntroduction->getPropertyName();
+			$declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();
+			$possiblePropertyTypes = $this->reflectionService->getPropertyTagValues($declaringAspectClassName, $propertyName, 'var');
+			if (count($possiblePropertyTypes) > 0 && !$this->reflectionService->isPropertyAnnotatedWith($declaringAspectClassName, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
+				$classSchema = $this->reflectionService->getClassSchema($targetClassName);
+				if ($classSchema !== NULL) {
+					$classSchema->addProperty($propertyName, $possiblePropertyTypes[0]);
+				}
+			}
+			$propertyReflection = new PropertyReflection($declaringAspectClassName, $propertyName);
+			$propertyReflection->setIsAopIntroduced(TRUE);
+			$this->reflectionService->reflectClassProperty($targetClassName, $propertyReflection, new ClassReflection($declaringAspectClassName));
+
+			$proxyClass->addProperty($propertyName, 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
 		}
 
 		$proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
