@@ -178,7 +178,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 					}
 					$account = $token->getAccount();
 					if ($account !== NULL) {
-						$this->session->addTag('TYPO3-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+						$this->securityContext->withoutAuthorizationChecks(function() use ($account) {
+							$this->session->addTag('TYPO3-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+						});
 					}
 				}
 				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
