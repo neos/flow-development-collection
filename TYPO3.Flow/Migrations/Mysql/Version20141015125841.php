@@ -80,7 +80,7 @@ class Version20141015125841 extends AbstractMigration {
 	 */
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
-		$this->addSql('CREATE TABLE typo3_flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB');
+		$this->addSql('CREATE TABLE typo3_flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
 
 		$this->addSql('ALTER TABLE typo3_flow_resource_resource ADD publishingconfiguration VARCHAR(40) DEFAULT NULL, CHANGE sha1 resourcepointer VARCHAR(255) NOT NULL, DROP md5, DROP collectionname, DROP mediatype, DROP relativepublicationpath, DROP filesize, ADD fileextension VARCHAR(255) NOT NULL');
 		$this->addSql('ALTER TABLE typo3_flow_resource_resource ADD CONSTRAINT FK_B4D45B32A4A851AF FOREIGN KEY (publishingconfiguration) REFERENCES typo3_flow_resource_publishing_abstractpublishingconfiguration (persistence_object_identifier)');
