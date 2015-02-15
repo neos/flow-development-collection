@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Resource\Storage;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A resource storage based on the (local) file system
@@ -61,8 +60,6 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 				throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
 			}
 		} else {
-			$pathInfo = UnicodeFunctions::pathinfo($source);
-			$filename = $pathInfo['basename'];
 			try {
 				copy($source, $temporaryTargetPathAndFilename);
 			} catch (\Exception $e) {
@@ -70,28 +67,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 			}
 		}
 
-		$sha1Hash = sha1_file($temporaryTargetPathAndFilename);
-		$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
-		if (!file_exists(dirname($finalTargetPathAndFilename))) {
-			Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
-		}
-		if (rename($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
-			unlink($temporaryTargetPathAndFilename);
-			throw new Exception(sprintf('The temporary file of the file import could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1375198906);
-		}
-
-		$this->fixFilePermissions($finalTargetPathAndFilename);
-
-		$resource = new Resource();
-		if (isset($filename)) {
-			$resource->setFilename($filename);
-		}
-		$resource->setFileSize(filesize($finalTargetPathAndFilename));
-		$resource->setCollectionName($collectionName);
-		$resource->setSha1($sha1Hash);
-		$resource->setMd5(md5_file($finalTargetPathAndFilename));
-
-		return $resource;
+		return $this->importTemporaryFile($temporaryTargetPathAndFilename, $collectionName);
 	}
 
 	/**
@@ -105,11 +81,10 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 	 *
 	 * @param string $content The actual content to import
 	 * @param string $collectionName Name of the collection the new Resource belongs to
-	 * @param string $filename The filename to use for the newly generated resource
 	 * @return Resource A resource object representing the imported resource
 	 * @throws Exception
 	 */
-	public function importResourceFromContent($content, $collectionName, $filename) {
+	public function importResourceFromContent($content, $collectionName) {
 		$temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
 		try {
 			file_put_contents($temporaryTargetPathAndFilename, $content);
@@ -117,81 +92,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 			throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1381156098);
 		}
 
-		$sha1Hash = sha1_file($temporaryTargetPathAndFilename);
-		$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
-		if (!file_exists(dirname($finalTargetPathAndFilename))) {
-			Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
-		}
-		if (rename($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
-			unlink($temporaryTargetPathAndFilename);
-			throw new Exception(sprintf('The temporary file of the file import could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1381156103);
-		}
-
-		$this->fixFilePermissions($finalTargetPathAndFilename);
-
-		$resource = new Resource();
-		$resource->setFilename($filename);
-		$resource->setFileSize(filesize($finalTargetPathAndFilename));
-		$resource->setCollectionName($collectionName);
-		$resource->setSha1($sha1Hash);
-		$resource->setMd5(md5_file($finalTargetPathAndFilename));
-
-		return $resource;
-	}
-
-	/**
-	 * Imports a resource (file) as specified in the given upload info array as a
-	 * persistent resource.
-	 *
-	 * On a successful import this method returns a Resource object representing
-	 * the newly imported persistent resource.
-	 *
-	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
-	 * @param string $collectionName Name of the collection this uploaded resource should be part of
-	 * @return Resource A resource object representing the imported resource
-	 * @throws Exception
-	 */
-	public function importUploadedResource(array $uploadInfo, $collectionName) {
-		$pathInfo = UnicodeFunctions::pathinfo($uploadInfo['name']);
-		$temporaryTargetPathAndFilename = $uploadInfo['tmp_name'];
-
-		if (!file_exists($temporaryTargetPathAndFilename)) {
-			throw new Exception(sprintf('The temporary file "%s" of the file upload does not exist (anymore).', $temporaryTargetPathAndFilename), 1375198998);
-		}
-
-		$openBasedirEnabled = (boolean)ini_get('open_basedir');
-		if ($openBasedirEnabled === TRUE) {
-			// Move uploaded file to a readable folder before trying to read sha1 value of file
-			$newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . uniqid() . '.tmp';
-			if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === FALSE) {
-				throw new Exception(sprintf('The uploaded file "%s" could not be moved to the temporary location "%s".', $temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename), 1375199056);
-			}
-			$sha1Hash = sha1_file($newTemporaryTargetPathAndFilename);
-			$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
-			if (rename($newTemporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
-				throw new Exception(sprintf('The temporary upload file "%s" could not be moved to the final target "%s".', $newTemporaryTargetPathAndFilename, $finalTargetPathAndFilename), 1375199071);
-			}
-		} else {
-			$sha1Hash = sha1_file($temporaryTargetPathAndFilename);
-			$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
-			if (!file_exists(dirname($finalTargetPathAndFilename))) {
-				Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
-			}
-			if (move_uploaded_file($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
-				throw new Exception(sprintf('The temporary file of the file upload could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1375199110);
-			}
-		}
-
-		$this->fixFilePermissions($finalTargetPathAndFilename);
-
-		$resource = new Resource();
-		$resource->setFilename($pathInfo['basename']);
-		$resource->setFileSize(filesize($finalTargetPathAndFilename));
-		$resource->setCollectionName($collectionName);
-		$resource->setSha1($sha1Hash);
-		$resource->setMd5(md5_file($finalTargetPathAndFilename));
-
-		return $resource;
+		return $this->importTemporaryFile($temporaryTargetPathAndFilename, $collectionName);
 	}
 
 	/**
@@ -210,6 +111,36 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 		}
 		Files::removeEmptyDirectoriesOnPath(dirname($pathAndFilename));
 		return TRUE;
+	}
+
+	/**
+	 * Imports the given temporary file into the storage and creates the new resource object.
+	 *
+	 * @param string $temporaryFile
+	 * @param string $collectionName
+	 * @return Resource
+	 * @throws Exception
+	 */
+	protected function importTemporaryFile($temporaryFile, $collectionName) {
+		$sha1Hash = sha1_file($temporaryFile);
+		$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
+		if (!file_exists(dirname($finalTargetPathAndFilename))) {
+			Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
+		}
+		if (rename($temporaryFile, $finalTargetPathAndFilename) === FALSE) {
+			unlink($temporaryFile);
+			throw new Exception(sprintf('The temporary file of the file import could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1381156103);
+		}
+
+		$this->fixFilePermissions($finalTargetPathAndFilename);
+
+		$resource = new Resource();
+		$resource->setFileSize(filesize($finalTargetPathAndFilename));
+		$resource->setCollectionName($collectionName);
+		$resource->setSha1($sha1Hash);
+		$resource->setMd5(md5_file($finalTargetPathAndFilename));
+
+		return $resource;
 	}
 
 	/**

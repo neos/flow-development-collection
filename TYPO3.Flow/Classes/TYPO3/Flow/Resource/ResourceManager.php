@@ -21,6 +21,7 @@ use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
 use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The Resource Manager
@@ -149,10 +150,13 @@ class ResourceManager {
 			if ($forcedPersistenceObjectIdentifier !== NULL) {
 				ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, TRUE);
 			}
+			if (!is_resource($source)) {
+				$pathInfo = UnicodeFunctions::pathinfo($source);
+				$resource->setFilename($pathInfo['basename']);
+			}
 		} catch (Exception $e) {
 			throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $e->getMessage()), 1375197120, $e);
 		}
-		/* @var Resource $resource */
 
 		$this->resourceRepository->add($resource);
 		$this->systemLogger->log(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()), LOG_DEBUG);
@@ -189,7 +193,8 @@ class ResourceManager {
 		$collection = $this->collections[$collectionName];
 
 		try {
-			$resource = $collection->importResourceFromContent($content, $filename);
+			$resource = $collection->importResourceFromContent($content);
+			$resource->setFilename($filename);
 			if ($forcedPersistenceObjectIdentifier !== NULL) {
 				ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, TRUE);
 			}
@@ -224,8 +229,9 @@ class ResourceManager {
 		$collection = $this->collections[$collectionName];
 
 		try {
-			/** @var Resource $resource */
-			$resource = $collection->importUploadedResource($uploadInfo);
+			$uploadedFile = $this->prepareUploadedFileForImport($uploadInfo);
+			$resource = $collection->importResource($uploadedFile['filepath']);
+			$resource->setFilename($uploadedFile['filename']);
 		} catch (Exception $e) {
 			throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $e);
 		}
@@ -528,6 +534,42 @@ class ResourceManager {
 			stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
 			StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
+	}
+
+	/**
+	 * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
+	 * move it outside of upload folder if open_basedir is enabled and check the filename.
+	 *
+	 * @param array $uploadInfo
+	 * @return array Array of string with the two keys "filepath" (the path to get the filecontent from) and "filename" the filename of the originally uploaded file.
+	 * @throws Exception
+	 */
+	protected function prepareUploadedFileForImport(array $uploadInfo) {
+		$openBasedirEnabled = (boolean)ini_get('open_basedir');
+		$temporaryTargetPathAndFilename = $uploadInfo['tmp_name'];
+		$pathInfo = UnicodeFunctions::pathinfo($uploadInfo['name']);
+
+		if (!is_uploaded_file($temporaryTargetPathAndFilename)) {
+			throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
+		}
+
+		if ($openBasedirEnabled === TRUE) {
+			// Move uploaded file to a readable folder before trying to read sha1 value of file
+			$newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . uniqid() . '.tmp';
+			if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === FALSE) {
+				throw new Exception(sprintf('The uploaded file "%s" could not be moved to the temporary location "%s".', $temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename), 1375199056);
+			}
+			$temporaryTargetPathAndFilename = $newTemporaryTargetPathAndFilename;
+		}
+
+		if (!is_file($temporaryTargetPathAndFilename)) {
+			throw new Exception(sprintf('The temporary file "%s" of the file upload does not exist (anymore).', $temporaryTargetPathAndFilename), 1375198998);
+		}
+
+		return array(
+			'filepath' => $temporaryTargetPathAndFilename,
+			'filename' => $pathInfo['basename']
+		);
 	}
 
 	/**

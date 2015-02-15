@@ -121,34 +121,14 @@ class Collection implements CollectionInterface {
 	 * important because the resource management will derive the IANA Media Type from it.
 	 *
 	 * @param string $content The actual content to import
-	 * @param string $filename The filename to use for the newly generated resource
 	 * @return Resource A resource object representing the imported resource
 	 * @throws Exception
 	 */
-	public function importResourceFromContent($content, $filename) {
+	public function importResourceFromContent($content) {
 		if (!$this->storage instanceof WritableStorageInterface) {
 			throw new Exception(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1381155740);
 		}
-		return $this->storage->importResourceFromContent($content, $this->name, $filename);
-	}
-
-	/**
-	 * Imports a resource (file) from the given upload info array into this collection.
-	 *
-	 * On a successful import this method returns a Resource object representing
-	 * the newly imported persistent resource.
-	 *
-	 * Note that this collection must have a writable storage in order to import resources.
-	 *
-	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
-	 * @return mixed A resource object representing the imported resource or a string containing an error message if an error ocurred
-	 * @throws Exception
-	 */
-	public function importUploadedResource(array $uploadInfo) {
-		if (!$this->storage instanceof WritableStorageInterface) {
-			throw new Exception(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1375197388);
-		}
-		return $this->storage->importUploadedResource($uploadInfo, $this->name);
+		return $this->storage->importResourceFromContent($content, $this->name);
 	}
 
 	/**
