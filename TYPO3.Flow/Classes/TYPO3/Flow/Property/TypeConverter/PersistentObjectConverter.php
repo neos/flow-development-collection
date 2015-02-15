@@ -154,8 +154,8 @@ class PersistentObjectConverter extends ObjectConverter {
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
 			if ($this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\ValueObject')) {
-				// Unset identity for valueobject to use constructor mapping, since the identity is determined from
-				// constructor arguments
+				// Unset identity for value objects to use constructor mapping, since the identity is determined from
+				// property values after construction
 				unset($source['__identity']);
 			}
 			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
