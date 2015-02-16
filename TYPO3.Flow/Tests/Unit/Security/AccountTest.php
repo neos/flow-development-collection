@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  *                                                                        */
 
 use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the account
+ * Test case for the account
  */
-class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AccountTest extends UnitTestCase {
 
 	/**
 	 * @var Role
@@ -35,7 +37,7 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $account;
 
 	/**
-	 * Setup function for the testcase
+	 * Setup function for the test case
 	 */
 	public function setUp() {
 		$administratorRole = new Role('TYPO3.Flow:Administrator');
@@ -161,5 +163,34 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertEquals(NULL, $this->account->getExpirationDate());
 	}
+
+	/**
+	 * @test
+	 */
+	public function isActiveReturnsTrueIfTheAccountHasNoExpirationDate() {
+		$this->account->setExpirationDate(NULL);
+		$this->assertTrue($this->account->isActive());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isActiveReturnsTrueIfTheAccountHasAnExpirationDateInTheFuture() {
+		$this->inject($this->account, 'now', new \DateTime());
+
+		$this->account->setExpirationDate(new \DateTime('tomorrow'));
+		$this->assertTrue($this->account->isActive());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isActiveReturnsFalseIfTheAccountHasAnExpirationDateInThePast() {
+		$this->inject($this->account, 'now', new \DateTime());
+
+		$this->account->setExpirationDate(new \DateTime('yesterday'));
+		$this->assertFalse($this->account->isActive());
+	}
+
 
 }

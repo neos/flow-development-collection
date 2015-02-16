@@ -15,12 +15,14 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\Party\Domain\Model\AbstractParty;
 
 /**
  * An account model
  *
  * @Flow\Entity
+ * @api
  */
 class Account {
 
@@ -81,6 +83,12 @@ class Account {
 	protected $policyService;
 
 	/**
+	 * @Flow\Inject
+	 * @var Now
+	 */
+	protected $now;
+
+	/**
 	 * Upon creation the creationDate property is initialized.
 	 */
 	public function __construct() {
@@ -111,6 +119,7 @@ class Account {
 	 * Returns the account identifier
 	 *
 	 * @return string The account identifier
+	 * @api
 	 */
 	public function getAccountIdentifier() {
 		return $this->accountIdentifier;
@@ -121,6 +130,7 @@ class Account {
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @return void
+	 * @api
 	 */
 	public function setAccountIdentifier($accountIdentifier) {
 		$this->accountIdentifier = $accountIdentifier;
@@ -130,6 +140,7 @@ class Account {
 	 * Returns the authentication provider name this account corresponds to
 	 *
 	 * @return string The authentication provider name
+	 * @api
 	 */
 	public function getAuthenticationProviderName() {
 		return $this->authenticationProviderName;
@@ -140,6 +151,7 @@ class Account {
 	 *
 	 * @param string $authenticationProviderName The authentication provider name
 	 * @return void
+	 * @api
 	 */
 	public function setAuthenticationProviderName($authenticationProviderName) {
 		$this->authenticationProviderName = $authenticationProviderName;
@@ -149,6 +161,7 @@ class Account {
 	 * Returns the credentials source
 	 *
 	 * @return mixed The credentials source
+	 * @api
 	 */
 	public function getCredentialsSource() {
 		return $this->credentialsSource;
@@ -159,6 +172,7 @@ class Account {
 	 *
 	 * @param mixed $credentialsSource The credentials source
 	 * @return void
+	 * @api
 	 */
 	public function setCredentialsSource($credentialsSource) {
 		$this->credentialsSource = $credentialsSource;
@@ -168,6 +182,7 @@ class Account {
 	 * Returns the party object this account corresponds to
 	 *
 	 * @return AbstractParty The party object
+	 * @api
 	 */
 	public function getParty() {
 		return $this->party;
@@ -178,6 +193,7 @@ class Account {
 	 *
 	 * @param AbstractParty $party The party object
 	 * @return void
+	 * @api
 	 */
 	public function setParty(AbstractParty $party) {
 		$this->party = $party;
@@ -187,6 +203,7 @@ class Account {
 	 * Returns the roles this account has assigned
 	 *
 	 * @return array<Role> The assigned roles, indexed by role identifier
+	 * @api
 	 */
 	public function getRoles() {
 		$this->initializeRoles();
@@ -199,6 +216,7 @@ class Account {
 	 * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects
 	 * @return void
 	 * @throws \InvalidArgumentException
+	 * @api
 	 */
 	public function setRoles(array $roles) {
 		$this->roleIdentifiers = array();
@@ -216,6 +234,7 @@ class Account {
 	 *
 	 * @param Role $role
 	 * @return boolean
+	 * @api
 	 */
 	public function hasRole(Role $role) {
 		$this->initializeRoles();
@@ -228,6 +247,7 @@ class Account {
 	 * @param Role $role
 	 * @return void
 	 * @throws \InvalidArgumentException
+	 * @api
 	 */
 	public function addRole(Role $role) {
 		if ($role->isAbstract()) {
@@ -246,6 +266,7 @@ class Account {
 	 *
 	 * @param Role $role
 	 * @return void
+	 * @api
 	 */
 	public function removeRole(Role $role) {
 		$this->initializeRoles();
@@ -258,24 +279,45 @@ class Account {
 	}
 
 	/**
+	 * Returns the date on which this account has been created.
+	 *
 	 * @return \DateTime
+	 * @api
 	 */
 	public function getCreationDate() {
 		return $this->creationDate;
 	}
 
 	/**
+	 * Returns the date on which this account has expired or will expire. If no expiration date has been set, NULL
+	 * is returned.
+	 *
 	 * @return \DateTime
+	 * @api
 	 */
 	public function getExpirationDate() {
 		return $this->expirationDate;
 	}
 
 	/**
+	 * Sets the date on which this account will become inactive
+	 *
 	 * @param \DateTime $expirationDate
 	 * @return void
+	 * @api
 	 */
 	public function setExpirationDate(\DateTime $expirationDate = NULL) {
 		$this->expirationDate = $expirationDate;
+	}
+
+	/**
+	 * Returns TRUE if it is currently allowed to use this account for authentication.
+	 * Returns FALSE if the account has expired.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isActive() {
+		return ($this->expirationDate === NULL || $this->expirationDate > $this->now);
 	}
 }
