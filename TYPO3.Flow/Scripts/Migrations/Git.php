@@ -29,20 +29,6 @@ class Git {
 	}
 
 	/**
-	 * Check whether the given $path points to the top-level of a git repository
-	 *
-	 * @param string $path
-	 * @return boolean
-	 */
-	public static function isWorkingCopy($path) {
-		chdir($path);
-		$output = array();
-
-		exec('git rev-parse --show-cdup', $output);
-		return implode('', $output) === '';
-	}
-
-	/**
 	 * Check whether the working copy is clean.
 	 *
 	 * @param string $path
