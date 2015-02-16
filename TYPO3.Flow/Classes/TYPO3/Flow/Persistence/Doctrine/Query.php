@@ -63,6 +63,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $limit;
 
 	/**
+	 * @var boolean
+	 */
+	protected $distinct = FALSE;
+
+	/**
 	 * @var integer
 	 */
 	protected $offset;
@@ -287,6 +292,29 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function getLimit() {
 		return $this->limit;
+	}
+
+	/**
+	 * Sets the DISTINCT flag for this query.
+	 *
+	 * @param boolean $distinct
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
+	 * @api
+	 */
+	public function setDistinct($distinct = TRUE) {
+		$this->distinct = $distinct;
+		$this->queryBuilder->distinct($distinct);
+		return $this;
+	}
+
+	/**
+	 * Returns the DISTINCT flag for this query.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isDistinct() {
+		return $this->distinct;
 	}
 
 	/**
@@ -609,7 +637,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function __sleep() {
 		$this->parameters = $this->queryBuilder->getParameters();
-		return array('entityClassName', 'constraint', 'orderings', 'parameterIndex', 'limit', 'offset', 'parameters', 'joins');
+		return array('entityClassName', 'constraint', 'orderings', 'parameterIndex', 'limit', 'offset', 'distinct', 'parameters', 'joins');
 	}
 
 	/**
@@ -635,6 +663,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		}
 		$this->queryBuilder->setFirstResult($this->offset);
 		$this->queryBuilder->setMaxResults($this->limit);
+		$this->queryBuilder->distinct($this->distinct);
 		$this->queryBuilder->setParameters($this->parameters);
 		unset($this->parameters);
 	}
