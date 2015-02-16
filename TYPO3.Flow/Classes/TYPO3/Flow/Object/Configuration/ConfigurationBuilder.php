@@ -60,39 +60,43 @@ class ConfigurationBuilder {
 	 * into the overall configuration. Finally autowires dependencies of arguments and properties
 	 * which can be resolved automatically.
 	 *
-	 * @param array $availableClassNamesByPackage An array of available class names, grouped by package key
+	 * @param array $availableClassAndInterfaceNamesByPackage An array of available class names, grouped by package key
 	 * @param array $rawObjectConfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
 	 * @return array<TYPO3\Flow\Object\Configuration\Configuration> Object configurations
 	 * @throws InvalidObjectConfigurationException
 	 */
-	public function buildObjectConfigurations(array $availableClassNamesByPackage, array $rawObjectConfigurationsByPackages) {
+	public function buildObjectConfigurations(array $availableClassAndInterfaceNamesByPackage, array $rawObjectConfigurationsByPackages) {
 		$objectConfigurations = array();
+		$interfaceNames = array();
 
-		foreach ($availableClassNamesByPackage as $packageKey => $classNames) {
-			foreach ($classNames as $className) {
-				$objectName = $className;
+		foreach ($availableClassAndInterfaceNamesByPackage as $packageKey => $classAndInterfaceNames) {
+			foreach ($classAndInterfaceNames as $classOrInterfaceName) {
+				$objectName = $classOrInterfaceName;
 
-				if ($this->reflectionService->isClassUnconfigurable($className)) {
+				if ($this->reflectionService->isClassUnconfigurable($classOrInterfaceName)) {
 					continue;
 				}
 
-				if ($this->reflectionService->isClassFinal($className)) {
+				if ($this->reflectionService->isClassFinal($classOrInterfaceName)) {
 					continue;
 				}
 
-				if (interface_exists($className)) {
-					$interfaceName = $className;
-					$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
-					if ($className === FALSE) {
+				if (interface_exists($classOrInterfaceName)) {
+					$interfaceName = $classOrInterfaceName;
+					$implementationClassName = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
+					if (!isset($rawObjectConfigurationsByPackages[$packageKey][$interfaceName]) && $implementationClassName === FALSE) {
 						continue;
 					}
 					if ($this->reflectionService->isClassAnnotatedWith($interfaceName, 'TYPO3\Flow\Annotations\Scope')) {
 						throw new InvalidObjectConfigurationException(sprintf('Scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
 					}
+					$interfaceNames[$interfaceName] = TRUE;
+				} else {
+					$implementationClassName = $classOrInterfaceName;
 				}
 
-				$rawObjectConfiguration = array('className' => $className);
-				$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($className, $rawObjectConfiguration);
+				$rawObjectConfiguration = array('className' => $implementationClassName);
+				$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($classOrInterfaceName, $rawObjectConfiguration);
 				$objectConfigurations[$objectName] = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'automatically registered class');
 				$objectConfigurations[$objectName]->setPackageKey($packageKey);
 			}
@@ -119,10 +123,25 @@ class ConfigurationBuilder {
 					throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
 				}
 
+				if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
+					$count = count($this->reflectionService->getAllImplementationClassNamesForInterface($objectName));
+					$hint = ($count ? 'It seems like there is no class which implements that interface, maybe the object configuration is obsolete?' : sprintf('There are %s classes implementing that interface, therefore you must specify a specific class in your object configuration.', $count));
+					throw new InvalidObjectConfigurationException('The object configuration for "' . $objectName . '" in the object configuration of package "' . $packageKey . '" lacks a "className" entry. ' . $hint, 1422566751);
+				}
+
 				$objectConfigurations[$objectName] = $newObjectConfiguration;
 				if ($objectConfigurations[$objectName]->getPackageKey() === NULL) {
 					$objectConfigurations[$objectName]->setPackageKey($packageKey);
 				}
+			}
+		}
+
+		// If an implementation class could be determined for an interface object configuration, set the scope for the
+		// interface object configuration to the scope found in the implementation class configuration:
+		foreach (array_keys($interfaceNames) as $interfaceName) {
+			$implementationClassName = $objectConfigurations[$interfaceName]->getClassName();
+			if ($implementationClassName !== '' && isset($objectConfigurations[$implementationClassName])) {
+				$objectConfigurations[$interfaceName]->setScope($objectConfigurations[$implementationClassName]->getScope());
 			}
 		}
 
@@ -332,6 +351,11 @@ class ConfigurationBuilder {
 	 */
 	protected function autowireArguments(array &$objectConfigurations) {
 		foreach ($objectConfigurations as $objectConfiguration) {
+			/** @var Configuration $objectConfiguration */
+			if ($objectConfiguration->getClassName() === '') {
+				continue;
+			}
+
 			$className = $objectConfiguration->getClassName();
 			$arguments = $objectConfiguration->getArguments();
 
@@ -381,6 +405,9 @@ class ConfigurationBuilder {
 			$className = $objectConfiguration->getClassName();
 			$properties = $objectConfiguration->getProperties();
 
+			if ($className === '') {
+				continue;
+			}
 			$classMethodNames = get_class_methods($className);
 			if (!is_array($classMethodNames)) {
 				if (!class_exists($className)) {

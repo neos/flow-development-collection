@@ -17,7 +17,7 @@ use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Session\SessionManager;
+use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Party\Domain\Model\AbstractParty;
 
@@ -126,7 +126,7 @@ class Context {
 
 	/**
 	 * @Flow\Inject
-	 * @var SessionManager
+	 * @var SessionManagerInterface
 	 */
 	protected $sessionManager;
 

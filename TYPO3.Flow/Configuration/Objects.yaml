@@ -198,6 +198,13 @@ TYPO3\Flow\Object\CompileTimeObjectManager:
   autowiring: off
 
 #                                                                          #
+# Package Management                                                       #
+#                                                                          #
+
+TYPO3\Flow\Package\PackageManagerInterface:
+  scope: singleton
+
+#                                                                          #
 # Persistence                                                              #
 #                                                                          #
 
@@ -306,7 +313,7 @@ TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpre
 
 TYPO3\Flow\Session\SessionInterface:
   scope: singleton
-  factoryObjectName: TYPO3\Flow\Session\SessionManager
+  factoryObjectName: TYPO3\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 
 TYPO3\Flow\Session\Session:
@@ -325,6 +332,9 @@ TYPO3\Flow\Session\Session:
         arguments:
           1:
             value: Flow_Session_Storage
+
+TYPO3\Flow\Session\SessionManagerInterface:
+  className: TYPO3\Flow\Session\SessionManager
 
 TYPO3\Flow\Session\SessionManager:
   properties:

@@ -114,7 +114,7 @@ class ProxyClassBuilder {
 
 		foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
 			$className = $objectConfiguration->getClassName();
-			if ($this->compiler->hasCacheEntryForClass($className) === TRUE) {
+			if ($className === '' || $this->compiler->hasCacheEntryForClass($className) === TRUE) {
 				continue;
 			}
 
@@ -535,7 +535,7 @@ class ProxyClassBuilder {
 			}
 		}
 		$propertyClassName = $this->objectConfigurations[$propertyObjectName]->getClassName();
-		if ($this->objectConfigurations[$propertyObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+		if ($this->objectConfigurations[$propertyObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE && !$this->objectConfigurations[$propertyObjectName]->isCreatedByFactory()) {
 			$preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($this->objectConfigurations[$propertyObjectName]->getArguments()) . ')';
 		} else {
 			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyObjectName . '\')';

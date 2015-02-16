@@ -100,14 +100,6 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Object\Exception\InvalidClassException
-	 */
-	public function setFactoryObjectNameRejectsNamesOfNonExistingNlasses() {
-		$this->objectConfiguration->setFactoryObjectName('TYPO3\Virtual\NonExistingClass');
-	}
-
-	/**
-	 * @test
 	 */
 	public function setFactoryMethodNameAcceptsValidStrings() {
 		$this->objectConfiguration->setFactoryMethodName('someMethodName');

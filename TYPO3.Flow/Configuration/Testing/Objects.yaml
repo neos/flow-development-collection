@@ -47,7 +47,6 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
       value: { 'thisIs': { 'anArray': 'asProperty' } }
 
 TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
-  scope: singleton
   factoryObjectName: TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
   arguments:
     1:
