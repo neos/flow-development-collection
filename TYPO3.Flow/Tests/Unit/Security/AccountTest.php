@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\Role;
@@ -193,4 +194,62 @@ class AccountTest extends UnitTestCase {
 	}
 
 
+	/**
+	 * @expectedException \TYPO3\Flow\Security\Exception
+	 * @expectedExceptionCode 1397747246
+	 * @test
+	 */
+	public function callingGetPartyWithoutIdentifierThrowsException() {
+		$account = new Account();
+		$account->getParty();
+	}
+
+	/**
+	 * @test
+	 */
+	public function callingGetPartyInvokesPartyDomainServiceWithAccountAndReturnsItsValue() {
+		$account = new Account();
+		$partyService = $this->getMock('DummyService', array('getAssignedPartyOfAccount'));
+		$partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
+
+		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(TRUE));
+		$objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
+
+		$this->inject($account, 'objectManager', $objectManager);
+
+		$account->setAccountIdentifier('AccountIdentifierToCheck');
+		$this->assertEquals('ReturnedValue', $account->getParty());
+	}
+
+	/**
+	 * @expectedException \TYPO3\Flow\Security\Exception
+	 * @expectedExceptionCode 1397745354
+	 * @test
+	 */
+	public function callingSetPartyWithoutIdentifierThrowsException() {
+		$account = new Account();
+		$account->setParty($this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function callingSetPartyInvokesPartyDomainServiceWithAccountIdentifier() {
+		$partyMock = $this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty');
+		$account = new Account();
+		$partyService = $this->getMock('DummyService', array('assignAccountToParty'));
+		$partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
+
+		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(TRUE));
+		$objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
+
+		$this->inject($account, 'objectManager', $objectManager);
+
+		$account->setAccountIdentifier('AccountIdentifierToCheck');
+		$account->setParty($partyMock);
+	}
+
 }
+

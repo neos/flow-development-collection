@@ -15,7 +15,6 @@
         "ext-reflection": "*",
 
         "typo3/fluid": "*",
-        "typo3/party": "*",
         "typo3/eel": "*",
 
         "doctrine/orm": "2.4.*",
@@ -29,7 +28,8 @@
     },
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
-        "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM"
+        "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
+        "typo3/party": "To make use of basic user handling"
     },
     "autoload": {
         "psr-0": {

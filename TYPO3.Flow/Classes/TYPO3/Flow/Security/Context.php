@@ -467,6 +467,7 @@ class Context {
 	 * (@see getAuthenticationTokens())
 	 *
 	 * @return AbstractParty The authenticated party
+	 * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.typo3.org/browse/FLOW-5)
 	 */
 	public function getParty() {
 		if ($this->initialized === FALSE) {
@@ -487,6 +488,7 @@ class Context {
 	 *
 	 * @param string $className Class name of the party to find
 	 * @return AbstractParty The authenticated party
+	 * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.typo3.org/browse/FLOW-5)
 	 */
 	public function getPartyByType($className) {
 		if ($this->initialized === FALSE) {

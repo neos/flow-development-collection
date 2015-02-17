@@ -546,31 +546,31 @@ is an example showing the possibilities:
 -----
 
 Matches if the property name of the global party object (the currently
-authenticated party of the security framework) is equal to "Andi":
+authenticated user of the security framework) is equal to "Andi":
 
-``evaluate(current.securityContext.party.name == "Andi")``
+``evaluate(current.userService.currentUser.name == "Andi")``
 
 Matches if the property someProperty of someObject which is a property of the
 current object (the object the advice will be executed in) is equal to the
-name of the current party:
+name of the currently authenticated user:
 
-``evaluate(this.someObject.someProperty == current.securityContext.party.name)``
+``evaluate(this.someObject.someProperty == current.userService.currentUser.name)``
 
 Matches if the property someProperty of the current object is equal to one of
-the values TRUE, "someString" or the address of the current party:
+the values TRUE, "someString" or the address of the currently authenticated user:
 
-``evaluate(this.someProperty in (TRUE, "someString", current.securityContext.party.address))``
+``evaluate(this.someProperty in (TRUE, "someString", current.userService.currentUser.address))``
 
 Matches if the accounts array in the current party object contains the account
 stored in the myAccount property of the current object:
 
-``evaluate(current.securityContext.party.accounts contains this.myAccount)``
+``evaluate(current.userService.currentUser.accounts contains this.myAccount)``
 
 Matches if at least one of the entries in the first array exists in the second one:
 
-``evaluate(current.securityContext.party.accounts matches ('Administrator', 'Customer', 'User'))``
+``evaluate(current.userService.currentUser.accounts matches ('Administrator', 'Customer', 'User'))``
 
-``evaluate(current.securityContext.party.accounts matches this.accounts)``
+``evaluate(current.userService.currentUser.accounts matches this.accounts)``
 
 ------
 
