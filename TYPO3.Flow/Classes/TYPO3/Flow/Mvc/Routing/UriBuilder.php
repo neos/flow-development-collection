@@ -60,7 +60,7 @@ class UriBuilder {
 	protected $createAbsoluteUri = FALSE;
 
 	/**
-	 * @Flow\Inject(setting="compatibility.uriBuilder.createRelativePaths")
+	 * @Flow\InjectConfiguration("compatibility.uriBuilder.createRelativePaths")
 	 * @var boolean
 	 */
 	protected $createRelativePaths = FALSE;
