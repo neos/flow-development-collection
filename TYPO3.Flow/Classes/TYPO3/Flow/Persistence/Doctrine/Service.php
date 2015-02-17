@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  *                                                                        */
 
 use Doctrine\DBAL\Migrations\Version;
+use Doctrine\DBAL\Schema\Identifier;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Files;
@@ -579,6 +580,13 @@ EOT;
 							}
 						);
 					}
+
+					$identifierConstructorCallback = function ($columnName) {
+						return new Identifier($columnName);
+					};
+					$localColumns = array_map($identifierConstructorCallback, $localColumns);
+					$foreignColumns = array_map($identifierConstructorCallback, $foreignColumns);
+
 					$newForeignKey = clone $foreignKey;
 					\TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_localColumnNames', $localColumns, TRUE);
 					\TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_foreignColumnNames', $foreignColumns, TRUE);
