@@ -335,7 +335,7 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resolveValueReturnsTrueAndSetTheValueToTheCorrectylCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse() {
+	public function resolveValueReturnsTrueAndSetTheValueToTheCorrectlyCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse() {
 		$object = new \stdClass();
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
 		$this->dynamicRoutPart->setLowerCase(FALSE);
@@ -343,6 +343,23 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('TheIdentifier', $this->dynamicRoutPart->getValue());
 	}
 
+	/**
+	 * @test
+	 */
+	public function resolveValueReturnsTrueIfTheValueToBeResolvedIsAnObjectWithANumericIdentifier() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(123));
+		$this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectWithAMultiValueIdentifier() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(array('foo' => 'Foo', 'bar' => 'Bar')));
+		$this->assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
+	}
 
 	/**
 	 * Objects that are unknown to the persistence manager cannot be resolved by the standard DynamicRoutePart handler.
@@ -352,15 +369,6 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectThatIsUnknownToThePersistenceManager() {
 		$object = new \stdClass();
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(NULL));
-		$this->assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectWithAnIdentifierThatIsNoString() {
-		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(array('foo', 'bar')));
 		$this->assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
 	}
 
