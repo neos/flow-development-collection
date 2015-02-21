@@ -11,9 +11,10 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\DBAL\Connection;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Reflection\ClassSchema;
+use TYPO3\Flow\Error\Exception;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -124,7 +125,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * Commits new objects and changes to objects in the current persistence
 	 * session into the backend
 	 *
-	 * @param boolean $onlyWhitelistedObjects
+	 * @param boolean $onlyWhitelistedObjects If TRUE an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
 	 * @return void
 	 * @api
 	 */
@@ -138,11 +139,23 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 				$this->throwExceptionIfObjectIsNotWhitelisted($object);
 			}
 		}
-		if ($this->entityManager->isOpen()) {
-			$this->entityManager->flush();
-			$this->emitAllObjectsPersisted();
-		} else {
+
+		if (!$this->entityManager->isOpen()) {
 			$this->systemLogger->log('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LOG_ERR);
+			return;
+		}
+
+		try {
+			$this->entityManager->flush();
+		} catch (Exception $exception) {
+			/** @var Connection $connection */
+			$connection = $this->entityManager->getConnection();
+			$connection->close();
+			$connection->connect();
+			$this->systemLogger->log('Reconnected the Doctrine EntityManager to the persistence backend.', LOG_INFO);
+			$this->entityManager->flush();
+		} finally {
+			$this->emitAllObjectsPersisted();
 		}
 	}
 
