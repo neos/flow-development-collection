@@ -164,6 +164,15 @@ class CacheManager {
 	}
 
 	/**
+	 * Returns an array of cache configurations, indexed by cache identifier
+	 *
+	 * @return array
+	 */
+	public function getCacheConfigurations() {
+		return $this->cacheConfigurations;
+	}
+
+	/**
 	 * Flushes entries tagged with class names if their class source files have changed.
 	 * Also flushes AOP proxy caches if a policy was modified.
 	 *
