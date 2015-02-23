@@ -125,7 +125,7 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 	public function convertObjectToIdentityArray($object) {
 		$identifier = $this->getIdentifierByObject($object);
 		if ($identifier === NULL) {
-			throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException('The given object is unknown to the Persistence Manager.', 1302628242);
+			throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException(sprintf('Tried to convert an object of type "%s" to an identity array, but it is unknown to the Persistence Manager.', get_class($object)), 1302628242);
 		}
 		return array('__identity' => $identifier);
 	}
