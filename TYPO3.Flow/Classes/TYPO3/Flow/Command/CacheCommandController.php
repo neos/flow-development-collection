@@ -180,6 +180,25 @@ class CacheCommandController extends CommandController {
 	 * @see typo3.flow:configuration:show
 	 */
 	public function flushOneCommand($identifier) {
+		if (!$this->cacheManager->hasCache($identifier)) {
+			$this->outputLine('The cache "%s" does not exist.', array($identifier));
+
+			$cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+			$shortestDistance = -1;
+			foreach(array_keys($cacheConfigurations) as $existingIdentifier) {
+				$distance = levenshtein($existingIdentifier, $identifier);
+				if ($distance <= $shortestDistance || $shortestDistance < 0) {
+					$shortestDistance = $distance;
+					$closestIdentifier = $existingIdentifier;
+				}
+			}
+
+			if (isset($closestIdentifier)) {
+				$this->outputLine('Did you mean "%s"?', array($closestIdentifier));
+			}
+
+			$this->quit(1);
+		}
 		$this->cacheManager->getCache($identifier)->flush();
 		$this->outputLine('Flushed "%s" cache for "%s" context.', array($identifier, $this->bootstrap->getContext()));
 		$this->sendAndExit(0);
