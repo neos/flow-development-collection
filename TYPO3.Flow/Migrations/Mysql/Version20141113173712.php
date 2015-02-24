@@ -17,9 +17,7 @@ class Version20141113173712 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
 		// skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
-		if (array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account'))) {
-			return;
-		}
+		$this->skipIf(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account')), 'Migration not needed, already applied earlier.');
 
 		$this->addSql("ALTER TABLE typo3_flow_security_account ADD roleidentifiers LONGTEXT DEFAULT NULL COMMENT '(DC2Type:simple_array)'");
 		$this->addSql("ALTER TABLE typo3_flow_security_account_roles_join DROP FOREIGN KEY FK_ADF11BBC23A1047C");
@@ -45,7 +43,6 @@ class Version20141113173712 extends AbstractMigration {
 		$this->addSql("CREATE TABLE typo3_flow_security_authorization_resource_securitypublis_861cb (persistence_object_identifier VARCHAR(40) NOT NULL, allowedroles LONGTEXT NOT NULL COMMENT '(DC2Type:array)', PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
 		$this->addSql("CREATE TABLE typo3_flow_security_policy_role (identifier VARCHAR(255) NOT NULL, sourcehint VARCHAR(6) NOT NULL, PRIMARY KEY(identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
 		$this->addSql("CREATE TABLE typo3_flow_security_policy_role_parentroles_join (flow_policy_role VARCHAR(255) NOT NULL, parent_role VARCHAR(255) NOT NULL, INDEX IDX_D459C58E23A1047C (flow_policy_role), INDEX IDX_D459C58E6A8ABCDE (parent_role), PRIMARY KEY(flow_policy_role, parent_role)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
-
 
 		$this->migrateAccountRolesDown();
 
