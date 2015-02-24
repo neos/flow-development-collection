@@ -219,7 +219,8 @@ class Package implements PackageInterface {
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
 	 */
 	public function getFunctionalTestsClassFiles() {
-		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $this->getNamespace() . '\\Tests\\Functional\\');
+		$namespacePrefix = str_replace('/', '\\', Files::concatenatePaths((array((($this->getAutoloadType() === self::AUTOLOADER_TYPE_PSR0) ? $this->getNamespace() : ''), '\\Tests\\Functional\\'))));
+		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix);
 	}
 
 	/**
@@ -477,7 +478,8 @@ class Package implements PackageInterface {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel + 1)));
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
-							$className = ($namespacePrefix . str_replace('/', '\\', ($extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
+							$className = Files::concatenatePaths(array($namespacePrefix, $extraNamespaceSegment, substr($currentPath, strlen($classesPath)), substr($filename, 0, -4)));
+							$className = str_replace('/', '\\', $className);
 							$classFiles[$className] = $currentRelativePath . $filename;
 						}
 					}
