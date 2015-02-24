@@ -139,7 +139,7 @@ class TextIterator implements \Iterator {
 	 * @return boolean True if the iterator has not reached it's end
 	 */
 	public function valid() {
-		if ($this->getCurrentElement()->getValue() != self::DONE && $this->getCurrentElement()->getOffset() != -1) {
+		if ($this->getCurrentElement() && $this->getCurrentElement()->getValue() != self::DONE && $this->getCurrentElement()->getOffset() != -1) {
 			return TRUE;
 		}
 		return FALSE;
@@ -314,6 +314,7 @@ class TextIterator implements \Iterator {
 		}
 
 		$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement(self::DONE, -1));
+		$this->iteratorCacheIterator = $this->iteratorCache->getIterator();
 	}
 
 	/**

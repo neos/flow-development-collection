@@ -19,15 +19,6 @@ namespace TYPO3\Flow\Persistence;
 interface RepositoryInterface {
 
 	/**
-	 * If set in an implementation overrides automatic detection of the
-	 * entity class name being managed by the repository.
-	 *
-	 * @var string
-	 * @api
-	 */
-	const ENTITY_CLASSNAME = NULL;
-
-	/**
 	 * Returns the object type this repository is managing.
 	 *
 	 * @return string
