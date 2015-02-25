@@ -517,7 +517,7 @@ class SchemaValidator {
 					}
 					break;
 				case 'class-name':
-					if (class_exists($value) === FALSE) {
+					if (class_exists($value) === FALSE && interface_exists($value) === FALSE) {
 						$result->addError($this->createError('format=class-name', $value));
 					}
 					break;
