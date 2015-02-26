@@ -209,7 +209,7 @@ class AccountTest extends UnitTestCase {
 	 */
 	public function callingGetPartyInvokesPartyDomainServiceWithAccountAndReturnsItsValue() {
 		$account = new Account();
-		$partyService = $this->getMock('DummyService', array('getAssignedPartyOfAccount'));
+		$partyService = $this->getMock('TYPO3\Party\Domain\Service\PartyService', array('getAssignedPartyOfAccount'));
 		$partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
 
 		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
@@ -229,14 +229,16 @@ class AccountTest extends UnitTestCase {
 	 */
 	public function callingSetPartyWithoutIdentifierThrowsException() {
 		$account = new Account();
-		$account->setParty($this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty'));
+
+		$mockParty = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty');
+		$account->setParty($mockParty);
 	}
 
 	/**
 	 * @test
 	 */
 	public function callingSetPartyInvokesPartyDomainServiceWithAccountIdentifier() {
-		$partyMock = $this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty');
+		$partyMock = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty');
 		$account = new Account();
 		$partyService = $this->getMock('DummyService', array('assignAccountToParty'));
 		$partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
