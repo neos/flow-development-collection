@@ -1,1 +1,0 @@
-With Flow 3.0 this file has been renamed to Upgrading.rst and can safely be removed.

@@ -1,5 +1,5 @@
 --------------
-TYPO3 Flow 3.0
+TYPO3 Flow 3.x
 --------------
 
 Welcome to TYPO3 Flow!
