@@ -24,8 +24,7 @@
         "symfony/dom-crawler": "2.5.*",
         "symfony/console": "2.*",
 
-        "composer/installers": "~1.0.2",
-        "typo3/party": "3.0.0-beta1"
+        "composer/installers": "~1.0.2"
     },
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
