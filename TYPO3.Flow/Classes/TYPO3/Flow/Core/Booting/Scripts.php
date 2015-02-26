@@ -251,7 +251,12 @@ class Scripts {
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			self::executeCommand('typo3.flow:core:compile', $settings);
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
-				self::compileDoctrineProxies($bootstrap);
+				try {
+					self::compileDoctrineProxies($bootstrap);
+				} catch (\Exception $exception) {
+					// hotfix to make compile work if no connection can be established
+					// @todo fix properly before 3.0.0 release
+				}
 			}
 		}
 
