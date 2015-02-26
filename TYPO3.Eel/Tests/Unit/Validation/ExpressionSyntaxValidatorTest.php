@@ -5,6 +5,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
 
 /**
+ * Tests for the ExpressionSyntaxValidator
  */
 class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase {
 
@@ -40,7 +41,7 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase {
 
 		$this->assertEquals('foo.bar( + (18 + 2)', $errorArguments[0]);
 		$this->assertEquals(7, $errorArguments[1]);
-		$this->assertEquals('( + (18 + 2)', $errorArguments[0]);
+		$this->assertEquals('( + (18 + 2)', $errorArguments[2]);
 
 	}
 
