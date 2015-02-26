@@ -393,7 +393,7 @@ Options
 +------------------+---------------------------------+-----------+-----------+-----------+
 | Option           | Description                     | Mandatory | Type      | Default   |
 +==================+=================================+===========+===========+===========+
-| host             | IP address or name of redis     | No        | string    | 127.0.0.1 |
+| hostname         | IP address or name of redis     | No        | string    | 127.0.0.1 |
 |                  | server to connect to            |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 | port             | Port of the Redis server.       | Yes       | integer   | 6379      |
