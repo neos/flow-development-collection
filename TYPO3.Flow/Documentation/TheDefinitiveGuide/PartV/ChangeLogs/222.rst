@@ -1,0 +1,149 @@
+====================
+2.2.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix nested + expressions in conditions
+-----------------------------------------------------------------------------------------
+
+Fixes: FLOW-46
+
+(cherry picked from commit 65c74bfd191fbb30b17d1f3ef514c46e2af6ea8a)
+
+* Commit: `eae8860 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/eae8860be13210bfaa01cf5d71336b35df6b7476>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/21/
+
+* Commit: `74efd3c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/74efd3c50f99bfa794ce758533adfcc8a78b3398>`_
+
+[BUGFIX] Make file uploads work again
+-----------------------------------------------------------------------------------------
+
+This change fixes a regression which was introduced by
+Ib5acdb59ee2ff9593456fe35960cdc9c41d71ace. That change
+created a second TypeConverter for Resource objects, but
+gave a wrong priority for that one -- effectively disabling
+the default type converter which handled file uploads.
+
+Here, we merge the behavior of both TypeConverters into
+a single one.
+
+When testing this, make sure to fully clear your cache.
+
+Related: NEOS-158
+Fixes: FLOW-60
+
+* Commit: `3a5d44e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3a5d44ec8e2725b31fee851a3407bb288d261195>`_
+
+[TASK] Remove link to forge from DebugExceptionHandler output
+-----------------------------------------------------------------------------------------
+
+The link to create an issue from the exception screen was not used much
+and since we moved away from forge it would link to the wrong tracker.
+
+I consider this experiment a failure and thus this change removes the
+link (generation code) from the DebugExceptionHandler.
+
+* Commit: `6fc1f77 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6fc1f7749c1c7caacef08e9b95cf9843fa8b6b29>`_
+
+[BUGFIX] Add domain model validators only once
+-----------------------------------------------------------------------------------------
+
+If a domain model validator is present and a controller action accepts
+this domain model as argument, the validator is added twice to the
+validation tree.
+
+It is added in ValidatorResolver::buildMethodArgumentsValidatorConjunctions()
+and in ValidatorResolver::addCustomValidators() which is called from
+ValidatorResolver::getBaseValidatorConjunction()
+
+Both methods are called when building the validation tree in
+ActionController::initializeActionMethodValidators()
+
+* Resolves: `#49624 <http://forge.typo3.org/issues/49624>`_
+* Commit: `6b38d1f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6b38d1f7a8d86886d99901c1535e502081e96285>`_
+
+[BUGFIX] sessionManager->getActiveSessions() returns empty array
+-----------------------------------------------------------------------------------------
+
+This change adds the tag 'session' to all started sessions.
+As SessionManager->getActiveSessions() searches sessions by
+'session' tag, nothing will ever be returned if the tag is
+not set.
+
+* Fixes: `#55936 <http://forge.typo3.org/issues/55936>`_
+* Commit: `3d492d3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3d492d3b26f327f39cad87f264a0d91d74098cf9>`_
+
+[BUGFIX] REMOTE_AUTHORIZATION strips "Basic" string
+-----------------------------------------------------------------------------------------
+
+Currently the .htaccess file passes the "Authorization" header
+to the REMOTE_AUTHORIZATION environment variable by stripping
+the "Basic" string. This means as soon as the authentication
+token tries to authenticate, the only remaining thing is the
+base64 encoded value of username/password without the "Basic"
+indicator. This leads to no basic auth possible when running
+CGI.
+
+* Resolves: `#53010 <http://forge.typo3.org/issues/53010>`_
+
+(cherry picked from commit 8bd0eca54fefa1eb014d000f368634d2a91f477d)
+
+* Commit: `19f638c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/19f638c8bf1f1d24bb01500056f6185475f8229b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix fatal errors related to templateCache
+-----------------------------------------------------------------------------------------
+
+Fixes more fatal errors that occur at times, similar to the fix in
+I9bf0c8eafc8ab70215b35153f428839a6721469e.
+
+* Commit: `ecd83ca <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/ecd83caf6170ec5af8711bc3192e368bdbe8bf7c>`_
+
+[BUGFIX] Resolve duplicate layout and partial compilations
+-----------------------------------------------------------------------------------------
+
+Layouts and partials are independent of the current controller and hence should
+not have the controller name in their identifier to prevent duplicate
+compilations and cache instances of the same content.
+This change removes the controller name from identifiers of layouts and
+partials, but leaves the identifier of templates untouched.
+
+* Fixes: `#39428 <http://forge.typo3.org/issues/39428>`_
+* Commit: `6224bcf <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/6224bcf3eb69e4f0303a80074df5964795cbe8ce>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

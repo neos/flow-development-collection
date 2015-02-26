@@ -1,0 +1,138 @@
+====================
+2.2.0
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Add more examples and make PHPDoc ready for RST documentation
+-----------------------------------------------------------------------------------------
+
+- Add more examples to StringHelper
+- Update the PHPDoc description to be formatted with RST
+
+(cherry picked from commit dea75c372ff3d6c37d3db78bf588dd0c04661915)
+
+* Commit: `e94b778 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/e94b778ab000b5707fbd88fd19775b6629e44bd5>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/19/
+
+* Commit: `5e59e87 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5e59e87902ba92af44f8409772c1292118e6ff23>`_
+
+[BUGFIX] Allow non-numerical keys for doctrine event listeners
+-----------------------------------------------------------------------------------------
+
+The schema for the doctrine event listener configuration was of
+type array, which only allows for numerical keys.
+Since non-numerical keys are needed to able to unset specific
+event listeners the type is changed to dictionary.
+
+* Commit: `9eb51a2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9eb51a20e67b473c035a0e77e67754b5991e8c26>`_
+
+[BUGFIX] Make DI work with Doctrine using newInstanceWithoutConstructor()
+-----------------------------------------------------------------------------------------
+
+This change does two things:
+
+* make sure Doctrine uses the Flow ClassReflection even after
+  wakeupReflection() has been called
+* override newInstanceWithoutConstructor() in ClassReflection to call
+  __wakeup(), so DI works.
+
+This fixes an issue with a workaround in Doctrine that broke DI on PHP
+5.4.29, 5.5.13 as well as 5.6.x.
+
+* Commit: `8950ce9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8950ce94538fc6defd20e1ec2b9396b29c42ad15>`_
+
+[BUGFIX] (Utility) SchemaValidator should allow additionalProperties: TRUE
+-----------------------------------------------------------------------------------------
+
+This bug prevented the Views.yaml schema from being evaluated correctly.
+
+(cherry picked from commit d0e4840958f59a831f73df4a727b5b8d4c657e8f)
+
+* Commit: `84e4e9b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/84e4e9b488f9e31c2cf63ad6e47ea97bea76f2fc>`_
+
+[TASK] Tiny tweak to RedisBackendTest
+-----------------------------------------------------------------------------------------
+
+* Commit: `6cbc515 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6cbc5154d5335e809b6dd0d5a485960bce46421f>`_
+
+[BUGFIX] ValidatorResolver unit test fails on PHP 5.5.13
+-----------------------------------------------------------------------------------------
+
+On PHP 5.5.13 (as well as 5.4.29 and 5.6.x) mocking stdClass fails,
+this change fixes that by a plain stdClass instance instead.
+
+* Commit: `c2c6367 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c2c63675ee77c8c2566e55be20075424ef6308f2>`_
+
+[TASK] Improve documentation for Settings Injection
+-----------------------------------------------------------------------------------------
+
+This adds a few more comments and more text to the Dependency Injection
+chapter of the Definitive Guide.
+
+* Commit: `10ceda7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/10ceda73f405453e56085b0322ffa1b1f9d5d8f7>`_
+
+[BUGFIX] Fix header handling for CSRF tokens
+-----------------------------------------------------------------------------------------
+
+This commit fixes a typo in the expected CSRF token header name.
+
+* Fixes: `#55703 <http://forge.typo3.org/issues/55703>`_
+* Commit: `23b0505 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/23b05053fd73b2efc4c440713da0c0e2965d5405>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Paginate Widget: Correctly highlight current page
+-----------------------------------------------------------------------------------------
+
+With #28283 the current page is correctly highlighted most of the
+time. But if a non-existing page is requested (for example by
+manually setting the currentPage-argument to a number higher than
+the number of total pages) the last page should be highlighted, but
+is not.
+
+That is fixed with this change by making sure that ``numberOfPages``
+is always an integer.
+
+* Related: `#28283 <http://forge.typo3.org/issues/28283>`_
+* Commit: `5717d53 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5717d53c173f27ef5ae0289b2fdc490bad72ce96>`_
+
+[TASK] Avoid warnings in two unit tests
+-----------------------------------------------------------------------------------------
+
+* Commit: `941c4d4 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/941c4d4161b91e011d705210f3b8edd0090bfaee>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
