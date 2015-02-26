@@ -14,8 +14,8 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
 
-        "typo3/fluid": "3.0.*@dev",
-        "typo3/eel": "3.0.*@dev",
+        "typo3/fluid": "3.0.0-beta1",
+        "typo3/eel": "3.0.0-beta1",
 
         "doctrine/orm": "2.4.*",
         "doctrine/migrations": "dev-master",
@@ -24,7 +24,8 @@
         "symfony/dom-crawler": "2.5.*",
         "symfony/console": "2.*",
 
-        "composer/installers": "~1.0.2"
+        "composer/installers": "~1.0.2",
+        "typo3/party": "3.0.0-beta1"
     },
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
