@@ -6,6 +6,11 @@
 Base Distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+[TASK] Remove TYPO3.Party from set-dependencies.sh
+-----------------------------------------------------------------------------------------
+
+* Commit: `fee8e37 <https://git.typo3.org/Flow/Distributions/Base.git/commit/fee8e377b5d6ccab611fbc609c029b4433ac3977>`_
+
 [TASK] Remove unintentional typo3/party requirement
 -----------------------------------------------------------------------------------------
 
@@ -33,6 +38,21 @@ Updates PHPUnit to version 4.5.*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Eel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Undo requirements adjustment from CI job
+-----------------------------------------------------------------------------------------
+
+The release CI job adjusted requirements dutifully, but the result was
+not as expected, because we humans missed some needed changes.
+
+* Commit: `b7c3ee6 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/b7c3ee69b4e17540f9e8a4076c1c6dd7aba99978>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `67c6693 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/67c669301bc05e0982e311f8121b90a8b643ef6e>`_
 
 [TASK] Update composer manifest
 -----------------------------------------------------------------------------------------
@@ -158,6 +178,48 @@ this error is avoided.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/33/
+
+* Commit: `81de15d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/81de15d741c62e3db62c6b3e652054229aba7146>`_
+
+[TASK] Add new files to default .gitignore file
+-----------------------------------------------------------------------------------------
+
+The default .gitignore file in Flow needs to contain the (new) rST
+files that replace Readme.txt and Upgrading.txt.
+
+* Commit: `fe573f3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fe573f3f2d1df2f1a6d2a01248b2ab4d33d34ba4>`_
+
+[TASK] Undo requirements adjustment from CI job
+-----------------------------------------------------------------------------------------
+
+The release CI job adjusted requirements dutifully, but the result was
+not as expected, because we humans missed some needed changes.
+
+* Commit: `0de3d5c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0de3d5c8b38d1b35b4eb4904166a7b37ab53701c>`_
+
+[TASK] Remove unintentional typo3/party requirement
+-----------------------------------------------------------------------------------------
+
+* Commit: `09b2c15 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/09b2c1562bfa82a787a2283ede5887b9c6033c7c>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `e8f5f7f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e8f5f7f61b2d9ed5664fd2263c5d6aa1b03673e0>`_
+
+[TASK] Add changelog for TYPO3 Flow 3.0.0-beta1
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `4f666c8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4f666c83a0555c406ce1e0ed38abfbebf7d81c8f>`_
 
 [TASK] Update references in documentation
 -----------------------------------------------------------------------------------------
@@ -2346,6 +2408,21 @@ are not rendered again.
 TYPO3.Fluid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+[TASK] Undo requirements adjustment from CI job
+-----------------------------------------------------------------------------------------
+
+The release CI job adjusted requirements dutifully, but the result was
+not as expected, because we humans missed some needed changes.
+
+* Commit: `ef57493 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/ef57493729c8d0e43f41c63252f1683a01ecc1bc>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `51eb9b8 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/51eb9b875fd9849967e01169930ff9354c943cfb>`_
+
 [TASK] Update composer manifest
 -----------------------------------------------------------------------------------------
 
@@ -2860,6 +2937,21 @@ a variable initialization until it's really used.
 TYPO3.Kickstart
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+[TASK] Undo requirements adjustment from CI job
+-----------------------------------------------------------------------------------------
+
+The release CI job adjusted requirements dutifully, but the result was
+not as expected, because we humans missed some needed changes.
+
+* Commit: `c3a6d6c <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/c3a6d6c16006cb01ec053c2eeff7e9f920945e79>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `81ce8d5 <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/81ce8d522996144354d59b1696d270ea618e396c>`_
+
 [TASK] Update composer manifest
 -----------------------------------------------------------------------------------------
 
@@ -2882,6 +2974,21 @@ won't show any open migrations for this package.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Welcome
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Undo requirements adjustment from CI job
+-----------------------------------------------------------------------------------------
+
+The release CI job adjusted requirements dutifully, but the result was
+not as expected, because we humans missed some needed changes.
+
+* Commit: `7cafb69 <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/7cafb697cffd4057c9def670a1dfe8a3f9aeb423>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/30/
+
+* Commit: `c27399f <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/c27399f219f810e5dca6c85ae2ea2acc3be9b8fe>`_
 
 [TASK] Update composer manifest
 -----------------------------------------------------------------------------------------
