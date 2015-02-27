@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-05-15
+The following reference was automatically generated from code on 2015-02-27
 
 
 Package *TYPO3.FLOW*
@@ -60,6 +60,39 @@ Related commands
   Freeze a package
 ``typo3.flow:package:refreeze``
   Refreeze a package
+
+
+
+``typo3.flow:cache:flushone``
+*****************************
+
+**Flushes a particular cache by its identifier**
+
+Given a cache identifier, this flushes just that one cache. To find
+the cache identifiers, you can use the configuration:show command with
+the type set to "Caches".
+
+Note that this does not have a force-flush option since it's not
+meant to remove temporary code data, resulting into a broken state if
+code files lack.
+
+Arguments
+^^^^^^^^^
+
+``--identifier``
+  Cache identifier to flush cache for
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:cache:flush``
+  Flush all caches
+``typo3.flow:configuration:show``
+  Show the active configuration settings
 
 
 
@@ -201,6 +234,10 @@ Options
   If set, use the given path as base when looking for packages
 ``--package-key``
   If set, migrate only the given package
+``--version``
+  If set, execute only the migration with the given version (e.g. "20150119114100")
+``--verbose``
+  If set, notes and skipped migrations will be rendered
 
 
 
@@ -246,6 +283,57 @@ entering commands like through the regular command line interface but
 additionally supports autocompletion and a user-based command history.
 
 
+
+
+
+
+
+``typo3.flow:database:setcharset``
+**********************************
+
+**Convert the database schema to use the given character set and collation (defaults to utf8 and utf8_unicode_ci).**
+
+This command can be used to convert the database configured in the Flow settings to the utf8 character
+set and the utf8_unicode_ci collation (by default, a custom collation can be given). It will only
+work when using the pdo_mysql driver.
+
+**Make a backup** before using it, to be on the safe side. If you want to inspect the statements used
+for conversion, you can use the $output parameter to write them into a file. This file can be used to do
+the conversion manually.
+
+For background information on this, see:
+
+- http://stackoverflow.com/questions/766809/
+- http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
+
+The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
+database server did not have a default collation of utf8_unicode_ci. In those cases, the tables will
+have a collation that does not match the default collation of later Flow versions, potentially leading
+to problems when creating foreign key constraints (among others, potentially).
+
+If you have special needs regarding the charset and collation, you *can* override the defaults with
+different ones. One thing this might be useful for is when switching to the utf8mb4 character set, see:
+
+- https://mathiasbynens.be/notes/mysql-utf8mb4
+- https://florian.ec/articles/mysql-doctrine-utf8/
+
+Note: This command **is not a general purpose conversion tool**. It will specifically not fix cases
+of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
+proper type, charset and collation is needed instead.
+
+
+
+Options
+^^^^^^^
+
+``--character-set``
+  Character set, defaults to utf8
+``--collation``
+  Collation to use, defaults to utf8_unicode_ci
+``--output``
+  A file to write SQL to, instead of executing it
+``--verbose``
+  If set, the statements will be shown as they are executed
 
 
 
@@ -631,6 +719,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--package-type``
+  The package type of the package to create
+
 
 
 Related commands
@@ -810,6 +904,46 @@ Related commands
 
 
 
+``typo3.flow:resource:clean``
+*****************************
+
+**Clean up resource registry**
+
+This command checks the resource registry (that is the database tables) for orphaned resource objects which don't
+seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
+without removing the related Resource object).
+
+If the TYPO3.Media package is active, this command will also detect any assets referring to broken resources
+and will remove the respective Asset object from the database when the broken resource is removed.
+
+This command will ask you interactively what to do before deleting anything.
+
+
+
+
+
+
+
+``typo3.flow:resource:publish``
+*******************************
+
+**Publish resources**
+
+This command publishes the resources of the given or - if none was specified, all - resource collections
+to their respective configured publishing targets.
+
+
+
+Options
+^^^^^^^
+
+``--collection``
+  If specified, only resources of this collection are published. Example: 'persistent'
+
+
+
+
+
 ``typo3.flow:routing:getpath``
 ******************************
 
@@ -871,6 +1005,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--method``
+  The request method (GET, POST, PUT, DELETE, ...) to simulate
+
 
 
 
@@ -878,7 +1018,7 @@ Arguments
 ``typo3.flow:routing:show``
 ***************************
 
-**Show informations for a route**
+**Show information for a route**
 
 This command displays the configuration of a route specified by index number.
 
@@ -938,6 +1078,104 @@ Related commands
 
 ``typo3.flow:security:importprivatekey``
   Import a private key
+
+
+
+``typo3.flow:security:showeffectivepolicy``
+*******************************************
+
+**Shows a list of all defined privilege targets and the effective permissions for the given groups.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--privilege-type``
+  The privilege type (entity or method)
+
+
+
+Options
+^^^^^^^
+
+``--role-identifiers``
+  A comma separated list of roleIdentifiers. Shows policy for an unauthenticated user when left empty.
+
+
+
+
+
+``typo3.flow:security:showmethodsforprivilegetarget``
+*****************************************************
+
+**Shows the methods represented by the given security privilege target**
+
+If the privilege target has parameters those can be specified separated by a colon
+for example "parameter1:value1" "parameter2:value2".
+But be aware that this only works for parameters that have been specified in the policy
+
+Arguments
+^^^^^^^^^
+
+``--privilege-target``
+  The name of the privilegeTarget as stated in the policy
+
+
+
+
+
+
+
+``typo3.flow:security:showunprotectedactions``
+**********************************************
+
+**Lists all public controller actions not covered by the active security policy**
+
+
+
+
+
+
+
+
+
+``typo3.flow:server:run``
+*************************
+
+**Run a standalone development server**
+
+Starts an embedded server, see http://php.net/manual/en/features.commandline.webserver.php
+Note: This requires PHP 5.4+
+
+To change the context Flow will run in, you can set the **FLOW_CONTEXT** environment variable:
+*export FLOW_CONTEXT=Development && ./flow server:run*
+
+
+
+Options
+^^^^^^^
+
+``--host``
+  The host name or IP address for the server to listen on
+``--port``
+  The server port to listen on
+
+
+
+
+
+``typo3.flow:typeconverter:list``
+*********************************
+
+**Lists all currently active and registered type converters**
+
+All active converters are listed with ordered by priority and grouped by
+source type first and target type second.
+
+
+
+
 
 
 

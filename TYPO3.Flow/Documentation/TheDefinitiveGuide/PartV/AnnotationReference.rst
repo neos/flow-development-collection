@@ -1,7 +1,9 @@
+.. _TYPO3 Flow Annotation Reference:
+
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2015-02-27
 
 
 After
@@ -132,6 +134,14 @@ Arguments
 
 
 
+CompileStatic
+-------------
+
+
+
+
+
+
 Entity
 ------
 
@@ -188,9 +198,12 @@ created - thus the limitations of that need to be observed.
 IgnoreValidation
 ----------------
 
-Used to ignore validation on a specific method argument.
+Used to ignore validation on a specific method argument or class property.
 
-:Applicable to: Method
+By default no validation will be executed for the given argument. To gather validation results for further
+processing, the "evaluate" option can be set to true (while still ignoring any validation error).
+
+:Applicable to: Method, Property
 
 
 
@@ -199,6 +212,8 @@ Arguments
 *********
 
 * ``argumentName`` (string): Name of the argument to skip validation for. (Can be given as anonymous argument.)
+
+* ``evaluate`` (boolean): Whether to evaluate the validation results of the argument
 
 
 
@@ -213,6 +228,58 @@ to inject a value as specified by the var annotation.
 
 :Applicable to: Property
 
+
+
+
+Arguments
+*********
+
+* ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
+  proxy should be injected instead
+
+* ``setting`` (string): Path of a setting (without the package key) which should be injected into the property.
+  Example: session.name
+
+* ``package`` (string): Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
+  is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
+  used.
+  
+  Example: TYPO3.Flow
+
+
+
+
+InjectConfiguration
+-------------------
+
+Used to enable property injection for configuration including settings.
+
+Flow will build Dependency Injection code for the property and try
+to inject the configured configuration.
+
+:Applicable to: Property
+
+
+
+
+Arguments
+*********
+
+* ``path`` (string): Path of a configuration which should be injected into the property.
+  Can be specified as anonymous argument: InjectConfiguration("some.path")
+  
+  For type "Settings" this refers to the relative path (excluding the package key)
+  
+  Example: session.name
+
+* ``package`` (string): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
+  package to be the same which contains the class where the InjectConfiguration annotation is used.
+  
+  Note: This property is only supported for type "Settings"
+  
+  Example: TYPO3.Flow
+
+* ``type`` (string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants): Type of Configuration (defaults to "Settings").
 
 
 

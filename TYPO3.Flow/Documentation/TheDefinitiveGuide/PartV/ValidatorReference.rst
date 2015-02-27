@@ -1,7 +1,9 @@
+.. _TYPO3 Flow Validator Reference:
+
 TYPO3 Flow Validator Reference
 ==============================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2015-02-27
 
 
 AlphanumericValidator
@@ -16,14 +18,21 @@ The given $value is valid if it is an alphanumeric string, which is defined as [
 
 
 
-GenericObjectValidator
-----------------------
+BooleanValueValidator
+---------------------
 
-A generic object validator which allows for specifying property validators.
+Validator for a specific boolean value.
 
-Checks if the given value is valid according to the property validators.
+Checks if the given value is a specific boolean value.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+Arguments
+*********
+
+* ``expectedValue`` (boolean, *optional*): The expected boolean value
 
 
 
@@ -175,6 +184,18 @@ FloatValidator
 Validator for floats.
 
 The given value is valid if it is of type float or a string matching the regular expression [0-9.e+-]
+
+.. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+
+GenericObjectValidator
+----------------------
+
+A generic object validator which allows for specifying property validators.
+
+Checks if the given value is valid according to the property validators.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
 
@@ -361,6 +382,26 @@ want to be sure of that, use a customized regular expression or filter on output
 See http://php.net/filter_var for details.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+
+UniqueEntityValidator
+---------------------
+
+Validator for uniqueness of entities.
+
+Checks if the given value is a unique entity depending on it's identity properties or
+custom configured identity properties.
+
+.. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+Arguments
+*********
+
+* ``identityProperties`` (array, *optional*): List of custom identity properties.
 
 
 
