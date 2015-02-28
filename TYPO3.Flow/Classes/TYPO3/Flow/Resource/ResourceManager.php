@@ -302,12 +302,6 @@ class ResourceManager {
 	public function deleteResource(Resource $resource, $unpublishResource = TRUE) {
 		$collectionName = $resource->getCollectionName();
 
-		if ($unpublishResource) {
-			/** @var TargetInterface $target */
-			$target = $this->collections[$collectionName]->getTarget();
-			$target->unpublishResource($resource);
-		}
-
 		$result = $this->resourceRepository->findBySha1($resource->getSha1());
 		if (count($result) > 1) {
 			$this->systemLogger->log(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other Resource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1), LOG_DEBUG);
@@ -328,12 +322,16 @@ class ResourceManager {
 				return FALSE;
 			}
 			if ($unpublishResource) {
+				/** @var TargetInterface $target */
+				$target = $this->collections[$collectionName]->getTarget();
+				$target->unpublishResource($resource);
 				$this->systemLogger->log(sprintf('Removed storage data and unpublished resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
 			} else {
 				$this->systemLogger->log(sprintf('Removed storage data of resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
 			}
 		}
 
+		$resource->setDeleted();
 		$this->resourceRepository->remove($resource);
 		return TRUE;
 	}

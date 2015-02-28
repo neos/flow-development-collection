@@ -98,6 +98,14 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	protected $lifecycleEventsActive = TRUE;
 
 	/**
+	 * An internal flag which tells if this Resource object has been deleted during the current request
+	 *
+	 * @Flow\Transient
+	 * @var boolean
+	 */
+	protected $deleted = FALSE;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
@@ -443,7 +451,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * @ORM\PreRemove
 	 */
 	public function preRemove() {
-		if ($this->lifecycleEventsActive) {
+		if ($this->lifecycleEventsActive && $this->deleted === FALSE) {
 			$this->resourceManager->deleteResource($this);
 		}
 	}
@@ -458,6 +466,28 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 */
 	public function disableLifecycleEvents() {
 		$this->lifecycleEventsActive = FALSE;
+	}
+
+	/**
+	 * An internal method which marks the Resource object as deleted.
+	 *
+	 * This method is called by the Resource Manager in order to prevent other code parts, for example the Doctrine
+	 * lifecycle events, to delete this resource again.
+	 *
+	 * @param boolean $flag
+	 * @return void
+	 */
+	public function setDeleted($flag = TRUE) {
+		$this->deleted = $flag;
+	}
+
+	/**
+	 * An internal method which tells if this Resource object has been already deleted by the Resource Manager.
+	 *
+	 * @return boolean
+	 */
+	public function isDeleted() {
+		return $this->deleted;
 	}
 
 	/**
@@ -486,7 +516,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	 * Takes care of removing a possibly existing temporary local copy on destruction of this object.
 	 *
 	 * Note: we can't use __destruct() here because this would lead Doctrine to create a proxy method __destruct() which
-	 *       will run __load(), which in turn will triger the SQL protection in Flow Security, which will then discover
+	 *       will run __load(), which in turn will trigger the SQL protection in Flow Security, which will then discover
 	 *       that a possibly previously existing session has been half-destroyed already (see FLOW-121).
 	 *
 	 * @return void
