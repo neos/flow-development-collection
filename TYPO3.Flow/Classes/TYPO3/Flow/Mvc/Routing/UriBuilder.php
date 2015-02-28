@@ -438,19 +438,15 @@ class UriBuilder {
 
 				$subRequest = $subRequest->getParentRequest();
 			}
-		}
-
-		if ($this->addQueryString === TRUE) {
+		} elseif ($this->addQueryString === TRUE) {
 			$requestArguments = $this->request->getArguments();
 			foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
 				unset($requestArguments[$argumentToBeExcluded]);
 			}
 
-			if (count($requestArguments) === 0) {
-				return $arguments;
+			if ($requestArguments !== array()) {
+				$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 			}
-
-			$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 		}
 
 		return $arguments;
