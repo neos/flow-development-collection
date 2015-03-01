@@ -17,7 +17,7 @@ this rocks big time.
 * *Tasks:* Find bugs, describe them, reproduce them in a unit test
 * *Skills needed:* Attention to detail, knowledge about PHP and PHPUnit is a plus
 
-**Report bugs in the** `TYPO3 Flow Base Distribution issue tracker <http://forge.typo3.org/projects/flow3-distribution-base/issues>`_ **!**
+**Report bugs in the** `TYPO3 Flow JIRA issue tracker <https://jira.typo3.org/browse/FLOW/>`_ **!**
 
 Improve Documentation
 =====================
@@ -45,7 +45,7 @@ For a quick start follow these simple steps:
 #. Read the documentation and adjust it as needed - it is in the *Documentation* directory.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `TYPO3 Flow issue tracker <http://forge.typo3.org/projects/package-typo3-flow/issues>`_.
+   `TYPO3 Flow JIRA issue tracker`_.
 
 If you like to see a rendered HTML result of the documentation a few more steps are necessary:
 
@@ -66,7 +66,7 @@ If you like to see a rendered HTML result of the documentation a few more steps 
 #. Read the documentation and adjust it as needed.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `TYPO3 Flow issue tracker`_.
+   `TYPO3 Flow JIRA issue tracker`_.
 
 Work on the Code
 ================
