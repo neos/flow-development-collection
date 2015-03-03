@@ -35,6 +35,14 @@ interface ChangeDetectionStrategyInterface {
 	public function getFileStatus($pathAndFilename);
 
 	/**
+	 * Notify the change strategy that this file was deleted and does not need to be tracked anymore.
+	 *
+	 * @param string $pathAndFilename
+	 * @return void
+	 */
+	public function setFileDeleted($pathAndFilename);
+
+	/**
 	 * Creates a link to the file monitor using the strategy
 	 *
 	 * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor

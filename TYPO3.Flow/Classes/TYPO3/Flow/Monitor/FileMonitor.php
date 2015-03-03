@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Monitor;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A monitor which detects changes in directories or files
@@ -27,7 +29,7 @@ class FileMonitor {
 	protected $identifier;
 
 	/**
-	 * @var \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
+	 * @var ChangeDetectionStrategyInterface
 	 */
 	protected $changeDetectionStrategy;
 
@@ -57,15 +59,25 @@ class FileMonitor {
 	protected $monitoredDirectories = array();
 
 	/**
+	 * Changed files for this monitor
+	 *
 	 * @var array
 	 */
-	protected $directoriesAndFiles = array();
+	protected $changedFiles = NULL;
 
 	/**
-	 * If the directories changed and therefore need to be cached
-	 * @var boolean
+	 * The changed paths for this monitor
+	 *
+	 * @var array
 	 */
-	protected $directoriesChanged = FALSE;
+	protected $changedPaths = NULL;
+
+	/**
+	 * Array of directories and files that were cached on the last run.
+	 *
+	 * @var array
+	 */
+	protected $directoriesAndFiles = NULL;
 
 	/**
 	 * Constructs this file monitor
@@ -98,7 +110,6 @@ class FileMonitor {
 		$fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
 		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance('TYPO3\Flow\SignalSlot\Dispatcher'));
 		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
-		$fileMonitor->initializeObject();
 
 		return $fileMonitor;
 	}
@@ -106,10 +117,10 @@ class FileMonitor {
 	/**
 	 * Injects the Change Detection Strategy
 	 *
-	 * @param \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
+	 * @param ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
 	 */
-	public function injectChangeDetectionStrategy(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
+	public function injectChangeDetectionStrategy(ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
 		$this->changeDetectionStrategy->setFileMonitor($this);
 	}
@@ -146,17 +157,6 @@ class FileMonitor {
 	}
 
 	/**
-	 * Initializes this monitor
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		if ($this->cache->has($this->identifier . '_directoriesAndFiles')) {
-			$this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles'), TRUE);
-		}
-	}
-
-	/**
 	 * Returns the identifier of this monitor
 	 *
 	 * @return string
@@ -178,7 +178,7 @@ class FileMonitor {
 		if (!is_string($pathAndFilename)) {
 			throw new \InvalidArgumentException('String expected, ' . gettype($pathAndFilename), ' given.', 1231171809);
 		}
-		$pathAndFilename = \TYPO3\Flow\Utility\Files::getUnixStylePath($pathAndFilename);
+		$pathAndFilename = Files::getUnixStylePath($pathAndFilename);
 		if (array_search($pathAndFilename, $this->monitoredFiles) === FALSE) {
 			$this->monitoredFiles[] = $pathAndFilename;
 		}
@@ -198,7 +198,7 @@ class FileMonitor {
 		if (!is_string($path)) {
 			throw new \InvalidArgumentException('String expected, ' . gettype($path), ' given.', 1231171810);
 		}
-		$path = rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($path), '/');
+		$path = Files::getNormalizedPath(Files::getUnixStylePath($path));
 		if (!array_key_exists($path, $this->monitoredDirectories)) {
 			$this->monitoredDirectories[$path] = $filenamePattern;
 		}
@@ -232,64 +232,147 @@ class FileMonitor {
 	 * @api
 	 */
 	public function detectChanges() {
-		$changedDirectories = array();
-		$changedFiles = $this->detectChangedFiles($this->monitoredFiles);
+		if ($this->changedFiles === NULL || $this->changedPaths === NULL) {
+			$this->loadDetectedDirectoriesAndFiles();
+			$changesDetected = FALSE;
+			$this->changedPaths = $this->changedFiles = array();
+			$this->changedFiles = $this->detectChangedFiles($this->monitoredFiles);
 
-		foreach ($this->monitoredDirectories as $path => $filenamePattern) {
-			if (!isset($this->directoriesAndFiles[$path])) {
-				$currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path);
-				$this->directoriesAndFiles[$path] = $currentSubDirectoriesAndFiles;
-
-				$this->directoriesChanged = TRUE;
-				$changedDirectories[$path] = \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
+			foreach ($this->monitoredDirectories as $path => $filenamePattern) {
+				$changesDetected = $this->detectChangesOnPath($path, $filenamePattern) ? TRUE : $changesDetected;
 			}
-		}
 
-		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
-			try {
-				$currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path);
-				if ($currentSubDirectoriesAndFiles != $pathAndFilenames) {
-					$pathAndFilenames = array_unique(array_merge($currentSubDirectoriesAndFiles, $pathAndFilenames));
-					$this->directoriesAndFiles[$path] = $pathAndFilenames;
-					$this->directoriesChanged = TRUE;
-				}
-				$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
-			} catch (\TYPO3\Flow\Utility\Exception $exception) {
-				unset($this->directoriesAndFiles[$path]);
-				$this->directoriesChanged = TRUE;
-				$changedDirectories[$path] = \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
+			if ($changesDetected) {
+				$this->saveDetectedDirectoriesAndFiles();
 			}
+			$this->directoriesAndFiles = NULL;
 		}
 
-		if (count($changedFiles) > 0) {
-			$this->emitFilesHaveChanged($this->identifier, $changedFiles);
+		$changedFileCount = count($this->changedFiles);
+		$changedPathCount = count($this->changedPaths);
+
+		if ($changedFileCount > 0) {
+			$this->emitFilesHaveChanged($this->identifier, $this->changedFiles);
 		}
-		if (count($changedDirectories) > 0) {
-			$this->emitDirectoriesHaveChanged($this->identifier, $changedDirectories);
+		if ($changedPathCount > 0) {
+			$this->emitDirectoriesHaveChanged($this->identifier, $this->changedPaths);
 		}
-		if (count($changedFiles) > 0 || count($changedDirectories) > 0) {
-			$this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), count($changedDirectories)), LOG_INFO);
+		if ($changedFileCount > 0 || $changedPathCount) {
+			$this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount), LOG_INFO);
 		}
+	}
+
+	/**
+	 * Detect changes for one of the monitored paths.
+	 *
+	 * @param string $path
+	 * @param string $filenamePattern
+	 * @return boolean TRUE if any changes were detected in this path
+	 */
+	protected function detectChangesOnPath($path, $filenamePattern) {
+		$currentDirectoryChanged = FALSE;
+		try {
+			$currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path, $filenamePattern);
+		} catch (\Exception $exception) {
+			$currentSubDirectoriesAndFiles = array();
+			$this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_DELETED;
+		}
+
+		$nowDetectedFilesAndDirectories = array();
+		if (!isset($this->directoriesAndFiles[$path])) {
+			$this->directoriesAndFiles[$path] = array();
+			$this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_CREATED;
+		}
+
+		foreach ($currentSubDirectoriesAndFiles as $pathAndFilename) {
+			$status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
+			if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
+				$this->changedFiles[$pathAndFilename] = $status;
+				$currentDirectoryChanged = TRUE;
+			}
+
+			if (isset($this->directoriesAndFiles[$path][$pathAndFilename])) {
+				unset($this->directoriesAndFiles[$path][$pathAndFilename]);
+			}
+			$nowDetectedFilesAndDirectories[$pathAndFilename] = 1;
+		}
+
+		if ($this->directoriesAndFiles[$path] !== array()) {
+			foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
+				$this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
+				$this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
+			}
+			$currentDirectoryChanged = TRUE;
+		}
+
+		if ($currentDirectoryChanged) {
+			$this->setDetectedFilesForPath($path, $nowDetectedFilesAndDirectories);
+		}
+
+		return $currentDirectoryChanged;
 	}
 
 	/**
 	 * Read a monitored directory recursively, taking into account filename patterns
 	 *
 	 * @param string $path The path of a monitored directory
-	 * @return array An array of filenames with full path
+	 * @param string $filenamePattern
+	 * @return \Generator<string> A generator returning filenames with full path
 	 */
-	protected function readMonitoredDirectoryRecursively($path) {
-		$filenames = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($path);
-		$filenamePattern = isset($this->monitoredDirectories[$path]) ? $this->monitoredDirectories[$path] : NULL;
-		if ($filenamePattern !== NULL) {
-			$filenames = array_filter(
-				$filenames,
-				function ($pathAndFilename) use ($filenamePattern) {
-					return preg_match('|' . $filenamePattern . '|', basename($pathAndFilename)) === 1;
+	protected function readMonitoredDirectoryRecursively($path, $filenamePattern) {
+		$directories = array(Files::getNormalizedPath($path));
+		while ($directories !== array()) {
+			$currentDirectory = array_pop($directories);
+			if (is_file($currentDirectory . '.flowFileMonitorIgnore')) {
+				continue;
+			}
+			if ($handle = opendir($currentDirectory)) {
+				while (FALSE !== ($filename = readdir($handle))) {
+					if ($filename[0] === '.') {
+						continue;
+					}
+					$pathAndFilename = $currentDirectory . $filename;
+					if (is_dir($pathAndFilename)) {
+						array_push($directories, $pathAndFilename . DIRECTORY_SEPARATOR);
+					} elseif ($filenamePattern === NULL || preg_match('|' . $filenamePattern . '|', $filename) === 1) {
+						yield $pathAndFilename;
+					}
 				}
-			);
+				closedir($handle);
+			}
 		}
-		return $filenames;
+	}
+
+	/**
+	 * Loads the last detected files for this monitor.
+	 *
+	 * @return void
+	 */
+	protected function loadDetectedDirectoriesAndFiles() {
+		if ($this->directoriesAndFiles === NULL) {
+			$this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles'), TRUE);
+			if (!is_array($this->directoriesAndFiles)) {
+				$this->directoriesAndFiles = array();
+			}
+		}
+	}
+
+	/**
+	 * Store the changed directories and files back to the cache.
+	 *
+	 * @return void
+	 */
+	protected function saveDetectedDirectoriesAndFiles() {
+		$this->cache->set($this->identifier . '_directoriesAndFiles', json_encode($this->directoriesAndFiles));
+	}
+
+	/**
+	 * @param string $path
+	 * @param array $files
+	 * @return void
+	 */
+	protected function setDetectedFilesForPath($path, array $files) {
+		$this->directoriesAndFiles[$path] = $files;
 	}
 
 	/**
@@ -302,7 +385,7 @@ class FileMonitor {
 		$changedFiles = array();
 		foreach ($pathAndFilenames as $pathAndFilename) {
 			$status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-			if ($status !== \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
+			if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
 				$changedFiles[$pathAndFilename] = $status;
 			}
 		}
@@ -341,10 +424,6 @@ class FileMonitor {
 	 * @return void
 	 */
 	public function shutdownObject() {
-		if ($this->directoriesChanged === TRUE) {
-			$this->cache->set($this->identifier . '_directoriesAndFiles', json_encode($this->directoriesAndFiles));
-		}
 		$this->changeDetectionStrategy->shutdownObject();
 	}
-
 }
