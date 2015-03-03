@@ -97,6 +97,19 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	}
 
 	/**
+	 * Notify the change strategy that this file was deleted and does not need to be tracked anymore.
+	 *
+	 * @param string $pathAndFilename
+	 * @return void
+	 */
+	public function setFileDeleted($pathAndFilename) {
+		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
+			unset($this->filesAndModificationTimes[$pathAndFilename]);
+			$this->modificationTimesChanged = TRUE;
+		}
+	}
+
+	/**
 	 * Caches the file modification times
 	 *
 	 * @return void
