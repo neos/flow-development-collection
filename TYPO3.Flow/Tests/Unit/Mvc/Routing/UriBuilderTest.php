@@ -580,6 +580,39 @@ class UriBuilderTest extends UnitTestCase {
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
+	/**
+	 * @test
+	 */
+	public function buildWithAddQueryStringMergesAllArgumentsAndKeepsRequestBoundariesIntact() {
+		$expectedArguments = array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request');
+		$this->mockMainRequest->expects($this->any())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Other Argument From Request')));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubNamespace'));
+
+		$this->mockSubRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Retained Argument From Parent Request')));
+
+		$this->mockSubSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubSubNamespace'));
+
+		$this->mockSubSubRequest->expects($this->any())
+			->method('getArguments')
+			->will($this->returnValue(array('Foo' => 'SomeArgument')));
+
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->setArguments(array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled'))));
+		$this->uriBuilder->setAddQueryString(TRUE);
+		$this->uriBuilder->build();
+
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
 
 	/**
 	 * @test
