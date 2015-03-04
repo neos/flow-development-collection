@@ -561,7 +561,7 @@ class ActionController extends AbstractController {
 	 */
 	protected function errorAction() {
 		$this->addErrorFlashMessage();
-		$this->redirectToReferringRequest();
+		$this->forwardToReferringRequest();
 
 		return $this->getFlattenedValidationErrorMessage();
 	}
@@ -574,7 +574,7 @@ class ActionController extends AbstractController {
 	 * @return void
 	 * @throws ForwardException
 	 */
-	protected function redirectToReferringRequest() {
+	protected function forwardToReferringRequest() {
 		$referringRequest = $this->request->getReferringRequest();
 		if ($referringRequest === NULL) {
 			return;
@@ -589,6 +589,14 @@ class ActionController extends AbstractController {
 		$argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
 
 		$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageKey, $argumentsForNextController);
+	}
+
+	/**
+	 * @deprecated since 3.0 - Use forwardToReferringRequest() instead. This method might be reworked to issue a "real" redirect at some point!
+	 * @return void
+	 */
+	protected function redirectToReferringRequest() {
+		$this->forwardToReferringRequest();
 	}
 
 	/**
