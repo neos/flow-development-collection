@@ -814,4 +814,13 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
 	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException
+	 */
+	public function registeringTheSamePackageKeyWithDifferentCaseShouldThrowException() {
+		$this->packageManager->createPackage('doctrine.instantiator');
+		$this->packageManager->createPackage('doctrine.Instantiator');
+	}
+
 }
