@@ -167,7 +167,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 	 * If $value is empty, this method checks whether a default value exists.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
 	 *
-	 * @param string $value value to resolve
+	 * @param mixed $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @api
 	 */
@@ -177,7 +177,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 		}
 		if (is_object($value)) {
 			$value = $this->persistenceManager->getIdentifierByObject($value);
-			if ($value === NULL || !is_string($value)) {
+			if ($value === NULL || (!is_string($value) && !is_integer($value))) {
 				return FALSE;
 			}
 		}
