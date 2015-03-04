@@ -1,0 +1,429 @@
+====================
+2.3.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Children operation does not work with collections
+-----------------------------------------------------------------------------------------
+
+Children operation applied to entities and giving the name of a
+collection property don't retrieve the collection
+
+* Fixes: `#52450 <http://forge.typo3.org/issues/52450>`_
+* Commit: `b5a13cb <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/b5a13cbe76c0b4a21039ac50d433c68d6d7826a8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/37/
+
+* Commit: `df212cd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/df212cd0416818b14d256fa9c3f0b6c8f6014940>`_
+
+[BUGFIX] Start session when fetching a CSRF token
+-----------------------------------------------------------------------------------------
+
+This change adds a ``@Flow\\Session(autoStart=true)`` annotation to the
+method ``Security\\Context::getCsrfProtectionToken()``.
+
+Background:
+
+Currently ``CSRF`` tokens are bound to a session. Thus fetching a token
+without starting a session makes no sense because the token will be
+invalid on the next request.
+
+In the long run we might be able to create "stateless" CSRF tokens that
+don't require a session.
+
+Related: FLOW-130
+
+Depends: I896f6a722445deede1f0a656ea73db04f0d2e978
+
+* Commit: `4c18080 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4c180800e258389752e03dea9965f8c038ae95b1>`_
+
+[BUGFIX] Fix hostname option name for Redis backend
+-----------------------------------------------------------------------------------------
+
+Redis backend option for specifying a hostname is not `host`
+but `hostname`.
+
+* Commit: `f506bcf <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f506bcff1692e0b0468120766ad9056de548c609>`_
+
+[BUGFIX] Don't append subrequest arguments to toplevel request
+-----------------------------------------------------------------------------------------
+
+For sub-requests the ``Uribuilder`` would append the sub-request
+arguments again without namespace prefix if ``addQueryString`` was set.
+This can lead to invalid URLs and possible side-effects.
+An example of this would be that having this URL::
+
+  some/action?namespace[argument]=foo
+
+And building a URL in the subrequest with ``addQueryString`` enabled and
+arguments set to ``array('argument' => 'bar')``. Previously the
+resulting URL was::
+
+  some/action?namespace[argument]=bar&argument=foo
+
+With this change it is::
+
+  some/action?namespace[argument]=bar
+
+Fixes: NEOS-1027
+
+* Commit: `5843e0a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5843e0ae65e88f75ab0e493cb3d0d1bfa5b3407e>`_
+
+[BUGFIX] Pointed the issue tracker URL to the new JIRA instance
+-----------------------------------------------------------------------------------------
+
+* Commit: `510c202 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/510c2026c86cec81f10a102589073775c569404c>`_
+
+[BUGFIX] Schema validation: Accept interfaces for format "class-name"
+-----------------------------------------------------------------------------------------
+
+This change adjusts the ``SchemaValidator`` to accept strings referring
+interfaces even if format "class-name" is required.
+
+Background:
+
+Currently if a string is expected to have the format "class-name", like::
+
+ { type: string, format: class-name }
+
+in a schema validation, only actual class names are accepted. To match
+interfaces the "interface-name" format can be used.
+
+In Flow we often use interface names in Objects.yaml in order to keep
+things decoupled and flexible.
+Because it's not possible to specify multiple supported formats, this
+relaxes this restriction.
+
+* Commit: `fab57b5 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fab57b5a180640b50f577f54312a6a1bb2dae52d>`_
+
+[TASK] Add missing changelogs (for 2.1.2 and 2.2.x)
+-----------------------------------------------------------------------------------------
+
+* Commit: `98d2fda <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/98d2fdafc2385adac60f5e6cb519e066c16ce4f6>`_
+
+[BUGFIX] Fix error and standard view templates
+-----------------------------------------------------------------------------------------
+
+Fixes several minor issues in regards of rendering of the default
+``Error`` and `StandardView`` templates:
+
+* Inline "StandardView_FloatingWindow.png" background image (it wasn't loaded
+  otherwise when not in web root because of missing base tag)
+* Remove references to "StandardView_Package.png" that doesn't exist
+* Commit: `ed711d8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ed711d8c03c493b298f7f06a7a642f2e603c04e0>`_
+
+[BUGFIX] Enable Functional Tests for PSR-4 packages
+-----------------------------------------------------------------------------------------
+
+Packages with PSR-4 autoloading will not be able to work with
+functional tests because two problems arise. First the
+package namespace is prepended twice and second the path
+contains an unnecessary backslash.
+
+To avoid wrong amounts of backslashes we now use the path merging
+utility to merge namespace parts instead of doing simple string
+concatenation. Additionally a check is added for packages with
+PSR-4 autoloading enabled.
+
+Releaes: master, 2.3
+
+* Commit: `0c2d4e2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0c2d4e2cf3dc0f8eedf48130930d2adb1118fe14>`_
+
+[BUGFIX] Rename redirectToReferringRequest() to forwardToReferringRequest() in ActionController
+-----------------------------------------------------------------------------------------------
+
+``ActionRequest::redirectToReferringRequest()`` actually triggers a
+forward not a redirect.
+This change deprecates the ``redirectToReferringRequest()`` method in
+favor of a new method ``redirectToReferringRequest()`` which works
+exactly like the previous method.
+
+The deprecated method might be re-implemented to issue a "real" HTTP
+redirect at some point, so you should not use it for forwards.
+
+Fixes: FLOW-164
+
+* Commit: `865ddc2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/865ddc265da5985af16df9f2b20e9f22d2fd8776>`_
+
+[BUGFIX] Support numeric identifiers in dynamic route parts
+-----------------------------------------------------------------------------------------
+
+Currently the dynamic route part handler provided by Flow (namely
+``DynamicRoutePart`` and ``IdentityRoutePart``) only support objects
+with string identifiers.
+
+With this change also numeric identifiers are supported, for example
+for entities with a numeric auto_increment identifier.
+
+* Fixes: `#48887 <http://forge.typo3.org/issues/48887>`_
+* Fixes: `#58517 <http://forge.typo3.org/issues/58517>`_
+
+* Commit: `f5bb055 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f5bb0553bd141dcd12e7900f602df5bc3b3c5c2a>`_
+
+[BUGFIX] Support persisting cloned related entities
+-----------------------------------------------------------------------------------------
+
+Cloning entities which are fetched as Doctrine proxy leads to an fatal
+error in PersistenceManager. This patch fixes that behaviour and provides
+a functional test for the use case.
+
+* Commit: `6360202 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6360202f16ec2525df3789121086a01de09a28c2>`_
+
+[TASK] Fix unit tests failing on PHP 5.6
+-----------------------------------------------------------------------------------------
+
+Some unit tests failed under PHP 5.6 because an argument to be passed by
+reference was by value.
+The affected tests now use ``_callRef`` in the ``AccessibleMock``.
+
+This should solve those issues on HHVM as well.
+
+Related: FLOW-194
+
+* Commit: `5568cbd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5568cbdff1323974bbbe2b1644f8204db60e5543>`_
+
+[BUGFIX] Properly support doctrine's indexBy attribute
+-----------------------------------------------------------------------------------------
+
+Doctrine allows an indexBy attribute at OneToMany and ManyToMany
+relations. The current FlowAnnotationDriver removes this attribute.
+This patch passes it forward again.
+
+Functional tests are included.
+
+* Related: `#44740 <http://forge.typo3.org/issues/44740>`_
+* Commit: `fcd2517 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fcd2517c4c1d8fcf802bbe922d215347d5515081>`_
+
+[TASK] Suggest ext-curl in composer manifest
+-----------------------------------------------------------------------------------------
+
+The curl PHP extension is used in the HTTP client CurlEngine and thus
+this change marks it as suggested in the composer manifest.
+
+* Commit: `0d41f8b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0d41f8b6f38c204efcd8d0f716e832b5469f981e>`_
+
+[BUGFIX] Fix typo in PHPDoc for method getParameters
+-----------------------------------------------------------------------------------------
+
+This commit fixes a typo in the PHPDoc for the method
+getParameters in file TYPO3\\Flow\\Reflection\\MethodReflection
+
+* Commit: `d4d3da0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d4d3da09499689aa05ee3b6eb712b203fd3276f7>`_
+
+[BUGFIX] Fix typo in PHPDoc for method createSchema
+-----------------------------------------------------------------------------------------
+
+This commit fixes a typo in the PHPDoc for the method
+createSchema in file TYPO3\\Flow\\Persistence\\Doctrine\\Service
+
+* Commit: `85f10fd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/85f10fd17e8da3d7f1fc270569180d07796eaeef>`_
+
+[BUGFIX] Package keys with different case should not be allowed
+-----------------------------------------------------------------------------------------
+
+Composer packages could change their Flow package key case, the package
+manager needs to prevent registering the same package twice.
+
+Fixes: FLOW-156
+
+* Commit: `20410ba <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/20410ba5cae53afba7017c60265409c6b54ea665>`_
+
+[TASK] Make i18n locale fallback rule handling a bit more robust
+-----------------------------------------------------------------------------------------
+
+If the locale fallback rule for the i18n framework is given without order an
+exception is thrown. A missing strict flag on the fallback rule is set to the
+default (FALSE) as implied by the documentation.
+
+* Commit: `cf4ed12 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/cf4ed12242f0fc9adbbd0583be4d16698cfbfdf6>`_
+
+[BUGFIX] Properly resolve case of Subpackage Key in ActionRequest
+-----------------------------------------------------------------------------------------
+
+``ActionRequest::getControllerSubpackageKey()`` failed to return the
+correctly cased subpackage key.
+This is not the case for the other ``getController*()`` getters and
+can lead to issues (e.g. "Template could not be loaded" Fluid
+exceptions on case-sensitive file systems.
+
+This change adjusts the ``getControllerSubpackageKey()`` method to
+``getControllerName()`` which already uses the correctly cased
+controllerObjectName to extract the controller name.
+
+Fixes: FLOW-126
+
+* Commit: `db46cfc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/db46cfcbb79ced6caf26f1c0c5ca175f9a5cc95f>`_
+
+[TASK] Fix warnings during reStructuredText rendering
+-----------------------------------------------------------------------------------------
+
+This tweaks rst files to get rid of some warnings that are emitted
+during documentation rendering.
+
+* Commit: `01d314d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/01d314d113cf5f58ef408580bb28ca4f9e17371a>`_
+
+[TASK] Remove inaccessible code from ArrayConverter
+-----------------------------------------------------------------------------------------
+
+Remove code that is currently inaccessible, because the constant
+STRING_FORMAT_SERIALIZED is not defined in the class.
+
+Unserializing from untrusted sources should not be done anyway
+so we remove this possibility completely instead of adding the constant.
+
+A use case which would require an unserialize for array conversion is complex
+enough to be handled in a dedicated type converter class which exactly fits the use case
+instead of providing a potentially insecure shortcut for that (unserialize) in the framework.
+
+* Commit: `491eaa7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/491eaa7f7434a245f2e4c685a90499a6fc6b7b4c>`_
+
+[BUGFIX] Adjust settings schema to "Add Configuration for Doctrine Filters"
+-----------------------------------------------------------------------------------------
+
+This fixes the ``TYPO3.Flow.persistence.schema.yaml`` according to the
+"Add Configuration for Doctrine Filters" change introduced with
+If8582f8d138a7e46b8b77fc3c4b83b78bfc93bba.
+
+* Commit: `8ae8b37 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8ae8b37f665fd4f81cc745b07176f8fa19ec9e6e>`_
+
+[BUGFIX] Package meta data do not contain package type.
+-----------------------------------------------------------------------------------------
+
+When loading packages using the PackageManager class, the associated
+MetaData instance is not initialized with the package type.
+
+* Commit: `12e98e4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/12e98e4930507a4c53b484169a2d1c430d2ecd3a>`_
+
+[BUGFIX] AOP works with __clone call on parent objects
+-----------------------------------------------------------------------------------------
+
+If, for example, you extend an entity which implements __clone
+the AOP Framework breaks with an warning in development mode,
+that it cannot access Flow_Aop_Proxy_targetMethodsAndGroupedAdvices.
+
+Solution is to check  if the private
+Flow_Aop_Proxy_targetMethodsAndGroupedAdvices property is
+accessible and otherwise skipping the Advice call.
+
+* Related: `#37571 <http://forge.typo3.org/issues/37571>`_
+* Commit: `0850d92 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0850d92ccd0f26a46d19f2bd92833ca3918725bd>`_
+
+[BUGFIX] Log exceptions recursively in ``SystemLogger::logException()``
+-----------------------------------------------------------------------------------------
+
+With this change "post mortem" information about the complete exception
+chain is logged, and not only for the outer exception.
+
+This also adds some cosmetic and non-functional cleanups in order to
+increase readability and IDE support:
+
+* Import FQN where applicable
+* Remove unused import statements
+
+Fixes: FLOW-159
+(cherry picked from commit 38602eb9d09ee6ad87a74352eadfaa17312d547c)
+
+* Commit: `c9636be <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c9636be69c48431d46f2589cad3a28e05d4c5257>`_
+
+[BUGFIX] Adjust CommandLine documentation to refactored console output
+-----------------------------------------------------------------------------------------
+
+This adjusts the ``CommandLine`` section of the documentation to
+changes introduced with Ia77c62b41fb598bdfb7b81c530494ba819a590d1.
+
+* Related: `#49016 <http://forge.typo3.org/issues/49016>`_
+* Commit: `0bb8bac <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0bb8bac767b07a45367514447b318b43bd93c154>`_
+
+[BUGFIX] Throw exception when trying to reflect a non-existing class
+-----------------------------------------------------------------------------------------
+
+Previously the ``ReflectionService`` ignored classes that couldn't be
+loaded. It just logged an error and marked the respective class
+"unconfigurable".
+This leads to weird side effects that are hard to track down.
+
+With this change an exception is thrown during compile time whenever
+a class is being reflected that couldn't be loaded.
+
+If a class or file should be skipped during reflection, the
+``excludeClasses`` can be used::
+
+  TYPO3:
+    Flow:
+      object:
+        excludeClasses:
+          'Some.PackageKey': ['Some\\\\Class\\\\Name']
+
+Fixes: FLOW-128
+
+* Commit: `0ded0a4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0ded0a4c4ab81c58bc6ee5e4848f2b3833004f08>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Render Form CSRF token field only if authenticated
+-----------------------------------------------------------------------------------------
+
+Currently ``CSRF`` tokens are only enforced if an account is
+authenticated. But the form ViewHelper rendered the corresponding
+hidden field for all forms with method != "GET".
+
+Background:
+
+Rendering the hidden field did not have a side effect before but as
+CSRF tokens only make sense with an active session,
+``Security\\Context::getCsrfProtectionToken()`` will be adjusted to start
+a session when called. Therefore the token should only be fetched if it's
+really required.
+
+Related: FLOW-130
+
+* Commit: `54652d0 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/54652d0be5f09222b5fbd23bd63c3da87fda3d2d>`_
+
+[TASK] Streamline regular expression for Resource URLs
+-----------------------------------------------------------------------------------------
+
+The regular expression to split templates finding resource URLs
+is prone to breaking in case the match grows too long because it
+has no boundaries. This change stops the match earlier, this also
+massively increases the matching speed.
+
+* Commit: `27772f9 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/27772f9727b649322150f7f8a4a7bbdba8ecc2b9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix links in TYPO3.Welcome template
+-----------------------------------------------------------------------------------------
+
+This fixes some links still pointing to forge.type.org.
+
+* Commit: `aa14622 <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/aa14622cac46ce6ed134f69ffd6e5428c007440d>`_
