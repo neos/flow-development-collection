@@ -232,6 +232,13 @@ TYPO3:
         filters:
           Flow_Security_Entity_Filter: 'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter'
 
+        # DBAL custom mapping types can be registered here
+        dbal:
+          mappingTypes:
+            'objectarray':
+              dbType: 'array'
+              className: 'TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray'
+
         # Doctrine ORM Lifecycle events and their subscribers and listeners.
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []

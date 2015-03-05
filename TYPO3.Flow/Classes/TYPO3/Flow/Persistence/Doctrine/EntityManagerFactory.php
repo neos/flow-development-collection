@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -98,7 +99,12 @@ class EntityManagerFactory {
 		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config, $eventManager);
 		$flowAnnotationDriver->setEntityManager($entityManager);
 
-		\Doctrine\DBAL\Types\Type::addType('objectarray', 'TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray');
+		if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
+			foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {
+				Type::addType($typeName, $typeConfiguration['className']);
+				$entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping($typeConfiguration['dbType'], $typeName);
+			}
+		}
 
 		if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
 			foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
