@@ -401,6 +401,42 @@ entities for the time being, with some differences:
 * Upon persisting Value Objects already present in the underlying database will be
   deduplicated.
 
+Custom Doctrine mapping types
+-----------------------------
+
+Doctrine provides a way to develop custom mapping types as explained in the documentation ([#doctrineMappingTypes]).
+
+Registration of those types in a Flow application is done through settings:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      persistence:
+        doctrine:
+          # DBAL custom mapping types can be registered here
+          dbal:
+            mappingTypes:
+              'mytype':
+                dbType: 'db_mytype'
+                className: 'Acme\Demo\Doctrine\DataTypes\MyType'
+
+The custom type can then be used:
+
+.. code-block:: php
+
+  class SomeModel {
+
+  	/**
+  	 * Some custom type property
+  	 *
+  	 * @ORM\Column(type="mytype")
+  	 * @var string
+  	 */
+  	protected $mytypeProperty;
+
+.. [#doctrineMappingTypes] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/cookbook/custom-mapping-types.html
+
 On the Doctrine Event System
 ----------------------------
 
