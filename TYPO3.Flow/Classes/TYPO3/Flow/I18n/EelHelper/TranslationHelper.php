@@ -17,7 +17,7 @@ use TYPO3\Flow\I18n\Translator;
 use TYPO3\Flow\I18n\Service as I1nService;
 
 /**
- * Configuration helpers for Eel contexts
+ * Translation helpers for Eel contexts
  */
 class TranslationHelper implements ProtectedContextAwareInterface {
 
