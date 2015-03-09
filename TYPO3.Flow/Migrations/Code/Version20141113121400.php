@@ -86,24 +86,55 @@ class Version20141113121400 extends AbstractMigration {
 		if (!isset($configuration['resources']) || !is_array($configuration['resources'])) {
 			return;
 		}
-		$methodPrivilegeClassName = 'TYPO3\\Flow\\Security\\Authorization\\Privilege\\Method\MethodPrivilege';
 		$newPrivilegeTargetConfiguration = array();
 		foreach ($configuration['resources'] as $resourceType => $resourceConfiguration) {
-			if ($resourceType !== 'methods') {
-				$this->showWarning('Resource type "' . $resourceType . '" is no longer supported...');
-				continue;
+			switch ($resourceType) {
+				case 'methods':
+					$privilegeClassName = 'TYPO3\\Flow\\Security\\Authorization\\Privilege\\Method\MethodPrivilege';
+					if (!isset($newPrivilegeTargetConfiguration[$privilegeClassName])) {
+						$newPrivilegeTargetConfiguration[$privilegeClassName] = array();
+					}
+					foreach ($resourceConfiguration as $resourceName => $resourceMatcher) {
+						$newPrivilegeTargetConfiguration[$privilegeClassName][$resourceName] = array(
+							'matcher' => $resourceMatcher,
+						);
+					}
+					break;
+				case 'entities':
+					$privilegeClassName = 'TYPO3\\Flow\\Security\\Authorization\\Privilege\\Entity\\Doctrine\\EntityPrivilege';
+					foreach ($resourceConfiguration as $entityType => $entityConfiguration) {
+						if (!isset($newPrivilegeTargetConfiguration[$privilegeClassName])) {
+							$newPrivilegeTargetConfiguration[$privilegeClassName] = array();
+						}
+						foreach ($entityConfiguration as $resourceName => $resourceMatcher) {
+							$newPrivilegeTargetConfiguration[$privilegeClassName][$resourceName] = array(
+								'matcher' => $this->convertEntityResourceMatcher($entityType, $resourceMatcher)
+							);
+						}
+					}
+					break;
+				default:
+					$this->showWarning('Resource type "' . $resourceType . '" is not supported...');
 			}
-			if (!isset($newPrivilegeTargetConfiguration[$methodPrivilegeClassName])) {
-				$newPrivilegeTargetConfiguration[$methodPrivilegeClassName] = array();
-			}
-			foreach ($resourceConfiguration as $resourceName => $resourceMatcher) {
-				$newPrivilegeTargetConfiguration[$methodPrivilegeClassName][$resourceName] = array(
-					'matcher' => $resourceMatcher,
-				);
-			}
+
 		}
 		unset($configuration['resources']);
 		$configuration['privilegeTargets'] = $newPrivilegeTargetConfiguration;
+	}
+
+	/**
+	 * Converts the given $resourceMatcher string to the new syntax
+	 *
+	 * @param string $entityType
+	 * @param string $resourceMatcher
+	 * @return string
+	 */
+	protected function convertEntityResourceMatcher($entityType, $resourceMatcher) {
+		$newMatcher = 'isType("' . $entityType . '")';
+		if (trim($resourceMatcher) !== 'ANY') {
+			$newMatcher .= ' && ' . preg_replace(array('/\bcurrent\./', '/\bthis\.([^\s]+)/'), array('context.', 'property("$1")'), $resourceMatcher);
+		}
+		return $newMatcher;
 	}
 
 	/**
@@ -126,8 +157,8 @@ class Version20141113121400 extends AbstractMigration {
 				$newRolesConfiguration[$roleIdentifier]['privileges'] = array();
 			}
 			foreach ($aclConfiguration as $resourceType => $permissions) {
-				if ($resourceType !== 'methods') {
-					$this->showWarning('Resource type "' . $resourceType . '" is no longer supported...');
+				if ($resourceType !== 'methods' && $resourceType !== 'entities') {
+					$this->showWarning('Resource type "' . $resourceType . '" is not supported...');
 					continue;
 				}
 				foreach ($permissions as $resourceName => $permission) {
