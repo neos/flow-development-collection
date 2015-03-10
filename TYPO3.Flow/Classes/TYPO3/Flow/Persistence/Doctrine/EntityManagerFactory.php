@@ -96,7 +96,21 @@ class EntityManagerFactory {
 		$config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
-		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config, $eventManager);
+		// The following code tries to connect first, if that succeeds, all is well. If not, the platform is fetched directly from the
+		// driver - without version checks to the database server (to which no connection can be made) - and is added to the config
+		// which is then used to create a new connection. This connection will then return the platform directly, without trying to
+		// detect the version it runs on, which fails if no connection can be made. But the platform is used even if no connection can
+		// be made, which was no problem with Doctrine DBAL 2.3. And then came version-aware drivers and platforms...
+		$connection = \Doctrine\DBAL\DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
+		try {
+			$connection->connect();
+		} catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+			$settings = $this->settings['backendOptions'];
+			$settings['platform'] = $connection->getDriver()->getDatabasePlatform();
+			$connection = \Doctrine\DBAL\DriverManager::getConnection($settings, $config, $eventManager);
+		}
+
+		$entityManager = \Doctrine\ORM\EntityManager::create($connection, $config, $eventManager);
 		$flowAnnotationDriver->setEntityManager($entityManager);
 
 		if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
