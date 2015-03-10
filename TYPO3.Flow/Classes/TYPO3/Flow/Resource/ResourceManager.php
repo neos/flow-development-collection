@@ -62,20 +62,9 @@ class ResourceManager {
 	protected $persistenceManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var \Doctrine\Common\Persistence\ObjectManager
-	 */
-	protected $entityManager;
-
-	/**
 	 * @var array
 	 */
 	protected $settings;
-
-	/**
-	 * @var \SplObjectStorage
-	 */
-	protected $importedResources;
 
 	/**
 	 * @Flow\Inject
@@ -119,8 +108,6 @@ class ResourceManager {
 		$this->initializeStorages();
 		$this->initializeTargets();
 		$this->initializeCollections();
-
-		$this->importedResources = new \SplObjectStorage();
 	}
 
 	/**
