@@ -15,10 +15,12 @@ class Version20150216124452 extends AbstractMigration {
 	 */
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
-		$this->abortIf($this->isPartyPackageInstalled() && !$this->isAccordingPartyMigrationExecuted(), 'This migration requires a current version of the TYPO3.Party package and its migration 20150216124451 being applied.');
 
-		$this->addSql("ALTER TABLE typo3_flow_security_account DROP CONSTRAINT fk_65efb31c89954ee0");
-		$this->addSql("DROP INDEX idx_65efb31c89954ee0");
+		if ($this->isPartyPackageInstalled()) {
+			$this->addSql("ALTER TABLE typo3_flow_security_account DROP CONSTRAINT fk_65efb31c89954ee0");
+			$this->addSql("DROP INDEX idx_65efb31c89954ee0");
+		}
+
 		$this->addSql("ALTER TABLE typo3_flow_security_account DROP party");
 	}
 
@@ -30,8 +32,11 @@ class Version20150216124452 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("ALTER TABLE typo3_flow_security_account ADD party VARCHAR(40) DEFAULT NULL");
-		$this->addSql("ALTER TABLE typo3_flow_security_account ADD CONSTRAINT fk_65efb31c89954ee0 FOREIGN KEY (party) REFERENCES typo3_party_domain_model_abstractparty (persistence_object_identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
-		$this->addSql("CREATE INDEX idx_65efb31c89954ee0 ON typo3_flow_security_account (party)");
+
+		if ($this->isPartyPackageInstalled()) {
+			$this->addSql("ALTER TABLE typo3_flow_security_account ADD CONSTRAINT fk_65efb31c89954ee0 FOREIGN KEY (party) REFERENCES typo3_party_domain_model_abstractparty (persistence_object_identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
+			$this->addSql("CREATE INDEX idx_65efb31c89954ee0 ON typo3_flow_security_account (party)");
+		}
 	}
 
 	/**
@@ -39,12 +44,5 @@ class Version20150216124452 extends AbstractMigration {
 	 */
 	protected function isPartyPackageInstalled() {
 		return $this->sm->tablesExist(array('typo3_party_domain_model_abstractparty'));
-	}
-
-	/**
-	 * @return boolean
-	 */
-	protected function isAccordingPartyMigrationExecuted() {
-		return $this->sm->tablesExist(array('typo3_party_domain_model_abstractparty_accounts_join'));
 	}
 }

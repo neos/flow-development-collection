@@ -27,7 +27,10 @@ class Version20120412194611 extends AbstractMigration {
 		$this->addSql("COMMENT ON COLUMN typo3_flow3_security_authorization_resource_securitypubli_6180a.allowedroles IS '(DC2Type:array)'");
 		$this->addSql("CREATE TABLE typo3_flow3_security_policy_role (identifier VARCHAR(255) NOT NULL, PRIMARY KEY(identifier))");
 		$this->addSql("ALTER TABLE typo3_flow3_resource_resource ADD CONSTRAINT FK_B4D45B323CB65D1 FOREIGN KEY (resourcepointer) REFERENCES typo3_flow3_resource_resourcepointer (hash) NOT DEFERRABLE INITIALLY IMMEDIATE");
-		$this->addSql("ALTER TABLE typo3_flow3_security_account ADD CONSTRAINT FK_65EFB31C89954EE0 FOREIGN KEY (party) REFERENCES typo3_party_domain_model_abstractparty (flow3_persistence_identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
+
+		if ($this->isPartyPackageInstalled()) {
+			$this->addSql("ALTER TABLE typo3_flow3_security_account ADD CONSTRAINT FK_65EFB31C89954EE0 FOREIGN KEY (party) REFERENCES typo3_party_domain_model_abstractparty (flow3_persistence_identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
+		}
 	}
 
 	/**
@@ -37,13 +40,23 @@ class Version20120412194611 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
+		if ($this->isPartyPackageInstalled()) {
+			$this->addSql("ALTER TABLE typo3_flow3_security_account DROP CONSTRAINT FK_65EFB31C89954EE0");
+		}
+
 		$this->addSql("ALTER TABLE typo3_flow3_resource_resource DROP CONSTRAINT FK_B4D45B323CB65D1");
-		$this->addSql("ALTER TABLE typo3_flow3_security_account DROP CONSTRAINT FK_65EFB31C89954EE0");
 		$this->addSql("DROP TABLE typo3_flow3_resource_resourcepointer");
 		$this->addSql("DROP TABLE typo3_flow3_mvc_routing_objectpathmapping");
 		$this->addSql("DROP TABLE typo3_flow3_resource_resource");
 		$this->addSql("DROP TABLE typo3_flow3_security_account");
 		$this->addSql("DROP TABLE typo3_flow3_security_authorization_resource_securitypubli_6180a");
 		$this->addSql("DROP TABLE typo3_flow3_security_policy_role");
+	}
+
+	/**
+	 * @return boolean
+	 */
+	protected function isPartyPackageInstalled() {
+		return $this->sm->tablesExist(array('typo3_party_domain_model_abstractparty'));
 	}
 }
