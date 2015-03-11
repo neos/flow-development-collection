@@ -226,6 +226,7 @@ class Scripts {
 
 		$cacheManager = new \TYPO3\Flow\Cache\CacheManager();
 		$cacheManager->setCacheConfigurations($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+		$cacheManager->injectConfigurationManager($configurationManager);
 		$cacheManager->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
 
 		$cacheFactory = new \TYPO3\Flow\Cache\CacheFactory($bootstrap->getContext(), $cacheManager, $environment);

@@ -11,9 +11,8 @@ namespace TYPO3\Flow\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * The Cache Manager
@@ -27,6 +26,11 @@ class CacheManager {
 	 * @var \TYPO3\Flow\Cache\CacheFactory
 	 */
 	protected $cacheFactory;
+
+	/**
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 */
+	protected $configurationManager;
 
 	/**
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
@@ -44,7 +48,7 @@ class CacheManager {
 	protected $cacheConfigurations = array(
 		'Default' => array(
 			'frontend' => 'TYPO3\Flow\Cache\Frontend\VariableFrontend',
-			'backend' =>  'TYPO3\Flow\Cache\Backend\FileBackend',
+			'backend' => 'TYPO3\Flow\Cache\Backend\FileBackend',
 			'backendOptions' => array()
 		)
 	);
@@ -63,6 +67,14 @@ class CacheManager {
 	 */
 	public function injectCacheFactory(\TYPO3\Flow\Cache\CacheFactory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
+	 * @return void
+	 */
+	public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager) {
+		$this->configurationManager = $configurationManager;
 	}
 
 	/**
@@ -121,6 +133,7 @@ class CacheManager {
 		if (!isset($this->caches[$identifier])) {
 			$this->createCache($identifier);
 		}
+
 		return $this->caches[$identifier];
 	}
 
@@ -146,6 +159,7 @@ class CacheManager {
 		foreach ($this->caches as $cache) {
 			$cache->flush();
 		}
+		$this->configurationManager->flushConfigurationCache();
 	}
 
 	/**
@@ -191,13 +205,13 @@ class CacheManager {
 		switch ($fileMonitorIdentifier) {
 			case 'Flow_ClassFiles' :
 				$this->flushClassCachesByChangedFiles($changedFiles);
-			break;
+				break;
 			case 'Flow_ConfigurationFiles' :
 				$this->flushConfigurationCachesByChangedFiles($changedFiles);
-			break;
+				break;
 			case 'Flow_TranslationFiles' :
 				$this->flushTranslationCachesByChangedFiles($changedFiles);
-			break;
+				break;
 		}
 	}
 
@@ -284,10 +298,12 @@ class CacheManager {
 				}
 			}
 		}
+
 		foreach ($cachesToFlush as $cacheName => $cacheFilePattern) {
 			$this->systemLogger->log(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LOG_INFO);
 			$this->getCache($cacheName)->flush();
 		}
+
 		$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
 		$objectConfigurationCache->remove('allAspectClassesUpToDate');
 		$objectConfigurationCache->remove('allCompiledCodeUpToDate');
