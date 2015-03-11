@@ -235,6 +235,9 @@ TYPO3:
         # DBAL custom mapping types can be registered here
         dbal:
           mappingTypes:
+            'flow_json_array':
+              dbType: 'json_array'
+              className: 'TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType'
             'objectarray':
               dbType: 'array'
               className: 'TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray'
