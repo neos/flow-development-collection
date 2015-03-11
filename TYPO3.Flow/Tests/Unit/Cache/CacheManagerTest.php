@@ -25,6 +25,11 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $cacheManager;
 
 	/**
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 */
+	protected $mockConfigurationManager;
+
+	/**
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $mockSystemLogger;
@@ -34,6 +39,8 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$this->cacheManager->injectSystemLogger($this->mockSystemLogger);
+		$this->mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+		$this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);
 	}
 
 	/**
@@ -135,6 +142,15 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->once())->method('flush');
 		$this->cacheManager->registerCache($cache2);
+
+		$this->cacheManager->flushCaches();
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushCachesCallsTheFlushConfigurationCacheMethodOfConfigurationManager() {
+		$this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
 
 		$this->cacheManager->flushCaches();
 	}
