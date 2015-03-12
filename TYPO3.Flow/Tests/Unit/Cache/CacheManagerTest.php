@@ -158,18 +158,6 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function flushConfigurationCachesByChangedFilesFlushesConfigurationCache() {
-		$this->registerCache('Flow_Object_Classes');
-		$this->registerCache('Flow_Object_Configuration');
-
-		$this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
-
-		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array());
-	}
-
-	/**
-	 * @test
-	 */
 	public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache() {
 		$objectClassCache = $this->registerCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
@@ -290,45 +278,17 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @return array
-	 */
-	public function configurationFileChangesNeedAopProxyClassesRebuild() {
-		return array(
-			array('A/Different/Package/Configuration/Policy.yaml', TRUE),
-			array('A/Different/Package/Configuration/Routes.yaml', TRUE),
-			array('A/Different/Package/Configuration/Settings.yaml', FALSE),
-			array('A/Different/Package/Configuration/Views.yaml', TRUE),
-		);
-	}
-
-	/**
 	 * @test
-	 * @dataProvider configurationFileChangesNeedAopProxyClassesRebuild
 	 */
-	public function flushSystemCachesByChangedFilesTriggersAopProxyClassRebuildIfNeeded($changedFile, $needsAopProxyClassRebuild) {
-		$this->registerCache('Flow_Security_Authorization_Privilege_Method');
-		$this->registerCache('Flow_Mvc_Routing_Route');
-		$this->registerCache('Flow_Mvc_ViewConfigurations');
-		$this->registerCache('Flow_Persistence_Doctrine');
-		$this->registerCache('Flow_Persistence_Doctrine_Results');
-		$this->registerCache('Flow_Mvc_Routing_Resolve');
-
+	public function flushSystemCachesByChangedFilesTriggersAopProxyClassRebuild() {
 		$objectClassesCache = $this->registerCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
 
-		if ($needsAopProxyClassRebuild) {
-			$objectClassesCache->expects($this->once())->method('flush');
-			$objectConfigurationCache->expects($this->at(0))->method('remove')->with('allAspectClassesUpToDate');
-			$objectConfigurationCache->expects($this->at(1))->method('remove')->with('allCompiledCodeUpToDate');
-		} else {
-			$objectClassesCache->expects($this->never())->method('flush');
-			$objectConfigurationCache->expects($this->never())->method('remove')->with('allAspectClassesUpToDate');
-			$objectConfigurationCache->expects($this->never())->method('remove')->with('allCompiledCodeUpToDate');
-		}
+		$objectClassesCache->expects($this->once())->method('flush');
+		$objectConfigurationCache->expects($this->at(0))->method('remove')->with('allAspectClassesUpToDate');
+		$objectConfigurationCache->expects($this->at(1))->method('remove')->with('allCompiledCodeUpToDate');
 
-		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
-			$changedFile => ChangeDetectionStrategyInterface::STATUS_CHANGED
-		));
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array());
 	}
 
 	/**
