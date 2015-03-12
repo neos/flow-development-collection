@@ -97,8 +97,11 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 		if ($runLevel === 'Runtime') {
 			/** @var \TYPO3\Flow\Security\Context $securityContext */
 			$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
-			$securityContext->withoutAuthorizationChecks(function() {
-				$this->dispatcher->dispatch($this->request, $this->response);
+			$dispatcher = $this->dispatcher;
+			$request = $this->request;
+			$response = $this->response;
+			$securityContext->withoutAuthorizationChecks(function() use ($dispatcher, $request, $response) {
+				$dispatcher->dispatch($request, $response);
 			});
 		} else {
 			$this->dispatcher->dispatch($this->request, $this->response);
