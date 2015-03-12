@@ -384,7 +384,7 @@ security only for some resources (e.g. SSL client certificates for an admin back
 Reuse of tokens and providers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is another configuration option for authentication providers called ``tokenClass``,
+There is another configuration option for authentication providers called ``token``,
 which can be specified in the provider settings. By this option you can specify which
 token should be used for a provider. Remember the token is responsible for the credentials
 retrieval, i.e. if you want to authenticate let's say via username and password this setting
@@ -401,7 +401,7 @@ in a POST request or set in an HTTP Basic authentication header.
       providers:
         'DefaultProvider':
           provider: 'PersistedUsernamePasswordProvider'
-          tokenClass: 'UsernamePasswordHttpBasic'
+          token: 'UsernamePasswordHttpBasic'
 
 .. _Request Patterns:
 
