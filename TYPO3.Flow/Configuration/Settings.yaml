@@ -29,14 +29,6 @@ TYPO3:
         # NOTE: This flag will be obsolete with version 2.2 and removed in version 3.0 of Flow
         createRelativePaths: FALSE
 
-    configuration:
-
-      # Enables the configuration file cache which compiles YAML files into
-      # much faster to load PHP files.
-      #
-      # NOTE: You must clear all caches right after switching this option OFF
-      compileConfigurationFiles: TRUE
-
     core:
 
       # TYPO3 Flow's application context
