@@ -280,6 +280,7 @@ TYPO3:
         'BeforeStep': TRUE
         'AfterStep': TRUE
         'WithoutSecurityChecks': TRUE
+        'covers': TRUE
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
