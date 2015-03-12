@@ -283,16 +283,22 @@ class CacheManager {
 	 * @see flushSystemCachesByChangedFiles()
 	 */
 	protected function flushConfigurationCachesByChangedFiles(array $changedFiles) {
+		$aopProxyClassRebuildIsNeeded = FALSE;
+		$aopProxyClassInfluencers = '/(?:Policy|Objects|Settings)(?:\..*)*\.yaml/';
+
 		$objectClassesCache = $this->getCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
 		$caches = array(
 			'/Policy\.yaml/' => array('Flow_Security_Authorization_Privilege_Method', 'Flow_Persistence_Doctrine', 'Flow_Persistence_Doctrine_Results'),
 			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve'),
-			'/Views\.yaml/' => array('Flow_Mvc_ViewConfigurations'),
+			'/Views\.yaml/' => array('Flow_Mvc_ViewConfigurations')
 		);
 		$cachesToFlush = array();
 		foreach (array_keys($changedFiles) as $pathAndFilename) {
 			foreach ($caches as $cacheFilePattern => $cacheNames) {
+				if (preg_match($aopProxyClassInfluencers, $pathAndFilename) === 1) {
+					$aopProxyClassRebuildIsNeeded = TRUE;
+				}
 				if (preg_match($cacheFilePattern, $pathAndFilename) !== 1) {
 					continue;
 				}
@@ -310,10 +316,12 @@ class CacheManager {
 		$this->systemLogger->log('A configuration file has been changed, flushing compiled configuration cache', LOG_INFO);
 		$this->configurationManager->flushConfigurationCache();
 
-		$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
-		$objectConfigurationCache->remove('allAspectClassesUpToDate');
-		$objectConfigurationCache->remove('allCompiledCodeUpToDate');
-		$objectClassesCache->flush();
+		if($aopProxyClassRebuildIsNeeded) {
+			$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
+			$objectConfigurationCache->remove('allAspectClassesUpToDate');
+			$objectConfigurationCache->remove('allCompiledCodeUpToDate');
+			$objectClassesCache->flush();
+		}
 	}
 
 	/**
