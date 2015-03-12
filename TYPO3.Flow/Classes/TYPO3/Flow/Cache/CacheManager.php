@@ -276,7 +276,7 @@ class CacheManager {
 	}
 
 	/**
-	 * Flushes policy/routing caches if routes or policies have changed
+	 * Flushes caches as needed if settings, routes or policies have changed
 	 *
 	 * @param array $changedFiles A list of full paths to changed files
 	 * @return void
@@ -306,6 +306,9 @@ class CacheManager {
 			$this->systemLogger->log(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LOG_INFO);
 			$this->getCache($cacheName)->flush();
 		}
+
+		$this->systemLogger->log('A configuration file has been changed, flushing compiled configuration cache', LOG_INFO);
+		$this->configurationManager->flushConfigurationCache();
 
 		$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
 		$objectConfigurationCache->remove('allAspectClassesUpToDate');
