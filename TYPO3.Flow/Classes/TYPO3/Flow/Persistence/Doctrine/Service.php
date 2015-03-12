@@ -24,6 +24,8 @@ use TYPO3\Flow\Utility\Files;
  */
 class Service {
 
+	const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
+
 	/**
 	 * @var array
 	 */
@@ -167,16 +169,15 @@ class Service {
 		);
 
 		$connection = $this->entityManager->getConnection();
-		if ($connection->getSchemaManager()->tablesExist(array('flow3_doctrine_migrationstatus')) === TRUE) {
-			// works for SQLite, MySQL, PostgreSQL, Oracle
-			// does not work for SQL Server
-			$connection->exec('ALTER TABLE flow3_doctrine_migrationstatus RENAME TO flow_doctrine_migrationstatus');
+		$schemaManager = $connection->getSchemaManager();
+		if ($schemaManager->tablesExist(array('flow3_doctrine_migrationstatus')) === TRUE) {
+			$schemaManager->renameTable('flow3_doctrine_migrationstatus', self::DOCTRINE_MIGRATIONSTABLENAME);
 		}
 
 		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($connection, $outputWriter);
 		$configuration->setMigrationsNamespace('TYPO3\Flow\Persistence\Doctrine\Migrations');
 		$configuration->setMigrationsDirectory(\TYPO3\Flow\Utility\Files::concatenatePaths(array(FLOW_PATH_DATA, 'DoctrineMigrations')));
-		$configuration->setMigrationsTableName('flow_doctrine_migrationstatus');
+		$configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
 
 		$configuration->createMigrationTable();
 
