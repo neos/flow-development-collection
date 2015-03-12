@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 
 /**
@@ -52,13 +53,17 @@ class EntityManagerFactory {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @throws InvalidConfigurationException
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings['persistence'];
-		if (!isset($this->settings['doctrine'])) {
-			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException('The configuration TYPO3.Flow.persistence.doctrine is NULL, please check your settings.', 1392800005);
+		if (!is_array($this->settings['doctrine'])) {
+			throw new InvalidConfigurationException(sprintf('The TYPO3.Flow.persistence.doctrine settings need to be an array, %s given.', gettype($this->settings['doctrine'])), 1392800005);
 		}
+		if (!is_array($this->settings['backendOptions'])) {
+			throw new InvalidConfigurationException(sprintf('The TYPO3.Flow.persistence.backendOptions settings need to be an array, %s given.', gettype($this->settings['backendOptions'])), 1426149224);
+		}
+
 	}
 
 	/**
@@ -81,8 +86,13 @@ class EntityManagerFactory {
 		$resultCache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine_Results'));
 		$config->setResultCacheImpl($resultCache);
 
-		if (class_exists($this->settings['doctrine']['sqlLogger'])) {
-			$config->setSQLLogger(new $this->settings['doctrine']['sqlLogger']());
+		if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
+			$sqlLoggerInstance = new $this->settings['doctrine']['sqlLogger']();
+			if ($sqlLoggerInstance instanceof \Doctrine\DBAL\Logging\SQLLogger) {
+				$config->setSQLLogger($sqlLoggerInstance);
+			} else {
+				throw new InvalidConfigurationException(sprintf('TYPO3.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
+			}
 		}
 
 		$eventManager = $this->buildEventManager();
