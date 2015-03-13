@@ -133,6 +133,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		$this->objectManager = self::$bootstrap->getObjectManager();
 
 		$this->cleanupPersistentResourcesDirectory();
+		self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceManager')->initialize();
 
 		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
 		if ($session->isStarted()) {
