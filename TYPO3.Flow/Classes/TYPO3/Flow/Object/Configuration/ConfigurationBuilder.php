@@ -417,7 +417,7 @@ class ConfigurationBuilder {
 				}
 			}
 			foreach ($classMethodNames as $methodName) {
-				if (strlen($methodName) > 6 && substr($methodName, 0, 6) === 'inject' && $methodName[6] === strtoupper($methodName[6])) {
+				if (isset($methodName[6]) && strpos($methodName, 'inject') === 0 && $methodName[6] === strtoupper($methodName[6])) {
 					$propertyName = lcfirst(substr($methodName, 6));
 
 					$autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\Flow\Annotations\Autowiring');

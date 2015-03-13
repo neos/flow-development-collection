@@ -63,7 +63,7 @@ class Files {
 			} else {
 				$path = trim($path, '/');
 			}
-			if (strlen($path) > 0) {
+			if ($path !== '') {
 				$resultingPath .= $path . '/';
 			}
 		}
@@ -218,7 +218,7 @@ class Files {
 		if (is_file($path)) {
 			throw new Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
 		}
-		if (!is_dir($path) && strlen($path) > 0) {
+		if (!is_dir($path) && $path !== '') {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);

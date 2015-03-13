@@ -175,7 +175,7 @@ class ProxyMethod {
 	 * @return boolean TRUE if there is any code to render, otherwise FALSE
 	 */
 	public function willBeRendered() {
-		return (strlen($this->addedPreParentCallCode) + strlen($this->addedPostParentCallCode) > 0);
+		return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '');
 	}
 
 	/**
