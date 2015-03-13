@@ -14,6 +14,7 @@ Part V: Appendixes
 		PredefinedConstantsReference
 		ContributingToTYPO3Flow
 		CodingGuideLines/Index
+		ReleaseNotes/Index
 		ChangeLogs/Index
 
 .. only:: latex
@@ -28,4 +29,5 @@ Part V: Appendixes
 		CommandReference
 		PredefinedConstantsReference
 		ContributingToTYPO3Flow
+		ReleaseNotes/Index
 		CodingGuideLines/Index

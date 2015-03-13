@@ -1426,7 +1426,7 @@ class ReflectionService {
 
 		// we try to find the class relative to the current namespace...
 		$possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $type);
-		if (class_exists($possibleFullyQualifiedClassName)) {
+		if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
 			return $possibleFullyQualifiedClassName;
 		}
 
