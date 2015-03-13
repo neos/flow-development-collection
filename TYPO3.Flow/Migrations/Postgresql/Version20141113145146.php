@@ -26,7 +26,6 @@ class Version20141113145146 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_flow_security_authorization_resource_securitypublis_861cb");
 		$this->addSql("DROP TABLE typo3_flow_security_account_roles_join");
 		$this->addSql("DROP TABLE typo3_flow_security_policy_role_parentroles_join");
-		$this->addSql("ALTER TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration DROP dtype");
 		$this->addSql("ALTER TABLE typo3_flow_security_account ADD roleidentifiers TEXT DEFAULT NULL");
 		$this->addSql("COMMENT ON COLUMN typo3_flow_security_account.roleidentifiers IS '(DC2Type:simple_array)'");
 	}
@@ -53,6 +52,5 @@ class Version20141113145146 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_flow_security_policy_role_parentroles_join ADD CONSTRAINT fk_d459c58e23a1047c FOREIGN KEY (flow_policy_role) REFERENCES typo3_flow_security_policy_role (identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
 		$this->addSql("ALTER TABLE typo3_flow_security_policy_role_parentroles_join ADD CONSTRAINT fk_d459c58e6a8abcde FOREIGN KEY (parent_role) REFERENCES typo3_flow_security_policy_role (identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
 		$this->addSql("ALTER TABLE typo3_flow_security_account DROP roleidentifiers");
-		$this->addSql("ALTER TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration ADD dtype VARCHAR(255) NOT NULL");
 	}
 }
