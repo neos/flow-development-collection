@@ -3,7 +3,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2015-02-27
+This reference was automatically generated from code on 2015-03-14
 
 
 ArrayConverter
@@ -38,6 +38,19 @@ TypeConverter which converts generic objects to arrays by converting and returni
 :Priority: 1
 :Target type: array
 :Source type: object
+
+
+
+
+
+ArrayTypeConverter
+------------------
+
+Converts Doctrine collections to arrays
+
+:Priority: 1
+:Target type: array
+:Source type: Doctrine\Common\Collections\Collection
 
 
 
@@ -231,6 +244,19 @@ Converter which transforms to an integer.
 
 
 
+LocaleTypeConverter
+-------------------
+
+Converter which transforms strings to a Locale object.
+
+:Priority: 1
+:Target type: TYPO3\Flow\I18n\Locale
+:Source type: string
+
+
+
+
+
 MediaTypeConverter
 ------------------
 
@@ -303,6 +329,65 @@ as the serialized value.
 :Priority: 1
 :Target type: string
 :Source type: TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface
+
+
+
+
+
+ResourceTypeConverter
+---------------------
+
+A type converter for converting strings, array and uploaded files to Resource objects.
+
+Has two major working modes:
+
+1. File Uploads by PHP
+
+   In this case, the input array is expected to be a fresh file upload following the native PHP handling. The
+   temporary upload file is then imported through the resource manager.
+
+   To enable the handling of files that have already been uploaded earlier, the special fields ['submittedFile'],
+   ['submittedFile']['filename'] and ['submittedFile']['hash'] are checked. If set, they are used to
+   fetch a file that has already been uploaded even if no file has been actually uploaded in the current request.
+
+
+2. Strings / arbitrary Arrays
+
+   If the source
+
+   - is an array and contains the key '__identity'
+
+   the converter will find an existing resource with the given identity or continue and assign the given identity if
+   CONFIGURATION_IDENTITY_CREATION_ALLOWED is set.
+
+   - is a string looking like a SHA1 (40 characters [0-9a-f]) or
+   - is an array and contains the key 'hash' with a value looking like a SHA1 (40 characters [0-9a-f])
+
+   the converter will look up an existing Resource with that hash and return it if found. If that fails,
+   the converter will try to import a file named like that hash from the configured CONFIGURATION_RESOURCE_LOAD_PATH.
+
+   If no hash is given in an array source but the key 'data' is set, the content of that key is assumed a binary string
+   and a Resource representing this content is created and returned.
+
+   The imported Resource will be given a 'filename' if set in the source array in both cases (import from file or data).
+
+:Priority: 1
+:Target type: TYPO3\Flow\Resource\Resource
+:Source types:
+ * string
+ * array
+
+
+
+
+RoleConverter
+-------------
+
+This converter transforms strings to role instances
+
+:Priority: 0
+:Target type: TYPO3\Flow\Security\Policy\Role
+:Source type: string
 
 
 

@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-02-27
+This reference was automatically generated from code on 2015-03-14
 
 
 f:alias
@@ -98,7 +98,7 @@ Case view helper that is only usable within the SwitchViewHelper.
 Arguments
 *********
 
-* ``value`` (mixed): 
+* ``value`` (mixed)
 
 
 
@@ -259,7 +259,7 @@ View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
 Arguments
 *********
 
-* ``title`` (string, *optional*): 
+* ``title`` (string, *optional*)
 
 * ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
@@ -1916,7 +1916,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*)
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -1940,7 +1940,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*)
 
 
 
@@ -1962,7 +1962,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*)
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -2822,7 +2822,7 @@ arguments.
 Arguments
 *********
 
-* ``arguments`` (array, *optional*): 
+* ``arguments`` (array, *optional*)
 
 
 
@@ -3017,7 +3017,7 @@ An optional default case can be specified which is rendered if none of the "f:ca
 Arguments
 *********
 
-* ``expression`` (mixed): 
+* ``expression`` (mixed)
 
 
 
@@ -3473,13 +3473,13 @@ Make sure to include jQuery and jQuery UI in the HTML, like that:
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface)
 
-* ``for`` (string): 
+* ``for`` (string)
 
-* ``searchProperty`` (string): 
+* ``searchProperty`` (string)
 
-* ``configuration`` (array, *optional*): 
+* ``configuration`` (array, *optional*)
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
@@ -3558,11 +3558,11 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface)
 
-* ``as`` (string): 
+* ``as`` (string)
 
-* ``configuration`` (array, *optional*): 
+* ``configuration`` (array, *optional*)
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
