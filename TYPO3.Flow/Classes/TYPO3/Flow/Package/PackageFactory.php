@@ -11,7 +11,9 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\PhpAnalyzer;
 
 /**
  * Class for building Packages
@@ -24,8 +26,6 @@ class PackageFactory {
 	protected $packageManager;
 
 	/**
-	 * Constructor
-	 *
 	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 */
 	public function __construct(PackageManagerInterface $packageManager) {
@@ -43,26 +43,34 @@ class PackageFactory {
 	 * @return \TYPO3\Flow\Package\PackageInterface
 	 * @throws Exception\CorruptPackageException
 	 */
-	public function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath = '') {
-		$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes/' . str_replace('.', '/', $packageKey) . '/Package.php'));
+	public function create($packagesBasePath, $packagePath, $packageKey, $classesPath = NULL, $manifestPath = NULL) {
+		$absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
+		$absoluteManifestPath = Files::concatenatePaths(array($absolutePackagePath, $manifestPath)) . '/';
+		$autoLoadDirectives = array();
+		try {
+			$autoLoadDirectives = (array)PackageManager::getComposerManifest($absoluteManifestPath, 'autoload');
+		} catch (MissingPackageManifestException $exception) {
+		}
+		if (isset($autoLoadDirectives[Package::AUTOLOADER_TYPE_PSR4])) {
+			$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes', 'Package.php'));
+		} else {
+			$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php'));
+		}
+		$package = NULL;
 		if (file_exists($packageClassPathAndFilename)) {
 			require_once($packageClassPathAndFilename);
-			/**
-			 * @todo there should be a general method for getting Namespace from $packageKey
-			 * @todo it should be tested if the package class implements the interface
-			 */
-			$packageClassName = str_replace('.', '\\', $packageKey) . '\Package';
-			if (!class_exists($packageClassName)) {
-				throw new \TYPO3\Flow\Package\Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class called "%s".', $packageKey, $packageClassPathAndFilename, $packageClassName), 1327587091);
+			$packageClassContents = file_get_contents($packageClassPathAndFilename);
+			$packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
+			if ($packageClassName === NULL) {
+				throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey, $packageClassPathAndFilename), 1327587091);
 			}
-		} else {
-			$packageClassName = 'TYPO3\Flow\Package\Package';
+			$package = new $packageClassName($this->packageManager, $packageKey, $absolutePackagePath, $classesPath, $manifestPath);
+			if (!$package instanceof PackageInterface) {
+				throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".', $packageKey, $packageClassPathAndFilename), 1427193370);
+			}
+			return $package;
 		}
-		$packagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
-
-		$package = new $packageClassName($this->packageManager, $packageKey, $packagePath, $classesPath, $manifestPath);
-
-		return $package;
+		return new Package($this->packageManager, $packageKey, $absolutePackagePath, $classesPath, $manifestPath);
 	}
 
 	/**

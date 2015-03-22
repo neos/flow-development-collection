@@ -167,7 +167,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
 		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
-			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Cache/CacheManager.php' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+			FLOW_PATH_PACKAGES . 'Framework/TYPO3.Flow/Classes/TYPO3/Flow/Cache/CacheManager.php' => ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
 
@@ -179,11 +179,11 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
 		$this->registerCache('Flow_Reflection_Status');
 
-		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Tests_Functional_Cache_CacheManagerTest');
+		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Tests_Unit_Cache_CacheManagerTest');
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
 		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
-			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Functional/Cache/CacheManagerTest.php' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+			__FILE__ => ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
 
