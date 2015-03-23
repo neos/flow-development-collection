@@ -353,6 +353,34 @@ Further breaking changes
 * [BUGFIX] Skip automatic persistence for updated entities (see `FLOW-84 <https://jira.typo3.org/browse/FLOW-84>`_)
 * [TASK] Remove usage of ReflectionService in ViewHelpers (see `3adb3c3 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/3adb3c3ded8ff90bbce1a0386a6a120fe0dde322>`_)
 
+Upgrading your Web Server Configuration
+---------------------------------------
+
+If using NGINX or custom Apache configuration, you need to remove a few lines from you Apache / NGINX configuration.
+
+In TYPO3 Flow 2.x, URLs to resources like `_Resources/Persistent/[40-character-hash]/filename.jpg` were redirected
+to `_Resources/Persistent/[40-character-hash].jpg` by having a rewrite rule in Apache or Nginx which looked as follows:
+
+Example of an Apache Rewrite Rule for Flow 2.x::
+
+	# Perform rewriting of persistent private resources
+	RewriteRule ^(_Resources/Persistent/[a-zA-Z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
+
+	# Perform rewriting of persistent resource files
+	RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
+
+
+Example of an Nginx Rewrite Rule for Flow 2.x::
+
+	location ~ "^/_Resources/Persistent/" {
+		rewrite "(.{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+		rewrite "([a-z0-9]+/(.+/)?[a-f0-9]{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+	}
+
+Flow 3.0 does not need these configuration blocks anymore, so they should be deleted.
+
+**In order to upgrade, please delete these rules from your Apache / Nginx Configuration in case you inserted them.**
+
 Upgrading your Packages
 -----------------------
 
