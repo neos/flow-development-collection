@@ -212,6 +212,7 @@ class Context {
 	 * @throws \Exception
 	 */
 	public function withoutAuthorizationChecks(\Closure $callback) {
+		$authorizationChecksAreAlreadyDisabled = $this->authorizationChecksDisabled;
 		$this->authorizationChecksDisabled = TRUE;
 		try {
 			/** @noinspection PhpUndefinedMethodInspection */
@@ -220,7 +221,9 @@ class Context {
 			$this->authorizationChecksDisabled = FALSE;
 			throw $exception;
 		}
-		$this->authorizationChecksDisabled = FALSE;
+		if ($authorizationChecksAreAlreadyDisabled === FALSE) {
+			$this->authorizationChecksDisabled = FALSE;
+		}
 	}
 
 	/**

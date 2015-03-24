@@ -910,4 +910,19 @@ class ContextTest extends UnitTestCase {
 		}
 		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
 	}
+
+	/**
+	 * @test
+	 */
+	public function withoutAuthorizationChecksReactivatesAuthorizationCheckCorrectlyWhenCalledNested() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		$self = $this;
+		$securityContext->withoutAuthorizationChecks(function() use ($securityContext, $self) {
+			$securityContext->withoutAuthorizationChecks(function() use ($securityContext, $self) {
+				$self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+			});
+			$self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+		});
+		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+	}
 }
