@@ -55,6 +55,7 @@ class ResourceRepository extends Repository {
 	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 */
 	public function add($object) {
+		$this->persistenceManager->whitelistObject($object);
 		if ($this->removedResources->contains($object)) {
 			$this->removedResources->detach($object);
 		}
