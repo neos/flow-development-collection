@@ -118,8 +118,14 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function(AbstractMigration
 	}
 });
 
+$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES, function (AbstractMigration $migration, $packageKey, $reason) {
+	outputMigrationHeadline($migration);
+	outputLine('  Skipping %s: %s', array($packageKey, $reason));
+	outputLine();
+});
+
 if ($verbose) {
-	$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED, function (AbstractMigration $migration, $packageKey, $reason) {
+	$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED, function (AbstractMigration $migration, $packageKey, $reason) {
 		outputMigrationHeadline($migration);
 		outputLine('  Skipping %s: %s', array($packageKey, $reason));
 		outputLine();
