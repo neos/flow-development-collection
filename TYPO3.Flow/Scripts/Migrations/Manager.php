@@ -23,7 +23,8 @@ class Manager {
 
 	const EVENT_MIGRATION_START = 'migrationStart';
 	const EVENT_MIGRATION_EXECUTE = 'migrationExecute';
-	const EVENT_MIGRATION_SKIPPED = 'migrationSkipped';
+	const EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES = 'migrationSkippedLocalChanges';
+	const EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED = 'migrationSkippedAlreadyApplied';
 	const EVENT_MIGRATION_EXECUTED = 'migrationExecuted';
 	const EVENT_MIGRATION_DONE = 'migrationDone';
 
@@ -130,6 +131,7 @@ class Manager {
 		if (in_array($packageData['category'], $this->ignoredPackageCategories)) {
 			return TRUE;
 		}
+		return FALSE;
 	}
 
 	/**
@@ -144,11 +146,11 @@ class Manager {
 	protected function migratePackage($packageKey, array $packageData, AbstractMigration $migration) {
 		$packagePath = $packageData['path'];
 		if (!Git::isWorkingCopyClean($packagePath)) {
-			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, $packageKey, 'working copy contains local changes'));
+			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES, array($migration, $packageKey, 'working copy contains local changes'));
 			return;
 		}
 		if ($this->hasMigrationApplied($packagePath, $migration)) {
-			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, $packageKey, 'migration already applied'));
+			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED, array($migration, $packageKey, 'migration already applied'));
 			return;
 		}
 		$this->triggerEvent(self::EVENT_MIGRATION_EXECUTE, array($migration, $packageKey));
@@ -268,6 +270,7 @@ class Manager {
 
 		$migrationFilenames = Files::readDirectoryRecursively($migrationsDirectory, '.php');
 		foreach ($migrationFilenames as $filenameAndPath) {
+			/** @noinspection PhpIncludeInspection */
 			require_once($filenameAndPath);
 			$baseFilename = basename($filenameAndPath, '.php');
 			$className = '\\TYPO3\\Flow\\Core\\Migrations\\' . $baseFilename;
