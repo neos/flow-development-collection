@@ -16,6 +16,7 @@ use Doctrine\Common\Util\Debug;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Error\Debugger;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Package;
 use TYPO3\Flow\Persistence\Doctrine\Service as DoctrineService;
@@ -44,6 +45,12 @@ class DoctrineCommandController extends CommandController {
 	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $logger;
 
 	/**
 	 * Injects the Flow settings, only the persistence part is kept for further use
@@ -266,20 +273,24 @@ class DoctrineCommandController extends CommandController {
 		// "driver" is used only for Doctrine, thus we (mis-)use it here
 		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-			if ($result == '') {
-				if (!$quiet) {
-					$this->outputLine('No migration was necessary.');
+			try {
+				$result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
+				if ($result == '') {
+					if (!$quiet) {
+						$this->outputLine('No migration was necessary.');
+					}
+				} elseif ($output === NULL) {
+					$this->outputLine($result);
+				} else {
+					if (!$quiet) {
+						$this->outputLine('Wrote migration SQL to file "' . $output . '".');
+					}
 				}
-			} elseif ($output === NULL) {
-				$this->outputLine($result);
-			} else {
-				if (!$quiet) {
-					$this->outputLine('Wrote migration SQL to file "' . $output . '".');
-				}
-			}
 
-			$this->emitAfterDatabaseMigration();
+				$this->emitAfterDatabaseMigration();
+			} catch (\Exception $exception) {
+				$this->handleMigrationException($exception, $version);
+			}
 
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -313,11 +324,28 @@ class DoctrineCommandController extends CommandController {
 		// "driver" is used only for Doctrine, thus we (mis-)use it here
 		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+			try {
+				$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+			} catch (\Exception $exception) {
+				$this->handleMigrationException($exception, $version);
+			}
+
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
+	}
+
+	/**
+	 * @param \Exception $exception
+	 * @param string $version
+	 */
+	protected function handleMigrationException(\Exception $exception, $version) {
+		$this->outputLine($exception->getMessage());
+		$this->outputLine();
+		$this->outputLine('Something wrong happen during the migration: ' . $version);
+		$this->logger->logException($exception);
+		$this->quit(1);
 	}
 
 	/**
