@@ -19,6 +19,9 @@ use PHPUnit_Framework_Assert as Assert;
  * - $this->environment (TYPO3\Flow\Utility\Environment)
  *
  * Note: This trait expects the IsolatedBehatStepsTrait to be available!
+ *
+ * Note: Make sure to call $this->setupSecurity() in the constructor of your
+ * behat context for these steps to work in your tests!
  */
 trait SecurityOperationsTrait {
 
@@ -32,11 +35,6 @@ trait SecurityOperationsTrait {
 	public function iHaveTheFollowingPolicies($string) {
 		self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
 		file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
-
-		if ($this->securityInitialized === FALSE) {
-			$this->setupSecurity();
-			$this->securityInitialized = TRUE;
-		}
 
 		$configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
 		$configurations = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($configurationManager, 'configurations', TRUE);
@@ -64,10 +62,7 @@ trait SecurityOperationsTrait {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__);
 		} else {
-			if ($this->securityInitialized === FALSE) {
-				$this->setupSecurity();
-				$this->securityInitialized = TRUE;
-			}
+			$this->setupSecurity();
 		}
 	}
 
@@ -78,10 +73,7 @@ trait SecurityOperationsTrait {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($roleIdentifier)));
 		} else {
-			if ($this->securityInitialized === FALSE) {
-				$this->setupSecurity();
-				$this->securityInitialized = TRUE;
-			}
+			$this->setupSecurity();
 			$this->authenticateRoles(Arrays::trimExplode(',', $roleIdentifier));
 		}
 	}
@@ -93,10 +85,7 @@ trait SecurityOperationsTrait {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($methodName), 'string', escapeshellarg($className), 'string', escapeshellarg($arguments)));
 		} else {
-			if ($this->securityInitialized === FALSE) {
-				$this->setupSecurity();
-				$this->securityInitialized = TRUE;
-			}
+			$this->setupSecurity();
 			$instance = $this->objectManager->get($className);
 
 			try {
@@ -121,6 +110,9 @@ trait SecurityOperationsTrait {
 	 * @return void
 	 */
 	protected function setupSecurity() {
+		if ($this->securityInitialized === TRUE) {
+			return;
+		}
 		$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
 		$this->privilegeManager->setOverrideDecision(NULL);
 
@@ -137,6 +129,8 @@ trait SecurityOperationsTrait {
 		$this->mockActionRequest = new ActionRequest($httpRequest);
 		$this->mockActionRequest->setControllerObjectName('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController');
 		$this->securityContext->setRequest($this->mockActionRequest);
+
+		$this->securityInitialized = TRUE;
 	}
 
 	/**

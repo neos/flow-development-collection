@@ -16,8 +16,8 @@ require_once(__DIR__ . '/SecurityOperationsTrait.php');
 class FeatureContext extends BehatContext {
 
 	use IsolatedBehatStepsTrait;
-
 	use SecurityOperationsTrait;
+
 	/**
 	 * @var string
 	 */
@@ -33,5 +33,6 @@ class FeatureContext extends BehatContext {
 		$flowContext = $this->getSubcontext('flow');
 		$this->objectManager = $flowContext->getObjectManager();
 		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+		$this->setupSecurity();
 	}
 }
