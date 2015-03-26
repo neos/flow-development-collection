@@ -131,20 +131,20 @@ class Context {
 	protected $sessionManager;
 
 	/**
-	 * @var SecurityLoggerInterface
 	 * @Flow\Inject
+	 * @var SecurityLoggerInterface
 	 */
 	protected $securityLogger;
 
 	/**
-	 * @var Policy\PolicyService
 	 * @Flow\Inject
+	 * @var Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @var Cryptography\HashService
 	 * @Flow\Inject
+	 * @var Cryptography\HashService
 	 */
 	protected $hashService;
 
@@ -178,11 +178,13 @@ class Context {
 	protected $authorizationChecksDisabled = FALSE;
 
 	/**
+	 * @Flow\Transient
 	 * @var string
 	 */
 	protected $contextHash = NULL;
 
 	/**
+	 * @Flow\Transient
 	 * @var array of strings
 	 */
 	protected $contextHashComponents = array();
