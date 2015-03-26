@@ -302,6 +302,18 @@ The corresponding route might look like this:
 The method ``matchValue()`` is called when translating from an URL to a request argument,
 and the method ``resolveValue()`` needs to return an URL segment when being passed a value.
 
+.. note::
+ For performance reasons the routing is cached. During development of route part
+ handlers it can be useful to disable the routing cache temporarily. You can do so
+ by using the following configuration in your `Caches.yaml`:
+
+ .. code-block:: yaml
+
+  Flow_Mvc_Routing_FindMatchResults:
+    backend: TYPO3\Flow\Cache\Backend\NullBackend
+  Flow_Mvc_Routing_Resolve:
+    backend: TYPO3\Flow\Cache\Backend\NullBackend
+
 .. warning:: Some examples are missing here, which should explain the API better.
 
 .. TODO: fix above warning and then remove it.
