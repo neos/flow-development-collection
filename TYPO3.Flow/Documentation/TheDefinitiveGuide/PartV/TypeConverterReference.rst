@@ -3,7 +3,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2015-03-26
+This reference was automatically generated from code on 2015-03-27
 
 
 ArrayConverter
