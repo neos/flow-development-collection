@@ -24,7 +24,7 @@
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="fr">Ce n'est pas une date valide</target><alt-trans><target xml:lang="fr">La valeur n'est pas une date valide</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Ce n'est pas une date valide</target><alt-trans><target xml:lang="fr">La valeur fournie n'est pas une date valide</target></alt-trans><alt-trans><target xml:lang="fr">La valeur n'est pas une date valide</target></alt-trans></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
 			<target xml:lang="fr">La date doit être comprise entre {0} et {1}</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="fr">Un nombre entier valide est attendu</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve" approved="yes">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="fr">"{0}" n'est pas un entier</target></trans-unit>
+			<target xml:lang="fr">"{0}" n'est pas un entier</target><alt-trans><target xml:lang="fr">"{0}" n'est pas un entier.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
