@@ -367,6 +367,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function customersCannotSeeTestEntityAAssociatedToATestEntityBSomeoneElsesAccount() {
+		$cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
+		$cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
 		$myAccount = $this->authenticateRoles(array('TYPO3.Flow:Customer'));
 		$myAccount->setAccountIdentifier('MyAccount');
 		$myAccount->setAuthenticationProviderName('SomeProvider');
@@ -510,6 +512,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function inOperatorWorksWithGlobalObjectAccess() {
+		$cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
+		$cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
 		$testEntityD1 = new Fixtures\TestEntityD();
 		$testEntityD2 = new Fixtures\TestEntityD();
 		$this->testEntityDDoctrineRepository->add($testEntityD1);
