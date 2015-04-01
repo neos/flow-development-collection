@@ -162,7 +162,13 @@ class JsonArrayType extends DoctrineJsonArrayType {
 
 			$propertyClassName = TypeHandling::getTypeForValue($value);
 
-			if ($value instanceof \SplObjectStorage) {
+			if ($value instanceof \DateTime) {
+				$value = array(
+					'date' => $value->format('Y-m-d H:i:s.u'),
+					'timezone' => $value->format('e'),
+					'dateFormat' => 'Y-m-d H:i:s.u'
+				);
+			} elseif ($value instanceof \SplObjectStorage) {
 				throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
 			} elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
 				throw new \RuntimeException('Collection in array properties is not supported', 1375196581);
