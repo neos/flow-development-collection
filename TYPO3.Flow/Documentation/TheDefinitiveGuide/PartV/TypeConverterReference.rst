@@ -346,9 +346,8 @@ Has two major working modes:
    In this case, the input array is expected to be a fresh file upload following the native PHP handling. The
    temporary upload file is then imported through the resource manager.
 
-   To enable the handling of files that have already been uploaded earlier, the special fields ['submittedFile'],
-   ['submittedFile']['filename'] and ['submittedFile']['hash'] are checked. If set, they are used to
-   fetch a file that has already been uploaded even if no file has been actually uploaded in the current request.
+   To enable the handling of files that have already been uploaded earlier, the special field ['originallySubmittedResource']
+   is checked. If set, it is used to fetch a file that has already been uploaded even if no file has been actually uploaded in the current request.
 
 
 2. Strings / arbitrary Arrays
