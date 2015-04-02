@@ -43,6 +43,14 @@ use TYPO3\Flow\Resource\Resource;
  * <input type="file" name="formObject[attachments][0][originalResource]">
  * </output>
  *
+ * <code title="Default resource">
+ * <f:form.upload name="file" value="{someDefaultResource}" />
+ * </code>
+ * <output>
+ * <input type="hidden" name="file[originallySubmittedResource][__identity]" value="<someDefaultResource-UUID>" />
+ * <input type="file" name="file" />
+ * </output>
+ *
  * <code title="Specifying the resource collection for the new resource">
  * <f:form.upload name="file" collection="invoices"/>
  * </code>
@@ -85,8 +93,8 @@ class UploadViewHelper extends AbstractFormFieldViewHelper {
 	 * @api
 	 */
 	public function render() {
-		$name = $this->getName();
-		$this->registerFieldNameForFormTokenGeneration($name);
+		$nameAttribute = $this->getName();
+		$this->registerFieldNameForFormTokenGeneration($nameAttribute);
 
 		$output = '';
 		$resource = $this->getUploadedResource();
@@ -95,15 +103,15 @@ class UploadViewHelper extends AbstractFormFieldViewHelper {
 			if ($this->hasArgument('id')) {
 				$resourceIdentityAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-resource-identity"';
 			}
-			$output .= '<input type="hidden" name="'. $this->getName() . '[originallySubmittedResource][__identity]" value="' . $this->persistenceManager->getIdentifierByObject($resource) . '"' . $resourceIdentityAttribute . ' />';
+			$output .= '<input type="hidden" name="'. htmlspecialchars($nameAttribute) . '[originallySubmittedResource][__identity]" value="' . $this->persistenceManager->getIdentifierByObject($resource) . '"' . htmlspecialchars($resourceIdentityAttribute) . ' />';
 		}
 
 		if ($this->hasArgument('collection') && $this->arguments['collection'] !== FALSE && $this->arguments['collection'] !== '') {
-			$output .= '<input type="hidden" name="'. $this->getName() . '[__collectionName]" value="' . $this->arguments['collection'] . '" />';
+			$output .= '<input type="hidden" name="'. htmlspecialchars($nameAttribute) . '[__collectionName]" value="' . htmlspecialchars($this->arguments['collection']) . '" />';
 		}
 
 		$this->tag->addAttribute('type', 'file');
-		$this->tag->addAttribute('name', $name);
+		$this->tag->addAttribute('name', $nameAttribute);
 
 		$this->addAdditionalIdentityPropertiesIfNeeded();
 		$this->setErrorClassAttribute();
@@ -113,26 +121,52 @@ class UploadViewHelper extends AbstractFormFieldViewHelper {
 	}
 
 	/**
-	 * Returns a previously uploaded resource.
+	 * Returns a previously uploaded resource, or the resource specified via "value" argument if no resource has been uploaded before
 	 * If errors occurred during property mapping for this property, NULL is returned
 	 *
-	 * @return \TYPO3\Flow\Resource\Resource
+	 * @return \TYPO3\Flow\Resource\Resource or NULL if no resource was uploaded and the "value" argument is not set
 	 */
 	protected function getUploadedResource() {
-		if ($this->getMappingResultsForProperty()->hasErrors()) {
-			return NULL;
-		}
 		$resource = NULL;
 		if ($this->hasMappingErrorOccurred()) {
 			$resource = $this->getLastSubmittedFormData();
-		} elseif ($this->isObjectAccessorMode()) {
-			$resource = $this->getPropertyValue();
 		} elseif ($this->hasArgument('value')) {
 			$resource = $this->arguments['value'];
+		} elseif ($this->isObjectAccessorMode()) {
+			$resource = $this->getPropertyValue();
+		}
+		if ($resource === NULL) {
+			return NULL;
 		}
 		if ($resource instanceof Resource) {
 			return $resource;
 		}
 		return $this->propertyMapper->convert($resource, 'TYPO3\Flow\Resource\Resource');
+	}
+
+	/**
+	 * Get the name of this form element, without prefix.
+	 *
+	 * Note: This is overridden here because the "value" argument should not have an effect on the name attribute of the <input type="file" /> tag
+	 * In the original implementation, setting a value will influence the name, @see AbstractFormFieldViewHelper::getNameWithoutPrefix()
+	 *
+	 * @return string name
+	 */
+	protected function getNameWithoutPrefix() {
+		if ($this->isObjectAccessorMode()) {
+			$propertySegments = explode('.', $this->arguments['property']);
+			$formObjectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+			if (!empty($formObjectName)) {
+				array_unshift($propertySegments, $formObjectName);
+			}
+			$name = array_shift($propertySegments);
+			foreach ($propertySegments as $segment) {
+				$name .= '[' . $segment . ']';
+			}
+		} else {
+			$name = $this->hasArgument('name') ? $this->arguments['name'] : '';
+		}
+
+		return $name;
 	}
 }
