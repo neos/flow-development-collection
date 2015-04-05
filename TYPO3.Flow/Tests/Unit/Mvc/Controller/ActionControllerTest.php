@@ -158,8 +158,21 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('initialize'));
 
 		$mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
-		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->with('TYPO3\Flow\Mvc\Controller\ActionController', 'initializeAction')->will($this->returnValue(FALSE));
-		$this->inject($this->actionController, 'reflectionService', $mockReflectionService);
+		$mockReflectionService->expects($this->any())->method('isMethodPublic')->will($this->returnCallback(function($className, $methodName) {
+			if ($methodName === 'initializeAction') {
+				return FALSE;
+			} else {
+				return TRUE;
+			}
+		}));
+
+		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function($classname) use ($mockReflectionService) {
+			if ($classname === 'TYPO3\Flow\Reflection\ReflectionService') {
+				$this->returnValue($mockReflectionService);
+			}
+
+			return $this->getMock($classname);
+		}));
 
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
