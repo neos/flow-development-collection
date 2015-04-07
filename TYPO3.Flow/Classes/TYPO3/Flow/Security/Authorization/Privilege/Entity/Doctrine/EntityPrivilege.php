@@ -53,7 +53,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
 	public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias) {
 		$context = new EelContext($this->getConditionGenerator());
 
-		$evaluator = new EntityPrivilegeExpressionEvaluator();
+		$evaluator = $this->objectManager->get('TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator');
 		$result = $evaluator->evaluate($this->getParsedMatcher(), $context);
 
 		/** @var EntityManager $entityManager */
