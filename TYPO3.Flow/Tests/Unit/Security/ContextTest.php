@@ -925,4 +925,49 @@ class ContextTest extends UnitTestCase {
 		});
 		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
 	}
+
+	/**
+	 * @test
+	 */
+	public function getContextHashReturnsStaticStringIfAuthorizationChecksAreDisabled() {
+		$self = $this;
+		$this->securityContext->withoutAuthorizationChecks(function() use ($self) {
+			$self->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $self->securityContext->getContextHash());
+		});
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContextHashInitializesSecurityContext() {
+		/** @var Context|\PHPUnit_Framework_MockObject_MockObject $securityContext */
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'canBeInitialized'));
+		$securityContext->setContextHashComponent('someHashComponent', 'someValue');
+		$securityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(TRUE));
+		$securityContext->expects($this->at(1))->method('initialize');
+
+		$expectedHash = md5('someValue');
+		$this->assertSame($expectedHash, $securityContext->getContextHash());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContextHashReturnsStaticStringIfSecurityContextCantBeInitialized() {
+		/** @var Context|\PHPUnit_Framework_MockObject_MockObject $securityContext */
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'canBeInitialized'));
+		$securityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(FALSE));
+		$securityContext->expects($this->never())->method('initialize');
+		$this->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContextHashReturnsAHashOverAllHashComponents() {
+		$this->securityContext->setContextHashComponent('someHashComponent', 'someValue');
+		$this->securityContext->setContextHashComponent('someOtherHashComponent', 'someOtherValue');
+		$expectedHash = md5('someValue|someOtherValue');
+		$this->assertSame($expectedHash, $this->securityContext->getContextHash());
+	}
 }

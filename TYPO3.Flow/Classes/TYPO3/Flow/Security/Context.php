@@ -70,6 +70,12 @@ class Context {
 	const CSRF_ONE_PER_REQUEST = 3;
 
 	/**
+	 * If the security context isn't initialized (or authorization checks are disabled)
+	 * this constant will be returned by getContextHash()
+	 */
+	const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
+
+	/**
 	 * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
 	 *
 	 * @var boolean
@@ -482,6 +488,7 @@ class Context {
 		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) {
+				/** @noinspection PhpDeprecationInspection */
 				return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
 			}
 		}
@@ -502,7 +509,9 @@ class Context {
 
 		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
+			/** @noinspection PhpDeprecationInspection */
 			if ($token->isAuthenticated() === TRUE && $token->getAccount() instanceof Account && $token->getAccount()->getParty() instanceof $className) {
+				/** @noinspection PhpDeprecationInspection */
 				return $token->getAccount()->getParty();
 			}
 		}
@@ -786,13 +795,14 @@ class Context {
 	 * @return string
 	 */
 	public function getContextHash() {
+		if ($this->areAuthorizationChecksDisabled()) {
+			return self::CONTEXT_HASH_UNINITIALIZED;
+		}
 		if ($this->initialized === FALSE) {
 			if (!$this->canBeInitialized()) {
-				return '__uninitialized__';
-			} else {
-				$this->initialize();
+				return self::CONTEXT_HASH_UNINITIALIZED;
 			}
-
+			$this->initialize();
 		}
 		if ($this->contextHash === NULL) {
 			$this->contextHash = md5(implode('|', $this->contextHashComponents));
