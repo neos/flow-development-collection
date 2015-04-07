@@ -191,4 +191,20 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$classWithSettings = new Fixtures\ClassWithSettings();
 		$this->assertSame($classWithSettings->getInjectedSettingB(), 'injected setting');
 	}
+
+	/**
+	 * This test verifies the behaviour described in FLOW-175.
+	 *
+	 * Please note that this issue occurs ONLY when creating an object
+	 * with a dependency that itself takes an prototype-scoped object as
+	 * constructor argument and that dependency was explicitly configured
+	 * in the package's Objects.yaml.
+	 *
+	 * @test
+	 * @see https://jira.typo3.org/browse/FLOW-175
+	 */
+	public function transitivePrototypeDependenciesWithExplicitObjectConfigurationAreConstructedCorrectly() {
+		$classWithTransitivePrototypeDependency = new \TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175\ClassWithTransitivePrototypeDependency();
+		$this->assertEquals('Hello World!', $classWithTransitivePrototypeDependency->getTestValue());
+	}
 }
