@@ -100,12 +100,11 @@ class JsonArrayType extends DoctrineJsonArrayType {
 
 		$this->encodeObjectReferences($array);
 
-		switch ($platform->getName()) {
-			case 'postgresql':
-				return parent::convertToDatabaseValue($array, $platform);
-			default:
-				return parent::convertToDatabaseValue($array, $platform);
+		if ($array === NULL) {
+			return NULL;
 		}
+
+		return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT);
 	}
 
 	/**
