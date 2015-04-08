@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Cache;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Backend\BackendInterface;
+use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Utility\PhpAnalyzer;
 
 /**
  * The Cache Manager
@@ -156,6 +159,7 @@ class CacheManager {
 	 */
 	public function flushCaches() {
 		$this->createAllCaches();
+		/** @var BackendInterface $cache */
 		foreach ($this->caches as $cache) {
 			$cache->flush();
 		}
@@ -172,6 +176,7 @@ class CacheManager {
 	 */
 	public function flushCachesByTag($tag) {
 		$this->createAllCaches();
+		/** @var TaggableBackendInterface $cache */
 		foreach ($this->caches as $cache) {
 			$cache->flushByTag($tag);
 		}
@@ -228,26 +233,24 @@ class CacheManager {
 		$modifiedAspectClassNamesWithUnderscores = array();
 		$modifiedClassNamesWithUnderscores = array();
 		foreach ($changedFiles as $pathAndFilename => $status) {
-			$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
-			$matches = array();
-			// safeguard against projects having illegal filenames below "Classes" (like phpexcel/phpexcel, see https://phpexcel.codeplex.com/workitem/20336)
-			if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/([^.]+)\.php/', $pathAndFilename, $matches) === 1) {
-				if ($matches[2] === 'Classes') {
-					$classNameWithUnderscores = str_replace('/', '_', $matches[3]);
-				} else {
-					$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
-					$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
-				}
-				$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
+			if (!file_exists($pathAndFilename)) {
+				continue;
+			}
+			$fileContents = file_get_contents($pathAndFilename);
+			$className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+			if ($className === NULL) {
+				continue;
+			}
+			$classNameWithUnderscores = str_replace('\\', '_', $className);
+			$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
 
-				// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
-				if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
-					$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
-				}
-				// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
-				if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
-					$objectClassesCache->remove($classNameWithUnderscores);
-				}
+			// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
+			if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
+				$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
+			}
+			// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
+			if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
+				$objectClassesCache->remove($classNameWithUnderscores);
 			}
 		}
 		$flushDoctrineProxyCache = FALSE;
