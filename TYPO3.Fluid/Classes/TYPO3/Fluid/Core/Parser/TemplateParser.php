@@ -224,22 +224,26 @@ class TemplateParser {
 	 *
 	 */
 	static public $SCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS = '/^
-		(?P<Recursion>                                  # Start the recursive part of the regular expression - describing the array syntax
-			{                                           # Each array needs to start with {
-				(?P<Array>                              # Start sub-match
+		(?P<Recursion>                                             # Start the recursive part of the regular expression - describing the array syntax
+			{                                                      # Each array needs to start with {
+				(?P<Array>                                         # Start sub-match
 					(?:
-						\s*[a-zA-Z0-9\-_]+              # The keys of the array
-						\s*:\s*                         # Key|Value delimiter :
-						(?:                             # Possible value options:
-							"(?:\\\"|[^"])*"            # Double quoted string
-							|\'(?:\\\\\'|[^\'])*\'      # Single quoted string
-							|[a-zA-Z0-9\-_.]+           # variable identifiers
-							|(?P>Recursion)             # Another sub-array
-						)                               # END possible value options
-						\s*,?                           # There might be a , to separate different parts of the array
-					)*                                  # The above cycle is repeated for all array elements
-				)                                       # End array sub-match
-			}                                           # Each array ends with }
+						\s*(
+							[a-zA-Z0-9\\-_]+                       # The keys of the array
+							|"[a-zA-Z0-9\\-_\\[\\]\\.]+"           # Double quoted key, supporting more characters like dots and square brackets
+							|\'[a-zA-Z0-9\\-_\\[\\]\\.]+\'         # Single quoted key
+						)
+						\s*:\s*                                    # Key|Value delimiter :
+						(?:                                        # Possible value options:
+							"(?:\\\"|[^"])*"                       # Double quoted string
+							|\'(?:\\\\\'|[^\'])*\'                 # Single quoted string
+							|[a-zA-Z0-9\-_.]+                      # variable identifiers
+							|(?P>Recursion)                        # Another sub-array
+						)                                          # END possible value options
+						\s*,?                                      # There might be a , to separate different parts of the array
+					)*                                             # The above cycle is repeated for all array elements
+				)                                                  # End array sub-match
+			}                                                      # Each array ends with }
 		)$/x';
 
 	/**
@@ -249,7 +253,11 @@ class TemplateParser {
 	 */
 	static public $SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS = '/
 		(?P<ArrayPart>                                             # Start sub-match
-			(?P<Key>[a-zA-Z0-9\-_]+)                               # The keys of the array
+			(?P<Key>                                               # The keys of the array
+				[a-zA-Z0-9\\-_]+                                   # unquoted
+				|"[a-zA-Z0-9\\-_\\[\\]\\.]+"                       # double quoted
+				|\'[a-zA-Z0-9\\-_\\[\\]\\.]+\'                     # single quoted
+			)
 			\s*:\s*                                                # Key|Value delimiter :
 			(?:                                                    # Possible value options:
 				(?P<QuotedString>                                  # Quoted string
@@ -945,7 +953,7 @@ class TemplateParser {
 		if (preg_match_all(self::$SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS, $arrayText, $matches, PREG_SET_ORDER) > 0) {
 			$arrayToBuild = array();
 			foreach ($matches as $singleMatch) {
-				$arrayKey = $singleMatch['Key'];
+				$arrayKey = $this->unquoteString($singleMatch['Key']);
 				if (!empty($singleMatch['VariableIdentifier'])) {
 					$arrayToBuild[$arrayKey] = $this->objectManager->get('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', $singleMatch['VariableIdentifier']);
 				} elseif (array_key_exists('Number', $singleMatch) && ( !empty($singleMatch['Number']) || $singleMatch['Number'] === '0' ) ) {
