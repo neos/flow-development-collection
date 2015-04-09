@@ -70,7 +70,7 @@ class LockManager {
 	 */
 	public function initializeObject() {
 		$this->lockPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Flow.lock';
-		if (file_exists($this->lockPathAndFilename)) {
+		if (is_file($this->lockPathAndFilename)) {
 			if (filemtime($this->lockPathAndFilename) < (time() - self::LOCKFILE_MAXIMUM_AGE)) {
 				unlink($this->lockPathAndFilename);;
 			} else {
@@ -129,7 +129,7 @@ class LockManager {
 	 */
 	public function unlockSite() {
 		if ($this->siteLocked === TRUE) {
-			if (file_exists($this->lockPathAndFilename)) {
+			if (is_file($this->lockPathAndFilename)) {
 				unlink($this->lockPathAndFilename);
 			} else {
 				$this->systemLogger->log('Site is locked but no lockfile could be found.', LOG_WARNING);

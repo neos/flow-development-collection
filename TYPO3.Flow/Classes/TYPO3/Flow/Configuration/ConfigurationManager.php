@@ -544,7 +544,7 @@ class ConfigurationManager {
 	 * @return boolean If cached configuration was loaded or not
 	 */
 	public function loadConfigurationCache() {
-		if (file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+		if (is_file($this->includeCachedConfigurationsPathAndFilename)) {
 			$this->configurations = require($this->includeCachedConfigurationsPathAndFilename);
 			return TRUE;
 		}
@@ -560,7 +560,7 @@ class ConfigurationManager {
 	public function flushConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
 		$cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
-		if (file_exists($cachePathAndFilename)) {
+		if (is_file($cachePathAndFilename)) {
 			if (unlink($cachePathAndFilename) === FALSE) {
 				throw new Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
 			}
@@ -596,7 +596,7 @@ EOD;
 			Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
 		}
 		file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
-		if (!file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+		if (!is_file($this->includeCachedConfigurationsPathAndFilename)) {
 			throw new Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
 		}
 	}
