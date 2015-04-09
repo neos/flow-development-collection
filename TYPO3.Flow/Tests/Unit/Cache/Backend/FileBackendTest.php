@@ -577,6 +577,69 @@ class FileBackendTest extends UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \Exception
+	 */
+	public function requireOnceDoesNotSwallowExceptionsOfTheIncludedFile() {
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$entryIdentifier = 'SomePhpEntryWithException';
+		$backend->set($entryIdentifier, '<?php throw new \Exception(); ?>');
+		$backend->requireOnce($entryIdentifier);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \PHPUnit_Framework_Error_Warning
+	 */
+	public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile() {
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$entryIdentifier = 'SomePhpEntryWithPhpWarning';
+		$backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_WARNING); ?>');
+		$backend->requireOnce($entryIdentifier);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \PHPUnit_Framework_Error_Notice
+	 */
+	public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile() {
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$entryIdentifier = 'SomePhpEntryWithPhpNotice';
+		$backend->set($entryIdentifier, '<?php $undefined ++; ?>');
+		$backend->requireOnce($entryIdentifier);
+	}
+
+	/**
+	 * @test
 	 */
 	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
