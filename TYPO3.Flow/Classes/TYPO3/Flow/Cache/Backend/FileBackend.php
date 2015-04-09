@@ -351,12 +351,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			}
 
 			if ($this->isCacheFileExpired($directoryIterator->getPathname())) {
-				$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
-				if ($cacheEntryFileExtensionLength > 0) {
-					$this->remove(substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength));
-				} else {
-					$this->remove($directoryIterator->getFilename());
-				}
+				$this->remove($directoryIterator->getBasename($this->cacheEntryFileExtension));
 			}
 		}
 	}
