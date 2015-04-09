@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(__DIR__ . '/../Fixture/FooBarAnnotation.php');
+
 use TYPO3\Flow\Annotations\Inject;
 use TYPO3\Flow\Annotations\Scope;
 use TYPO3\Flow\Annotations\Session;
@@ -134,14 +136,4 @@ class CompilerTest extends UnitTestCase {
 		$this->assertSame($expectedResult, $actualResult);
 	}
 
-}
-
-/**
- * fixture "annotation" for the above test case
- */
-class FooBarAnnotation {
-	public $value;
-	public function __construct($value = 1.2) {
-		$this->value = $value;
-	}
 }
