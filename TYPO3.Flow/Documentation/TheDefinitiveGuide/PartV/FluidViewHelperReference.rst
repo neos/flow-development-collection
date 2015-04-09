@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-04-08
+This reference was automatically generated from code on 2015-04-09
 
 
 f:alias
@@ -1512,6 +1512,17 @@ Expected result::
 
 	<input type="file" name="formObject[attachments][0][originalResource]">
 	<input type="file" name="formObject[attachments][0][originalResource]">
+
+
+**Default resource**::
+
+	<f:form.upload name="file" value="{someDefaultResource}" />
+
+
+Expected result::
+
+	<input type="hidden" name="file[originallySubmittedResource][__identity]" value="<someDefaultResource-UUID>" />
+	<input type="file" name="file" />
 
 
 **Specifying the resource collection for the new resource**::
