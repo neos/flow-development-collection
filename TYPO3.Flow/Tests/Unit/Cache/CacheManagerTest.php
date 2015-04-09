@@ -158,6 +158,18 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function flushConfigurationCachesByChangedFilesFlushesConfigurationCache() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array());
+	}
+
+	/**
+	 * @test
+	 */
 	public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache() {
 		$objectClassCache = $this->registerCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');

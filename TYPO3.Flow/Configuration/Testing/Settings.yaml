@@ -12,9 +12,6 @@ TYPO3:
 
   Flow:
 
-    configuration:
-      compileConfigurationFiles: FALSE
-
     core:
       subRequestEnvironmentVariables:
         XDEBUG_CONFIG: 'idekey=FLOW_SUBREQUEST remote_port=9001'
