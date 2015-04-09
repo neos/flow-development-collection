@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -15,39 +15,32 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * An entity for tests
+ * A simple entity for persistence tests of OneToOne relations.
  *
  * @Flow\Entity
+ * @ORM\Table(name="persistence_onetooneentity")
  */
-class TestEntityA {
+class OneToOneEntity {
 
 	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
-	 * @ORM\OneToOne(inversedBy="relatedEntityA")
+	 * Self-referencing
+	 * @var OneToOneEntity
+	 * @ORM\OneToOne
 	 */
-	protected $relatedEntityB;
+	protected $selfReferencing;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+	 * Bidirectional relation owning side
+	 * @var OneToOneEntity2
+	 * @ORM\OneToOne(inversedBy="bidirectionalRelation")
 	 */
-	public function __construct($relatedEntityB) {
-		$this->relatedEntityB = $relatedEntityB;
-	}
+	protected $bidirectionalRelation;
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+	 * Unidirectional relation
+	 * @var OneToOneEntity2
+	 * @ORM\OneToOne
 	 */
-	public function setRelatedEntityB($relatedEntityB) {
-		$this->relatedEntityB = $relatedEntityB;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
-	 */
-	public function getRelatedEntityB() {
-		return $this->relatedEntityB;
-	}
+	protected $unidirectionalRelation;
 
 }
