@@ -61,4 +61,14 @@ class UserDomainClass {
 	public function getLastName() {
 		return $this->lastName;
 	}
+
+	/**
+	 * @return \ArrayObject
+	 */
+	public function getInterests() {
+		return new \ArrayObject(array(
+			'value1',
+			'value3',
+		));
+	}
 }
