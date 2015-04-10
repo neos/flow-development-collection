@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\Builder\ClassNameIndex;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
+use TYPO3\Flow\Aop\Pointcut\RuntimeExpressionEvaluator;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -48,6 +49,11 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface {
 	protected $objectManager;
 
 	/**
+	 * @var RuntimeExpressionEvaluator
+	 */
+	protected $runtimeExpressionEvaluator;
+
+	/**
 	 * This object is created very early so we can't rely on AOP for the property injection
 	 *
 	 * @param ObjectManagerInterface $objectManager
@@ -56,8 +62,9 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface {
 	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 		/** @var CacheManager $cacheManager */
-		$cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
+		$cacheManager = $this->objectManager->get(CacheManager::class);
 		$this->methodPermissionCache = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method');
+		$this->runtimeExpressionEvaluator = $this->objectManager->get(RuntimeExpressionEvaluator::class);
 	}
 
 	/**
@@ -92,14 +99,14 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface {
 				$matches = TRUE;
 				$methodIdentifier = strtolower($className . '->' . $methodName);
 
+				$hasRuntimeEvaluations = FALSE;
 				if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
-					$runtimeEvaluationsClosureCode = $filter->getRuntimeEvaluationsClosureCode();
-				} else {
-					$runtimeEvaluationsClosureCode = FALSE;
+					$hasRuntimeEvaluations = TRUE;
+					$this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
 				}
 
 				$this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = TRUE;
-				$this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['runtimeEvaluationsClosureCode'] = $runtimeEvaluationsClosureCode;
+				$this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
 			}
 		}
 
@@ -150,9 +157,9 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface {
 	protected function buildPointcutFilters() {
 		$this->filters = array();
 		/** @var PolicyService $policyService */
-		$policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+		$policyService = $this->objectManager->get(PolicyService::class);
 		/** @var MethodPrivilegeInterface[] $methodPrivileges */
-		$methodPrivileges = $policyService->getAllPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface');
+		$methodPrivileges = $policyService->getAllPrivilegesByType(MethodPrivilegeInterface::class);
 		foreach ($methodPrivileges as $privilege) {
 			$this->filters[$privilege->getCacheEntryIdentifier()] = $privilege->getPointcutFilterComposite();
 		}

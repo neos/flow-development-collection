@@ -239,6 +239,9 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$policyCache = $this->registerCache('Flow_Security_Authorization_Privilege_Method');
 		$policyCache->expects($this->once())->method('flush');
 
+		$aopExpressionCache = $this->registerCache('Flow_Aop_RuntimeExpressions');
+		$aopExpressionCache->expects($this->once())->method('flush');
+
 		$doctrineCache = $this->registerCache('Flow_Persistence_Doctrine');
 		$doctrineCache->expects($this->once())->method('flush');
 
