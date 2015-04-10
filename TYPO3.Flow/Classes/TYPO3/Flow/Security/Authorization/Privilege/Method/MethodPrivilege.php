@@ -14,7 +14,9 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Method;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilter;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
+use TYPO3\Flow\Aop\Pointcut\RuntimeExpressionEvaluator;
 use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -27,7 +29,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 	/**
 	 * @var array
 	 */
-	protected $methodPermissions;
+	protected static $methodPermissions;
 
 	/**
 	 * @var PointcutFilter
@@ -35,15 +37,38 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 	protected $pointcutFilter;
 
 	/**
+	 * @var RuntimeExpressionEvaluator
+	 */
+	protected $runtimeExpressionEvaluator;
+
+	/**
+	 * This object is created very early so we can't rely on AOP for the property injection
+	 * This method also takes care of initializing caches and other dependencies.
+	 *
+	 * @param ObjectManagerInterface $objectManager
+	 * @return void
+	 */
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+		$this->initialize();
+	}
+	/**
 	 * @return void
 	 */
 	protected function initialize() {
-		if ($this->methodPermissions !== NULL) {
+		if ($this->runtimeExpressionEvaluator !== NULL) {
 			return;
 		}
+
 		/** @var CacheManager $cacheManager */
-		$cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
-		$this->methodPermissions = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->get('methodPermission');
+		$cacheManager = $this->objectManager->get(CacheManager::class);
+		$this->runtimeExpressionEvaluator = $this->objectManager->get(RuntimeExpressionEvaluator::class);
+		$this->runtimeExpressionEvaluator->injectObjectManager($this->objectManager);
+
+		if (static::$methodPermissions !== NULL) {
+			return;
+		}
+		static::$methodPermissions = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->get('methodPermission');
 	}
 
 	/**
@@ -63,14 +88,9 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 
-		if (isset($this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
-			if ($this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['runtimeEvaluationsClosureCode'] !== FALSE) {
-				// Make object manager usable as closure variable
-				/** @noinspection PhpUnusedLocalVariableInspection */
-				$objectManager = $this->objectManager;
-				eval('$runtimeEvaluator = ' . $this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['runtimeEvaluationsClosureCode'] . ';');
-				/** @noinspection PhpUndefinedVariableInspection */
-				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) {
+		if (isset(static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
+			if (static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['hasRuntimeEvaluations']) {
+				if ($this->runtimeExpressionEvaluator->evaluate($this->getCacheEntryIdentifier(), $joinPoint) === FALSE) {
 					return FALSE;
 				}
 			}
@@ -91,7 +111,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 		$this->initialize();
 
 		$methodIdentifier = strtolower($className . '->' . $methodName);
-		if (isset($this->methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
+		if (isset(static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
 			return TRUE;
 		}
 

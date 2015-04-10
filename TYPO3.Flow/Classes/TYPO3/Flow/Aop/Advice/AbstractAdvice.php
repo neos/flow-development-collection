@@ -77,7 +77,7 @@ class AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface {
 	 * @return mixed Result of the advice method
 	 */
 	public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) {
+		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint, $this->objectManager) === FALSE) {
 			return;
 		}
 
