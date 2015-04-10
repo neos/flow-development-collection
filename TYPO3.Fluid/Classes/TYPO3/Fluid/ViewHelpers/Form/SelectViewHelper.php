@@ -303,7 +303,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper {
 	 */
 	protected function getSelectedValue() {
 		$value = $this->getValueAttribute();
-		if (!is_array($value) && !($value instanceof  \Traversable)) {
+		if (!is_array($value) && !($value instanceof \Traversable)) {
 			return $this->getOptionValueScalar($value);
 		}
 		$selectedValues = array();

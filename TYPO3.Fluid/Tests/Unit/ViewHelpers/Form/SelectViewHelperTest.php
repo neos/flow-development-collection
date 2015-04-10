@@ -11,6 +11,8 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Form;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
 require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
@@ -155,6 +157,47 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
 		$this->viewHelper->initialize();
 		$result = $this->viewHelper->render();
 		$expected = '<select multiple="multiple" name="myName[]"><option value="value1" selected="selected">label1</option>' . chr(10) .
+			'<option value="value2">label2</option>' . chr(10) .
+			'<option value="value3" selected="selected">label3</option>' . chr(10) .
+			'</select>';
+		$this->assertSame($expected, $result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function multipleSelectCreatesExpectedOptionsInObjectAccessorMode() {
+		$this->tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder();
+
+		$user = new \TYPO3\Fluid\ViewHelpers\Fixtures\UserDomainClass(1, 'Sebastian', 'Düvel');
+
+		$this->viewHelperVariableContainerData = array(
+			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
+				'formObjectName' => 'someFormObjectName',
+				'formObject' => $user,
+			)
+		);
+
+		$this->arguments['options'] = array(
+			'value1' => 'label1',
+			'value2' => 'label2',
+			'value3' => 'label3'
+		);
+		$this->arguments['property'] = 'interests';
+		$this->arguments['multiple'] = 'multiple';
+		$this->arguments['selectAllByDefault'] = NULL;
+
+		/** @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPersistenceManager */
+		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($user->getInterests())->will($this->returnValue(NULL));
+		$this->viewHelper->injectPersistenceManager($mockPersistenceManager);
+
+		$this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+		$this->viewHelper->initializeArguments();
+		$this->viewHelper->initialize();
+		$result = $this->viewHelper->render();
+		$expected = '<select multiple="multiple" name="someFormObjectName[interests][]"><option value="value1" selected="selected">label1</option>' . chr(10) .
 			'<option value="value2">label2</option>' . chr(10) .
 			'<option value="value3" selected="selected">label3</option>' . chr(10) .
 			'</select>';
