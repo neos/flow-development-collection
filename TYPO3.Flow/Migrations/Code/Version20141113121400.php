@@ -68,7 +68,7 @@ class Version20141113121400 extends AbstractMigration {
 			$newRolesConfiguration[$roleIdentifier]['parentRoles'] = array();
 			foreach ($roleConfiguration as $parentRoleIdentifier) {
 				if (strpos($parentRoleIdentifier, ':') === FALSE) {
-					$parentRoleIdentifier = $this->targetPackageData['packageKey'] . ':' . $parentRoleIdentifier;
+					$parentRoleIdentifier = $this->expandRoleIdentifier($parentRoleIdentifier);
 				}
 				$newRolesConfiguration[$roleIdentifier]['parentRoles'][] = $parentRoleIdentifier;
 			}
