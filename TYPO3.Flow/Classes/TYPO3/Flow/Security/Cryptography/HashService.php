@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 
 /**
  * A hash service which should be used to generate and validate hashes.
@@ -41,6 +42,12 @@ class HashService {
 	 * @Flow\Inject
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var StringFrontend
+	 * @Flow\Inject
+	 */
+	protected $cache;
 
 	/**
 	 * Injects the settings of the package this controller belongs to.
@@ -185,21 +192,22 @@ class HashService {
 	}
 
 	/**
+	 * Returns the encryption key from the persistent cache or Data/Persistent directory. If none exists, a new
+	 * encryption key will be generated and stored in the cache.
+	 *
 	 * @return string The configured encryption key stored in Data/Persistent/EncryptionKey
-	 * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	protected function getEncryptionKey() {
 		if ($this->encryptionKey === NULL) {
-			if (!file_exists(FLOW_PATH_DATA . 'Persistent/EncryptionKey')) {
-				file_put_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\Flow\Utility\Algorithms::generateRandomBytes(96)));
-			}
-			$this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
-
-			if ($this->encryptionKey === FALSE || $this->encryptionKey === '') {
-				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
-			}
+			$this->encryptionKey = $this->cache->get('encryptionKey');
 		}
-
+		if ($this->encryptionKey === FALSE && file_exists(FLOW_PATH_DATA . 'Persistent/EncryptionKey')) {
+			$this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
+		}
+		if ($this->encryptionKey === FALSE) {
+			$this->encryptionKey = bin2hex(\TYPO3\Flow\Utility\Algorithms::generateRandomBytes(96));
+			$this->cache->set('encryptionKey', $this->encryptionKey);
+		}
 		return $this->encryptionKey;
 	}
 
