@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -64,30 +65,35 @@ class CacheFactory {
 	 * @param string $cacheObjectName Object name of the cache frontend
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
-	 * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface The created cache frontend
-	 * @throws \TYPO3\Flow\Cache\Exception\InvalidBackendException
-	 * @throws \TYPO3\Flow\Cache\Exception\InvalidCacheException
+	 * @param boolean $persistent If the new cache should be marked as "persistent"
+	 * @return Frontend\FrontendInterface The created cache frontend
+	 * @throws Exception\InvalidBackendException
+	 * @throws Exception\InvalidCacheException
 	 * @api
 	 */
-	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
+	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array(), $persistent = FALSE) {
 		$backend = new $backendObjectName($this->context, $backendOptions);
-		if (!$backend instanceof \TYPO3\Flow\Cache\Backend\BackendInterface) {
-			throw new \TYPO3\Flow\Cache\Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+		if (!$backend instanceof Backend\BackendInterface) {
+			throw new Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		}
 		$backend->injectEnvironment($this->environment);
+		if (is_callable(array($backend, 'injectCacheManager'))) {
+			$backend->injectCacheManager($this->cacheManager);
+		}
 		if (is_callable(array($backend, 'initializeObject'))) {
-			$backend->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+			$backend->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 		}
 
 		$cache = new $cacheObjectName($cacheIdentifier, $backend);
-		if (!$cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
-			throw new \TYPO3\Flow\Cache\Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
-		}
-		if (is_callable(array($cache, 'initializeObject'))) {
-			$cache->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+		if (!$cache instanceof Frontend\FrontendInterface) {
+			throw new Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
 		}
 
-		$this->cacheManager->registerCache($cache);
+		$this->cacheManager->registerCache($cache, $persistent);
+
+		if (is_callable(array($cache, 'initializeObject'))) {
+			$cache->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+		}
 		return $cache;
 	}
 

@@ -1187,9 +1187,14 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
+		$mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(FALSE));
+
 		$backend = new FileBackend(new ApplicationContext('Testing'));
+		$backend->injectCacheManager($mockCacheManager);
 		$backend->injectEnvironment($mockEnvironment);
 		$cache = new VariableFrontend($name, $backend);
+		$cache->initializeObject();
 		$cache->flush();
 		return $cache;
 	}

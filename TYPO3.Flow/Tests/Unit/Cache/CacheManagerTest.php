@@ -117,6 +117,22 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function isCachePersistentReturnsCorrectResult() {
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
+		$this->cacheManager->registerCache($cache1);
+
+		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
+		$this->cacheManager->registerCache($cache2, TRUE);
+
+		$this->assertFalse($this->cacheManager->isCachePersistent('cache1'));
+		$this->assertTrue($this->cacheManager->isCachePersistent('cache2'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
 		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
@@ -124,8 +140,14 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->cacheManager->registerCache($cache1);
 
 		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 		$cache2->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
 		$this->cacheManager->registerCache($cache2);
+
+		$persistentCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$persistentCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('persistentCache'));
+		$persistentCache->expects($this->never())->method('flushByTag')->with($this->equalTo('theTag'));
+		$this->cacheManager->registerCache($persistentCache, TRUE);
 
 		$this->cacheManager->flushCachesByTag('theTag');
 	}
@@ -140,8 +162,14 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->cacheManager->registerCache($cache1);
 
 		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 		$cache2->expects($this->once())->method('flush');
 		$this->cacheManager->registerCache($cache2);
+
+		$persistentCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$persistentCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('persistentCache'));
+		$persistentCache->expects($this->never())->method('flush');
+		$this->cacheManager->registerCache($persistentCache, TRUE);
 
 		$this->cacheManager->flushCaches();
 	}

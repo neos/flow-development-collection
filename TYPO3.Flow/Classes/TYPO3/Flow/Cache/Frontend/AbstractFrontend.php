@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Cache\Backend\BackendInterface;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 
 /**
@@ -35,15 +36,28 @@ abstract class AbstractFrontend implements FrontendInterface {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \TYPO3\Flow\Cache\Backend\BackendInterface $backend Backend to be used for this cache
+	 * @param BackendInterface $backend Backend to be used for this cache
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
-	public function __construct($identifier, \TYPO3\Flow\Cache\Backend\BackendInterface $backend) {
+	public function __construct($identifier, BackendInterface $backend) {
 		if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
 			throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		}
 		$this->identifier = $identifier;
 		$this->backend = $backend;
+	}
+
+	/**
+	 * Initializes this frontend
+	 *
+	 * The backend is connected with this frontend in initializeObject(), not in __construct(), because the Cache Factory
+	 * needs an opportunity to register the cache before the backend's setCache() method is called. See
+	 * CacheFactory::create() for details. A backend (for example the SimpleFileBackend) may rely on the cache already
+	 * being registered at the CacheManager when its setCache() method is called.
+	 *
+	 * @return void
+	 */
+	public function initializeObject() {
 		$this->backend->setCache($this);
 	}
 
@@ -60,7 +74,7 @@ abstract class AbstractFrontend implements FrontendInterface {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \TYPO3\Flow\Cache\Backend\BackendInterface The backend used by this cache
+	 * @return BackendInterface The backend used by this cache
 	 * @api
 	 */
 	public function getBackend() {
