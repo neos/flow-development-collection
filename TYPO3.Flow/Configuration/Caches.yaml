@@ -18,6 +18,7 @@ Default:
   backend: TYPO3\Flow\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 0
+  persistent: false
 
 ##
 # Definition of caches used by TYPO3 Flow:
