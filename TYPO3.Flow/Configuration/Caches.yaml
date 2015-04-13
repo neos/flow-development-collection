@@ -112,6 +112,10 @@ Flow_Security_Authorization_Privilege_Method: []
 Flow_Security_Cryptography_RSAWallet:
   backendOptions:
     defaultLifetime: 30
+Flow_Security_Cryptography_HashService:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  persistent: true
+
 
 # Flow_Session_*
 Flow_Session_MetaData:
