@@ -8,7 +8,7 @@
 	<![CDATA[<f:form action="create"]]> objectName="new{modelName -> k:format.ucfirst()}">
 		<ol><f:for each="{properties}" as="property" key="propertyName">
 			<li>
-				<label for="{propertyName}">{modelName -> k:inflect.humanizeCamelCase()}</label>
+				<label for="{propertyName}">{propertyName -> k:inflect.humanizeCamelCase()}</label>
 				<f:if condition="{0: property.type} == {0: 'DateTime'}"><f:then><![CDATA[<f:form.textfield]]> type="datetime" value="<![CDATA[{f:format.date(date: 'now', format: 'Y-m-d\TH:i:sP')}]]>" property="{propertyName}" id="{propertyName}" /></f:then><f:else><![CDATA[<f:form.textfield]]> property="{propertyName}" id="{propertyName}" /></f:else></f:if>
 			</li>
 		</f:for>
