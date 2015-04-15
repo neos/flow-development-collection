@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
 
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
@@ -40,6 +41,11 @@ class SimpleFileBackendTest extends UnitTestCase {
 	protected $mockCacheFrontend;
 
 	/**
+	 * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockCacheManager;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -50,6 +56,8 @@ class SimpleFileBackendTest extends UnitTestCase {
 		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
 		$this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Temporary/Directory/'));
+
+		$this->mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array(), array(), '', FALSE);
 
 		$this->mockCacheFrontend = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->getMock();
 	}
@@ -63,6 +71,7 @@ class SimpleFileBackendTest extends UnitTestCase {
 	protected function getSimpleFileBackend(array $options = array()) {
 		$simpleFileBackend = new SimpleFileBackend($this->mockApplicationContext, $options);
 		$this->inject($simpleFileBackend, 'environment', $this->mockEnvironment);
+		$this->inject($simpleFileBackend, 'cacheManager', $this->mockCacheManager);
 		return $simpleFileBackend;
 	}
 
@@ -139,6 +148,23 @@ class SimpleFileBackendTest extends UnitTestCase {
 		$simpleFileBackend = $this->getSimpleFileBackend();
 		$simpleFileBackend->setCache($mockPhpCacheFrontend);
 		$this->assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
+	}
+
+	/**
+	 * @test
+	 */
+	public function aDifferentDefaultCacheDirectoryIsUsedForPersistentCaches() {
+		$this->mockCacheManager->expects($this->atLeastOnce())->method('isCachePersistent')->will($this->returnValue(TRUE));
+
+		$this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
+
+		// We need to create the directory here because vfs doesn't support touch() which is used by
+		// createDirectoryRecursively() in the setCache method.
+		mkdir ('vfs://Temporary/Directory/Cache');
+
+		$simpleFileBackend = $this->getSimpleFileBackend();
+		$simpleFileBackend->setCache($this->mockCacheFrontend);
+		$this->assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/SomeCache/', $simpleFileBackend->getCacheDirectory());
 	}
 
 	/**

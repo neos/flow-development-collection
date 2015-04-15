@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Cache;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Backend\BackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
@@ -48,11 +46,17 @@ class CacheManager {
 	/**
 	 * @var array
 	 */
+	protected $persistentCaches = array();
+
+	/**
+	 * @var array
+	 */
 	protected $cacheConfigurations = array(
 		'Default' => array(
 			'frontend' => 'TYPO3\Flow\Cache\Frontend\VariableFrontend',
 			'backend' => 'TYPO3\Flow\Cache\Backend\FileBackend',
-			'backendOptions' => array()
+			'backendOptions' => array(),
+			'persistent' => FALSE
 		)
 	);
 
@@ -88,6 +92,7 @@ class CacheManager {
 	 *   frontend
 	 *   backend
 	 *   backendOptions
+	 *   persistent
 	 *
 	 * If one of the options is not specified, the default value is assumed.
 	 * Existing cache configurations are preserved.
@@ -113,12 +118,15 @@ class CacheManager {
 	 * @throws \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
 	 * @api
 	 */
-	public function registerCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
+	public function registerCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache, $persistent = FALSE) {
 		$identifier = $cache->getIdentifier();
 		if (isset($this->caches[$identifier])) {
 			throw new \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		}
 		$this->caches[$identifier] = $cache;
+		if ($persistent === TRUE) {
+			$this->persistentCaches[$identifier] = $cache;
+		}
 	}
 
 	/**
@@ -152,15 +160,29 @@ class CacheManager {
 	}
 
 	/**
+	 * Checks if the specified cache is marked as "persistent".
+	 *
+	 * @param string $identifier The identifier of the cache
+	 * @return boolean TRUE if the specified cache is persistent, FALSE if it is not, or if the cache does not exist
+	 */
+	public function isCachePersistent($identifier) {
+		return isset($this->persistentCaches[$identifier]);
+	}
+
+	/**
 	 * Flushes all registered caches
 	 *
+	 * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
 	 * @return void
 	 * @api
 	 */
-	public function flushCaches() {
+	public function flushCaches($flushPersistentCaches = FALSE) {
 		$this->createAllCaches();
-		/** @var BackendInterface $cache */
-		foreach ($this->caches as $cache) {
+		/** @var FrontendInterface $cache */
+		foreach ($this->caches as $identifier => $cache) {
+			if (!$flushPersistentCaches && $this->isCachePersistent($identifier)) {
+				continue;
+			}
 			$cache->flush();
 		}
 		$this->configurationManager->flushConfigurationCache();
@@ -171,13 +193,17 @@ class CacheManager {
 	 * caches.
 	 *
 	 * @param string $tag Tag to search for
+	 * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
 	 * @return void
 	 * @api
 	 */
-	public function flushCachesByTag($tag) {
+	public function flushCachesByTag($tag, $flushPersistentCaches = FALSE) {
 		$this->createAllCaches();
-		/** @var TaggableBackendInterface $cache */
-		foreach ($this->caches as $cache) {
+		/** @var FrontendInterface $cache */
+		foreach ($this->caches as $identifier => $cache) {
+			if (!$flushPersistentCaches && $this->isCachePersistent($identifier)) {
+				continue;
+			}
 			$cache->flushByTag($tag);
 		}
 	}
@@ -380,6 +406,7 @@ class CacheManager {
 		$frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
 		$backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
 		$backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
-		$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
+		$persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
+		$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
 	}
 }

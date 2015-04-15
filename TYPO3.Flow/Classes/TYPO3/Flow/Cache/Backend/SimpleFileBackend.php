@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
@@ -71,12 +72,25 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	protected $cacheFilesIterator;
 
 	/**
+	 * @var CacheManager
+	 */
+	protected $cacheManager;
+
+	/**
 	 * Initializes this cache frontend
 	 *
 	 * @return void
 	 */
 	public function initializeObject() {
 		$this->useIgBinary = extension_loaded('igbinary');
+	}
+
+	/**
+	 * @param CacheManager $cacheManager
+	 * @return void
+	 */
+	public function injectCacheManager(CacheManager $cacheManager) {
+		$this->cacheManager = $cacheManager;
 	}
 
 	/**
@@ -90,8 +104,12 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	public function setCache(FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$codeOrData = ($cache instanceof PhpFrontend) ? 'Code' : 'Data';
-		$cacheDirectory = $this->cacheDirectory ?: $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
+		$cacheDirectory = $this->cacheDirectory;
+		if ($cacheDirectory == '') {
+			$codeOrData = ($cache instanceof PhpFrontend) ? 'Code' : 'Data';
+			$baseDirectory = ($this->cacheManager->isCachePersistent($cache->getIdentifier()) ? FLOW_PATH_DATA . 'Persistent/' : $this->environment->getPathToTemporaryDirectory());
+			$cacheDirectory = $baseDirectory . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
+		}
 		if (!is_writable($cacheDirectory)) {
 			try {
 				\TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);

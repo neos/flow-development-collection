@@ -132,6 +132,9 @@ backend
 backendOptions
 	The backend options to use.
 
+persistent
+	If the cache should stay persistent.
+
 As an example for such a configuration take a look at the default that is inherited for
 any cache unless overridden:
 
@@ -159,6 +162,31 @@ or package *Configuration* directory.
 	  backend: TYPO3\Flow\Cache\Backend\RedisBackend
 	  backendOptions:
 	    database: 3
+
+Persistent Cache
+----------------
+
+Caches can be marked as being "persistent" which lets the Cache Manager skip the cache while flushing all other
+caches or flushing caches by tag. Persistent caches make for a versatile and easy to use low-level key-value-store.
+Simple data like tokens, preferences or the like which usually would be stored in the file system, can be stored in
+such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service. The configuration for
+this cache looks like this:
+
+*Example: Persistent cache settings* ::
+
+	##
+	# Cache configuration for the HashService
+	#
+	# If no frontend, backend or options are specified for a cache, these values
+	# will be taken to create the cache.
+	Flow_Security_Cryptography_HashService:
+	  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+	  persistent: true
+
+Note that, because the cache has been configured as "persistent", the *SimpleFileBackend* will store its data in
+``Data/Persistent/Cache/Flow_Security_Cryptography_HashService/`` instead of using the temporary directory
+``Data/Temporary/Production/Cache/Flow_Security_Cryptography_HashService/``. You can override the cache directory
+by specifying it in the cache's backend options.
 
 Cache Frontends
 ===============
@@ -270,6 +298,11 @@ TYPO3\\Flow\\Cache\\Backend\\FileBackend
 
 The file backend stores every cache entry as a single file to the file system. The
 lifetime and tags are added after the data part in the same file.
+
+By default, cache entries will be stored in a directory below ``Data/Temporary/{context}/Cache/``.
+For caches which are marked as *persistent*, the default directory is
+``Data/Persistent/Cache/``. You may override each of the defaults by specifying the ``cacheDirectory``
+backend option (see below).
 
 As main advantage the file backend is the only backend which implements the
 ``PhpCapableInterface`` and can be used in combination with the ``PhpFrontend``. The
