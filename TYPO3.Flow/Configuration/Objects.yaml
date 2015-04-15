@@ -270,6 +270,16 @@ TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
 TYPO3\Flow\Security\Authorization\FirewallInterface:
   className: TYPO3\Flow\Security\Authorization\FilterFirewall
 
+TYPO3\Flow\Security\Cryptography\HashService:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_HashService
+
 TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy:
   scope: singleton
   arguments:

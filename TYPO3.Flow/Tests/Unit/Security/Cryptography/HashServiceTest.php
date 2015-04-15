@@ -10,17 +10,26 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Security\Cryptography\HashService;
 
 /**
- * Testcase for the Hash Service
+ * Test case for the Hash Service
  *
  */
 class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @var HashService
 	 */
 	protected $hashService;
+
+	/**
+	 * @var StringFrontend
+	 */
+	protected $cache;
 
 	/**
 	 * Set up test dependencies
@@ -28,7 +37,11 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->hashService = new \TYPO3\Flow\Security\Cryptography\HashService();
+		$this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new ApplicationContext('Testing')));
+		$this->cache->initializeObject();
+
+		$this->hashService = new HashService();
+		$this->inject($this->hashService, 'cache', $this->cache);
 	}
 
 	/**
@@ -58,7 +71,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function generateHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->generateHmac(NULL);
@@ -199,7 +212,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function appendHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->appendHmac(NULL);
@@ -216,7 +229,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->validateAndStripHmac(NULL);
@@ -224,7 +237,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfGivenStringIsTooShort() {
 		$this->hashService->validateAndStripHmac('string with less than 40 characters');
@@ -232,7 +245,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidHashException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfGivenStringHasNoHashAppended() {
 		$this->hashService->validateAndStripHmac('string with exactly a length 40 of chars');
@@ -240,7 +253,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\InvalidHashException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfTheAppendedHashIsInvalid() {
 		$this->hashService->validateAndStripHmac('some Stringac43682075d36592d4cb320e69ff0aa515886eab');
