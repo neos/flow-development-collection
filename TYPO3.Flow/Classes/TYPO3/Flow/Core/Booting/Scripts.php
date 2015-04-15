@@ -14,6 +14,9 @@ namespace TYPO3\Flow\Core\Booting;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Monitor\FileMonitor;
+use TYPO3\Flow\Package\Package;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -400,6 +403,7 @@ class Scripts {
 	 * @return void
 	 */
 	static public function initializeSystemFileMonitor(Bootstrap $bootstrap) {
+		/** @var FileMonitor[] $fileMonitors */
 		$fileMonitors = array(
 			'Flow_ClassFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ClassFiles', $bootstrap),
 			'Flow_ConfigurationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ConfigurationFiles', $bootstrap),
@@ -407,16 +411,19 @@ class Scripts {
 		);
 
 		$context = $bootstrap->getContext();
+		/** @var PackageManagerInterface $packageManager */
 		$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+		/** @var PackageInterface $package */
 		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
 			if ($packageManager->isPackageFrozen($packageKey)) {
 				continue;
 			}
-			self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getClassesPath());
-			self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath());
-			self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/');
-			if ($context->isTesting()) {
-				self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath());
+			self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getClassesPath(), '\.php$');
+			self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
+			self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
+			if ($context->isTesting() && $package instanceof Package) {
+				/** @var Package $package */
+				self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
 			}
 		}
 
@@ -435,11 +442,12 @@ class Scripts {
 	 *
 	 * @param FileMonitor $fileMonitor
 	 * @param string $path
+	 * @param string $filenamePattern Optional pattern for filenames to consider for file monitoring (regular expression). @see FileMonitor::monitorDirectory()
 	 * @return void
 	 */
-	static protected function monitorDirectoryIfItExists(FileMonitor $fileMonitor, $path) {
+	static protected function monitorDirectoryIfItExists(FileMonitor $fileMonitor, $path, $filenamePattern = NULL) {
 		if (is_dir($path)) {
-			$fileMonitor->monitorDirectory($path);
+			$fileMonitor->monitorDirectory($path, $filenamePattern);
 		}
 	}
 
