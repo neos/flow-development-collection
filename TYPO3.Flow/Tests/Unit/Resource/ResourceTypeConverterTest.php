@@ -63,8 +63,8 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithSubmittedFileSet() {
-		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('submittedFile' => 'somehash'), 'TYPO3\Flow\Resource\Resource'));
+	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithOriginallySubmittedResourceSet() {
+		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('originallySubmittedResource' => 'SomeResource'), 'TYPO3\Flow\Resource\Resource'));
 	}
 
 	/**
@@ -88,9 +88,6 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	public function convertFromReturnsPreviouslyUploadedResourceIfNoNewFileWasUploaded() {
 		$source = array(
 			'error' => \UPLOAD_ERR_NO_FILE,
-			'submittedFile' => array(
-				'filename' => 'SomeFilename',
-			),
 			'originallySubmittedResource' => array(
 				'__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
 			)
@@ -112,9 +109,6 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	public function convertFromReturnsNullIfSpecifiedResourceCantBeFound() {
 		$source = array(
 			'error' => \UPLOAD_ERR_NO_FILE,
-			'submittedFile' => array(
-					'filename' => 'SomeFilename',
-			),
 			'originallySubmittedResource' => array(
 					'__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
 			)
