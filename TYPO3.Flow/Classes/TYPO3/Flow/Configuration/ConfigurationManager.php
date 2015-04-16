@@ -372,7 +372,7 @@ class ConfigurationManager {
 	 * @return void
 	 */
 	public function shutdown() {
-		if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['Flow']['configuration']['compileConfigurationFiles'] === TRUE && $this->cacheNeedsUpdate === TRUE) {
+		if ($this->cacheNeedsUpdate === TRUE) {
 			$this->saveConfigurationCache();
 		}
 	}
@@ -385,10 +385,8 @@ class ConfigurationManager {
 	 * @return void
 	 */
 	public function warmup() {
-		if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['Flow']['configuration']['compileConfigurationFiles'] === TRUE) {
-			foreach ($this->getAvailableConfigurationTypes() as $configurationType) {
-				$this->getConfiguration($configurationType);
-			}
+		foreach ($this->getAvailableConfigurationTypes() as $configurationType) {
+			$this->getConfiguration($configurationType);
 		}
 	}
 

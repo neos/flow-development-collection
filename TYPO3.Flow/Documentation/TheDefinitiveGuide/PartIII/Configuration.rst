@@ -378,30 +378,12 @@ Configuration Cache
 ===================
 
 Parsing the YAML configuration files takes a bit of time which remarkably slows down the
-initialization of TYPO3 Flow. That's why all configuration is cached by default when TYPO3 Flow is
-running in Production context. Because this cache cannot be cleared automatically it is
-important to know that changes to any configuration file won't have any effect until you
-manually flush the respective caches.
+initialization of TYPO3 Flow. That's why all configuration is cached by default, the
+configuration manager will compile all loaded configuration into a PHP file which will be
+loaded in subsequent calls instead of parsing the YAML files again.
 
-This feature can be configured through a switch in the *Settings.yaml* file:
-
-.. code-block:: yaml
-
-	TYPO3:
-	  Flow:
-	    configuration:
-	      compileConfigurationFiles: TRUE
-
-When enabled, the configuration manager will compile all loaded configuration into a PHP
-file which will be loaded in subsequent calls instead of parsing the YAML files again.
-
-.. important::
-
-	Once the configuration is cached changes to the YAML files don't have any effect.
-	Therefore in order to switch off the configuration cache again you need to disable the
-	feature in the YAML file *and* flush all caches afterwards manually.
-
-In order to flush caches, use the following command:
+Changes to the configuration are detected and the cache is flushed when needed. In order to
+flush caches manually (should that be needed), use the following command:
 
 .. code-block:: bash
 
