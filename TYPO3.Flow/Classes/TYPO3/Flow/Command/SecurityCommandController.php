@@ -17,7 +17,6 @@ use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Security\Authorization\PrivilegeVoteResult;
 use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;
@@ -121,30 +120,38 @@ class SecurityCommandController extends CommandController {
 	}
 
 	/**
-	 * Shows a list of all defined privilege targets and the effective permissions for the given groups.
+	 * Shows a list of all defined privilege targets and the effective permissions
 	 *
-	 * @param string $privilegeType The privilege type (entity or method)
-	 * @param string $roleIdentifiers A comma separated list of roleIdentifiers. Shows policy for an unauthenticated user when left empty.
+	 * @param string $privilegeType The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
+	 * @param string $roles A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
 	 */
-	public function showEffectivePolicyCommand($privilegeType, $roleIdentifiers = '') {
-
+	public function showEffectivePolicyCommand($privilegeType, $roles = '') {
 		$systemRoleIdentifiers = array('TYPO3.Flow:Everybody', 'TYPO3.Flow:Anonymous', 'TYPO3.Flow:AuthenticatedUser');
 
-		if(interface_exists($privilegeType)) {
-			$privilegeTypeInterfaceName = $privilegeType;
-		} else {
-			$privilegeTypeInterfaceName = sprintf('\TYPO3\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst(strtolower($privilegeType)), ucfirst(strtolower($privilegeType)));
+		if(strpos($privilegeType, '\\') === FALSE) {
+			$privilegeType = sprintf('\TYPO3\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst($privilegeType), ucfirst($privilegeType));
 		}
-		if(!interface_exists($privilegeTypeInterfaceName)) {
-			$this->outputLine('The privilege type %s was not defined.', array($privilegeTypeInterfaceName));
+		if(!class_exists($privilegeType) && !interface_exists($privilegeType)) {
+			$this->outputLine('The privilege type "%s" was not defined.', array($privilegeType));
+			$this->quit(1);
+		}
+		if (!is_subclass_of($privilegeType, PrivilegeInterface::class)) {
+			$this->outputLine('"%s" does not refer to a valid Privilege', array($privilegeType));
 			$this->quit(1);
 		}
 
 		$requestedRoles = array();
-		foreach (Arrays::trimExplode(',', $roleIdentifiers) as $roleIdentifier) {
+		foreach (Arrays::trimExplode(',', $roles) as $roleIdentifier) {
 			try {
-				if(!in_array($roleIdentifier, $systemRoleIdentifiers)) {
-					$requestedRoles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
+				if(in_array($roleIdentifier, $systemRoleIdentifiers)) {
+					continue;
+				}
+				$currentRole = $this->policyService->getRole($roleIdentifier);
+				$requestedRoles[$roleIdentifier] = $currentRole;
+				foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
+					if (!in_array($currentParentRole, $requestedRoles)) {
+						$requestedRoles[$currentParentRole->getIdentifier()] = $currentParentRole;
+					}
 				}
 			} catch (NoSuchRoleException $exception) {
 				$this->outputLine('The role %s was not defined.', array($roleIdentifier));
@@ -161,7 +168,7 @@ class SecurityCommandController extends CommandController {
 		$this->outputLine('Effective Permissions for the roles <b>%s</b> ', array(implode(', ', $requestedRoles)));
 		$this->outputLine(str_repeat('-', $this->output->getMaximumLineLength()));
 
-		$definedPrivileges = $this->policyService->getAllPrivilegesByType($privilegeTypeInterfaceName);
+		$definedPrivileges = $this->policyService->getAllPrivilegesByType($privilegeType);
 		$permissions = array();
 
 		/** @var PrivilegeInterface $definedPrivilege */
@@ -170,28 +177,28 @@ class SecurityCommandController extends CommandController {
 			$accessGrants = 0;
 			$accessDenies = 0;
 
-			$permission = sprintf('%s', PrivilegeVoteResult::VOTE_ABSTAIN);
+			$permission = 'ABSTAIN';
 
 			/** @var Role $requestedRole */
 			foreach($requestedRoles as $requestedRole) {
-				$privilege = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->getIdentifier());
+				$privilegeType = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->getIdentifier());
 
-				if ($privilege === NULL) {
+				if ($privilegeType === NULL) {
 					continue;
 				}
 
-				if ($privilege->isGranted()) {
+				if ($privilegeType->isGranted()) {
 					$accessGrants++;
-				} elseif ($privilege->isDenied()) {
+				} elseif ($privilegeType->isDenied()) {
 					$accessDenies++;
 				}
 			}
 
 			if ($accessDenies > 0) {
-				$permission = sprintf('<error>%s</error>', PrivilegeVoteResult::VOTE_DENY);
+				$permission = '<error>DENY</error>';
 			}
 			if ($accessGrants > 0 && $accessDenies === 0) {
-				$permission = sprintf('<success>%s</success>', PrivilegeVoteResult::VOTE_GRANT);
+				$permission = '<success>GRANT</success>';
 			}
 
 			$permissions[$definedPrivilege->getPrivilegeTarget()->getIdentifier()] = $permission;
