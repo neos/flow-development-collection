@@ -3,27 +3,6 @@
 #                                                                        #
 
 ##
-# Default route to the Flow Authentication Controller
-
--
-  name: 'Authentication with action'
-  uriPattern: 'flow/authentication/{@action}'
-  defaults:
-    '@package':    'TYPO3.Flow'
-    '@subpackage': 'Security\Authentication'
-    '@controller': 'Authentication'
-
--
-  name: 'Authentication'
-  uriPattern: 'flow/authentication'
-  defaults:
-    '@package':    'TYPO3.Flow'
-    '@subpackage': 'Security\Authentication'
-    '@controller': 'Authentication'
-    '@action':     'authenticate'
-
-
-##
 # Default route to map the first three URL segments to package, controller and action
 # including optional format-suffix
 
