@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-04-17
+The following reference was automatically generated from code on 2015-04-18
 
 
 Package *TYPO3.FLOW*
@@ -1084,7 +1084,7 @@ Related commands
 ``typo3.flow:security:showeffectivepolicy``
 *******************************************
 
-**Shows a list of all defined privilege targets and the effective permissions for the given groups.**
+**Shows a list of all defined privilege targets and the effective permissions**
 
 
 
@@ -1092,15 +1092,15 @@ Arguments
 ^^^^^^^^^
 
 ``--privilege-type``
-  The privilege type (entity or method)
+  The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
 
 
 
 Options
 ^^^^^^^
 
-``--role-identifiers``
-  A comma separated list of roleIdentifiers. Shows policy for an unauthenticated user when left empty.
+``--roles``
+  A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
 
 
 
