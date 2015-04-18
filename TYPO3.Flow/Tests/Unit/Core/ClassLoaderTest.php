@@ -43,11 +43,18 @@ class ClassLoaderTest extends UnitTestCase {
 	protected $mockPackages;
 
 	/**
-	 * Test flag used in in this test case
+	 * Test flag used in this test case
 	 *
 	 * @var boolean
 	 */
 	public static $testClassWasLoaded = FALSE;
+
+	/**
+	 * Test flag used in this test case
+	 *
+	 * @var boolean
+	 */
+	public static $testClassWasOverwritten;
 
 	/**
 	 */
@@ -203,5 +210,72 @@ class ClassLoaderTest extends UnitTestCase {
 		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
 		$this->classLoader->loadClass('Acme\MyApp\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
+	}
+
+	/**
+	 * @test
+	 */
+	public function classesFromOverlayedPsr4PackagesAreLoaded() {
+		$this->classLoader = new ClassLoader();
+
+		$mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage1->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
+		$mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Subscriber\\Log'));
+		$mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
+		$mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
+
+		$mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage2->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
+		$mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage'));
+		$mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));
+		$mockPackage2->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));
+
+		$packages = array($mockPackage2, $mockPackage1);
+		mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, TRUE);
+		mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+
+		$this->classLoader->setPackages($packages, $packages);
+
+
+		$this->classLoader->loadClass('TestPackage\Subscriber\Foo');
+		$this->assertTrue(self::$testClassWasLoaded);
+
+		self::$testClassWasLoaded = FALSE;
+
+		$this->classLoader->loadClass('TestPackage\Subscriber\Log\Bar');
+		$this->assertTrue(self::$testClassWasLoaded);
+	}
+
+	/**
+	 * @test
+	 */
+	public function classesFromOverlayedPsr4PackagesAreOverwritten() {
+		$this->classLoader = new ClassLoader();
+
+		$mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage1->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
+		$mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Foo'));
+		$mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
+		$mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
+
+		$mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage2->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
+		$mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage'));
+		$mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));
+		$mockPackage2->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));
+
+		$packages = array($mockPackage2, $mockPackage1);
+		mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, TRUE);
+		mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = TRUE; ?>');
+		file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
+
+		$this->classLoader->setPackages($packages, $packages);
+
+
+		$this->classLoader->loadClass('TestPackage\Foo\Bar');
+		$this->assertTrue(self::$testClassWasOverwritten);
 	}
 }
