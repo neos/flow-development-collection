@@ -161,12 +161,10 @@ class ClassLoader {
 		$namespaceParts = array_merge($namespaceParts, $classNameParts);
 		$namespacePartCount = count($namespaceParts);
 
-		// Load classes from the Flow package at a very early stage where
-		// no packages have been registered yet:
+		// Load classes from the Flow package at a very early stage where no packages have been registered yet:
 		if ($this->packageNamespaces === array()) {
 			if ($namespaceParts[0] === 'TYPO3' && $namespaceParts[1] === 'Flow') {
 				require(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/' . implode('/', array_slice($namespaceParts, 2)) . '.php');
-
 				return TRUE;
 			} else {
 				return FALSE;
@@ -175,31 +173,50 @@ class ClassLoader {
 
 		$currentPackageArray = $this->packageNamespaces;
 		$packagenamespacePartCount = 0;
-		if ($namespacePartCount === 1 && isset($currentPackageArray[$namespaceParts[0]])) {
-			$currentPackageArray = $currentPackageArray[$namespaceParts[0]];
-		} else {
+
+		// This will contain all possible class mappings for the given class name. We start with the fallback paths and prepend mappings with growing specificy.
+		$collectedPossibleNamespaceMappings = array(
+			array('p' => $this->fallbackClassPaths, 'c' => 0)
+		);
+
+		if ($namespacePartCount > 1) {
 			while (($packagenamespacePartCount + 1) < $namespacePartCount) {
 				$possiblePackageNamespacePart = $namespaceParts[$packagenamespacePartCount];
-
 				if (!isset($currentPackageArray[$possiblePackageNamespacePart])) {
 					break;
 				}
 
 				$packagenamespacePartCount++;
 				$currentPackageArray = $currentPackageArray[$possiblePackageNamespacePart];
+				if (isset($currentPackageArray['_pathData'])) {
+					array_unshift($collectedPossibleNamespaceMappings, array('p' => $currentPackageArray['_pathData'], 'c' => $packagenamespacePartCount));
+
+				}
 			}
 		}
 
-		if (isset($currentPackageArray['_pathData'])) {
-			$possiblePaths = $currentPackageArray['_pathData'];
-		} else {
-			$packagenamespacePartCount = 0;
-			$possiblePaths = $this->fallbackClassPaths;
+		foreach ($collectedPossibleNamespaceMappings as $nameSpaceMapping) {
+			if ($this->loadClassFromPossiblePaths($nameSpaceMapping['p'], $namespaceParts, $nameSpaceMapping['c'])) {
+				return TRUE;
+			}
 		}
 
+		$this->nonExistentClasses[$className] = TRUE;
+		return FALSE;
+	}
+
+	/**
+	 * Tries to load a class from a list of possible paths
+	 *
+	 * @param array $possiblePaths
+	 * @param array $namespaceParts
+	 * @param integer $packageNamespacePartCount
+	 * @return boolean
+	 */
+	protected function loadClassFromPossiblePaths(array $possiblePaths, array $namespaceParts, $packageNamespacePartCount) {
 		foreach ($possiblePaths as $possiblePathData) {
 			$pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
-			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packagenamespacePartCount);
+			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
 			if (is_file($possibleFilePath)) {
 				$result = include($possibleFilePath);
 				if ($result !== FALSE) {
@@ -207,8 +224,6 @@ class ClassLoader {
 				}
 			}
 		}
-
-		$this->nonExistentClasses[$className] = TRUE;
 
 		return FALSE;
 	}
