@@ -311,6 +311,7 @@ class RequestTest extends UnitTestCase
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
         $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $actualContent = $request->getContent();
@@ -328,6 +329,7 @@ class RequestTest extends UnitTestCase
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
         $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $resource = $request->getContent(true);

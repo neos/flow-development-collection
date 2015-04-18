@@ -38,7 +38,7 @@ abstract class AbstractMessage
      *
      * @var string
      */
-    protected $content;
+    protected $content = '';
 
     /**
      * @var string
