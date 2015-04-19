@@ -218,7 +218,7 @@ return " . var_export($this->storedProxyClasses, TRUE) . ";";
 		$classCode = $this->stripOpeningPhpTag($classCode);
 
 		$classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
-		$classCode = preg_replace_callback('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function($matches) use ($pathAndFilename, $classNameSuffix) {
+		$classCode = preg_replace_callback('/^([a-z\s]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function($matches) use ($pathAndFilename, $classNameSuffix) {
 			$classNameAccordingToFileName = basename($pathAndFilename, '.php');
 			if ($matches[3] !== $classNameAccordingToFileName) {
 				throw new Exception('The name of the class "' . $matches[3] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
