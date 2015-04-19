@@ -166,7 +166,7 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
 		$conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
 		if ($conditionCode !== '') {
-			$code = "\n\t\t\t\t\t\tfunction(\\TYPO3\\Flow\\Aop\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
+			$code = "\n\t\t\t\t\t\tfunction(\\TYPO3\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
 					"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
 			if ($useGlobalObjects) {
 				$code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'Flow', 'aop', 'globalObjects'));\n";

@@ -25,7 +25,7 @@ class AroundAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYP
 	 * @return mixed Result of the advice method
 	 */
 	public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) {
+		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint, $this->objectManager) === FALSE) {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 

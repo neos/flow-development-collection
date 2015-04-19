@@ -122,3 +122,8 @@ Flow_Session_MetaData:
   backend: TYPO3\Flow\Cache\Backend\FileBackend
 Flow_Session_Storage:
   backend: TYPO3\Flow\Cache\Backend\FileBackend
+
+#  Aop filter expressions that need to be evaluated at runtime.
+Flow_Aop_RuntimeExpressions:
+  frontend: TYPO3\Flow\Cache\Frontend\PhpFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend

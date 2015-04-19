@@ -315,7 +315,7 @@ class CacheManager {
 		$objectClassesCache = $this->getCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
 		$caches = array(
-			'/Policy\.yaml/' => array('Flow_Security_Authorization_Privilege_Method', 'Flow_Persistence_Doctrine', 'Flow_Persistence_Doctrine_Results'),
+			'/Policy\.yaml/' => array('Flow_Security_Authorization_Privilege_Method', 'Flow_Persistence_Doctrine', 'Flow_Persistence_Doctrine_Results', 'Flow_Aop_RuntimeExpressions'),
 			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve'),
 			'/Views\.yaml/' => array('Flow_Mvc_ViewConfigurations')
 		);
