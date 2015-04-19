@@ -12,6 +12,8 @@ namespace TYPO3\Flow\I18n;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -39,18 +41,18 @@ class Service {
 	 * in a hierarchical manner.
 	 *
 	 * @Flow\Inject(lazy=false)
-	 * @var \TYPO3\Flow\I18n\LocaleCollection
+	 * @var LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
 	 * @Flow\Inject(lazy=false)
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var VariableFrontend
 	 */
 	protected $cache;
 
 	/**
-	 * @var \TYPO3\Flow\I18n\Configuration
+	 * @var Configuration
 	 */
 	protected $configuration;
 
@@ -87,7 +89,7 @@ class Service {
 	}
 
 	/**
-	 * @return \TYPO3\Flow\I18n\Configuration
+	 * @return Configuration
 	 * @api
 	 */
 	public function getConfiguration() {
@@ -257,22 +259,33 @@ class Service {
 	 * @return void
 	 */
 	protected function generateAvailableLocalesCollectionByScanningFilesystem() {
+		/** @var PackageInterface $activePackage */
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
+			$packageResourcesPath = $activePackage->getResourcesPath();
 
-			$packageResourcesPath = $this->localeBasePath . $activePackage->getPackageKey() . '/';
 			if (!is_dir($packageResourcesPath)) {
 				continue;
 			}
 
-			$directoryIterator = new \RecursiveDirectoryIterator($packageResourcesPath, \RecursiveDirectoryIterator::UNIX_PATHS);
-			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
-
-			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
-				if ($fileOrDirectory->isFile()) {
-					$localeIdentifier = Utility::extractLocaleTagFromFilename($fileOrDirectory->getFilename());
-					if ($localeIdentifier !== FALSE) {
-						$this->localeCollection->addLocale(new Locale($localeIdentifier));
+			$directories = array(Files::getNormalizedPath($packageResourcesPath));
+			while ($directories !== array()) {
+				$currentDirectory = array_pop($directories);
+				if ($handle = opendir($currentDirectory)) {
+					while (FALSE !== ($filename = readdir($handle))) {
+						if ($filename[0] === '.') {
+							continue;
+						}
+						$pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
+						if (is_dir($pathAndFilename)) {
+							array_push($directories, Files::getNormalizedPath($pathAndFilename));
+						} else {
+							$localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
+							if ($localeIdentifier !== FALSE) {
+								$this->localeCollection->addLocale(new Locale($localeIdentifier));
+							}
+						}
 					}
+					closedir($handle);
 				}
 			}
 		}
