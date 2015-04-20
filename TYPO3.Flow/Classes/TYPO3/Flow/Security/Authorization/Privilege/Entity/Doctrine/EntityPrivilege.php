@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  *                                                                        */
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use TYPO3\Eel\Context as EelContext;
 use TYPO3\Flow\Annotations as Flow;
@@ -28,48 +29,71 @@ use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterface {
 
 	/**
+	 * @var boolean
+	 */
+	protected $isEvaluated = FALSE;
+
+	/**
 	 * @var string
 	 */
 	protected $entityType;
 
 	/**
+	 * @var SqlGeneratorInterface
+	 */
+	protected $conditionGenerator;
+
+	/**
 	 * @param string $entityType
 	 * @return boolean
-	 * @throws \Exception
+	 * @throws InvalidQueryRewritingConstraintException
 	 */
 	public function matchesEntityType($entityType) {
+		$this->evaluateMatcher();
 		if ($this->entityType === NULL) {
-			throw new InvalidQueryRewritingConstraintException('Entity type has not been evaluated yet! This might be due to an missing entity type matcher in your privilege target definition!', 1416399447);
+			throw new InvalidQueryRewritingConstraintException('Entity type could not be determined! This might be due to an missing entity type matcher in your privilege target definition!', 1416399447);
 		}
 		return $this->entityType === $entityType;
 	}
 
 	/**
 	 * Note: The result of this method cannot be cached, as the target table alias might change for different query scenarios
+	 *
 	 * @param ClassMetadata $targetEntity
 	 * @param string $targetTableAlias
 	 * @return string
 	 */
 	public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias) {
-		$context = new EelContext($this->getConditionGenerator());
-
-		$evaluator = $this->objectManager->get('TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator');
-		$result = $evaluator->evaluate($this->getParsedMatcher(), $context);
+		$this->evaluateMatcher();
 
 		/** @var EntityManager $entityManager */
-		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+		$entityManager = $this->objectManager->get(ObjectManager::class);
 		$sqlFilter = new SqlFilter($entityManager);
 
-		$this->entityType = $result['entityType'];
 		if (!$this->matchesEntityType($targetEntity->getName())) {
 			return NULL;
 		}
-		/** @var SqlGeneratorInterface $conditionGenerator */
-		$conditionGenerator = $result['conditionGenerator'];
-		if ($conditionGenerator === NULL) {
-			$conditionGenerator = new AnyEntityConditionGenerator();
+
+		return $this->conditionGenerator->getSql($sqlFilter, $targetEntity, $targetTableAlias);
+	}
+
+	/**
+	 * parses the matcher of this privilege using Eel and extracts "entityType" and "conditionGenerator"
+	 *
+	 * @return void
+	 */
+	protected function evaluateMatcher() {
+		if ($this->isEvaluated) {
+			return;
 		}
-		return $conditionGenerator->getSql($sqlFilter, $targetEntity, $targetTableAlias);
+		$context = new EelContext($this->getConditionGenerator());
+
+		/** @var EntityPrivilegeExpressionEvaluator $evaluator */
+		$evaluator = $this->objectManager->get(EntityPrivilegeExpressionEvaluator::class);
+		$result = $evaluator->evaluate($this->getParsedMatcher(), $context);
+		$this->entityType = $result['entityType'];
+		$this->conditionGenerator = $result['conditionGenerator'] !== NULL ? $result['conditionGenerator'] : new TrueConditionGenerator();
+		$this->isEvaluated = TRUE;
 	}
 
 	/**

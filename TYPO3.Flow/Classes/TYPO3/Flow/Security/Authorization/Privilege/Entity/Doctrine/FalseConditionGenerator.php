@@ -16,12 +16,12 @@ use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A sql generator to create a sql condition matching any entity.
+ * A SQL generator to create a condition matching nothing.
  */
-class AnyEntityConditionGenerator implements SqlGeneratorInterface {
+class FalseConditionGenerator implements SqlGeneratorInterface {
 
 	/**
-	 * Returns an SQL query part that is basically a no-op in order to match any entity
+	 * Returns an SQL query part that is basically a no-op in order to match no entity
 	 *
 	 * @param DoctrineSqlFilter $sqlFilter
 	 * @param ClassMetadata $targetEntity
@@ -29,6 +29,6 @@ class AnyEntityConditionGenerator implements SqlGeneratorInterface {
 	 * @return string
 	 */
 	public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias) {
-		return ' (1=1) ';
+		return ' (1=0) ';
 	}
 }
