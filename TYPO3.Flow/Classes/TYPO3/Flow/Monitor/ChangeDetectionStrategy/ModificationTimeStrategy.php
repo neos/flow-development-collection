@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A change detection strategy based on modification times
  */
-class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, StrategyWithMarkDeletedInterface {
 
 	/**
 	 * @var \TYPO3\Flow\Monitor\FileMonitor

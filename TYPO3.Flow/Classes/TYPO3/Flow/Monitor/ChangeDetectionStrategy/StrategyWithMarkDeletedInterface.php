@@ -14,39 +14,17 @@ namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
 use TYPO3\Flow\Monitor\FileMonitor;
 
 /**
- * Contract for a change detection strategy
+ * Contract for a change detection strategy that allows the FileMonitor to mark a file deleted directly.
  *
  * @api
  */
-interface ChangeDetectionStrategyInterface {
-
-	const STATUS_UNCHANGED = 0;
-	const STATUS_CREATED = 1;
-	const STATUS_CHANGED = 2;
-	const STATUS_DELETED = 3;
+interface StrategyWithMarkDeletedInterface {
 
 	/**
-	 * Checks if the specified file has changed
+	 * Notify the change strategy that this file was deleted and does not need to be tracked anymore.
 	 *
 	 * @param string $pathAndFilename
-	 * @return integer One of the STATUS_* constants
-	 * @api
-	 */
-	public function getFileStatus($pathAndFilename);
-
-	/**
-	 * Creates a link to the file monitor using the strategy
-	 *
-	 * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor
-	 * @return mixed
-	 */
-	public function setFileMonitor(FileMonitor $fileMonitor);
-
-	/**
-	 * Commit any necessary data, like the current modification time.
-	 *
 	 * @return void
 	 */
-	public function shutdownObject();
-
+	public function setFileDeleted($pathAndFilename);
 }

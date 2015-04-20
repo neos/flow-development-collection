@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Monitor;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use TYPO3\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -300,7 +301,13 @@ class FileMonitor {
 		if ($this->directoriesAndFiles[$path] !== array()) {
 			foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
 				$this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
-				$this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
+				if ($this->changeDetectionStrategy instanceof StrategyWithMarkDeletedInterface) {
+					$this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
+				} else {
+					// This call is needed to mark the file deleted in any possibly existing caches of the strategy.
+					// The return value is not important as we know this file doesn't exist so we set the status to DELETED anyway.
+					$this->changeDetectionStrategy->getFileStatus($pathAndFilename);
+				}
 			}
 			$currentDirectoryChanged = TRUE;
 		}
