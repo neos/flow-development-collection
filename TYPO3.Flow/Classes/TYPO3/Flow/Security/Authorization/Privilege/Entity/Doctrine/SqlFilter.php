@@ -73,6 +73,9 @@ class SqlFilter extends DoctrineSqlFilter {
 			$entityPrivileges = $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface');
 			/** @var EntityPrivilegeInterface $privilege */
 			foreach ($entityPrivileges as $privilege) {
+				if (!$privilege->matchesEntityType($targetEntity->getName())) {
+					continue;
+				}
 				$sqlConstraint = $privilege->getSqlConstraint($targetEntity, $targetTableAlias);
 				if ($sqlConstraint === NULL) {
 					continue;
