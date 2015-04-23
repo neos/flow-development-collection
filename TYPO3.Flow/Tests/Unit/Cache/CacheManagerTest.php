@@ -345,6 +345,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->registerCache('Flow_Persistence_Doctrine');
 		$this->registerCache('Flow_Persistence_Doctrine_Results');
 		$this->registerCache('Flow_Mvc_Routing_Resolve');
+		$this->registerCache('Flow_Aop_RuntimeExpressions');
 
 		$objectClassesCache = $this->registerCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
