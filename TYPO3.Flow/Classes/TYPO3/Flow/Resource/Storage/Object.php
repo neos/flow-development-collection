@@ -14,6 +14,8 @@ namespace TYPO3\Flow\Resource\Storage;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\ResourceMetaDataInterface;
+use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * An Object which is stored in a Storage
@@ -100,7 +102,10 @@ class Object implements ResourceMetaDataInterface {
 	 * @return void
 	 */
 	public function setFilename($filename) {
-		$this->filename = $filename;
+		$pathInfo = UnicodeFunctions::pathinfo($filename);
+		$extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
+		$this->filename = $pathInfo['filename'] . $extension;
+		$this->mediaType = MediaTypes::getMediaTypeFromFilename($this->filename);
 	}
 
 	/**

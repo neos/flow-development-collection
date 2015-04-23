@@ -84,6 +84,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 	 *
 	 * @param string $sourcePath Absolute path to the source directory
 	 * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
+	 * @throws Exception
 	 * @return void
 	 */
 	protected function publishDirectory($sourcePath, $relativeTargetPathAndFilename) {
