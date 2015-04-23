@@ -161,7 +161,7 @@ class Manager {
 			$migrationResult = $this->commitMigration($packagePath, $migration);
 			$this->triggerEvent(self::EVENT_MIGRATION_EXECUTED, array($migration, $packageKey, $migrationResult));
 		} catch (\Exception $exception) {
-			throw new \RuntimeException(sprintf('Applying migration "%s" to "%s" failed.', $migration->getIdentifier(), $packageKey), 1421692982, $exception);
+			throw new \RuntimeException(sprintf('Applying migration "%s" to "%s" failed: "%s"', $migration->getIdentifier(), $packageKey, $exception->getMessage()), 1421692982, $exception);
 		}
 	}
 
