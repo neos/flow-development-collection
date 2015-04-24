@@ -941,12 +941,28 @@ class ContextTest extends UnitTestCase {
 	 */
 	public function getContextHashInitializesSecurityContext() {
 		/** @var Context|\PHPUnit_Framework_MockObject_MockObject $securityContext */
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'canBeInitialized'));
-		$securityContext->setContextHashComponent('someHashComponent', 'someValue');
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'canBeInitialized', 'getRoles'));
 		$securityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(TRUE));
 		$securityContext->expects($this->at(1))->method('initialize');
+		$securityContext->expects($this->any())->method('getRoles')->will($this->returnValue(array()));
 
-		$expectedHash = md5('someValue');
+		$securityContext->getContextHash();
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContextHashReturnsAHashOverAllAuthenticatedRoles() {
+		/** @var Context|\PHPUnit_Framework_MockObject_MockObject $securityContext */
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('isInitialized', 'getRoles'));
+		$securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
+
+		$mockRole1 = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
+		$mockRole2 = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
+		$mockRoles = ['Acme.Role1' => $mockRole1, 'Acme.Role2' => $mockRole2];
+		$securityContext->expects($this->atLeastOnce())->method('getRoles')->will($this->returnValue($mockRoles));
+
+		$expectedHash = md5(implode('|', array_keys($mockRoles)));
 		$this->assertSame($expectedHash, $securityContext->getContextHash());
 	}
 
@@ -959,15 +975,5 @@ class ContextTest extends UnitTestCase {
 		$securityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(FALSE));
 		$securityContext->expects($this->never())->method('initialize');
 		$this->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getContextHashReturnsAHashOverAllHashComponents() {
-		$this->securityContext->setContextHashComponent('someHashComponent', 'someValue');
-		$this->securityContext->setContextHashComponent('someOtherHashComponent', 'someOtherValue');
-		$expectedHash = md5('someValue|someOtherValue');
-		$this->assertSame($expectedHash, $this->securityContext->getContextHash());
 	}
 }

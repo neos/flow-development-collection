@@ -85,7 +85,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 		$account = new Account();
 		$account->setAccountIdentifier('admin');
 
-		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array('getAuthenticationStrategy', 'getAuthenticationTokens', 'updateContextHashComponents', 'refreshTokens'), array(), '', FALSE);
+		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array('getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens'), array(), '', FALSE);
 
 		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token->expects($this->any())->method('getAccount')->will($this->returnValue($account));
@@ -344,7 +344,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function logoutResetsSecurityContextHash() {
+	public function logoutRefreshesTokensInSecurityContext() {
 		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
@@ -358,9 +358,6 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
 
 		$this->mockSecurityContext->expects($this->once())->method('refreshTokens');
-		$this->mockSecurityContext->expects($this->any())->method('getRolesHash')->will($this->returnValue('RolesHash'));
-		$this->mockSecurityContext->expects($this->atLeastOnce())->method('updateContextHashComponents');
-
 
 		$this->authenticationProviderManager->logout();
 	}

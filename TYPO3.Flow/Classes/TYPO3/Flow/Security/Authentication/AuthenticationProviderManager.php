@@ -185,7 +185,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 				}
 				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
-					$this->securityContext->updateContextHashComponents();
 					return;
 				}
 				$anyTokenAuthenticated = TRUE;
@@ -201,7 +200,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 		}
 
 		$this->isAuthenticated = $anyTokenAuthenticated;
-		$this->securityContext->updateContextHashComponents();
 	}
 
 	/**
@@ -239,7 +237,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 			$this->session->destroy('Logout through AuthenticationProviderManager');
 		}
 		$this->securityContext->refreshTokens();
-		$this->securityContext->updateContextHashComponents();
 	}
 
 	/**

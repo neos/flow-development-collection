@@ -178,22 +178,19 @@ class Context {
 
 	/**
 	 * Whether authorization is disabled @see areAuthorizationChecksDisabled()
+	 *
 	 * @Flow\Transient
 	 * @var boolean
 	 */
 	protected $authorizationChecksDisabled = FALSE;
 
 	/**
+	 * A hash for this security context that is unique to the currently authenticated roles. @see getContextHash()
+	 *
 	 * @Flow\Transient
 	 * @var string
 	 */
 	protected $contextHash = NULL;
-
-	/**
-	 * @Flow\Transient
-	 * @var array of strings
-	 */
-	protected $contextHashComponents = array();
 
 	/**
 	 * Inject the authentication manager
@@ -441,15 +438,6 @@ class Context {
 	}
 
 	/**
-	 * Generates a hash that is unique for the currently authenticated roles
-	 *
-	 * @return string
-	 */
-	public function getRolesHash() {
-		return md5(implode('|', array_keys($this->getRoles())));
-	}
-
-	/**
 	 * Returns TRUE, if at least one of the currently authenticated accounts holds
 	 * a role with the given identifier, also recursively.
 	 *
@@ -641,6 +629,7 @@ class Context {
 	 */
 	public function clearContext() {
 		$this->roles = NULL;
+		$this->contextHash = NULL;
 		$this->tokens = array();
 		$this->activeTokens = array();
 		$this->inactiveTokens = array();
@@ -749,6 +738,7 @@ class Context {
 		}
 
 		$this->roles = NULL;
+		$this->contextHash = NULL;
 	}
 
 	/**
@@ -799,34 +789,16 @@ class Context {
 		if ($this->areAuthorizationChecksDisabled()) {
 			return self::CONTEXT_HASH_UNINITIALIZED;
 		}
-		if ($this->initialized === FALSE) {
+		if (!$this->isInitialized()) {
 			if (!$this->canBeInitialized()) {
 				return self::CONTEXT_HASH_UNINITIALIZED;
 			}
 			$this->initialize();
 		}
 		if ($this->contextHash === NULL) {
-			$this->contextHash = md5(implode('|', $this->contextHashComponents));
+			$this->contextHash = md5(implode('|', array_keys($this->getRoles())));
 		}
 		return $this->contextHash;
 	}
 
-	/**
-	 * Register a value that affects the context hash. @see getContextHash()
-	 *
-	 * @param string $key a key that uniquely identifies the hash component
-	 * @param string $value
-	 * @return void
-	 */
-	public function setContextHashComponent($key, $value) {
-		$this->contextHash = NULL;
-		$this->contextHashComponents[$key] = $value;
-	}
-
-	/**
-	 * @return void
-	 */
-	public function updateContextHashComponents() {
-		$this->setContextHashComponent('TYPO3.Flow:Roles', $this->getRolesHash());
-	}
 }
