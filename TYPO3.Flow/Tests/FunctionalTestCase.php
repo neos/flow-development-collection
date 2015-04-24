@@ -162,9 +162,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
 		}
 
-		if ($this->testableSecurityEnabled === TRUE) {
-			$this->setupSecurity();
-		}
+		$this->setupSecurity();
 	}
 
 	/**
@@ -175,30 +173,34 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @return void
 	 */
 	protected function setupSecurity() {
-		$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
-		$this->privilegeManager->setOverrideDecision(NULL);
-
-		$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
-
-		$this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
-
-		$this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('TestingProvider');
-
-		$this->registerRoute('functionaltestroute', 'typo3/flow/test', array(
-			'@package' => 'TYPO3.Flow',
-			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
-			'@controller' => 'Standard',
-			'@action' => 'index',
-			'@format' => 'html'
-		));
-
-		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$actionRequest = $this->route($requestHandler->getHttpRequest());
-
 		$this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
-		$this->securityContext->clearContext();
-		$this->securityContext->setRequest($actionRequest);
+		if ($this->testableSecurityEnabled) {
+			$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+			$this->privilegeManager->setOverrideDecision(NULL);
+
+			$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+
+			$this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
+
+			$this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
+			$this->testingProvider->setName('TestingProvider');
+
+			$this->registerRoute('functionaltestroute', 'typo3/flow/test', array(
+				'@package' => 'TYPO3.Flow',
+				'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+				'@controller' => 'Standard',
+				'@action' => 'index',
+				'@format' => 'html'
+			));
+
+			$requestHandler = self::$bootstrap->getActiveRequestHandler();
+			$actionRequest = $this->route($requestHandler->getHttpRequest());
+
+			$this->securityContext->clearContext();
+			$this->securityContext->setRequest($actionRequest);
+		} else {
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->securityContext, 'authorizationChecksDisabled', TRUE, TRUE);
+		}
 	}
 
 	/**
@@ -227,9 +229,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @return void
 	 */
 	public function tearDown() {
-		if ($this->testableSecurityEnabled === TRUE) {
-			$this->tearDownSecurity();
-		}
+		$this->tearDownSecurity();
 
 		$persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
@@ -273,7 +273,10 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		if ($this->securityContext !== NULL) {
 			$this->securityContext->clearContext();
 		}
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', NULL, TRUE);
+		if ($this->authenticationManager !== NULL) {
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', NULL, TRUE);
+		}
+
 	}
 
 	/**

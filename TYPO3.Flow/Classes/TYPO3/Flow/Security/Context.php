@@ -636,6 +636,7 @@ class Context {
 		$this->request = NULL;
 		$this->csrfProtectionTokens = array();
 		$this->interceptedRequest = NULL;
+		$this->authorizationChecksDisabled = FALSE;
 		$this->initialized = FALSE;
 	}
 
