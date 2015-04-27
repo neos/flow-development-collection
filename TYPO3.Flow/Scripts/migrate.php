@@ -55,10 +55,17 @@ if (\TYPO3\Flow\Core\Migrations\Git::isGitAvailable() === FALSE) {
 $migrationsManager = new Manager();
 
 $packageKey = getFlagValue('package-key');
-$versionNumber = flagIsSet('version') ? preg_replace('/[^0-9]/', '', getFlagValue('version')) : NULL;
-// see https://jira.typo3.org/browse/FLOW-110
-if (strlen($versionNumber) === 12) {
-	$versionNumber .= '00';
+$versionNumber = NULL;
+if (flagIsSet('version')) {
+	if (preg_match('/[0-9]{12,14}/', getFlagValue('version'), $matches) !== 1) {
+		outputLine('EXCEPTION: invalid version "%s" specified, please provide the 12 or 14 digit timestamp of the version you want to target.', array(getFlagValue('version')));
+		exit(255);
+	}
+	$versionNumber = $matches[0];
+	// see https://jira.typo3.org/browse/FLOW-110
+	if (strlen($versionNumber) === 12) {
+		$versionNumber .= '00';
+	}
 }
 $verbose = flagIsSet('verbose');
 
