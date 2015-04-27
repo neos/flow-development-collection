@@ -12,6 +12,7 @@ namespace TYPO3\Eel\Tests\Unit;
  *                                                                        */
 
 use TYPO3\Eel\Context;
+use TYPO3\Eel\EelEvaluatorInterface;
 use TYPO3\Eel\Evaluator;
 
 /**
@@ -626,6 +627,22 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function expressionStartingWithWhitespaceWorkAsExpected() {
+		$context = new Context(array('variable' => 1));
+		$this->assertEvaluated(1, ' variable', $context);
+	}
+
+	/**
+	 * @test
+	 */
+	public function expressionEndingWithWhitespaceWorkAsExpected() {
+		$context = new Context(array('variable' => 1));
+		$this->assertEvaluated(1, 'variable ', $context);
+	}
+
+	/**
 	 * Assert that the expression is evaluated to the expected result
 	 * under the given context. It also ensures that the Eel expression is
 	 * recognized using the predefined regular expression.
@@ -643,7 +660,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @return \TYPO3\Eel\Context
+	 * @return EelEvaluatorInterface
 	 */
 	abstract protected function createEvaluator();
 
