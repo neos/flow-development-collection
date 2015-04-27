@@ -28,6 +28,7 @@ class InterpretedEvaluator implements EelEvaluatorInterface {
 	 * @throws ParserException
 	 */
 	public function evaluate($expression, Context $context) {
+		$expression = trim($expression);
 		$parser = new InterpretedEelParser($expression, $context);
 		$res = $parser->match_Expression();
 
