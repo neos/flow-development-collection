@@ -34,6 +34,11 @@ class ClassToBeSerialized {
 	private $privateProperty = 'Saving Private Ryan.';
 
 	/**
+	 * @var string
+	 */
+	static protected $staticProperty = 'I am static';
+
+	/**
 	 * @Flow\Inject(lazy = FALSE)
 	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
 	 */
