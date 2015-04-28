@@ -3,7 +3,7 @@
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2015-04-27
+This reference was automatically generated from code on 2015-04-28
 
 
 After
