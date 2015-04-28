@@ -427,7 +427,7 @@ class Scripts {
 			}
 		}
 
-		self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION);
+		self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
 
 		foreach ($fileMonitors as $fileMonitor) {
 			$fileMonitor->detectChanges();
