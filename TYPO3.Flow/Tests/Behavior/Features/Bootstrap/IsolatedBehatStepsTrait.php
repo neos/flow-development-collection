@@ -46,6 +46,9 @@ trait IsolatedBehatStepsTrait {
 			$objectConfigurationCache->remove('allCompiledCodeUpToDate');
 			$cacheManager->getCache('Flow_Object_Classes')->flush();
 
+			$configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+			$configurationManager->flushConfigurationCache();
+
 			$this->subProcess = new SubProcess($this->objectManager->getContext());
 		}
 		return $this->subProcess;
