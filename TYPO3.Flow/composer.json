@@ -14,15 +14,15 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
 
-        "typo3/fluid": "3.0.0-beta1",
-        "typo3/eel": "3.0.0-beta1",
+        "typo3/fluid": "~3.0.0",
+        "typo3/eel": "~3.0.0",
 
-        "doctrine/orm": "2.4.*",
+        "doctrine/orm": "~2.4.0",
         "doctrine/migrations": "dev-master",
 
-        "symfony/yaml": "2.5.*",
-        "symfony/dom-crawler": "2.5.*",
-        "symfony/console": "2.*",
+        "symfony/yaml": "~2.5.0",
+        "symfony/dom-crawler": "~2.5.0",
+        "symfony/console": "~2.0",
 
         "composer/installers": "~1.0.2"
     },
