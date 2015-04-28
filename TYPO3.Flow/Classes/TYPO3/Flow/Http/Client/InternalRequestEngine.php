@@ -82,15 +82,6 @@ class InternalRequestEngine implements RequestEngineInterface {
 	}
 
 	/**
-	 * Initialize this engine
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->router->setRoutesConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
-	}
-
-	/**
 	 * Sends the given HTTP request
 	 *
 	 * @param Http\Request $httpRequest
@@ -114,7 +105,6 @@ class InternalRequestEngine implements RequestEngineInterface {
 		$objectManager = $this->bootstrap->getObjectManager();
 		$baseComponentChain = $objectManager->get('TYPO3\Flow\Http\Component\ComponentChain');
 		$componentContext = new ComponentContext($httpRequest, $response);
-		$componentContext->setParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'skipRouterInitialization', TRUE);
 
 		try {
 			$baseComponentChain->handle($componentContext);
