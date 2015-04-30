@@ -17,7 +17,6 @@ use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Routing\Router;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Utility\Arrays;
 

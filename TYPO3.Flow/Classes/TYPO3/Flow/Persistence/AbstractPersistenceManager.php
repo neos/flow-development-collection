@@ -10,7 +10,6 @@ namespace TYPO3\Flow\Persistence;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * The Flow Persistence Manager base class

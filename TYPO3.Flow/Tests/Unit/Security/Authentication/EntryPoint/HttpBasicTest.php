@@ -11,9 +11,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use TYPO3\Flow\Tests\UnitTestCase;
 

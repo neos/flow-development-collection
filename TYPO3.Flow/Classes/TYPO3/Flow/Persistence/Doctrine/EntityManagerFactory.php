@@ -70,6 +70,7 @@ class EntityManagerFactory {
 	 * Factory method which creates an EntityManager.
 	 *
 	 * @return \Doctrine\ORM\EntityManager
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 */
 	public function create() {
 		$config = new Configuration();

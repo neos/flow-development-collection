@@ -11,9 +11,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
-
 /**
  * Testcase for the filter firewall
  *

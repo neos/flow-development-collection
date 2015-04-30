@@ -47,8 +47,6 @@ class ConsoleOutput {
 
 	/**
 	 * Creates and initializes the SymfonyConsoleOutput instance
-	 *
-	 * @return void
 	 */
 	public function __construct() {
 		$this->output = new SymfonyConsoleOutput();
