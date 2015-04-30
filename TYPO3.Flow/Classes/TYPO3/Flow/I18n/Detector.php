@@ -99,7 +99,7 @@ class Detector {
 	public function detectLocaleFromLocaleTag($localeIdentifier) {
 		try {
 			return $this->detectLocaleFromTemplateLocale(new \TYPO3\Flow\I18n\Locale($localeIdentifier));
-		} catch (\TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException $e) {
+		} catch (\TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 			return $this->localizationService->getConfiguration()->getDefaultLocale();
 		}
 	}

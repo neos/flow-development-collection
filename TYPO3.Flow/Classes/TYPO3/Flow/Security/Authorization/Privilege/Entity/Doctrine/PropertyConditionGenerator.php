@@ -390,7 +390,8 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 			} else {
 				$parameter = $sqlFilter->getParameter($operandDefinition);
 			}
-		} catch (\InvalidArgumentException $e) {}
+		} catch (\InvalidArgumentException $exception) {
+		}
 
 		if ($parameter === NULL || $parameter === '') {
 			$addNullExpression = TRUE;

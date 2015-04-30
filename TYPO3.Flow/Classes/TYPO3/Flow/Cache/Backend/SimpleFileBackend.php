@@ -255,7 +255,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			$lock = new Lock($pathAndFilename);
 			unlink($pathAndFilename);
 			$lock->release();
-		} catch (\Exception $e) {
+		} catch (\Exception $exception) {
 			return FALSE;
 		}
 		return TRUE;

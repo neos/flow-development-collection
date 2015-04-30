@@ -147,7 +147,7 @@ class DateTimeConverter extends AbstractTypeConverter {
 		if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
 			try {
 				$timezone = new \DateTimeZone($source['timezone']);
-			} catch (\Exception $e) {
+			} catch (\Exception $exception) {
 				throw new \TYPO3\Flow\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
 			}
 			$date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);

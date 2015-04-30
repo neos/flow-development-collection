@@ -115,7 +115,7 @@ class EntityManagerFactory {
 		$connection = \Doctrine\DBAL\DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
 		try {
 			$connection->connect();
-		} catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+		} catch (\Doctrine\DBAL\Exception\ConnectionException $exception) {
 			$settings = $this->settings['backendOptions'];
 			$settings['platform'] = $connection->getDriver()->getDatabasePlatform();
 			$connection = \Doctrine\DBAL\DriverManager::getConnection($settings, $config, $eventManager);

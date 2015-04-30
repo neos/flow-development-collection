@@ -361,7 +361,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 			$temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceFiles/';
 			try {
 				Files::createDirectoryRecursively($temporaryPathAndFilename);
-			} catch (\TYPO3\Flow\Utility\Exception $e) {
+			} catch (\TYPO3\Flow\Utility\Exception $exception) {
 				throw new Exception(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
 			}
 

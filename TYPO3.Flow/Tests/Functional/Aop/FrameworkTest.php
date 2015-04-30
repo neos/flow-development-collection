@@ -32,7 +32,8 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$targetClass = new Fixtures\TargetClass01();
 		try {
 			$targetClass->sayHelloAndThrow(TRUE);
-		} catch(\Exception $e) {}
+		} catch (\Exception $exception) {
+		}
 		$this->assertSame('Hello World', $targetClass->sayHelloAndThrow(FALSE));
 	}
 

@@ -266,8 +266,8 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 			if ($this->pdoDriver === 'mysql') {
 				$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
 			}
-		} catch (\PDOException $e) {
-			throw new \TYPO3\Flow\Persistence\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1334736164);
+		} catch (\PDOException $exception) {
+			throw new \TYPO3\Flow\Persistence\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
 		}
 	}
 
@@ -280,8 +280,8 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 	protected function createCacheTables() {
 		try {
 			\TYPO3\Flow\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
-		} catch (\PDOException $e) {
-			throw new \TYPO3\Flow\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
+		} catch (\PDOException $exception) {
+			throw new \TYPO3\Flow\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
 		}
 	}
 }

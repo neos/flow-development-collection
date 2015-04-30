@@ -207,7 +207,8 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		if ($this->entityManager->contains($object)) {
 			try {
 				return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-			} catch (\Doctrine\ORM\ORMException $e) {}
+			} catch (\Doctrine\ORM\ORMException $exception) {
+			}
 		}
 		return NULL;
 	}

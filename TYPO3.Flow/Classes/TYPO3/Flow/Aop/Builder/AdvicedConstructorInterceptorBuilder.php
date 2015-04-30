@@ -53,9 +53,9 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\Abstr
 				$this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 				try {
 				' . $advicesCode . '
-				} catch (\Exception $e) {
+				} catch (\Exception $exception) {
 					unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-					throw $e;
+					throw $exception;
 				}
 				unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 				return;

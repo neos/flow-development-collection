@@ -65,7 +65,7 @@ class LazySplObjectStorage extends \SplObjectStorage {
 			foreach ($this->objectIdentifiers as $identifier) {
 				try {
 					parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
-				} catch (\TYPO3\Flow\Persistence\Generic\Exception\InvalidObjectDataException $e) {
+				} catch (\TYPO3\Flow\Persistence\Generic\Exception\InvalidObjectDataException $exception) {
 					// when security query rewriting holds back an object here, we skip it...
 				}
 			}

@@ -141,8 +141,8 @@ class ResourceManager {
 				$pathInfo = UnicodeFunctions::pathinfo($source);
 				$resource->setFilename($pathInfo['basename']);
 			}
-		} catch (Exception $e) {
-			throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $e->getMessage()), 1375197120, $e);
+		} catch (Exception $exception) {
+			throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
 		}
 
 		$this->resourceRepository->add($resource);
@@ -185,8 +185,8 @@ class ResourceManager {
 			if ($forcedPersistenceObjectIdentifier !== NULL) {
 				ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, TRUE);
 			}
-		} catch (Exception $e) {
-			throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $e->getMessage()), 1381156155, $e);
+		} catch (Exception $exception) {
+			throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1381156155, $exception);
 		}
 
 		$this->resourceRepository->add($resource);
@@ -219,8 +219,8 @@ class ResourceManager {
 			$uploadedFile = $this->prepareUploadedFileForImport($uploadInfo);
 			$resource = $collection->importResource($uploadedFile['filepath']);
 			$resource->setFilename($uploadedFile['filename']);
-		} catch (Exception $e) {
-			throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $e);
+		} catch (Exception $exception) {
+			throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $exception);
 		}
 
 		$this->resourceRepository->add($resource);
@@ -304,8 +304,8 @@ class ResourceManager {
 			}
 			try {
 				$storage->deleteResource($resource);
-			} catch (\Exception $e) {
-				$this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $e->getMessage()), LOG_WARNING);
+			} catch (\Exception $exception) {
+				$this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LOG_WARNING);
 				return FALSE;
 			}
 			if ($unpublishResource) {

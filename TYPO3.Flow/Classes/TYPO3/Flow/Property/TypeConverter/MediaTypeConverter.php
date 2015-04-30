@@ -92,7 +92,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
 			case 'xml':
 				try {
 					$xmlElement = new \SimpleXMLElement(urldecode($requestBody), LIBXML_NOERROR);
-				} catch (\Exception $e) {
+				} catch (\Exception $exception) {
 					return array();
 				}
 				$result = Arrays::convertObjectToArray($xmlElement);

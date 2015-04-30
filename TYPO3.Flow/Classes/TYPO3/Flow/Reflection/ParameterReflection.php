@@ -42,7 +42,7 @@ class ParameterReflection extends \ReflectionParameter {
 	public function getClass() {
 		try {
 			$class = parent::getClass();
-		} catch (\Exception $e) {
+		} catch (\Exception $exception) {
 			return NULL;
 		}
 
