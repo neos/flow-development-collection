@@ -26,6 +26,8 @@ class Response extends \TYPO3\Flow\Mvc\Response {
 	const STYLE_UNDERLINED = 4;
 	const STYLE_INVERSE = 7;
 	const STYLE_STRIKETHROUGH = 9;
+	const STYLE_ERROR = 31;
+	const STYLE_SUCCESS = 32;
 
 	/**
 	 * Constants for output formats
@@ -150,12 +152,16 @@ class Response extends \TYPO3\Flow\Mvc\Response {
 			$content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "\x1B[" . self::STYLE_UNDERLINED . "m\$1\x1B[0m", $content);
 			$content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "\x1B[" . self::STYLE_INVERSE . "m\$1\x1B[0m", $content);
 			$content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "\x1B[" . self::STYLE_STRIKETHROUGH . "m\$1\x1B[0m", $content);
+			$content =  preg_replace('|\<error>(((?!\</error>).)*)\</error>|', "\x1B[" . self::STYLE_ERROR . "m\$1\x1B[0m", $content);
+			$content =  preg_replace('|\<success>(((?!\</success>).)*)\</success>|', "\x1B[" . self::STYLE_SUCCESS . "m\$1\x1B[0m", $content);
 		} else {
 			$content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "$1", $content);
 			$content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "$1", $content);
 			$content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "$1", $content);
 			$content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "$1", $content);
 			$content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "$1", $content);
+			$content =  preg_replace('|\<error>(((?!\</strike>).)*)\</error>|', "$1", $content);
+			$content =  preg_replace('|\<success>(((?!\</strike>).)*)\</success>|', "$1", $content);
 		}
 		echo $content;
 	}
