@@ -61,6 +61,7 @@ class OperationResolver implements OperationResolverInterface {
 	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return array Array of sorted operations and array of final operation names
 	 * @Flow\CompileStatic
+	 * @throws \TYPO3\Eel\FlowQuery\FlowQueryException
 	 */
 	static public function buildOperationsAndFinalOperationNames($objectManager) {
 		$operations = array();

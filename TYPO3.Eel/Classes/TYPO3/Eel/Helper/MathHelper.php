@@ -155,7 +155,7 @@ class MathHelper implements ProtectedContextAwareInterface {
 	 * @return float The cube root of the given value
 	 */
 	public function cbrt($x) {
-		$y = pow(abs($x), 1/3);
+		$y = pow(abs($x), 1 / 3);
 		return $x < 0 ? -$y : $y;
 	}
 

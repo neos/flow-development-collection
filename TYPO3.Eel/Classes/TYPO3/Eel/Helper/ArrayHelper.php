@@ -289,7 +289,7 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 		// get all elements that are supposed to be added
 		$elements = func_get_args();
 		array_shift($elements);
-		foreach($elements as $element) {
+		foreach ($elements as $element) {
 			array_unshift($array, $element);
 		}
 		return $array;

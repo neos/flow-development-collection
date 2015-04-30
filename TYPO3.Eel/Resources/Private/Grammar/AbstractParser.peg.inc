@@ -1,5 +1,6 @@
 <?php
 namespace TYPO3\Eel;
+// @codingStandardsIgnoreFile
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
@@ -48,4 +49,3 @@ Identifier: / [a-zA-Z_] [a-zA-Z0-9_\-]* /
 		$result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
 	}
 }
-?>

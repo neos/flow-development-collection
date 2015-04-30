@@ -1,5 +1,6 @@
 <?php
 namespace TYPO3\Eel;
+// @codingStandardsIgnoreFile
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
@@ -45,4 +46,3 @@ ObjectLiteral: '{' ObjectLiteralProperty? (< ',' > ObjectLiteralProperty)* > '}'
 */
 
 }
-?>

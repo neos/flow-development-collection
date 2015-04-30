@@ -39,7 +39,7 @@ class CountOperation extends AbstractOperation {
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
 	 * @param array $arguments filter arguments for this operation
-	 * @return integer with the number of elements
+	 * @return void|integer with the number of elements
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (count($arguments) == 0) {

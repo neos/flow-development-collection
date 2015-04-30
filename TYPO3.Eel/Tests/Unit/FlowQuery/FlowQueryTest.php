@@ -69,8 +69,8 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $query->slice());
 		$this->assertSame(array($myObject, $myObject2, $myObject3), $query->slice()->get());
 		$this->assertSame(array($myObject, $myObject2, $myObject3), iterator_to_array($query->slice()));
-		$this->assertSame(array($myObject, $myObject2), $query->slice(0,2)->get());
-		$this->assertSame(array($myObject, $myObject2), iterator_to_array($query->slice(0,2)));
+		$this->assertSame(array($myObject, $myObject2), $query->slice(0, 2)->get());
+		$this->assertSame(array($myObject, $myObject2), iterator_to_array($query->slice(0, 2)));
 		$this->assertSame(array($myObject3), $query->slice(2)->get());
 		$this->assertSame(array($myObject3), iterator_to_array($query->slice(2)));
 	}
