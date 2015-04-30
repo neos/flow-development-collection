@@ -338,7 +338,7 @@ class RequestTest extends UnitTestCase {
 
 		$expectedHeaders =
 			"PUT /?foo=bar HTTP/1.1\r\n" .
-			"User-Agent: Flow/" . FLOW_VERSION_BRANCH . ".x\r\n" .
+			'User-Agent: Flow/' . FLOW_VERSION_BRANCH . ".x\r\n" .
 			"Host: dev.blog.rob\r\n" .
 			"Content-Type: application/x-www-form-urlencoded\r\n";
 
@@ -361,11 +361,11 @@ class RequestTest extends UnitTestCase {
 		$request->setContent('putArgument=first value');
 		$expectedRawRequest =
 			"PUT /?foo=bar HTTP/1.1\r\n" .
-			"User-Agent: Flow/" . FLOW_VERSION_BRANCH . ".x\r\n" .
+			'User-Agent: Flow/' . FLOW_VERSION_BRANCH . ".x\r\n" .
 			"Host: dev.blog.rob\r\n" .
 			"Content-Type: application/x-www-form-urlencoded\r\n" .
 			"\r\n" .
-			"putArgument=first value";
+			'putArgument=first value';
 
 		$this->assertEquals($expectedRawRequest, (string)$request);
 	}

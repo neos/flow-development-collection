@@ -55,7 +55,7 @@ class SubProcess {
 				throw new \Exception('Failed launching the shell sub process');
 			}
 		}
-		fwrite($this->pipes[0], "$commandLine\n");
+		fwrite($this->pipes[0], $commandLine . "\n");
 		fflush($this->pipes[0]);
 
 		return $this->getSubProcessResponse();
@@ -81,7 +81,7 @@ class SubProcess {
 	 * @throws \RuntimeException
 	 */
 	protected function launchSubProcess() {
-		$systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' ' . 'FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
+		$systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php --start-slave';
 		$descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
 		$this->subProcess = proc_open($systemCommand, $descriptorSpecification, $this->pipes);
 		if (!is_resource($this->subProcess)) {

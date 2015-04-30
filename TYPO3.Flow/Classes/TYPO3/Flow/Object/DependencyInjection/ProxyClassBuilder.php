@@ -400,9 +400,9 @@ class ProxyClassBuilder {
 				break;
 			}
 			if ($objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
-				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
+				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
 			} else {
-				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
+				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
 			}
 			$index++;
 		}
@@ -617,11 +617,11 @@ class ProxyClassBuilder {
 	protected function buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument) {
 		$setterMethodName = 'inject' . ucfirst($propertyName);
 		if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-			return array("\$this->$setterMethodName($preparedSetterArgument);");
+			return array('$this->' . $setterMethodName . '(' . $preparedSetterArgument . ');');
 		}
 		$setterMethodName = 'set' . ucfirst($propertyName);
 		if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-			return array("\$this->$setterMethodName($preparedSetterArgument);");
+			return array('$this->' . $setterMethodName . '(' . $preparedSetterArgument . ');');
 		}
 		if (!property_exists($className, $propertyName)) {
 			return array();
@@ -642,7 +642,7 @@ class ProxyClassBuilder {
 			return '';
 		}
 		$className = $objectConfiguration->getClassName();
-		$code = "\n". '		if (get_class($this) === \'' . $className . '\') {' . "\n";
+		$code = "\n" . '		if (get_class($this) === \'' . $className . '\') {' . "\n";
 		$code .= '			$this->' . $lifecycleInitializationMethodName . '(' . $cause . ');' . "\n";
 		$code .= '		}' . "\n";
 		return $code;
@@ -660,7 +660,7 @@ class ProxyClassBuilder {
 			return '';
 		}
 		$className = $objectConfiguration->getClassName();
-		$code = "\n". '		if (get_class($this) === \'' . $className . '\') {' . "\n";
+		$code = "\n" . '		if (get_class($this) === \'' . $className . '\') {' . "\n";
 		$code .= '		\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
 		$code .= '		}' . "\n";
 		return $code;

@@ -485,13 +485,13 @@ EOT;
 	protected function buildCodeFromSql(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, array $sql) {
 		$currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
 		$code = array(
-			"\$this->abortIf(\$this->connection->getDatabasePlatform()->getName() != \"$currentPlatform\");", "",
+			'$this->abortIf($this->connection->getDatabasePlatform()->getName() != "' . $currentPlatform . '");', '',
 		);
 		foreach ($sql as $query) {
 			if (strpos($query, $configuration->getMigrationsTableName()) !== FALSE) {
 				continue;
 			}
-			$code[] = "\$this->addSql(\"$query\");";
+			$code[] = '$this->addSql("' . $query . '");';
 		}
 		return implode("\n", $code);
 	}

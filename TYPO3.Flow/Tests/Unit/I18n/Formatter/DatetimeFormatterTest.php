@@ -47,7 +47,7 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en');
 		$this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
-		$this->sampleDateTime = new \DateTime("@1276192176");
+		$this->sampleDateTime = new \DateTime('@1276192176');
 		$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
 	}
 

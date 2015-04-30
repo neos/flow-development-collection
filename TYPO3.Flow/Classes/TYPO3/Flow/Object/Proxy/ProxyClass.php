@@ -190,16 +190,16 @@ class ProxyClass {
 		if ($methodsCode . $constantsCode === '') {
 			return '';
 		}
-		$classCode = ($namespace !== '' ? "namespace $namespace;\n\n" : '') .
+		$classCode = ($namespace !== '' ? 'namespace ' . $namespace . ";\n\n" : '') .
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
 			$this->buildClassDocumentation() .
-			$abstractKeyword . "class $proxyClassName extends $originalClassName implements " . implode(', ', array_unique($this->interfaces)) ." {\n\n" .
+			$abstractKeyword . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
 			$constantsCode .
 			$propertiesCode .
 			$methodsCode .
-			"}";
+			'}';
 		return $classCode;
 	}
 

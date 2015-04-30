@@ -319,7 +319,7 @@ class Debugger {
 							if ($plaintext) {
 								$arguments .= '"' . $argument . '"';
 							} else {
-								$preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
+								$preparedArgument = str_replace('…', '<span style="color:white;">…</span>', $preparedArgument);
 								$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
 								$arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
 							}

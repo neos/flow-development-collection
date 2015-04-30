@@ -418,7 +418,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			\TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
 				'entityProperty' => array(
 					\TYPO3\Flow\Object\ObjectSerializer::TYPE => 'persistenceObject',
-					\TYPO3\Flow\Object\ObjectSerializer::VALUE => $entityClassName . ':' . 'someUUID',
+					\TYPO3\Flow\Object\ObjectSerializer::VALUE => $entityClassName . ':someUUID',
 				)
 			)
 		);

@@ -29,7 +29,7 @@ abstract class AbstractClass {
 	 * @return string
 	 */
 	public function concreteMethod($foo) {
-		return "foo: $foo";
+		return 'foo: ' . $foo;
 	}
 
 }

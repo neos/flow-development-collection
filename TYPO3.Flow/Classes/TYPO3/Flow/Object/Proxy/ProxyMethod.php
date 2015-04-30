@@ -149,17 +149,17 @@ class ProxyMethod {
 		if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
 			$code = "\n" .
 				$methodDocumentation .
-				"	" . $staticKeyword . " " . $visibility . " function " . $this->methodName . "(" . $methodParametersCode . ") {\n";
+				'	' . $staticKeyword . ' ' . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ") {\n";
 			if ($this->methodBody !== '') {
 				$code .= "\n" . $this->methodBody . "\n";
 			} else {
 				$code .= $this->addedPreParentCallCode;
 				if ($this->addedPostParentCallCode !== '') {
-					$code .= "		\$result = " . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+					$code .= '		$result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
 					$code .= $this->addedPostParentCallCode;
 					$code .= "		return \$result;\n";
 				} else {
-					$code .= ($callParentMethodCode === '' ? '' : "		return " . $callParentMethodCode . ";\n");
+					$code .= ($callParentMethodCode === '' ? '' : '		return ' . $callParentMethodCode . ";\n");
 				}
 			}
 			$code .= "	}\n";
@@ -252,7 +252,7 @@ class ProxyMethod {
 						} elseif (is_string($rawDefaultValue)) {
 							$defaultValue = " = '" . $rawDefaultValue . "'";
 						} elseif (is_array($rawDefaultValue)) {
-							$defaultValue = " = " . $this->buildArraySetupCode($rawDefaultValue);
+							$defaultValue = ' = ' . $this->buildArraySetupCode($rawDefaultValue);
 						}
 					}
 					$byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
@@ -277,7 +277,7 @@ class ProxyMethod {
 		if (!$this->reflectionService->hasMethod($fullClassName, $methodName)) {
 			return '';
 		}
-		return "parent::" . $methodName . "(" . $this->buildMethodParametersCode($fullClassName, $methodName, FALSE) . ");\n";
+		return 'parent::' . $methodName . '(' . $this->buildMethodParametersCode($fullClassName, $methodName, FALSE) . ");\n";
 	}
 
 	/**

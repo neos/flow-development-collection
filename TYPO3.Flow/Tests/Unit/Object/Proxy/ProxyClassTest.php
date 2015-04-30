@@ -31,9 +31,9 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
-			"class ClassName extends ClassName".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-			"	const TEST_CONSTANT = 1;\n\n".
-			"}",
+			'class ClassName extends ClassName' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+			"	const TEST_CONSTANT = 1;\n\n" .
+			'}',
 			),
 			array(
 				'originalClassName' => '\ClassWithoutNamespace',
@@ -44,9 +44,9 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
-			"class ClassWithoutNamespace extends ClassWithoutNamespace".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-			"	const TEST_CONSTANT = 1;\n\n".
-			"}",
+			'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+			"	const TEST_CONSTANT = 1;\n\n" .
+			'}',
 			),
 			array(
 				'originalClassName' => 'ClassWithoutNamespace',
@@ -57,9 +57,9 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
-			"class ClassWithoutNamespace extends ClassWithoutNamespace".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-			"	const TEST_CONSTANT = 1;\n\n".
-			"}",
+			'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+			"	const TEST_CONSTANT = 1;\n\n" .
+			'}',
 			),
 		);
 	}

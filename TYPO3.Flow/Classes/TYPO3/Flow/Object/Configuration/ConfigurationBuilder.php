@@ -436,12 +436,12 @@ class ConfigurationBuilder {
 						}
 						$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 						if (count($methodParameters) !== 1) {
-							$this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', "$className::$propertyName", $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
+							$this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
 							continue;
 						}
 						$methodParameter = array_pop($methodParameters);
 						if ($methodParameter['class'] === NULL) {
-							$this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', "$className::$propertyName", $methodName), LOG_DEBUG);
+							$this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
 							continue;
 						}
 						$properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);

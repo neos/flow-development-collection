@@ -77,7 +77,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createFromRawSetsHeadersAndStatusCodeCorrectly($rawResponse, $expectedHeaders, $expectedStatusCode) {
 		$response = Response::createFromRaw($rawResponse);
-		$this->assertEquals("HTTP/1.1", $response->getVersion());
+		$this->assertEquals('HTTP/1.1', $response->getVersion());
 
 		foreach ($expectedHeaders as $fieldName => $fieldValue) {
 			$this->assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));

@@ -1051,7 +1051,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
 		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
-		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . ';';
+		$packageStatesCode = "<?php\n" . $fileDescription . "\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . ';';
 		$result = @file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
 		if ($result === FALSE) {
 			throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);

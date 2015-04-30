@@ -192,12 +192,12 @@ class Compiler {
 	 * @return string
 	 */
 	public function getStoredProxyClassMap() {
-		$return = "<?php
+		$return = '<?php
 /**
  * This is a cached list of all proxy classes. Only classes in this array will
  * actually be loaded from the proxy class cache in the ClassLoader.
  */
-return " . var_export($this->storedProxyClasses, TRUE) . ";";
+return ' . var_export($this->storedProxyClasses, TRUE) . ';';
 
 		return $return;
 	}

@@ -105,7 +105,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function argumentsOfPutRequestArePassedToAction() {
 		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
-		$request->setContent("putArgument=first value");
+		$request->setContent('putArgument=first value');
 		$request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
 		$request->setHeader('Content-Length', 54);
 

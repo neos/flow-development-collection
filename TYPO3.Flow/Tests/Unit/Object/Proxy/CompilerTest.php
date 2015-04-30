@@ -107,13 +107,13 @@ class CompilerTest extends UnitTestCase {
 	public function stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider() {
 		return array(
 				// no (valid) php file
-			array('classCode' => "", 'expectedResult' => ""),
+			array('classCode' => '', 'expectedResult' => ''),
 			array('classCode' => "Not\nPHP code\n", 'expectedResult' => "Not\nPHP code\n"),
 
 				// PHP files with only one line
-			array('classCode' => "<?php just one line", 'expectedResult' => " just one line"),
-			array('classCode' => "<?php another <?php tag", 'expectedResult' => " another <?php tag"),
-			array('classCode' => "  <?php  space before and after tag", 'expectedResult' => "  space before and after tag"),
+			array('classCode' => '<?php just one line', 'expectedResult' => ' just one line'),
+			array('classCode' => '<?php another <?php tag', 'expectedResult' => ' another <?php tag'),
+			array('classCode' => '  <?php  space before and after tag', 'expectedResult' => '  space before and after tag'),
 
 				// PHP files with more lines
 			array('classCode' => "<?php\nsecond line", 'expectedResult' => "\nsecond line"),

@@ -22,10 +22,10 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
-		eval("
-			class $className {
+		eval('
+			class ' . $className . ' {
 				final public function someFinalMethod() {}
-			}"
+			}'
 		);
 
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('isMethodFinal'), array(), '', FALSE);
@@ -42,12 +42,12 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function matchesTakesTheVisibilityModifierIntoAccountIfOneWasSpecified() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
-		eval("
-			class $className {
+		eval('
+			class ' . $className . ' {
 				public function somePublicMethod() {}
 				protected function someProtectedMethod() {}
 				private function somePrivateMethod() {}
-			}"
+			}'
 		);
 
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
@@ -76,8 +76,8 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function matchesChecksTheAvailablityOfAnArgumentNameIfArgumentConstraintsHaveBeenConfigured() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
-		eval("
-			class $className {
+		eval('
+			class ' . $className . " {
 				public function somePublicMethod(\$arg1) {}
 				public function someOtherPublicMethod(\$arg1, \$arg2 = 'default') {}
 				public function someThirdMethod(\$arg1, \$arg2, \$arg3 = 'default') {}

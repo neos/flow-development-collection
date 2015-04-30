@@ -57,7 +57,7 @@ class AbstractControllerTestAController extends ActionController {
 	 * @return string
 	 */
 	public function thirdAction($firstArgument, $secondArgument, $third = NULL, $fourth = 'default') {
-		return "thirdAction-$firstArgument-$secondArgument-$third-$fourth";
+		return 'thirdAction-' . $firstArgument . '-' . $secondArgument . '-' . $third . '-' . $fourth;
 	}
 
 	/**
@@ -68,6 +68,6 @@ class AbstractControllerTestAController extends ActionController {
 	 */
 	public function fourthAction($nonObject1 = NULL, $nonObject2 = NULL) {
 		$internalArguments = $this->request->getInternalArguments();
-		return "fourthAction-$nonObject1-$nonObject2-" . (isset($internalArguments['__object1']) ? get_class($internalArguments['__object1']) : 'x');
+		return 'fourthAction-' . $nonObject1 . '-' . $nonObject2 . '-' . (isset($internalArguments['__object1']) ? get_class($internalArguments['__object1']) : 'x');
 	}
 }

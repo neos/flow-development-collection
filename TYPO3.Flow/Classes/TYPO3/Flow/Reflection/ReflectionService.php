@@ -1567,7 +1567,7 @@ class ReflectionService {
 				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\Flow\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\Flow\Annotations\Scope')->value !== 'singleton') {
 					throw new ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
 				}
-				if (defined("$repositoryClassName::ENTITY_CLASSNAME") && isset($this->classSchemata[$repositoryClassName::ENTITY_CLASSNAME])) {
+				if (defined($repositoryClassName . '::ENTITY_CLASSNAME') && isset($this->classSchemata[$repositoryClassName::ENTITY_CLASSNAME])) {
 					$claimedObjectType = $repositoryClassName::ENTITY_CLASSNAME;
 					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassName);
 				}

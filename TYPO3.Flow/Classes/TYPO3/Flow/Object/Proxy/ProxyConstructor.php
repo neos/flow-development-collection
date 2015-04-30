@@ -49,7 +49,7 @@ class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod {
 			$argumentsCode = (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) ? '		$arguments = func_get_args();' . "\n" : '';
 			$code = "\n" .
 				$methodDocumentation .
-				"	" . $staticKeyword . "public function __construct() {\n" .
+				'	' . $staticKeyword . "public function __construct() {\n" .
 				$argumentsCode .
 				$this->addedPreParentCallCode . $callParentMethodCode . $this->addedPostParentCallCode .
 				"	}\n";

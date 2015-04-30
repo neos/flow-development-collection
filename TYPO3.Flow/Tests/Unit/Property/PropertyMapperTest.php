@@ -173,16 +173,16 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$interfaceName2 = uniqid('TYPO3_Flow_TestInterface2_', FALSE);
 		$interfaceName3 = uniqid('TYPO3_Flow_TestInterface3_', FALSE);
 
-		eval("
-			interface $interfaceName2 {}
-			interface $interfaceName1 {}
+		eval('
+			interface ' . $interfaceName2 . ' {}
+			interface ' . $interfaceName1 . ' {}
 
-			interface $interfaceName3 extends $interfaceName2 {}
+			interface ' . $interfaceName3 . ' extends ' . $interfaceName2 . ' {}
 
-			class $className1 implements $interfaceName1 {}
-			class $className2 extends $className1 {}
-			class $className3 extends $className2 implements $interfaceName3 {}
-		");
+			class ' . $className1 . ' implements ' . $interfaceName1 . ' {}
+			class ' . $className2 . ' extends ' . $className1 . ' {}
+			class ' . $className3 . ' extends ' . $className2 . ' implements ' . $interfaceName3 . ' {}
+		');
 
 		// The most specific converter should win
 		$data[] = array(

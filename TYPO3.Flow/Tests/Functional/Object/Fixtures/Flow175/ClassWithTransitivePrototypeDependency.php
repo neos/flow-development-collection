@@ -22,7 +22,7 @@ class ClassWithTransitivePrototypeDependency {
 	protected $outer;
 
 	public function getTestValue() {
-		return $this->outer->getInner()->greet("World");
+		return $this->outer->getInner()->greet('World');
 	}
 
 }
