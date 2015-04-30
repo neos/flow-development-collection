@@ -51,7 +51,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter {
 	public function getSourceChildPropertiesToBeConverted($source) {
 		$gettableProperties = ObjectAccess::getGettableProperties($source);
 		$propertiesToConvert = array();
-		foreach($gettableProperties as $gettableProperty) {
+		foreach ($gettableProperties as $gettableProperty) {
 			if (is_object($gettableProperty)) {
 				$propertiesToConvert[] = $gettableProperty;
 			}

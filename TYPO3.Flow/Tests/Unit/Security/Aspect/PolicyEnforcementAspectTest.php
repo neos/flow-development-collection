@@ -79,7 +79,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
 		$this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-		//$this->mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($this->mockJoinPoint);
+		// $this->mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($this->mockJoinPoint);
 
 		$this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
 	}
@@ -94,7 +94,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
 		$this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-		//$this->mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
+		// $this->mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
 
 		$this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
 	}
@@ -106,7 +106,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
 		$this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-		//$this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
+		// $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
 
 		$this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
 	}
@@ -132,9 +132,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
-		//$this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
+		// $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
-		//
 		$this->assertEquals($someResult, $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint));
 	}
 

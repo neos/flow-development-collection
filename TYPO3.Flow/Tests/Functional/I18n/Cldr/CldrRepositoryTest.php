@@ -44,7 +44,7 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected function retrieveCldrBasePath() {
 		$reflectedCldrRepository = new \ReflectionObject($this->cldrRepository);
 		$reflectedBasePathProperty = $reflectedCldrRepository->getProperty('cldrBasePath');
-		$reflectedBasePathProperty->setAccessible(true);
+		$reflectedBasePathProperty->setAccessible(TRUE);
 
 		return $reflectedBasePathProperty->getValue($this->cldrRepository);
 	}

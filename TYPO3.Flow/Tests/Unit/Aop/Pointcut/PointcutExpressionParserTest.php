@@ -84,7 +84,7 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->parse('evaluate(Foo.Bar.baz == "test")', 'Unit Test');
 	}
 
-        /**
+	/**
 	 * @test
 	 */
 	public function parseCallsParseDesignatorMethodWithTheCorrectSignaturePatternStringIfTheExpressionContainsArgumentPatterns() {

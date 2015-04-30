@@ -171,7 +171,6 @@ class PersistentObjectConverter extends ObjectConverter {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
 
-
 		$objectConstructorArguments = $this->getConstructorArgumentsForClass(get_class($object));
 
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {

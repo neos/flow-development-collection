@@ -181,7 +181,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 
 		$resource = $this->resourceManager->importUploadedResource($source, $this->getCollectionName($source, $configuration));
 		if ($resource === FALSE) {
-			return new Error('The Resource Manager could not create a Resource instance for an uploaded file. See log for more details.' , 1264517906);
+			return new Error('The Resource Manager could not create a Resource instance for an uploaded file. See log for more details.', 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

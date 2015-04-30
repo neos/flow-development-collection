@@ -128,10 +128,10 @@ class SecurityCommandController extends CommandController {
 	public function showEffectivePolicyCommand($privilegeType, $roles = '') {
 		$systemRoleIdentifiers = array('TYPO3.Flow:Everybody', 'TYPO3.Flow:Anonymous', 'TYPO3.Flow:AuthenticatedUser');
 
-		if(strpos($privilegeType, '\\') === FALSE) {
+		if (strpos($privilegeType, '\\') === FALSE) {
 			$privilegeType = sprintf('\TYPO3\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst($privilegeType), ucfirst($privilegeType));
 		}
-		if(!class_exists($privilegeType) && !interface_exists($privilegeType)) {
+		if (!class_exists($privilegeType) && !interface_exists($privilegeType)) {
 			$this->outputLine('The privilege type "%s" was not defined.', array($privilegeType));
 			$this->quit(1);
 		}
@@ -143,7 +143,7 @@ class SecurityCommandController extends CommandController {
 		$requestedRoles = array();
 		foreach (Arrays::trimExplode(',', $roles) as $roleIdentifier) {
 			try {
-				if(in_array($roleIdentifier, $systemRoleIdentifiers)) {
+				if (in_array($roleIdentifier, $systemRoleIdentifiers)) {
 					continue;
 				}
 				$currentRole = $this->policyService->getRole($roleIdentifier);
@@ -158,7 +158,7 @@ class SecurityCommandController extends CommandController {
 				$this->quit(1);
 			}
 		}
-		if(count($requestedRoles) > 0) {
+		if (count($requestedRoles) > 0) {
 			$requestedRoles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
 		} else {
 			$requestedRoles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
@@ -172,7 +172,7 @@ class SecurityCommandController extends CommandController {
 		$permissions = array();
 
 		/** @var PrivilegeInterface $definedPrivilege */
-		foreach($definedPrivileges as $definedPrivilege) {
+		foreach ($definedPrivileges as $definedPrivilege) {
 
 			$accessGrants = 0;
 			$accessDenies = 0;
@@ -180,7 +180,7 @@ class SecurityCommandController extends CommandController {
 			$permission = 'ABSTAIN';
 
 			/** @var Role $requestedRole */
-			foreach($requestedRoles as $requestedRole) {
+			foreach ($requestedRoles as $requestedRole) {
 				$privilegeType = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->getIdentifier());
 
 				if ($privilegeType === NULL) {
@@ -206,7 +206,7 @@ class SecurityCommandController extends CommandController {
 
 		ksort($permissions);
 
-		foreach($permissions as $privilegeTargetIdentifier => $permission) {
+		foreach ($permissions as $privilegeTargetIdentifier => $permission) {
 			$formattedPrivilegeTargetIdentifier = wordwrap($privilegeTargetIdentifier, $this->output->getMaximumLineLength() - 10, PHP_EOL . str_repeat(' ', 10), TRUE);
 			$this->outputLine('%-70s %s', array($formattedPrivilegeTargetIdentifier, $permission));
 		}
@@ -303,7 +303,6 @@ class SecurityCommandController extends CommandController {
 			$this->outputLine('The given Resource did not match any method or is unknown.');
 			$this->quit(1);
 		}
-
 
 		foreach ($matchedClassesAndMethods as $className => $methods) {
 			$this->outputLine($className);

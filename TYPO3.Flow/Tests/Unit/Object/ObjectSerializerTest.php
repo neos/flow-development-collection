@@ -36,7 +36,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$someObject = new $className();
 		$expectedPropertyArray = array(
-		  \spl_object_hash($someObject) => array(
+			\spl_object_hash($someObject) => array(
 			\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
 				\TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
 					'privateProperty' => array (
@@ -838,7 +838,6 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectSerializer->expects($this->once())->method('reconstituteObject')->with('some object', array(\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',\TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-
 		$dataArray = array(
 			'key1' => array(
 				\TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
@@ -872,7 +871,6 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectSerializer = $this->getAccessibleMock('TYPO3\Flow\Object\ObjectSerializer', array('reconstituteSplObjectStorage'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with(array(\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',\TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
-
 
 		$dataArray = array(
 			'key1' => array(
@@ -946,7 +944,6 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', array('object1 data'))->will($this->returnValue($mockObject1));
 		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', array('object2 data'))->will($this->returnValue($mockObject2));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
-
 
 		$dataArray = array('some object', 'some other object');
 
@@ -1051,7 +1048,6 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', array('object2 data'))->will($this->returnValue($mockObject2));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-
 		$dataArray = array('some object', 'some other object');
 
 		$expectedResult = new \Doctrine\Common\Collections\ArrayCollection();
@@ -1075,7 +1071,6 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectSerializer = $this->getAccessibleMock('TYPO3\Flow\Object\ObjectSerializer', array('reconstituteCollection'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('reconstituteCollection')->with('Doctrine\Common\Collections\ArrayCollection', array('some object'))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
-
 
 		$dataArray = array(
 			'key1' => array(

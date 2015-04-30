@@ -107,7 +107,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 
-		$methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+		$methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', NULL, $argumentConstraints);
 		$methodNameFilter->injectReflectionService($mockReflectionService);
 		$methodNameFilter->injectSystemLogger($mockSystemLogger);
 
@@ -132,7 +132,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'methodArgumentConstraints' => $argumentConstraints
 		);
 
-		$methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+		$methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', NULL, $argumentConstraints);
 
 		$this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
 	}

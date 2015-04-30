@@ -95,7 +95,7 @@ class HeadersTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getAllReturnsAllHeaderFields() {
-		$specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
+		$specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
 		$headers = new Headers($specifiedFields);
 
 		$expectedFields = array('X-Coffee' => array('Arabica'), 'Host' => array('myhost.com'));
@@ -144,7 +144,7 @@ class HeadersTest extends UnitTestCase {
 	 * @test
 	 */
 	public function removeRemovesTheSpecifiedHeader() {
-		$specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
+		$specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
 		$headers = new Headers($specifiedFields);
 
 		$headers->remove('X-Coffee');

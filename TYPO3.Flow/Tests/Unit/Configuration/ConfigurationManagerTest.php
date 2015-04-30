@@ -1325,7 +1325,6 @@ EOD;
 			),
 		);
 
-
 		$globalSubContextViewConfigurations = array(
 			array(
 				'requestFilter' => 'RequestFilterFromGlobalSubContext',
@@ -1355,7 +1354,6 @@ EOD;
 				throw new \Exception('Unexpected filename: ' . $filenameAndPath);
 		}
 	}
-
 
 	/**
 	 * @param string $configurationSourceCallbackName

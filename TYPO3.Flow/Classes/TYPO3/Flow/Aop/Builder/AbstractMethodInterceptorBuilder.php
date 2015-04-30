@@ -65,7 +65,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	protected function buildArraySetupCode(array $array) {
 		$code = 'array(';
 		foreach ($array as $key => $value) {
-			$code .= (is_string($key)) ? "'" . $key  . "'" : $key;
+			$code .= (is_string($key)) ? "'" . $key . "'" : $key;
 			$code .= ' => ';
 			if ($value === NULL) {
 				$code .= 'NULL';

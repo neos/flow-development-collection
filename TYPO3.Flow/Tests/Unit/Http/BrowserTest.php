@@ -151,7 +151,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$wildResponses[3]->setHeader('Location', 'http://localhost/ahNoPleaseRatherGoThere');
 
 		$requestEngine = $this->getMock('TYPO3\Flow\Http\Client\RequestEngineInterface');
-		for ($i=0; $i<=3; $i++) {
+		for ($i = 0; $i <= 3; $i++) {
 			$requestEngine
 				->expects($this->at($i))
 				->method('sendRequest')
@@ -168,7 +168,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function browserHaltsOnExceedingMaximumRedirections() {
 		$requestEngine = $this->getMock('TYPO3\Flow\Http\Client\RequestEngineInterface');
-		for ($i=0; $i<=10; $i++) {
+		for ($i = 0; $i <= 10; $i++) {
 			$response = new Response();
 			$response->setHeader('Location', 'http://localhost/this/willLead/you/knowhere/' . $i);
 			$response->setStatus(301);

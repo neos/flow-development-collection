@@ -105,7 +105,7 @@ class LoggingAspect {
 				$this->alreadyLoggedAuthenticateCall = TRUE;
 			break;
 			case TokenInterface::WRONG_CREDENTIALS :
-				$this->securityLogger->log(sprintf('Wrong credentials given for token: %s', $token) , LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
+				$this->securityLogger->log(sprintf('Wrong credentials given for token: %s', $token), LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
 			break;
 			case TokenInterface::NO_CREDENTIALS_GIVEN :
 				$this->securityLogger->log(sprintf('No credentials given or no account found for token: %s', $token), LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());

@@ -29,7 +29,7 @@ class SubProcess {
 	/**
 	 * @param ApplicationContext $context
 	 */
-	function __construct(ApplicationContext $context) {
+	public function __construct(ApplicationContext $context) {
 		$this->context = $context;
 
 		$this->execute('');

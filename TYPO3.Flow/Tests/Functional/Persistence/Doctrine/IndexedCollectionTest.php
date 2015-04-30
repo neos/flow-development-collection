@@ -43,7 +43,7 @@ class IndexedCollectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function collectionsWithIndexAttributeAreIndexed() {
 
 		$entityWithIndexedRelation = new EntityWithIndexedRelation();
-		for($i = 0; $i < 3; $i++) {
+		for ($i = 0; $i < 3; $i++) {
 			$annotatedIdentitiesEntity = new AnnotatedIdentitiesEntity();
 			$annotatedIdentitiesEntity->setAuthor('Author' . ((string) $i));
 			$annotatedIdentitiesEntity->setTitle('Author' . ((string) $i));
@@ -56,7 +56,7 @@ class IndexedCollectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 		$id = $this->persistenceManager->getIdentifierByObject($entityWithIndexedRelation);
 
-		//Reset persistence manager to make sure fresh instances will be created
+		// Reset persistence manager to make sure fresh instances will be created
 		$this->persistenceManager->clearState();
 		unset($entityWithIndexedRelation);
 

@@ -62,7 +62,7 @@ class SqlFilter extends DoctrineSqlFilter {
 			$this->securityContext->initialize();
 		}
 
-		//This is needed to include the current context of roles into query cache identifier
+		// This is needed to include the current context of roles into query cache identifier
 		$this->setParameter('__contextHash', $this->securityContext->getContextHash(), 'string');
 
 		$sqlConstraints = array();

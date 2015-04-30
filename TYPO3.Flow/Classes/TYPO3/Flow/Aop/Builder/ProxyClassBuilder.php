@@ -495,13 +495,13 @@ class ProxyClassBuilder {
 	 *
 	 * Example:
 	 *
-	 *	$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(
-	 *		'getSomeProperty' => array(
-	 *			'TYPO3\Flow\Aop\Advice\AroundAdvice' => array(
-	 *				new \TYPO3\Flow\Aop\Advice\AroundAdvice('TYPO3\Foo\SomeAspect', 'aroundAdvice', \\TYPO3\\Flow\\Core\\Bootstrap::$staticObjectManager, function() { ... }),
-	 *			),
-	 *		),
-	 *	);
+	 * 	$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(
+	 * 		'getSomeProperty' => array(
+	 * 			'TYPO3\Flow\Aop\Advice\AroundAdvice' => array(
+	 * 				new \TYPO3\Flow\Aop\Advice\AroundAdvice('TYPO3\Foo\SomeAspect', 'aroundAdvice', \\TYPO3\\Flow\\Core\\Bootstrap::$staticObjectManager, function() { ... }),
+	 * 			),
+	 * 		),
+	 * 	);
 	 *
 	 *
 	 * @param array $methodsAndGroupedAdvices An array of method names and grouped advice objects
@@ -631,7 +631,7 @@ EOT;
 						);
 						$interceptedMethods[$methodName]['declaringClassName'] = $methodDeclaringClassName;
 					}
-					$pointcutQueryIdentifier ++;
+					$pointcutQueryIdentifier++;
 				}
 			}
 		}

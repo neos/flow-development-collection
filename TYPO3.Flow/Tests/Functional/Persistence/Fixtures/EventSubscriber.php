@@ -33,7 +33,7 @@ class EventSubscriber implements \Doctrine\Common\EventSubscriber {
 	 *
 	 * @return array
 	 */
-	function getSubscribedEvents() {
+	public function getSubscribedEvents() {
 		return array(Events::preFlush, Events::onFlush, Events::postFlush);
 	}
 

@@ -30,7 +30,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 	 */
 	public function publishCollection(Collection $collection) {
 		$storage = $collection->getStorage();
-		if($storage instanceof PackageStorage) {
+		if ($storage instanceof PackageStorage) {
 			foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
 				$this->publishDirectory($path, $packageKey);
 			}

@@ -37,14 +37,15 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$getCaseSensitiveObjectNameCallback = function() {
 			$args = func_get_args();
 
-			if ($args[0] === 'TYPO3\Flow\Security\Authorization\Interceptor\ValidShortName') return 'TYPO3\Flow\Security\Authorization\Interceptor\ValidShortName';
+			if ($args[0] === 'TYPO3\Flow\Security\Authorization\Interceptor\ValidShortName') {
+				return 'TYPO3\Flow\Security\Authorization\Interceptor\ValidShortName';
+			}
 
 			return FALSE;
 		};
 
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
-
 
 		$interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
 		$interceptorClass = $interceptorResolver->resolveInterceptorClass('ValidShortName');

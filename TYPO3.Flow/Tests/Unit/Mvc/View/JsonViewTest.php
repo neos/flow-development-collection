@@ -110,9 +110,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configuration = array(
 			'_only' => array('name', 'path', 'properties'),
 			'_descend' => array(
-				 'properties' => array(
-					  '_exclude' => array('prohibited')
-				 )
+				'properties' => array(
+					'_exclude' => array('prohibited')
+				)
 			)
 		);
 		$expected = array(
@@ -167,9 +167,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$object->value1 = new \stdClass();
 		$configuration = array(
 			'_descend' => array(
-				 'value1' => array(
-					  '_exposeObjectIdentifier' => TRUE
-				 )
+				'value1' => array(
+					'_exposeObjectIdentifier' => TRUE
+				)
 			)
 		);
 
@@ -241,9 +241,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$object->value1 = new $fullyQualifiedClassName();
 		$configuration = array(
 			'_descend' => array(
-				 'value1' => array(
-					  '_exposeClassName' => $exposeClassNameSetting
-				 )
+				'value1' => array(
+					'_exposeClassName' => $exposeClassNameSetting
+				)
 			)
 		);
 

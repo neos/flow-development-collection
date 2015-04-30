@@ -30,7 +30,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $className. ' extends \TYPO3\Flow\Cache\Backend\AbstractBackend {
+			class ' . $className . ' extends \TYPO3\Flow\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

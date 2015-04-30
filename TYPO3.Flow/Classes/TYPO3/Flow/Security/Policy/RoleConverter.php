@@ -56,7 +56,7 @@ class RoleConverter extends AbstractTypeConverter {
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		try {
-		 $role = $this->policyService->getRole($source);
+			$role = $this->policyService->getRole($source);
 		} catch (NoSuchRoleException $exception) {
 			return new Error('Could not find a role with the identifier "%s".', 1397212327, array($source));
 		}

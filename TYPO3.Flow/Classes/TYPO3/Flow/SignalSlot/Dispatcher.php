@@ -65,7 +65,7 @@ class Dispatcher {
 
 		if (strpos($signalName, 'emit') === 0) {
 			$possibleSignalName = lcfirst(substr($signalName, strlen('emit')));
-			throw new \InvalidArgumentException('The signal should not be connected with the method name ("' . $signalName .  '"). Try "' . $possibleSignalName . '" for the signal name.', 1314016630);
+			throw new \InvalidArgumentException('The signal should not be connected with the method name ("' . $signalName . '"). Try "' . $possibleSignalName . '" for the signal name.', 1314016630);
 		}
 
 		if (is_object($slotClassNameOrObject)) {

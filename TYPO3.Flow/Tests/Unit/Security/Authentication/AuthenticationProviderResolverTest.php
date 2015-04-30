@@ -37,7 +37,9 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase 
 		$getCaseSensitiveObjectNameCallback = function() {
 			$args = func_get_args();
 
-			if ($args[0] === 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName') return 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName';
+			if ($args[0] === 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName') {
+				return 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName';
+			}
 
 			return FALSE;
 		};

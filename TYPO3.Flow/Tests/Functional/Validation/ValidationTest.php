@@ -45,7 +45,7 @@ class ValidationTest extends FunctionalTestCase {
 			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 			'@controller' => 'Entity',
-			'@format' =>'html'
+			'@format' => 'html'
 		));
 	}
 

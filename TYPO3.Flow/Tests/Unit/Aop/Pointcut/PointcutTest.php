@@ -47,7 +47,7 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
 		for ($i = -1; $i <= \TYPO3\Flow\Aop\Pointcut\Pointcut::MAXIMUM_RECURSIONS; $i++) {
-			$pointcut->matches($className, $methodName, $className,1);
+			$pointcut->matches($className, $methodName, $className, 1);
 		}
 	}
 

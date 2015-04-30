@@ -320,10 +320,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 				throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
 		}
 
-		if($packagePath !== NULL) {
+		if ($packagePath !== NULL) {
 			$packages = $this->filterPackagesByPath($packages, $packagePath);
 		}
-		if($packageType !== NULL) {
+		if ($packageType !== NULL) {
 			$packages = $this->filterPackagesByType($packages, $packageType);
 		}
 
@@ -691,7 +691,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$packageKey = $package->getPackageKey();
 		$caseSensitivePackageKey = $this->getCaseSensitivePackageKey($packageKey);
 		if ($this->isPackageAvailable($caseSensitivePackageKey)) {
-			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered as "' . $caseSensitivePackageKey .  '".', 1338996122);
+			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered as "' . $caseSensitivePackageKey . '".', 1338996122);
 		}
 
 		$this->packages[$packageKey] = $package;

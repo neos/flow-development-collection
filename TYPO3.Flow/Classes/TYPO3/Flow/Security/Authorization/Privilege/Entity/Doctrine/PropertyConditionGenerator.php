@@ -207,22 +207,19 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 
 		if ($targetEntity->hasAssociation($targetEntityPropertyName) === FALSE) {
 			return $this->getSqlForSimpleProperty($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
-		}
 
-		elseif (strstr($this->path, '.') === FALSE && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === FALSE) {
+		} elseif (strstr($this->path, '.') === FALSE && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === FALSE) {
 			return $this->getSqlForManyToOneAndOneToOneRelationsWithoutPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
-		}
 
-		elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === FALSE) {
+		} elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === FALSE) {
 			return $this->getSqlForManyToOneAndOneToOneRelationsWithPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
-		}
 
-		elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === TRUE) {
-			throw new InvalidQueryRewritingConstraintException('Single valued properties from the inverse side are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition .  '"', 1416397754);
-		}
+		} elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === TRUE && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === TRUE) {
+			throw new InvalidQueryRewritingConstraintException('Single valued properties from the inverse side are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397754);
 
-		elseif ($targetEntity->isCollectionValuedAssociation($targetEntityPropertyName) === TRUE) {
-			throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition .  '"', 1416397655);
+		} elseif ($targetEntity->isCollectionValuedAssociation($targetEntityPropertyName) === TRUE) {
+
+			throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397655);
 		}
 
 		throw new InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid/supported. Got: ' . $this->operator, 1270483540);
@@ -336,7 +333,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	 */
 	protected function getSubselectQuery($targetEntity, $targetEntityPropertyName) {
 		$subselectQuery = new \TYPO3\Flow\Persistence\Doctrine\Query($targetEntity->getAssociationTargetClass($targetEntityPropertyName));
-		$propertyName = str_replace($targetEntityPropertyName.'.', '', $this->path);
+		$propertyName = str_replace($targetEntityPropertyName . '.', '', $this->path);
 
 		switch ($this->operator) {
 			case '==':
@@ -402,30 +399,22 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 		switch ($this->operator) {
 			case '==':
 				return ($parameter === NULL ? $propertyPointer . ' IS NULL' : $propertyPointer . ' = ' . $parameter);
-				break;
 			case '!=':
 				return ($parameter === NULL ? $propertyPointer . ' IS NOT NULL' : $propertyPointer . ' <> ' . $parameter);
-				break;
 			case '<':
 				return $propertyPointer . ' < ' . $parameter;
-				break;
 			case '>':
 				return $propertyPointer . ' > ' . $parameter;
-				break;
 			case '<=':
 				return $propertyPointer . ' <= ' . $parameter;
-				break;
 			case '>=':
 				return $propertyPointer . ' >= ' . $parameter;
-				break;
 			case 'like':
 				return $propertyPointer . ' LIKE ' . $parameter;
-				break;
 			case 'in':
 				$inPart = $parameter !== NULL && $parameter !== '' ? $propertyPointer . ' IN (' . $parameter . ') ' : '';
 				$nullPart = $addNullExpression ? $propertyPointer . ' IS NULL' : '';
 				return $inPart . ($inPart !== '' && $nullPart !== '' ? ' OR ' : '') . $nullPart;
-				break;
 		}
 	}
 
@@ -442,15 +431,15 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 				$result[] = $this->getValueForOperand($expressionEntry);
 			}
 			return $result;
-		} else if (is_numeric($expression)) {
+		} elseif (is_numeric($expression)) {
 			return $expression;
-		} else if ($expression === 'TRUE') {
+		} elseif ($expression === 'TRUE') {
 			return TRUE;
-		} else if ($expression === 'FALSE') {
+		} elseif ($expression === 'FALSE') {
 			return FALSE;
-		} else if ($expression === 'NULL') {
+		} elseif ($expression === 'NULL') {
 			return NULL;
-		} else if (strpos($expression, 'context.') === 0) {
+		} elseif (strpos($expression, 'context.') === 0) {
 			$objectAccess = explode('.', $expression, 3);
 			$globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
 			$globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);

@@ -151,7 +151,9 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function offsetInCharacterIterationBasicallyWorks() {
 		$iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by character...', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
 		foreach ($iterator as $currentCharacter) {
-			if ($currentCharacter == 'L') break;
+			if ($currentCharacter == 'L') {
+				break;
+			}
 		}
 		$this->assertEquals($iterator->offset(), 23, 'Wrong offset returned in character iteration.');
 	}
@@ -164,7 +166,9 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function offsetInWordIterationBasicallyWorks() {
 		$iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
 		foreach ($iterator as $currentWord) {
-			if ($currentWord == 'iterate') break;
+			if ($currentWord == 'iterate') {
+				break;
+			}
 		}
 		$this->assertEquals($iterator->offset(), 29, 'Wrong offset returned in word iteration.');
 	}
@@ -177,7 +181,9 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function offsetInSentenceIterationBasicallyWorks() {
 		$iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
 		foreach ($iterator as $currentSentence) {
-			if ($currentSentence == 'Let\'s iterate it by word.') break;
+			if ($currentSentence == 'Let\'s iterate it by word.') {
+				break;
+			}
 		}
 		$this->assertEquals($iterator->offset(), 23, 'Wrong offset returned in sentence iteration.');
 	}

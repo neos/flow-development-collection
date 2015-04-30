@@ -77,7 +77,7 @@ class ClassLoaderTest extends UnitTestCase {
 
 		$this->mockPackages = array('Acme.MyApp' => $this->mockPackage1, 'Acme.MyAppAddon' => $this->mockPackage2);
 
-		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
+		$this->classLoader->setPackages($this->mockPackages, $this->mockPackages );
 	}
 
 	/**
@@ -103,7 +103,7 @@ class ClassLoaderTest extends UnitTestCase {
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		$this->classLoader->setConsiderTestsNamespace(TRUE);
-		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
+		$this->classLoader->setPackages($this->mockPackages, $this->mockPackages );
 		$this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -207,7 +207,7 @@ class ClassLoaderTest extends UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
+		$this->classLoader->setPackages($this->mockPackages, $this->mockPackages );
 		$this->classLoader->loadClass('Acme\MyApp\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -237,7 +237,6 @@ class ClassLoaderTest extends UnitTestCase {
 		file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		$this->classLoader->setPackages($packages, $packages);
-
 
 		$this->classLoader->loadClass('TestPackage\Subscriber\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
@@ -273,7 +272,6 @@ class ClassLoaderTest extends UnitTestCase {
 		file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
 
 		$this->classLoader->setPackages($packages, $packages);
-
 
 		$this->classLoader->loadClass('TestPackage\Foo\Bar');
 		$this->assertTrue(self::$testClassWasOverwritten);

@@ -30,7 +30,7 @@ return array(
 					),
 				),
 			),
-	        'calendar[@type="buddhist"]' => array(
+			'calendar[@type="buddhist"]' => array(
 				'dateFormats' => array(
 					'dateFormatLength[@type="full"]' => array(
 						'alias[@source="locale"][@path="../../../calendar[@type=\'gregorian\']/dateFormats/dateFormatLength[@type=\'full\']"]' => '',

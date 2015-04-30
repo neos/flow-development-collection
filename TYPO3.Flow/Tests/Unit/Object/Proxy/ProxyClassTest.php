@@ -26,7 +26,7 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'originalClassAnnotations' => array(),
 				'originalClassDocumentation' => '',
 				'originalClassConstants' => array(array('name' => 'TEST_CONSTANT', 'value' => '1')),
-				'expectedProxyCode' => "namespace \Acme\Namespace;\n".
+				'expectedProxyCode' => "namespace \Acme\Namespace;\n" .
 			"\n" .
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .

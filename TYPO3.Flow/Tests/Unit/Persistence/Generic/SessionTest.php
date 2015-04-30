@@ -453,7 +453,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('Some\ValueObject', $valueObject, array('identifier' => NULL), FALSE),
 			array('Some\ValueObject', $valueObject, array('identifier' => 'dirtyHash'), TRUE),
 			array('DateTime', $dateTime, $dateTime->getTimestamp(), FALSE),
-			array('DateTime', $dateTime, $dateTime->getTimestamp()+1, TRUE),
+			array('DateTime', $dateTime, $dateTime->getTimestamp() + 1, TRUE),
 		);
 	}
 

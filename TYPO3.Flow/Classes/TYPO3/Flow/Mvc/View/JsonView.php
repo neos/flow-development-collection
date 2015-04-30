@@ -66,25 +66,25 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * Example 1:
 	 *
 	 * array(
-	 *		'variable1' => array(
-	 *			'_only' => array('property1', 'property2', ...)
-	 *		),
-	 *		'variable2' => array(
-	 *	 		'_exclude' => array('property3', 'property4, ...)
-	 *		),
-	 *		'variable3' => array(
-	 *			'_exclude' => array('secretTitle'),
-	 *			'_descend' => array(
-	 *				'customer' => array(
-	 *					'_only' => array('firstName', 'lastName')
-	 *				)
-	 *			)
-	 *		),
-	 *		'somearrayvalue' => array(
-	 *			'_descendAll' => array(
-	 *				'_only' => array('property1')
-	 *			)
-	 *		)
+	 * 		'variable1' => array(
+	 * 			'_only' => array('property1', 'property2', ...)
+	 * 		),
+	 * 		'variable2' => array(
+	 * 	 		'_exclude' => array('property3', 'property4, ...)
+	 * 		),
+	 * 		'variable3' => array(
+	 * 			'_exclude' => array('secretTitle'),
+	 * 			'_descend' => array(
+	 * 				'customer' => array(
+	 * 					'_only' => array('firstName', 'lastName')
+	 * 				)
+	 * 			)
+	 * 		),
+	 * 		'somearrayvalue' => array(
+	 * 			'_descendAll' => array(
+	 * 				'_only' => array('property1')
+	 * 			)
+	 * 		)
 	 * )
 	 *
 	 * Of variable1 only property1 and property2 will be included.

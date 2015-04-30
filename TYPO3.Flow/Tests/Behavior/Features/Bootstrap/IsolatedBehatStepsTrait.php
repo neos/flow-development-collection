@@ -67,7 +67,7 @@ trait IsolatedBehatStepsTrait {
 
 		$subProcessResponse = $this->getSubProcess()->execute($subProcessCommand);
 
-		Assert::assertStringStartsWith('SUCCESS:', $subProcessResponse, 'We called "' . $subProcessCommand . '" and got: '  . $subProcessResponse);
+		Assert::assertStringStartsWith('SUCCESS:', $subProcessResponse, 'We called "' . $subProcessCommand . '" and got: ' . $subProcessResponse);
 	}
 
 	/**

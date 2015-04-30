@@ -34,4 +34,3 @@ class TestValueObjectWithDateTimeProperty {
 		$this->value1 = $value1;
 	}
 }
-?>

@@ -184,7 +184,7 @@ class CacheCommandController extends CommandController {
 
 			$cacheConfigurations = $this->cacheManager->getCacheConfigurations();
 			$shortestDistance = -1;
-			foreach(array_keys($cacheConfigurations) as $existingIdentifier) {
+			foreach (array_keys($cacheConfigurations) as $existingIdentifier) {
 				$distance = levenshtein($existingIdentifier, $identifier);
 				if ($distance <= $shortestDistance || $shortestDistance < 0) {
 					$shortestDistance = $distance;

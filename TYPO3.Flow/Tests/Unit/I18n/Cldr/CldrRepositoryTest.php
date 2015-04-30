@@ -48,7 +48,7 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
 		$result = $this->repository->getModel('Bar');
-		$this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths',  $result);
+		$this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths', $result);
 
 		$result = $this->repository->getModel('NoSuchFile');
 		$this->assertEquals(FALSE, $result);
@@ -62,8 +62,8 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		file_put_contents('vfs://Foo/Directory/en.xml', '');
 
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-		$this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths',  $result);
-		$this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths',  $result);
+		$this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths', $result);
+		$this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths', $result);
 
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
 		$this->assertEquals(NULL, $result);

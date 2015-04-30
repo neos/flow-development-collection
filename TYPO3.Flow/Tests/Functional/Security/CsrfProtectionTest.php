@@ -57,7 +57,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'public',
-			'@format' =>'html',
+			'@format' => 'html',
 		), TRUE
 		);
 	}
@@ -66,7 +66,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function postRequestOnRestrictedActionWithoutCsrfTokenCausesAccessDeniedException() {
-		$this->markTestIncomplete('Needs to be implemtend');
+		$this->markTestIncomplete('Needs to be implemented');
 		return;
 
 		$arguments = array();
@@ -84,16 +84,16 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		// Expect an exception because no account is authenticated:
 		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
-		   // ...
+		// ...
 
 		// Expect an different exception because although an account is authenticated, the request lacks a CSRF token:
 		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST', $arguments);
-		   // ...
+		// ...
 
 		// Expect that it works after you logged in
 		$csrfToken = $this->securityContext->getCsrfProtectionToken();
 		$request = Request::create(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
-		   // ...
+		// ...
 	}
 
 }

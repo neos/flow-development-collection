@@ -304,7 +304,7 @@ class ConfigurationBuilder {
 					$objectName = $annotations[0];
 				}
 			}
-			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName .'"');
+			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName . '"');
 			$property = new ConfigurationProperty($propertyName, $objectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 		} else {
 			$property = new ConfigurationProperty($propertyName, $objectNameOrConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);

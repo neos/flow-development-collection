@@ -41,4 +41,3 @@ class TestValueObjectWithSubValueObjectProperties {
 		$this->value2 = trim($value2);
 	}
 }
-?>

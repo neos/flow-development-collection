@@ -168,7 +168,6 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationArray = array();
 		$configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Foo.Bar';
 
-
 		/** @var ConfigurationBuilder $configurationBuilder */
 		$configurationBuilder = $this->getAccessibleMock('TYPO3\Flow\Object\Configuration\ConfigurationBuilder', NULL);
 		/** @var Configuration $builtObjectConfiguration */

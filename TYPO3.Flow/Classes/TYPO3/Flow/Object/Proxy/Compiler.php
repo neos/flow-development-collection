@@ -176,7 +176,7 @@ class Compiler {
 						$classPathAndFilename = $class->getFileName();
 						$this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
 						$this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = TRUE;
-						$classCount ++;
+						$classCount++;
 					}
 				} else {
 					if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {

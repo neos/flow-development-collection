@@ -18,7 +18,7 @@ use TYPO3\Flow\Error\Message;
 /**
  * A controller fixture for testing the AbstractController functionality.
  *
- * Althought the functions we want to test are really implemented in the Abstract
+ * Although the functions we want to test are really implemented in the Abstract
  * Controller, this fixture class is an ActionController as this is the easiest way
  * to provide an implementation of the abstract class.
  */

@@ -98,7 +98,7 @@ class DispatchComponent implements ComponentInterface {
 		$actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
 		$this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-		$componentContext->setParameter('TYPO3\Flow\Mvc\DispatchComponent', 'actionRequest' ,$actionRequest);
+		$componentContext->setParameter('TYPO3\Flow\Mvc\DispatchComponent', 'actionRequest', $actionRequest);
 		$this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
 	}
 

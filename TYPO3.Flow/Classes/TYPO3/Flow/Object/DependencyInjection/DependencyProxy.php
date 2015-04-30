@@ -55,7 +55,7 @@ class DependencyProxy {
 	 */
 	public function _activateDependency() {
 		$realDependency = $this->builder->__invoke();
-		foreach($this->propertyVariables as &$propertyVariable) {
+		foreach ($this->propertyVariables as &$propertyVariable) {
 			$propertyVariable = $realDependency;
 		}
 		return $realDependency;

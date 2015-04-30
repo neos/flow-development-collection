@@ -32,7 +32,7 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'@subpackage' => 'Tests\Functional\Session\Fixtures',
 			'@controller' => 'SessionTest',
 			'@action' => 'sessionStart',
-			'@format' =>'html'
+			'@format' => 'html'
 		));
 		$this->router->addRoute($route);
 	}

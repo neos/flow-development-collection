@@ -137,7 +137,7 @@ class CsrfProtection implements RequestPatternInterface {
 			return TRUE;
 		}
 
-		$this->systemLogger->log(sprintf('CSRF: Successfully verified token for %s::%s()', $controllerClassName, $actionMethodName),  LOG_DEBUG);
+		$this->systemLogger->log(sprintf('CSRF: Successfully verified token for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
 		return FALSE;
 	}
 

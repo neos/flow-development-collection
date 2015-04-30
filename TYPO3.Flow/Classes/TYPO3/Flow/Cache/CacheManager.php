@@ -369,7 +369,7 @@ class CacheManager {
 		$this->systemLogger->log('A configuration file has been changed, flushing compiled configuration cache', LOG_INFO);
 		$this->configurationManager->flushConfigurationCache();
 
-		if($aopProxyClassRebuildIsNeeded) {
+		if ($aopProxyClassRebuildIsNeeded) {
 			$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
 			$objectConfigurationCache->remove('allAspectClassesUpToDate');
 			$objectConfigurationCache->remove('allCompiledCodeUpToDate');

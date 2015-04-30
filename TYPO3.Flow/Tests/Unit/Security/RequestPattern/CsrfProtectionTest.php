@@ -34,7 +34,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
@@ -78,7 +78,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
@@ -115,7 +115,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getInternalArguments')->will($this->returnValue(array()));
@@ -161,7 +161,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'invalidCsrfToken')));
@@ -209,7 +209,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'validToken')));
@@ -258,7 +258,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array() , array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
 		$mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockActionRequest->expects($this->any())->method('getInternalArguments')->will($this->returnValue(array()));

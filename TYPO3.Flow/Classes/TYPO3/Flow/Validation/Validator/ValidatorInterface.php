@@ -24,7 +24,7 @@ interface ValidatorInterface {
 	 * @param array $options The validation options
 	 * @api
 	 */
-	//public function __construct(array $options = array());
+	// public function __construct(array $options = array());
 
 	/**
 	 * Checks if the given value is valid according to the validator, and returns

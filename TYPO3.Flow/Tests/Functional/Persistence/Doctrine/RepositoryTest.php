@@ -73,12 +73,12 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$post = $this->postRepository->findOneByTitle('Modified Sample');
 		$this->assertNull($post);
 
-#		The following assertions won't work because findOneByTitle() will get the _modified_ post
-#		because it is still in Doctrine's identity map:
-#
-#		$post = $this->postRepository->findOneByTitle('Sample');
-#		$this->assertNotNull($post);
-#		$this->assertEquals('Sample', $post->getTitle());
+		// The following assertions won't work because findOneByTitle() will get the _modified_ post
+		// because it is still in Doctrine's identity map:
+
+		// $post = $this->postRepository->findOneByTitle('Sample');
+		// $this->assertNotNull($post);
+		// $this->assertEquals('Sample', $post->getTitle());
 	}
 
 	/**

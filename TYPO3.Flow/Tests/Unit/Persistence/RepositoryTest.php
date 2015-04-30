@@ -220,7 +220,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException PHPUnit_Framework_Error
+	 * @expectedException \PHPUnit_Framework_Error
 	 */
 	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {
 		$repository = $this->getMock('TYPO3\Flow\Persistence\Repository', array('createQuery'));
@@ -229,7 +229,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 */
 	public function addChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\Flow\Persistence\Repository', array('dummy'));
@@ -240,7 +240,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 */
 	public function removeChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\Flow\Persistence\Repository', array('dummy'));
@@ -250,7 +250,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 */
 	public function updateChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\Flow\Persistence\Repository', array('dummy'));

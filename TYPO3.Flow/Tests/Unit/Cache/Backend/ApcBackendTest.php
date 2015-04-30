@@ -144,7 +144,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->has($identifier);
-		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
+		$this->assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
 	}
 
 	/**
@@ -154,7 +154,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->remove($identifier);
-		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
+		$this->assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
 	}
 
 	/**

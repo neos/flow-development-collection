@@ -35,7 +35,6 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			new \TYPO3\Flow\Annotations\SkipCsrfProtection(array())
 		)));
 
-
 		$mockProxyMethod = $this->getAccessibleMock('TYPO3\Flow\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 		$mockProxyMethod->injectReflectionService($mockReflectionService);
 		$methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\Class\Name', 'myMethod');

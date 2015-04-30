@@ -276,7 +276,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
 		foreach ($schema->getTable('persistence_onetooneentity2')->getForeignKeys() as $foreignKey) {
 			if ($foreignKey->getForeignTableName() === 'persistence_onetooneentity') {
-				$this->assertTrue(false);
+				$this->assertTrue(FALSE);
 			}
 		}
 	}

@@ -165,7 +165,6 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function dataProviderForObjectTypeConverters() {
 		$data = array();
 
-
 		$className1 = uniqid('TYPO3_Flow_Testclass1_', FALSE);
 		$className2 = uniqid('TYPO3_Flow_Testclass2_', FALSE);
 		$className3 = uniqid('TYPO3_Flow_Testclass3_', FALSE);

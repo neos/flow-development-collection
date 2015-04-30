@@ -32,7 +32,7 @@ abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function __construct($name, $value) {
+	public function __construct($name, $value) {
 		$this->name = $name;
 		$this->value = $value;
 	}

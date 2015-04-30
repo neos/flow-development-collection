@@ -114,7 +114,6 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockMonitor->expects($this->once())->method('detectChangedFiles')->with($monitoredFiles)->will($this->returnValue($expectedChangedFiles));
 		$mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedChangedFiles);
 
-
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
 		$mockMonitor->_set('monitoredFiles', $monitoredFiles);
 

@@ -37,7 +37,7 @@ class Exception extends \Exception {
 	 */
 	public function getReferenceCode() {
 		if (!isset($this->referenceCode)) {
-			$this->referenceCode = date('YmdHis' , $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+			$this->referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
 		}
 		return $this->referenceCode;
 	}

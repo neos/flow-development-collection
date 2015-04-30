@@ -25,7 +25,7 @@ class OuterPrototype {
 	/**
 	 * @return Greeter
 	 */
-	public function getInner(){
+	public function getInner() {
 		return $this->inner;
 	}
 }

@@ -77,9 +77,9 @@ class FlockLockStrategy implements LockStrategyInterface {
 		}
 
 		if ($exclusiveLock === FALSE && flock($this->filePointer, LOCK_SH) === TRUE) {
-			//Shared lock acquired
+			// Shared lock acquired
 		} elseif ($exclusiveLock === TRUE && flock($this->filePointer, LOCK_EX) === TRUE) {
-			//Exclusive lock acquired
+			// Exclusive lock acquired
 		} else {
 			throw new LockNotAcquiredException(sprintf('Could not lock file "%s"', $this->lockFileName), 1386520597);
 		}

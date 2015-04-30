@@ -311,7 +311,7 @@ class RoutingTest extends FunctionalTestCase {
 				'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 				'@controller' => 'ActionControllerTestA',
 				'@action' => 'second',
-				'@format' =>'html'
+				'@format' => 'html'
 			),
 			FALSE,
 			array('POST', 'DELETE')

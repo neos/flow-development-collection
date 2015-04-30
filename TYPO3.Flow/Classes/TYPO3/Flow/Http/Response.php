@@ -56,7 +56,7 @@ class Response extends AbstractMessage implements ResponseInterface {
 		$statusMessages = array(
 				100 => 'Continue',
 				101 => 'Switching Protocols',
-				102 => 'Processing', # RFC 2518
+				102 => 'Processing', // RFC 2518
 				200 => 'OK',
 				201 => 'Created',
 				202 => 'Accepted',

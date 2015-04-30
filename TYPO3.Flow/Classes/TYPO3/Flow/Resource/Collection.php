@@ -155,10 +155,10 @@ class Collection implements CollectionInterface {
 			$objects = $this->storage->getObjectsByCollection($this);
 		}
 
-#		TODO: Implement filter manipulation here:
-#		foreach ($objects as $object) {
-#			$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
-#		}
+		// TODO: Implement filter manipulation here:
+		// foreach ($objects as $object) {
+		// 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
+		// }
 
 		return $objects;
 	}

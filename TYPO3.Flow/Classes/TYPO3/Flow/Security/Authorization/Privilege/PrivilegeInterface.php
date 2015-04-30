@@ -34,7 +34,7 @@ interface PrivilegeInterface extends CacheAwareInterface {
 	 * @param integer $permission One of the constants ABSTAIN, GRANT or DENY
 	 * @param PrivilegeParameterInterface[] $parameters
 	 */
-	//public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters) {
+	// public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters) {
 
 	/**
 	 * This object is created very early so we can't rely on AOP for the property injection

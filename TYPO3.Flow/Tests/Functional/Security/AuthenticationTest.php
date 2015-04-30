@@ -55,7 +55,7 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'public',
-			'@format' =>'html'
+			'@format' => 'html'
 		));
 		$route->setAppendExceedingArguments(TRUE);
 		$this->router->addRoute($route);

@@ -25,14 +25,18 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$resolveRequestPatternClassCallback = function() {
 			$args = func_get_args();
 
-			if ($args[0] === 'URI') return 'mockPatternURI';
+			if ($args[0] === 'URI') {
+				return 'mockPatternURI';
+			}
 			elseif ($args[0] === 'TYPO3\TestRequestPattern') return 'mockPatternTest';
 		};
 
 		$resolveInterceptorClassCallback = function() {
 			$args = func_get_args();
 
-			if ($args[0] === 'AccessGrant') return 'mockInterceptorAccessGrant';
+			if ($args[0] === 'AccessGrant') {
+				return 'mockInterceptorAccessGrant';
+			}
 			elseif ($args[0] === 'TYPO3\TestSecurityInterceptor') return 'mockInterceptorTest';
 		};
 
@@ -44,14 +48,20 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$getObjectCallback = function() use (&$mockRequestPattern1, &$mockRequestPattern2) {
 			$args = func_get_args();
 
-			if ($args[0] === 'mockPatternURI') return $mockRequestPattern1;
+			if ($args[0] === 'mockPatternURI') {
+				return $mockRequestPattern1;
+			}
 			elseif ($args[0] === 'mockPatternTest') return $mockRequestPattern2;
 			elseif ($args[0] === 'mockInterceptorAccessGrant') return 'AccessGrant';
 			elseif ($args[0] === 'mockInterceptorTest') return 'InterceptorTest';
 
 			elseif ($args[0] === 'TYPO3\Flow\Security\Authorization\RequestFilter') {
-				if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') return 'filter1';
-				if ($args[1] == $mockRequestPattern2 && $args[2] === 'InterceptorTest') return 'filter2';
+				if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') {
+					return 'filter1';
+				}
+				if ($args[1] == $mockRequestPattern2 && $args[2] === 'InterceptorTest') {
+					return 'filter2';
+				}
 			}
 		};
 

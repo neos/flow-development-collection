@@ -32,9 +32,9 @@ class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			if (in_array($localeIdentifier, array('en_US_POSIX', 'en_Shaw'))) {
 				return new \TYPO3\Flow\I18n\Locale('en');
-			} else if ($localeIdentifier === 'en_GB') {
+			} elseif ($localeIdentifier === 'en_GB') {
 				return new \TYPO3\Flow\I18n\Locale('en_GB');
-			} else if ($localeIdentifier === 'sr_RS') {
+			} elseif ($localeIdentifier === 'sr_RS') {
 				return new \TYPO3\Flow\I18n\Locale('sr');
 			} else {
 				return NULL;

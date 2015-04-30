@@ -956,7 +956,6 @@ class RouteTest extends UnitTestCase {
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -966,7 +965,6 @@ class RouteTest extends UnitTestCase {
 		$originalArray = array('foo' => 'bar', 'someObject' => $object1, 'baz' => array('someOtherObject' => $object2));
 
 		$convertedArray = array('foo' => 'bar', 'someObject' => array('__identity' => 'x'), 'baz' => array('someOtherObject' => array('__identity' => 'y')));
-
 
 		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArray)->will($this->returnValue($convertedArray));

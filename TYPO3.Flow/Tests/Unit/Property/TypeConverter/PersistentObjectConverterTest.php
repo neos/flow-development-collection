@@ -167,7 +167,6 @@ class PersistentObjectConverterTest extends UnitTestCase {
 		$identifier = '550e8400-e29b-11d4-a716-446655440000';
 		$object = new \stdClass();
 
-
 		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 		$this->assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
 	}

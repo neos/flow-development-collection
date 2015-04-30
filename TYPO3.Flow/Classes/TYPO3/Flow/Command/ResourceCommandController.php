@@ -135,7 +135,7 @@ class ResourceCommandController extends CommandController {
 			$assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
 			/* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
 
-			foreach($brokenResources as $resource) {
+			foreach ($brokenResources as $resource) {
 				$assets = $assetRepository->findByResource($resource);
 				if ($assets !== NULL) {
 					$relatedAssets[$resource] = $assets;

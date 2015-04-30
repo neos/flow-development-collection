@@ -460,7 +460,7 @@ class ContextTest extends UnitTestCase {
 		$securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
 		$this->inject($securityContext, 'activeTokens', array($mockToken));
 		$this->inject($securityContext, 'policyService', $mockPolicyService);
-		$this->inject($securityContext, 'authenticationManager',$mockAuthenticationManager);
+		$this->inject($securityContext, 'authenticationManager', $mockAuthenticationManager);
 
 		$expectedResult = array(
 			'Acme.Demo:TestRole1' => $testRole1,
@@ -479,7 +479,7 @@ class ContextTest extends UnitTestCase {
 		ksort($result);
 
 		$this->assertSame(array_keys($expectedResult), array_keys($result));
-		#$this->assertSame($expectedResult, $result);
+		// $this->assertSame($expectedResult, $result);
 	}
 
 	/**

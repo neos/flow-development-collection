@@ -404,7 +404,7 @@ class ProxyClassBuilder {
 			} else {
 				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
 			}
-			$index ++;
+			$index++;
 		}
 
 		return $code;

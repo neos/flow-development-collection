@@ -37,7 +37,9 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$getCaseSensitiveObjectNameCallback = function() {
 			$args = func_get_args();
 
-			if ($args[0] === 'TYPO3\Flow\Security\RequestPattern\ValidShortName') return 'TYPO3\Flow\Security\RequestPattern\ValidShortName';
+			if ($args[0] === 'TYPO3\Flow\Security\RequestPattern\ValidShortName') {
+				return 'TYPO3\Flow\Security\RequestPattern\ValidShortName';
+			}
 
 			return FALSE;
 		};

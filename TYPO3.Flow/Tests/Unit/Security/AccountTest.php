@@ -50,10 +50,8 @@ class AccountTest extends UnitTestCase {
 			switch($roleIdentifier) {
 				case 'TYPO3.Flow:Administrator':
 					return $administratorRole;
-					break;
 				case 'TYPO3.Flow:Customer':
 					return $customerRole;
-					break;
 				default:
 					throw new NoSuchRoleException();
 			}
@@ -63,7 +61,6 @@ class AccountTest extends UnitTestCase {
 				case 'TYPO3.Flow:Administrator':
 				case 'TYPO3.Flow:Customer':
 					return TRUE;
-					break;
 				default:
 					return FALSE;
 			}

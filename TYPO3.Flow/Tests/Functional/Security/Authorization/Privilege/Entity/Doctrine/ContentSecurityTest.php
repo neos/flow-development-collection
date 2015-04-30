@@ -455,7 +455,6 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->testEntityDDoctrineRepository->add($testEntityD);
 		$this->testEntityDDoctrineRepository->add($testEntityD2);
 
-
 		$testEntityC = new Fixtures\TestEntityC();
 		$testEntityC->setSimpleStringProperty('Christopher');
 		$testEntityC->setRelatedEntityD($testEntityD);

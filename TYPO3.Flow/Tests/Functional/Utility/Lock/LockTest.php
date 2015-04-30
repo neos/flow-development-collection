@@ -39,7 +39,7 @@ class LockTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			$lock = $this->objectManager->get('\TYPO3\Flow\Utility\Lock\Lock', 'testLock');
 			$lock->release();
 			$lock = $this->objectManager->get('\TYPO3\Flow\Utility\Lock\Lock', 'testLock');
-		} catch(\TYPO3\Flow\Utility\Exception\LockNotAcquiredException $exception) {
+		} catch (\TYPO3\Flow\Utility\Exception\LockNotAcquiredException $exception) {
 			$this->fail('Lock could not be acquired after it was released');
 		}
 
