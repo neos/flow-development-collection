@@ -473,7 +473,8 @@ class PointcutExpressionParser {
 
 		preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $evaluateString, $matches);
 
-		for ($i = 0; $i < count($matches[0]); $i++) {
+		$matchesCount = count($matches[0]);
+		for ($i = 0; $i < $matchesCount; $i++) {
 			if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
 				$list = array();
 				$listEntries = array();

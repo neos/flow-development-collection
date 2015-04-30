@@ -123,9 +123,9 @@ class Debugger {
 		} elseif (is_numeric($variable)) {
 			$dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
 		} elseif (is_array($variable)) {
-			$dump = \TYPO3\Flow\Error\Debugger::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
+			$dump = self::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
 		} elseif (is_object($variable)) {
-			$dump = \TYPO3\Flow\Error\Debugger::renderObjectDump($variable, $level + 1, TRUE, $plaintext, $ansiColors);
+			$dump = self::renderObjectDump($variable, $level + 1, TRUE, $plaintext, $ansiColors);
 		} elseif (is_bool($variable)) {
 			$dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
 		} elseif (is_null($variable) || is_resource($variable)) {

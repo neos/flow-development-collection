@@ -230,7 +230,8 @@ class Bootstrap {
 		foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
 			list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
 			$packageKeyParts = explode('.', $packageKey);
-			for ($offset = 0; $offset < count($packageKeyParts); $offset++) {
+			$packageKeyPartsCount = count($packageKeyParts);
+			for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {
 				$possibleCommandControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
 
 				if (substr($fullControllerIdentifier, -2, 2) === ':*') {

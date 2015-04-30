@@ -52,7 +52,8 @@ class MvcPropertyMappingConfigurationService {
 		foreach ($formFieldNames as $formField) {
 			$formFieldParts = explode('[', $formField);
 			$currentPosition =& $formFieldArray;
-			for ($i=0; $i < count($formFieldParts); $i++) {
+			$formFieldPartsCount = count($formFieldParts);
+			for ($i = 0; $i < $formFieldPartsCount; $i++) {
 				$formFieldPart = $formFieldParts[$i];
 				$formFieldPart = rtrim($formFieldPart, ']');
 

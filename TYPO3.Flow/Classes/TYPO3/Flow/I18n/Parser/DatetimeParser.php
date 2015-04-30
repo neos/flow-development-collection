@@ -246,7 +246,8 @@ class DatetimeParser {
 						} else {
 							$year = substr($datetimeToParse, 0, $lengthOfSubformat);
 
-							for ($i = $lengthOfSubformat; $i < strlen($datetimeToParse); ++$i) {
+							$datetimeToParseLength = strlen($datetimeToParse);
+							for ($i = $lengthOfSubformat; $i < $datetimeToParseLength; ++$i) {
 								if (is_numeric($datetimeToParse[$i])) {
 									$year .= $datetimeToParse[$i];
 								} else {

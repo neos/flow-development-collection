@@ -275,7 +275,8 @@ class CldrModel {
 		// Merge all data starting with most generic file so we get proper inheritance
 		$parsedData = $parsedFiles[0];
 
-		for ($i = 1; $i < count($parsedFiles); ++$i) {
+		$parsedFilesCount = count($parsedFiles);
+		for ($i = 1; $i < $parsedFilesCount; ++$i) {
 			$parsedData = $this->mergeTwoParsedFiles($parsedData, $parsedFiles[$i]);
 		}
 
