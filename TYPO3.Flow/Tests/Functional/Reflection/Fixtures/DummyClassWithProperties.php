@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Reflection\Fixture;
+namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -18,19 +18,29 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
 class DummyClassWithProperties {
 
 	/**
-	 * Some property
+	 * The @var annotation is intentional as "int" to check if the reflection service normalizes variable types.
 	 *
-	 * @firsttag
-	 * @secondtag x
-	 * @secondtag y
-	 * @var mixed
+	 * @var int
 	 */
-	protected $firstProperty;
+	protected $intProperty;
 
 	/**
-	 * Some property
+	 * This should result in the same type string as the "intProperty".
 	 *
-	 * @var mixed
+	 * @var integer
 	 */
-	public $secondProperty;
+	protected $integerProperty;
+
+	/**
+	 * Same as for int/integer for bool.
+	 *
+	 * @var bool
+	 */
+	protected $boolProperty;
+
+	/**
+	 * @var boolean
+	 */
+	protected $booleanProperty;
+
 }
