@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
 
 /**
@@ -281,7 +282,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * @api
 	 */
 	public function flush() {
-		\TYPO3\Flow\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
+		Files::emptyDirectoryRecursively($this->cacheDirectory);
 		if ($this->frozen === TRUE) {
 			@unlink($this->cacheDirectory . 'FrozenCache.data');
 			$this->frozen = FALSE;
