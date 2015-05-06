@@ -34,6 +34,12 @@ class BaseFunctionalityTestingAspect {
 	public $introducedPublicProperty;
 
 	/**
+	 * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass03)")
+	 * @var string
+	 */
+	public $introducedProtectedPropertyWithDefaultValue = 'thisIsADefaultValueBelieveItOrNot';
+
+	/**
 	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->__construct())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return void
