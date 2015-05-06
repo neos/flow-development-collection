@@ -87,7 +87,7 @@ class ResourceCommandController extends CommandController {
 			}
 		} catch (Exception $exception) {
 			$this->outputLine();
-			$this->outputLine('An error occurred while publishing resources (see full description below). You can check and probably fix the integrity of the resource registry by using the resource:repair command.');
+			$this->outputLine('An error occurred while publishing resources (see full description below). You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
 			$this->outputLine('%s (Exception code: %s)', array(get_class($exception), $exception->getCode()));
 			$this->outputLine($exception->getMessage());
 			$this->quit(1);
