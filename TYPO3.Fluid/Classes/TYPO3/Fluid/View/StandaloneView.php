@@ -104,8 +104,7 @@ class StandaloneView extends AbstractTemplateView {
 			$this->request,
 			new Response(),
 			new Arguments(array()),
-			$uriBuilder,
-			$this->flashMessageContainer
+			$uriBuilder
 		));
 	}
 
