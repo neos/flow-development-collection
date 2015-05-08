@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -94,14 +95,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 				$this->echoExceptionWeb($exception);
 		}
 	}
-
-	/**
-	 * Echoes an exception for the command line.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	abstract protected function echoExceptionCli(\Exception $exception);
 
 	/**
 	 * Echoes an exception for the web.
@@ -194,6 +187,99 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Formats and echoes the exception and its previous exceptions (if any) for the command line
+	 *
+	 * @param \Exception $exception The exception object
+	 * @return void
+	 */
+	protected function echoExceptionCli(\Exception $exception) {
+		$response = new CliResponse();
+
+		$exceptionMessage = $this->renderSingleExceptionCli($exception);
+		while (($exception = $exception->getPrevious()) !== NULL) {
+			$exceptionMessage .= PHP_EOL . '<u>Nested exception:</u>' . PHP_EOL;
+			$exceptionMessage .= $this->renderSingleExceptionCli($exception);
+		}
+
+		$response->setContent($exceptionMessage);
+		$response->send();
+		exit(1);
+	}
+
+	/**
+	 * Renders a single exception including message, code and affected file
+	 *
+	 * @param \Exception $exception
+	 * @return string
+	 */
+	protected function renderSingleExceptionCli(\Exception $exception) {
+		$exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
+		$exceptionMessage = '<error><b>' . $exceptionMessageParts['subject'] . '</b></error>' . PHP_EOL;
+		if ($exceptionMessageParts['body'] !== '') {
+			$exceptionMessage .= wordwrap($exceptionMessageParts['body'], 73, PHP_EOL) . PHP_EOL;
+		}
+
+		$exceptionMessage .= PHP_EOL;
+		$exceptionMessage .= $this->renderExceptionDetailCli('Type', get_class($exception));
+		if ($exception->getCode()) {
+			$exceptionMessage .= $this->renderExceptionDetailCli('Code', $exception->getCode());
+		}
+		$exceptionMessage .= $this->renderExceptionDetailCli('File', str_replace(FLOW_PATH_ROOT, '', $exception->getFile()));
+		$exceptionMessage .= $this->renderExceptionDetailCli('Line', $exception->getLine());
+		if ($exception instanceof FlowException) {
+			$exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
+		}
+		return $exceptionMessage;
+	}
+
+	/**
+	 * Renders the given $value word-wrapped and prefixed with $label
+	 *
+	 * @param string $label
+	 * @param string $value
+	 * @return string
+	 *
+	 */
+	protected function renderExceptionDetailCli($label, $value) {
+		$result = '  <b>' . $label . ': </b>';
+		$result .= wordwrap($value, 75, PHP_EOL . str_repeat(' ', strlen($label) + 4), TRUE);
+		$result .= PHP_EOL;
+		return $result;
+	}
+
+	/**
+	 * Splits the given string into subject and body according to following rules:
+	 * - If the string is empty or does not contain more than one sentence nor line breaks, the subject will be equal to the string and body will be an empty string
+	 * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
+	 *
+	 * @param string $exceptionMessage
+	 * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
+	 */
+	protected function splitExceptionMessage($exceptionMessage) {
+		$body = '';
+		$pattern = '/
+			(?<=                # Begin positive lookbehind.
+			  [.!?]\s           # Either an end of sentence punct,
+			| \n                # or line break
+			)
+			(?<!                # Begin negative lookbehind.
+			  i\.E\.\s          # Skip "i.E."
+			)                   # End negative lookbehind.
+			/ix';
+		$sentences = preg_split($pattern, $exceptionMessage, 2, PREG_SPLIT_NO_EMPTY);
+		if (!isset($sentences[1])) {
+			$subject = $exceptionMessage;
+		} else {
+			$subject = trim($sentences[0]);
+			$body = trim($sentences[1]);
+		}
+		return array(
+			'subject' => $subject,
+			'body' => $body
+		);
 	}
 
 }

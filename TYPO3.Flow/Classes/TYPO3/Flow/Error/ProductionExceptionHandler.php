@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 
@@ -149,38 +148,5 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 					</div>
 				</body>
 			</html>';
-	}
-
-	/**
-	 * Echoes an exception for the command line.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	protected function echoExceptionCli(\Exception $exception) {
-		$response = new CliResponse();
-
-		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
-
-		$exceptionMessage = PHP_EOL . '<b>Uncaught Exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
-		$exceptionMessage .= '<b>Message</b>' . PHP_EOL;
-		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
-			$exceptionMessage .= '  ' . $messageLine . PHP_EOL;
-		}
-
-		$exceptionMessage .= PHP_EOL . '<b>More Information</b>' . PHP_EOL;
-		if ($exception->getCode()) {
-			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
-		}
-		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof FlowException) {
-			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
-		}
-		$exceptionMessage .= PHP_EOL;
-
-		$response->setContent($exceptionMessage);
-		$response->send();
-		exit(1);
 	}
 }

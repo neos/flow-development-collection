@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 
@@ -138,106 +137,5 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				</div>
 			</div>
 		';
-	}
-
-	/**
-	 * Formats and echoes the exception for the command line
-	 *
-	 * @param \Exception $exception The exception object
-	 * @return void
-	 */
-	protected function echoExceptionCli(\Exception $exception) {
-		$response = new CliResponse();
-
-		$backtraceSteps = $exception->getTrace();
-		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
-
-		$exceptionMessage = PHP_EOL . '<b>Uncaught Exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
-		$exceptionMessage .= '<b>Message</b>' . PHP_EOL;
-		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
-			$exceptionMessage .= '  ' . $messageLine . PHP_EOL;
-		}
-
-		$exceptionMessage .= PHP_EOL . '<b>More Information</b>' . PHP_EOL;
-		if ($exception->getCode()) {
-			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
-		}
-		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof FlowException) {
-			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
-		}
-
-		$indent = '  ';
-		while (($exception = $exception->getPrevious()) !== NULL) {
-			$exceptionMessage .= PHP_EOL . $indent . '<b>Nested exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
-			$exceptionMessage .= $indent . '<b>Message</b>' . PHP_EOL;
-			foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
-				$exceptionMessage .= $indent . '  ' . $messageLine . PHP_EOL;
-			}
-
-			$exceptionMessage .= PHP_EOL . $indent . '<b>More Information</b>' . PHP_EOL;
-			if ($exception->getCode()) {
-				$exceptionMessage .= $indent . '  Exception code ' . $exception->getCode() . PHP_EOL;
-			}
-			$exceptionMessage .= $indent . '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-			if ($exception instanceof FlowException) {
-				$exceptionMessage .= $indent . '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
-			}
-
-			$indent .= '  ';
-		}
-
-		$exceptionMessage .= PHP_EOL . '<b>Stack trace</b>' . PHP_EOL;
-		for ($index = 0; $index < count($backtraceSteps); $index ++) {
-			$exceptionMessage .= PHP_EOL . '#' . $index . ' ';
-			if (isset($backtraceSteps[$index]['class'])) {
-				$exceptionMessage .= $backtraceSteps[$index]['class'];
-			}
-			if (isset($backtraceSteps[$index]['function'])) {
-				$exceptionMessage .= '::' . $backtraceSteps[$index]['function'] . '()';
-			}
-			$exceptionMessage .= PHP_EOL;
-			if (isset($backtraceSteps[$index]['file'])) {
-				$exceptionMessage .= '   ' . $backtraceSteps[$index]['file'] . (isset($backtraceSteps[$index]['line']) ? ':' . $backtraceSteps[$index]['line'] : '') . PHP_EOL;
-			}
-		}
-		$exceptionMessage .= PHP_EOL;
-
-		$response->setContent($exceptionMessage);
-		$response->send();
-		exit(1);
-	}
-
-	/**
-	 * Splits the given string into subject and body according to following rules:
-	 * - If the string is empty or does not contain more than one sentence nor line breaks, the subject will be equal to the string and body will be an empty string
-	 * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
-	 *
-	 * @param string $exceptionMessage
-	 * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
-	 */
-	protected function splitExceptionMessage($exceptionMessage) {
-		$body = '';
-		$pattern = '/
-			(?<=                # Begin positive lookbehind.
-			  [.!?]\s           # Either an end of sentence punct,
-			| \n                # or line break
-			)
-			(?<!                # Begin negative lookbehind.
-			  i\.E\.\s          # Skip "i.E."
-			)                   # End negative lookbehind.
-			/ix';
-		$sentences = preg_split($pattern, $exceptionMessage, 2, PREG_SPLIT_NO_EMPTY);
-		if (!isset($sentences[1])) {
-			$subject = $exceptionMessage;
-		} else {
-			$subject = trim($sentences[0]);
-			$body = trim($sentences[1]);
-		}
-		return array(
-			'subject' => $subject,
-			'body' => $body
-		);
 	}
 }

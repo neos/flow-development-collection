@@ -38,7 +38,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase {
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
-		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE, TRUE, TRUE, array('echoExceptionCli'));
 		/** @var AbstractExceptionHandler $exceptionHandler */
 		$exceptionHandler->setOptions($options);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
@@ -76,7 +76,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase {
 		$mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
 		$mockSystemLogger->expects($this->never())->method('logException');
 
-		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE, TRUE, TRUE, array('echoExceptionCli'));
 		/** @var AbstractExceptionHandler $exceptionHandler */
 		$exceptionHandler->setOptions($options);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
