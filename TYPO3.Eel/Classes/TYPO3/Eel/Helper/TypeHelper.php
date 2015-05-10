@@ -87,13 +87,33 @@ class TypeHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
-	 * Is the given variable integer.
+	 * Is the given variable an integer.
 	 *
 	 * @param mixed $variable
 	 * @return boolean
 	 */
 	public function isInteger($variable) {
-		return is_integer($variable);
+		return is_int($variable);
+	}
+
+	/**
+	 * Is the given variable a float.
+	 *
+	 * @param mixed $variable
+	 * @return boolean
+	 */
+	public function isFloat($variable) {
+		return is_float($variable);
+	}
+
+	/**
+	 * Is the given variable a scalar.
+	 *
+	 * @param mixed $variable
+	 * @return boolean
+	 */
+	public function isScalar($variable) {
+		return is_scalar($variable);
 	}
 
 	/**
@@ -104,6 +124,16 @@ class TypeHelper implements ProtectedContextAwareInterface {
 	 */
 	public function isBoolean($variable) {
 		return is_bool($variable);
+	}
+
+	/**
+	 * Is the given variable an object.
+	 *
+	 * @param mixed $variable
+	 * @return boolean
+	 */
+	public function isObject($variable) {
+		return is_object($variable);
 	}
 
 	/**
