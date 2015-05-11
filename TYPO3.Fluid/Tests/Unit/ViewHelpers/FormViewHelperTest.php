@@ -472,7 +472,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase {
 	 * @test
 	 */
 	public function renderEmptyHiddenFieldsRendersOneHiddenFieldPerEntry() {
-		$emptyHiddenFieldNames = array('fieldName1', 'fieldName2');
+		$emptyHiddenFieldNames = array('fieldName1' => FALSE, 'fieldName2' => FALSE);
 		$this->viewHelperVariableContainerData = array(
 			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
 				'emptyHiddenFieldNames' => $emptyHiddenFieldNames,

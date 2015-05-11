@@ -324,6 +324,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$post = new Fixtures\Domain\Model\Post();
 		$post->setAuthor($author);
 		$post->setName('myName');
+		$post->setPrivate(TRUE);
 		$this->persistenceManager->add($post);
 		$postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
 		$this->persistenceManager->persistAll();
@@ -377,5 +378,28 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
 		$this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
 		$this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function valueForDisabledCheckboxIsNotLost() {
+		$postIdentifier = $this->setupDummyPost();
+		$post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, '\TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+		$this->assertEquals(TRUE, $post->getPrivate());
+
+		$this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
+		$checkboxDisabled = $this->browser->getCrawler()->filterXPath('//*[@id="private"]')->attr('disabled');
+		$this->assertNotEmpty($checkboxDisabled);
+		$this->assertEquals($checkboxDisabled, $this->browser->getCrawler()->filterXPath('//input[@type="hidden" and contains(@name,"private")]')->attr('disabled'), 'The hidden checkbox field is not disabled like the connected checkbox.');
+
+		$form = $this->browser->getForm();
+		$this->browser->submit($form);
+
+		$this->persistenceManager->clearState();
+		$post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, '\TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+		// This will currently never fail, because DomCrawler\Form does not handle hidden checkbox fields correctly!
+		// Hence this test currently only relies on the correctly set "disabled" attribute on the hidden field.
+		$this->assertEquals(TRUE, $post->getPrivate(), 'The value for the checkbox field "private" was lost on form submit!');
 	}
 }

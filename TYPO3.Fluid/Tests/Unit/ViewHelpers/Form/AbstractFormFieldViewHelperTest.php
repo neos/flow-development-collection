@@ -655,10 +655,10 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase {
 			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
 				'formObjectName' => 'someFormObjectName',
 				'formObject' => new \stdClass(),
-				'emptyHiddenFieldNames' => array('OldFieldName')
+				'emptyHiddenFieldNames' => array('OldFieldName' => FALSE)
 			)
 		);
-		$this->viewHelperVariableContainer->expects($this->atLeastOnce())->method('addOrUpdate')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames', array('OldFieldName', 'NewFieldName'));
+		$this->viewHelperVariableContainer->expects($this->atLeastOnce())->method('addOrUpdate')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames', array('OldFieldName' => FALSE, 'NewFieldName' => FALSE));
 
 		$formViewHelper->_call('renderHiddenFieldForEmptyValue');
 	}
@@ -673,7 +673,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase {
 		$formViewHelper->expects($this->any())->method('getName')->will($this->returnValue('SomeFieldName'));
 		$this->viewHelperVariableContainerData = array(
 			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
-				'emptyHiddenFieldNames' => array('SomeFieldName')
+				'emptyHiddenFieldNames' => array('SomeFieldName' => FALSE)
 			)
 		);
 		$this->viewHelperVariableContainer->expects($this->never())->method('addOrUpdate');
@@ -691,7 +691,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase {
 		$formViewHelper->expects($this->any())->method('getName')->will($this->returnValue('SomeFieldName[WithBrackets][]'));
 		$this->viewHelperVariableContainerData = array(
 			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
-				'emptyHiddenFieldNames' => array('SomeFieldName[WithBrackets]')
+				'emptyHiddenFieldNames' => array('SomeFieldName[WithBrackets]' => FALSE)
 			)
 		);
 
@@ -711,7 +711,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase {
 		$formViewHelper->expects($this->any())->method('getName')->will($this->returnValue('SomeFieldName[WithBrackets][foo]'));
 		$this->viewHelperVariableContainerData = array(
 			'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
-				'emptyHiddenFieldNames' => array('SomeFieldName[WithBrackets][foo]')
+				'emptyHiddenFieldNames' => array('SomeFieldName[WithBrackets][foo]' => FALSE)
 			)
 		);
 
@@ -719,6 +719,22 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase {
 
 		// dummy assertion to avoid "risky test" warning
 		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function renderHiddenFieldForEmptyValueAddsHiddenFieldWithDisabledState() {
+		$formViewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper', array('getName'), array(), '', FALSE);
+		$this->injectDependenciesIntoViewHelper($formViewHelper);
+
+		$this->tagBuilder->expects($this->any())->method('hasAttribute')->with('disabled')->will($this->returnValue(TRUE));
+		$this->tagBuilder->expects($this->any())->method('getAttribute')->with('disabled')->will($this->returnValue('disabledValue'));
+
+		$formViewHelper->expects($this->any())->method('getName')->will($this->returnValue('SomeFieldName'));
+
+		$this->viewHelperVariableContainer->expects($this->atLeastOnce())->method('addOrUpdate')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames', array('SomeFieldName' => 'disabledValue'));
+		$formViewHelper->_call('renderHiddenFieldForEmptyValue');
 	}
 
 }
