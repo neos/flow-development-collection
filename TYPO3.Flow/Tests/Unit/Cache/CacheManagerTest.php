@@ -11,7 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * Testcase for the Cache Manager
@@ -34,8 +36,18 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected $mockSystemLogger;
 
+	/**
+	 * @var Environment
+	 */
+	protected $mockEnvironment;
+
 	public function setUp() {
+		vfsStream::setup('Foo');
 		$this->cacheManager = new \TYPO3\Flow\Cache\CacheManager();
+
+		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+		$this->cacheManager->injectEnvironment($this->mockEnvironment);
 
 		$this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$this->cacheManager->injectSystemLogger($this->mockSystemLogger);
@@ -181,6 +193,15 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
 
 		$this->cacheManager->flushCaches();
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushCachesDeletesAvailableProxyClassesFile() {
+		file_put_contents('vfs://Foo/AvailableProxyClasses.php', '// dummy');
+		$this->cacheManager->flushCaches();
+		$this->assertFileNotExists('vfs://Foo/AvailableProxyClasses.php');
 	}
 
 	/**

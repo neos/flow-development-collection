@@ -136,8 +136,7 @@ class CacheCommandController extends CommandController {
 		// other code can cause fatal errors.
 
 		$this->cacheManager->flushCaches();
-		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
-		Files::unlink($dataTemporaryPath . 'AvailableProxyClasses.php');
+
 		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
