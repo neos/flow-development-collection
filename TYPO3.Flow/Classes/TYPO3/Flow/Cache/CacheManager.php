@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
 /**
@@ -37,6 +39,11 @@ class CacheManager {
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
+
+	/**
+	 * @var Environment
+	 */
+	protected $environment;
 
 	/**
 	 * @var array
@@ -82,6 +89,14 @@ class CacheManager {
 	 */
 	public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
+	}
+
+	/**
+	 * @param Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -186,6 +201,8 @@ class CacheManager {
 			$cache->flush();
 		}
 		$this->configurationManager->flushConfigurationCache();
+		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
+		Files::unlink($dataTemporaryPath . 'AvailableProxyClasses.php');
 	}
 
 	/**
