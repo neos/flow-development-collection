@@ -133,7 +133,7 @@ class CurlEngine implements RequestEngineInterface {
 
 		$curlResult = curl_exec($curlHandle);
 		if ($curlResult === FALSE) {
-			throw new CurlEngineException('cURL reported error code ' . curl_errno($curlHandle) . ' with message "' . curl_error($curlHandle) . '". Last requested URL was "' . curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL) . '".', 1338906040);
+			throw new CurlEngineException(sprintf('cURL reported error code %s with message "%s". Last requested URL was "%s" (%s).', curl_errno($curlHandle), curl_error($curlHandle), curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL), $request->getMethod()), 1338906040);
 		} elseif (strlen($curlResult) === 0) {
 			return FALSE;
 		}
