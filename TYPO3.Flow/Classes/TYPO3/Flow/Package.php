@@ -46,7 +46,7 @@ class Package extends BasePackage {
 		$bootstrap->registerCompiletimeCommand('typo3.flow:cache:flush');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', function($request) use($bootstrap) {
+		$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', function($request) use ($bootstrap) {
 			if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== TRUE) {
 				$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			} elseif ($request->getHttpRequest()->isMethodSafe()) {
@@ -95,7 +95,7 @@ class Package extends BasePackage {
 
 		$dispatcher->connect('TYPO3\Flow\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter', 'savePolicyCache');
 
-		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', function() use($bootstrap) {
+		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', function() use ($bootstrap) {
 			$session = $bootstrap->getObjectManager()->get('TYPO3\Flow\Session\SessionInterface');
 			if ($session->isStarted()) {
 				$session->renewId();
@@ -111,13 +111,17 @@ class Package extends BasePackage {
 		});
 		$dispatcher->connect('TYPO3\Flow\Command\CacheCommandController', 'warmupCaches', 'TYPO3\Flow\Configuration\ConfigurationManager', 'warmup');
 
-		$dispatcher->connect('TYPO3\Fluid\Core\Parser\TemplateParser', 'initializeNamespaces', function(TemplateParser $templateParser) use($bootstrap) {
+		$dispatcher->connect('TYPO3\Fluid\Core\Parser\TemplateParser', 'initializeNamespaces', function(TemplateParser $templateParser) use ($bootstrap) {
 			/** @var PackageManagerInterface $packageManager */
 			$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
 			/** @var PackageInterface $package */
 			foreach ($packageManager->getActivePackages() as $package) {
 				$templateParser->registerNamespace(strtolower($package->getPackageKey()), $package->getNamespace() . '\\ViewHelpers');
 			}
+		});
+
+		$dispatcher->connect('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated', function() use ($dispatcher) {
+			$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Cache\CacheManager', 'flushCaches');
 		});
 	}
 }
