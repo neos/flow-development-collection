@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Package;
  *                                                                        */
 
 use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
+use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\TypeHandling;
@@ -38,6 +39,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @var PackageFactory
 	 */
 	protected $packageFactory;
+
+	/**
+	 * @var Dispatcher
+	 */
+	protected $dispatcher;
 
 	/**
 	 * @var array
@@ -1039,6 +1045,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		if ($result === FALSE) {
 			throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);
 		}
+		$this->emitPackageStatesUpdated();
 	}
 
 	/**
@@ -1091,5 +1098,21 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			unset($unsortedPackages[$packageKey]);
 			$sortedPackages[$packageKey] = $package;
 		}
+	}
+
+	/**
+	 * Emits a signal when package states have been changed (e.g. when a package was created or activated)
+	 *
+	 * The advice is not proxyable, so the signal is dispatched manually here.
+	 *
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitPackageStatesUpdated() {
+		if ($this->dispatcher === NULL) {
+			$this->dispatcher = $this->bootstrap->getEarlyInstance(Dispatcher::class);
+		}
+
+		$this->dispatcher->dispatch(PackageManager::class, 'packageStatesUpdated');
 	}
 }

@@ -11,8 +11,11 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\PackageInterface;
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\SignalSlot\Dispatcher;
 
 /**
  * Testcase for the default package manager
@@ -26,15 +29,34 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $packageManager;
 
 	/**
+	 * @var Bootstrap|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockBootstrap;
+
+	/**
+	 * @var ApplicationContext|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockApplicationContext;
+
+	/**
+	 * @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockDispatcher;
+
+	/**
 	 * Sets up this test case
 	 *
 	 */
 	protected function setUp() {
 		vfsStream::setup('Test');
-		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\Flow\SignalSlot\Dispatcher')));
+		$this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
+		$this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\Flow\SignalSlot\Dispatcher')));
+
+		$this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
+		$this->mockBootstrap->expects($this->any())->method('getContext')->will($this->returnValue($this->mockApplicationContext));
+
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
+		$this->mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function($object) {
 			if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
@@ -58,7 +80,11 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
 		$this->inject($this->packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
 		$this->inject($this->packageManager, 'packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
-		$this->packageManager->initialize($mockBootstrap);
+
+		$this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
+		$this->inject($this->packageManager, 'dispatcher', $this->mockDispatcher);
+
+		$this->packageManager->initialize($this->mockBootstrap);
 	}
 
 	/**
@@ -175,7 +201,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 		}
 
-		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));
+		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -209,7 +235,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 		}
 
-		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));
+		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -253,7 +279,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 		}
 
-		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('updateShortcuts', 'emitPackageStatesUpdated'), array(), '', FALSE);
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -468,7 +494,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$unsortedPackages[$packageKey] = $mockPackage;
 		}
 
-		$packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('dummy'));
+		$packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
 		$packageManager->_set('packages', $unsortedPackages);
 		$packageManager->_set('packageStatesConfiguration', array('packages' => $packages));
 		$packageManager->_call('sortAvailablePackagesByDependencies');
@@ -821,6 +847,61 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function registeringTheSamePackageKeyWithDifferentCaseShouldThrowException() {
 		$this->packageManager->createPackage('doctrine.instantiator');
 		$this->packageManager->createPackage('doctrine.Instantiator');
+	}
+
+	/**
+	 * @test
+	 */
+	public function createPackageEmitsPackageStatesUpdatedSignal() {
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+		$this->packageManager->createPackage('Some.Package');
+	}
+
+	/**
+	 * @test
+	 */
+	public function activatePackageEmitsPackageStatesUpdatedSignal() {
+		$this->packageManager->createPackage('Some.Package');
+		$this->packageManager->deactivatePackage('Some.Package');
+
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+		$this->packageManager->activatePackage('Some.Package');
+	}
+
+	/**
+	 * @test
+	 */
+	public function deactivatePackageEmitsPackageStatesUpdatedSignal() {
+		$this->packageManager->createPackage('Some.Package');
+
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+		$this->packageManager->deactivatePackage('Some.Package');
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function freezePackageEmitsPackageStatesUpdatedSignal() {
+		$this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(TRUE));
+
+		$this->packageManager->createPackage('Some.Package');
+
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+		$this->packageManager->freezePackage('Some.Package');
+	}
+
+	/**
+	 * @test
+	 */
+	public function unfreezePackageEmitsPackageStatesUpdatedSignal() {
+		$this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(TRUE));
+
+		$this->packageManager->createPackage('Some.Package');
+		$this->packageManager->freezePackage('Some.Package');
+
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+		$this->packageManager->unfreezePackage('Some.Package');
 	}
 
 }
