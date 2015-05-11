@@ -149,7 +149,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 
 		$mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Bar'));
+		$mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
 		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
