@@ -15,19 +15,25 @@ ordering anything but alphabetic.
 * Andreas Wolf
 * Andy Grunwald
 * Aske Ertmann
+* Bastian Heist
 * Bastian Waidelich
 * Benno Weinzierl
 * Berit Jensen
 * Bernhard Fischer
+* Carsten Bleicker
 * Cedric Ziel
 * Christian Jul Jensen
 * Christian Kuhn
 * Christian Müller
 * Christopher Hlubek
+* Dan Untenzu
+* Daniel Lienert
+* Dmitri Pisarev
 * Dominique Feyer
 * Felix Oertel
 * Ferdinand Kuhl
 * Franz Kugelmann
+* Georg Ringer
 * Helmut Hummel
 * Henrik Møller Rasmussen
 * Ingo Pfennigstorf
@@ -36,10 +42,12 @@ ordering anything but alphabetic.
 * Jan-Erik Revsbech
 * Jochen Rau
 * Johannes Künsebeck
+* Jonas Renggli
 * Julian Kleinhans
 * Julian Wachholz
 * Karol Gusak
 * Karsten Dambekalns
+* Kerstin Huppenbauer
 * Lars Peipmann
 * Laurent Cherpit
 * Lienhart Woitok
@@ -49,18 +57,25 @@ ordering anything but alphabetic.
 * Markus Günther
 * Martin Brüggemann
 * Martin Ficzel
+* Martin Helmich
 * Mattias Nilsson
 * Michael Gerdemann
 * Michael Klapper
 * Michael Sauter
 * Oliver Hader
+* Oliver Eglseder
 * Pankaj Lele
 * Patrick Pussar
 * Philipp Maier
+* Rafael Kähm
 * Rens Admiraal
 * Robert Lemke
+* Roland Waldner
 * Ryan J. Peterson
 * Sascha Egerer
+* Sascha Nowak
+* Sebastian Helzle
+* Sebastian Heuer
 * Sebastian Kurfürst
 * Simon Schaufelberger
 * Simon Schick
@@ -78,6 +93,7 @@ ordering anything but alphabetic.
 * Tolleiv Nietsch
 * Tymoteusz Motylewski
 * Wouter Wolters
+* Xavier Perseguers
 * Zach Davis
 
 The list has been generated with some manual tweaking of the output of this::
