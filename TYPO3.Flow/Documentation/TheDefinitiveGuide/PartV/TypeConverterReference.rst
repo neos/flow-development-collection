@@ -3,7 +3,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2015-02-27
+This reference was automatically generated from code on 2015-05-12
 
 
 ArrayConverter
@@ -38,6 +38,19 @@ TypeConverter which converts generic objects to arrays by converting and returni
 :Priority: 1
 :Target type: array
 :Source type: object
+
+
+
+
+
+ArrayTypeConverter
+------------------
+
+Converts Doctrine collections to arrays
+
+:Priority: 1
+:Target type: array
+:Source type: Doctrine\Common\Collections\Collection
 
 
 
@@ -227,6 +240,19 @@ Converter which transforms to an integer.
  * integer
  * string
  * DateTime
+
+
+
+
+LocaleTypeConverter
+-------------------
+
+Converter which transforms strings to a Locale object.
+
+:Priority: 1
+:Target type: TYPO3\Flow\I18n\Locale
+:Source type: string
+
 
 
 
