@@ -73,14 +73,14 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function nonFlowPackageClassesAreFilteredFromObjectManagementByDefault() {
-		$packagePath = 'vfs://Packages/Vendor.TestPackage/';
+		$packagePath = 'vfs://Packages/NonFlow.TestPackage/';
 		mkdir($packagePath . 'Classes/', 0777, TRUE);
 		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "some-non-flow-package-type"}');
 		file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-		$testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Classes');
+		$testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'NonFlow.TestPackage', $packagePath, 'Classes');
 
-		$objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('Vendor.TestPackage' => $testPackage));
+		$objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('NonFlow.TestPackage' => $testPackage));
 		// Count is at least 1 as '' => 'DateTime' is hardcoded
 		$this->assertCount(1, $objectManagementEnabledClasses);
 	}
