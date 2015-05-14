@@ -45,16 +45,16 @@ class PackageFactory {
 	 */
 	public function create($packagesBasePath, $packagePath, $packageKey, $classesPath = NULL, $manifestPath = NULL) {
 		$absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
-		$absoluteManifestPath = Files::concatenatePaths(array($absolutePackagePath, $manifestPath)) . '/';
+		$absoluteManifestPath = $manifestPath === NULL ? $absolutePackagePath : Files::concatenatePaths(array($absolutePackagePath, $manifestPath)) . '/';
 		$autoLoadDirectives = array();
 		try {
 			$autoLoadDirectives = (array)PackageManager::getComposerManifest($absoluteManifestPath, 'autoload');
 		} catch (MissingPackageManifestException $exception) {
 		}
 		if (isset($autoLoadDirectives[Package::AUTOLOADER_TYPE_PSR4])) {
-			$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes', 'Package.php'));
+			$packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', 'Package.php'));
 		} else {
-			$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php'));
+			$packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php'));
 		}
 		$package = NULL;
 		if (file_exists($packageClassPathAndFilename)) {
