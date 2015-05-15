@@ -517,15 +517,14 @@ class Scripts
     }
 
     /**
-     * Initialize the resource management component, setting up stream wrappers,
-     * publishing the public resources of all found packages, ...
+     * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeResources(Bootstrap $bootstrap)
     {
-        $bootstrap->getObjectManager()->get(ResourceManager::class)->initializeStreamWrapper();
+        StreamWrapperAdapter::initializeStreamWrapper($bootstrap->getObjectManager());
     }
 
     /**

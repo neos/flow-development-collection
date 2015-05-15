@@ -555,24 +555,6 @@ class ResourceManager
     }
 
     /**
-     * Registers a Stream Wrapper Adapter for the resource:// scheme.
-     *
-     * @return void
-     */
-    public function initializeStreamWrapper()
-    {
-        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
-        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
-            $scheme = $streamWrapperClassName::getScheme();
-            if (in_array($scheme, stream_get_wrappers())) {
-                stream_wrapper_unregister($scheme);
-            }
-            stream_wrapper_register($scheme, \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::class);
-            StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
-        }
-    }
-
-    /**
      * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
      * move it outside of upload folder if open_basedir is enabled and check the filename.
      *
@@ -607,18 +589,6 @@ class ResourceManager
             'filepath' => $temporaryTargetPathAndFilename,
             'filename' => $pathInfo['basename']
         );
-    }
-
-    /**
-     * Returns all class names implementing the StreamWrapperInterface.
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return array Array of stream wrapper implementations
-     * @Flow\CompileStatic
-     */
-    protected static function getStreamWrapperImplementationClassNames($objectManager)
-    {
-        return $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class)->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Resource\Streams\StreamWrapperInterface::class);
     }
 
     /**

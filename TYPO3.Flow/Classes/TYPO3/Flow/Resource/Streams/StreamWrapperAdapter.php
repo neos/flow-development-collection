@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Resource\Streams;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
  * \TYPO3\Flow\Resource\Streams\StreamWrapperInterface.
@@ -34,9 +37,29 @@ class StreamWrapperAdapter
     public $context;
 
     /**
-     * @var \TYPO3\Flow\Resource\Streams\StreamWrapperInterface
+     * @var StreamWrapperInterface
      */
     protected $streamWrapper;
+
+    /**
+     * Initialize StreamWrappers with this adapter
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public static function initializeStreamWrapper($objectManager)
+    {
+        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($objectManager);
+        /** @var StreamWrapperInterface $streamWrapperClassName */
+        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
+            $scheme = $streamWrapperClassName::getScheme();
+            if (in_array($scheme, stream_get_wrappers())) {
+                stream_wrapper_unregister($scheme);
+            }
+            stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
+            static::registerStreamWrapper($scheme, $streamWrapperClassName);
+        }
+    }
 
     /**
      * Register a stream wrapper. Later registrations for a scheme will override
@@ -456,5 +479,17 @@ class StreamWrapperAdapter
     {
         $this->createStreamWrapper($path);
         return $this->streamWrapper->pathStat($path, $flags);
+    }
+
+    /**
+     * Returns all class names implementing the StreamWrapperInterface.
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return array Array of stream wrapper implementations
+     * @Flow\CompileStatic
+     */
+    public static function getStreamWrapperImplementationClassNames(ObjectManagerInterface $objectManager)
+    {
+        return $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
     }
 }
