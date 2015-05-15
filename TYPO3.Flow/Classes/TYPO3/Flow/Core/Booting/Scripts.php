@@ -17,6 +17,7 @@ use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -500,6 +501,7 @@ class Scripts {
 	 * @return void
 	 */
 	static public function initializeResources(Bootstrap $bootstrap) {
+		StreamWrapperAdapter::initializeStreamWrapper($bootstrap->getObjectManager());
 		$resourceManager = $bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceManager::class);
 		$resourceManager->initialize();
 	}

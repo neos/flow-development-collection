@@ -19,7 +19,6 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
-use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -104,7 +103,6 @@ class ResourceManager {
 	 * @return void
 	 */
 	public function initialize() {
-		$this->initializeStreamWrapper();
 		$this->initializeStorages();
 		$this->initializeTargets();
 		$this->initializeCollections();
@@ -505,23 +503,6 @@ class ResourceManager {
 	}
 
 	/**
-	 * Registers a Stream Wrapper Adapter for the resource:// scheme.
-	 *
-	 * @return void
-	 */
-	protected function initializeStreamWrapper() {
-		$streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
-		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
-			$scheme = $streamWrapperClassName::getScheme();
-			if (in_array($scheme, stream_get_wrappers())) {
-				stream_wrapper_unregister($scheme);
-			}
-			stream_wrapper_register($scheme, \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::class);
-			StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
-		}
-	}
-
-	/**
 	 * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
 	 * move it outside of upload folder if open_basedir is enabled and check the filename.
 	 *
@@ -555,17 +536,6 @@ class ResourceManager {
 			'filepath' => $temporaryTargetPathAndFilename,
 			'filename' => $pathInfo['basename']
 		);
-	}
-
-	/**
-	 * Returns all class names implementing the StreamWrapperInterface.
-	 *
-	 * @param ObjectManagerInterface $objectManager
-	 * @return array Array of stream wrapper implementations
-	 * @Flow\CompileStatic
-	 */
-	static protected function getStreamWrapperImplementationClassNames($objectManager) {
-		return $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class)->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Resource\Streams\StreamWrapperInterface::class);
 	}
 
 	/**
