@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
+use RandomLib\Generator as RandomGenerator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
 
@@ -43,6 +44,12 @@ class FileBasedSimpleKeyService
     protected $hashService;
 
     /**
+     * @Flow\Inject
+     * @var RandomGenerator
+     */
+    protected $randomGenerator;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -68,7 +75,7 @@ class FileBasedSimpleKeyService
         if (strlen($name) === 0) {
             throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215474);
         }
-        $password = \TYPO3\Flow\Utility\Algorithms::generateRandomString($this->passwordGenerationLength);
+        $password = $this->randomGenerator->generateString($this->passwordGenerationLength, RandomGenerator::EASY_TO_READ);
         $this->persistKey($name, $password);
         return $password;
     }

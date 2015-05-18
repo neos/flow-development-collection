@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-require_once(FLOW_PATH_FLOW . 'Resources/PHP/iSecurity/Security_Randomizer.php');
-
+use RandomLib\Factory;
+use RandomLib\Generator;
 use Ramsey\Uuid\Uuid;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -23,6 +23,11 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class Algorithms
 {
+    /**
+     * @var Factory
+ */
+    protected static $randomGeneratorFactory;
+
     /**
      * Generates a universally unique identifier (UUID) according to RFC 4122.
      * The algorithm used here, might not be completely random.
@@ -49,7 +54,8 @@ class Algorithms
      */
     public static function generateRandomBytes($count)
     {
-        return \Security_Randomizer::getRandomBytes($count);
+        $generator = static::getRandomGeneratorFactory()->getMediumStrengthGenerator();
+        return $generator->generate($count);
     }
 
     /**
@@ -60,7 +66,8 @@ class Algorithms
      */
     public static function generateRandomToken($count)
     {
-        return \Security_Randomizer::getRandomToken($count);
+        $generator = static::getRandomGeneratorFactory()->getMediumStrengthGenerator();
+        return $generator->generateString($count * 2, Generator::CHAR_LOWER_HEX);
     }
 
     /**
@@ -72,6 +79,21 @@ class Algorithms
      */
     public static function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     {
-        return \Security_Randomizer::getRandomString($count, $characters);
+        $generator = static::getRandomGeneratorFactory()->getMediumStrengthGenerator();
+        return $generator->generateString($count, $characters);
+    }
+
+    /**
+     * Gets an instance of the RandomLib\Factory to avoid initialization costs.
+     *
+     * @return Factory
+     */
+    protected static function getRandomGeneratorFactory()
+    {
+        if (static::$randomGeneratorFactory === null) {
+            static::$randomGeneratorFactory = new Factory();
+        }
+
+        return static::$randomGeneratorFactory;
     }
 }

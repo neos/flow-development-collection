@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * source code.
  */
 
+use RandomLib\Generator;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Account;
@@ -839,11 +840,14 @@ class ContextTest extends UnitTestCase
     public function getCsrfProtectionTokenReturnsANewTokenIfNoneIsPresentInTheContext()
     {
         $mockAuthenticationManager = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
 
         $securityContext = $this->getAccessibleMock(\TYPO3\Flow\Security\Context::class, array('getAuthenticationTokens'));
         $securityContext->setRequest($this->mockActionRequest);
         $securityContext->_set('authenticationManager', $mockAuthenticationManager);
         $securityContext->_set('csrfTokens', array());
+        $securityContext->_set('randomGenerator', $mockRandomGenerator);
 
         $this->assertNotEmpty($securityContext->getCsrfProtectionToken());
     }
@@ -854,6 +858,8 @@ class ContextTest extends UnitTestCase
     public function getCsrfProtectionTokenReturnsANewTokenIfTheCsrfStrategyIsOnePerUri()
     {
         $mockAuthenticationManager = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
 
         $existingTokens = array('token1' => true, 'token2' => true);
 
@@ -862,6 +868,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('authenticationManager', $mockAuthenticationManager);
         $securityContext->_set('csrfTokens', $existingTokens);
         $securityContext->_set('csrfStrategy', Context::CSRF_ONE_PER_URI);
+        $securityContext->_set('randomGenerator', $mockRandomGenerator);
 
         $this->assertFalse(array_key_exists($securityContext->getCsrfProtectionToken(), $existingTokens));
     }

@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Session;
  * source code.
  */
 
+use RandomLib\Generator as RandomGenerator;
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
 use TYPO3\Flow\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
@@ -79,6 +80,12 @@ class Session implements SessionInterface
      * @var \TYPO3\Flow\Core\Bootstrap
      */
     protected $bootstrap;
+
+    /**
+     * @Flow\Inject
+     * @var RandomGenerator
+     */
+    protected $randomGenerator;
 
     /**
      * @var string
@@ -288,7 +295,7 @@ class Session implements SessionInterface
             $this->initializeHttpAndCookie($requestHandler);
         }
         if ($this->started === false) {
-            $this->sessionIdentifier = Algorithms::generateRandomString(32);
+            $this->sessionIdentifier = $this->randomGenerator->generateString(32, RandomGenerator::CHAR_ALNUM);
             $this->storageIdentifier = Algorithms::generateUUID();
             $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
             $this->response->setCookie($this->sessionCookie);
@@ -400,7 +407,7 @@ class Session implements SessionInterface
         }
 
         $this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
-        $this->sessionIdentifier = Algorithms::generateRandomString(32);
+        $this->sessionIdentifier = $this->randomGenerator->generateString(32, RandomGenerator::CHAR_ALNUM);
         $this->writeSessionMetaDataCacheEntry();
 
         $this->sessionCookie->setValue($this->sessionIdentifier);

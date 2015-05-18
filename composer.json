@@ -13,6 +13,7 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
         "ramsey/uuid": "^3.0.0",
+        "ircmaxell/random-lib": "~1.1",
         "doctrine/orm": "2.4.*",
         "doctrine/migrations": "1.0.*",
         "symfony/yaml": "2.5.*",

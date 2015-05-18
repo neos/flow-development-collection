@@ -377,3 +377,25 @@ TYPO3\Flow\Session\SessionManager:
 TYPO3\Flow\Utility\PdoHelper:
   autowiring: off
   scope: prototype
+
+
+#
+# RandomLib
+#
+
+SecurityLib\Strength:
+  scope: prototype
+  autowiring: off
+
+RandomLib\Factory:
+  scope: singleton
+
+RandomLib\Generator:
+  factoryObjectName: RandomLib\Factory
+  factoryMethodName: getGenerator
+  arguments:
+    1:
+      object: 'SecurityLib\Strength'
+      arguments:
+        # 5 is the constant value for MEDIUM strength
+        1: 5

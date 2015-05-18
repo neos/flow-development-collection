@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
+use RandomLib\Generator as RandomGenerator;
+
 /**
  * A PBKDF2 based password hashing strategy
  *
@@ -42,6 +45,12 @@ class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
     protected $algorithm;
 
     /**
+     * @Flow\Inject
+     * @var RandomGenerator
+     */
+    protected $randomGenerator;
+
+    /**
      * Construct a PBKDF2 hashing strategy with the given parameters
      *
      * @param integer $dynamicSaltLength Length of the dynamic random salt to generate in bytes
@@ -67,7 +76,7 @@ class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
      */
     public function hashPassword($password, $staticSalt = null)
     {
-        $dynamicSalt = \TYPO3\Flow\Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
+        $dynamicSalt = $this->randomGenerator->generateString($this->dynamicSaltLength);
         $result = \TYPO3\Flow\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
         return base64_encode($dynamicSalt) . ',' . base64_encode($result);
     }

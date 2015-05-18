@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use RandomLib\Generator;
 
 /**
  * Testcase for the Pbkdf2HashingStrategy
@@ -23,6 +24,11 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function hashPasswordWithMatchingPasswordAndParametersSucceeds()
     {
         $strategy = new \TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
+
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
+        $this->inject($strategy, 'randomGenerator', $mockRandomGenerator);
+
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
         $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'));
@@ -36,6 +42,11 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function hashAndValidatePasswordWithNotMatchingPasswordOrParametersFails()
     {
         $strategy = new \TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
+
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
+        $this->inject($strategy, 'randomGenerator', $mockRandomGenerator);
+
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
         $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different password should not match');
