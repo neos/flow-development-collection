@@ -52,7 +52,7 @@ interface StorageInterface
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      * @api
      */
     public function getObjects();
@@ -61,7 +61,7 @@ interface StorageInterface
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
      * @param CollectionInterface $collection
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      * @api
      */
     public function getObjectsByCollection(CollectionInterface $collection);

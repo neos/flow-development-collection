@@ -84,7 +84,10 @@ class ResourceCommandController extends CommandController
             foreach ($collections as $collection) {
                 /** @var CollectionInterface $collection */
                 $this->outputLine('Publishing resources of collection "%s"', array($collection->getName()));
-                $collection->publish();
+                $target = $collection->getTarget();
+                $target->publishCollection($collection, function ($iteration) {
+                    $this->clearState($iteration);
+                });
             }
         } catch (Exception $exception) {
             $this->outputLine();
@@ -121,7 +124,10 @@ class ResourceCommandController extends CommandController
 
         $brokenResources = array();
         $relatedAssets = new \SplObjectStorage();
-        foreach ($this->resourceRepository->findAll() as $resource) {
+        $iterator = $this->resourceRepository->findAllIterator();
+        foreach ($this->resourceRepository->iterate($iterator, function ($iteration) {
+            $this->clearState($iteration);
+        }) as $resource) {
             $this->output->progressAdvance(1);
             /* @var \TYPO3\Flow\Resource\Resource $resource */
             $stream = $resource->getStream();
@@ -183,6 +189,18 @@ class ResourceCommandController extends CommandController
                     $this->quit(0);
                 break;
             }
+        }
+    }
+
+    /**
+     * This method is used internal as a callback method to clear doctrine states
+     *
+     * @param integer $iteration
+     */
+    protected function clearState($iteration)
+    {
+        if ($iteration % 1000 === 0) {
+            $this->persistenceManager->clearState();
         }
     }
 }

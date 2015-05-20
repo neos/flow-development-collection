@@ -11,7 +11,11 @@ namespace TYPO3\Flow\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Persistence\Repository;
 
@@ -29,7 +33,19 @@ class ResourceRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Resource\Resource';
+    const ENTITY_CLASSNAME = Resource::class;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManager
+     */
+    protected $entityManager;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @var \SplObjectStorage
@@ -103,6 +119,62 @@ class ResourceRepository extends Repository
         }
 
         return $object;
+    }
+
+    /**
+     * Iterator over an IterableResult and return a Generator
+     *
+     * This methos is useful for batch processing huge result set as it clear the object
+     * manager and detach the current object on each iteration.
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            $object = current($object);
+            yield $object;
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+            ++$iteration;
+        }
+    }
+
+    /**
+     * Finds all objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findAllIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('Resource')
+            ->from($this->getEntityClassName(), 'Resource')
+            ->getQuery()->iterate();
+    }
+
+    /**
+     * Finds all objects by collection name and return an IterableResult
+     *
+     * @param string $collectionName
+     * @return IterableResult
+     */
+    public function findByCollectionNameIterator($collectionName)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('Resource')
+            ->from($this->getEntityClassName(), 'Resource')
+            ->where('Resource.collectionName = :collectionName')
+            ->setParameter(':collectionName', $collectionName)
+            ->getQuery()->iterate();
     }
 
     /**

@@ -153,13 +153,14 @@ class FileSystemTarget implements TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\Collection $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
+     * @param callable $callback Function called after each resource publishing
      * @return void
      * @throws Exception
      */
-    public function publishCollection(Collection $collection)
+    public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
-        foreach ($collection->getObjects() as $object) {
+        foreach ($collection->getObjects($callback) as $object) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
