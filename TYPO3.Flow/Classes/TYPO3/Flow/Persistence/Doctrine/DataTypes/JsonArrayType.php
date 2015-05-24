@@ -104,7 +104,7 @@ class JsonArrayType extends DoctrineJsonArrayType {
 			return NULL;
 		}
 
-		return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT);
+		return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
 	}
 
 	/**
