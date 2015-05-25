@@ -37,6 +37,6 @@ class Package extends BasePackage {
 							[^\'\\\\]*		# unrolled loop following Jeffrey E.F. Friedl
 						)*\'
 				)*
-            )}
+			)}
 			$/x';
 }
