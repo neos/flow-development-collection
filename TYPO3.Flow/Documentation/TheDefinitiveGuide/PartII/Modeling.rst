@@ -2,17 +2,15 @@
 Modeling
 ========
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
-
 Before we kickstart our first application, let's have a quick look in what
-TYPO3 Flow differs from other frameworks.
+Flow differs from other frameworks.
 
-We claim that TYPO3 Flow **lets you concentrate on the essential** and in fact this
-is one major design goal we followed in the making of TYPO3 Flow. There are many
+We claim that Flow **lets you concentrate on the essential** and in fact this
+is one major design goal we followed in the making of Flow. There are many
 factors which can distract developers from their principal task to create an
 application solving real-world problems. Most of them are infrastructure-
 related and reappear in almost every project: security, database, validation,
-persistence, logging, visualization and much more. TYPO3 Flow preaches legible code,
+persistence, logging, visualization and much more. Flow preaches legible code,
 well-proven design patterns, true object orientation and provides first class
 support for Domain-Driven Design. And it takes care of most of the cross-cutting
 concerns, separating them from the business logic of the application. [#]_ [#]_
@@ -48,12 +46,12 @@ from the other applications and resides in its own layer, the **domain layer**.
 .. tip::
 	Of course there is much more to say about Domain-Driven Design which
 	doesn't belong in this tutorial. A good starter is the :ref:`section about DDD <ch-concepts-of-modern-programming>`
-	in the TYPO3 Flow documentation.
+	in the Flow documentation.
 
 Domain Model
 ============
 
-Our first TYPO3 Flow application will be a blog system. Not because programming
+Our first Flow application will be a blog system. Not because programming
 blogs is particularly fancy but because you will
 a) feel instantly at home with the domain and
 b) it is comparable with tutorials you might know from other frameworks.
@@ -112,7 +110,7 @@ In the same manner ``getTags`` returns all tags attached to a given Post. But
 how do you retrieve the active Blog object?
 
 All objects which can't be found by another object need to be stored in a
-repository. In TYPO3 Flow each repository is responsible for exactly one kind of an
+repository. In Flow each repository is responsible for exactly one kind of an
 object (i.e. one class). Let's look at the relation between the ``BlogRepository``
 and the ``Blog``:
 
@@ -187,7 +185,7 @@ first let's get our hands dirty and start with the actual implementation!
 		just love clean code due to the advantages I discovered in my real-
 		world projects.
 .. [#]	If it doesn't, we recommend reading our introductory sections about MVC
-		in the :doc:`TYPO3 Flow reference <../PartIII/ModelViewController>`.
+		in the :doc:`Flow reference <../PartIII/ModelViewController>`.
 .. [#]	see http://en.wikipedia.org/wiki/Active_record_pattern
 .. [#]	Of course we considered magic getters and setters. But then, how do you
 		restrict read or write access to single properties?
