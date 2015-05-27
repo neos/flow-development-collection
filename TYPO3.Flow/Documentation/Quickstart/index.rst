@@ -204,6 +204,7 @@ Let's create a *Demo* package for our fictive company *Acme*:
 
 	$ ./flow kickstart:package Acme.Demo
 	Created .../Acme.Demo/Classes/Acme/Demo/Controller/StandardController.php
+	Created .../Acme.Demo/Resources/Private/Layouts/Default.html
 	Created .../Acme.Demo/Resources/Private/Templates/Standard/Index.html
 
 The Kickstarter will create a new package directory in *Packages/Application/* resulting
@@ -249,8 +250,6 @@ method *indexAction()* which is responsible for the output you've just seen in y
 browser::
 
 	/**
-	 * Index action
-	 *
 	 * @return void
 	 */
 	public function indexAction() {
@@ -264,10 +263,10 @@ great deal of processing and sanitizing any incoming data. Try it out – create
 action method like this one::
 
 	/**
-	 * Hello action
+	 * This action outputs a custom greeting
 	 *
-	 * @param string $name Your name
-	 * @return string The hello
+	 * @param string $name your name
+	 * @return string custom greeting
 	 */
 	public function helloAction($name) {
 		return 'Hello ' . $name . '!';
@@ -297,7 +296,7 @@ should be dispatched to. In our example the parts are:
 * *Standard* (controller name)
 * *hello* (action name)
 
-If everything went fine, you should be greeted by a friendly "`Hello John!`" – if that's
+If everything went fine, you should be greeted by a friendly "`Hello Robert!`" – if that's
 the name you passed to the action. Also try leaving out the *name* parameter in the URL –
 TYPO3 Flow will complain about a missing argument.
 
@@ -364,13 +363,15 @@ just generate some example with the kickstarter:
 
 	$ ./flow kickstart:actioncontroller --generate-actions --generate-related Acme.Demo CoffeeBean
 	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Model/CoffeeBean.php
+	Created .../Acme.Demo/Tests/Unit/Domain/Model/CoffeeBeanTest.php
 	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Repository/CoffeeBeanRepository.php
 	Created .../Acme.Demo/Classes/Acme/Demo/Controller/CoffeeBeanController.php
-	Created .../Acme.Demo/Resources/Private/Layouts/Default.html
+	Omitted .../Acme.Demo/Resources/Private/Layouts/Default.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Index.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/New.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Edit.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
+	As new models were generated, don't forget to update the database schema with the respective doctrine:* commands.
 
 Whenever a model is created or modified, the database structure needs to be adjusted to
 fit the new PHP code. This is something you should do consciously because existing data
@@ -422,9 +423,6 @@ With this background, the following complete code listing powering the previous 
 may seem a bit odd, if not magical to you. Take a close look at each of the methods –
 can you imagine what they do? ::
 
-	/**
-	 * CoffeeBean controller for the Acme.Demo package
-	 */
 	class CoffeeBeanController extends ActionController {
 
 		/**
@@ -434,31 +432,29 @@ can you imagine what they do? ::
 		protected $coffeeBeanRepository;
 
 		/**
-		 * Shows a list of coffee beans
+		 * @return void
 		 */
 		public function indexAction() {
 			$this->view->assign('coffeeBeans', $this->coffeeBeanRepository->findAll());
 		}
 
 		/**
-		 * Shows a single coffee bean object
-		 *
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to show
+		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+		 * @return void
 		 */
 		public function showAction(CoffeeBean $coffeeBean) {
 			$this->view->assign('coffeeBean', $coffeeBean);
 		}
 
 		/**
-		 * Shows a form for creating a new coffee bean object
+		 * @return void
 		 */
 		public function newAction() {
 		}
 
 		/**
-		 * Adds the given new coffee bean object to the coffee bean repository
-		 *
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean A new coffee bean to add
+		 * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
+		 * @return void
 		 */
 		public function createAction(CoffeeBean $newCoffeeBean) {
 			$this->coffeeBeanRepository->add($newCoffeeBean);
@@ -467,18 +463,16 @@ can you imagine what they do? ::
 		}
 
 		/**
-		 * Shows a form for editing an existing coffee bean object
-		 *
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to edit
+		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+		 * @return void
 		 */
 		public function editAction(CoffeeBean $coffeeBean) {
 			$this->view->assign('coffeeBean', $coffeeBean);
 		}
 
 		/**
-		 * Updates the given coffee bean object
-		 *
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to update
+		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+		 * @return void
 		 */
 		public function updateAction(CoffeeBean $coffeeBean) {
 			$this->coffeeBeanRepository->update($coffeeBean);
@@ -487,15 +481,15 @@ can you imagine what they do? ::
 		}
 
 		/**
-		 * Removes the given coffee bean object from the coffee bean repository
-		 *
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to delete
+		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+		 * @return void
 		 */
 		public function deleteAction(CoffeeBean $coffeeBean) {
 			$this->coffeeBeanRepository->remove($coffeeBean);
 			$this->addFlashMessage('Deleted a coffee bean.');
 			$this->redirect('index');
 		}
+
 	}
 
 You will learn all the nitty-gritty details of persistence (that is storing and
@@ -524,11 +518,9 @@ the database? The ``CoffeeBeanRepository`` is therefore tagged with an *annotati
 stating that only a single instance may exist at a time::
 
 	/**
-	 * A repository for CoffeeBeans
-	 *
 	 * @Flow\Scope("singleton")
 	 */
-	class CoffeeBeanRepository extends \TYPO3\Flow\Persistence\Repository {
+	class CoffeeBeanRepository extends Repository {
 
 Because PHP doesn't support the concept of annotations natively, we are using doc
 comments which are parsed by an annotation parser in TYPO3 Flow.
@@ -587,9 +579,8 @@ showAction
 The ``showAction`` displays a single coffee bean::
 
 	/**
-	 * Shows a single coffee bean object
-	 *
 	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to show
+	 * @return void
 	 */
 	public function showAction(CoffeeBean $coffeeBean) {
 		$this->view->assign('coffeeBean', $coffeeBean);
@@ -599,7 +590,7 @@ The corresponding template for this action is stored in this file:
 
 .. code-block:: text
 
-	Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html`
+	Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
 
 This template produces a simple representation of the ``coffeeBean`` object.
 Similar to the ``indexAction`` the coffee bean object is assigned to a Fluid variable::
@@ -658,9 +649,8 @@ The ``createAction`` is called when a form displayed by the ``newAction`` is sub
 Like the ``showAction`` it expects a ``CoffeeBean`` as its argument::
 
 	/**
-	 * Adds the given new coffee bean object to the coffee bean repository
-	 *
-	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean A new coffee bean to add
+	 * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
+	 * @return void
 	 */
 	public function createAction(CoffeeBean $newCoffeeBean) {
 		$this->coffeeBeanRepository->add($newCoffeeBean);
@@ -669,7 +659,7 @@ Like the ``showAction`` it expects a ``CoffeeBean`` as its argument::
 	}
 
 This time the argument contains not an existing coffee bean but a new one. TYPO3 Flow knows
-that the expected type is ``CoffeeBean`` (by the type hint in the method and the comment)
+that the expected type is ``CoffeeBean`` (by the type hint in the method and the param annotation)
 and thus tries to convert the POST data sent by the form into a new ``CoffeeBean`` object.
 All you need to do is adding it to the Coffee Bean Repository.
 
@@ -685,7 +675,7 @@ for the edit form is the form object assignment:
 
 .. code-block:: html
 
-	<f:form action="update" object="{coffeeBean}" name="coffeeBean">
+	<f:form action="update" object="{coffeeBean}" objectName="coffeeBean">
 		...
 	</f:form>
 
@@ -695,7 +685,7 @@ as the text box, can now refer to the coffee bean object properties:
 
 .. code-block:: html
 
-	<f:form.textbox property="name" id="name" />
+	<f:form.textfield property="name" id="name" />
 
 On submitting the form, the user will be redirected to the ``updateAction``.
 
@@ -706,9 +696,8 @@ The ``updateAction`` receives the modified coffee bean through its ``$coffeeBean
 argument::
 
 	/**
-	 * Updates the given coffee bean object
-	 *
-	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to update
+	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+	 * @return void
 	 */
 	public function updateAction(CoffeeBean $coffeeBean) {
 		$this->coffeeBeanRepository->update($coffeeBean);
