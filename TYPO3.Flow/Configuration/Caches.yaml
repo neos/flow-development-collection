@@ -113,6 +113,7 @@ Flow_Security_Cryptography_RSAWallet:
   backendOptions:
     defaultLifetime: 30
 Flow_Security_Cryptography_HashService:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
   backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
   persistent: true
 
