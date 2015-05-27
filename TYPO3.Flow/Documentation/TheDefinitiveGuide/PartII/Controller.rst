@@ -2,76 +2,138 @@
 Controller
 ==========
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
-
 Now that we have the first models and repositories in place we can almost move forward to
 creating our first controller.
+There are two types of controllers in Flow:
+
+* ``ActionControllers`` are triggered by regular HTTP requests, and
+* ``CommandControllers`` are usually invoked via the Command Line Interface.
 
 Setup Controller
 ================
 
-The ``SetupController`` will be in charge of creating a ``Blog`` object, setting a title
-and description and storing it in the ``BlogRepository``. The kickstarter created a very
-basic setup controller containing only one action, the ``indexAction``. Let's create and
-store a new blog once the index action is called:
+The ``SetupCommandController`` will be in charge of creating a ``Blog`` object, setting a title
+and description and storing it in the ``BlogRepository``::
 
-*Classes/TYPO3/Blog/Controller/SetupController.php*:
+.. code-block:: none
+
+	./flow kickstart:commandcontroller Acme.Blog Blog
+
+The kickstarter created a very basic command controller containing only one command, the ``exampleCommand``::
+
+*Classes/Acme/Blog/Command/BlogCommandController.php*:
 
 .. code-block:: php
 
 	<?php
-	namespace TYPO3\Blog\Controller;
+	namespace Acme\Blog\Command;
+
+	/*                                                                        *
+	 * This script belongs to the Flow package "Acme.Blog".                   *
+	 *                                                                        *
+	 *                                                                        */
 
 	use TYPO3\Flow\Annotations as Flow;
 
-	// ...
+	/**
+	 * @Flow\Scope("singleton")
+	 */
+	class BlogCommandController extends \TYPO3\Flow\Cli\CommandController {
 
-	class SetupController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+		/**
+		 * An example command
+		 *
+		 * The comment of this command method is also used for TYPO3 Flow's help screens. The first line should give a very short
+		 * summary about what the command does. Then, after an empty line, you should explain in more detail what the command
+		 * does. You might also give some usage example.
+		 *
+		 * It is important to document the parameters with param tags, because that information will also appear in the help
+		 * screen.
+		 *
+		 * @param string $requiredArgument This argument is required
+		 * @param string $optionalArgument This argument is optional
+		 * @return void
+		 */
+		public function exampleCommand($requiredArgument, $optionalArgument = NULL) {
+			$this->outputLine('You called the example command and passed "%s" as the first argument.', array($requiredArgument));
+		}
+
+	}
+
+Let's replace the example with a ``setupCommand`` that can be used to create the first blog from the command line::
+
+
+*Classes/Acme/Blog/Command/BlogCommandController.php*:
+
+.. code-block:: php
+
+	<?php
+	namespace Acme\Blog\Command;
+
+	/*                                                                        *
+	 * This script belongs to the Flow package "Acme.Blog".                   *
+	 *                                                                        *
+	 *                                                                        */
+
+	use Acme\Blog\Domain\Model\Blog;
+	use Acme\Blog\Domain\Model\Post;
+	use Acme\Blog\Domain\Repository\BlogRepository;
+	use Acme\Blog\Domain\Repository\PostRepository;
+	use TYPO3\Flow\Annotations as Flow;
+	use TYPO3\Flow\Cli\CommandController;
+
+	/**
+	 * @Flow\Scope("singleton")
+	 */
+	class BlogCommandController extends CommandController {
 
 		/**
 		 * @Flow\Inject
-		 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
+		 * @var BlogRepository
 		 */
 		protected $blogRepository;
 
 		/**
 		 * @Flow\Inject
-		 * @var \TYPO3\Blog\Domain\Repository\PostRepository
+		 * @var PostRepository
 		 */
 		protected $postRepository;
 
 		/**
-		 * Sets up a fresh blog and creates a sample post.
+		 * A command to setup a blog
 		 *
+		 * With this command you can kickstart a new blog.
+		 *
+		 * @param string $blogTitle the name of the blog to create
+		 * @param boolean $reset set this flag to remove all previously created blogs and posts
 		 * @return void
 		 */
-		public function indexAction() {
-			$this->blogRepository->removeAll();
-			$this->postRepository->removeAll();
+		public function setupCommand($blogTitle, $reset = FALSE) {
+			if ($reset) {
+				$this->blogRepository->removeAll();
+				$this->postRepository->removeAll();
+			}
 
-			$blog = new \TYPO3\Blog\Domain\Model\Blog();
-			$blog->setTitle('My Blog');
+			$blog = new Blog($blogTitle);
 			$blog->setDescription('A blog about Foo, Bar and Baz.');
 			$this->blogRepository->add($blog);
 
-			$post = new \TYPO3\Blog\Domain\Model\Post();
+			$post = new Post();
+			$post->setBlog($blog);
 			$post->setAuthor('John Doe');
-			$post->setTitle('Example Post');
-			$post->setContent('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+			$post->setSubject('Example Post');
+			$post->setContent('Lorem ipsum dolor sit amet, consectetur adipisicing elit.' . chr(10) . 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
 			$this->postRepository->add($post);
 
-			$blog->addPost($post);
-
-			return 'Successfully created a blog';
+			$this->outputLine('Successfully created a blog "%s"', [$blogTitle]);
 		}
+
 	}
 
-	?>
-
-You can probably figure out easily what the ``indexAction`` does – it empties the
-``BlogRepository`` and ``PostRepository``, creates a new ``Blog`` object and adds it to
-the ``BlogRepository``. In addition a sample blog post is created and added to the
-``PostRepository`` and blog. Note that if you had omitted the lines::
+You can probably figure out easily what the ``setupCommand`` does – it empties the ``BlogRepository`` and
+``PostRepository`` if the ``--reset`` flag is set, creates a new ``Blog`` object and adds it to the ``BlogRepository``.
+In addition a sample blog post is created and added to the ``PostRepository`` and blog. Note that if you had omitted the
+lines::
 
 	$this->blogRepository->add($blog);
 
@@ -85,58 +147,105 @@ the database.
 Using the blog and post repository sounds plausible, but where do you get the
 repositories from?
 
-*Classes/TYPO3/Blog/Controller/SetupController.php*:
+*Classes/Acme/Blog/Command/BlogCommandController.php*:
 
 .. code-block:: php
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
+	 * @var BlogRepository
 	 */
 	protected $blogRepository;
 
 The property declarations for ``$blogRepository`` (and ``$postRepository``) is marked with
 an ``Inject`` annotation. This signals to the object framework: I need the blog
-repository here, please make sure it's stored in this member variable. In effect TYPO3 Flow
+repository here, please make sure it's stored in this member variable. In effect Flow
 will inject the blog repository into the ``$blogRepository`` property right after your
 controller has been instantiated. And because the blog repository's scope is *singleton*
 [#]_, the framework will always inject the same instance of the repository.
 
 There's a lot more to discover about **Dependency Injection** and we recommend
-that you read the whole chapter about objects in the
-`TYPO3 Flow guide <http://flow.typo3.org/documentation/guide>`_ once you start with
-your own coding.
+that you read the whole chapter on :doc:`objects <../PartIII/ObjectManagement>` in :doc:`../PartIII/index` once you
+start with your own coding.
 
 To create the required database tables we now use the command line support to generate the
 tables for our package:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow doctrine:update
+	./flow doctrine:migrationgenerate
 
-Try out the ``SetupController`` by accessing
-http://dev.tutorial.local/typo3.blog/setup/index. If all went right you should see the
-*Successfully created a blog* message on your screen. In order to find this blog again, we
-add a method ``findActive`` to the ``BlogRepository``:
+.. code-block:: none
 
-*Classes/TYPO3/Blog/Domain/Repository/BlogRepository.php*:
+	Do you want to move the migration to one of these Packages?
+	  [0] Don't Move
+	  [1] TYPO3.Eel
+	  [2] TYPO3.Flow
+	  [3] TYPO3.Fluid
+	  [3] TYPO3.Kickstart
+	  [4] TYPO3.Welcome
+	  [5] Acme.Blog
+
+Hit a key to move the new migration to the ``Acme.Blog`` package (in this example key "5") and press <ENTER>.
+You will now find the generated migration in *Migrations/Mysql/Version<YYYYMMDDhhmmss>.php*.
+Whenever you auto-generate a migration take a few minutes to verify that it contains (only) the changes you want
+to apply. In this case the migration should look like this:
 
 .. code-block:: php
 
+	<?php
+	namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
+
+	use Doctrine\DBAL\Migrations\AbstractMigration,
+		Doctrine\DBAL\Schema\Schema;
+
 	/**
-	 * Finds the active blog.
-	 *
-	 * As of now only one Blog is supported anyway so we just assume that only one
-	 * Blog object resides in the Blog Repository.
-	 *
-	 * @return \TYPO3\Blog\Domain\Model\Blog The active blog or FALSE if none exists
+	 * Initial migration, creating tables for the "Blog" and "Post" domain models
 	 */
-	public function findActive() {
-		$query = $this->createQuery();
-		$result = $query->setLimit(1)->execute();
-		return $result->getFirst();
+	class Version20150714161019 extends AbstractMigration {
+
+		/**
+		 * @param Schema $schema
+		 * @return void
+		 */
+		public function up(Schema $schema) {
+			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+
+			$this->addSql("CREATE TABLE acme_blog_domain_model_blog (persistence_object_identifier VARCHAR(40) NOT NULL, title VARCHAR(80) NOT NULL, description VARCHAR(150) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+			$this->addSql("CREATE TABLE acme_blog_domain_model_post (persistence_object_identifier VARCHAR(40) NOT NULL, blog VARCHAR(40) DEFAULT NULL, subject VARCHAR(255) NOT NULL, date DATETIME NOT NULL, author VARCHAR(255) NOT NULL, content LONGTEXT NOT NULL, INDEX IDX_EF2000AAC0155143 (blog), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+			$this->addSql("ALTER TABLE acme_blog_domain_model_post ADD CONSTRAINT FK_EF2000AAC0155143 FOREIGN KEY (blog) REFERENCES acme_blog_domain_model_blog (persistence_object_identifier)");
+		}
+
+		/**
+		 * @param Schema $schema
+		 * @return void
+		 */
+		public function down(Schema $schema) {
+			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+
+			$this->addSql("ALTER TABLE acme_blog_domain_model_post DROP FOREIGN KEY FK_EF2000AAC0155143");
+			$this->addSql("DROP TABLE acme_blog_domain_model_blog");
+			$this->addSql("DROP TABLE acme_blog_domain_model_post");
+		}
 	}
 
+Now you can execute all pending migrations to update the database schema:
+
+.. code-block:: none
+
+	./flow doctrine:migrate
+
+And finally you can try out the ``setupCommand``:
+
+.. code-block:: none
+
+	./flow blog:setup "My Blog"
+
+and the CLI should respond with:
+
+.. code-block:: none
+
+	Successfully created a blog "My Blog"
 
 This is all we need for moving on to something more visible: the blog posts.
 
@@ -144,19 +253,37 @@ This is all we need for moving on to something more visible: the blog posts.
 Basic Post Controller
 =====================
 
-Now let us add some more code to *.../Classes/TYPO3/Blog/Controller/PostController.php*:
+Now let us add some more code to *.../Classes/Acme/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
-	...
+	<?php
+	namespace Acme\Blog\Controller;
 
-	class PostController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+	/*                                                                        *
+	 * This script belongs to the Flow package "Acme.Blog".                   *
+	 *                                                                        *
+	 *                                                                        */
+
+	use Acme\Blog\Domain\Repository\BlogRepository;
+	use Acme\Blog\Domain\Repository\PostRepository;
+	use TYPO3\Flow\Annotations as Flow;
+	use TYPO3\Flow\Mvc\Controller\ActionController;
+	use Acme\Blog\Domain\Model\Post;
+
+	class PostController extends ActionController {
 
 		/**
-		 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
 		 * @Flow\Inject
+		 * @var BlogRepository
 		 */
 		protected $blogRepository;
+
+		/**
+		 * @Flow\Inject
+		 * @var PostRepository
+		 */
+		protected $postRepository;
 
 		/**
 		 * Index action
@@ -170,7 +297,7 @@ Now let us add some more code to *.../Classes/TYPO3/Blog/Controller/PostControll
 				<ol>';
 
 			foreach ($blog->getPosts() as $post) {
-				$output .= '<li>' . $post->getTitle() . '</li>';
+				$output .= '<li>' . $post->getSubject() . '</li>';
 			}
 
 			$output .= '</ol>';
@@ -178,11 +305,13 @@ Now let us add some more code to *.../Classes/TYPO3/Blog/Controller/PostControll
 			return $output;
 		}
 
-	...
+		// ...
+
+	}
 
 The ``indexAction`` retrieves the active blog from the ``BlogRepository`` and
-outputs the blog's title and post titles [#]_. A quick look
-at http://dev.tutorial.local/typo3.blog/post [#]_ confirms that the
+outputs the blog's title and post subject lines [#]_. A quick look
+at http://dev.tutorial.local/acme.blog/post [#]_ confirms that the
 ``SetupController`` has indeed created the blog and post:
 
 .. figure:: Images/MyFirstBlog.png
@@ -199,7 +328,7 @@ created and filled with some hardcoded values. At least the posts should,
 however, be filled with values provided by the blog author, so we need to pass
 the new post as an argument to a ``createAction`` in the ``PostController``:
 
-*Classes/TYPO3/Blog/Controller/PostController.php*:
+*Classes/Acme/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -208,23 +337,21 @@ the new post as an argument to a ``createAction`` in the ``PostController``:
 	/**
 	 * Creates a new post
 	 *
-	 * @param \TYPO3\Blog\Domain\Model\Post $newPost
+	 * @param Post $newPost
 	 * @return void
 	 */
-	public function createAction(\TYPO3\Blog\Domain\Model\Post $newPost) {
-		$blog = $this->blogRepository->findActive();
-		$blog->addPost($newPost);
+	public function createAction(Post $newPost) {
 		$this->postRepository->add($newPost);
 		$this->addFlashMessage('Created a new post.');
 		$this->redirect('index');
 	}
 
 
-The ``createAction`` expects a parameter ``$post`` which is the ``Post`` object
-to be persisted. The code is quite straight-forward: add the post to the blog,
+The ``createAction`` expects a parameter ``$newPost`` which is the ``Post`` object
+to be persisted. The code is quite straight-forward: add the post to the repository,
 add a message to some flash message stack and redirect to the index action.
 Try calling the ``createAction`` now by accessing
-http://dev.tutorial.local/typo3.blog/post/create:
+http://dev.tutorial.local/acme.blog/post/create:
 
 .. figure:: Images/CreateActionWithoutArgument.png
 	:alt: Create action called without argument
@@ -232,8 +359,8 @@ http://dev.tutorial.local/typo3.blog/post/create:
 
 	Create action called without argument
 
-TYPO3 Flow analyzed the new method signature and automatically registered ``$post``
-as a required argument for ``createAction``. Because no such argument was
+Flow analyzed the new method signature and automatically registered ``$newPost`` as a
+required argument for ``createAction``. Because no such argument was
 passed to the action, the controller exits with an error.
 
 So, how do you create a new post? You need to create some HTML form which
@@ -248,5 +375,5 @@ form – this is clearly a task for the view!
 		singleton scope instead.
 .. [#]	Don't worry, the action won't stay like this – of course later we'll
 		move all HTML rendering code to a dedicated view.
-.. [#]	The *typo3.blog* stands for the package *TYPO3.Blog* and *post* specifies the
+.. [#]	The *acme.blog* stands for the package *Acme.Blog* and *post* specifies the
 		controller *PostController*.
