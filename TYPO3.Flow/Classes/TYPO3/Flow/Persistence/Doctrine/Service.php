@@ -182,13 +182,14 @@ class Service {
 
 		$databasePlatformName = $this->getDatabasePlatformName();
 		foreach ($this->packageManager->getActivePackages() as $package) {
-			$configuration->registerMigrationsFromDirectory(
-				\TYPO3\Flow\Utility\Files::concatenatePaths(array(
-					$package->getPackagePath(),
-					'Migrations',
-					$databasePlatformName
-				))
-			);
+			$path = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
+				$package->getPackagePath(),
+				'Migrations',
+				$databasePlatformName
+			));
+			if (is_dir($path)) {
+				$configuration->registerMigrationsFromDirectory($path);
+			}
 		}
 
 		return $configuration;
