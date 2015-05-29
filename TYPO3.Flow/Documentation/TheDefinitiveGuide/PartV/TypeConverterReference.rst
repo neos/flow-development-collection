@@ -3,7 +3,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2014-04-03
+This reference was automatically generated from code on 2015-05-29
 
 
 ArrayConverter
@@ -223,6 +223,19 @@ This converter transforms arrays or strings to persistent objects. It does the f
 :Source types:
  * string
  * array
+
+
+
+
+ResourceTypeConverter
+---------------------
+
+An type converter for ResourcePointer objects
+
+:Priority: 1
+:Target type: TYPO3\Flow\Resource\Resource
+:Source type: array
+
 
 
 
