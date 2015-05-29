@@ -1,0 +1,249 @@
+====================
+2.3.4
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Pin doctrine/migrations to known working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Unfortunately this needs to be repeated in the root manifest.
+
+Related: FLOW-300
+
+* Commit: `36be088 <https://git.typo3.org/Flow/Distributions/Base.git/commit/36be088188b42b4cc9be5c0d7457bb9dac52eb94>`_
+
+[TASK] Adjust to changed parameters for `commit_manifest_update`
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1216
+Depends: I791174633d2b1b0fb7263504744901d87bbb1ec6
+
+* Commit: `921df5b <https://git.typo3.org/Flow/Distributions/Base.git/commit/921df5b39642b88093bde7c90b0a456f69224ff2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] EEL expressions should be trimmed before parsing
+-----------------------------------------------------------------------------------------
+
+As the EEL parser will not accept expressions that start or end
+with a whitespace the evaluators should trim given expressions to
+avoid hard to spot errors due to additional whitespaces.
+
+Fixes: FLOW-278
+
+* Commit: `2bb5efa <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/2bb5efacb50795f06b3ce2cf28632169ba683177>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/44/
+
+* Commit: `a432dee <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a432dee3a69e02fb6681b8833f85eb8f4e8da712>`_
+
+[BUGFIX] Pin doctrine/migrations to known working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Fixes: FLOW-300
+
+* Commit: `62f3664 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/62f36644a50b9c85b1f5e03dc8a6c722e0564278>`_
+
+[BUGFIX] Avoid "too many open files" exception during I18n filesystem scan
+-----------------------------------------------------------------------------------------
+
+The I18n Service scans the filesystem for localized files in order to build
+a list of available locales, this is done with a RecursiveIterator, which
+will keep handles open in nested structures. A simple stack like now
+used in the FileMonitor prevents the problem of "too many open files"
+(leading to a fatal error) and at the same time brings clear performance
+boost. Additionally hidden directories and files (starting with ".") are
+ignored now.
+
+Fixes: NEOS-111
+
+* Commit: `ecbbd13 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ecbbd1393ac469cbf74b14bfcc3a69945c997cdb>`_
+
+[BUGFIX] Setting properties from Objects.yaml should invoke setter
+-----------------------------------------------------------------------------------------
+
+If you configure simple values via Objects.yaml they should be set
+via setter if one exists, as the setter could manipulate the
+incoming value. Without this change the injected values are directly
+set to the property circumventing the setter.
+
+Fixes: FLOW-30
+
+* Commit: `214981c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/214981c2d9aebc7dc8a4a99b971612edd616d627>`_
+
+[BUGFIX] ValidatorResolver shouldn't ask class loader for simple types
+-----------------------------------------------------------------------------------------
+
+The ValidatorResolver generates a Validator conjunction for a given class
+if that class exists. Problem is that there is no check for simple types
+before this, so a simple type will trigger the class loader (every time).
+To avoid that we now check if the given type is a simple type.
+
+Related: Icefc6eadbe7cae2e12cc2204ec6de3f25370aefa
+
+* Commit: `43589e0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/43589e08735ac1854363b2cb3ed9caadc6b29ae2>`_
+
+[BUGFIX] ClassLoader should check sub namespaces
+-----------------------------------------------------------------------------------------
+
+This change cleans the ``ClassLoader`` up and fixes a problem with
+nested autoloading namespaces. Before a nested namespace got preference
+and was only tried for loading a class. Now every possible path is
+tried for nested namespaces.
+
+An example are the two packages:
+
+- guzzlehttp/guzzle
+   Which declares autoloading as: ``"GuzzleHttp\\\\": "src/"``
+
+- guzzlehttp/log-subscriber
+   Which delcares autoloading as: ``"GuzzleHttp\\\\Subscriber\\\\Log\\\\": "src/"``
+
+As the second declaration was nested in the first one it got precedence
+for all classes inside of ``GuzzleHttp\\\\Subscriber\\\\`` making it
+impossible to load classes inside that namespace from the first package.
+With this change both paths are tried in order of their nesting level.
+
+Kudos go to Jens Schulze for reporting, preparing an initial fix and the
+test.
+
+Fixes: FLOW-238
+
+* Commit: `38b8361 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/38b836143767af0c3fdf0e2cff39db1c1958dfd4>`_
+
+[!!!][BUGFIX] Make bidirectional OneToOne relations work correctly
+-----------------------------------------------------------------------------------------
+
+This change fixes bidirectional OneToOne relations, which previously
+resulted in foreign keys being created on both sides. Therefore the
+related entities could no longer be deleted.
+
+The problem was that the joinColum mapping was created in every case,
+which doctrine interprets as a secondary hint for the owning side.
+The joinColumn should only be created for the owning side, i.e. only
+for unidirectional OneToOne and for the inversedBy side of a
+bidirectional OneToOne.
+
+This change is not breaking, but needs manual attention to fix the
+schema of own projects as follows:
+
+After upgrading to this change, you should run following commands
+from command line to update your projects:
+
+  flow doctrine:migrationgenerate
+    -> check the created migration file, it should contain a number of
+       "DROP FOREIGN KEY", "DROP INDEX" and "DROP {column}" statements
+       for each of your bidirectional OneToOne relations.
+  flow doctrine:migrate
+    -> applies the changes
+
+Fixes: FLOW-87
+
+* Commit: `a0d2d06 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a0d2d06152d0952aab7863f0e484a5993b8d1350>`_
+
+[BUGFIX] Fix "Call to undefined method ...::getPrototype()"
+-----------------------------------------------------------------------------------------
+
+When injecting dependencies that take prototype-scoped objects as
+constructor parameter, the ``ProxyClassBuilder`` class tries to
+instantiate these objects using the ``getPrototype`` method. This method
+is apparently supposed to be implemented by the proxy class, but never
+is.
+
+This results in a fatal error when the owning object is instantiated:
+
+    Fatal error: Call to undefined method My\\Class::getPrototype() in ...
+
+This commit fixes this behaviour by replacing the ``getPrototype`` call
+with a simple constructor call and adds a (kind-of) simple functional test
+for this behaviour.
+
+Fixes: FLOW-175
+
+* Commit: `06c3611 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/06c36113651ad142d538e15b0b1354dbc8a1c3f6>`_
+
+[!!!][BUGFIX] Skip automatic persistence for updated entities
+-----------------------------------------------------------------------------------------
+
+When trying to persist changes in a "safe request" (e.g. ``GET``) Flow
+throws an exception::
+
+  Detected modified or new objects [...] to be persisted which is not
+  allowed for "safe requests"
+
+including details on how to work around this.
+
+This currently only works if entities have been *added* or *removed*.
+
+With this change also *updates* to entities are tracked correctly so
+that automatic persistence is skipped for modified objects for safe
+requests.
+
+This is a breaking change when code relied on the incorrect behavior of
+automatically persisting changes even for safe requests.
+In this case make sure to trigger updates only via unsafe requests (e.g.
+``POST`` or ``PUT``).
+If that's not an option, the issue can be worked around with a manual
+call to ``PersistenceManager::persistAll()``.
+
+Fixes: FLOW-84
+* Related: `#47252 <http://forge.typo3.org/issues/47252>`_
+* Related: `#51570 <http://forge.typo3.org/issues/51570>`_
+
+* Commit: `bfffa3c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bfffa3c501bfd5362e454ccaeaf351a4f404b6d3>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Use propertyName instead of modelName for form labels
+-----------------------------------------------------------------------------------------
+
+The NewTemplate used the ``modelName`` for each property as label
+instead of the ``propertyName``, this commit fixes that to be in
+line with the EditTemplate.
+
+Kudos for finding and fixing to Guido.
+
+* Commit: `fbad6a0 <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/fbad6a0ce0093b95b87abdc8ea06e49bcc0c3ca7>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

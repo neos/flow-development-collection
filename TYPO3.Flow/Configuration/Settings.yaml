@@ -1,0 +1,451 @@
+#                                                                        #
+# Configuration for the TYPO3 Flow Framework                             #
+#                                                                        #
+# This file contains the default base configuration for the TYPO3 Flow   #
+# Framework. Don't modify this file but add configuration options to     #
+# the Settings.yaml file in the in global Configuration/ directory       #
+# instead.                                                               #
+#                                                                        #
+
+TYPO3:
+
+  Flow:
+
+    aop:
+
+      # Registers global objects to be evaluated for dynamic pointcut expressions
+      globalObjects:
+
+        securityContext: TYPO3\Flow\Security\Context
+
+    compatibility:
+
+      uriBuilder:
+
+        # A compatibility flag that affects the behavior of the UriBuilder when creating relative URIs:
+        # TRUE: The UriBuilder creates relative path like "some/path", a base tag is required in the respective HTML head
+        # FALSE: The UriBuilder prefixes the path with the scripts request path: "/document/root/some/path", no base tag will be required
+        #
+        # NOTE: This flag will be obsolete with version 2.2 and removed in version 3.0 of Flow
+        createRelativePaths: FALSE
+
+    configuration:
+
+      # Enables the configuration file cache which compiles YAML files into
+      # much faster to load PHP files.
+      #
+      # NOTE: You must clear all caches right after switching this option OFF
+      compileConfigurationFiles: TRUE
+
+    core:
+
+      # TYPO3 Flow's application context
+      # This setting is automatically set by the configuration manager and can't be set manually.
+      context: ''
+
+      # Path and filename of the PHP binary
+      # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
+      phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
+
+      # optional list of variables (key: value) that will be set for all Flow CLI sub requests
+      subRequestEnvironmentVariables: []
+
+      # Set which php.ini file should be used for the CLI sub requests.
+      # If not set (that is value equals NULL) the php.ini file of the executing process (usually the web server's) is used.
+      # If set to a path and filename, the specified php.ini file is loaded.
+      # If set to boolean FALSE, Flow does not try to specify any php.ini file to the sub process.
+      subRequestPhpIniPathAndFilename: NULL
+
+    error:
+
+      exceptionHandler:
+
+        # Defines the global, last-resort exception handler.
+        # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
+        className: TYPO3\Flow\Error\ProductionExceptionHandler
+
+        # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
+        defaultRenderingOptions:
+          renderTechnicalDetails: FALSE
+          logException: TRUE
+
+        # Rendering groups can define special renderings depending on status code or class of the
+        # thrown exception.
+        renderingGroups:
+
+          notFoundExceptions:
+            matchingStatusCodes: [404]
+            options:
+              logException: FALSE
+              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, the page you requested was not found.'
+
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, the database connection couldn''t be established.'
+
+      errorHandler:
+
+        # Defines which errors should result in an exception thrown - all other error
+        # levels will be silently ignored. Only errors that can be handled in an
+        # user-defined error handler are affected, of course.
+        exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%']
+
+    http:
+      # Defines an explicit base URI that should be used. This affects
+      # resource management, routing and all other parts accessing
+      # "Http\Request->getBaseUri()".
+      #
+      # If this setting is NULL, the base URI will be detected from the current
+      # request (default).
+      baseUri: NULL
+
+      # Defines the workflow of one request from bootstrap to the HTTP response
+      #
+      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
+      #
+      chain:
+
+        'preprocess':
+          position: 'before process'
+          chain: []
+
+        'process':
+          chain:
+            'routing':
+              position: 'start'
+              component: 'TYPO3\Flow\Mvc\Routing\RoutingComponent'
+            'dispatching':
+              component: 'TYPO3\Flow\Mvc\DispatchComponent'
+
+        'postprocess':
+          chain:
+            'standardsCompliance':
+              position: 'end'
+              component: 'TYPO3\Flow\Http\Component\StandardsComplianceComponent'
+
+    log:
+
+      # Settings for TYPO3 Flow's default loggers
+      systemLogger:
+        logger: TYPO3\Flow\Log\Logger
+        backend: TYPO3\Flow\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: '%FLOW_PATH_DATA%Logs/System.log'
+           createParentDirectories: TRUE
+           severityThreshold: '%LOG_INFO%'
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+           logMessageOrigin: FALSE
+
+      securityLogger:
+        backend: TYPO3\Flow\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
+           createParentDirectories: TRUE
+           severityThreshold: '%LOG_INFO%'
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+           logIpAddress: TRUE
+
+      sqlLogger:
+        backend: TYPO3\Flow\Log\Backend\FileBackend
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
+          createParentDirectories: TRUE
+          severityThreshold: '%LOG_INFO%'
+          maximumLogFileSize: 10485760
+          logFilesToKeep: 1
+
+    i18n:
+
+      # The default locale identifier.
+      defaultLocale: en
+
+      # The fallback rule to use for locale resolution
+      fallbackRule:
+        # Strictly use the defined order (without implicit locale fallback)
+        strict: FALSE
+        # The locales identifiers to use in their desired order
+        order: []
+
+    object:
+
+      # If enabled, the Object Manager will - additionally to the class files found
+      # in the "Classes" directory - also register class files found in the directory
+      # "Tests/Functional/". Enabling this feature obviously only makes sense in a
+      # testing context.
+      registerFunctionalTestClasses: FALSE
+
+      # Exclude classes from object management (Reflection and Configuration building).
+      # Sequence of package keys (a * as wildcard as last character is allowed) each
+      # with a sequence of regular expressions.
+      # The package key must match the key found in PackageStates.php regarding case,
+      # so it might be needed to add two inclusions (like for Doctrine below).
+      # Each regular expression will be tested against the list of fully qualified
+      # class names in the package and classes will be excluded if matching.
+      excludeClasses:
+        'Doctrine.*': ['.*']
+        'doctrine.*': ['.*']
+        'symfony.*': ['.*']
+        'phpunit.*': ['.*']
+        'mikey179.vfsStream': ['.*']
+        # workaround, should rather be deactivated
+        'Composer.Installers': ['.*']
+
+    package:
+
+      # This can be used to make packages inactive, even though they would be
+      # activated automatically otherwise.
+      inactiveByDefault:
+        - 'Composer.Installers'
+      # Option for the PackageManager::Create to map the packagesPath by package type
+      packagesPathByType:
+        'typo3-flow-package': 'Application'
+        'typo3-flow-framework': 'Framework'
+
+    persistence:
+
+      # Options for the default Doctrine persistence
+      backendOptions:
+        driver: 'pdo_mysql'
+        host: '127.0.0.1'
+        dbname: NULL
+        user: NULL
+        password: NULL
+        charset: 'utf8'
+      cacheAllQueryResults: FALSE
+      doctrine:
+        # By default Doctrine proxy compilation is done in the Flow bootstrap
+        enable: TRUE
+        sqlLogger: NULL
+
+    reflection:
+
+      # A list of tags to be ignored during reflection
+      ignoredTags: ['api', 'package', 'subpackage', 'license', 'copyright', 'author', 'const', 'see', 'todo', 'scope', 'fixme', 'test', 'expectedException', 'expectedExceptionMessage', 'expectedExceptionCode', 'depends', 'dataProvider', 'group', 'codeCoverageIgnore', 'requires', 'Given', 'When', 'Then', 'BeforeScenario', 'AfterScenario', 'fixtures', 'Isolated', 'AfterFeature', 'BeforeFeature', 'BeforeStep', 'AfterStep', 'WithoutSecurityChecks', 'covers']
+
+      # If enabled, the Reflection Service notes all incorrect or inconsistent usage
+      # of @param annotations in the default log.
+      logIncorrectDocCommentHints: FALSE
+
+    resource:
+
+      publishing:
+
+        # If enabled, the publisher will check if the static resources of active packages
+        # have changed and if so publishes them again. If disabled, static package resources
+        # are only published once and changes are unnoticed until the related cache is flushed.
+        detectPackageResourceChanges: FALSE
+
+        # Options for the File System publishing target
+        fileSystem:
+
+          # Strategy for mirroring files: Either "copy" or "link"
+          mirrorMode: link
+
+    security:
+
+      enable: TRUE
+
+      firewall:
+
+        # If set to TRUE, the firewall will reject any request that is not
+        # explicitly allowed by a configured request filter.
+        rejectAll: FALSE
+
+        # The filter configuration for the firewall. Here is an example configuration array:
+        #
+        # filters:
+        #   -
+        #     patternType:  URL
+        #     patternValue: /some/url/.*
+        #     interceptor:  AccessGrant
+        #   -
+        #     patternType:  URL
+        #     patternValue: /some/url/blocked.*
+        #     interceptor:  AccessDeny
+        #
+        # If the objects are in the namespace "\TYPO3\Flow\Security" it is enough to specify
+        # the last name of the class name, e.g. AccessGrant
+        filters:
+          -
+            patternType: CsrfProtection
+            patternValue:
+            interceptor: AccessDeny
+
+      authentication:
+
+        # Array of authentication providers that should be used for authentication.
+        # If you define a request pattern, the provider will only be called if the pattern
+        # matches the current request. If the objects are in the namespace
+        # "\TYPO3\Flow\Security" it is sufficient to specify the last part of the class name,
+        # e.g. PersistedUsernamePasswordProvider
+        # Note: Authentication will be performed in the given order of the providers.
+        # So make sure, that the primary authentication method is the first array entry.
+        #
+        # You'll need to configure your own authentication provider depending on your use case.
+        # Below you find an example which uses simple username/password authentication. In
+        # case the user is not logged in, the web redirect entry point, which redirects her
+        # to the login action that displays the authentication form.
+        #
+        #  AdminInterfaceProvider:
+        #    provider: 'PersistedUsernamePasswordProvider'
+        #    providerOptions:
+        #      fooBar: 'baz'
+        #    requestPatterns:
+        #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
+        #    entryPoint: 'WebRedirect'
+        #    entryPointOptions:
+        #      routeValues:
+        #        '@package': 'Your.Package'
+        #        '@controller': 'Authenticate'
+        #        '@action': 'login'
+        #        '@format': 'html'
+        providers: []
+
+        # One of the available authentication strategies:
+        #
+        #   "anyToken":
+        #     Authenticate as many tokens as possible but do not require
+        #     an authenticated token (e.g. for guests with role Everybody).
+        #
+        #   "allTokens":
+        #     Authenticate all active tokens and throw an exception if
+        #     an active token could not be authenticated.
+        #
+        #   "oneToken":
+        #     Stop authentication of tokens after first successful
+        #     authentication of a token. Requires an authenticated token.
+        #
+        #   "atLeastOneToken" (default):
+        #     Authenticate as many tokens as possible but do not fail if
+        #     a token could not be authenticated as long as at least one
+        #     token could be authenticated.
+        authenticationStrategy: atLeastOneToken
+
+      authorization:
+        # An array of access decision voters that should vote when access decisions are made
+        accessDecisionVoters: [TYPO3\Flow\Security\Authorization\Voter\Policy]
+
+        # If this is set to TRUE access will be granted even if all voters abstain
+        allowAccessIfAllVotersAbstain: FALSE
+
+      # "Cross-site request forgery" is an attack method to have authorized users trigger
+      # actions without them knowing it. This section is configuring the built-in CSRF
+      # protection in Flow.
+      csrf:
+        # The strategy to use for generating and using the CSRF protection token. Available are
+        # onePerSession, onePerUri and onePerRequest.
+        csrfStrategy: onePerSession
+
+      cryptography:
+
+        hashingStrategies:
+
+          # The default strategy will be used to hash or validate passwords if no specific strategy is given
+          default: bcrypt
+
+          # If a fallback strategy is configured, it will be used to validate passwords without a strategy identifier.
+          # This should be configured to the hashing strategy that was used before strategy identifiers were introduced
+          # with Flow 1.1 (pbkdf2 by default) to allow for a seamless migration.
+          fallback: pbkdf2
+
+          pbkdf2: TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy
+          bcrypt: TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy
+          saltedmd5: TYPO3\Flow\Security\Cryptography\SaltedMd5HashingStrategy
+
+        Pbkdf2HashingStrategy:
+
+          # Length of the random, dynamic salt that will be stored with the hashed password
+          dynamicSaltLength: 8
+          # Iteration count, high enough to make brute-force attacks unfeasible, use a custom value!
+          iterationCount: 10000
+          # Length of the derived key (hashed password) in bytes
+          derivedKeyLength: 64
+          # Hash function to use for PBKDF2
+          algorithm: sha256
+
+        BCryptHashingStrategy:
+
+          # Cost of a BCrypt operation, can be between 4 and 31
+          # The faster your machine is, the higher this number should be
+          cost: 14
+
+        RSAWalletServicePHP:
+
+          # Path to the file where RSA keys shall be stored
+          # Note: This file must not be accessible by the public!
+          keystorePath: '%FLOW_PATH_DATA%Persistent/RsaWalletData'
+
+          # Defines the openSSL configuration used for key handling.
+          # See the PHP openSSL documentation for possible settings.
+          openSSLConfiguration: []
+
+    session:
+
+      # Specifies the number of seconds a user must be idle before the session
+      # automatically expires. If set to "0", a session will never expire
+      # automatically.
+      inactivityTimeout: 3600
+
+      # A specific name for the session, used in the session cookie.
+      # The session name must be alphanumerical and must contain at least one
+      # character – not only numbers.
+      #
+      # If left empty, the session name will be determined from the base URL.
+      name: 'TYPO3_Flow_Session'
+
+      # Configuration for handling of expired sessions
+      garbageCollection:
+
+        # The probability in percent of a session shutdown triggering a garbage
+        # collection which removes expired session data from other sessions.
+        #
+        # Examples:
+        #    1    (would be a 1% chance to clean up)
+        #   20    (would be a 20% chance to clean up)
+        #    0.42 (would be a 0.42 % chance to clean up)
+        probability: 30
+
+        # The number of invalid and expired sessions which are removed per garbage
+        # collection run.
+        maximumPerRun: 1000
+
+      # Configuration for the session cookie:
+      cookie:
+
+        # Cookie lifetime in seconds
+        # Note that if you want to sessions expire automatically, you should rather
+        # set inactivityTimeout to the wanted value. Only in rare cases you'd want
+        # some other cookie lifetime than "0".
+        lifetime: 0
+
+        # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
+        path: /
+
+        # Force SSL cookies.
+        secure: FALSE
+
+        # Allow http access only.
+        httponly: TRUE
+
+        # The cookie domain. Use dot notation if cookies should be valid for
+        # all subdomains.
+        #domain: .domain.com
+        domain: NULL
+
+    utility:
+      environment:
+
+        # Defines the base directory which Flow may use for storing different kinds
+        # of temporary files.
+        # The directory must be writable and Flow will automatically create a sub
+        # directory (named after the context) which will contain the actual temporary files.
+        temporaryDirectoryBase: '%FLOW_PATH_DATA%Temporary/'
+
+      lockStrategyClassName: 'TYPO3\Flow\Utility\Lock\FlockLockStrategy'
