@@ -1,0 +1,293 @@
+====================
+2.2.4
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Adjust to changed parameters for `commit_manifest_update`
+-----------------------------------------------------------------------------------------
+
+Related: NEOS-1216
+Depends: I791174633d2b1b0fb7263504744901d87bbb1ec6
+
+* Commit: `9979143 <https://git.typo3.org/Flow/Distributions/Base.git/commit/99791432ad22da7378024430dd078460d0bd7b80>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] EEL expressions should be trimmed before parsing
+-----------------------------------------------------------------------------------------
+
+As the EEL parser will not accept expressions that start or end
+with a whitespace the evaluators should trim given expressions to
+avoid hard to spot errors due to additional whitespaces.
+
+Fixes: FLOW-278
+
+* Commit: `986cdff <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/986cdff9857bc27e6fa22ebba0ce9c90db238163>`_
+
+[BUGFIX] Children operation does not work with collections
+-----------------------------------------------------------------------------------------
+
+Children operation applied to entities and giving the name of a
+collection property don't retrieve the collection
+
+* Fixes: `#52450 <http://forge.typo3.org/issues/52450>`_
+* Commit: `e545497 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/e54549706274070b10ea67b064569aec02c9125c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/45/
+
+* Commit: `a9ecbb1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a9ecbb11d7fd8fb4e5a5a709f9ae81bfd12b55c6>`_
+
+[BUGFIX] Pin doctrine/migrations to known working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Fixes: FLOW-300
+
+* Commit: `9707979 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9707979ea49225e05f3f1145bee2efbb1cacf473>`_
+
+[BUGFIX] Support persisting cloned related entities
+-----------------------------------------------------------------------------------------
+
+Cloning entities which are fetched as Doctrine proxy leads to an fatal
+error in PersistenceManager. This patch fixes that behaviour and provides
+a functional test for the use case.
+
+* Commit: `1e45442 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1e4544258393926119600849d9830f1ba78f593e>`_
+
+[!!!][BUGFIX] Skip automatic persistence for updated entities
+-----------------------------------------------------------------------------------------
+
+When trying to persist changes in a "safe request" (e.g. ``GET``) Flow
+throws an exception::
+
+  Detected modified or new objects [...] to be persisted which is not
+  allowed for "safe requests"
+
+including details on how to work around this.
+
+This currently only works if entities have been *added* or *removed*.
+
+With this change also *updates* to entities are tracked correctly so
+that automatic persistence is skipped for modified objects for safe
+requests.
+
+This is a breaking change when code relied on the incorrect behavior of
+automatically persisting changes even for safe requests.
+In this case make sure to trigger updates only via unsafe requests (e.g.
+``POST`` or ``PUT``).
+If that's not an option, the issue can be worked around with a manual
+call to ``PersistenceManager::persistAll()``.
+
+Fixes: FLOW-84
+* Related: `#47252 <http://forge.typo3.org/issues/47252>`_
+* Related: `#51570 <http://forge.typo3.org/issues/51570>`_
+
+* Commit: `a0b36f9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a0b36f97d8d0b57fa6851206968a6492dec7707c>`_
+
+[BUGFIX] Support numeric identifiers in dynamic route parts
+-----------------------------------------------------------------------------------------
+
+Currently the dynamic route part handler provided by Flow (namely
+``DynamicRoutePart`` and ``IdentityRoutePart``) only support objects
+with string identifiers.
+
+With this change also numeric identifiers are supported, for example
+for entities with a numeric auto_increment identifier.
+
+* Fixes: `#48887 <http://forge.typo3.org/issues/48887>`_
+* Fixes: `#58517 <http://forge.typo3.org/issues/58517>`_
+
+* Commit: `8687bfb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8687bfb8c34fe4a50febff3f968152decd98aaa3>`_
+
+[BUGFIX] Start session when fetching a CSRF token
+-----------------------------------------------------------------------------------------
+
+This change adds a ``@Flow\\Session(autoStart=true)`` annotation to the
+method ``Security\\Context::getCsrfProtectionToken()``.
+
+Background:
+
+Currently ``CSRF`` tokens are bound to a session. Thus fetching a token
+without starting a session makes no sense because the token will be
+invalid on the next request.
+
+In the long run we might be able to create "stateless" CSRF tokens that
+don't require a session.
+
+Related: FLOW-130
+
+Depends: I896f6a722445deede1f0a656ea73db04f0d2e978
+
+* Commit: `7908073 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7908073ffe878555a5a71b42443b2ecf239bdb39>`_
+
+[BUGFIX] Disable security for CLI requests
+-----------------------------------------------------------------------------------------
+
+Currently it's not possible to invoke methods that are covered by a
+policy via CLI because the security context is not yet initialized
+leading to a ``The security Context cannot be initialized yet``
+exception.
+
+With this change all authorization checks are disabled for command
+controllers.
+
+Fixes: #FLOW-163
+
+* Commit: `c56b780 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c56b78037484eab40b59ea6b65b81309dbf538c8>`_
+
+[BUGFIX] Properly resolve case of Subpackage Key in ActionRequest
+-----------------------------------------------------------------------------------------
+
+``ActionRequest::getControllerSubpackageKey()`` failed to return the
+correctly cased subpackage key.
+This is not the case for the other ``getController*()`` getters and
+can lead to issues (e.g. "Template could not be loaded" Fluid
+exceptions on case-sensitive file systems.
+
+This change adjusts the ``getControllerSubpackageKey()`` method to
+``getControllerName()`` which already uses the correctly cased
+controllerObjectName to extract the controller name.
+
+Fixes: FLOW-126
+
+* Commit: `d35837c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d35837c171aad0ad7d7a3c75012461250343c0ec>`_
+
+[BUGFIX] ValidatorResolver shouldn't ask class loader for simple types
+-----------------------------------------------------------------------------------------
+
+The ValidatorResolver generates a Validator conjunction for a given class
+if that class exists. Problem is that there is no check for simple types
+before this, so a simple type will trigger the class loader (every time).
+To avoid that we now check if the given type is a simple type.
+
+Related: Icefc6eadbe7cae2e12cc2204ec6de3f25370aefa
+
+* Commit: `a7b4a59 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a7b4a59e70495f748e96a03926a510bc07041562>`_
+
+[!!!][BUGFIX] Make bidirectional OneToOne relations work correctly
+-----------------------------------------------------------------------------------------
+
+This change fixes bidirectional OneToOne relations, which previously
+resulted in foreign keys being created on both sides. Therefore the
+related entities could no longer be deleted.
+
+The problem was that the joinColum mapping was created in every case,
+which doctrine interprets as a secondary hint for the owning side.
+The joinColumn should only be created for the owning side, i.e. only
+for unidirectional OneToOne and for the inversedBy side of a
+bidirectional OneToOne.
+
+This change is not breaking, but needs manual attention to fix the
+schema of own projects as follows:
+
+After upgrading to this change, you should run following commands
+from command line to update your projects:
+
+  flow doctrine:migrationgenerate
+    -> check the created migration file, it should contain a number of
+       "DROP FOREIGN KEY", "DROP INDEX" and "DROP {column}" statements
+       for each of your bidirectional OneToOne relations.
+  flow doctrine:migrate
+    -> applies the changes
+
+Fixes: FLOW-87
+
+* Commit: `025a025 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/025a02516b694969e3225279a470a450235ceec1>`_
+
+[BUGFIX] Fix "Call to undefined method ...::getPrototype()"
+-----------------------------------------------------------------------------------------
+
+When injecting dependencies that take prototype-scoped objects as
+constructor parameter, the ``ProxyClassBuilder`` class tries to
+instantiate these objects using the ``getPrototype`` method. This method
+is apparently supposed to be implemented by the proxy class, but never
+is.
+
+This results in a fatal error when the owning object is instantiated:
+
+    Fatal error: Call to undefined method My\\Class::getPrototype() in ...
+
+This commit fixes this behaviour by replacing the ``getPrototype`` call
+with a simple constructor call and adds a (kind-of) simple functional test
+for this behaviour.
+
+Fixes: FLOW-175
+
+* Commit: `a3fd6c6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a3fd6c6f89e936bacf2fd70d0004cc023ad27928>`_
+
+[BUGFIX] PersistentObjectConverter works with "immutable" properties
+-----------------------------------------------------------------------------------------
+
+The PersistentObjectConverter sets convertedChildProperties on the
+object after it was created (either newly constructed or
+hydrated from persistance). Creating a new object will filter
+constructor arguments from the convertedChildProperties but
+if the object already existed that does not happen.
+This poses a problem for objects that accept arguments in the
+constructor that are not settable afterwards. So those properties are
+considered "immutable".
+In cases where you cannot be sure if an object already exists and you
+give the identity and all properties of an object with "immutable"
+properties the property mapping will fail if the object already existed
+as the converter tries to set the "immutable" properties as well.
+
+With this change we check for this kind of properties and compare the
+given value with the already set value. In case they are identical
+we ignore the given value and proceed with the property mapping. In
+case they differ there is an inconsistency in your data that we cannot
+handle and so throw an exception.
+This is not breaking as before in all cases an exception would be thrown.
+
+Fixes: NEOS-937
+
+* Commit: `9eb75a4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9eb75a41db4843fca81e3e702715b0bf5db7d793>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Use propertyName instead of modelName for form labels
+-----------------------------------------------------------------------------------------
+
+The NewTemplate used the ``modelName`` for each property as label
+instead of the ``propertyName``, this commit fixes that to be in
+line with the EditTemplate.
+
+Kudos for finding and fixing to Guido.
+
+* Commit: `e821b9f <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/e821b9f35cb146cf85744d02b87bca3e8d628cc6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
