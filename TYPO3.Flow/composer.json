@@ -18,7 +18,7 @@
         "typo3/eel": "*",
 
         "doctrine/orm": "2.4.*",
-        "doctrine/migrations": "dev-master",
+        "doctrine/migrations": "1.0.*",
 
         "symfony/yaml": "2.5.*",
         "symfony/dom-crawler": "2.5.*",
