@@ -1,0 +1,236 @@
+====================
+2.2.1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/20/
+
+* Commit: `30b2594 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/30b2594b3d69dfbb95e862c0f01fc1143e069a9c>`_
+
+[FEATURE] Improve type converters
+-----------------------------------------------------------------------------------------
+
+The ArrayConverter can now convert CSV strings (with configurable
+delimiter) and JSON to array, depending on configuration. Conversion of
+Resource instances to arrays is added with configurable file export
+(base64 or external file).
+
+The StringConverter accepts float, boolean, array and DateTime as source
+types now. For DateTime conversion the W3C format is the default and can
+be changed through configuration. Array sources can be converted to a
+CSV string (with configurable delimiter)  or JSON, again depending on
+configuration.
+
+A ResourceConverter has been added. Unlike the ResourceTypeConverter it
+is not for converting file uploads to Resource instances but handles
+conversion of string and array sources.
+
+Further changes:
+
+* the BooleanConverter accepts integer and float as source types
+* the IntegerConverter now can convert DateTime soures (to timestamp)
+* add (more) class documentation for type converters to improve the
+  converter reference in the Flow guide appendix
+
+Related: NEOS-158
+
+* Commit: `1a8db9b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1a8db9b1926a3073f24f47c068d477e0411e41fa>`_
+
+[FEATURE] Allow logging of exceptions to be switched off
+-----------------------------------------------------------------------------------------
+
+The AbstractExceptionHandler logs all exceptions before passing control
+to the concrete ExceptionHandler. This means that even if an exception
+is handled with a custom template (e.g. for exceptions grouped as 404
+status errors) the error log is filled with exceptions and the traces
+fill up the Data/Logs/Exceptions directory.
+
+Now the new option ``logException`` can be used to switch that off. Flow
+sets this to FALSE for the ``notFoundExceptions`` rendering group by
+default.
+
+* Commit: `9b6059f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9b6059f7268adfed4d06e652732b0155fbb00b3f>`_
+
+[BUGFIX] Proxy compiler should only remove opening php tag
+-----------------------------------------------------------------------------------------
+
+Without this change the proxy compiler throws away the full line
+containing the opening php tag, but that is not correct as this
+first line could contain important information like the namepace
+declaration.
+
+This change just removed the opening php tag and all following
+whitespace but leaves anything else in the line unchanged.
+
+Fixes: FLOW-3
+
+* Commit: `8a52e5e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8a52e5ea2588f6f38061d1c42e2b9279fc7e8692>`_
+
+[TASK] Raise cURL timeout
+-----------------------------------------------------------------------------------------
+
+This change raises the default cURL timeout to 30 seconds.
+
+* Commit: `460f422 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/460f422447829080ddd724dd56cb6580c85b3d67>`_
+
+[TASK] Use Unicode-aware strtolower in equals()
+-----------------------------------------------------------------------------------------
+
+The implementation of equals() in Doctrine\\Query used plain strtolower()
+instead of a Unicode-aware function to lowercase the parameter. This
+changes fixes that by using the Unicode\\Functions::strtolower() method.
+
+* Commit: `2203c47 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2203c47b7dce1cd45ea07ac6d8e2c1475b73d295>`_
+
+[TASK] Implement case insensitive like() in the Query object
+-----------------------------------------------------------------------------------------
+
+This change implements the missing case insensitive like() into
+the Query object which was still documented as todo.
+
+* Commit: `381aa5c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/381aa5cbaa76c7e516d4684699cc042de9d285d9>`_
+
+[BUGFIX] FunctionalTestcase->registerRoute() does not allow httpMethods
+-----------------------------------------------------------------------------------------
+
+The FunctionalTestcase->registerRoute() did not allow configurable httpMethods.
+This change adds an httpMethods argument to this method, and adds a simple
+test to verify the behavior.
+
+* Fixes: `#58959 <http://forge.typo3.org/issues/58959>`_
+* Commit: `ae14707 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ae1470771e6adc2a44b7e5187c45ea5265ce0350>`_
+
+[BUGFIX] ClassLoader creates correct fallback path map
+-----------------------------------------------------------------------------------------
+
+The ClassLoader would build a simple fallback path map but this
+would then fail in loadClass() because the structure is not
+matching that of other path maps. The change fixes that.
+
+* Commit: `6376aa8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6376aa806a1cda47ce307f721a71e0be5de190ca>`_
+
+[BUGFIX] Corrupted HTTP request with empty cookie name causes exception
+-----------------------------------------------------------------------------------------
+
+This change adds more tolerance to the HTTP cookie handling by simply
+ignoring "Cookie: " lines in the HTTP request which have an empty name.
+
+Resolves: FLOW-12
+
+* Commit: `2926fbc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2926fbc63067999a99d8c8e9f72d5a931aa15c8b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Allow ViewHelperVariableContainer to hold NULL values
+-----------------------------------------------------------------------------------------
+
+``ViewHelperVariableContainer::exists()`` checks whether a specified
+key is set via ``isset()`` which leads to the behavior NULL can't be
+retrieved from the container leading to unexpected exceptions.
+
+Example::
+
+  <f:switch expression="{expression}" />
+
+Throws an exception if ``{expression}`` evaluates to NULL.
+
+Make sure to use ``ViewHelperVariableContainer::remove()`` to delete
+a value from the container.
+
+Fixes: FLOW-16
+
+(cherry picked from commit 8447c1ce416682f530037f48608a0fd990429754)
+
+* Commit: `0d78257 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/0d7825745665f775c1df78835c2c68c1d74f7784>`_
+
+[!!!][BUGFIX] Enforce escaping on string-casted objects
+-----------------------------------------------------------------------------------------
+
+This change assures that the escape interceptor is active for objects
+that are casted to strings implicitly.
+
+Background:
+For HTML requests Fluid internally applies the
+``HtmlspecialcharsViewHelper`` on variables before rendering them.
+An ``is_string()`` check in the escaping ViewHelpers effectively
+disabled this behavior for objects that are converted to strings
+implicitly via a ``__toString()`` method.
+
+This is a breaking change if you relied on the previous behavior that
+escaping is disabled for objects. In this case you can apply the
+format.raw ViewHelper to achieve the old behavior::
+
+  {object -> f:format.raw()}
+
+But be aware that this might pose a security issue if
+``$object->__toString()`` returns an unsecure string.
+
+* Fixes: `#60069 <http://forge.typo3.org/issues/60069>`_
+* Commit: `9744e76 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/9744e768fdab93cadf97fe0c3e8f523fddc95b14>`_
+
+[BUGFIX] Use htmlspecialchars to escape hidden query parameters in form
+-----------------------------------------------------------------------------------------
+
+Query parameters from the action URI of a form are sent as hidden values
+for the GET method. UTF-8 values were not handled correctly in PHP
+versions below 5.4 because the htmlentities function was used to
+escape attributes.
+
+This change updates the function to htmlspecialchars that is used
+everywhere else to escape output for HTML and doesn't show the described
+problem.
+
+Fixes: FLOW-13
+
+* Commit: `aa81202 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/aa81202607152c849bedd1fad8f8463c860a7a6a>`_
+
+[BUGFIX] Support for ViewHelper usage within layout tags
+-----------------------------------------------------------------------------------------
+
+Previously, when using ViewHelpers in the ``name`` argument of the
+``<f:layout />`` tag, the TemplateCompiler threw an exception
+``Notice: Undefined variable: self...`` when rendering the *compiled*
+template.
+
+This change fixes this by adding the respective initialization code
+before the closure that makes use of ``$self``.
+
+* Fixes: `#45735 <http://forge.typo3.org/issues/45735>`_
+* Commit: `b79dabb <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/b79dabb14c09a51796c135ab8818e46b4f29905c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

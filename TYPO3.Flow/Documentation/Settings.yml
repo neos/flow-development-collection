@@ -1,0 +1,16 @@
+conf.py:
+  copyright: '2006-2014, respective authors'
+  project: 'TYPO3 Flow'
+  version: '2.2.0'
+  release: '2.2'
+  latex_documents:
+  - - Index
+    - typo3.flow.tex
+    - TYPO3 Flow PHP Framework
+    - TYPO3 Flow team
+    - manual
+  latex_use_parts: 'true'
+  latex_elements:
+    papersize: a4paper
+    pointsize: 10pt
+    preamble: \usepackage{typo3}
