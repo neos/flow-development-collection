@@ -1,0 +1,119 @@
+#                                                                        #
+# Caches configuration                                                   #
+#                                                                        #
+# This file contains a list of caches which are automatically registered #
+# while initializing the cache framework. If caches want to benefit from #
+# the automatic flushing mechanisms (such as garbage collection and      #
+# automatic flushing by tag) they must be registered in a Caches.yaml    #
+# file.                                                                  #
+#                                                                        #
+
+##
+# Default cache configuration
+#
+# If no frontend, backend or options are specified for a cache, these values
+# will be taken to create the cache.
+Default:
+  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 0
+
+##
+# Definition of caches used by TYPO3 Flow:
+#
+Flow_Cache_ResourceFiles: []
+
+# Flow_Core
+#
+# This cache is used by the Bootstrap to communicate between main and sub process
+# about Doctrine proxy class building.
+Flow_Core:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+
+# Flow_I18n_*
+#
+# These caches contain precompiled data from the CLDR and information about available
+# locales and translations.
+Flow_I18n_AvailableLocalesCache: []
+Flow_I18n_XmlModelCache: []
+Flow_I18n_Cldr_CldrModelCache: []
+Flow_I18n_Cldr_Reader_DatesReaderCache: []
+Flow_I18n_Cldr_Reader_NumbersReaderCache: []
+Flow_I18n_Cldr_Reader_PluralsReaderCache: []
+
+# Flow_Monitor
+Flow_Monitor:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+
+# Flow_Mvc_Routing_*
+#
+# These caches contain request patterns and their matches and the opposite direction –
+# action request patterns and their resolved URL.
+Flow_Mvc_Routing_Route:
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
+Flow_Mvc_Routing_Resolve:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
+
+##
+# Cache for RequestFiltered ViewConfigurations
+#
+Flow_Mvc_ViewConfigurations: []
+
+# Flow_Object_Classes
+#
+# This is the main code cache. It contains copies of the original classes and proxy
+# classes built by AOP and the Dependency Injection builder.
+Flow_Object_Classes:
+  frontend: TYPO3\Flow\Cache\Frontend\PhpFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+
+# Flow_Object_Configuration
+#
+# This cache contains meta and status information for all code building mechanisms
+# of Flow. It states if certain code caches are up to date and stores previously
+# built object configurations.
+Flow_Object_Configuration:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+
+# Flow_Persistence_Doctrine
+#
+# This cache contains meta data for the Doctrine ORM.
+Flow_Persistence_Doctrine:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+Flow_Persistence_Doctrine_Results:
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 60
+
+# Flow_Reflection*
+#
+#
+Flow_Reflection_Status:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+Flow_Reflection_CompiletimeData:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+Flow_Reflection_RuntimeData: []
+Flow_Reflection_RuntimeClassSchemata: []
+
+# Flow_Resource_Status
+#
+# Stores the publication status of static and persistent resources
+Flow_Resource_Status:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+
+# Flow_Security_*
+Flow_Security_Policy: []
+Flow_Security_Cryptography_RSAWallet:
+  backendOptions:
+    defaultLifetime: 30
+
+# Flow_Session_*
+Flow_Session_MetaData:
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
+Flow_Session_Storage:
+  backend: TYPO3\Flow\Cache\Backend\FileBackend

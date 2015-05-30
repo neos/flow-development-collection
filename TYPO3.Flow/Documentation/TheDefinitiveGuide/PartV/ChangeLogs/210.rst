@@ -1,0 +1,82 @@
+====================
+2.1.0
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] Configuration Helper: settings
+-----------------------------------------------------------------------------------------
+
+This new helper is supposed to be the one which provides information
+about the environment. The first implemented method allows for retrieving
+settings.
+
+Example for use within TypoScript:
+
+	sitePackageKey = ${Configuration.setting(‚Acme.Demo.sitePackageKey')}
+
+* Commit: `39c2c03 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/39c2c03318cb771fa6e9d8612a708157735a0052>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/8/
+
+* Commit: `6f9b251 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6f9b2513da5c48fc77285fb463abbed9e287be99>`_
+
+[SECURITY] Remove possible XSS from ActionController Error output
+-----------------------------------------------------------------------------------------
+
+The errorAction method in the ActionController base class of Flow
+returns error messages without properly encoding them. Because these
+error messages can contain user input, this could lead to a Cross-Site
+Scripting vulnerability in Flow driven applications.
+
+The offending output has been removed without substitution.
+
+Hint: If you have customized the error action in your Flow application,
+we advise you to check that the error messages returned in these actions
+only contain static strings and are not derived from any kind of user
+input. If you are not sure whether your code is fine in that regard,
+feel free to ask on a public mailing list or the forum.
+
+* Fixes: `#31206 <http://forge.typo3.org/issues/31206>`_
+
+Security-Bulletin: TYPO3-FLOW-SA-2013-001
+
+* Commit: `76987d1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/76987d1216590846c9cbed23f25593e29ef5c039>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
