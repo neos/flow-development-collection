@@ -1,0 +1,206 @@
+====================
+2.2.0-beta2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/15/
+
+* Commit: `5704ae7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5704ae7724ea4d32224b9083e2012ec3df305e06>`_
+
+[TASK] Update Upgrading.txt with note about changed persistAll()
+-----------------------------------------------------------------------------------------
+
+* Commit: `d7714f0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d7714f09374ca70c098da631f567c5e0bb25c2c8>`_
+
+[BUGFIX] Prevent invocation of protected controller methods
+-----------------------------------------------------------------------------------------
+
+Currently any method with an "Action" suffix is callable via the
+default request handling if a corresponding route exists.
+
+For the fallback routes provided by Flow this is the case for the
+``initialize*Action()`` methods that are called before the actual
+action invocation.
+
+This change adds a check for the visibility of an action method
+and only allows invocation of public methods.
+
+* Fixes: `#57410 <http://forge.typo3.org/issues/57410>`_
+* Commit: `2221256 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/22212565c6a42a0387f354333b4742dac75138d1>`_
+
+[BUGFIX] SlaveRequestHandler must not ignore QUIT command
+-----------------------------------------------------------------------------------------
+
+The ``SlaveRequestHandler`` listens for a "QUIT\\n" command but
+it trims the input first, removing the newline character.
+
+* Commit: `b8155cf <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b8155cf721c36ecdb191de1a739af3aa7d0343ca>`_
+
+[FEATURE] Persist whitelisted objects even for safe requests
+-----------------------------------------------------------------------------------------
+
+This change provides the possibility to register single objects which
+should be allowed to be persisted even if the current request is a
+"safe" request.
+
+See documentation for further explanation and an example.
+
+* Commit: `b51d10b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b51d10b61a0b10500b92dd5ffb5a8a98337c4b54>`_
+
+[FEATURE] Split configuration sources include non-split default
+-----------------------------------------------------------------------------------------
+
+This change changes the behavior of split configuration sources to
+include the default non-prefixed source as a fallback for increased
+flexibility, allowing some packages to have split sources and others
+to have a single source.
+
+Also a check in the has method is made more strict.
+
+* Related: `#37854 <http://forge.typo3.org/issues/37854>`_
+* Commit: `d9d1fd0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d9d1fd03c5ea316f0481cdc79e658094022cf65f>`_
+
+[BUGFIX] Fix temporary path for AvailableProxyClasses.php
+-----------------------------------------------------------------------------------------
+
+This fixes the temporary path used for "AvailableProxyClasses.php" for
+situations when a application sub context was used.
+
+Provided that the context is "Development/MyMachine", without this patch
+Flow would create a file
+"Data/Temporary/Development/MyMachine/AvailableProxyClasses.php" while
+all other temporary files would reside in
+"Data/Temporary/Development/SubContextMyMachine/".
+
+With this patch, the path will be
+"Data/Temporary/Development/SubContextMyMachine/AvailableProxyClasses.php"
+
+* Commit: `da46db2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/da46db268ded3c4d0f124e13fdb6aaf4fa427f4b>`_
+
+[BUGFIX] Fix resolving of imported collection types
+-----------------------------------------------------------------------------------------
+
+This change extends the ReflectionService so that it is able to
+expand our custom notation for collection types::
+
+ CollectionType<ElementType>
+
+Background:
+
+In the Coding Guidelines we encourage developers to import namespaces
+in order to increase readability.
+
+With #46008 the ReflectionService is able to resolve relative and
+imported namespace (with #50909 this also works for abstract classes).
+
+But this does not work for our custom notation of Collection types yet.
+With this fix relative and imported class names are supported also for
+our custom notation of collection types and the above would be
+expanded to::
+
+ \\CollectionTypeNamespace\\CollectionType<\\ElementTypeNamespace\\ElementType>
+
+* Fixes: `#57034 <http://forge.typo3.org/issues/57034>`_
+* Related: `#46008 <http://forge.typo3.org/issues/46008>`_
+* Related: `#50909 <http://forge.typo3.org/issues/50909>`_
+* Commit: `0b45aa5 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0b45aa53d72a61241d975d5d68a64ea638439306>`_
+
+[FEATURE] Custom cache directory for file based cache backends
+-----------------------------------------------------------------------------------------
+
+This introduces a new backend option "cacheDirectory" which allows for
+explicitly specifying a path to the directory where entries of a
+specific cache are stored. This option overrides the automatically
+chosen path within Flow's temporary directory.
+
+* Commit: `0c8315b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0c8315b6ed5ab91794ff090e8a32902034a9846f>`_
+
+Revert "[TASK] Resources are published with relative symlinks"
+-----------------------------------------------------------------------------------------
+
+This reverts commit 6d206c1d35324f26e8780fdad80fed466bc9f4e1
+(also known as I2e84cd8f9abd41578a87791813d03e764528feb9)
+
+In a real-world Surf setup, this patch will cause invalid relative
+paths in the generated symbolic links.
+
+For example:
+
+The current release is in
+/var/www/acme.com/releases/current
+
+which would have a realpath() of
+/var/www/acme.com/releases/201403060101
+
+A published resource symlink would incorrectly point to
+../../../releases/20140306210347/Data/Persistent/Resources/abcdef1234
+
+The correct path would be
+../../../Data/Persistent/Resources/abcdef1234
+
+Since there are more variations to consider (virtual host root path
+contains a symlink to releases/current/Web/_Resources or not)
+this can't be solved last minute and needs thorough testing.
+
+* Commit: `2ba78fa <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2ba78fa66b75109a159faf04ba376666f2073a1c>`_
+
+[TASK] Fix intermittent failures in SessionTest
+-----------------------------------------------------------------------------------------
+
+At time the garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions
+in SessionTest fails with "Failed asserting that 1 matches expected 5."
+
+Since the test is about making sure a maximum is not exceeded, this
+changes the assertion from "equal" to "less than or equal".
+
+* Commit: `d8fcd9d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d8fcd9d8de1934ac49345e4e12566adcce64ab3f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Arrays as form objects also support property paths
+-----------------------------------------------------------------------------------------
+
+When having an array as form object and a dotted property notation
+for form fields, that dotted notation wasn't followed for no
+reason. Now it's possible to have a ``<f:form.textfield
+property="product.tag" />`` if the underlying form object is
+``array('product'=>array('tag'=>'somevalue'))``.
+
+* Commit: `736d07a <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/736d07ae90682ae96353927e057bd35a90f2dfc6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

@@ -1,0 +1,237 @@
+====================
+2.1.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Add phpunit/phpunit as dev requirement
+-----------------------------------------------------------------------------------------
+
+* Commit: `8d57cbb <https://git.typo3.org/Flow/Distributions/Base.git/commit/8d57cbb66f06b06816aeeb421aedb71abe178d20>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/16/
+
+* Commit: `8a2a0a7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8a2a0a7a2bd5cda4ad529b821e7d8320c5ebf00c>`_
+
+[TASK] Fix intermittent failure in SessionTest unit test
+-----------------------------------------------------------------------------------------
+
+By injecting a system logger mock, the test for GC that would fail at
+random should now run reliably.
+
+Along this the test tweaks the code (style) a bit.
+
+* Commit: `def9a77 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/def9a772167d442ce063be985557fd1f3d2f25e9>`_
+
+[BUGFIX] Prevent invocation of protected controller methods
+-----------------------------------------------------------------------------------------
+
+Currently any method with an "Action" suffix is callable via the
+default request handling if a corresponding route exists.
+
+For the fallback routes provided by Flow this is the case for the
+``initialize*Action()`` methods that are called before the actual
+action invocation.
+
+This change adds a check for the visibility of an action method
+and only allows invocation of public methods.
+
+* Fixes: `#57410 <http://forge.typo3.org/issues/57410>`_
+* Commit: `b358926 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b358926fde3f0cded32d0adaea039785c11fcb80>`_
+
+[BUGFIX] SlaveRequestHandler must not ignore QUIT command
+-----------------------------------------------------------------------------------------
+
+The ``SlaveRequestHandler`` listens for a "QUIT\\n" command but
+it trims the input first, removing the newline character.
+
+* Commit: `cfda873 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/cfda873a9cd232b393e55c5576bca55cc4e3c9dc>`_
+
+[TASK] Clarify documentation for AOP method() and class()
+-----------------------------------------------------------------------------------------
+
+Add some hints regarding matching on interfaces.
+
+* Commit: `d2bfbd4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d2bfbd4ecc38b203b6f89c248f6f36dbdef6385c>`_
+
+[BUGFIX] Fix resolving of imported collection types
+-----------------------------------------------------------------------------------------
+
+This change extends the ReflectionService so that it is able to
+expand our custom notation for collection types::
+
+ CollectionType<ElementType>
+
+Background:
+
+In the Coding Guidelines we encourage developers to import namespaces
+in order to increase readability.
+
+With #46008 the ReflectionService is able to resolve relative and
+imported namespace (with #50909 this also works for abstract classes).
+
+But this does not work for our custom notation of Collection types yet.
+With this fix relative and imported class names are supported also for
+our custom notation of collection types and the above would be
+expanded to::
+
+ \\CollectionTypeNamespace\\CollectionType<\\ElementTypeNamespace\\ElementType>
+
+* Fixes: `#57034 <http://forge.typo3.org/issues/57034>`_
+* Related: `#46008 <http://forge.typo3.org/issues/46008>`_
+* Related: `#50909 <http://forge.typo3.org/issues/50909>`_
+* Commit: `4935af4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4935af46252403c530c42b1061fe5b503128379d>`_
+
+[TASK] Fix intermittent failures in SessionTest
+-----------------------------------------------------------------------------------------
+
+At time the garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions
+in SessionTest fails with "Failed asserting that 1 matches expected 5."
+
+Since the test is about making sure a maximum is not exceeded, this
+changes the assertion from "equal" to "less than or equal".
+
+* Commit: `e943cfd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e943cfdc266461107c6ce52b6004f74297c53b6f>`_
+
+[BUGFIX] Adjust FLOW_VERSION_BRANCH to 2.1
+-----------------------------------------------------------------------------------------
+
+The value was still "dev-master"
+
+* Commit: `351d35a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/351d35a52df01d8fcf1a428cefbc5cd0738a1da6>`_
+
+[BUFGIX] Throw exception if PackageStates.php is not writeable
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#53238 <http://forge.typo3.org/issues/53238>`_
+* Commit: `8c2d221 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8c2d221b472f5999d1ff67e037deb6125209f6ae>`_
+
+[BUGFIX] Do not serialize singleton properties on __sleep
+-----------------------------------------------------------------------------------------
+
+Serializing a Flow managed object will not serialize injected
+properties as they will be reinjected anyway. This now works
+consistently for all injections.
+
+This also is a workaround for the PHP bug:
+https://bugs.php.net/bug.php?id=65967
+
+As the only reason we serialize an SplObjectStorage curently is
+that we serialize Logger instances.
+
+* Commit: `bdd54d1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bdd54d18813591977ab5556cbe5948d6421262c1>`_
+
+[BUGFIX] PackageManager initialize() signature is incompatible
+-----------------------------------------------------------------------------------------
+
+PackageManagerInterface contains following method declaration::
+
+ public function initialize(\\TYPO3\\Flow\\Core\\Bootstrap $bootstrap);
+
+however in the PackageManager the signature is::
+
+  public function initialize(\\TYPO3\\Flow\\Core\\Bootstrap $bootstrap,
+    $packagesBasePath = FLOW_PATH_PACKAGES,
+    $packageStatesPathAndFilename = '')
+
+This will create a fatal error on some versions of php and when running
+unit tests on hhvm (of CMS), see
+http://php.net/manual/en/language.oop5.interfaces.php:
+
+"The class implementing the interface must use the exact same method
+signatures as are defined in the interface. Not doing so will result
+in a fatal error."
+
+This change updates the method signature of the PackageManager to be in
+line with the interface.
+
+* Fixes: `#56409 <http://forge.typo3.org/issues/56409>`_
+* Commit: `6c4fbd6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6c4fbd6d2f2da6d196ddf926c1b60c0152912e5e>`_
+
+[TASK] Fix unit test failing due to float precision issue
+-----------------------------------------------------------------------------------------
+
+Fixes two unit tests failing with something like::
+
+  Expected: "12.34"
+  Actual: "12.339999999999999857891452847979962825775146484375"
+
+We just raise the value from 12.34 to 112.34 - that makes it
+112.34000000... which makes the test pass.
+
+* Commit: `d3fec1e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d3fec1e77ee7af063c8bb85dd6303cc5ae2e64db>`_
+
+[TASK] Clarify logger configuration in Objects.yaml
+-----------------------------------------------------------------------------------------
+
+The configuration given in Objects.yaml for the system logger is not really used,
+as the logger is set up from settings during boot.
+
+This change makes it clear that a change to the settings should be done
+through Settings.yaml.
+
+* Commit: `c409ca2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c409ca22f6899a3459b401ed7ab713c6f5761f56>`_
+
+[BUGFIX] .htaccess is overwritten by the composer install scripts
+-----------------------------------------------------------------------------------------
+
+The composer update / install scripts overwrite the Web/.htaccess
+file which is unwanted behavior as this leads to issues when
+people add custom rewrite rules, or if for example setting the
+MultiViews option is not allowed.
+
+This change moves the .htaccess, index.php and flow scripts
+to the Defaults folder so it will only be initialy placed into
+the installation.
+
+* Fixes: `#54553 <http://forge.typo3.org/issues/54553>`_
+* Commit: `f792ef7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f792ef7b1b64ad95cacb6467d3a2573e3d11cb24>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Arrays as form objects also support property paths
+-----------------------------------------------------------------------------------------
+
+When having an array as form object and a dotted property notation
+for form fields, that dotted notation wasn't followed for no
+reason. Now it's possible to have a ``<f:form.textfield
+property="product.tag" />`` if the underlying form object is
+``array('product'=>array('tag'=>'somevalue'))``.
+
+* Commit: `4e37140 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/4e37140bee8155b890e84fe20489ad6f45e1d130>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
