@@ -119,6 +119,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 */
 	static public function setUpBeforeClass() {
 		self::$bootstrap = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+		self::setupSuperGlobals();
 	}
 
 	/**
@@ -352,17 +353,16 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Sets up a virtual browser and web environment for seamless HTTP and MVC
-	 * related tests.
+	 * Setup super global PHP variables mocking a standard http request.
 	 *
 	 * @return void
 	 */
-	protected function setupHttp() {
+	protected static function setupSuperGlobals() {
 		$_GET = array();
 		$_POST = array();
 		$_COOKIE = array();
 		$_FILES = array();
-		$_SERVER = array (
+		$_SERVER = array(
 			'REDIRECT_FLOW_CONTEXT' => 'Development',
 			'REDIRECT_FLOW_REWRITEURLS' => '1',
 			'REDIRECT_STATUS' => '200',
@@ -396,7 +396,15 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 			'PHP_SELF' => '/index.php',
 			'REQUEST_TIME' => 1326472534,
 		);
+	}
 
+	/**
+	 * Sets up a virtual browser and web environment for seamless HTTP and MVC
+	 * related tests.
+	 *
+	 * @return void
+	 */
+	protected function setupHttp() {
 		$this->browser = new \TYPO3\Flow\Http\Client\Browser();
 		$this->browser->setRequestEngine(new \TYPO3\Flow\Http\Client\InternalRequestEngine());
 		$this->router = $this->browser->getRequestEngine()->getRouter();
