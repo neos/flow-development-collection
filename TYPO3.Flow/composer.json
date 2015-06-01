@@ -14,8 +14,8 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
 
-        "typo3/fluid": "~3.0.0",
-        "typo3/eel": "~3.0.0",
+        "typo3/fluid": "3.0.0-beta3",
+        "typo3/eel": "3.0.0-beta3",
 
         "doctrine/orm": "~2.4.0",
         "doctrine/migrations": "~1.0.0",
