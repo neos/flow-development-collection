@@ -102,6 +102,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected $systemLogger;
 
 	/**
+	 * Cached composer manifest data for this request
+	 */
+	static protected $composerManifestData = array();
+
+	/**
 	 * @param \TYPO3\Flow\Core\ClassLoader $classLoader
 	 * @return void
 	 */
@@ -955,6 +960,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @throws MissingPackageManifestException
 	 */
 	static protected function readComposerManifest($manifestPath) {
+		if (isset(self::$composerManifestData[$manifestPath])) {
+			return self::$composerManifestData[$manifestPath];
+		}
+
 		if (!file_exists($manifestPath . 'composer.json')) {
 			throw new MissingPackageManifestException(sprintf('No composer manifest file found at "%s/composer.json".', $manifestPath), 1349868540);
 		}
@@ -962,6 +971,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$composerManifest = json_decode($json);
 		$composerManifest->version = self::getPackageVersion($composerManifest->name);
 
+		self::$composerManifestData[$manifestPath] = $composerManifest;
 		return $composerManifest;
 	}
 
