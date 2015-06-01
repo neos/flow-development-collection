@@ -134,7 +134,7 @@ class Package implements PackageInterface {
 			throw new Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
 		}
 		if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
-			throw new Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $manifestPath), 1349776393);
+			throw new Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $packagePath . $manifestPath), 1349776393);
 		}
 
 		$this->packageManager = $packageManager;
