@@ -51,7 +51,7 @@ class TemplateParser {
 	static public $SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS = '/
 		(
 			(?: <\/?                                      # Start dynamic tags
-					(?:(?:[a-z0-9\\.]*):[a-zA-Z0-9\\.]+)  # A tag consists of the namespace prefix and word characters
+					(?:(?:[a-zA-Z0-9\\.]*):[a-zA-Z0-9\\.]+)  # A tag consists of the namespace prefix and word characters
 					(?:                                   # Begin tag arguments
 						\s*[a-zA-Z0-9:-]+                 # Argument Keys
 						=                                 # =

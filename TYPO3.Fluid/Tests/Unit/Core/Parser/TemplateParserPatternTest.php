@@ -75,6 +75,10 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$source = '<foo.bar:a.testing someArgument="baz"> <f:a.testing>';
 		$expected = array('<foo.bar:a.testing someArgument="baz">', ' ', '<f:a.testing>');
 		$this->assertEquals(preg_split($pattern, $source, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY), $expected, 'The SPLIT_PATTERN_DYNAMICTAGS pattern did not split the input string correctly with custom multi-part namespace identifier.');
+
+		$source = '<mixed.Case:viewHelper someArgument="baz">static<UPPERCASE:VIEWHELPER />static<UpperCamel:Case />';
+		$expected = array('<mixed.Case:viewHelper someArgument="baz">', 'static', '<UPPERCASE:VIEWHELPER />', 'static', '<UpperCamel:Case />');
+		$this->assertEquals(preg_split($pattern, $source, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY), $expected, 'The SPLIT_PATTERN_DYNAMICTAGS pattern did not split the input string correctly with mixed case namespace identifier.');
 	}
 
 	/**
