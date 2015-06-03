@@ -34,6 +34,7 @@ class EntityPrivilegeExpressionEvaluator extends CompilingEvaluator {
 	 * @return mixed
 	 */
 	public function evaluate($expression, Context $context) {
+		$expression = trim($expression);
 		$identifier = md5($expression);
 		$functionName = 'expression_' . $identifier;
 
