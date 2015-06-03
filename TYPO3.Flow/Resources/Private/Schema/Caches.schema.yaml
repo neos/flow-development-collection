@@ -8,6 +8,7 @@ properties:
       'backend': {type: string, format: class-name, required: TRUE}
       'frontend': {type: string, format: class-name, required: TRUE}
       'backendOptions': {type: dictionary}
+      'persistent': {type: boolean}
 additionalProperties:
   type: dictionary
   additionalProperties: FALSE
@@ -15,3 +16,4 @@ additionalProperties:
     'backend': {type: string, format: class-name}
     'frontend': {type: string, format: class-name}
     'backendOptions': {type: dictionary}
+    'persistent': {type: boolean}
