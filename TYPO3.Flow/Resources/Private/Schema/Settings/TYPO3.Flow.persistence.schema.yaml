@@ -79,18 +79,31 @@ properties:
         required: FALSE
         additionalProperties: FALSE
         properties:
-          customStringFunctions:
+          'customStringFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: false
-          customNumericFunctions:
+            additionalProperties: FALSE
+          'customNumericFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: false
-          customDatetimeFunctions:
+            additionalProperties: FALSE
+          'customDatetimeFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: false
+            additionalProperties: FALSE
+      'dbal':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          'mappingTypes':
+            type: dictionary
+            additionalProperties:
+              type: dictionary
+              additionalProperties: FALSE
+              properties:
+                'dbType': { type: string, required: TRUE }
+                'className': { type: string, format: class-name, required: TRUE }
   'cacheAllQueryResults':
     type: boolean
     required: TRUE
