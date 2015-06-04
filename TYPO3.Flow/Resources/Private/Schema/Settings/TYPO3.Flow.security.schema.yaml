@@ -30,6 +30,7 @@ properties:
           additionalProperties: FALSE
           required: TRUE
           properties:
+            'label': { type: string, required: FALSE }
             'provider': { type: string, required: TRUE }
             'providerOptions': { type: dictionary }
             'requestPatterns':
