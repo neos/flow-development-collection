@@ -32,3 +32,13 @@ properties:
         type: array
         required: TRUE
         items: { type: [string, integer] }
+
+  'debugger':
+    type: dictionary
+    additionalProperties: FALSE
+    required: FALSE
+    properties:
+      'ignoredClasses':
+        type: dictionary
+        required: TRUE
+        patternProperties: { '/.*/': { type: boolean } }
