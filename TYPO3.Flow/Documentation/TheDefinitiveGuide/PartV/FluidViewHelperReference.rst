@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-06-05
+This reference was automatically generated from code on 2015-06-06
 
 
 f:alias
@@ -2089,7 +2089,7 @@ Arguments
 
 * ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
 
-* ``decimals`` (int, *optional*): The number of digits after the decimal point
+* ``decimals`` (integer, *optional*): The number of digits after the decimal point
 
 * ``decimalSeparator`` (string, *optional*): The decimal point character
 
