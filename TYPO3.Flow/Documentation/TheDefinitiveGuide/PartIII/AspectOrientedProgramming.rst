@@ -625,8 +625,7 @@ conveniently in advice declarations:
 		 * PointcutTestingTargetClasses except those from Target
 		 * Class number 3.
 		 *
-		 * @FLOW3\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && ⏎
-		  !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
+		 * @FLOW3\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
 		 */
 		public function pointcutTestingTargetClasses() {}
 
@@ -641,8 +640,7 @@ conveniently in advice declarations:
 		/**
 		 * A combination of both above pointcuts
 		 *
-		 * @FLOW3\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses ⏎
-		  || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
+		 * @FLOW3\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
 		 */
 		public function bothPointcuts() {}
 
@@ -692,8 +690,7 @@ can it take influence on other before advices at the same join point.
 	 *
 	 * @FLOW3\Before("class(Example\News\.*->.*())")
 	 */
-	public function myBeforeAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myBeforeAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -709,11 +706,9 @@ advices may read the result of the target method, but can't modify it.
 	/**
 	 * After returning advice
 	 *
-	 * @FLOW3\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) ⏎
-		  || Example\MyPackage\MyAspect->someOtherPointcut")
+	 * @FLOW3\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) || Example\MyPackage\MyAspect->someOtherPointcut")
 	 */
-	public function myAfterReturningAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myAfterReturningAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -730,8 +725,7 @@ after method execution, but only if an exception was thrown.
 	 *
 	 * @FLOW3\AfterThrowing("within(Example\News\ImportantLayer)")
 	 */
-	public function myAfterThrowingAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
-		$joinPoint) {
+	public function myAfterThrowingAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -839,8 +833,7 @@ code will just do that:
 		 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger The System Logger
 		 * @return void
 		 */
-		public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface ⏎
-			$systemLogger) {
+		public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 			$this->logger = $systemLogger;
 		}
 

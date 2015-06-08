@@ -27,7 +27,7 @@ ordering anything but alphabetic.
 * Karsten Dambekalns
 * Lienhart Woitok
 * Marco Huber
-* Martin Brüggemann
+* Martin Brüggemann
 * Martin Ficzel
 * Michael Klapper
 * Michael Sauter
