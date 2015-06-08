@@ -144,7 +144,7 @@ Releaes: master, 2.3
 * Commit: `0c2d4e2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0c2d4e2cf3dc0f8eedf48130930d2adb1118fe14>`_
 
 [BUGFIX] Rename redirectToReferringRequest() to forwardToReferringRequest() in ActionController
------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
 
 ``ActionRequest::redirectToReferringRequest()`` actually triggers a
 forward not a redirect.
