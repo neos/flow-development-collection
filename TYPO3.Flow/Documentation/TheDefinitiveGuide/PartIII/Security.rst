@@ -136,7 +136,7 @@ the provided credentials are valid an account will be authenticated afterwards. 
 
 
 The internal workings of the authentication process
------------------------------------
+---------------------------------------------------
 
 Now that you know, how you can authenticate, let's have a look at the internal process.
 The following sequence diagram shows the participating components and their interaction:
@@ -481,13 +481,13 @@ controllers will be authenticated by the default username/password provider.
 |                      | for the current .      |                                          |
 |                      | request                | ``My\Application\AdministrationArea\.*`` |
 +----------------------+------------------------+------------------------------------------+
-| Uri                      | Matches on the uri       | Expects one regular expression, to       |
-|                            | of the current request. | match on the request uri.                |
-|                            |                                     |                                          |
-|                            |                                     | For example.:                            |
-|                            |                                     |                                          |
-|                            |                                     | ``/admin/.*`` |
-+----------------------+------------------------------+------------------------------------------+
+| Uri                  | Matches on the uri     | Expects one regular expression, to       |
+|                      | of the current request.| match on the request uri.                |
+|                      |                        |                                          |
+|                      |                        | For example.:                            |
+|                      |                        |                                          |
+|                      |                        | ``/admin/.*``                            |
++----------------------+------------------------+------------------------------------------+
 
 Authentication entry points
 ---------------------------
@@ -658,43 +658,43 @@ that implements the interface
 ``TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface``:
 
 #. In the constructor you will get the name, that has been configured for the provider and
-an optional options array. Basically you can decide on your own which options you need
-and how the corresponding yaml configuration will look like.
+   an optional options array. Basically you can decide on your own which options you need
+   and how the corresponding yaml configuration will look like.
 
 #. Then there has to be a ``canAuthenticate()`` method, which gets an authentication token
-and returns a boolean value whether your provider can authenticate that token or not.
-Most likely you will call ``getAuthenticationProviderName()`` on the token and check,
-if it matches the provider name given to you in your provider's constructor. In
-addition to this, the method ``getTokenClassNames()`` has to return an array with all
-authentication token classes, your provider is able to authenticate.
+   and returns a boolean value whether your provider can authenticate that token or not.
+   Most likely you will call ``getAuthenticationProviderName()`` on the token and check,
+   if it matches the provider name given to you in your provider's constructor. In
+   addition to this, the method ``getTokenClassNames()`` has to return an array with all
+   authentication token classes, your provider is able to authenticate.
 
 #. All the magic will happen in the ``authenticate()`` method, which will get an appropriate
-authentication token. Basically you could do whatever you want in this method, the
-only thing you'll have to make sure is to set the correct status (possible values are
-defined as constants in the token interface and explained above). If authentication
-succeeds you might also want to set an account in the given token, to add some roles
-to the current security context. However, here is the recommended way of what should
-be done in this method and if you don't have really good reasons, you shouldn't
-deviate from this procedure.
+   authentication token. Basically you could do whatever you want in this method, the
+   only thing you'll have to make sure is to set the correct status (possible values are
+   defined as constants in the token interface and explained above). If authentication
+   succeeds you might also want to set an account in the given token, to add some roles
+   to the current security context. However, here is the recommended way of what should
+   be done in this method and if you don't have really good reasons, you shouldn't
+   deviate from this procedure.
 
 #. Get the credentials provided by the client from the authentication token
-  (``getCredentials()``)
+   (``getCredentials()``)
 
 #. Retrieve the corresponding account object from the account repository, which
-  you should inject into your provider by dependency injection. The repository
-  provides a convenient find method for this task:
-  ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
+   you should inject into your provider by dependency injection. The repository
+   provides a convenient find method for this task:
+   ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
 
 #. The ``credentialsSource`` property of the account will hold the credentials
-  you'll need to compare or at least the information, where these credentials lie.
+   you'll need to compare or at least the information, where these credentials lie.
 
 #. Start the authentication process (e.g. compare credentials/call directory service/...).
 
 #. Depending on the authentication result, set the correct status in the
-  authentication token, by ``calling setAuthenticationStatus()``.
+   authentication token, by ``calling setAuthenticationStatus()``.
 
 #. Set the account in the authentication token, if authentication succeeded. This
-  will add the roles of this token to the security context.
+   will add the roles of this token to the security context.
 
 .. tip::
 
@@ -876,7 +876,7 @@ if you remember the following two rules, you will have no problems or unexpected
 when writing your policies:
 
 1. If a DENY permission is configured for one of the user's roles, access will be denied
-  no matter how many grant privileges there are in other roles.
+   no matter how many grant privileges there are in other roles.
 
 2. If no privilege has been defined for any of the user's roles, access will be denied implicitly.
 
@@ -1021,16 +1021,16 @@ The following example shows the matcher syntax used for entity privilege targets
 
 .. code-block:: yaml
 
-'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-
- 'Acme.MyPackage.RestrictableEntity.AllEntitiesOfTypeRestrictableEntity':
-   matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
-
- 'Acme.MyPackage.HiddenEntities':
-   matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
-
- 'Acme.MyPackage.OthersEntities':
-   matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
+  
+   'Acme.MyPackage.RestrictableEntity.AllEntitiesOfTypeRestrictableEntity':
+     matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
+  
+   'Acme.MyPackage.HiddenEntities':
+     matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
+  
+   'Acme.MyPackage.OthersEntities':
+     matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
 
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
 values and use global objects for comparison. Global objects (e.g. the currently authenticated account) are registered
@@ -1039,19 +1039,19 @@ entities. The following examples, taken from the functional tests, show some mor
 
 .. code-block:: yaml
 
-'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-
- 'Acme.MyPackage.RelatedStringProperty':
-   matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
-
- 'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject:
-   matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
-
- 'Acme.MyPackage.CompareStringPropertyWithCollection':
-   matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
-
- 'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
-   matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
+  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
+  
+   'Acme.MyPackage.RelatedStringProperty':
+     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
+  
+   'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject:
+     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
+  
+   'Acme.MyPackage.CompareStringPropertyWithCollection':
+     matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
+  
+   'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
+     matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
 
 
 Internal workings of entity restrictions (EntityPrivilege)
@@ -1115,7 +1115,7 @@ use case. Feel free to add custom methods to your privilege class to help you en
 to generation of SQL or pointcut filters in the entity or method privilege type, respectively).
 
 Retrieving permission and status information
-========================
+============================================
 
 Besides enforcing the policy it is also important to find out about permissions beforehand, to be able to react on not
 permitted actions before permissions are actually enforced. To find out about permissions, the central privilege
@@ -1133,7 +1133,7 @@ roles. By this one can check what would happen if the user had different roles t
 ``isGrantedForRoles(...)`` and ``isPrivilegeTargetGrantedForRoles(...)``
 
 Fluid (view) integration
-----------------------------
+------------------------
 
 As already stated it is desirable to reflect the policy rules in the view, e.g. a button or link to delete a customer
 should not be shown, if the user has not the privilege to do so. If you are using the recommended Fluid templating
@@ -1142,7 +1142,7 @@ manager - as stated above - for the current privilege situation and implement th
 find a short description of the available Fluid view helpers.
 
 ``ifAccess`` view helper
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 This view helper implements an ifAccess/else condition, have a look at the following
 example, which should be more or less self-explanatory:
@@ -1168,7 +1168,7 @@ As you can imagine, the main advantage is, that the view will automatically refl
 configured policy rules, without the need of changing any template code.
 
 ``ifHasRole`` view helper
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This view helper is pretty similar to the ``ifAccess`` view helper, however it does not
 check the access privilege for a given privilege target, but the availability of a certain role.
@@ -1210,7 +1210,7 @@ specify the package key with the ``packageKey`` attribute:
   </f:security.ifHasRole>
 
 ``ifAuthenticated`` view helper
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There are cases where it doesn’t matter which permissions or roles a user has, it is simply needed to differentiate
 between authenticated users and anonymous users in general. In these cases the ``ifAuthenticated`` view helper will be
@@ -1232,7 +1232,7 @@ the method of choice:
 
 
 Commands to analyze the policy
-------------------------
+------------------------------
 
 Flow ships different commands to analyze the configured policy:
 
@@ -1251,7 +1251,7 @@ command.
 
 
 Application firewall
-===============
+====================
 
 Besides the privilege powered authorization, there is another line of defense: the filter
 firewall. This firewall is triggered directly when a request arrives in the MVC dispatcher.
@@ -1337,7 +1337,7 @@ security interceptors.
   to pass the firewall.
 
 CSRF protection
------------------------
+---------------
 
 A special use case for the filter firewall is CSRF protection. A custom csrf filter is installed and active by default.
 It checks every non-safe request (requests are considered safe, if they do not manipulate any persistent data) for a

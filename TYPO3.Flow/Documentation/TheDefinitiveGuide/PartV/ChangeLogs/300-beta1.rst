@@ -317,7 +317,7 @@ This test adjusts that while keeping BC.
 * Commit: `7ca5620 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7ca562036e38e91e747e93922932ee1ea9416efd>`_
 
 [BUGFIX] Rename redirectToReferringRequest() to forwardToReferringRequest() in ActionController
------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
 
 ``ActionRequest::redirectToReferringRequest()`` actually triggers a
 forward not a redirect.
@@ -865,7 +865,7 @@ Resolves: FLOW-179
 [!!!][TASK] Exclude Non-Flow packages from object management by default
 -----------------------------------------------------------------------------------------
 
-With this change all packages, that are not of one of the "typo3-flow-*"
+With this change all packages, that are not of one of the "typo3-flow-\*"
 composer types, are excluded from object management by default.
 
 Previously the had to be excluded explicitly with the
@@ -1477,7 +1477,7 @@ Fixes: FLOW-33
 [!!!][FEATURE] Introduce InjectConfiguration Annotation
 -----------------------------------------------------------------------------------------
 
-This adds a new ``InjectConfiguration` annotation that can be used to
+This adds a new ``InjectConfiguration`` annotation that can be used to
 easily inject settings or other configuration types to classes.
 
 Example::
@@ -2546,6 +2546,7 @@ which was error-prone and less flexible.
 The escaping of a custom ViewHelper can be disabled by setting the new
 flag ``escapeOutput`` to FALSE in the ViewHelper class.
 But this should only be necessary if:
+
 a) The result of ``$this->renderChildren()`` is used directly as output
    (child nodes are escaped by default).
 b) The ViewHelper renders HTML code.
@@ -2721,6 +2722,7 @@ which was error-prone and less flexible.
 The escaping of a custom ViewHelper can be disabled by setting the new
 flag ``escapeOutput`` to FALSE in the ViewHelper class.
 But this should only be necessary if:
+
 a) The result of ``$this->renderChildren()`` is used directly as output
    (child nodes are escaped by default).
 b) The ViewHelper renders HTML code.
