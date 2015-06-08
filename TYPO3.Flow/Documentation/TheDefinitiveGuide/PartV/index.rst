@@ -4,15 +4,11 @@ Part V: Appendixes
 .. only:: html
 
 	.. toctree::
-		:titlesonly:
+		:maxdepth: 1
+		:glob:
 
-		ValidatorReference
-		AnnotationReference
-		TypeConverterReference
-		FluidViewHelperReference
-		CommandReference
-		PredefinedConstantsReference
-		ContributingToTYPO3Flow
+		*
+
 		CodingGuideLines/index
 		ReleaseNotes/index
 		ChangeLogs/index
@@ -20,14 +16,10 @@ Part V: Appendixes
 .. only:: latex
 
 	.. toctree::
-		:maxdepth: 2
+		:maxdepth: 1
+		:glob:
 
-		ValidatorReference
-		AnnotationReference
-		TypeConverterReference
-		FluidViewHelperReference
-		CommandReference
-		PredefinedConstantsReference
-		ContributingToTYPO3Flow
-		ReleaseNotes/index
+		*
+
 		CodingGuideLines/index
+		ReleaseNotes/index
