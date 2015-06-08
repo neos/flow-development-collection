@@ -626,24 +626,24 @@ that implements the interface
 ``TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface``:
 
 #. In the constructor you will get the name, that has been configured for the provider and
-an optional options array. Basically you can decide on your own which options you need
-and how the corresponding yaml configuration will look like.
+   an optional options array. Basically you can decide on your own which options you need
+   and how the corresponding yaml configuration will look like.
 
 #. Then there has to be a ``canAuthenticate()`` method, which gets an authentication token
-and returns a boolean value whether your provider can authenticate that token or not.
-Most likely you will call ``getAuthenticationProviderName()`` on the token and check,
-if it matches the provider name given to you in your provider's constructor. In
-addition to this, the method ``getTokenClassNames()`` has to return an array with all
-authentication token classes, your provider is able to authenticate.
+   and returns a boolean value whether your provider can authenticate that token or not.
+   Most likely you will call ``getAuthenticationProviderName()`` on the token and check,
+   if it matches the provider name given to you in your provider's constructor. In
+   addition to this, the method ``getTokenClassNames()`` has to return an array with all
+   authentication token classes, your provider is able to authenticate.
 
 #. All the magic will happen in the ``authenticate()`` method, which will get an appropriate
-authentication token. Basically you could do whatever you want in this method, the
-only thing you'll have to make sure is to set the correct status (possible values are
-defined as constants in the token interface and explained above). If authentication
-succeeds you might also want to set an account in the given token, to add some roles
-to the current security context. However, here is the recommended way of what should
-be done in this method and if you don't have really good reasons, you shouldn't
-deviate from this procedure.
+   authentication token. Basically you could do whatever you want in this method, the
+   only thing you'll have to make sure is to set the correct status (possible values are
+   defined as constants in the token interface and explained above). If authentication
+   succeeds you might also want to set an account in the given token, to add some roles
+   to the current security context. However, here is the recommended way of what should
+   be done in this method and if you don't have really good reasons, you shouldn't
+   deviate from this procedure.
 
 #. Get the credentials provided by the client from the authentication token
    (``getCredentials()``)
