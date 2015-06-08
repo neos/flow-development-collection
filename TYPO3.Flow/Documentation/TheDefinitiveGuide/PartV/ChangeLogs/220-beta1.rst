@@ -1013,9 +1013,12 @@ Will render::
 Moves the validationResults ViewHelper to the ``validation`` namespace
 for consistency reasons.
 If you use this ViewHelper you should update your Fluid templates from::
- <f:form.validationResults>...</f:form.validationResults>
+
+  <f:form.validationResults>...</f:form.validationResults>
+
 to::
- <f:validation.results></f:validation.results>
+
+  <f:validation.results></f:validation.results>
 
 * Related: `#54196 <http://forge.typo3.org/issues/54196>`_
 * Commit: `49dfdbe <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/49dfdbe5c17a617ddabf997bdf76703e66a196e5>`_

@@ -184,13 +184,13 @@ This introduces a view helper which allows for specifying markup being
 rendered when no "case" view helpers matches within a "switch" view helper
 construct.
 
-Example:
+Example::
 
-<f:switch expression="{fruit}">
-	<f:case value="apple">Apple</f:case>
-	<f:case value="pear">Pear</f:case>
-	<f:defaultCase>Some other fruit</f:defaultCase>
-</f:switch>
+  <f:switch expression="{fruit}">
+  	<f:case value="apple">Apple</f:case>
+  	<f:case value="pear">Pear</f:case>
+  	<f:defaultCase>Some other fruit</f:defaultCase>
+  </f:switch>
 
 * Commit: `cb6d0b6 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/cb6d0b6d126ded1639e331b705bf6dcf41621ca1>`_
 
