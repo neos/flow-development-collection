@@ -381,6 +381,12 @@ structure to the database, just run the :command:`doctrine:update` command:
 	$ ./flow doctrine:update
 	Executed a database schema update.
 
+.. tip::
+
+	In a real project you should avoid the :command:`doctrine:update` command and instead
+	work with migrations. See the "Persistence" section of the
+	:doc:`The Definitive Guide <../TheDefinitiveGuide/index>` for more details
+
 A quick glance at the table structure (using your preferred database management tool) will
 reveal that a new table for coffee beans has been created.
 
@@ -491,7 +497,7 @@ can you imagine what they do? ::
 
 You will learn all the nitty-gritty details of persistence (that is storing and
 retrieving objects in a database), Model-View Controller and validation in
-:doc:`The Definitive Guide <../TheDefinitiveGuide/Index>`. With some hints
+:doc:`The Definitive Guide <../TheDefinitiveGuide/index>`. With some hints
 for each of the actions of this controller though, you'll get some first impression of
 how basic operations like creating or deleting objects are handled in TYPO3 Flow.
 
@@ -740,7 +746,7 @@ the trees* thing ...).
 
 Next you should experiment a bit with TYPO3 Flow on your own. After you've collected
 even more questions, I suggest reading the
-:doc:`Getting Started Tutorial <../TheDefinitiveGuide/PartII/Index>`.
+:doc:`Getting Started Tutorial <../TheDefinitiveGuide/PartII/index>`.
 
 At the time of this writing, The Definitive Guide is not yet complete and still
 contains a few rough parts. Also the Getting Started Tutorial needs some love

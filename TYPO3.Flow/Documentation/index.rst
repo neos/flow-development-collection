@@ -19,7 +19,7 @@ TYPO3 Flow Documentation
 	Quickstart
 	----------
 
-	Get a first overview and a working example within 15 minutes: :doc:`Quickstart <Quickstart/Index>`
+	Get a first overview and a working example within 15 minutes: :doc:`Quickstart <Quickstart/index>`
 
 
 	The Definitive Guide
@@ -27,13 +27,13 @@ TYPO3 Flow Documentation
 
 	The Hitchhiker's Guide to TYPO3 Flow and comprehensive almanac:
 
-	- :doc:`TheDefinitiveGuide/Index`
+	- :doc:`TheDefinitiveGuide/index`
 
-	  - :doc:`TheDefinitiveGuide/PartI/Index`
-	  - :doc:`TheDefinitiveGuide/PartII/Index`
-	  - :doc:`TheDefinitiveGuide/PartIII/Index`
-	  - :doc:`TheDefinitiveGuide/PartIV/Index`
-	  - :doc:`TheDefinitiveGuide/PartV/Index`
+	  - :doc:`TheDefinitiveGuide/PartI/index`
+	  - :doc:`TheDefinitiveGuide/PartII/index`
+	  - :doc:`TheDefinitiveGuide/PartIII/index`
+	  - :doc:`TheDefinitiveGuide/PartIV/index`
+	  - :doc:`TheDefinitiveGuide/PartV/index`
 	  - :doc:`TheDefinitiveGuide/Contributors`
 
 
@@ -42,7 +42,7 @@ TYPO3 Flow Documentation
 
 	A style guide giving advice on how to write for the TYPO3 project:
 
-	- :doc:`StyleGuide/Index`
+	- :doc:`StyleGuide/index`
 
 	  - :doc:`StyleGuide/About`
 	  - :doc:`StyleGuide/StyleAndUsage`
@@ -57,6 +57,6 @@ TYPO3 Flow Documentation
 .. toctree::
 	:titlesonly:
 
-	Quickstart/Index
-	TheDefinitiveGuide/Index
-	StyleGuide/Index
+	Quickstart/index
+	TheDefinitiveGuide/index
+	StyleGuide/index
