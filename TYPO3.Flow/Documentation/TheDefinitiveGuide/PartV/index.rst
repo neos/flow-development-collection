@@ -1,15 +1,23 @@
 Part V: Appendixes
 ==================
 
-.. toctree::
-	:maxdepth: 2
+.. only:: html
 
-	ValidatorReference
-	TypeConverterReference
-	AnnotationReference
-	FluidViewHelperReference
-	CommandReference
-	PredefinedConstantsReference
-	ContributingToFLOW3
-	CodingGuideLines/index
-	ChangeLogs/index
+	.. toctree::
+		:maxdepth: 1
+		:glob:
+
+		*
+
+		CodingGuideLines/index
+		ChangeLogs/index
+
+.. only:: latex
+
+	.. toctree::
+		:maxdepth: 1
+		:glob:
+
+		*
+
+		CodingGuideLines/index
