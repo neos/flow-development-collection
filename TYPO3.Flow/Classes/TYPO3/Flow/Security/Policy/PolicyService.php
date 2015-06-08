@@ -97,7 +97,7 @@ class PolicyService {
 
 		$this->initializePrivilegeTargets();
 
-		$uncoveredPrivilegeTargets = $this->privilegeTargets;
+		$privilegeTargetsForEverybody = $this->privilegeTargets;
 
 		$this->roles = array();
 		$everybodyRole = new Role('TYPO3.Flow:Everybody');
@@ -132,10 +132,9 @@ class PolicyService {
 						}
 						$role->addPrivilege($privilege);
 
-						if ($roleIdentifier !== 'TYPO3.Flow:Everybody') {
-							$everybodyRole->addPrivilege($privilegeTarget->createPrivilege(PrivilegeInterface::ABSTAIN, $privilegeParameters));
+						if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
+							unset($privilegeTargetsForEverybody[$privilegeTargetIdentifier]);
 						}
-						unset($uncoveredPrivilegeTargets[$privilegeTargetIdentifier]);
 					}
 				}
 
@@ -145,7 +144,7 @@ class PolicyService {
 
 		// create ABSTAIN privilege for all uncovered privilegeTargets
 		/** @var PrivilegeTarget $privilegeTarget */
-		foreach ($uncoveredPrivilegeTargets as $privilegeTarget) {
+		foreach ($privilegeTargetsForEverybody as $privilegeTarget) {
 			if ($privilegeTarget->hasParameters()) {
 				continue;
 			}

@@ -11,13 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for for the policy service
+ * Testcase for for TYPO3\Flow\Security\Policy\Role
  */
-class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RoleTest extends UnitTestCase {
 
 	/**
 	 * data provider
