@@ -360,8 +360,7 @@ specified as a regular expression.
    pointcut expression. Instead of ``method(InterfaceName->methodName())``, use
    ``within(InterfaceName) && method(.*->methodName())``.
 
- Here are some examples for matching method
-executions:
+Here are some examples for matching method executions:
 
 *Example: method() pointcut designator*
 

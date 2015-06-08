@@ -305,22 +305,23 @@ settings scheme and host afterwards, __toString would return
 [BUGFIX] Merge request arguments instead of overwrite
 -----------------------------------------------------------------------------------------
 
-A sub-request losing its arguments if a route is defined f.e. like this:
--
-  name: 'Basket Steps'
-  uriPattern: '{node}/{--pipeu_factura_nodetypes-basket.@action}.{@format}'
-  defaults:
-    '@package': 'TYPO3.Neos'
-    '@controller': 'Frontend\\Node'
-    '@format': 'html'
-    '@action': 'show'
-    '--pipeu_factura_nodetypes-basket':
-      '@package': 'PIPEU.Factura.NodeTypes'
-      '@controller': 'Basket'
-  routeParts:
-    node:
-      handler: TYPO3\\Neos\\Routing\\FrontendNodeRoutePartHandler
-  appendExceedingArguments: true
+A sub-request losing its arguments if a route is defined f.e. like this::
+
+  -
+    name: 'Basket Steps'
+    uriPattern: '{node}/{--pipeu_factura_nodetypes-basket.@action}.{@format}'
+    defaults:
+      '@package': 'TYPO3.Neos'
+      '@controller': 'Frontend\\Node'
+      '@format': 'html'
+      '@action': 'show'
+      '--pipeu_factura_nodetypes-basket':
+        '@package': 'PIPEU.Factura.NodeTypes'
+        '@controller': 'Basket'
+    routeParts:
+      node:
+        handler: TYPO3\\Neos\\Routing\\FrontendNodeRoutePartHandler
+    appendExceedingArguments: true
 
 In this case '--pipeu_factura_nodetypes-basket' will override
 any pluginArgument because of a missing check for existing
