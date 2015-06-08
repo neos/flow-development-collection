@@ -1,7 +1,9 @@
 FLOW3 Documentation
 ===================
 
-*This version of the documentation has been rendered at:* |today|
+FLOW3 is a free PHP framework licensed under the LGPL.
+
+This version of the documentation covering FLOW3 |release| has been rendered at: |today|
 
 .. note::
 
