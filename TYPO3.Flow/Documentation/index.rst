@@ -19,12 +19,12 @@ Quickstart
 ----------
 
 Get a first overview and a working example within 15 minutes: :doc:`Quickstart
-<Quickstart/Index>`
+<Quickstart/index>`
 
 .. toctree::
 	:hidden:
 
-	Quickstart/Index
+	Quickstart/index
 
 The Definitive Guide
 --------------------
@@ -34,7 +34,7 @@ The Hitchhiker's Guide to FLOW3 and comprehensive almanac:
 .. toctree::
 	:maxdepth: 2
 
-	TheDefinitiveGuide/Index
+	TheDefinitiveGuide/index
 
 TYPO3 Publication Style Guide
 -----------------------------
@@ -44,4 +44,4 @@ A style guide giving advice on how to write for the TYPO3 project.
 .. toctree::
 	:maxdepth: 2
 
-	StyleGuide/Index
+	StyleGuide/index

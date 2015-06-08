@@ -4,9 +4,9 @@ FLOW3 – The Definitive Guide
 .. toctree::
 	:maxdepth: 2
 
-	PartI/Index
-	PartII/Index
-	PartIII/Index
-	PartIV/Index
-	PartV/Index
+	PartI/index
+	PartII/index
+	PartIII/index
+	PartIV/index
+	PartV/index
 	Contributors

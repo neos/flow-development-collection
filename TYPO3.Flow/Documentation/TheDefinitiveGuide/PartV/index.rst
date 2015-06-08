@@ -11,5 +11,5 @@ Part V: Appendixes
 	CommandReference
 	PredefinedConstantsReference
 	ContributingToFLOW3
-	CodingGuideLines/Index
-	ChangeLogs/Index
+	CodingGuideLines/index
+	ChangeLogs/index
