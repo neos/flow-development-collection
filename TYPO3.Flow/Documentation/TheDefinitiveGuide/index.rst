@@ -4,9 +4,9 @@ The Definitive Guide
 .. toctree::
 	:titlesonly:
 
-	PartI/Index
-	PartII/Index
-	PartIII/Index
-	PartIV/Index
-	PartV/Index
+	PartI/index
+	PartII/index
+	PartIII/index
+	PartIV/index
+	PartV/index
 	Contributors
