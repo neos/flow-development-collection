@@ -935,7 +935,7 @@ annotated with ``@Flow\\Inject`` so that injected properties are never
 persisted.
 
 If an object has a property which holds an object and that property is
-annotated with ``@ORM\\Column(type="object")` that will be stored as 
+annotated with ``@ORM\\Column(type="object")`` that will be stored as 
 expected (i.e. as a serialized PHP object). If no such annotation is given
 and no other relation type annotation is given, an exception is thrown as
 before.
