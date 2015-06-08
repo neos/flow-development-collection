@@ -640,10 +640,8 @@ This will result in output that looks similar to the following:
 
 	  ++ migrating 20110613223837
 
-	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
-	     PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY ⏎
-	     (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
+	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
+	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
 
 	  ++ migrated (1.31s)
 
@@ -669,10 +667,8 @@ This will result in output that looks similar to the following:
 
 	  ++ migrating 20110613223837
 
-	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
-	     PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY ⏎
-	     (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
+	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
+	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
 
 	  ++ migrated (0.09s)
 
