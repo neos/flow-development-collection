@@ -231,7 +231,7 @@ class PersistentObjectConverter extends ObjectConverter {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
 			if ($object === NULL) {
-				return new TargetNotFoundError(sprintf('Object with identity "%s" not found.', print_r($source['__identity'], TRUE)), 1412283038);
+				return new TargetNotFoundError(sprintf('Object of type %s with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
 			}
 
 			if (count($convertedChildProperties) > 0 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
