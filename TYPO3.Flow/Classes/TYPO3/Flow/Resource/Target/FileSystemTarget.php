@@ -287,14 +287,15 @@ class FileSystemTarget implements TargetInterface {
 	 * if no relative publication path was defined in the given object.
 	 *
 	 * @param ResourceMetaDataInterface $object Resource or Storage Object
-	 * @return string The relative path and filename, for example "c828d/0f88c/e197b/e1aff/7cc2e/5e86b/12442/41ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
+	 * @return string The relative path and filename, for example "c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
 	 */
 	protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object) {
 		if ($object->getRelativePublicationPath() !== '') {
 			$pathAndFilename = $object->getRelativePublicationPath() . $object->getFilename();
 		} else {
 			if ($this->subdivideHashPathSegment) {
-				$pathAndFilename = wordwrap($object->getSha1(), 5, '/', TRUE) . '/' . $object->getFilename();
+				$sha1Hash = $object->getSha1();
+				$pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
 			} else {
 				$pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
 			}

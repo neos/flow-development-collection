@@ -144,23 +144,6 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 	}
 
 	/**
-	 * Determines and returns the absolute path and filename for a storage file identified by the given SHA1 hash.
-	 *
-	 * This function assures a nested directory structure in order to avoid thousands of files in a single directory
-	 * which may result in performance problems in older file systems such as ext2, ext3 or NTFS.
-	 *
-	 * This specialized version for the Writable File System Storage will automatically migrate resource data
-	 * stored in a legacy structure from applications based on Flow < 2.1.
-	 *
-	 * @param string $sha1Hash The SHA1 hash identifying the stored resource
-	 * @return string The path and filename, for example "/var/www/mysite.com/Data/Persistent/c828d/0f88c/e197b/e1aff/7cc2e/5e86b/12442/41ac6/c828d0f88ce197be1aff7cc2e5e86b1244241ac6"
-	 * @throws Exception
-	 */
-	protected function getStoragePathAndFilenameByHash($sha1Hash) {
-		return $this->path . wordwrap($sha1Hash, 5, '/', TRUE) . '/' . $sha1Hash;
-	}
-
-	/**
 	 * Fixes the permissions as needed for Flow to run fine in web and cli context.
 	 *
 	 * @param string $pathAndFilename
