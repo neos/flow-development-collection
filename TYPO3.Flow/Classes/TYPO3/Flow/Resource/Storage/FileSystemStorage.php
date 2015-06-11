@@ -162,10 +162,10 @@ class FileSystemStorage implements StorageInterface {
 	 * which may result in performance problems in older file systems such as ext2, ext3 or NTFS.
 	 *
 	 * @param string $sha1Hash The SHA1 hash identifying the stored resource
-	 * @return string The path and filename, for example "/var/www/mysite.com/Data/Persistent/c828d/0f88c/e197b/e1aff/7cc2e/5e86b/12442/41ac6/c828d0f88ce197be1aff7cc2e5e86b1244241ac6"
+	 * @return string The path and filename, for example "/var/www/mysite.com/Data/Persistent/c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6"
 	 */
 	protected function getStoragePathAndFilenameByHash($sha1Hash) {
-		return $this->path . wordwrap($sha1Hash, 5, '/', TRUE) . '/' . $sha1Hash;
+		return $this->path . $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash;
 	}
 
 }
