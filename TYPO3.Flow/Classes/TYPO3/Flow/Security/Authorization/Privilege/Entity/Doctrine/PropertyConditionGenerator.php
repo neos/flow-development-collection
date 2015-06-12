@@ -18,6 +18,7 @@ use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Persistence\Doctrine\Query;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\InvalidPolicyException;
@@ -29,7 +30,6 @@ use TYPO3\Flow\Utility\TypeHandling;
  * A sql generator to create a sql condition for an entity property.
  */
 class PropertyConditionGenerator implements SqlGeneratorInterface {
-
 
 	/**
 	 * Property path the currently parsed expression relates to
@@ -90,6 +90,13 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	 * @var PersistenceManager
 	 */
 	protected $persistenceManager;
+
+	/**
+	 * Raw parameter values
+	 *
+	 * @var array
+	 */
+	protected $parameters = array();
 
 	/**
 	 * @param string $path Property path the currently parsed expression relates to
@@ -241,12 +248,13 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	protected function getSqlForSimpleProperty(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName) {
 		$quotedColumnName = $quoteStrategy->getColumnName($targetEntityPropertyName, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
 		$propertyPointer = $targetTableAlias . '.' . $quotedColumnName;
+
 		if (is_array($this->operandDefinition)) {
 			foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
-				$sqlFilter->setParameter($operandIterator, $singleOperandValue);
+				$this->setParameter($sqlFilter, $operandIterator, $singleOperandValue);
 			}
 		} else {
-			$sqlFilter->setParameter($this->operandDefinition, $this->operand);
+			$this->setParameter($sqlFilter, $this->operandDefinition, $this->operand);
 		}
 		return $this->getConstraintStringForSimpleProperty($sqlFilter, $propertyPointer);
 	}
@@ -277,16 +285,16 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 			if (is_object($this->operand)) {
 				$operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($this->operand));
 				$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($this->operand, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
-				$sqlFilter->setParameter($currentReferencedOperandName, $currentReferencedValueOfOperand, $associationMapping['type']);
+				$this->setParameter($sqlFilter, $currentReferencedOperandName, $currentReferencedValueOfOperand, $associationMapping['type']);
 
 			} elseif (is_array($this->operandDefinition)) {
 				foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
 					if (is_object($singleOperandValue)) {
 						$operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($singleOperandValue));
 						$currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($singleOperandValue, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
-						$sqlFilter->setParameter($operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);
+						$this->setParameter($sqlFilter, $operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);
 					} elseif ($singleOperandValue === NULL) {
-						$sqlFilter->setParameter($operandIterator, NULL, $associationMapping['type']);
+						$this->setParameter($sqlFilter, $operandIterator, NULL, $associationMapping['type']);
 					}
 				}
 			}
@@ -332,11 +340,13 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 	}
 
 	/**
-	 *
+	 * @param ClassMetadata $targetEntity
+	 * @param string $targetEntityPropertyName
+	 * @return Query
 	 */
-	protected function getSubselectQuery($targetEntity, $targetEntityPropertyName) {
-		$subselectQuery = new \TYPO3\Flow\Persistence\Doctrine\Query($targetEntity->getAssociationTargetClass($targetEntityPropertyName));
-		$propertyName = str_replace($targetEntityPropertyName.'.', '', $this->path);
+	protected function getSubselectQuery(ClassMetadata $targetEntity, $targetEntityPropertyName) {
+		$subselectQuery = new Query($targetEntity->getAssociationTargetClass($targetEntityPropertyName));
+		$propertyName = str_replace($targetEntityPropertyName . '.', '', $this->path);
 
 		switch ($this->operator) {
 			case '==':
@@ -390,7 +400,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 					}
 				}
 				$parameter = implode(',', $parameters);
-			} else {
+			} elseif ($this->getRawParameterValue($operandDefinition) !== NULL) {
 				$parameter = $sqlFilter->getParameter($operandDefinition);
 			}
 		} catch (\InvalidArgumentException $e) {}
@@ -442,15 +452,15 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 				$result[] = $this->getValueForOperand($expressionEntry);
 			}
 			return $result;
-		} else if (is_numeric($expression)) {
+		} elseif (is_numeric($expression)) {
 			return $expression;
-		} else if ($expression === 'TRUE') {
+		} elseif ($expression === TRUE) {
 			return TRUE;
-		} else if ($expression === 'FALSE') {
+		} elseif ($expression === FALSE) {
 			return FALSE;
-		} else if ($expression === 'NULL') {
+		} elseif ($expression === NULL) {
 			return NULL;
-		} else if (strpos($expression, 'context.') === 0) {
+		} elseif (strpos($expression, 'context.') === 0) {
 			$objectAccess = explode('.', $expression, 3);
 			$globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
 			$globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
@@ -458,6 +468,30 @@ class PropertyConditionGenerator implements SqlGeneratorInterface {
 		} else {
 			return trim($expression, '"\'');
 		}
+	}
+
+	/**
+	 * @param DoctrineSqlFilter $sqlFilter
+	 * @param mixed $name
+	 * @param mixed $value
+	 * @param string $type
+	 * @return void
+	 */
+	protected function setParameter(DoctrineSqlFilter $sqlFilter, $name, $value, $type = NULL) {
+		$sqlFilter->setParameter($name, $value, $type);
+		$this->parameters[$name] = $value;
+	}
+
+	/**
+	 * @param mixed $name
+	 * @return mixed the raw parameter value
+	 */
+	protected function getRawParameterValue($name) {
+		if (isset($this->parameters[$name]) === FALSE) {
+			throw new \InvalidArgumentException('Paremeter "' . $name . '" does not exist.', 1435830434);
+		}
+
+		return $this->parameters[$name];
 	}
 
 	/**

@@ -38,6 +38,12 @@ class RestrictableEntity {
 	protected $ownerAccount;
 
 	/**
+	 * @var \DateTime
+	 * @ORM\Column(nullable=true)
+	 */
+	protected $deletedOn;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $name The name of the entity
@@ -86,6 +92,10 @@ class RestrictableEntity {
 	 */
 	public function getOwnerAccount() {
 		return $this->ownerAccount;
+	}
+
+	public function delete() {
+		$this->deletedOn = new \DateTime();
 	}
 
 }

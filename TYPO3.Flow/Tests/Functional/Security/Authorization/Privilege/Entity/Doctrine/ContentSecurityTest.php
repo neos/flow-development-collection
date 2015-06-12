@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Do
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
 use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /**
@@ -120,6 +121,64 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+
+		$this->restrictableEntityDoctrineRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
+
+	/**
+	 * @test
+	 */
+	public function customersAreNotAllowedToSeeDeletedRestrictableEntities() {
+		$this->authenticateRoles(array('TYPO3.Flow:Customer'));
+
+		$defaultEntity = new Fixtures\RestrictableEntity('default');
+		$deletedEntity = new Fixtures\RestrictableEntity('deletedEntry');
+		$deletedEntity->delete();
+
+		$this->restrictableEntityDoctrineRepository->add($defaultEntity);
+		$defaultEntityIdentifier = $this->persistenceManager->getIdentifierByObject($defaultEntity);
+		$this->restrictableEntityDoctrineRepository->add($deletedEntity);
+		$deletedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($deletedEntity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
+		$this->assertTrue(count($result) === 1);
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+
+		$this->restrictableEntityDoctrineRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
+
+	/**
+	 * @test
+	 */
+	public function administratorsCanSeeDeletedRestrictableEntities() {
+		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+
+		$defaultEntity = new Fixtures\RestrictableEntity('default');
+		$deletedEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+		$deletedEntity->delete();
+
+		$this->restrictableEntityDoctrineRepository->add($defaultEntity);
+		$defaultEntityIdentifier = $this->persistenceManager->getIdentifierByObject($defaultEntity);
+		$this->restrictableEntityDoctrineRepository->add($deletedEntity);
+		$deletedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($deletedEntity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
+		$this->assertTrue(count($result) === 2);
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityDoctrineRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -540,4 +599,5 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 	}
+
 }
