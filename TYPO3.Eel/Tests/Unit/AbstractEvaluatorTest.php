@@ -13,7 +13,6 @@ namespace TYPO3\Eel\Tests\Unit;
 
 use TYPO3\Eel\Context;
 use TYPO3\Eel\EelEvaluatorInterface;
-use TYPO3\Eel\Evaluator;
 
 /**
  * Abstract evaluator test
@@ -365,6 +364,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('{foo: "bar", bar: "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
 			// Simple object literal with differently quoted keys
 			array('{"foo": "bar", \'bar\': "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
+			// Nested object literals with unquoted key
+			array('{foo: "bar", bar: {baz: "quux"}}', $c, array('foo' => 'bar', 'bar' => array('baz' => 'quux'))),
 		);
 	}
 
