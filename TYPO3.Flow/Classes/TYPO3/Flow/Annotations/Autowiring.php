@@ -30,8 +30,10 @@ final class Autowiring {
 	 * @param array $values
 	 */
 	public function __construct(array $values) {
-		if ($values['value'] !== array()) {
-			$this->enabled = isset($values['enabled']) ? (boolean)$values['enabled'] : (boolean)$values['value'];
+		if (isset($values['enabled'])) {
+			$this->enabled = (boolean)$values['enabled'];
+		} elseif (isset($values['value'])) {
+			$this->enabled = (boolean)$values['value'];
 		}
 	}
 
