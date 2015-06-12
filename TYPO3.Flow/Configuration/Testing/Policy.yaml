@@ -25,6 +25,9 @@ privilegeTargets:
     'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities':
       matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && TRUE == property("hidden")'
 
+    'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("deletedOn") != NULL'
+
     'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.OthersEntities':
       matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
 
@@ -45,7 +48,6 @@ roles:
 
   'TYPO3.Flow:Customer':
     privileges:
-
       -
         privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
         permission: GRANT
@@ -78,6 +80,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries'
         permission: GRANT
 
       -
