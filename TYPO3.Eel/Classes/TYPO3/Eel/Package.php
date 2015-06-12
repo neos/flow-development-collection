@@ -25,7 +25,7 @@ class Package extends BasePackage {
 			^\${(?P<exp>
 				(?:
 					{ (?P>exp) }			# match object literal expression recursively
-					|[^}"\']+				# simple eel expression without quoted strings
+					|[^{}"\']+				# simple eel expression without quoted strings
 					|"[^"\\\\]*				# double quoted strings with possibly escaped double quotes
 						(?:
 							\\\\.			# escaped character (quote)
