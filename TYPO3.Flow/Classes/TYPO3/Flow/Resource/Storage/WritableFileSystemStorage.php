@@ -122,6 +122,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 	 * @throws Exception
 	 */
 	protected function importTemporaryFile($temporaryFile, $collectionName) {
+		$this->fixFilePermissions($temporaryFile);
 		$sha1Hash = sha1_file($temporaryFile);
 		$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
 		if (!file_exists(dirname($finalTargetPathAndFilename))) {
