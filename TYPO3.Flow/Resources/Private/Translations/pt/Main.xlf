@@ -7,10 +7,10 @@
 			<target xml:lang="pt-BR" state="needs-translation">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="pt-BR" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Nome de Usuário</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="pt-BR" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Senha</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="pt-BR" state="needs-translation">New password</target></trans-unit>

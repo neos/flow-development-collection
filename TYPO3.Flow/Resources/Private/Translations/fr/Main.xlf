@@ -16,7 +16,7 @@
 			<target xml:lang="fr">Nouveau mot de passe</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="fr">Identifiant</target></trans-unit>
+			<target xml:lang="fr">Se connecter</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="fr">Déconnexion</target></trans-unit>

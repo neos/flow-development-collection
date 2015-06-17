@@ -30,7 +30,7 @@
 			<target xml:lang="nl">De gegeven datum moet tussen {0} en {1} liggen</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve" approved="yes">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="nl">De opgegeven datum mag niet na {0} liggen</target><alt-trans><target xml:lang="nl">De gegeven datum moet niet na {0} liggen</target></alt-trans></trans-unit>
+			<target xml:lang="nl">De opgegeven datum mag niet na {0} liggen</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve" approved="yes">
 				<source>The given date must be before {0}</source>
 			<target xml:lang="nl">De opgegeven datum moet voor {0} liggen</target></trans-unit>

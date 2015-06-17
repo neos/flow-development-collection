@@ -142,7 +142,7 @@
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="pl" state="needs-translation">The given subject is not a valid UUID</target></trans-unit>
+			<target xml:lang="pl" state="translated">Podana wartość nie jest poprawnym identyfikatorem obiektu</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>

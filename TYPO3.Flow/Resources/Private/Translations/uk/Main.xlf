@@ -7,7 +7,7 @@
 			<target xml:lang="uk" state="needs-translation">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="uk" state="translated">Користувач</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ім'я користувача</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="uk" state="translated">Пароль</target></trans-unit>
@@ -16,7 +16,7 @@
 			<target xml:lang="uk" state="translated">Новий Пароль</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="uk" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вхід</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target xml:lang="uk" state="needs-translation">Logout</target></trans-unit>

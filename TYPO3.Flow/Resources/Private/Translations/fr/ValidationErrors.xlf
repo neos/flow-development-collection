@@ -13,18 +13,18 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="fr">Le sujet n'est pas une collection</target><alt-trans><target xml:lang="fr">La valeur n'est pas une collection</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Le sujet n'est pas une collection</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
-			<target xml:lang="fr">Le sujet n'est pas dénombrable</target><alt-trans><target xml:lang="fr">La valeur n'est pas dénombrable</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Le sujet n'est pas dénombrable</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve" approved="yes">
 				<source>The count must be between {0,number} and {1,number}</source>
 			<target xml:lang="fr">Ce nombre doit être compris entre {0, number} et {1, number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="fr">Ce n'est pas une date valide</target><alt-trans><target xml:lang="fr">La valeur fournie n'est pas une date valide</target></alt-trans><alt-trans><target xml:lang="fr">La valeur n'est pas une date valide</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Ce n'est pas une date valide</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
 			<target xml:lang="fr">La date doit être comprise entre {0} et {1}</target></trans-unit>
@@ -40,13 +40,13 @@
 			<target xml:lang="fr">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve" approved="yes">
 				<source>A valid time is expected</source>
-			<target xml:lang="fr">Un heure valide est attendue</target><alt-trans><target xml:lang="fr">Une heure valide est requise</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Un heure valide est attendue</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve" approved="yes">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="fr">Une date et heure valide est attendue</target><alt-trans><target xml:lang="fr">Une date et heure valide est requise</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Une date et heure valide est attendue</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve" approved="yes">
 				<source>A valid date is expected</source>
-			<target xml:lang="fr">Une date valide est attendue</target><alt-trans><target xml:lang="fr">Une date valide est requise</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Une date valide est attendue</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
@@ -61,14 +61,14 @@
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve" approved="yes">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="fr">Objet attendu, {0} fourni</target><alt-trans><target xml:lang="fr">Un objet est attendu, {0} fourni</target></alt-trans></trans-unit>
+			<target xml:lang="fr">Objet attendu, {0} fourni</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected</source>
 			<target xml:lang="fr">Un nombre entier valide est attendu</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve" approved="yes">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="fr">"{0}" n'est pas un entier</target><alt-trans><target xml:lang="fr">"{0}" n'est pas un entier.</target></alt-trans></trans-unit>
+			<target xml:lang="fr">"{0}" n'est pas un entier</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -94,7 +94,7 @@
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="fr">L'option "locale" peut être seulement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
+			<target xml:lang="fr">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve" approved="yes">
 				<source>A valid percent number is expected</source>
 			<target xml:lang="fr">Un pourcentage valide est attendu</target></trans-unit>
@@ -165,7 +165,7 @@
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fr">Ce n'est pas une image valide</target></trans-unit>
+			<target xml:lang="fr">La ressource n'est pas une image</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
 			<target xml:lang="fr">La largeur de l'image ({0, number}) est inférieure à la largeur minimale autorisée qui est de {1, number}</target></trans-unit>
