@@ -9,7 +9,7 @@
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="fi" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annetun arvo oletetaan olevan {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>

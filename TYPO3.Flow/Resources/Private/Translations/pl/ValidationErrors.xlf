@@ -13,11 +13,11 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="pl" state="needs-translation">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="pl" state="translated">Podany element nie jest zbiorem</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="pl" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="pl" state="translated">Podany element nie jest policzalny</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
 			<target xml:lang="pl" state="translated">Licznik musi być pomiędzy {0,number} a {1,number}</target></trans-unit>
@@ -104,7 +104,7 @@
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="pl" state="needs-translation">The given subject did not match the pattern. Got: {0}</target></trans-unit>
+			<target xml:lang="pl" state="translated">Podana wartość nie pasuje do wzorca. Otrzymano: {0}</target></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
