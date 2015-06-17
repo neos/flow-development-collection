@@ -17,6 +17,7 @@ use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
  * A general purpose configuration manager
@@ -562,6 +563,7 @@ class ConfigurationManager {
 			if (unlink($cachePathAndFilename) === FALSE) {
 				throw new Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
 			}
+			OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
 		}
 		$this->configurations = array(self::CONFIGURATION_TYPE_SETTINGS => array());
 	}
@@ -590,6 +592,8 @@ if (FLOW_PATH_ROOT !== '$flowRootPath' || !file_exists('$cachePathAndFilename'))
 return require '$cachePathAndFilename';
 EOD;
 		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . ';');
+		OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
+
 		if (!is_dir(dirname($this->includeCachedConfigurationsPathAndFilename)) && !is_link(dirname($this->includeCachedConfigurationsPathAndFilename))) {
 			Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
 		}
@@ -597,6 +601,8 @@ EOD;
 		if (!file_exists($this->includeCachedConfigurationsPathAndFilename)) {
 			throw new Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
 		}
+
+		OpcodeCacheHelper::clearAllActive($this->includeCachedConfigurationsPathAndFilename);
 	}
 
 	/**
