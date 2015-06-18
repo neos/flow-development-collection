@@ -13,21 +13,21 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="fi" state="needs-translation">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu kohde ei ole kokoelma</target><alt-trans><target xml:lang="fi">Annettu aihe ei ole kokoelma</target></alt-trans></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="fi" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu kohde ei ole laskettavissa</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="fi" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Määrän on oltava välillä {0,number} ja {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="fi" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu arvo ei ole kelvollinen päivämäärä</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="fi" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Päivämäärän on oltava väliltä {0} ja {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target xml:lang="fi" state="needs-translation">The given date must be after {0}</target></trans-unit>
