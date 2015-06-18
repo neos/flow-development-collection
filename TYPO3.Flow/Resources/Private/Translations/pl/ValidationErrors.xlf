@@ -4,7 +4,7 @@
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
-				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+				<source>Only the characters a to z and numbers are allowed</source>
 			<target xml:lang="pl" state="translated">Dozwolone są tylko znaki od a do z i cyfry</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
