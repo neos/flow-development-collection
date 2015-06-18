@@ -4,8 +4,8 @@
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
-				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="fi" state="needs-translation">Only the characters a to z and numbers are allowed</target></trans-unit>
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="fi" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
