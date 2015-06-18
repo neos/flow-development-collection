@@ -50,7 +50,7 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="ru" state="translated">Укажите годный адрес электронной почты</target></trans-unit>
+			<target xml:lang="ru" state="translated">Укажите адрес электронной почты</target><alt-trans><target xml:lang="ru">Укажите годный адрес электронной почты</target></alt-trans></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
@@ -114,43 +114,43 @@
 			<target xml:lang="ru" state="needs-translation">The given value is not a valid string</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target xml:lang="ru" state="needs-translation">The length of this text must be between {0,number} and {1,number} characters</target></trans-unit>
+			<target xml:lang="ru" state="translated">Длинна текста должа быть между {0,number} и {1,number} символами</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]" xml:space="preserve">
 					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="ru" state="needs-translation">This field must contain at least {0,number} character</target></trans-unit>
+				<target xml:lang="ru" state="translated">В этом поле должно быть как минимум {0,number} символов</target></trans-unit>
         <trans-unit id="1238108068[1]" xml:space="preserve">
 					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="ru" state="needs-translation">This field must contain at least {0,number} characters</target></trans-unit>
+				<target xml:lang="ru" state="translated">В этом поле должно быть как минимум {0,number} символов</target></trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" xml:space="preserve">
 					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="ru" state="needs-translation">This text may not exceed {0,number} character</target></trans-unit>
+				<target xml:lang="ru" state="translated">Длинна этого текста не может превышать {0,number} символов</target></trans-unit>
         <trans-unit id="1238108069[1]" xml:space="preserve">
 					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="ru" state="needs-translation">This text may not exceed {0,number} characters</target></trans-unit>
+				<target xml:lang="ru" state="translated">Длинна этого текста не может превышать {0,number} символов</target></trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="ru" state="needs-translation">A valid string is expected</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ожидается строковый тип</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="ru" state="needs-translation">Valid text without any XML tags is expected</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ожидается текст без XML-тэгов</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="ru" state="needs-translation">The given subject is not a valid UUID</target></trans-unit>
+			<target xml:lang="ru" state="translated">Содержимое не является годным UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="ru" state="needs-translation">No validator found for electronic address of type "{0}"</target></trans-unit>
+			<target xml:lang="ru" state="translated">Валидатор для типа электронной почты "{0}" не найден</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="ru" state="needs-translation">The person name cannot be empty</target></trans-unit>
+			<target xml:lang="ru" state="translated">Поле для ФИО не может быть пустым</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
