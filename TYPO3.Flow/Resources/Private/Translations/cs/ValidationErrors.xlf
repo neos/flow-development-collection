@@ -30,10 +30,10 @@
 			<target xml:lang="cs" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="cs" state="needs-translation">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Dané datum musí následovat po {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="cs" state="needs-translation">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Dané datum musí být před {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -111,7 +111,7 @@
 			<target xml:lang="cs" state="needs-translation">The given object could not be converted to a string</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target xml:lang="cs" state="needs-translation">The given value is not a valid string</target></trans-unit>
+			<target xml:lang="cs" state="translated">Zadaná hodnota není platný řetězec</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="cs" state="needs-translation">The length of this text must be between {0,number} and {1,number} characters</target></trans-unit>
@@ -150,7 +150,7 @@
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="cs" state="needs-translation">The person name cannot be empty</target></trans-unit>
+			<target xml:lang="cs" state="translated">Jméno osoby musí být vyplněno</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
@@ -190,10 +190,10 @@
 			<target xml:lang="cs" state="needs-translation">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="cs" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="cs" state="translated">Orientace obrázku musí být "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="cs" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="cs" state="translated">Orientace obrázku "{0}" není povolena</target></trans-unit>
     </body>
   </file>
 </xliff>
