@@ -150,28 +150,28 @@
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="fi" state="needs-translation">The person name cannot be empty</target></trans-unit>
+			<target xml:lang="fi" state="translated">Nimi ei voi olla tyhjä</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fi" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="fi" state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kuvatyyppi "{0}" ei ole sallittu</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="fi" state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target xml:lang="fi" state="translated">Ladattu kuva ei ole kelvollinen kuvatiedosto</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fi" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="fi" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kuvan todellinen leveys {0,number} on pienempi kuin sallittu vähimmäisleveys {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="fi" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target xml:lang="fi" state="translated">Kuvan todellinen leveys {0,number} on suurempi kuin sallittu enimmäisleveys {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
 			<target xml:lang="fi" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
@@ -187,7 +187,7 @@
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fi" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="fi" state="translated">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
 			<target xml:lang="fi" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
