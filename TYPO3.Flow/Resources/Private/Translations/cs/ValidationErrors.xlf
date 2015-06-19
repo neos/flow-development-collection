@@ -5,29 +5,29 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="cs" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="cs" state="translated">Jsou povoleny pouze znaky a–z a číslice.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="cs" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se hodnota {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="cs" state="needs-translation">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="cs" state="translated">Daný předmět není kolekce</target><alt-trans><target xml:lang="cs">Daný subjekt není kolekce</target></alt-trans></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="cs" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="cs" state="translated">Daný předmět není počitatelný</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="cs" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Počet musí být v rozmezí od {0,number} and {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="cs" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="cs" state="translated">Zadaná hodnota není platné datum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="cs" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Datum musí být mezi {0} a {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target xml:lang="cs" state="translated">Dané datum musí následovat po {0}</target></trans-unit>
@@ -37,27 +37,27 @@
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="cs" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="cs" state="translated">Volba "locale" může být nastavena pouze na textový řetězec nebo objekt jazykového nastavení</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Zadejte čas v platném formátu</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se platné datum a čas</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se platné datum</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="cs" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="cs" state="translated">Uveďte prosím platnou e-mailovou adresu</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se platné desetinné číslo</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="cs" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
+			<target xml:lang="cs" state="translated">"{0}" nelze převést na desetinné číslo</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
@@ -65,18 +65,18 @@
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid integer number is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se platné celé číslo</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="cs" state="needs-translation">"{0}" is no integer.</target></trans-unit>
+			<target xml:lang="cs" state="translated">"{0}" není celé číslo.</target><alt-trans><target xml:lang="cs">"{0}" není číslo.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="cs" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Lze použít pouze písmena, číslice, mezery a některá interpunkční znaménka</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="cs" state="needs-translation">Value is no valid I18n locale identifier</target></trans-unit>
+			<target xml:lang="cs" state="translated">Neplatný identifikátor národního prostředí I18n</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
@@ -87,14 +87,14 @@
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="cs" state="needs-translation">A valid number is expected</target></trans-unit>
+			<target xml:lang="cs" state="translated">Očekává se platné číslo</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
 			<target xml:lang="cs" state="needs-translation">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="cs" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="cs" state="translated">Volba "locale" může být nastavena pouze na textový řetězec nebo objekt jazykového nastavení</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
 			<target xml:lang="cs" state="needs-translation">A valid percent number is expected</target></trans-unit>
@@ -161,29 +161,29 @@
 			<target xml:lang="cs" state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="cs" state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target xml:lang="cs" state="translated">Nahraný soubor není obrázek</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
 			<target xml:lang="cs" state="needs-translation">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="cs" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Šířka obrázku {0,number} je menši než povolená minimální šířka {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="cs" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Šířka obrázku {0,number} je větší než povolená maximální šířka {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="cs" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Výška obrázku {0,number} je menší než minimální povolená výška {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="cs" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Výška obrázku {0,number} je větší než maximální povolená výška {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="cs" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Velikost obrázku {0,number} x {1,number} neodpovídá /je menší/ než požadované minimální rozlišení {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="cs" state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="cs" state="translated">Velikost obrázku {0,number} x {1,number} neodpovídá /je větší/ než povolené maximální rozlišení {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
