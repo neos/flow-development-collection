@@ -12,7 +12,9 @@ namespace TYPO3\Flow\Resource\Streams;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Unicode\Functions;
 
 /**
  * A stream wrapper for resources.
@@ -456,26 +458,25 @@ class ResourceStreamWrapper implements StreamWrapperInterface {
 	 * @param string $requestedPath
 	 * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
 	 * @return mixed The full path and filename or FALSE if the file doesn't exist
-	 * @throws \TYPO3\Flow\Resource\Exception
-	 * @throws \InvalidArgumentException
+	 * @throws \InvalidArgumentException|Exception
 	 */
 	protected function evaluateResourcePath($requestedPath, $checkForExistence = TRUE) {
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
 			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
 		}
 
-		$uriParts = \TYPO3\Flow\Utility\Unicode\Functions::parse_url($requestedPath);
+		$uriParts = Functions::parse_url($requestedPath);
 		if (!is_array($uriParts) || !isset($uriParts['host'])) {
 			return FALSE;
 		}
 
-		if (strlen($uriParts['host']) === 40) {
+		if (preg_match('/^[0-9a-f]{40}$/i', $uriParts['host']) === 1) {
 			$resource = $this->resourceManager->getResourceBySha1($uriParts['host']);
 			return $this->resourceManager->getStreamByResource($resource);
 		}
 
 		if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-			throw new \TYPO3\Flow\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+			throw new Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
 		}
 
 		$package = $this->packageManager->getPackage($uriParts['host']);
