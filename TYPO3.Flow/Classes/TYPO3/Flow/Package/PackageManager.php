@@ -15,6 +15,7 @@ use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\OpcodeCacheHelper;
 use TYPO3\Flow\Utility\TypeHandling;
 
 /**
@@ -1055,6 +1056,8 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		if ($result === FALSE) {
 			throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);
 		}
+		OpcodeCacheHelper::clearAllActive($this->packageStatesPathAndFilename);
+
 		$this->emitPackageStatesUpdated();
 	}
 

@@ -17,6 +17,7 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Lock\Lock;
+use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
  * A caching backend which stores cache entries in files, but does not support or
@@ -183,6 +184,10 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		$lock->release();
 		if ($result === FALSE) {
 			throw new \TYPO3\Flow\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1334756737);
+		}
+
+		if ($this->cacheEntryFileExtension === '.php') {
+			OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
 		}
 	}
 
