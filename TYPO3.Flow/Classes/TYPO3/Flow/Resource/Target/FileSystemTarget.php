@@ -192,7 +192,7 @@ class FileSystemTarget implements TargetInterface {
 	 * @return string The URI
 	 */
 	public function getPublicStaticResourceUri($relativePathAndFilename) {
-		return $this->baseUri . $relativePathAndFilename;
+		return $this->baseUri . $this->encodeRelativePathAndFilenameForUri($relativePathAndFilename);
 	}
 
 	/**
@@ -203,7 +203,17 @@ class FileSystemTarget implements TargetInterface {
 	 * @throws Exception
 	 */
 	public function getPublicPersistentResourceUri(Resource $resource) {
-		return $this->baseUri . $this->getRelativePublicationPathAndFilename($resource);
+		return $this->baseUri . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
+	}
+
+	/**
+	 * Applies rawurlencode() to all path segments of the given $relativePathAndFilename
+	 *
+	 * @param string $relativePathAndFilename
+	 * @return string
+	 */
+	protected function encodeRelativePathAndFilenameForUri($relativePathAndFilename) {
+		return implode('/', array_map('rawurlencode', explode('/', $relativePathAndFilename)));
 	}
 
 	/**
