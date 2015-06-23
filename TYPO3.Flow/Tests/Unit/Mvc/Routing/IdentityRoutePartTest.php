@@ -137,7 +137,7 @@ class IdentityRoutePartTest extends UnitTestCase {
 
 		$this->identityRoutePart->setObjectType('stdClass');
 
-		$this->assertTrue($this->identityRoutePart->_call('matchValue', 'The+Identifier'));
+		$this->assertTrue($this->identityRoutePart->_call('matchValue', 'The%20Identifier'));
 		$expectedResult = array('__identity' => 'The Identifier');
 		$actualResult = $this->identityRoutePart->getValue();
 		$this->assertSame($expectedResult, $actualResult);
@@ -245,6 +245,9 @@ class IdentityRoutePartTest extends UnitTestCase {
 	}
 
 	/**
+	 * Makes also sure that identity route parts are encoded via rawurlencode (which encodes spaces to "%20") and not
+	 * urlencode (which encodes spaces to "+"). According to RFC 3986 that is correct for path segments.
+	 *
 	 * @test
 	 */
 	public function resolveValueSetsTheRouteValueToTheUrlEncodedIdentifierIfNoUriPatternIsSpecified() {
@@ -254,7 +257,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 		$this->identityRoutePart->setObjectType('stdClass');
 
 		$this->identityRoutePart->_call('resolveValue', $value);
-		$this->assertSame('Some+Identifier', $this->identityRoutePart->getValue());
+		$this->assertSame('Some%20Identifier', $this->identityRoutePart->getValue());
+		$this->assertNotSame('Some+Identifier', $this->identityRoutePart->getValue());
 	}
 
 	/**
