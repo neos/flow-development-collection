@@ -111,7 +111,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 		if ($value === NULL || $value === '') {
 			return FALSE;
 		}
-		$this->value = urldecode($value);
+		$this->value = rawurldecode($value);
 		return TRUE;
 	}
 
@@ -181,7 +181,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 				return FALSE;
 			}
 		}
-		$this->value = urlencode($value);
+		$this->value = rawurlencode($value);
 		if ($this->lowerCase) {
 			$this->value = strtolower($this->value);
 		}

@@ -95,7 +95,7 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->dynamicRoutPart->setDefaultValue('bar');
 		$this->dynamicRoutPart->setSplitString('/');
 
-		$routePath = 'some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f/secondSegment';
+		$routePath = 'some%20%5c%20special%20%c3%b6%c3%a4%c3%bc%c3%9f/secondSegment';
 		$this->dynamicRoutPart->match($routePath);
 
 		$this->assertEquals('some \ special öäüß', $this->dynamicRoutPart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
@@ -225,14 +225,18 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Makes sure that dynamic route parts are encoded via rawurlencode (which encodes spaces to "%20") and not
+	 * urlencode (which encodes spaces to "+"). According to RFC 3986 that is correct for path segments.
+	 *
 	 * @test
 	 */
-	public function dynamicRoutePartUrlEncodesValues() {
+	public function dynamicRoutePartRawUrlEncodesValues() {
 		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('foo' => 'some \ special öäüß');
 
 		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-		$this->assertEquals('some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
+		$this->assertEquals('some%20%5c%20special%20%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
+		$this->assertNotEquals('some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
 	}
 
 	/**
