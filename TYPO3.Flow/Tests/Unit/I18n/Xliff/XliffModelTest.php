@@ -94,7 +94,7 @@ class XliffModelTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockXliffParser->expects($this->once())->method('getParsedData')->will($this->returnValue(array()));
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', FALSE);
-		$mockSystemLogger->expects($this->once())->method('log')->with($this->stringStartsWith('No trans-unit elements were found'), LOG_WARNING);
+		$mockSystemLogger->expects($this->once())->method('log')->with($this->stringStartsWith('No trans-unit elements were found'), LOG_DEBUG);
 
 		$this->model->injectParser($this->mockXliffParser);
 		$this->inject($this->model, 'systemLogger', $mockSystemLogger);
