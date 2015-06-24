@@ -276,6 +276,19 @@ class HeadersTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 *
+	 * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
+	 */
+	public function setExceptsHttpsHeaders() {
+		$headers = new Headers();
+		$headers->set('HTTPS', 1);
+
+		// dummy assertion to suppress PHPUnit warning
+		$this->assertTrue(TRUE);
+	}
+
+	/**
 	 * (RFC 2616 / 14.9.1)
 	 *
 	 * @test

@@ -1182,4 +1182,16 @@ class RequestTest extends UnitTestCase {
 		$this->assertEquals($expectedUri, (string)$request->getUri());
 	}
 
+	/**
+	 * @test
+	 *
+	 * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
+	 */
+	public function constructorIgnoresHttpsHeader() {
+		$server = array (
+			'HTTP_HTTPS' => '1',
+		);
+		new Request(array(), array(), array(), $server);
+	}
+
 }
