@@ -99,9 +99,6 @@ class Headers {
 	 * @api
 	 */
 	public function set($name, $values, $replaceExistingHeader = TRUE) {
-		if (strtoupper(substr($name, 0, 4)) === 'HTTP') {
-			throw new \InvalidArgumentException('The "HTTP" status header must be set via setStatus().', 1220541963);
-		}
 		if (strtoupper(substr($name, 0, 10)) === 'SET-COOKIE') {
 			throw new \InvalidArgumentException('The "Set-Cookie" headers must be set via setCookie().', 1345128153);
 		}
