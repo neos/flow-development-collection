@@ -58,8 +58,9 @@ class Arrays {
 	}
 
 	/**
-	 * Merges two arrays recursively and "binary safe" (integer keys are overridden as well), overruling similar values in the first array ($firstArray) with the values of the second array ($secondArray)
-	 * In case of identical keys, ie. keeping the values of the second.
+	 * Merges two arrays recursively and "binary safe" (integer keys are overridden as well), overruling similar values
+	 * in the first array ($firstArray) with the values of the second array ($secondArray) in case of identical keys,
+	 * ie. keeping the values of the second.
 	 *
 	 * @param array $firstArray First array
 	 * @param array $secondArray Second array, overruling the first array
