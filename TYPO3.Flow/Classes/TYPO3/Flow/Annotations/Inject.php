@@ -35,7 +35,7 @@ final class Inject {
 	 * Example: session.name
 	 *
 	 * @var string
-	 * @deprecated since 3.0. Use the InjectConfigurations annotation instead.
+	 * @deprecated since 3.0. Use the InjectConfiguration annotation instead.
 	 */
 	public $setting;
 
@@ -47,7 +47,7 @@ final class Inject {
 	 * Example: TYPO3.Flow
 	 *
 	 * @var string
-	 * @deprecated since 3.0. Use the InjectConfigurations annotation instead.
+	 * @deprecated since 3.0. Use the InjectConfiguration annotation instead.
 	 */
 	public $package;
 
