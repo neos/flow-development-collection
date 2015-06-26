@@ -397,4 +397,22 @@ class ForViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase 
 		);
 		$this->assertSame($expectedCallProtocol, $viewHelperNode->callProtocol, 'The call protocol differs -> The for loop does not work as it should!');
 	}
+
+	/**
+	 * @test
+	 */
+	public function iteratedItemsAreNotCountedIfIterationArgumentIsNotSet() {
+		$viewHelper = new \TYPO3\Fluid\ViewHelpers\ForViewHelper();
+
+		$viewHelperNode = new \TYPO3\Fluid\ViewHelpers\Fixtures\ConstraintSyntaxTreeNode($this->templateVariableContainer);
+
+		$mockItems = $this->getMockBuilder(\ArrayObject::class)->setMethods(['count'])->disableOriginalConstructor()->getMock();
+		$mockItems->expects($this->never())->method('count');
+		$this->arguments['each'] = $mockItems;
+		$this->arguments['as'] = 'innerVariable';
+
+		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$viewHelper->setViewHelperNode($viewHelperNode);
+		$viewHelper->render($this->arguments['each'], $this->arguments['as']);
+	}
 }
