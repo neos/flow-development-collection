@@ -105,11 +105,13 @@ class ForViewHelper extends AbstractViewHelper implements CompilableInterface {
 			}
 			$arguments['each'] = array_reverse($arguments['each']);
 		}
-		$iterationData = array(
-			'index' => 0,
-			'cycle' => 1,
-			'total' => count($arguments['each'])
-		);
+		if ($arguments['iteration'] !== NULL) {
+			$iterationData = array(
+				'index' => 0,
+				'cycle' => 1,
+				'total' => count($arguments['each'])
+			);
+		}
 
 		$output = '';
 		foreach ($arguments['each'] as $keyValue => $singleElement) {
