@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2015-06-26
+This reference was automatically generated from code on 2015-06-27
 
 
 AbstractAdvice (``TYPO3\Flow\Aop\Advice\AbstractAdvice``)
