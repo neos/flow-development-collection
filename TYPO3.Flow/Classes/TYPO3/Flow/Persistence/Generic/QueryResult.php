@@ -42,6 +42,12 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 	protected $queryResult;
 
 	/**
+	 * @var array
+	 * @Flow\Transient
+	 */
+	protected $numberOfResults;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \TYPO3\Flow\Persistence\QueryInterface $query
@@ -115,11 +121,14 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function count() {
-		if (is_array($this->queryResult)) {
-			return count($this->queryResult);
-		} else {
-			return $this->persistenceManager->getObjectCountByQuery($this->query);
+		if ($this->numberOfResults === NULL) {
+			if (is_array($this->queryResult)) {
+				$this->numberOfResults = count($this->queryResult);
+			} else {
+				$this->numberOfResults = $this->persistenceManager->getObjectCountByQuery($this->query);
+			}
 		}
+		return $this->numberOfResults;
 	}
 
 	/**
