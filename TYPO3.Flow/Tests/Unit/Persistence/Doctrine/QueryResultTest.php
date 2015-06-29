@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Persistence\Doctrine\QueryResult;
+use TYPO3\Flow\Persistence\Doctrine\Query;
+
 /**
  * Testcase for \TYPO3\Flow\Persistence\QueryResult
  *
@@ -18,12 +21,12 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
 class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\Doctrine\QueryResult
+	 * @var QueryResult
 	 */
 	protected $queryResult;
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\QueryInterface
+	 * @var Query|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $query;
 
@@ -32,9 +35,9 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->query = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\Query')->disableOriginalConstructor()->disableOriginalClone()->getMock();
-		$this->query->expects($this->any())->method('getResult')->will($this->returnValue(array()));
-		$this->queryResult = new \TYPO3\Flow\Persistence\Doctrine\QueryResult($this->query);
+		$this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
+		$this->query->expects($this->any())->method('getResult')->will($this->returnValue(array('First result', 'second result', 'third result')));
+		$this->queryResult = new QueryResult($this->query);
 	}
 
 	/**
@@ -56,5 +59,31 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function offsetGetReturnsNullIfOffsetDoesNotExist() {
 		$this->assertNull($this->queryResult->offsetGet('foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function countCallsCountOnTheQuery() {
+		$this->query->expects($this->once())->method('count')->will($this->returnValue(123));
+		$this->assertEquals(123, $this->queryResult->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countCountsQueryResultDirectlyIfAlreadyInitialized() {
+		$this->query->expects($this->never())->method('count');
+		$this->queryResult->toArray();
+		$this->assertEquals(3, $this->queryResult->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countCallsCountOnTheQueryOnlyOnce() {
+		$this->query->expects($this->once())->method('count')->will($this->returnValue(321));
+		$this->queryResult->count();
+		$this->assertEquals(321, $this->queryResult->count());
 	}
 }
