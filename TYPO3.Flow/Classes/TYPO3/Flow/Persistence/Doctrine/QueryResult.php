@@ -27,6 +27,12 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 	protected $rows;
 
 	/**
+	 * @var integer
+	 * @Flow\Transient
+	 */
+	protected $numberOfRows;
+
+	/**
 	 * @var \TYPO3\Flow\Persistence\Doctrine\Query
 	 */
 	protected $query;
@@ -84,7 +90,14 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function count() {
-		return $this->query->count();
+		if ($this->numberOfRows === NULL) {
+			if (is_array($this->rows)) {
+				$this->numberOfRows = count($this->rows);
+			} else {
+				$this->numberOfRows = $this->query->count();
+			}
+		}
+		return $this->numberOfRows;
 	}
 
 	/**
