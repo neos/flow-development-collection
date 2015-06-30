@@ -454,7 +454,7 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 			return FALSE;
 		}
 
-		if (strlen($uriParts['host']) === 40) {
+		if (preg_match('/^[0-9a-f]{40}$/i', $uriParts['host']) === 1) {
 			$resourcePath = $this->resourceManager->getPersistentResourcesStorageBaseUri() . $uriParts['host'];
 			if ($checkForExistence === FALSE || file_exists($resourcePath)) {
 				return $resourcePath;
