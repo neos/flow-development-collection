@@ -11,21 +11,42 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Persistence\Generic\PersistenceManager;
+use TYPO3\Flow\Persistence\Generic\DataMapper;
+use TYPO3\Flow\Persistence\Generic\QueryResult;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for \TYPO3\Flow\Persistence\QueryResult
  *
  */
-class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class QueryResultTest extends UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\Generic\QueryResult
+	 * @var PersistenceManager|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * @var DataMapper|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $dataMapper;
+
+	/**
+	 * @var QueryResult
 	 */
 	protected $queryResult;
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\QueryInterface
+	 * @var QueryInterface
 	 */
 	protected $query;
+
+	/**
+	 * @var QueryResult|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $sampleResult;
 
 	/**
 	 * Sets up this test case
@@ -34,10 +55,9 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$this->persistenceManager = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array(), array(), '', FALSE);
 		$this->persistenceManager->expects($this->any())->method('getObjectDataByQuery')->will($this->returnValue(array('one', 'two')));
-		$this->persistenceManager->expects($this->any())->method('getObjectCountByQuery')->will($this->returnValue(2));
 		$this->dataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
 		$this->query = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
-		$this->queryResult = new \TYPO3\Flow\Persistence\Generic\QueryResult($this->query);
+		$this->queryResult = new QueryResult($this->query);
 		$this->queryResult->injectPersistenceManager($this->persistenceManager);
 		$this->queryResult->injectDataMapper($this->dataMapper);
 		$this->sampleResult = array(array('foo' => 'Foo1', 'bar' => 'Bar1'), array('foo' => 'Foo2', 'bar' => 'Bar2'));
@@ -106,9 +126,26 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function countCallsGetObjectCountByQueryOnPersistenceManager() {
-		$queryResult = $this->getMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
-		$queryResult->injectPersistenceManager($this->persistenceManager);
-		$this->assertEquals(2, $queryResult->count());
+		$this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
+		$this->assertEquals(2, $this->queryResult->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countCountsQueryResultDirectlyIfAlreadyInitialized() {
+		$this->persistenceManager->expects($this->never())->method('getObjectCountByQuery');
+		$this->queryResult->toArray();
+		$this->assertEquals(2, $this->queryResult->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countOnlyCallsGetObjectCountByQueryOnPersistenceManagerOnce() {
+		$this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
+		$this->queryResult->count();
+		$this->assertEquals(2, $this->queryResult->count());
 	}
 
 	/**
