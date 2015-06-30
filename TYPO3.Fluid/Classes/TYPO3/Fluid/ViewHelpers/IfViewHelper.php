@@ -28,12 +28,10 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * XX and YY can be one of:
  * - number
+ * - string
  * - Object Accessor
  * - Array
  * - a ViewHelper
- * Note: Strings at XX/YY are NOT allowed, however, for the time being,
- * a string comparison can be achieved with comparing arrays (see example
- * below).
  * ::
  *
  *   <f:if condition="{rank} > 100">
@@ -45,7 +43,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *   <f:if condition="{rank} == {k:bar()}">
  *     Checks if rank is equal to the result of the ViewHelper "k:bar"
  *   </f:if>
- *   <f:if condition="{0: foo.bar} == {0: 'stringToCompare'}">
+ *   <f:if condition="{foo.bar} == 'stringToCompare'">
  *     Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
  *   </f:if>
  *
