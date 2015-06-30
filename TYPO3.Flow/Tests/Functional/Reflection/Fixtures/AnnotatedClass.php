@@ -51,4 +51,10 @@ class AnnotatedClass {
 	 * @Flow\Validate("foo", type="StringLength", options={ "mininum"=2, "maximum"=5 })
 	 */
 	public function someFlowAnnotations($foo) {}
+
+	/**
+	 * @param int $int
+	 * @param integer $integer
+	 */
+	public function intAndIntegerParameters($int, $integer) {}
 }

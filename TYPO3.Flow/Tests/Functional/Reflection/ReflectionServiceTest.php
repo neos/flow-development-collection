@@ -167,4 +167,46 @@ class ReflectionServiceTest extends FunctionalTestCase {
 		$actualType = $methodParameters['parameter']['type'];
 		$this->assertSame($expectedType, $actualType);
 	}
+
+	/**
+	 * @test
+	 */
+	public function integerPropertiesGetANormlizedType() {
+		$className = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties';
+
+		$varTagValues = $this->reflectionService->getPropertyTagValues($className, 'intProperty', 'var');
+		$this->assertCount(1, $varTagValues);
+		$this->assertEquals('integer', $varTagValues[0]);
+
+		$varTagValues = $this->reflectionService->getPropertyTagValues($className, 'integerProperty', 'var');
+		$this->assertCount(1, $varTagValues);
+		$this->assertEquals('integer', $varTagValues[0]);
+	}
+
+	/**
+	 * @test
+	 */
+	public function booleanPropertiesGetANormlizedType() {
+		$className = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties';
+
+		$varTagValues = $this->reflectionService->getPropertyTagValues($className, 'boolProperty', 'var');
+		$this->assertCount(1, $varTagValues);
+		$this->assertEquals('boolean', $varTagValues[0]);
+
+		$varTagValues = $this->reflectionService->getPropertyTagValues($className, 'booleanProperty', 'var');
+		$this->assertCount(1, $varTagValues);
+		$this->assertEquals('boolean', $varTagValues[0]);
+	}
+
+	/**
+	 * @test
+	 */
+	public function methodParametersGetNormalizedType() {
+		$methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass', 'intAndIntegerParameters');
+
+		foreach ($methodParameters as $methodParameter) {
+			$this->assertEquals('integer', $methodParameter['type']);
+		}
+
+	}
 }
