@@ -119,6 +119,7 @@ public function getVariableContainer() {
 	return new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer();
 }
 public function getLayoutName(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface \$renderingContext) {
+\$self = \$this;
 %s
 return %s;
 }
