@@ -228,6 +228,8 @@ return " . var_export($this->storedProxyClasses, TRUE) . ";";
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
+		$proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
+
 		$this->classesCache->set(str_replace('\\', '_', $className), $classCode . $proxyClassCode);
 	}
 
