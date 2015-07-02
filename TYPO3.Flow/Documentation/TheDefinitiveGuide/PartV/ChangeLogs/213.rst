@@ -1,0 +1,694 @@
+====================
+2.1.3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Pin doctrine/migrations to known working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Unfortunately this needs to be repeated in the root manifest.
+
+Related: FLOW-300
+
+* Commit: `9be187c <https://git.typo3.org/Flow/Distributions/Base.git/commit/9be187cfff4237c08de98f186bbededa71c3dd9c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/47/
+
+* Commit: `3790795 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3790795baba80056e551f8bde2c491c2b621654d>`_
+
+[BUGFIX] Pin doctrine/migrations to known working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that conflicts with the version
+of doctrine/orm used with Flow 2.x, so we need to pin the required
+version to the last known working state.
+
+Fixes: FLOW-300
+
+* Commit: `d58cee8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d58cee83789f700a766149730cfa72f0bc1ea050>`_
+
+[BUGFIX] Handle all exception cases in the Doctrine connection
+-----------------------------------------------------------------------------------------
+
+Now all cases of an exception are handled and given through in case
+a PDO exception occurs.
+
+* Commit: `1b26b8f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1b26b8f936540d0ac9a223ba049a21c7ddb32b5b>`_
+
+[BUGFIX] Disable security for CLI requests
+-----------------------------------------------------------------------------------------
+
+Currently it's not possible to invoke methods that are covered by a
+policy via CLI because the security context is not yet initialized
+leading to a ``The security Context cannot be initialized yet``
+exception.
+
+With this change all authorization checks are disabled for command
+controllers.
+
+Fixes: #FLOW-163
+
+* Commit: `fb4fe0d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fb4fe0d6590aa2e06e93aef375dfbea74bae0549>`_
+
+[BUGFIX] PersistentObjectConverter works with "immutable" properties
+-----------------------------------------------------------------------------------------
+
+The PersistentObjectConverter sets convertedChildProperties on the
+object after it was created (either newly constructed or
+hydrated from persistance). Creating a new object will filter
+constructor arguments from the convertedChildProperties but
+if the object already existed that does not happen.
+This poses a problem for objects that accept arguments in the
+constructor that are not settable afterwards. So those properties are
+considered "immutable".
+In cases where you cannot be sure if an object already exists and you
+give the identity and all properties of an object with "immutable"
+properties the property mapping will fail if the object already existed
+as the converter tries to set the "immutable" properties as well.
+
+With this change we check for this kind of properties and compare the
+given value with the already set value. In case they are identical
+we ignore the given value and proceed with the property mapping. In
+case they differ there is an inconsistency in your data that we cannot
+handle and so throw an exception.
+This is not breaking as before in all cases an exception would be thrown.
+
+Fixes: NEOS-937
+
+* Commit: `ae29851 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ae29851b8b06f03e3cbf2478ee72a4db19328746>`_
+
+[BUGFIX] Fix resolving of imported interface namespaces
+-----------------------------------------------------------------------------------------
+
+Dependency injection and property mapping does not work for
+interfaces of the current namespace if the code does not refer to
+the fully qualified name.
+
+Fixes: FLOW-34
+
+* Commit: `fbb242a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fbb242a685b39f52bbceaaf6fb6491c5de6e29d2>`_
+
+[TASK] Fix unit tests failing on PHP 5.6
+-----------------------------------------------------------------------------------------
+
+Some unit tests failed under PHP 5.6 because an argument to be passed by
+reference was by value.
+The affected tests now use ``_callRef`` in the ``AccessibleMock``.
+
+This should solve those issues on HHVM as well.
+
+Related: FLOW-194
+
+* Commit: `fb470d8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fb470d8e6862f5f00add5a806fa9c6d84811603b>`_
+
+[BUGFIX] Properly support doctrine's indexBy attribute
+-----------------------------------------------------------------------------------------
+
+Doctrine allows an indexBy attribute at OneToMany and ManyToMany
+relations. The current FlowAnnotationDriver removes this attribute.
+This patch passes it forward again.
+
+Functional tests are included.
+
+* Related: `#44740 <http://forge.typo3.org/issues/44740>`_
+* Commit: `59c880f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/59c880f2126e84dd8612931094b930f2e90b4f8b>`_
+
+[BUGFIX] AOP works with __clone call on parent objects
+-----------------------------------------------------------------------------------------
+
+If, for example, you extend an entity which implements __clone
+the AOP Framework breaks with an warning in development mode,
+that it cannot access Flow_Aop_Proxy_targetMethodsAndGroupedAdvices.
+
+Solution is to check  if the private
+Flow_Aop_Proxy_targetMethodsAndGroupedAdvices property is
+accessible and otherwise skipping the Advice call.
+
+* Related: `#37571 <http://forge.typo3.org/issues/37571>`_
+* Commit: `2a2351c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2a2351c078b5e98f66ecb9fb78a6718c5496160e>`_
+
+[TASK] Explain "inconsistent naming" of classes and interfaces
+-----------------------------------------------------------------------------------------
+
+This adds the wonderful explanation the reasons for our naming of
+classes and interfaces that Jacob Floyd sent to the mailing list to the
+CGL appendix.
+
+* Commit: `288e0aa <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/288e0aae22c416c1fee8ba0eea0df18fb81cc5c4>`_
+
+[BUGFIX] PHP Notice when multiple namespace roots are set
+-----------------------------------------------------------------------------------------
+
+The ``Package`` class triggers a PHP Notice when a composer manifest
+contains several search paths for the same prefix (see [1])::
+
+    {
+      "autoload": {
+        "psr-0": {
+          "Foo\\\\": ["src/", "tests/"]
+        }
+      }
+    }
+
+This commit changes the behaviour to using the first path as class
+path when multiple paths are defined.
+
+[1] https://getcomposer.org/doc/04-schema.md#psr-0
+
+Resolves: FLOW-94
+
+* Commit: `b727046 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b7270466399a8fe0b6a39259f55e47ad716ae210>`_
+
+[BUGFIX] Prevent iteration over empty collection
+-----------------------------------------------------------------------------------------
+
+This shouldn't make a difference but with the current way
+properties are serialized in the TYPO3CR it can happen that
+you have ArrayCollections which do contain a NULL value instead
+of an array. This will break on the next serialization and this
+prevents it.
+
+* Commit: `a884025 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a884025d113d67e0bf6d71b32abe2680acb2a1db>`_
+
+[TASK] Add "suggest" and "conflict" dependencies to newly created composer manifests
+-----------------------------------------------------------------------------------------
+
+Newly created composer manifests only contained the "require" dependencies
+of the package meta data. With this change also suggested and conflicting
+dependencies are added.
+
+Related: NEOS-785
+
+* Commit: `ee15084 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ee1508466808e281519148d01d14d928c2cf1b5f>`_
+
+[TASK] Fix wrong path in documentation
+-----------------------------------------------------------------------------------------
+
+Resolves: FLOW-91
+
+* Commit: `a943252 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a943252cec23ef30a0247a649ae7fb5204bbff82>`_
+
+[BUGFIX] Memcached backend not cleared across Cli/Web requests
+-----------------------------------------------------------------------------------------
+
+This is because the backend is bound to the executing script + SAPI mode
+and not the installation path + Flow context. This makes it
+impossible to clear entries created in the Web with the
+Cli cache flush commands, and vice versa.
+
+Additionally the Flow context is not taking into account so
+the Development/Production share the same cache, which can
+lead to undesired behavior.
+
+Fixes: FLOW-116
+
+* Commit: `58e7ee9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/58e7ee94cbdf038362222b40ec5bf6e194212a23>`_
+
+[BUGFIX] Adjust code migration identifier pattern to contain the full timestamp
+-----------------------------------------------------------------------------------------
+
+Previously code migrations are expected to have a class name with the
+pattern ``Version<YYYYMMDDhhmm>`` and the unique identifier was
+determined extracting the last 12 characters of the class name (which
+are expected to be the timestamp).
+
+With this change everything after the "Version" string is considered for
+the identifier, allowing the timestamp to contain seconds as well.
+
+This also adjusts existing code migrations to use the full timestamp in
+order to establish the new guideline (note: those migrations still
+return the old identifier so that they won't be applied again with a
+new identifier).
+
+Fixes: FLOW-110
+
+* Commit: `c2562a1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c2562a16eab397f8532d087baaf3f9f467e2440d>`_
+
+[BUGFIX] Adjust regular expression to strip only first php tag
+-----------------------------------------------------------------------------------------
+
+This is a follow up for I388f1a7c04139d5482203887931684f597d71e54
+which changed the regular expression in a way that wrongly
+removed all opening php tags in the given php file.
+
+Fixes: FLOW-90
+
+* Commit: `f21708b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f21708b305e9f33ccd6b052959fbd6b20b176406>`_
+
+[BUGFIX] Move file migration operation created empty folders
+-----------------------------------------------------------------------------------------
+
+When the "oldPath" didn't exist the operation still created the empty "newpath".
+
+Related: NEOS-390
+
+* Commit: `7d42878 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7d42878b89a53077d898f8b2ea08d38bca045557>`_
+
+[BUGFIX] Requesting /index.phpa/ breaks Uri host parameter
+-----------------------------------------------------------------------------------------
+
+If the request URI contains ``index.php`` and something afterwards
+before a slash, that something is included in the host being
+set on the request URI that's constructed.
+
+Problem lies in the handling of URIs containing index.php,
+where that part is automatically stripped off. However it
+strips it off in a way that can cause this issue, when the
+``parse_url()`` is called on a broken URI.
+
+Fixes: FLOW-92
+
+* Commit: `33833de <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/33833deb4c4b98778ccb9fa88656fbeeb8500009>`_
+
+[BUGFIX] There is a "off-by-one" error in proxy classes
+-----------------------------------------------------------------------------------------
+
+Since merging I42867963468c23a3dd11512c31ab1bff0ba3db1c the generated
+proxy classes contain one line too much which results in error
+messages showing the wrong line number when compared to the original
+code. With this change the proxy class again resembles exactly
+the original code.
+
+* Commit: `3f0679f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3f0679f702b25a7be477d9b38c5a550eb8266e33>`_
+
+[BUGFIX] Fix __toString() in Uri for edge case
+-----------------------------------------------------------------------------------------
+
+When constructing an Uri instance from a string like '/foo/bar' and
+settings scheme and host afterwards, __toString would return
+``http://host:/foo/bar`` (note the lone colon).
+
+* Commit: `e9a5512 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e9a551201be2a2002d0a41b77a210ca432004691>`_
+
+[BUGFIX] Merge request arguments instead of overwrite
+-----------------------------------------------------------------------------------------
+
+A sub-request losing its arguments if a route is defined f.e. like this::
+
+  -
+    name: 'Basket Steps'
+    uriPattern: '{node}/{--pipeu_factura_nodetypes-basket.@action}.{@format}'
+    defaults:
+      '@package': 'TYPO3.Neos'
+      '@controller': 'Frontend\\Node'
+      '@format': 'html'
+      '@action': 'show'
+      '--pipeu_factura_nodetypes-basket':
+        '@package': 'PIPEU.Factura.NodeTypes'
+        '@controller': 'Basket'
+    routeParts:
+      node:
+        handler: TYPO3\\Neos\\Routing\\FrontendNodeRoutePartHandler
+    appendExceedingArguments: true
+
+In this case '--pipeu_factura_nodetypes-basket' will override
+any pluginArgument because of a missing check for existing
+index in pluginArguments. Its getting replaced instead of merged.
+
+This wrong behavior is fixed with this patch by merging instead of
+overwriting.
+
+Same for internal arguments.
+
+Was fixed in master by the related feature.
+
+Related: I1d192231810757f38aecfc3f7dc520b118ee3feb
+
+* Resolves: `#59404 <http://forge.typo3.org/issues/59404>`_
+* Commit: `bbf90a4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bbf90a4adefdad23228ac4da7a1da3113a989723>`_
+
+[BUGFIX] Support split configuration source in code migrations
+-----------------------------------------------------------------------------------------
+
+Code migrations now also apply to split configuration files.
+
+Fixes: FLOW-68
+
+* Commit: `a30578b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a30578bda44dafcf9a647df0a4dfd0d19ce3e8fc>`_
+
+[BUGFIX] Add domain model validators only once
+-----------------------------------------------------------------------------------------
+
+If a domain model validator is present and a controller action accepts
+this domain model as argument, the validator is added twice to the
+validation tree.
+
+It is added in ValidatorResolver::buildMethodArgumentsValidatorConjunctions()
+and in ValidatorResolver::addCustomValidators() which is called from
+ValidatorResolver::getBaseValidatorConjunction()
+
+Both methods are called when building the validation tree in
+ActionController::initializeActionMethodValidators()
+
+* Resolves: `#49624 <http://forge.typo3.org/issues/49624>`_
+* Commit: `296cfc9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/296cfc959069f41a459719843cc8317b174622a2>`_
+
+[BUGFIX] sessionManager->getActiveSessions() returns empty array
+-----------------------------------------------------------------------------------------
+
+This change adds the tag 'session' to all started sessions.
+As SessionManager->getActiveSessions() searches sessions by
+'session' tag, nothing will ever be returned if the tag is
+not set.
+
+* Fixes: `#55936 <http://forge.typo3.org/issues/55936>`_
+* Commit: `bc7a07d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bc7a07df317b534fb6b458791ae9b1beb3d54660>`_
+
+[BUGFIX] REMOTE_AUTHORIZATION strips "Basic" string
+-----------------------------------------------------------------------------------------
+
+Currently the .htaccess file passes the "Authorization" header
+to the REMOTE_AUTHORIZATION environment variable by stripping
+the "Basic" string. This means as soon as the authentication
+token tries to authenticate, the only remaining thing is the
+base64 encoded value of username/password without the "Basic"
+indicator. This leads to no basic auth possible when running
+CGI.
+
+* Resolves: `#53010 <http://forge.typo3.org/issues/53010>`_
+
+(cherry picked from commit 8bd0eca54fefa1eb014d000f368634d2a91f477d)
+
+* Commit: `71bfc21 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/71bfc2152e50a9932befa3cc50d02c44c233eb27>`_
+
+[BUGFIX] Proxy compiler should only remove opening php tag
+-----------------------------------------------------------------------------------------
+
+Without this change the proxy compiler throws away the full line
+containing the opening php tag, but that is not correct as this
+first line could contain important information like the namepace
+declaration.
+
+This change just removed the opening php tag and all following
+whitespace but leaves anything else in the line unchanged.
+
+Fixes: FLOW-3
+
+* Commit: `730fcb4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/730fcb4516ca74acc291154e1b1d421200e89564>`_
+
+[TASK] Use Unicode-aware strtolower in equals()
+-----------------------------------------------------------------------------------------
+
+The implementation of equals() in Doctrine\\Query used plain strtolower()
+instead of a Unicode-aware function to lowercase the parameter. This
+changes fixes that by using the Unicode\\Functions::strtolower() method.
+
+* Commit: `d82644c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d82644c3d4c30f4e757e77aac73aa4cc462f5de0>`_
+
+[TASK] Implement case insensitive like() in the Query object
+-----------------------------------------------------------------------------------------
+
+This change implements the missing case insensitive like() into
+the Query object which was still documented as todo.
+
+* Commit: `db8c8b9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/db8c8b9923036195ab9f80d6e74a084be2cfb742>`_
+
+[BUGFIX] FunctionalTestcase->registerRoute() does not allow httpMethods
+-----------------------------------------------------------------------------------------
+
+The FunctionalTestcase->registerRoute() did not allow configurable httpMethods.
+This change adds an httpMethods argument to this method, and adds a simple
+test to verify the behavior.
+
+* Fixes: `#58959 <http://forge.typo3.org/issues/58959>`_
+* Commit: `e72b636 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e72b636e8edebfb00da170b77c8f3cd5cbd91491>`_
+
+[BUGFIX] Allow non-numerical keys for doctrine event listeners
+-----------------------------------------------------------------------------------------
+
+The schema for the doctrine event listener configuration was of
+type array, which only allows for numerical keys.
+Since non-numerical keys are needed to able to unset specific
+event listeners the type is changed to dictionary.
+
+* Commit: `1de2023 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1de202348b2f491f5ea76abbe442dc1d26ab21fc>`_
+
+[BUGFIX] Support Doctrine Collections in PersistenceQueryRewriting
+-----------------------------------------------------------------------------------------
+
+Security's PersistenceQueryRewritingAspect now supports also Doctrine
+collection handling rather than only primitive arrays for ``in``, ``contains``
+and ``matches`` operators.
+
+* Fixes: `#46076 <http://forge.typo3.org/issues/46076>`_
+* Commit: `8623586 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8623586c6b021f5db8e96285b5c64db6c5c36938>`_
+
+[BUGFIX] Throw exception if case of class- and filename don't match
+-----------------------------------------------------------------------------------------
+
+Mismatching class- and filename case is now detected during compiletime
+already and a helpful exception is thrown.
+
+* Related: `#59031 <http://forge.typo3.org/issues/59031>`_
+* Commit: `9408eb0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9408eb09f7941ed234b694c1f4d23dc0a1caf59b>`_
+
+[BUGFIX] Fix support for absolute URIs in WebRedirect options
+-----------------------------------------------------------------------------------------
+
+Fixes support for authentication provider redirects to external
+domains.
+
+Background:
+
+If a ``WebRedirect`` is configured with a relative URI like::
+
+  entryPoint: 'WebRedirect'
+  entryPointOptions:
+    uri: 'some/path'
+
+The ``Location`` header gets properly prefixed with the current
+base URI.
+But due to a typo this happened as well for absolute URIs.
+
+Note: using the "uri" option for internal redirects is deprecated,
+use the ``routeParts`` option instead for those.
+
+* Fixes: `#56598 <http://forge.typo3.org/issues/56598>`_
+* Commit: `2de9d66 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2de9d6619aa25ec109792fab7a00e8de3f7c7dfb>`_
+
+[BUGFIX] Make DI work with Doctrine using newInstanceWithoutConstructor()
+-----------------------------------------------------------------------------------------
+
+This change does two things:
+
+* make sure Doctrine uses the Flow ClassReflection even after
+  wakeupReflection() has been called
+* override newInstanceWithoutConstructor() in ClassReflection to call
+  __wakeup(), so DI works.
+
+This fixes an issue with a workaround in Doctrine that broke DI on PHP
+5.4.29, 5.5.13 as well as 5.6.x.
+
+* Commit: `346c7b2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/346c7b217838bbe42eacbd5e01c482791bbb9393>`_
+
+[BUGFIX] CommandController must reset its arguments on dispatch
+-----------------------------------------------------------------------------------------
+
+The CLI CommandController is not stateless in the sense that it
+just adds argument definitions without removing previous definitions
+in ``processRequest()``.
+Usual this is not a problem, because every command is called only
+once per request. But in tests or when using the ``flow:core:shell``
+command this has weird side effects.
+
+* Commit: `0fda48d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0fda48d74ba147903ddeb8ebf83917084d290336>`_
+
+[TASK] Log configuration details of WebRedirects
+-----------------------------------------------------------------------------------------
+
+Log all WebRedirect options instead of only ``uri``.
+
+Background:
+Even though it's encouraged to use the ``routeParts`` option rather
+than ``uri`` for security WebRedirects, the corresponding AOP aspect
+logs "Redirecting to authentication entry point with URI - undefined"
+when no ``uri`` is specified.
+This change fixes this by logging all redirect options.
+
+* Commit: `a5940fc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a5940fca7d1c63fa1c4170075e6d7e1f05ff7db5>`_
+
+[BUGFIX] Fix header handling for CSRF tokens
+-----------------------------------------------------------------------------------------
+
+This commit fixes a typo in the expected CSRF token header name.
+
+* Fixes: `#55703 <http://forge.typo3.org/issues/55703>`_
+* Commit: `d7f56e9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d7f56e9f467d26c372c15f64f217109dd954c56c>`_
+
+[BUGFIX] SplitSources break on glob errors
+-----------------------------------------------------------------------------------------
+
+When using SplitSource a glob call is used to fetch all
+configuration files. This can return FALSE on error and on some
+systems also on no result which was not correctly catched.
+
+* Commit: `c724336 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c7243360e2a7a47a9e54102f05b1caf52a9ce38d>`_
+
+[FEATURE] Add method getPackageByClassName to PackageManager
+-----------------------------------------------------------------------------------------
+
+Currently there is only a method to fetch the package of a given object.
+This change adds a new method ``PackageManager::getPackageByClassName()`` that
+resolves the package of a given class name.
+
+* Resolves: `#50118 <http://forge.typo3.org/issues/50118>`_
+* Commit: `fbf7950 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fbf7950ae363f4adf1bfb187951d31c74628adbc>`_
+
+[BUGFIX] TestingToken must not rely on a session
+-----------------------------------------------------------------------------------------
+
+This changes the ``TestingToken`` to implement the
+``SessionLessTokenInterface`` so that it doesn't rely on a session
+to be started whenever it is authenticated.
+
+This is required in order to make use of the token for CLI based
+tests (e.g. from behat).
+The change also removes the TestingProviderTest that were actually
+outdated and only worked by accident.
+
+* Commit: `4ef67d9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4ef67d91e8a3adac51982d369924f95a6de1dd75>`_
+
+[TASK] Fix documentation version
+-----------------------------------------------------------------------------------------
+
+Sets the version of this documentation to "2.1.2" to match the released
+version.
+
+* Commit: `e8f6f50 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e8f6f50d8f919f9f3a9ac6778baa96671e020d4d>`_
+
+[TASK] Fix navigation menus in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `8f43625 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8f43625ff7779354224f258dec9102d312aad094>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Allow ViewHelperVariableContainer to hold NULL values
+-----------------------------------------------------------------------------------------
+
+``ViewHelperVariableContainer::exists()`` checks whether a specified
+key is set via ``isset()`` which leads to the behavior NULL can't be
+retrieved from the container leading to unexpected exceptions.
+
+Example::
+
+  <f:switch expression="{expression}" />
+
+Throws an exception if ``{expression}`` evaluates to NULL.
+
+Make sure to use ``ViewHelperVariableContainer::remove()`` to delete
+a value from the container.
+
+Fixes: FLOW-16
+
+* Commit: `6eb4d43 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/6eb4d4301ab7963f8cafe639fa6bc009f61226bb>`_
+
+[BUGFIX] Adjust code migration identifier pattern to contain the full timestamp
+-----------------------------------------------------------------------------------------
+
+Previously code migrations are expected to have a class name with the
+pattern ``Version<YYYYMMDDhhmm>`` and the unique identifier was
+determined extracting the last 12 characters of the class name (which
+are expected to be the timestamp).
+
+This change adjusts existing code migrations to use the full timestamp in
+order to establish the new guideline (note: those migrations still
+return the old identifier so that they won't be applied again with a
+new identifier).
+
+Related: FLOW-110
+
+* Commit: `1a2415c <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/1a2415ca7325cc4e98f928b47b4d462535c4e32f>`_
+
+[BUGFIX] Make Format.Crop VH multibyte safe
+-----------------------------------------------------------------------------------------
+
+This makes use of Flow's unicode utility functions
+to allow multibyte-safe operations with the
+format.crop ViewHelper.
+
+Fixes: FLOW-48
+
+* Commit: `babbdab <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/babbdab28e0791feaaec246e99e3b0c5553667d8>`_
+
+[BUGFIX] Fix fatal errors related to templateCache
+-----------------------------------------------------------------------------------------
+
+Fixes more fatal errors that occur at times, similar to the fix in
+I9bf0c8eafc8ab70215b35153f428839a6721469e.
+
+* Commit: `7a4293a <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/7a4293af9481fb228bad0505295f1f30e2f9560e>`_
+
+[BUGFIX] Use htmlspecialchars to escape hidden query parameters in form
+-----------------------------------------------------------------------------------------
+
+Query parameters from the action URI of a form are sent as hidden values
+for the GET method. UTF-8 values were not handled correctly in PHP
+versions below 5.4 because the htmlentities function was used to
+escape attributes.
+
+This change updates the function to htmlspecialchars that is used
+everywhere else to escape output for HTML and doesn't show the described
+problem.
+
+Fixes: FLOW-13
+
+* Commit: `18e8b99 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/18e8b9997c92f9a3ec290573977227aaefeac6d2>`_
+
+[BUGFIX] Paginate Widget: Correctly highlight current page
+-----------------------------------------------------------------------------------------
+
+With #28283 the current page is correctly highlighted most of the
+time. But if a non-existing page is requested (for example by
+manually setting the currentPage-argument to a number higher than
+the number of total pages) the last page should be highlighted, but
+is not.
+
+That is fixed with this change by making sure that ``numberOfPages``
+is always an integer.
+
+* Related: `#28283 <http://forge.typo3.org/issues/28283>`_
+* Commit: `c897a81 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/c897a81154630578153509a79ce620c9c2350859>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

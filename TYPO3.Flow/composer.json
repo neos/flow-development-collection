@@ -1,0 +1,38 @@
+{
+    "name": "typo3/flow",
+    "type": "typo3-flow-framework",
+    "description": "TYPO3 Flow Application Framework",
+    "homepage": "http://flow.typo3.org",
+    "license": ["LGPL-3.0+"],
+
+    "require": {
+        "php": ">=5.3.2",
+
+        "ext-zlib": "*",
+        "ext-SPL": "*",
+        "ext-json": ">=1.2.0",
+        "ext-session": "*",
+
+        "typo3/fluid": "2.3.*",
+        "typo3/party": "2.3.*",
+        "typo3/eel": "2.3.*",
+
+        "doctrine/orm": "2.3.*",
+        "doctrine/migrations": "1.0.0-alpha3",
+
+        "symfony/yaml": "2.5.*",
+        "symfony/dom-crawler": "2.5.*",
+        "symfony/console": "2.*",
+
+        "composer/installers": "~1.0.2"
+    },
+    "suggest": {
+        "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
+        "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow": "Classes"
+        }
+    }
+}

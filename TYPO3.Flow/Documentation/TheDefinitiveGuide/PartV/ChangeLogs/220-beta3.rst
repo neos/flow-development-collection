@@ -1,0 +1,110 @@
+====================
+2.2.0-beta3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] Implement (almost) all JavaScript Math functions in MathHelper
+-----------------------------------------------------------------------------------------
+
+This change adds most of the functions implemented in the global
+JavaScript Math objects to the EEL MathHelper.
+Only some functions dealing with low-level floating point number
+operations are left out. Some of the EcmaScript 6 draft functions are
+also implemented, since most of them already have counterparts in the
+PHP math API.
+This change also updates the round() function to not throw any
+exceptions but return NAN as this resembles the behavior in JavaScript.
+
+* Commit: `cac3bd6 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/cac3bd69d98c4e03a432688758a247c0bc0df838>`_
+
+[BUGFIX] Calling a method on NULL should not throw NotAllowedException
+-----------------------------------------------------------------------------------------
+
+A call to a method of a NULL value in the ProtectedContext throws a
+misleading NotAllowedException. Since the default in Eel is to return
+NULL if a method is called on a NULL value, this change updates that
+behavior also for the ProtectedContext.
+
+* Commit: `698a8cb <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/698a8cb31714aadbf098dd96111e70ccab86890e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/17/
+
+* Commit: `f08316b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f08316b04e82f72e37f1a4fa5f5425a44d1f150d>`_
+
+[FEATURE] Convenience method to create custom FileMonitors
+-----------------------------------------------------------------------------------------
+
+Exposes a static method in the FileMonitor class to create
+a new FileMonitor instance during boot time in order to use
+the FileMonitor for custom purposes.
+
+Additionally add a new method to monitor a directory with a given
+filename pattern and fix a bug where the removal of subsequently created
+files was not tracked.
+
+* Commit: `b2cb66f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b2cb66ff7255e60f2e453a36ba6869e433453d54>`_
+
+[TASK] Update documentation
+-----------------------------------------------------------------------------------------
+
+This fixes some documentation issues and typos.
+
+* Resolves: `#57160 <http://forge.typo3.org/issues/57160>`_, #57404
+
+(cherry picked from commit dbd5bc6a94ce4af589e127da9a426221223b0ea9)
+
+* Commit: `2028319 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/20283190e8f2dcbf1208eaa3e5a915675ea4bd4b>`_
+
+[TASK] Clarify documentation for AOP method() and class()
+-----------------------------------------------------------------------------------------
+
+Add some hints regarding matching on interfaces.
+
+* Commit: `ec1fc0a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ec1fc0accf66aa413792aa79c4a5e92f33e3971a>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] Configure FileMonitor for Resources/Private/Templates
+-----------------------------------------------------------------------------------------
+
+Adds a custom FileMonitor to watch for changes in Templates.
+This will for now be used to flush the Neos content cache.
+
+Needs Id4aebb951f27b7befe1c1be81301b12679440bfc in TYPO3.Flow
+
+* Commit: `49a5a5d <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/49a5a5d292ebfe7acf5bad00c03b3190a93c874d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

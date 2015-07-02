@@ -1,0 +1,79 @@
+====================
+2.2.6
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Pin doctrine/migrations to tagged working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. We pinned it to a version known as
+the last known working state.
+
+But due to the way composer works, only tagged version results in the
+expected behavior, see https://github.com/composer/composer/issues/4082.
+
+Unfortunately this needs to be repeated in the root manifest.
+
+Related: FLOW-300
+
+* Commit: `ad62bbd <https://git.typo3.org/Flow/Distributions/Base.git/commit/ad62bbdfc589f9f59b855f93d0045a0c77b974bb>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/49/
+
+* Commit: `7c8c4d5 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7c8c4d59c216b31e21d1b3f1f9e32c8735f44650>`_
+
+[BUGFIX] Pin doctrine/migrations to tagged working version
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. We pinned it to a version known as
+the last known working state.
+
+But due to the way composer works, only tagged version results in the
+expected behavior, see https://github.com/composer/composer/issues/4082.
+
+Fixes: FLOW-300
+
+* Commit: `689d92b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/689d92be8cce8f7b217ab5044e201141c3338b99>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
