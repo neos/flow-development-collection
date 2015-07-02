@@ -516,7 +516,7 @@ TYPO3:
         #    1    (would be a 1% chance to clean up)
         #   20    (would be a 20% chance to clean up)
         #    0.42 (would be a 0.42 % chance to clean up)
-        probability: 30
+        probability: 1
 
         # The number of invalid and expired sessions which are removed per garbage
         # collection run.
