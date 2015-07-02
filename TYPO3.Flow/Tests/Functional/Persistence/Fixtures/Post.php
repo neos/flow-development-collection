@@ -58,6 +58,12 @@ class Post {
 	protected $related;
 
 	/**
+	 * @var TestValueObject
+	 * @ORM\ManyToOne
+	 */
+	protected $author;
+
+	/**
 	 * @return string
 	 * @ORM\PrePersist
 	 */
@@ -100,6 +106,20 @@ class Post {
 	 */
 	public function getComment() {
 		return $this->comment;
+	}
+
+	/**
+	 * @return TestValueObject
+	 */
+	public function getAuthor() {
+		return $this->author;
+	}
+
+	/**
+	 * @param TestValueObject $author
+	 */
+	public function setAuthor(TestValueObject $author) {
+		$this->author = $author;
 	}
 
 }
