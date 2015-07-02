@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
+use TYPO3\Flow\Package\MetaData\PackageConstraint;
+use TYPO3\Flow\Package\MetaDataInterface;
 use TYPO3\Flow\Package\Package;
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Package\PackageManager;
@@ -358,5 +361,44 @@ class PackageTest extends UnitTestCase {
 
 		$metaData = $package->getPackageMetaData();
 		$this->assertEquals('flow-test', $metaData->getPackageType());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageMetaDataAddsRequiredPackagesAsConstraint() {
+		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "require": { "some/other/package": "*" }}');
+
+		$mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
+		$mockPackageManager->expects($this->once())->method('getPackageKeyFromComposerName')->with('some/other/package')->will($this->returnValue('Some.Other.Package'));
+
+		$package = new Package($mockPackageManager, 'Acme.MyPackage', $packagePath, 'Classes');
+		$metaData = $package->getPackageMetaData();
+		$packageConstraints = $metaData->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
+
+		$this->assertCount(1, $packageConstraints);
+
+		$expectedConstraint = new PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, 'Some.Other.Package');
+		$this->assertEquals($expectedConstraint, $packageConstraints[0]);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageMetaDataIgnoresUnresolvableConstraints() {
+		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "require": { "non/existing/package": "*" }}');
+
+		$mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
+		$mockPackageManager->expects($this->once())->method('getPackageKeyFromComposerName')->with('non/existing/package')->will($this->throwException(new InvalidPackageStateException()));
+
+		$package = new Package($mockPackageManager, 'Acme.MyPackage', $packagePath, 'Classes');
+		$metaData = $package->getPackageMetaData();
+		$packageConstraints = $metaData->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
+
+		$this->assertCount(0, $packageConstraints);
 	}
 }
