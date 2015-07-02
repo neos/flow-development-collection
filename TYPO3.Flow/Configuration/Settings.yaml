@@ -186,6 +186,15 @@ TYPO3:
           maximumLogFileSize: 10485760
           logFilesToKeep: 1
 
+      i18nLogger:
+        backend: TYPO3\Flow\Log\Backend\FileBackend
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/I18n.log'
+          createParentDirectories: TRUE
+          severityThreshold: '%LOG_INFO%'
+          maximumLogFileSize: 1048576
+          logFilesToKeep: 1
+
     i18n:
 
       # The default locale identifier.
