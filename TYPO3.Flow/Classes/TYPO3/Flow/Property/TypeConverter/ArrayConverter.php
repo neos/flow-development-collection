@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use TYPO3\Flow\Property\Exception\InvalidSourceException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
@@ -144,9 +145,14 @@ class ArrayConverter extends AbstractTypeConverter {
 						'data' => base64_encode(file_get_contents('resource://' . $source->getSha1()))
 					);
 				case self::RESOURCE_EXPORT_TYPE_FILE:
+					$sourceStream = $source->getStream();
+					if ($sourceStream === FALSE) {
+						throw new InvalidSourceException(sprintf('Could not get stream of resource "%s" (%s). This might be caused by a broken resource object and can be fixed by running the "resource:clean" command.', $source->getFilename(), $source->getSha1()), 1435842312);
+					}
 					$targetStream = fopen($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
-					stream_copy_to_stream($source->getStream(), $targetStream);
+					stream_copy_to_stream($sourceStream, $targetStream);
 					fclose($targetStream);
+					fclose($sourceStream);
 					return array(
 						'filename' => $source->getFilename(),
 						'hash' => $source->getSha1(),
