@@ -141,7 +141,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 */
 	protected function getObjectIdentifierFromPathSegment($pathSegment) {
 		if ($this->getUriPattern() === '') {
-			$identifier = urldecode($pathSegment);
+			$identifier = rawurldecode($pathSegment);
 			$object = $this->persistenceManager->getObjectByIdentifier($identifier, $this->objectType);
 			if ($object !== NULL) {
 				return $identifier;
@@ -217,7 +217,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 */
 	protected function getPathSegmentByIdentifier($identifier) {
 		if ($this->getUriPattern() === '') {
-			return urlencode($identifier);
+			return rawurlencode($identifier);
 		}
 
 		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndIdentifier($this->objectType, $this->getUriPattern(), $identifier);
