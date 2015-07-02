@@ -11,9 +11,11 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations\After;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
 
 /**
  * Testcase for aggregate-related behavior
@@ -92,6 +94,29 @@ class AggregateTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
 		$this->assertSame($comment, $retrievedComment);
+	}
+
+	/**
+	 * This test fixes FLOW-296 but is only affecting MySQL.
+	 *
+	 * @test
+	 */
+	public function valueObjectsAreNotCascadeRemovedWhenARelatedEntityIsDeleted() {
+		$post1 = new Post();
+		$post1->setAuthor(new TestValueObject('Some Name'));
+
+		$post2 = new Post();
+		$post2->setAuthor(new TestValueObject('Some Name'));
+
+		$this->postRepository->add($post1);
+		$this->postRepository->add($post2);
+		$this->persistenceManager->persistAll();
+
+		$this->postRepository->remove($post1);
+		$this->persistenceManager->persistAll();
+
+		// if all goes well the value object is not deleted
+		$this->assertTrue(TRUE);
 	}
 
 }
