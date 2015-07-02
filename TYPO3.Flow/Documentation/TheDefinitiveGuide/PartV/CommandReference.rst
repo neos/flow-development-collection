@@ -1,7 +1,7 @@
-.. _TYPO3 Flow Command Reference:
+.. _Flow Command Reference:
 
-TYPO3 Flow Command Reference
-============================
+Flow Command Reference
+======================
 
 .. note:
 
@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-05-30
+The following reference was automatically generated from code on 2015-07-02
 
 
 Package *TYPO3.FLOW*
