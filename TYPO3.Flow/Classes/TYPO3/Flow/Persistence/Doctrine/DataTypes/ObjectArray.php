@@ -4,7 +4,6 @@ namespace TYPO3\Flow\Persistence\Doctrine\DataTypes;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * A datatype that replaces references to entities in arrays with a type/identifier tuple
@@ -137,7 +136,7 @@ class ObjectArray extends Types\ArrayType {
 				continue;
 			}
 
-			$propertyClassName = TypeHandling::getTypeForValue($value);
+			$propertyClassName = get_class($value);
 
 			if ($value instanceof \SplObjectStorage) {
 				throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
