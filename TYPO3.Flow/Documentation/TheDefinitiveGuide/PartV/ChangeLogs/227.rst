@@ -1,0 +1,277 @@
+====================
+2.2.7
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/typo3-flow-release/53/
+
+* Commit: `20bd657 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/20bd65784ceaa9f0a5028c05ac3ce3af264d2d53>`_
+
+Revert "[BUGFIX] ObjectArray should use TypeHandling::getTypeForValue"
+-----------------------------------------------------------------------------------------
+
+This reverts commit e8ea8c40c82d529ba19528e8b5d3dc62bd5807e0.
+
+* Commit: `f422f2b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f422f2b460ee6ff461408b46f786b3a7c5d338d1>`_
+
+[BUGFIX] ObjectArray should use TypeHandling::getTypeForValue
+-----------------------------------------------------------------------------------------
+
+ObjectArray used get_class() to get the type of given $value. This
+change changes that to using TypeHandling::getTypeForValue.
+
+This fixes problems where for example class names of doctrine
+proxies are used instead of the entity class name.
+
+Resolves: FLOW-206
+
+* Commit: `e8ea8c4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e8ea8c40c82d529ba19528e8b5d3dc62bd5807e0>`_
+
+[BUGFIX] Make rewriteFilenameForUri handle non-ASCII names correctly
+-----------------------------------------------------------------------------------------
+
+When the filename consists completely of non-ASCII characters,
+the ``rewriteFilenameForUri`` would substitute it with empty filename
+like ".jpg", resulting in a broken resource link.
+
+This change makes ``rewriteFilenameForUri`` accept unicode character.
+In addition it checks if the filename is empty after the rewrite and
+names it "unnamed.<fileExtension>" if needed.
+
+Fixes: FLOW-99
+
+* Commit: `a687648 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a687648685116e00350ba127ef4fca7bad5ea8e4>`_
+
+[BUGFIX] Safeguard against undefined index
+-----------------------------------------------------------------------------------------
+
+The methods shutdown() and warmup() use an index that may not be
+defined. This is the case e.g. immediately after the configuration
+cache has been flushed.
+
+This change adds a check for the first level of the tested path in the
+internal configuration array.
+
+Fixes: FLOW-310
+
+* Commit: `bc99641 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bc99641423723993a6cb1b48c7097c10c33ec8b0>`_
+
+[BUGFIX] 1st level cache for ``QueryResult::count()``
+-----------------------------------------------------------------------------------------
+
+Counting the results of the ``QueryResultInterface`` proxy that is
+returned by Repository finder methods always executed a ``COUNT query``,
+even if the results have been fetched or counted already.
+
+With this patch the number of results is cached as soon as the
+result is initialized and/or counted once.
+
+Fixes: FLOW-326
+
+* Commit: `9816841 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9816841090ae03908e63b9070d6ef14d4e6fa71c>`_
+
+[BUGFIX] Accept incoming HTTPS headers
+-----------------------------------------------------------------------------------------
+
+This removes a check from ``Http\\Headers`` that prevented any header
+starting with "HTTP".
+
+Background:
+A recent version of Google Chrome seems to send a ``HTTPS`` header
+for requests via SSL (see
+https://code.google.com/p/chromium/issues/detail?id=501095).
+This header translates to ``$_SERVER['HTTP_HTTPS']`` which triggered
+the exception.
+
+Fixes: FLOW-324
+
+* Commit: `3cb0d6a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3cb0d6a4a0dbdbbdf6715a9d57e5e674a9dc4993>`_
+
+[BUGFIX] Make ``resource://`` URIs work with 40 character Package Keys
+-----------------------------------------------------------------------------------------
+
+The Flow ``ResourceStreamWrapper`` transparently handles resource URLs
+in the formats ``resource://<SHA1>`` (referring to the SHA1 hash of a
+Flow Resource) and ``resource://Package.Key/some/path`` (referring to
+a local file path relative to the specified package's Resources
+directory).
+
+Currently the detection of a SHA1 hash is unreliably only checking for
+the string length being 40 characters. If a Package Key happens to be
+exactly 40 characters long, static resources can't be loaded.
+This change fixes the issue by replacing the ``strlen`` check with a
+simple regular expression lookup that only accepts valid SHA1 hashes.
+
+Fixes: FLOW-250
+
+* Commit: `4b5d677 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4b5d6777d73e8dd28aa08cbf8ce4ad39415ae2b2>`_
+
+[BUGFIX] Fix warning about undefined index in Autowiring
+-----------------------------------------------------------------------------------------
+
+The Autowiring annotation did not check the existence the existence of
+the value key, leading to a warning, followed by an exception, when
+the annotation was used like::
+
+  Autowiring(enable=false)
+
+instead of::
+
+  Autowiring(false)
+
+and the ReflectionService was asked for reflection data on such a class.
+
+The same problem could affect Proxy annotation, so it is fixed as well.
+
+* Commit: `2251f5f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2251f5fbc5f1531ba85dfafe0a6c728e57dbb642>`_
+
+[TASK] Fix PDF rendering errors
+-----------------------------------------------------------------------------------------
+
+* Commit: `6aa03f0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6aa03f039b6522bc315f0e4d7e66f8ffe18606ff>`_
+
+[TASK] Fix rST rendering warnings
+-----------------------------------------------------------------------------------------
+
+* Commit: `6b63d67 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6b63d67e724b38c1403897bb2420d93dd071b2d1>`_
+
+[TASK] Show version and release in front matter
+-----------------------------------------------------------------------------------------
+
+* Commit: `b6d8597 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b6d859778dff4eeb3afb273f796d35d128f3baec>`_
+
+[TASK] Simplify appendix TOC generation
+-----------------------------------------------------------------------------------------
+
+* Commit: `433638a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/433638a74cbfbfc07a83838b0fc5a951ea737e32>`_
+
+[TASK] Rename Index.rst to index.rst
+-----------------------------------------------------------------------------------------
+
+This is our workaround for an issue with rtfd.org so the documentation
+can be browsed when it has been rendered there.
+
+(See https://github.com/rtfd/readthedocs.org/issues/1279 for details.)
+
+* Commit: `45fab0e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/45fab0e90f30f520f2503dc9b4a35116f2af262e>`_
+
+[TASK] Switch to plain Sphinx build configuration
+-----------------------------------------------------------------------------------------
+
+Switches to a more standard setup for rendering rST using Sphinx. A
+simple ``make html`` renders the documentation, if sphinx is installed.
+
+The ``conf.py`` contains a tweak to allow using the RTD theme without
+confusing the renderer over at RDT itself.
+
+* Commit: `a319366 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a3193669963c038192f9df6044bd072d1127ecc9>`_
+
+[TASK] Add missing ChangeLogs to documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `84c57d7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/84c57d708575fcedde1fdafa452a36b1ec4ebe34>`_
+
+[BUGFIX] Support serialization of classes with static properties
+-----------------------------------------------------------------------------------------
+
+When trying to serialize a proxied class that contains static
+properties an exception is thrown::
+
+  Runtime Notice: Accessing static property [...] as non static
+
+The reason is that the ``DependencyInjection\\\\ProxyClassBuilder``
+overrides the magic ``__sleep()`` method of the proxy class, accessing
+all properties as ``$this->\\$propertyName``.
+
+This change fixes the issue by skipping static properties.
+
+Fixes: FLOW-282
+
+* Commit: `7ad02b7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7ad02b71e98fd048f02cc27f60715ebfa1367c93>`_
+
+[BUGFIX] Move variable initialisation to where it is needed
+-----------------------------------------------------------------------------------------
+
+* Commit: `3fdbda9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3fdbda9cf60dc0ad15f687af789153e61b68e844>`_
+
+[BUGFIX] Package meta data do not contain package type.
+-----------------------------------------------------------------------------------------
+
+When loading packages using the PackageManager class, the associated
+MetaData instance is not initialized with the package type.
+
+* Commit: `650f52f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/650f52f150adc7099cb03ad61d4eb4862033d64f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Only count items in ForViewHelper when ``iteration`` argument is set
+-----------------------------------------------------------------------------------------
+
+When using the ``iteration`` argument, the ``ForViewHelper`` provides
+information about the current iteration, including the ``cycle`` and
+``total``. Therefore it needs to count all elements.
+The problem is, that this happens even if the iteration argument is
+not specified leading to performance issues especially when iterating
+over a (subset of a) lot of (remote) items.
+
+This patch fixes this by adding a check for the ``iteration`` argument.
+
+Fixes: FLOW-325
+
+* Commit: `400bbad <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/400bbad103ae1d53557c5bc17b2955f6f31a0480>`_
+
+[BUGFIX] Render Form CSRF token field only if authenticated
+-----------------------------------------------------------------------------------------
+
+Currently ``CSRF`` tokens are only enforced if an account is
+authenticated. But the form ViewHelper rendered the corresponding
+hidden field for all forms with method != "GET".
+
+Background:
+
+Rendering the hidden field did not have a side effect before but as
+CSRF tokens only make sense with an active session,
+``Security\\Context::getCsrfProtectionToken()`` will be adjusted to start
+a session when called. Therefore the token should only be fetched if it's
+really required.
+
+Related: FLOW-130
+
+* Commit: `061c680 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/061c6804ac0626844995204bf72603aeb5c8f39d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

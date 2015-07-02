@@ -1,0 +1,138 @@
+Upgrading instructions
+======================
+
+This file contains instructions for upgrading your Flow 2.1 based
+applications to TYPO3 Flow 2.2.
+
+What has changed
+----------------
+
+Eel
+^^^
+
+The handling of the **boolean short circuit operators** for disjunction and
+conjunction has been adjusted to the JavaScript semantics of returning
+one of the left or right side values instead of a boolean.
+
+This is only breaking if the code using Eel relied on the exact type
+e.g. by using a strict comparison.
+
+Flow
+^^^^
+
+The composer **update / install scripts will no longer overwrite the Web/.htaccess**
+file. This allows to keep adjustments - it might be needed to adjust that file manually
+in the future. This will be announced, though.
+
+If an **@IgnoreValidation** annotation is added for an action argument, the **validation
+will not be evaluated** by default anymore. The annotation option "evaluate" can be
+set to true to enable the old behaviour of evaluating the validator for the argument
+and storing the validation results (while still ignoring any error). This can be used
+of the results are needed for further processing.
+
+The **FileMonitor is switched to use json_encode() and json_decode() and a StringBackend**.
+This could be breaking if you implemented your own Strategy and use the Flow_Monitor cache
+there because it will no longer accept all kinds of variables but only strings.
+
+The **option to provide the plural quantity as a single numeric argument during translation
+was removed**. This change is breaking for cases where an application depends on previous
+behavior that ``translateBy*`` calls with a single numeric argument would implicate
+a quantity for plural form. Also classes extending ``I18n\\Translator`` and using the
+protected method ``getPluralForm()`` will break due to a signature change.
+
+If **the PECL YAML extension is installed it will be used** to parse configuration
+files, which results in a speed improvement, especially in Development context. This is
+breaking if the YAML extension is installed and you have invalid YAML files.
+
+The **status code for persisted entities that can't be found is no longer 500** but
+404 now. This is a breaking change only when code relies on the (incorrect) behavior
+of returning a status code 500 for entities that couldn't be found.
+
+The **sorting of packages is now done with an depth-first algorithm** that makes sure
+that package settings overrule settings from depending packages. This is a breaking
+change in case you relied on the previous (and sometimes incorrect) sorting of packages.
+
+In case you implemented your own **Persistence Manager**, you must add the **new
+hasUnpersistedChanges()** method, unless you extend the AbstractPersistenceManager.
+Additionally the **persistAll()** method has got a new argument to persist whitelisted
+entities. See **PersistenceManagerInterface**.
+
+Fluid
+^^^^^
+
+The **form.validationResults view helper is moved to validation.results** for consistency
+reasons. If you use this ViewHelper you should update your Fluid templates from::
+
+ <f:form.validationResults>...</f:form.validationResults>
+
+to::
+
+ <f:validation.results></f:validation.results>
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Here comes the easier part. As with earlier changes to TYPO3 Flow that
+required code changes on the user side we provide a code migration tool.
+Given you have a TYPO3 Flow system with your (outdated) package in place
+you should run the following before attempting to fix anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages
+it finds - for the first run you might want to limit things a little to
+keep the overview, though.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commit messages is the Migration: … footer. It is used to
+detect if a migration has been applied already, so if you drop it,
+things might get out of hands in the future.
+
+Upgrading the database schema
+-----------------------------
+
+Upgrading the schema is done by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema.
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrationgenerate
+
+padded with some manual checking and adjustments needs to be done. That
+should result in a working package.
+
+If it does not and you have no idea what to do next, please come over
+to `#typo3-flow <irc://freenode.net/#typo3-flow>`_ on freenode IRC or
+ask in the mailing list (news group) as you prefer. The `support page
+<http://flow.typo3.org/support.html>`_ provides more information.

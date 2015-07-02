@@ -1,0 +1,24 @@
+#                                                                        #
+# Example Settings                                                       #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Copy this file to Settings.yaml, and adjust as necessary.              #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  Flow:
+    persistence:
+
+      # It is good practice to not specify user name and password of the database
+      # connection in this global Settings.yaml file. Rather specify them in the
+      # settings of the respective context (Production / Development ...).
+      backendOptions:
+        host: '127.0.0.1'    # adjust to your database host
+
+  # You might need to uncomment the following lines and specify
+  # the location of the PHP binary manually.
+  #  core:
+  #    phpBinaryPathAndFilename: 'C:/path/to/php.exe'
