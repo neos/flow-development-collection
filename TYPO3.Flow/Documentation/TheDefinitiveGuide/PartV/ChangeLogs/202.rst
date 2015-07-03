@@ -1,0 +1,551 @@
+====================
+2.0.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/10/
+
+* Commit: `786fdf4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/786fdf424daf02251a0754b238a296ecc0dfa1c6>`_
+
+[BUGFIX] Set Max-Age for Cookies
+-----------------------------------------------------------------------------------------
+
+If the configured session cookie lifetime is > 0, the Max-Age property of the
+cookie is set accordingly in the response header.
+
+Before this change the lifetime would be used as the expiry time, leading to
+cookies having session lifetime only.
+
+* Fixes: `#55369 <http://forge.typo3.org/issues/55369>`_
+* Commit: `cb28397 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/cb283972ff79142d865a9e9cfa891038aff68254>`_
+
+[BUGFIX] Object Route Parts fall back to technical identifier
+-----------------------------------------------------------------------------------------
+
+As described in the routing section of the documentation, the
+`Object Route Parts`` should use the technical identifier to
+represent an object if no uriPattern is specified and the
+specified object does not contain any identity properties.
+
+Instead an exception was thrown if no uriPattern could be
+determined because ``ClassSchema::getIdentityProperties()``
+doesn't return the property name of the technical identifier.
+
+This change fixes this by falling back by skipping the
+ObjectPathMapping if no uriPattern is defined.
+
+* Fixes: `#51082 <http://forge.typo3.org/issues/51082>`_
+* Commit: `f81d39f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f81d39fe5a2a8b636e2c7e51643c6cb5df9931ca>`_
+
+[BUGFIX] Respect case-sensitivity in object routing
+-----------------------------------------------------------------------------------------
+
+By default dynamic route parts are lower-cased unless the
+"toLowerCase" flag is set to TRUE for the route or a single
+route part.
+This change makes sure that this flag is actually taken into
+account for routes using the ObjectPathMapping.
+
+* Fixes: `#44521 <http://forge.typo3.org/issues/44521>`_
+* Commit: `56c3720 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/56c372045e97248a487d30867fe431d7a53dc6cc>`_
+
+[BUGFIX] Use fully qualified classname in fixture entity
+-----------------------------------------------------------------------------------------
+
+* Commit: `4dad786 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4dad7862c6ceb966ec70d6b5c29a1a85903282bf>`_
+
+[BUGFIX] Fix configuration schema for Routes
+-----------------------------------------------------------------------------------------
+
+This adjusts the Routes.schema.yaml to the "httpMethods"
+setting introduced with #27117
+
+* Related: `#27117 <http://forge.typo3.org/issues/27117>`_
+* Commit: `f69ebd4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f69ebd44a9a2dcf0b9dc58106264a8ad7b0e6e96>`_
+
+[TASK] Tweak documentation rendering
+-----------------------------------------------------------------------------------------
+
+* fix broken TOC
+* exclude change logs from PDF
+* use parts for PDF rendering
+
+All changes have been merged for master already and are consolidated
+here for the branch.
+
+* Commit: `6d5bd05 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6d5bd05d3606bb66104de494ea583161509967c4>`_
+
+[BUGFIX] Make getPackageOfObject() work for proxy objects
+-----------------------------------------------------------------------------------------
+
+The method ``PackageManager::getPackageOfObject()`` failed to
+resolve the package of a given object if it was a proxy.
+
+This change fixes this by comparing the namespace of the object
+with the package namespaces rather than the file locations.
+
+Background:
+
+The Flow/Doctrine proxy classes usually reside in a folder underneath
+``Data/Temporary``. Comparing those paths with the package root paths
+led to invalid results.
+
+In addition this adjusts the ``getPackageKeyFromMigrationVersion()``
+of the ``Doctrine\\Service`` not to rely on ``getPackageOfObject()``
+as all doctrine migrations reside in the ``TYPO3\\Flow`` namespace.
+
+* Fixes: `#55309 <http://forge.typo3.org/issues/55309>`_
+* Commit: `844ea8e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/844ea8ecbf4dcfaeaa50b24d60726f2ac5f08493>`_
+
+[FEATURE] documentation of the authentication process
+-----------------------------------------------------------------------------------------
+
+* Commit: `fc57a00 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fc57a00d54b3f16d0bb49564d7a3ce3a9c61d72e>`_
+
+[BUGFIX] Don't catch security exceptions during property mapping
+-----------------------------------------------------------------------------------------
+
+As security exceptions will be handled by the security
+framework, we have to let them bubble up instead of
+converting them into an property mapping exception.
+
+* Commit: `7f38ddc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7f38ddcaec39fd20c9314f93a1f5aabfd79abf66>`_
+
+[BUGFIX] Injected properties are not available in initializeObject()
+-----------------------------------------------------------------------------------------
+
+This fixes an issue where properties injected to the parent class A
+were not available when the initializeObject() method of sub class B
+was called.
+
+The root cause of this bug was that, in order to avoid double injection,
+injectProperties() was only called in the constructor of sub class B
+and not in the constructor of parent class A. The initializeObject()
+methods however, were still executed in both constructors.
+
+* Resolves: `#43659 <http://forge.typo3.org/issues/43659>`_
+* Commit: `8a28ec3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8a28ec3bb417ce757191af5658474d8da06042c4>`_
+
+[BUGFIX] Wrong media type on non-lower case filenames
+-----------------------------------------------------------------------------------------
+
+This fixes an issue in the getMediaTypeFromFilename() function which
+returned application/octet-stream on any filename specified which
+contained a non-lowercase file extension.
+
+* Commit: `764f3a3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/764f3a3adf79041bc44a2fed8382ecc6602a10ee>`_
+
+[BUGFIX] Ignore unreflectable classes
+-----------------------------------------------------------------------------------------
+
+Classes that cannot be reflected will make the automatic configuration choke.
+This happens quite often when using 3rd party components.
+
+Make the reflection system mark the class unconfigurable, to allow the configurator
+to ignore the class.
+
+* Commit: `fa743db <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fa743dbfffced64cdfb9abefe5230d26f0a12cb9>`_
+
+[BUGFIX] BooleanConverter considers "false" TRUE
+-----------------------------------------------------------------------------------------
+
+The BooleanConverter provided by Flow simply casts the $source
+to a boolean using boxing.
+With this change a string "false" (case insensitive) is considered FALSE.
+
+* Fixes: `#51255 <http://forge.typo3.org/issues/51255>`_
+* Fixes: `#51385 <http://forge.typo3.org/issues/51385>`_
+
+* Commit: `90d745a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/90d745a04e7583fc22816c4337939d329abafd29>`_
+
+[TASK] Fix broken links in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `253ff11 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/253ff119239646b387ca1996d3f725c289acf93b>`_
+
+[BUGFIX] Allow arbitrary setters in PersistentObjectConverter
+-----------------------------------------------------------------------------------------
+
+This change supports additional setters in entities by implementing a
+fallback to the reflection service if the class schema does not contain
+a property.
+
+* Resolves: `#49815 <http://forge.typo3.org/issues/49815>`_
+* Commit: `4d68da2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4d68da2cc48a80eab3f6526d880bce6ff6cef0a3>`_
+
+[BUGFIX] Use consistent spelling of dependency to avoid confusion
+-----------------------------------------------------------------------------------------
+
+* Commit: `59d02f5 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/59d02f5283ce2f0363465234dc02219ea6a25be1>`_
+
+[BUGFIX] Write TYPO3 CMS instead of just TYPO3 in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `3cef756 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3cef756db8877011395f0f94b381c7d6855b567c>`_
+
+[BUGFIX] Roles are not synchronized after database migrate
+-----------------------------------------------------------------------------------------
+
+The roles are not synchronized from the Policy.yaml files to the
+database after the database migration, but only after rebuilding
+the cache. This causes problems in the setup package where the
+database migration is run and the next step fails in reading the
+roles from the database.
+
+By adding a signal to the doctrine migration command we can run
+the synchronization after database migration so the roles in the
+database will always be up to date after migration.
+
+This change makes the initializeRolesFromPolicy method public
+which does not cause issues as the method won't perform any
+actions if the rolesFromPolicyUpToDate flag in the cache is set.
+
+* Commit: `f761fd3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f761fd3d308b97ace9554653e6b7c66846684232>`_
+
+[BUGFIX] Support BCrypt validation of hashes with different cost
+-----------------------------------------------------------------------------------------
+
+In the current implementation of the BCryptHashingStrategy a password is
+hashed with crypt and the hash contains the algorithm and parameters
+with the salt that was used to hash the password.
+
+This change updates the validation to also take the cost from the stored
+hash and allow changes to the cost setting.
+
+* Fixes: `#47725 <http://forge.typo3.org/issues/47725>`_
+* Commit: `269b258 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/269b258218b934570599bcaf00f55f65e43bb63e>`_
+
+[TASK] Cleaned up configuration:validate command
+-----------------------------------------------------------------------------------------
+
+* Related: `#44990 <http://forge.typo3.org/issues/44990>`_
+* Commit: `dbec6d6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/dbec6d6554196c13e289c26c8e87e50a6eae562f>`_
+
+[BUGFIX] Package Manager needs to sort active packages in dependency order
+-----------------------------------------------------------------------------------------
+
+Problem: If being in production context and the configuration cache is still empty,
+it might happen that $this->activePackages is not sorted in the correct order of
+package dependencies, but $this->packages is. This leads to wrongly merged configuration,
+which is then cached.
+
+This problem might also occur in development context, but only on first hit. After
+a reload it is gone.
+
+This change is a fix which makes sure the order in activePackages is the same
+as in packages.
+
+* Commit: `0dd558f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0dd558f9919b5de8f3ada7049f0232a09c13b7b8>`_
+
+[TASK] Tweak documentation settings, enable PDF
+-----------------------------------------------------------------------------------------
+
+* Commit: `9b0142c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9b0142c7999d75c2b4e03ad7a7c4f9636ad42601>`_
+
+[TASK] Fix and tweak rST markup
+-----------------------------------------------------------------------------------------
+
+Note especially the changes to Förthner and Föder! :)
+
+Yes, they fix PDF rendering of the documentation.
+
+* Commit: `614d8c9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/614d8c99635745017e01dce0ce03564f27b4c27c>`_
+
+[TASK] Fix tables in rST documents
+-----------------------------------------------------------------------------------------
+
+Although working for HTML rendering the syntax was wrong, breaking PDF
+rendering.
+
+* Commit: `3a9237b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3a9237b7cd090afa0013aebb68cd8fc3712a5d54>`_
+
+[BUGFIX] Classes without namespace create invalid proxy code
+-----------------------------------------------------------------------------------------
+
+This change makes classes without namespace create proper proxy
+class code, by optionally skipping the namespace declaration.
+Before such classes would create an empty namespace statement,
+which resulted in syntax errors, i.e.::
+
+   namespace ;
+
+=> "syntax error, unexpected ';', expecting T_STRING or
+T_NS_SEPARATOR or '{' in [filename]"
+
+* Fixes: `#52944 <http://forge.typo3.org/issues/52944>`_
+* Commit: `649c3fa <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/649c3fa310aa6dad60e6d4a14b36532ac4772f42>`_
+
+[BUGFIX] Fix validation if nested properties of same type are present
+-----------------------------------------------------------------------------------------
+
+The performance optimization in #46340
+changed the isValid() method of the
+GenericObjectValidator to use the result
+property while recursing through the properties
+of the to be validated object.
+
+Since GenericObjectValidator is reused, it could
+be the case that this result set is reset to
+empty value.
+
+Revert this change and set the result property
+*after* all properties of the to be validated
+object are validated.
+
+* Resolves: `#50585 <http://forge.typo3.org/issues/50585>`_
+* Related: `#46340 <http://forge.typo3.org/issues/46340>`_
+
+* Commit: `a6e5f72 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a6e5f720a486e1af61f9027b5bd13b05174c4ac9>`_
+
+[TASK] Remove persistAll() from IdentityRoutePart
+-----------------------------------------------------------------------------------------
+
+Having IdentityRoutePart call persistAll() could have very weird and
+unexpected side effects, not even mentioning “safe request”.
+
+This change limits the persist operation to the items managed by the
+ObjectPathMappingRepository.
+
+The fix for the failing unit tests in master, done in change with
+id I699d47f3cc2d9ad1eaee19e95896e74246c50c38 has been merged into
+this one.
+
+* Commit: `1decdd7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1decdd7929d96e0f65b1586ded0645250b99d8a0>`_
+
+[BUGFIX] Browser must not directly handle cookie
+-----------------------------------------------------------------------------------------
+
+Request::create() doesn't support "cookies" parameter.
+
+Cookie argument has been removed from Request::create
+with change Icdf7fea74d8331abcf95f1ec361abc78e31bfb8c.
+
+* Fixes: `#48290 <http://forge.typo3.org/issues/48290>`_
+* Commit: `bb9161f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bb9161f46ef404dc43676e1e23299bceff3766dc>`_
+
+[BUGFIX] ActionRequest should not serialize parent HTTP request
+-----------------------------------------------------------------------------------------
+
+When working with WebRedirects and authentication, the intercepted
+request is serialized with the security context. While it makes sense
+to do so, we should *not* include the reference to the base HTTP request
+in this case, as this includes lots of cruft like $_SERVER etc.
+
+In order to test this, just look at the serialized session files
+when a web redirect is taking place.
+
+* Resolves: `#53931 <http://forge.typo3.org/issues/53931>`_
+* Commit: `896a47d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/896a47d5185f48297a61455c33a11b565d81b53c>`_
+
+[BUGFIX] Expose more details in MappingExceptions
+-----------------------------------------------------------------------------------------
+
+This adds a try/catch block to the FlowAnnotationDriver adding the
+affected class name to the message of the thrown exception.
+
+Before if ``evaluatePropertyAnnotations`` threw an exception during
+the ``flow:doctrine:compileproxies`` command the exception did not
+contain details about the affected class (see #52907).
+
+* Fixes: `#52907 <http://forge.typo3.org/issues/52907>`_
+* Commit: `86c578a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/86c578afa474b3cda83569ac23c90d1d82a9559d>`_
+
+[BUGFIX] "Required option" flag in AbstractValidator works correct
+-----------------------------------------------------------------------------------------
+
+This fix adds a boolean condition to the "Required option" flag
+condition. With this fix the flag can also be FALSE.
+
+* Fixes: `#52425 <http://forge.typo3.org/issues/52425>`_
+* Commit: `de5ed46 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/de5ed46793fe07c5d37362dcccde79df44f124f8>`_
+
+[TASK] Warn that a package is not available on (de)activate
+-----------------------------------------------------------------------------------------
+
+Flow now specifically warns about a package not being available
+when the activate or deactivate command for a package is called.
+
+* Commit: `308e09d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/308e09da93c64d1d16247fe4195e1174558f6773>`_
+
+[TASK] Remove arbitrary limit on Resource filename/extension
+-----------------------------------------------------------------------------------------
+
+The DB columns for those properties are VARCHAR(255), so the validation
+limit of 100 makes no sense.
+
+* Commit: `3f314f4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3f314f47737ced1463792903cea01613edc4921f>`_
+
+[BUGFIX] unpublishPersistentResource deletes only intended Resource
+-----------------------------------------------------------------------------------------
+
+When calling ``unpublishPersistentResource``, now only the actually
+intended Resource gets deleted, rather than the whole publishing
+target directory.
+
+Since vfsStream does not support the necessary glob() operation,
+the appropriate UnitTest is rebuilt to use the real filesystem.
+
+* Commit: `d06901f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d06901fd9b832accb179c001f43c4e57d90a8274>`_
+
+[BUGFIX] ReflectionService works for non-Entity inheritance members
+-----------------------------------------------------------------------------------------
+
+As soon as a class which is *not* an entity was present as an
+ancestor of an Entity (with at least one Entity descendant in
+between), there was an Undefined Index error because the
+ReflectionService proceeded on the assumption that everything
+was an Entity, hence present in the ->classSchemata array.
+
+This adds an additional check for the actual presence of
+such an array index and proofs this behavior with a
+Functional Test Fixture.
+
+* Fixes: `#47809 <http://forge.typo3.org/issues/47809>`_
+* Commit: `be7b184 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/be7b184a07fff9b4b1f15fe6d189a34abf5be5e6>`_
+
+[BUGFIX] Dynamic RouteParts should be urldecoded
+-----------------------------------------------------------------------------------------
+
+This makes sure that request path segments are urldecoded
+during matching and urlencoded during resolving of Routes.
+
+Previously An URI ``/some.package/sub%5Csomecontroller`` was
+not decoded correctly leading to a 404.
+Now the value is correctly decoded to "sub\\somecontroller".
+
+* Resolves: `#46449 <http://forge.typo3.org/issues/46449>`_
+* Commit: `ebd6612 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ebd661254bb6d5f18fa2f4e0ab27cebe096de62c>`_
+
+[BUGFIX] Treat namespaces with underscores correctly
+-----------------------------------------------------------------------------------------
+
+The actual classloading does not handle the presence of underscores in namespaces
+correctly.
+
+* Fixes: `#49847 <http://forge.typo3.org/issues/49847>`_
+* Commit: `eca1d1e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/eca1d1eb7721ebb2749133b35a810141deafe21c>`_
+
+[BUGFIX] buildSubprocessCommand fails with multiple arguments
+-----------------------------------------------------------------------------------------
+
+Fixes an issue where the buildSubprocessCommand() function returned
+an invalid command line which lacked spaces between command options.
+
+* Resolves: `#49503 <http://forge.typo3.org/issues/49503>`_
+* Commit: `3d64809 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3d648098ad10c7d469d2c2b338519772092a2758>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Form ViewHelpers throw exception if no formObject is set
+-----------------------------------------------------------------------------------------
+
+When using forms with object binding Fluid throws an exception for FormField
+ViewHelpers bound to nested properties if no form object is available.
+This is the case for example in newAction() where the object is usually NULL::
+
+	<f:form action="create" objectName="user">
+	  <f:form.textfield property="name.firstName" />
+	</f:form>
+
+* Related: `#29290 <http://forge.typo3.org/issues/29290>`_
+* Commit: `695cb81 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/695cb81310bf655ea2157151332707863fa0cc76>`_
+
+[BUGFIX] Flush template cache on ViewHelper changes
+-----------------------------------------------------------------------------------------
+
+Changing the signature of the render method in a ViewHelper leads to
+stale cached templates that throw exceptions. This change uses the
+file monitoring to flush the template cache on a change to a ViewHelper
+class.
+
+* Fixes: `#54135 <http://forge.typo3.org/issues/54135>`_
+* Commit: `d1af4a0 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/d1af4a05cfd2ca541e467d449035b2bf32133088>`_
+
+[TASK] Optimize number_format calls
+-----------------------------------------------------------------------------------------
+
+This change optimizes number_format calls in ViewHelpers by
+explicitly casting the number argument to float.
+A benchmark shows this increases performance of the number_format
+call by a factor of 2-3.
+
+* Resolves: `#36207 <http://forge.typo3.org/issues/36207>`_
+* Commit: `e8ce123 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/e8ce12322f3f6cfde83f5e2589faf6a7a7dfa7c5>`_
+
+[BUGFIX] Don't use folders as templates, partials and layouts
+-----------------------------------------------------------------------------------------
+
+The PHP function ``file_exists()`` returns TRUE for files as well as
+directories.
+This change adjusts Template- and StandaloneView to use ``is_file()``
+instead.
+
+* Fixes: `#47188 <http://forge.typo3.org/issues/47188>`_
+* Commit: `2bf6363 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/2bf6363234ad0b7795b3c617c6c4136549666e96>`_
+
+[TASK] initializeAction methods have to be protected
+-----------------------------------------------------------------------------------------
+
+* Commit: `4a79af8 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/4a79af88c25354280e5bb0e482621f247a41c18c>`_
+
+[BUGFIX] Additional Identity Properties not set on mapping error
+-----------------------------------------------------------------------------------------
+
+When binding Fluid forms to nested objects, Fluid automatically adds
+hidden fields with the identifiers of all affected objects so that
+the persistence layer can update all objects correctly.
+
+When a form was redisplayed due to property mapping errors, the
+identity fields for the nested sub objects were no longer created.
+
+This change fixes this by making sure all identity fields are rendered
+recursively also after property mapping errors.
+
+Example code to verify this::
+
+	<f:form action="update" object="{user}" objectName="user">
+	  <f:form.textfield property="firstName" />
+	  <f:for each="{user.invoices}" as="invoice" iteration="iteration">
+	    {iteration.cycle}:
+	    <f:form.textfield property="invoices.{iteration.index}.subject" />
+	  </f:for>
+	  <f:form.submit value="update" />
+	</f:form>
+
+When submitting the form with validation errors, the redisplayed form
+should contain a div with a hidden field named
+"user[__identity]" for the user and one for each invoice.
+
+* Fixes: `#29290 <http://forge.typo3.org/issues/29290>`_
+* Commit: `516fc37 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/516fc3707c391e32cda7f070d219c92921af0fdc>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

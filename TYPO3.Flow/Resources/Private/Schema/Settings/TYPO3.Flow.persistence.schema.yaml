@@ -1,0 +1,109 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'backendOptions':
+    type: dictionary
+    required: TRUE
+    properties:
+      'driver':
+        type: string
+        enum: [ 'pdo_mysql', 'pdo_sqlite', 'pdo_pgsql', 'pdo_oci', 'oci8', 'ibm_db2', 'pdo_ibm', 'pdo_sqlsrv', 'mysqli' ]
+      'host':
+        -
+          type: string
+          format: host-name
+        -
+          type: string
+          format: ip-address
+      'charset': { type: string }
+      'dbname': { type: string }
+      'user': { type: string }
+      'password':  { type: string }
+      'path': { type: string }
+      'wrapperClass': { type: string, format: class-name }
+      'master':
+        type: dictionary
+        properties:
+          'host':
+            -
+              type: string
+              format: host-name
+            -
+              type: string
+              format: ip-address
+          'charset': { type: string }
+          'dbname': { type: string }
+          'user': { type: string }
+          'password':  { type: string }
+      'slaves':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'host':
+              -
+                type: string
+                format: host-name
+              -
+                type: string
+                format: ip-address
+            'charset': { type: string }
+            'dbname': { type: string }
+            'user': { type: string }
+            'password':  { type: string }
+
+  'doctrine':
+    type: dictionary
+    required: TRUE
+    additionalProperties: FALSE
+    properties:
+      'enable': { type: boolean, required: TRUE }
+      'sqlLogger': { type: [string, 'null'], required: TRUE }
+      'eventSubscribers': { type: array, items: { type: string, format: class-name } }
+      'eventListeners':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'events': { type: [string, array], items: { type: string } }
+            'listener': { type: string, format: class-name }
+      'filters':
+        type: dictionary
+        additionalProperties:
+          type: string
+          additionalProperties: TRUE
+      'dql':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          'customStringFunctions':
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: FALSE
+          'customNumericFunctions':
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: FALSE
+          'customDatetimeFunctions':
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: FALSE
+      'dbal':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          'mappingTypes':
+            type: dictionary
+            additionalProperties:
+              type: dictionary
+              additionalProperties: FALSE
+              properties:
+                'dbType': { type: string, required: TRUE }
+                'className': { type: string, format: class-name, required: TRUE }
+  'cacheAllQueryResults':
+    type: boolean
+    required: TRUE
