@@ -67,8 +67,8 @@ class OperationResolver implements OperationResolverInterface {
 		$operations = array();
 		$finalOperationNames = array();
 
-		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
-		$operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Eel\FlowQuery\OperationInterface');
+		$reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+		$operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Eel\FlowQuery\OperationInterface::class);
 		/** @var $operationClassName OperationInterface */
 		foreach ($operationClassNames as $operationClassName) {
 			$shortOperationName = $operationClassName::getShortName();

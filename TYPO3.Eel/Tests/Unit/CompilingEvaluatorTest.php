@@ -44,7 +44,7 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest {
 	 * @param \TYPO3\Eel\Context $context
 	 */
 	protected function assertEvaluated($expected, $expression, $context) {
-		$evaluator = $this->getAccessibleMock('TYPO3\Eel\CompilingEvaluator', array('dummy'));
+		$evaluator = $this->getAccessibleMock(\TYPO3\Eel\CompilingEvaluator::class, array('dummy'));
 		// note, this is not a public method. We should expect expressions coming in here to be trimmed already.
 		$code = $evaluator->_call('generateEvaluatorCode', trim($expression));
 		$this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');

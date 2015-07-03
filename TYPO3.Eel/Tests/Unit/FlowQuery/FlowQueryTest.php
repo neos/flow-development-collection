@@ -39,7 +39,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject2 = new \stdClass();
 
 		$query = $this->createFlowQuery(array($myObject, $myObject2));
-		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $query->first());
+		$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->first());
 		$this->assertSame(array($myObject), $query->first()->get());
 		$this->assertSame(array($myObject), iterator_to_array($query->first()));
 	}
@@ -52,7 +52,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject2 = new \stdClass();
 
 		$query = $this->createFlowQuery(array($myObject, $myObject2));
-		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $query->last());
+		$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->last());
 		$this->assertSame(array($myObject2), $query->last()->get());
 		$this->assertSame(array($myObject2), iterator_to_array($query->last()));
 	}
@@ -66,7 +66,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject3 = new \stdClass();
 
 		$query = $this->createFlowQuery(array($myObject, $myObject2, $myObject3));
-		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $query->slice());
+		$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->slice());
 		$this->assertSame(array($myObject, $myObject2, $myObject3), $query->slice()->get());
 		$this->assertSame(array($myObject, $myObject2, $myObject3), iterator_to_array($query->slice()));
 		$this->assertSame(array($myObject, $myObject2), $query->slice(0, 2)->get());
@@ -258,7 +258,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function filterCanFilterObjects($sourceObjects, $filterString, $expected) {
 		$query = $this->createFlowQuery($sourceObjects);
 		$filter = $query->filter($filterString);
-		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $filter);
+		$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $filter);
 		$this->assertSame($expected, iterator_to_array($filter));
 	}
 
@@ -372,7 +372,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		foreach ($expressions as $expression) {
 			eval('$result = ' . $expression . ';');
 			if (!$isFinal) {
-				$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
+				$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $result);
 				$result = iterator_to_array($result);
 			}
 			$this->assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
@@ -413,7 +413,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$x->foo->foo = 'asdf';
 		$query = $this->createFlowQuery(array($x));
 		eval('$result = ' . $expression . ';');
-		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
+		$this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $result);
 		$result->getIterator(); // Throws exception
 	}
 
@@ -422,10 +422,10 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \TYPO3\Eel\FlowQuery\FlowQuery
 	 */
 	protected function createFlowQuery(array $elements) {
-		$flowQuery = $this->getAccessibleMock('TYPO3\Eel\FlowQuery\FlowQuery', array('dummy'), array($elements));
+		$flowQuery = $this->getAccessibleMock(\TYPO3\Eel\FlowQuery\FlowQuery::class, array('dummy'), array($elements));
 
 			// Set up mock persistence manager to return dummy object identifiers
-		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$this->mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function($object) {
 			if (isset($object->__identity)) {
 				return $object->__identity;
@@ -433,17 +433,17 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}));
 
 		$mockPersistenceManager = $this->mockPersistenceManager;
-		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$objectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 		$objectManager->expects($this->any())->method('get')->will($this->returnCallback(function($className) use($mockPersistenceManager) {
 			$instance = new $className;
 			// Special case to inject the mock persistence manager into the filter operation
-			if ($className === 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation') {
+			if ($className === \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation::class) {
 				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, TRUE);
 			}
 			return $instance;
 		}));
 
-		$operationResolver = $this->getAccessibleMock('TYPO3\Eel\FlowQuery\OperationResolver', array('dummy'));
+		$operationResolver = $this->getAccessibleMock(\TYPO3\Eel\FlowQuery\OperationResolver::class, array('dummy'));
 		$operationResolver->_set('objectManager', $objectManager);
 
 		$operationResolver->_set('finalOperationNames', array(
@@ -454,15 +454,15 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		));
 
 		$operationResolver->_set('operations', array(
-			'count' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\CountOperation'),
-			'first' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\FirstOperation'),
-			'last' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\LastOperation'),
-			'slice' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\SliceOperation'),
-			'get' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\GetOperation'),
-			'is' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\IsOperation'),
-			'filter' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation'),
-			'children' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\ChildrenOperation'),
-			'property' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\PropertyOperation')
+			'count' => array(300 => \TYPO3\Eel\FlowQuery\Operations\CountOperation::class),
+			'first' => array(300 => \TYPO3\Eel\FlowQuery\Operations\FirstOperation::class),
+			'last' => array(300 => \TYPO3\Eel\FlowQuery\Operations\LastOperation::class),
+			'slice' => array(300 => \TYPO3\Eel\FlowQuery\Operations\SliceOperation::class),
+			'get' => array(300 => \TYPO3\Eel\FlowQuery\Operations\GetOperation::class),
+			'is' => array(300 => \TYPO3\Eel\FlowQuery\Operations\IsOperation::class),
+			'filter' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation::class),
+			'children' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\ChildrenOperation::class),
+			'property' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\PropertyOperation::class)
 		));
 
 		$flowQuery->_set('operationResolver', $operationResolver);

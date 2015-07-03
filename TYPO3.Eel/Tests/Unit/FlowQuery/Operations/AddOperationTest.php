@@ -24,8 +24,8 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function addWithFlowQueryArgumentAppendsToCurrentContext() {
-		$mockNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$mockNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+		$mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
 
 		$flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
 
@@ -44,8 +44,8 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function addWithNodeArgumentAppendsToCurrentContext() {
-		$mockNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$mockNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+		$mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
 
 		$flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
 
@@ -64,8 +64,8 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function addWithArrayArgumentAppendsToCurrentContext() {
-		$mockNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$mockNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+		$mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
 
 		$flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
 

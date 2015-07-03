@@ -14,7 +14,7 @@ class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->operationResolver = $this->objectManager->get('TYPO3\Eel\FlowQuery\OperationResolver');
+		$this->operationResolver = $this->objectManager->get(\TYPO3\Eel\FlowQuery\OperationResolver::class);
 	}
 
 	/**
@@ -35,6 +35,6 @@ class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function higherPriorityOverridesLowerPriority() {
-		$this->assertInstanceOf('TYPO3\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority', $this->operationResolver->resolveOperation('exampleFinalOperation', array()));
+		$this->assertInstanceOf(\TYPO3\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority::class, $this->operationResolver->resolveOperation('exampleFinalOperation', array()));
 	}
 }
