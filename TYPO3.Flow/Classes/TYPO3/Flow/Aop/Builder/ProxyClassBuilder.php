@@ -248,24 +248,6 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Returns an array of method names and advices which were applied to the specified class. If the
-	 * target class has no adviced methods, an empty array is returned.
-	 *
-	 * @param string $targetClassName Name of the target class
-	 * @return mixed An array of method names and their advices as array of \TYPO3\Flow\Aop\Advice\AdviceInterface
-	 * @throws \TYPO3\Flow\Aop\Exception
-	 */
-	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
-		throw new \TYPO3\Flow\Aop\Exception('This method is currently not supported.');
-
-		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) {
-			return array();
-		} else {
-			return $this->advicedMethodsInformationByTargetClass[$targetClassName];
-		}
-	}
-
-	/**
 	 * Determines which of the given classes are potentially proxyable
 	 * and returns their names in an array.
 	 *
