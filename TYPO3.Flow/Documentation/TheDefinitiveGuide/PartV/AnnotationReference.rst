@@ -1,9 +1,9 @@
-.. _TYPO3 Flow Annotation Reference:
+.. _Flow Annotation Reference:
 
-TYPO3 Flow Annotation Reference
-===============================
+Flow Annotation Reference
+=========================
 
-This reference was automatically generated from code on 2015-06-01
+This reference was automatically generated from code on 2015-07-03
 
 
 After

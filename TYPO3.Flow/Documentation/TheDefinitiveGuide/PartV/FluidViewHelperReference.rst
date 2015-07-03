@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-06-01
+This reference was automatically generated from code on 2015-07-03
 
 
 f:alias
@@ -2089,7 +2089,7 @@ Arguments
 
 * ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
 
-* ``decimals`` (int, *optional*): The number of digits after the decimal point
+* ``decimals`` (integer, *optional*): The number of digits after the decimal point
 
 * ``decimalSeparator`` (string, *optional*): The decimal point character
 
@@ -2387,12 +2387,10 @@ The % operator converts the result of the % operation to boolean.
 
 XX and YY can be one of:
 - number
+- string
 - Object Accessor
 - Array
 - a ViewHelper
-Note: Strings at XX/YY are NOT allowed, however, for the time being,
-a string comparison can be achieved with comparing arrays (see example
-below).
 ::
 
   <f:if condition="{rank} > 100">
@@ -2404,7 +2402,7 @@ below).
   <f:if condition="{rank} == {k:bar()}">
     Checks if rank is equal to the result of the ViewHelper "k:bar"
   </f:if>
-  <f:if condition="{0: foo.bar} == {0: 'stringToCompare'}">
+  <f:if condition="{foo.bar} == 'stringToCompare'">
     Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
   </f:if>
 
