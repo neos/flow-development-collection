@@ -10,7 +10,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization\Interceptor;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use TYPO3\Flow\Security\Authorization\Privilege\GenericPrivilegeSubject;
 
 /**
  * Testcase for the policy enforcement interceptor

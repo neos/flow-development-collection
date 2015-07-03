@@ -58,7 +58,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructingArgumentWithInvalidNameThrowsException() {
 		new \TYPO3\Flow\Mvc\Controller\Argument(new \ArrayObject(), 'Text');

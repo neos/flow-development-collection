@@ -38,7 +38,7 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockCommandManager;
 
 	/**
-	 * @var \TYPO\Flow\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $mockReflectionService;
 

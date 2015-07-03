@@ -194,7 +194,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					'value' => 'theUnixtime'
 				),
 				'fourthProperty' => array(
-					'type' => '\TYPO3\Some\Domain\Model',
+					'type' => 'TYPO3\Some\Domain\Model',
 					'multivalue' => FALSE,
 					'value' => array('identifier' => 'theMappedObjectIdentifier')
 				)
@@ -205,7 +205,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$classSchema->addProperty('firstProperty', 'array');
 		$classSchema->addProperty('secondProperty', 'SplObjectStorage');
 		$classSchema->addProperty('thirdProperty', 'DateTime');
-		$classSchema->addProperty('fourthProperty', '\TYPO3\Some\Domain\Model');
+		$classSchema->addProperty('fourthProperty', 'TYPO3\Some\Domain\Model');
 
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));

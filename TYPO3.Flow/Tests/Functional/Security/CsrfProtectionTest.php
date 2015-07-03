@@ -67,7 +67,6 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function postRequestOnRestrictedActionWithoutCsrfTokenCausesAccessDeniedException() {
 		$this->markTestIncomplete('Needs to be implemented');
-		return;
 
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'admin';

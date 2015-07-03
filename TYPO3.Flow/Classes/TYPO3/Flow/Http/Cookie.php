@@ -91,7 +91,7 @@ class Cookie {
 	 *
 	 * @param string $name The cookie name as a valid token (RFC 2616)
 	 * @param mixed $value The value to store in the cookie. Must be possible to cast into a string.
-	 * @param integer|DateTime $expires Date and time after which this cookie expires.
+	 * @param integer|\DateTime $expires Date and time after which this cookie expires.
 	 * @param integer $maximumAge Number of seconds until the cookie expires.
 	 * @param string $domain The host to which the user agent will send this cookie
 	 * @param string $path The path describing the scope of this cookie

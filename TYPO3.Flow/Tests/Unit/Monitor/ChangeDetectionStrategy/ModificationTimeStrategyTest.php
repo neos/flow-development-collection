@@ -24,12 +24,12 @@ use org\bovigo\vfs\vfsStreamWrapper;
 class ModificationTimeStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTime
+	 * @var \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy
 	 */
 	protected $strategy;
 
 	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $cache;
 

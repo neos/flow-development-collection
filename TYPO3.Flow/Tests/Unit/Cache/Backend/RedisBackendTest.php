@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
 use TYPO3\Flow\Cache\Backend\RedisBackend;
 use TYPO3\Flow\Core\ApplicationContext;
 

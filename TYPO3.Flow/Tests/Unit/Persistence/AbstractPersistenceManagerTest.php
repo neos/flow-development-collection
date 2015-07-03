@@ -18,7 +18,7 @@ namespace TYPO3\Flow\Tests\Unit\Persistence;
 class AbstractPersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Tests\Unit\Persistence\AbstractPersistenceManager
+	 * @var \TYPO3\Flow\Persistence\AbstractPersistenceManager
 	 */
 	protected $abstractPersistenceManager;
 

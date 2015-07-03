@@ -168,7 +168,6 @@ trait SecurityOperationsTrait {
 
 		$this->securityContext->clearContext();
 
-		/** @var RequestHandler $requestHandler */
 		$this->securityContext->setRequest($this->mockActionRequest);
 		$this->authenticationManager->authenticate();
 	}

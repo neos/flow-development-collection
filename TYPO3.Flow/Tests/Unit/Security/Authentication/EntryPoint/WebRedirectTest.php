@@ -23,7 +23,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing() {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'));
@@ -68,7 +68,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid() {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'));

@@ -103,7 +103,7 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function setRequestPatternsOnlyAcceptsRequestPatterns() {
 		$uriRequestPattern = new UriRequestPattern('http://mydomain.com/some/path/pattern');

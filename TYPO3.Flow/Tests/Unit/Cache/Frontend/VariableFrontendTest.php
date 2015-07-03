@@ -153,7 +153,7 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function getByTagRejectsInvalidTags() {
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
