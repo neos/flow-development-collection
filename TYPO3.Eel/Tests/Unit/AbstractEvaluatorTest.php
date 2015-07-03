@@ -620,8 +620,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidExpressions
-	 *
-	 * @expectedException TYPO3\Eel\ParserException
+	 * @expectedException \TYPO3\Eel\ParserException
 	 */
 	public function invalidExpressionsThrowExceptions($expression) {
 		$this->assertEvaluated(FALSE, $expression, new Context());
