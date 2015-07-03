@@ -910,7 +910,7 @@ class ParserCompiler {
 					return '';
 			}
 
-			throw new Exception("Unknown pragma $class encountered when compiling parser");
+			throw new \Exception("Unknown pragma $class encountered when compiling parser");
 		}
 
 		if (!isset(self::$parsers[$class])) {
