@@ -46,8 +46,8 @@ class ParsingStateTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function pushAndGetFromStackWorks() {
 		$rootNode = new \TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode();
 		$this->parsingState->pushNodeToStack($rootNode);
-		$this->assertSame($rootNode, $this->parsingState->getNodeFromStack($rootNode), 'Node returned from stack was not the right one.');
-		$this->assertSame($rootNode, $this->parsingState->popNodeFromStack($rootNode), 'Node popped from stack was not the right one.');
+		$this->assertSame($rootNode, $this->parsingState->getNodeFromStack(), 'Node returned from stack was not the right one.');
+		$this->assertSame($rootNode, $this->parsingState->popNodeFromStack(), 'Node popped from stack was not the right one.');
 	}
 
 	/**

@@ -19,7 +19,7 @@ require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
 class SubmitViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\FormFieldViewHelperBaseTestcase {
 
 	/**
-	 * @var \TYPO3\Fluid\ViewHelpers\Form\ubmitViewHelper
+	 * @var \TYPO3\Fluid\ViewHelpers\Form\SubmitViewHelper
 	 */
 	protected $viewHelper;
 

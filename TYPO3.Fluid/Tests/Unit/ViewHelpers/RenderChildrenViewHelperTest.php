@@ -62,7 +62,7 @@ class RenderChildrenViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBa
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
+	 * @expectedException \TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
 	 */
 	public function renderThrowsExceptionIfTheRequestIsNotAWidgetRequest() {
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -73,7 +73,7 @@ class RenderChildrenViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBa
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Fluid\Core\Widget\Exception\RenderingContextNotFoundException
+	 * @expectedException \TYPO3\Fluid\Core\Widget\Exception\RenderingContextNotFoundException
 	 */
 	public function renderThrowsExceptionIfTheChildNodeRenderingContextIsNotThere() {
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);

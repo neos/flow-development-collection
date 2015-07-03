@@ -54,7 +54,7 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $tagBuilder;
 
 	/**
-	 * @var \TYPO3\Fluid\Core\ViewHelper\Arguments
+	 * @var array
 	 */
 	protected $arguments;
 

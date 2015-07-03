@@ -46,7 +46,7 @@ class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
+	 * @expectedException \TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
 	 */
 	public function getThrowsExceptionIfWidgetContextIsNotFound() {
 		$ajaxWidgetContextHolder = new \TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder();

@@ -73,12 +73,12 @@ class AjaxWidgetComponentTest extends UnitTestCase {
 	protected $mockSecurityContext;
 
 	/**
-	 * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+	 * @var \TYPO3\Flow\Property\PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockPropertyMapper;
 
 	/**
-	 * @var PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
+	 * @var \TYPO3\Flow\Property\PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockPropertyMappingConfiguration;
 
