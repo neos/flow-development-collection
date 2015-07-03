@@ -181,7 +181,11 @@ class Package implements PackageInterface {
 						// Skip non-package requirements
 						continue;
 					}
-					$packageKey = $this->packageManager->getPackageKeyFromComposerName($requirement);
+					try {
+						$packageKey = $this->packageManager->getPackageKeyFromComposerName($requirement);
+					} catch (Exception\InvalidPackageStateException $exception) {
+						continue;
+					}
 					$constraint = new MetaData\PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, $packageKey);
 					$this->packageMetaData->addConstraint($constraint);
 				}
