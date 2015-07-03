@@ -429,10 +429,20 @@ class ClassLoader {
 		}
 
 		if ($context !== NULL) {
-			$proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
-			if ($proxyClasses !== FALSE) {
-				$this->availableProxyClasses = $proxyClasses;
-			}
+			$this->initializeAvailableProxyClasses($context);
+		}
+	}
+
+	/**
+	 * Initialize available proxy classes from the cached list.
+	 *
+	 * @param ApplicationContext $context
+	 * @return void
+	 */
+	public function initializeAvailableProxyClasses(ApplicationContext $context) {
+		$proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
+		if ($proxyClasses !== FALSE) {
+			$this->availableProxyClasses = $proxyClasses;
 		}
 	}
 
