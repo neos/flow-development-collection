@@ -76,8 +76,8 @@ class WidgetContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperChildNodesCanBeReadAgain() {
-		$viewHelperChildNodes = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
-		$renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+		$viewHelperChildNodes = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
+		$renderingContext = $this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
 
 		$this->widgetContext->setViewHelperChildNodes($viewHelperChildNodes, $renderingContext);
 		$this->assertSame($viewHelperChildNodes, $this->widgetContext->getViewHelperChildNodes());

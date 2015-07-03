@@ -17,14 +17,14 @@ namespace TYPO3\Fluid\Tests\Unit\Core\ViewHelper;
 class AbstractTagBasedViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function setUp() {
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper', array('dummy'), array(), '', FALSE);
+		$this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper::class, array('dummy'), array(), '', FALSE);
 	}
 
 	/**
 	 * @test
 	 */
 	public function initializeResetsUnderlyingTagBuilder() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('reset'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('reset'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('reset');
 		$this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -35,7 +35,7 @@ class AbstractTagBasedViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function oneTagAttributeIsRenderedCorrectly() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('addAttribute')->with('foo', 'bar');
 		$this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -49,7 +49,7 @@ class AbstractTagBasedViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function additionalTagAttributesAreRenderedCorrectly() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('addAttribute')->with('foo', 'bar');
 		$this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -63,7 +63,7 @@ class AbstractTagBasedViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function dataAttributesAreRenderedCorrectly() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('data-foo', 'bar');
 		$mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('data-baz', 'foos');
 		$this->viewHelper->injectTagBuilder($mockTagBuilder);
@@ -77,7 +77,7 @@ class AbstractTagBasedViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function standardTagAttributesAreRegistered() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('class', 'classAttribute');
 		$mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('dir', 'dirAttribute');
 		$mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('id', 'idAttribute');

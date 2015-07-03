@@ -41,13 +41,13 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->translateViewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\TranslateViewHelper', array('renderChildren'));
+		$this->translateViewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\TranslateViewHelper::class, array('renderChildren'));
 
 		$this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TYPO3.Fluid'));
 
 		$this->dummyLocale = new Locale('de_DE');
 
-		$this->mockTranslator = $this->getMockBuilder('TYPO3\Flow\I18n\Translator')->disableOriginalConstructor()->getMock();
+		$this->mockTranslator = $this->getMockBuilder(\TYPO3\Flow\I18n\Translator::class)->disableOriginalConstructor()->getMock();
 		$this->inject($this->translateViewHelper, 'translator', $this->mockTranslator);
 
 		$this->injectDependenciesIntoViewHelper($this->translateViewHelper);
@@ -126,10 +126,10 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase {
 	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function renderThrowsExceptionIfNoPackageCouldBeResolved() {
-		$mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue(NULL));
 
-		$mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+		$mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
 		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$this->renderingContext->setControllerContext($mockControllerContext);

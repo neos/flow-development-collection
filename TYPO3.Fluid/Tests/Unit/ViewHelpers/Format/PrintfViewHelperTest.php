@@ -27,7 +27,7 @@ class PrintfViewHelperTest extends ViewHelperBaseTestcase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\PrintfViewHelper', array('renderChildren'));
+		$this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\PrintfViewHelper::class, array('renderChildren'));
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
 		$this->viewHelper->initializeArguments();
 	}

@@ -22,7 +22,7 @@ class ElseViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 	 * @test
 	 */
 	public function renderRendersChildren() {
-		$viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\ElseViewHelper', array('renderChildren'));
+		$viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\ElseViewHelper::class, array('renderChildren'));
 
 		$viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('foo'));
 		$actualResult = $viewHelper->render();

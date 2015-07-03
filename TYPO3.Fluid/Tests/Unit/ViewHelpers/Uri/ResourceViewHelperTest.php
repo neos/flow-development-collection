@@ -38,10 +38,10 @@ class ResourceViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTest
 
 	public function setUp() {
 		parent::setUp();
-		$this->mockResourceManager = $this->getMock('TYPO3\Flow\Resource\ResourceManager');
-		$this->mockI18nService = $this->getMock('TYPO3\Flow\I18n\Service');
+		$this->mockResourceManager = $this->getMock(\TYPO3\Flow\Resource\ResourceManager::class);
+		$this->mockI18nService = $this->getMock(\TYPO3\Flow\I18n\Service::class);
 
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper', array('renderChildren'), array(), '', FALSE);
+		$this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper::class, array('renderChildren'), array(), '', FALSE);
 		$this->inject($this->viewHelper, 'resourceManager', $this->mockResourceManager);
 		$this->inject($this->viewHelper, 'i18nService', $this->mockI18nService);
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);

@@ -27,7 +27,7 @@ class TextareaViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
 
 	public function setUp() {
 		parent::setUp();
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\TextareaViewHelper', array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
+		$this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\TextareaViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
 		$this->arguments['name'] = '';
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
 		$this->viewHelper->initializeArguments();
@@ -37,7 +37,7 @@ class TextareaViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
 	 * @test
 	 */
 	public function renderCorrectlySetsTagName() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('setTagName'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('setTagName')->with('textarea');
 		$this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -49,7 +49,7 @@ class TextareaViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
 	 * @test
 	 */
 	public function renderCorrectlySetsNameAttributeAndContent() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute', 'setContent', 'render'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute', 'setContent', 'render'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
 		$this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
 		$mockTagBuilder->expects($this->once())->method('setContent')->with('Current value');
@@ -79,7 +79,7 @@ class TextareaViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
 	 * @test
 	 */
 	public function renderEscapesTextareaContent() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('addAttribute', 'setContent', 'render'), array(), '', FALSE);
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute', 'setContent', 'render'), array(), '', FALSE);
 		$mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
 		$this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
 		$mockTagBuilder->expects($this->once())->method('setContent')->with('some &lt;tag&gt; &amp; &quot;quotes&quot;');

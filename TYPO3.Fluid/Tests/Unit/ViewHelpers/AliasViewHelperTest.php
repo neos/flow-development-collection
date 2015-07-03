@@ -24,7 +24,7 @@ class AliasViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
 	public function renderAddsSingleValueToTemplateVariableContainerAndRemovesItAfterRendering() {
 		$viewHelper = new \TYPO3\Fluid\ViewHelpers\AliasViewHelper();
 
-		$mockViewHelperNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', array('evaluateChildNodes'), array(), '', FALSE);
+		$mockViewHelperNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array('evaluateChildNodes'), array(), '', FALSE);
 		$mockViewHelperNode->expects($this->once())->method('evaluateChildNodes')->will($this->returnValue('foo'));
 
 		$this->templateVariableContainer->expects($this->at(0))->method('add')->with('someAlias', 'someValue');
@@ -41,7 +41,7 @@ class AliasViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
 	public function renderAddsMultipleValuesToTemplateVariableContainerAndRemovesThemAfterRendering() {
 		$viewHelper = new \TYPO3\Fluid\ViewHelpers\AliasViewHelper();
 
-		$mockViewHelperNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', array('evaluateChildNodes'), array(), '', FALSE);
+		$mockViewHelperNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array('evaluateChildNodes'), array(), '', FALSE);
 		$mockViewHelperNode->expects($this->once())->method('evaluateChildNodes')->will($this->returnValue('foo'));
 
 		$this->templateVariableContainer->expects($this->at(0))->method('add')->with('someAlias', 'someValue');
@@ -60,7 +60,7 @@ class AliasViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
 	public function renderDoesNotTouchTemplateVariableContainerAndReturnsChildNodesIfMapIsEmpty() {
 		$viewHelper = new \TYPO3\Fluid\ViewHelpers\AliasViewHelper();
 
-		$mockViewHelperNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', array('evaluateChildNodes'), array(), '', FALSE);
+		$mockViewHelperNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array('evaluateChildNodes'), array(), '', FALSE);
 		$mockViewHelperNode->expects($this->once())->method('evaluateChildNodes')->will($this->returnValue('foo'));
 
 		$this->templateVariableContainer->expects($this->never())->method('add');

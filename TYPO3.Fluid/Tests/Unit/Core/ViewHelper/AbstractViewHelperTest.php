@@ -68,16 +68,16 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	);
 
 	public function setUp() {
-		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$this->mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue($this->mockReflectionService));
+		$this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+		$this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Reflection\ReflectionService::class)->will($this->returnValue($this->mockReflectionService));
 	}
 
 	/**
 	 * @test
 	 */
 	public function argumentsCanBeRegistered() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$name = 'This is a name';
@@ -95,7 +95,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function registeringTheSameArgumentNameAgainThrowsException() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render'), array(), '', FALSE);
 
 		$name = 'shortName';
 		$description = 'Example desc';
@@ -110,7 +110,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function overrideArgumentOverwritesExistingArgumentDefinition() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$name = 'argumentName';
@@ -131,7 +131,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$viewHelper->_call('overrideArgument', 'argumentName', 'string', 'description', TRUE);
@@ -141,7 +141,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function prepareArgumentsCallsInitializeArguments() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'initializeArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'initializeArguments'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$viewHelper->expects($this->once())->method('initializeArguments');
@@ -156,14 +156,14 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		\TYPO3\Fluid\Fluid::$debugMode = TRUE;
 
-		$dataCacheMock = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$dataCacheMock = $this->getMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, array(), array(), '', FALSE);
 		$dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(TRUE));
 		$dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 
 		$viewHelper = new \TYPO3\Fluid\Core\Fixtures\TestViewHelper();
 
-		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('TYPO3\Fluid\Core\Fixtures\TestViewHelper', 'render')->will($this->returnValue($this->fixtureMethodParameters));
-		$this->mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with('TYPO3\Fluid\Core\Fixtures\TestViewHelper', 'render')->will($this->returnValue($this->fixtureMethodTags));
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Fluid\Core\Fixtures\TestViewHelper::class, 'render')->will($this->returnValue($this->fixtureMethodParameters));
+		$this->mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(\TYPO3\Fluid\Core\Fixtures\TestViewHelper::class, 'render')->will($this->returnValue($this->fixtureMethodTags));
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$expected = array(
@@ -184,13 +184,13 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		\TYPO3\Fluid\Fluid::$debugMode = FALSE;
 
-		$dataCacheMock = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$dataCacheMock = $this->getMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, array(), array(), '', FALSE);
 		$dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(TRUE));
 		$dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 
 		$viewHelper = new \TYPO3\Fluid\Core\Fixtures\TestViewHelper2();
 
-		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('TYPO3\Fluid\Core\Fixtures\TestViewHelper2', 'render')->will($this->returnValue($this->fixtureMethodParameters));
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Fluid\Core\Fixtures\TestViewHelper2::class, 'render')->will($this->returnValue($this->fixtureMethodParameters));
 		$this->mockReflectionService->expects($this->never())->method('getMethodTagsValues');
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
@@ -207,7 +207,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function validateArgumentsCallsPrepareArguments() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'prepareArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'prepareArguments'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue(array()));
@@ -219,7 +219,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function validateArgumentsAcceptsAllObjectsImplemtingArrayAccessAsAnArray() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'prepareArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'prepareArguments'), array(), '', FALSE);
 
 		$viewHelper->setArguments(array('test' => new \ArrayObject));
 		$viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue(array('test' => new \TYPO3\Fluid\Core\ViewHelper\ArgumentDefinition('test', 'array', FALSE, 'documentation'))));
@@ -230,7 +230,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function validateArgumentsCallsTheRightValidators() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'prepareArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'prepareArguments'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$viewHelper->setArguments(array('test' => 'Value of argument'));
@@ -247,7 +247,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function validateArgumentsCallsTheRightValidatorsAndThrowsExceptionIfValidationIsWrong() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'prepareArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'prepareArguments'), array(), '', FALSE);
 		$viewHelper->injectObjectManager($this->mockObjectManager);
 
 		$viewHelper->setArguments(array('test' => 'test'));
@@ -263,7 +263,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods() {
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('validateArguments', 'initialize', 'callRenderMethod'));
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('validateArguments', 'initialize', 'callRenderMethod'));
 		$viewHelper->expects($this->at(0))->method('validateArguments');
 		$viewHelper->expects($this->at(1))->method('initialize');
 		$viewHelper->expects($this->at(2))->method('callRenderMethod')->will($this->returnValue('Output'));
@@ -277,16 +277,16 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setRenderingContextShouldSetInnerVariables() {
-		$templateVariableContainer = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer');
-		$viewHelperVariableContainer = $this->getMock('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
-		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+		$templateVariableContainer = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class);
+		$viewHelperVariableContainer = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
+		$controllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array(), array(), '', FALSE);
 
 		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
 		$renderingContext->injectTemplateVariableContainer($templateVariableContainer);
 		$renderingContext->injectViewHelperVariableContainer($viewHelperVariableContainer);
 		$renderingContext->setControllerContext($controllerContext);
 
-		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'prepareArguments'), array(), '', FALSE);
+		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class, array('render', 'prepareArguments'), array(), '', FALSE);
 
 		$viewHelper->setRenderingContext($renderingContext);
 

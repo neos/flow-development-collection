@@ -94,7 +94,7 @@ class StandaloneView extends AbstractTemplateView {
 	public function initializeObject() {
 		if ($this->request === NULL) {
 			$httpRequest = Request::createFromEnvironment();
-			$this->request = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $httpRequest);
+			$this->request = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
 		}
 
 		$uriBuilder = new UriBuilder();

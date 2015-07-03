@@ -24,7 +24,7 @@ class RawViewHelperTest extends UnitTestCase {
 	protected $viewHelper;
 
 	public function setUp() {
-		$this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\RawViewHelper', array('renderChildren'));
+		$this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\RawViewHelper::class, array('renderChildren'));
 	}
 
 	/**

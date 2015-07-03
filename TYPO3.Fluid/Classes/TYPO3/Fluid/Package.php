@@ -36,10 +36,10 @@ class Package extends BasePackage {
 
 		$context = $bootstrap->getContext();
 		if (!$context->isProduction()) {
-			$dispatcher->connect('TYPO3\Flow\Core\Booting\Sequence', 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+			$dispatcher->connect(\TYPO3\Flow\Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
 				if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
 					$templateFileMonitor = \TYPO3\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
-					$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+					$packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
 					foreach ($packageManager->getActivePackages() as $packageKey => $package) {
 						if ($packageManager->isPackageFrozen($packageKey)) {
 							continue;
@@ -67,11 +67,11 @@ class Package extends BasePackage {
 			}
 
 			$objectManager = $bootstrap->getObjectManager();
-			if ($objectManager->isRegistered('TYPO3\Fluid\Core\Compiler\TemplateCompiler')) {
-				$templateCompiler = $objectManager->get('TYPO3\Fluid\Core\Compiler\TemplateCompiler');
+			if ($objectManager->isRegistered(\TYPO3\Fluid\Core\Compiler\TemplateCompiler::class)) {
+				$templateCompiler = $objectManager->get(\TYPO3\Fluid\Core\Compiler\TemplateCompiler::class);
 				$templateCompiler->flushTemplatesOnViewHelperChanges($changedFiles);
 			}
 		};
-		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', $flushTemplates);
+		$dispatcher->connect(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', $flushTemplates);
 	}
 }

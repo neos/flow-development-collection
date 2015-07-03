@@ -120,7 +120,7 @@ class ViewHelperVariableContainerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewCanBeReadOutAgain() {
-		$view = $this->getMock('TYPO3\Fluid\View\AbstractTemplateView', array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'hasTemplate', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'));
+		$view = $this->getMock(\TYPO3\Fluid\View\AbstractTemplateView::class, array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'hasTemplate', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'));
 		$this->viewHelperVariableContainer->setView($view);
 		$this->assertSame($view, $this->viewHelperVariableContainer->getView());
 	}

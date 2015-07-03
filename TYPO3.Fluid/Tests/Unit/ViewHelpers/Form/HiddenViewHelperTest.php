@@ -25,7 +25,7 @@ class HiddenViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
 
 	public function setUp() {
 		parent::setUp();
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\HiddenViewHelper', array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'registerFieldNameForFormTokenGeneration'));
+		$this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\HiddenViewHelper::class, array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'registerFieldNameForFormTokenGeneration'));
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
 		$this->viewHelper->initializeArguments();
 	}
@@ -34,7 +34,7 @@ class HiddenViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
 	 * @test
 	 */
 	public function renderCorrectlySetsTagNameAndDefaultAttributes() {
-		$mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName', 'addAttribute'));
+		$mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute'));
 		$mockTagBuilder->expects($this->once())->method('setTagName')->with('input');
 		$mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'hidden');
 		$mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');

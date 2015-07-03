@@ -27,7 +27,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\CaseViewHelper', array('renderChildren'));
+		$this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\CaseViewHelper::class, array('renderChildren'));
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
 		$this->viewHelper->initializeArguments();
 	}
@@ -45,7 +45,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderReturnsChildNodesIfTheSpecifiedValueIsEqualToTheSwitchExpression() {
 		$this->viewHelperVariableContainerData = array(
-			'TYPO3\Fluid\ViewHelpers\SwitchViewHelper' => array(
+			\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class => array(
 				'switchExpression' => 'someValue',
 			)
 		);
@@ -61,11 +61,11 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderSetsBreakStateInViewHelperVariableContainerIfTheSpecifiedValueIsEqualToTheSwitchExpression() {
 		$this->viewHelperVariableContainerData = array(
-			'TYPO3\Fluid\ViewHelpers\SwitchViewHelper' => array(
+			\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class => array(
 				'switchExpression' => 'someValue',
 			)
 		);
-		$this->viewHelperVariableContainer->expects($this->once())->method('addOrUpdate')->with('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break', TRUE);
+		$this->viewHelperVariableContainer->expects($this->once())->method('addOrUpdate')->with(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', TRUE);
 
 		$this->viewHelper->render('someValue');
 	}
@@ -78,12 +78,12 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase {
 		$stringValue = '123';
 
 		$this->viewHelperVariableContainerData = array(
-			'TYPO3\Fluid\ViewHelpers\SwitchViewHelper' => array(
+			\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class => array(
 				'switchExpression' => $numericValue,
 			)
 		);
 
-		$this->viewHelperVariableContainer->expects($this->once())->method('addOrUpdate')->with('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break', TRUE);
+		$this->viewHelperVariableContainer->expects($this->once())->method('addOrUpdate')->with(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', TRUE);
 
 		$this->viewHelper->render($stringValue);
 	}
@@ -94,7 +94,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderReturnsAnEmptyStringIfTheSpecifiedValueIsNotEqualToTheSwitchExpression() {
 		$this->viewHelperVariableContainerData = array(
-			'TYPO3\Fluid\ViewHelpers\SwitchViewHelper' => array(
+			\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class => array(
 				'switchExpression' => 'someValue',
 			)
 		);

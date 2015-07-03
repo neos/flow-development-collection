@@ -25,7 +25,7 @@ class IfViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\IfViewHelper', array('renderThenChild', 'renderElseChild'));
+		$this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\IfViewHelper::class, array('renderThenChild', 'renderElseChild'));
 		$this->injectDependenciesIntoViewHelper($this->viewHelper);
 		$this->viewHelper->initializeArguments();
 	}

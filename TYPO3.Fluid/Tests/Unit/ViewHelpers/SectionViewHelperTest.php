@@ -23,7 +23,7 @@ class SectionViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function sectionIsAddedToParseVariableContainer() {
 		$section = new \TYPO3\Fluid\ViewHelpers\SectionViewHelper();
 
-		$viewHelperNodeMock = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', array(), array(), '', FALSE);
+		$viewHelperNodeMock = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array(), array(), '', FALSE);
 		$viewHelperArguments = array(
 			'name' => new \TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode('sectionName')
 		);

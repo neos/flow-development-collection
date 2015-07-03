@@ -34,10 +34,10 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	protected function getMockControllerContext() {
 		$httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
-		$mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($httpRequest));
+		$mockRequest = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($httpRequest));
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Acme.Demo'));
 
-		$mockControllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
+		$mockControllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array('getRequest'), array(), '', FALSE);
 		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		return $mockControllerContext;
@@ -49,13 +49,13 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 	public function viewHelperRendersThenPartIfHasRoleReturnsTrue() {
 		$role = new Role('Acme.Demo:SomeRole');
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class, array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('hasRole')->with('Acme.Demo:SomeRole')->will($this->returnValue(TRUE));
 
-		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock(\TYPO3\Flow\Security\Policy\PolicyService::class, array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('getRole')->with('Acme.Demo:SomeRole')->will($this->returnValue($role));
 
-		$mockViewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper', array('renderThenChild', 'hasAccessToPrivilege'));
+		$mockViewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper::class, array('renderThenChild', 'hasAccessToPrivilege'));
 		$this->inject($mockViewHelper, 'securityContext', $mockSecurityContext);
 		$this->inject($mockViewHelper, 'controllerContext', $this->getMockControllerContext());
 		$this->inject($mockViewHelper, 'policyService', $mockPolicyService);
@@ -70,7 +70,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 	 * @test
 	 */
 	public function viewHelperHandlesPackageKeyAttributeCorrectly() {
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class, array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnCallback(function($role) {
 			switch($role) {
 				case 'TYPO3.Fluid:Administrator':
@@ -81,7 +81,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 
 		}));
 
-		$mockViewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper', array('renderThenChild', 'renderElseChild', 'hasAccessToPrivilege'));
+		$mockViewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper::class, array('renderThenChild', 'renderElseChild', 'hasAccessToPrivilege'));
 		$this->inject($mockViewHelper, 'securityContext', $mockSecurityContext);
 		$this->inject($mockViewHelper, 'controllerContext', $this->getMockControllerContext());
 		$mockViewHelper->expects($this->any())->method('renderThenChild')->will($this->returnValue('true'));
@@ -98,7 +98,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 	 * @test
 	 */
 	public function viewHelperUsesSpecifiedAccountForCheck() {
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
+		$mockAccount = $this->getMock(\TYPO3\Flow\Security\Account::class);
 		$mockAccount->expects($this->any())->method('hasRole')->will($this->returnCallback(function(Role $role) {
 			switch($role->getIdentifier()) {
 				case 'TYPO3.Fluid:Administrator':
@@ -106,7 +106,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase {
 			}
 		}));
 
-		$mockViewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper', array('renderThenChild', 'renderElseChild', 'hasAccessToPrivilege'));
+		$mockViewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper::class, array('renderThenChild', 'renderElseChild', 'hasAccessToPrivilege'));
 		$this->inject($mockViewHelper, 'controllerContext', $this->getMockControllerContext());
 		$mockViewHelper->expects($this->any())->method('renderThenChild')->will($this->returnValue('true'));
 		$mockViewHelper->expects($this->any())->method('renderElseChild')->will($this->returnValue('false'));

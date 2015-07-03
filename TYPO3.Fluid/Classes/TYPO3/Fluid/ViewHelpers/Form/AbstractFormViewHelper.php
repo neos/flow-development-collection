@@ -47,10 +47,10 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper {
 		if ($fieldName === NULL || $fieldName === '') {
 			return '';
 		}
-		if (!$this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix')) {
+		if (!$this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'fieldNamePrefix')) {
 			return $fieldName;
 		}
-		$fieldNamePrefix = (string)$this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix');
+		$fieldNamePrefix = (string)$this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'fieldNamePrefix');
 		if ($fieldNamePrefix === '') {
 			return $fieldName;
 		}
@@ -91,12 +91,12 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper {
 	 * @return void
 	 */
 	protected function registerFieldNameForFormTokenGeneration($fieldName) {
-		if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formFieldNames')) {
-			$formFieldNames = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formFieldNames');
+		if ($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formFieldNames')) {
+			$formFieldNames = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formFieldNames');
 		} else {
 			$formFieldNames = array();
 		}
 		$formFieldNames[] = $fieldName;
-		$this->viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formFieldNames', $formFieldNames);
+		$this->viewHelperVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formFieldNames', $formFieldNames);
 	}
 }
