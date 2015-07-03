@@ -258,6 +258,10 @@ class Scripts {
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
 				self::compileDoctrineProxies($bootstrap);
 			}
+
+			// As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
+			$classLoader = $bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader');
+			$classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
 		}
 
 		// Check if code was updated, if not something went wrong
