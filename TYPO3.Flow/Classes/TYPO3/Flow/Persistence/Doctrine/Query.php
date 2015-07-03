@@ -214,7 +214,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 			$originalQuery = $this->queryBuilder->getQuery();
 			$dqlQuery = clone $originalQuery;
 			$dqlQuery->setParameters($originalQuery->getParameters());
-			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('TYPO3\Flow\Persistence\Doctrine\CountWalker'));
+			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array(\TYPO3\Flow\Persistence\Doctrine\CountWalker::class));
 			$offset = $dqlQuery->getFirstResult();
 			$limit = $dqlQuery->getMaxResults();
 			if ($offset !== NULL) {

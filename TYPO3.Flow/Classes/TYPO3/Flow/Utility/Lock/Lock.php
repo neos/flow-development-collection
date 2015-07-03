@@ -49,10 +49,10 @@ class Lock {
 	 */
 	public function __construct($subject, $exclusiveLock = TRUE) {
 		if (self::$lockStrategyClassName === NULL) {
-			if (Bootstrap::$staticObjectManager === NULL || !Bootstrap::$staticObjectManager->isRegistered('TYPO3\Flow\Configuration\ConfigurationManager')) {
+			if (Bootstrap::$staticObjectManager === NULL || !Bootstrap::$staticObjectManager->isRegistered(\TYPO3\Flow\Configuration\ConfigurationManager::class)) {
 				return;
 			}
-			$configurationManager = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+			$configurationManager = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
 			$settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 			self::$lockStrategyClassName = $settings['utility']['lockStrategyClassName'];
 		}

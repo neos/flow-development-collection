@@ -191,6 +191,6 @@ class AbstractMessageTest extends UnitTestCase {
 	 * @return AbstractMessage|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getAbstractMessageMock() {
-		return $this->getMockForAbstractClass('TYPO3\Flow\Http\AbstractMessage');
+		return $this->getMockForAbstractClass(\TYPO3\Flow\Http\AbstractMessage::class);
 	}
 }

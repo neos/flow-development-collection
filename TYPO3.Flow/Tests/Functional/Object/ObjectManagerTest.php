@@ -21,11 +21,11 @@ class ObjectManagerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function ifOnlyOneImplementationExistsGetReturnsTheImplementationByTheSpecifiedInterface() {
-		$objectByInterface = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA');
-		$objectByClassName = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation');
+		$objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
+		$objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByInterface);
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByClassName);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByInterface);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByClassName);
 	}
 
 	/**
@@ -42,8 +42,8 @@ class ObjectManagerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function interfaceObjectsHaveTheScopeDefinedInTheImplementationClassIfNothingElseWasSpecified() {
-		$objectByInterface = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA');
-		$objectByClassName = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation');
+		$objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
+		$objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
 
 		$this->assertSame($objectByInterface, $objectByClassName);
 	}

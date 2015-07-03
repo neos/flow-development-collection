@@ -29,7 +29,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->translator = $this->objectManager->get('TYPO3\Flow\I18n\Translator');
+		$this->translator = $this->objectManager->get(\TYPO3\Flow\I18n\Translator::class);
 	}
 
 	/**

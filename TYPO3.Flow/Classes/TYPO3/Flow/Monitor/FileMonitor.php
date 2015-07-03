@@ -98,7 +98,7 @@ class FileMonitor {
 	 * @return FileMonitor
 	 */
 	static public function createFileMonitorAtBoot($identifier, Bootstrap $bootstrap) {
-		$fileMonitorCache = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Monitor');
+		$fileMonitorCache = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Monitor');
 
 		// The change detector needs to be instantiated and registered manually because
 		// it has a complex dependency (cache) but still needs to be a singleton.
@@ -109,8 +109,8 @@ class FileMonitor {
 		$fileMonitor = new FileMonitor($identifier);
 		$fileMonitor->injectCache($fileMonitorCache);
 		$fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
-		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance('TYPO3\Flow\SignalSlot\Dispatcher'));
-		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
+		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(\TYPO3\Flow\SignalSlot\Dispatcher::class));
+		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 
 		return $fileMonitor;
 	}
@@ -409,7 +409,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
-		$this->signalDispatcher->dispatch('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
+		$this->signalDispatcher->dispatch(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
 	}
 
 	/**
@@ -422,7 +422,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
-		$this->signalDispatcher->dispatch('TYPO3\Flow\Monitor\FileMonitor', 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
+		$this->signalDispatcher->dispatch(\TYPO3\Flow\Monitor\FileMonitor::class, 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
 	}
 
 	/**

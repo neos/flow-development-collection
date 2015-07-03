@@ -34,8 +34,8 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockObjectManager;
 
 	public function setUp() {
-		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
-		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+		$this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 
 		$this->converter = new \TYPO3\Flow\Property\TypeConverter\ObjectConverter();
 		$this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
@@ -65,10 +65,10 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected) {
 		if ($isEntity) {
-			$this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\Entity')->will($this->returnValue($isEntity));
+			$this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue($isEntity));
 		} else {
-			$this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\Entity')->will($this->returnValue($isEntity));
-			$this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\ValueObject')->will($this->returnValue($isValueObject));
+			$this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue($isEntity));
+			$this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\ValueObject::class)->will($this->returnValue($isValueObject));
 		}
 
 		$this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
@@ -86,7 +86,7 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		)));
 		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-		$configuration->setTypeConverterOptions('TYPO3\Flow\Property\TypeConverter\ObjectConverter', array());
+		$configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, array());
 		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
 	}
 

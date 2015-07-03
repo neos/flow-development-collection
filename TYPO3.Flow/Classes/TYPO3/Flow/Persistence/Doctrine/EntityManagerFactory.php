@@ -74,17 +74,17 @@ class EntityManagerFactory {
 	 */
 	public function create() {
 		$config = new Configuration();
-		$config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
+		$config->setClassMetadataFactoryName(\TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory::class);
 
 		$cache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
 		// must use ObjectManager in compile phase...
-		$cache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine'));
+		$cache->setCache($this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Persistence_Doctrine'));
 		$config->setMetadataCacheImpl($cache);
 		$config->setQueryCacheImpl($cache);
 
 		$resultCache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
 		// must use ObjectManager in compile phase...
-		$resultCache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine_Results'));
+		$resultCache->setCache($this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Persistence_Doctrine_Results'));
 		$config->setResultCacheImpl($resultCache);
 
 		if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
@@ -98,7 +98,7 @@ class EntityManagerFactory {
 
 		$eventManager = $this->buildEventManager();
 
-		$flowAnnotationDriver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$flowAnnotationDriver = $this->objectManager->get(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class);
 		$config->setMetadataDriverImpl($flowAnnotationDriver);
 
 		$proxyDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));

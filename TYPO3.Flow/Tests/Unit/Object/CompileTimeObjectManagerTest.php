@@ -30,9 +30,9 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		vfsStream::setup('Packages');
-		$this->mockPackageManager = $this->getMockBuilder('TYPO3\Flow\Package\PackageManager')->disableOriginalConstructor()->getMock();
-		$this->compileTimeObjectManager = $this->getAccessibleMock('TYPO3\Flow\Object\CompileTimeObjectManager', array('dummy'), array(), '', FALSE);
-		$this->compileTimeObjectManager->_set('systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface'));
+		$this->mockPackageManager = $this->getMockBuilder(\TYPO3\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
+		$this->compileTimeObjectManager = $this->getAccessibleMock(\TYPO3\Flow\Object\CompileTimeObjectManager::class, array('dummy'), array(), '', FALSE);
+		$this->compileTimeObjectManager->_set('systemLogger', $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 		$configurations = array(
 			'TYPO3' => array(
 				'Flow' => array(

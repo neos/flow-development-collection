@@ -54,8 +54,8 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$this->markTestSkipped('redis server not reachable');
 		}
 
-		$this->redis = $this->getMockBuilder('\Redis')->disableOriginalConstructor()->getMock();
-		$this->cache = $this->getMock('\TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
+		$this->cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
 		$this->cache->expects($this->any())
 			->method('getIdentifier')
 			->will($this->returnValue('Foo_Cache'));

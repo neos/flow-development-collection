@@ -51,15 +51,15 @@ class SimpleFileBackendTest extends UnitTestCase {
 	public function setUp() {
 		vfsStream::setup('Temporary/Directory/');
 
-		$this->mockApplicationContext = $this->getMockBuilder('TYPO3\Flow\Core\ApplicationContext')->disableOriginalConstructor()->getMock();
+		$this->mockApplicationContext = $this->getMockBuilder(\TYPO3\Flow\Core\ApplicationContext::class)->disableOriginalConstructor()->getMock();
 
-		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+		$this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 		$this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Temporary/Directory/'));
 
-		$this->mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array(), array(), '', FALSE);
+		$this->mockCacheManager = $this->getMock(\TYPO3\Flow\Cache\CacheManager::class, array(), array(), '', FALSE);
 
-		$this->mockCacheFrontend = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->getMock();
+		$this->mockCacheFrontend = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->getMock();
 	}
 
 	/**
@@ -87,7 +87,7 @@ class SimpleFileBackendTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Cache\Exception
 	 */
 	public function setCacheThrowsExceptionOnNonWritableDirectory() {
-		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+		$this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 		$this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://non/existing/directory'));
 		$this->getSimpleFileBackend();
@@ -99,7 +99,7 @@ class SimpleFileBackendTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Cache\Exception
 	 */
 	public function setCacheThrowsExceptionIfCachePathLengthExceedsMaximumPathLength() {
-		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+		$this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 		$this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(5));
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Temporary/Directory/'));
 		$this->getSimpleFileBackend();
@@ -139,10 +139,10 @@ class SimpleFileBackendTest extends UnitTestCase {
 	 */
 	public function aDedicatedCacheDirectoryIsUsedForCodeCaches() {
 		/** @var PhpFrontend|\PHPUnit_Framework_MockObject_MockObject $mockPhpCacheFrontend */
-		$mockPhpCacheFrontend = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\PhpFrontend')->disableOriginalConstructor()->getMock();
+		$mockPhpCacheFrontend = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class)->disableOriginalConstructor()->getMock();
 		$mockPhpCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomePhpCache'));
 
-		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 

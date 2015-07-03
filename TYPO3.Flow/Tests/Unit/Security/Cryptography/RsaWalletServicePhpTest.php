@@ -40,7 +40,7 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		vfsStream::setup('Foo');
 		$settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
 
-		$this->rsaWalletService = $this->getAccessibleMock('TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
+		$this->rsaWalletService = $this->getAccessibleMock(\TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp::class, array('dummy'));
 		$this->rsaWalletService->injectSettings($settings);
 
 		$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();

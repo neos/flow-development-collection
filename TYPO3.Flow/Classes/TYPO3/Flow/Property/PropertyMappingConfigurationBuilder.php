@@ -26,10 +26,10 @@ class PropertyMappingConfigurationBuilder {
 	 * @param string $type the implementation class name of the PropertyMappingConfiguration to instantiate; must be a subclass of TYPO3\Flow\Property\PropertyMappingConfiguration
 	 * @return \TYPO3\Flow\Property\PropertyMappingConfiguration
 	 */
-	public function build($type = 'TYPO3\Flow\Property\PropertyMappingConfiguration') {
+	public function build($type = \TYPO3\Flow\Property\PropertyMappingConfiguration::class) {
 		$configuration = new $type();
 
-		$configuration->setTypeConverterOptions('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', array(
+		$configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, array(
 			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE,
 			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE
 		));

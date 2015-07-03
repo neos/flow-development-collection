@@ -117,7 +117,7 @@ class RequestBuilder {
 	 */
 	public function build($commandLine) {
 		$request = new Request();
-		$request->setControllerObjectName('TYPO3\Flow\Command\HelpCommandController');
+		$request->setControllerObjectName(\TYPO3\Flow\Command\HelpCommandController::class);
 
 		if (is_array($commandLine) === TRUE) {
 			$rawCommandLineArguments = $commandLine;

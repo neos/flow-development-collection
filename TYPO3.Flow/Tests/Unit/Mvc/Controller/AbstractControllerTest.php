@@ -40,12 +40,12 @@ class AbstractControllerTest extends UnitTestCase {
 	protected $mockActionRequest;
 
 	public function setUp() {
-		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$this->mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('text/html'));
 
-		$this->mockHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
+		$this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->getMock();
 
-		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 		$this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 	}
 
@@ -57,7 +57,7 @@ class AbstractControllerTest extends UnitTestCase {
 		$request = new \TYPO3\Flow\Cli\Request();
 		$response = new \TYPO3\Flow\Cli\Response();
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $request, $response);
 	}
 
@@ -67,14 +67,14 @@ class AbstractControllerTest extends UnitTestCase {
 	public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext() {
 		$request = new ActionRequest(Request::create(new Uri('http://localhost/foo')));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
 
 		$this->assertFalse($request->isDispatched());
 		$controller->_call('initializeController', $request, $this->mockHttpResponse);
 
 		$this->assertTrue($request->isDispatched());
-		$this->assertInstanceOf('TYPO3\Flow\Mvc\Controller\Arguments', $controller->_get('arguments'));
+		$this->assertInstanceOf(\TYPO3\Flow\Mvc\Controller\Arguments::class, $controller->_get('arguments'));
 		$this->assertSame($request, $controller->_get('uriBuilder')->getRequest());
 		$this->assertSame($request, $controller->getControllerContext()->getRequest());
 	}
@@ -113,7 +113,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 */
 	public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = \TYPO3\Flow\Error\Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
 		$flashMessageContainer = new FlashMessageContainer();
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
 
 		$controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
@@ -126,7 +126,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 */
 	public function addFlashMessageThrowsExceptionOnInvalidMessageBody() {
 		$flashMessageContainer = new FlashMessageContainer();
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
 
 		$controller->addFlashMessage(new \stdClass());
@@ -136,10 +136,10 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
@@ -162,10 +162,10 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function forwardResetsControllerArguments() {
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
@@ -187,10 +187,10 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function forwardSetsAndResetsSubpackageKeyIfNeeded() {
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
@@ -223,10 +223,10 @@ class AbstractControllerTest extends UnitTestCase {
 		$originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
 		$convertedArguments = array('foo' => 'bar', 'bar' => array('someObject' => array('__identity' => 'x')));
 
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->will($this->returnValue($convertedArguments));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
@@ -244,13 +244,13 @@ class AbstractControllerTest extends UnitTestCase {
 	public function redirectRedirectsToTheSpecifiedAction() {
 		$arguments = array('foo' => 'bar');
 
-		$mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+		$mockUriBuilder = $this->getMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
 		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setFormat')->with('doc')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest', 'redirectToUri'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest', 'redirectToUri'));
 		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 		$this->inject($controller, 'uriBuilder', $mockUriBuilder);
@@ -267,13 +267,13 @@ class AbstractControllerTest extends UnitTestCase {
 
 		$this->mockActionRequest->expects($this->atLeastOnce())->method('getFormat')->will($this->returnValue('json'));
 
-		$mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+		$mockUriBuilder = $this->getMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
 		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', NULL)->will($this->returnValue('the uri'));
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest', 'redirectToUri'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest', 'redirectToUri'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 		$this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
@@ -286,7 +286,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	public function redirectToUriThrowsStopActionException() {
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$controller->_call('redirectToUri', 'http://some.uri');
@@ -296,7 +296,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function redirectToUriSetsStatus() {
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$this->mockHttpResponse->expects($this->atLeastOnce())->method('setStatus')->with(303);
@@ -313,7 +313,7 @@ class AbstractControllerTest extends UnitTestCase {
 	public function redirectToUriSetsLocationHeader() {
 		$uri = 'http://flow.typo3.org/awesomeness';
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$this->mockHttpResponse->expects($this->atLeastOnce())->method('setHeader')->with('Location', $uri);
@@ -330,7 +330,7 @@ class AbstractControllerTest extends UnitTestCase {
 	public function redirectToUriDoesNotSetLocationHeaderIfDelayIsNotZero() {
 		$uri = 'http://flow.typo3.org/awesomeness';
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$this->mockHttpResponse->expects($this->never())->method('setHeader');
@@ -346,7 +346,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	public function throwStatusSetsThrowsStopActionException() {
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$controller->_call('throwStatus', 404);
@@ -356,7 +356,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$message = '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>';
@@ -374,7 +374,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided() {
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
 		$this->mockHttpResponse->expects($this->atLeastOnce())->method('setStatus')->with(404, NULL);
@@ -391,7 +391,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function mapRequestArgumentsToControllerArgumentsDoesJustThat() {
-		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper', array('convert'), array(), '', FALSE);
+		$mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class, array('convert'), array(), '', FALSE);
 		$mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
 		$controllerArguments = new Arguments();
@@ -402,7 +402,7 @@ class AbstractControllerTest extends UnitTestCase {
 			$this->inject($controllerArgument, 'propertyMapper', $mockPropertyMapper);
 		}
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 		$controller->_set('arguments', $controllerArguments);
 
@@ -421,7 +421,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException
 	 */
 	public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet() {
-		$mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper', array('convert'), array(), '', FALSE);
+		$mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class, array('convert'), array(), '', FALSE);
 		$mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
 		$controllerArguments = new Arguments();
@@ -432,7 +432,7 @@ class AbstractControllerTest extends UnitTestCase {
 			$this->inject($controllerArgument, 'propertyMapper', $mockPropertyMapper);
 		}
 
-		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
 		$controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 		$controller->_set('arguments', $controllerArguments);
 

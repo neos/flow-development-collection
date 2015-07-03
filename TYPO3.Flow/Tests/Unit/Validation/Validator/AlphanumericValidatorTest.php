@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class AlphanumericValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\AlphanumericValidator';
+	protected $validatorClassName = \TYPO3\Flow\Validation\Validator\AlphanumericValidator::class;
 
 	/**
 	 * @test

@@ -473,7 +473,7 @@ class Debugger {
 		$ignoredClasses = array();
 
 		if (self::$objectManager instanceof ObjectManagerInterface) {
-			$configurationManager = self::$objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
+			$configurationManager = self::$objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
 			if ($configurationManager instanceof ConfigurationManager) {
 				$ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'TYPO3.Flow.error.debugger.ignoredClasses');
 				if (is_array($ignoredClassesFromSettings)) {

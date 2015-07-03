@@ -21,7 +21,7 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCas
 	 * @test
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation() {
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('getClassAnnotations'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array('getClassAnnotations'), array(), '', FALSE, TRUE);
 		$mockReflectionService->expects($this->any())->method('getClassAnnotations')->with('Acme\Some\Class', 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(array('SomeAnnotation'), array()));
 
 		$filter = new \TYPO3\Flow\Aop\Pointcut\PointcutClassAnnotatedWithFilter('Acme\Some\Annotation');
@@ -45,7 +45,7 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCas
 		$availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$availableClassNamesIndex->setClassNames($availableClassNames);
 
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->will($this->returnValue(array('TestPackage\Subpackage\Class1','TestPackage\Subpackage\SubSubPackage\Class3','SomeMoreClass')));
 
 		$classAnnotatedWithFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutClassAnnotatedWithFilter('SomeAnnotationClass');

@@ -176,7 +176,7 @@ class CommandController implements ControllerInterface {
 
 			if ($argumentValue === NULL) {
 				$exception = new CommandException(sprintf('Required argument "%s" is not set.', $argumentName), 1306755520);
-				$this->forward('error', 'TYPO3\Flow\Command\HelpCommandController', array('exception' => $exception));
+				$this->forward('error', \TYPO3\Flow\Command\HelpCommandController::class, array('exception' => $exception));
 			}
 			$argument->setValue($argumentValue);
 		}

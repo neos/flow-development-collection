@@ -39,7 +39,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		if (ini_get('apc.slam_defense') == 1) {
 			$this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
 		}
-		$this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', FALSE);
 	}
 
 	/**
@@ -197,13 +197,13 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$thisCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new ApcBackend(new ApplicationContext('Testing'));
 		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 
-		$thatCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new ApcBackend(new ApplicationContext('Testing'));
 		$thatBackend->injectEnvironment($this->mockEnvironment);
@@ -268,7 +268,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return ApcBackend
 	 */
 	protected function setUpBackend() {
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$backend = new ApcBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);

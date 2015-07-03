@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class DateTimeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\DateTimeValidator';
+	protected $validatorClassName = \TYPO3\Flow\Validation\Validator\DateTimeValidator::class;
 
 	/**
 	 * @var \TYPO3\Flow\I18n\Locale
@@ -34,9 +34,9 @@ class DateTimeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
 	public function setUp() {
 		parent::setUp();
 		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
-		$this->mockObjectManagerReturnValues['TYPO3\Flow\I18n\Locale'] = $this->sampleLocale;
+		$this->mockObjectManagerReturnValues[\TYPO3\Flow\I18n\Locale::class] = $this->sampleLocale;
 
-		$this->mockDatetimeParser = $this->getMock('TYPO3\Flow\I18n\Parser\DatetimeParser');
+		$this->mockDatetimeParser = $this->getMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class);
 	}
 
 	/**

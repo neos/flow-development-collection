@@ -60,7 +60,7 @@ class RuntimeExpressionEvaluator {
 		if ($this->objectManager === NULL) {
 			$this->objectManager = $objectManager;
 			/** @var CacheManager $cacheManager */
-			$cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
+			$cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
 			$this->runtimeExpressionsCache = $cacheManager->getCache('Flow_Aop_RuntimeExpressions');
 			$this->runtimeExpressions = $this->runtimeExpressionsCache->requireOnce('Flow_Aop_RuntimeExpressions');
 		}

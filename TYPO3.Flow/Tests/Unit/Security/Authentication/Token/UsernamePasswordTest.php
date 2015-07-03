@@ -44,9 +44,9 @@ class UsernamePasswordTest extends UnitTestCase {
 	public function setUp() {
 		$this->token = new UsernamePassword();
 
-		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 	}
 
@@ -98,10 +98,10 @@ class UsernamePasswordTest extends UnitTestCase {
 		$this->assertEquals(array('username' => 'TYPO3.Flow', 'password' => 'verysecurepassword'), $this->token->getCredentials());
 
 		$secondToken = new UsernamePassword();
-		$secondMockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$secondMockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
 		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $secondMockActionRequest */
-		$secondMockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$secondMockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
 		$secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
 		$secondToken->updateCredentials($secondMockActionRequest);

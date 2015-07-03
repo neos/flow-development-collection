@@ -56,7 +56,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		$mediaType = NULL;
 		if ($configuration !== NULL) {
-			$mediaType = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
+			$mediaType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
 		}
 		if ($mediaType === NULL) {
 			$mediaType = MediaTypeConverterInterface::DEFAULT_MEDIA_TYPE;

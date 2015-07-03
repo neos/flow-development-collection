@@ -38,7 +38,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->simpleValueArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'string');
 		$this->objectArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'DateTime');
 
-		$this->mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
+		$this->mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class);
 		$this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
 		$this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
@@ -143,7 +143,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator() {
-		$mockValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+		$mockValidator = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
 		$returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
 		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
 		$this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
@@ -203,7 +203,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed() {
 		$error = new \TYPO3\Flow\Error\Error('Some Error', 1234);
 
-		$mockValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+		$mockValidator = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
 		$validationMessages = new \TYPO3\Flow\Error\Result();
 		$validationMessages->addError($error);
 		$mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
@@ -218,8 +218,8 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function defaultPropertyMappingConfigurationDoesNotAllowCreationOrModificationOfObjects() {
-		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 	}
 
 	/**

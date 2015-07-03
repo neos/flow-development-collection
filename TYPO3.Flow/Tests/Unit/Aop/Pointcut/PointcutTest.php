@@ -26,16 +26,16 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$className = 'TheClass';
 		$methodName = 'TheMethod';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array('matches'), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('matches'), array(), '', FALSE);
 		$mockPointcutFilterComposite->expects($this->once())->method('matches')->with($className, $methodName, $className, 1)->will($this->returnValue(TRUE));
 
-		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
+		$pointcut = $this->getMock(\TYPO3\Flow\Aop\Pointcut\Pointcut::class, array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
 		$this->assertTrue($pointcut->matches($className, $methodName, $className, 1));
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Aop\Exception\CircularPointcutReferenceException
+	 * @expectedException \TYPO3\Flow\Aop\Exception\CircularPointcutReferenceException
 	 */
 	public function matchesDetectsCircularMatchesAndThrowsAndException() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -43,9 +43,9 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$className = 'TheClass';
 		$methodName = 'TheMethod';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array('matches'), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('matches'), array(), '', FALSE);
 
-		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
+		$pointcut = $this->getMock(\TYPO3\Flow\Aop\Pointcut\Pointcut::class, array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
 		for ($i = -1; $i <= \TYPO3\Flow\Aop\Pointcut\Pointcut::MAXIMUM_RECURSIONS; $i++) {
 			$pointcut->matches($className, $methodName, $className, 1);
 		}
@@ -58,9 +58,9 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$pointcutExpression = 'ThePointcutExpression';
 		$aspectClassName = 'TheAspect';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array('matches'), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('matches'), array(), '', FALSE);
 
-		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
+		$pointcut = $this->getMock(\TYPO3\Flow\Aop\Pointcut\Pointcut::class, array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
 		$this->assertSame($pointcutExpression, $pointcut->getPointcutExpression());
 	}
 
@@ -71,9 +71,9 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$pointcutExpression = 'ThePointcutExpression';
 		$aspectClassName = 'TheAspect';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array('matches'), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('matches'), array(), '', FALSE);
 
-		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
+		$pointcut = $this->getMock(\TYPO3\Flow\Aop\Pointcut\Pointcut::class, array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName), '', TRUE);
 		$this->assertSame($aspectClassName, $pointcut->getAspectClassName());
 	}
 
@@ -84,9 +84,9 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$pointcutExpression = 'ThePointcutExpression';
 		$aspectClassName = 'TheAspect';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array('matches'), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('matches'), array(), '', FALSE);
 
-		$pointcut = $this->getMock('TYPO3\Flow\Aop\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, 'PointcutMethod'), '', TRUE);
+		$pointcut = $this->getMock(\TYPO3\Flow\Aop\Pointcut\Pointcut::class, array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, 'PointcutMethod'), '', TRUE);
 		$this->assertSame('PointcutMethod', $pointcut->getPointcutMethodName());
 	}
 
@@ -98,7 +98,7 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$aspectClassName = 'TheAspect';
 		$className = 'TheClass';
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array(), array(), '', FALSE);
 		$mockPointcutFilterComposite->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('runtimeEvaluationsDefinition')));
 
 		$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
@@ -116,7 +116,7 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$targetClassNameIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array(), array(), '', FALSE);
 		$mockPointcutFilterComposite->expects($this->once())->method('reduceTargetClassNames')->with($targetClassNameIndex)->will($this->returnValue('someResult'));
 
 		$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);

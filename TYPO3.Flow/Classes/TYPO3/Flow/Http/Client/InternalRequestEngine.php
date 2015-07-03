@@ -103,7 +103,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 		$requestHandler->setHttpResponse($response);
 
 		$objectManager = $this->bootstrap->getObjectManager();
-		$baseComponentChain = $objectManager->get('TYPO3\Flow\Http\Component\ComponentChain');
+		$baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
 		$componentContext = new ComponentContext($httpRequest, $response);
 
 		try {
@@ -127,7 +127,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$response->setHeader('X-Flow-ExceptionCode', $exception->getCode());
 			$response->setHeader('X-Flow-ExceptionMessage', $exception->getMessage());
 		}
-		$session = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Session\SessionInterface');
+		$session = $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);
 		if ($session->isStarted()) {
 			$session->close();
 		}

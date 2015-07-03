@@ -87,8 +87,8 @@ class ObjectConverter extends AbstractTypeConverter {
 	 */
 	public function canConvertFrom($source, $targetType) {
 		return !(
-			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\Entity') ||
-			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\ValueObject') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\Entity::class) ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class) ||
 			$this->reflectionService->isClassAnnotatedWith($targetType, 'Doctrine\ORM\Mapping\Entity')
 		);
 	}
@@ -116,7 +116,7 @@ class ObjectConverter extends AbstractTypeConverter {
 	 * @throws InvalidTargetException
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration) {
-		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_TARGET_TYPE);
+		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
@@ -196,7 +196,7 @@ class ObjectConverter extends AbstractTypeConverter {
 			if ($configuration === NULL) {
 				throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1326277369);
 			}
-			if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
+			if ($configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
 				throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
 			}
 

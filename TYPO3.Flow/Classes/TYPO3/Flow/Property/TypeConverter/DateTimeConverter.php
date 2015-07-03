@@ -25,7 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
  *  $this->arguments['<argumentName>']
  *    ->getPropertyMappingConfiguration()
  *    ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
- *    ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
+ *    ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
  *
  * If the source is of type array, it is possible to override the format in the source::
  *
@@ -186,7 +186,7 @@ class DateTimeConverter extends AbstractTypeConverter {
 		if ($configuration === NULL) {
 			return self::DEFAULT_DATE_FORMAT;
 		}
-		$dateFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
+		$dateFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, self::CONFIGURATION_DATE_FORMAT);
 		if ($dateFormat === NULL) {
 			return self::DEFAULT_DATE_FORMAT;
 		} elseif ($dateFormat !== NULL && !is_string($dateFormat)) {

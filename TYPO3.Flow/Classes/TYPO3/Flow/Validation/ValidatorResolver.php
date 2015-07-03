@@ -159,7 +159,7 @@ class ValidatorResolver {
 		}
 
 		foreach ($methodParameters as $parameterName => $methodParameter) {
-			$validatorConjunction = $this->createValidator('TYPO3\Flow\Validation\Validator\ConjunctionValidator');
+			$validatorConjunction = $this->createValidator(\TYPO3\Flow\Validation\Validator\ConjunctionValidator::class);
 
 			if (!array_key_exists('type', $methodParameter)) {
 				throw new Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
@@ -177,7 +177,7 @@ class ValidatorResolver {
 		}
 
 		if ($methodValidateAnnotations === NULL) {
-			$validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\Validate');
+			$validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, \TYPO3\Flow\Annotations\Validate::class);
 			$methodValidateAnnotations = array_map(function($validateAnnotation) {
 				return array(
 					'type' => $validateAnnotation->type,
@@ -281,13 +281,13 @@ class ValidatorResolver {
 					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744, $exception);
 				}
 
-				if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, 'TYPO3\Flow\Annotations\IgnoreValidation')) {
+				if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, \TYPO3\Flow\Annotations\IgnoreValidation::class)) {
 					continue;
 				}
 
 				$propertyTargetClassName = $parsedType['type'];
 				if (TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
-					$collectionValidator = $this->createValidator('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
+					$collectionValidator = $this->createValidator(\TYPO3\Flow\Validation\Validator\CollectionValidator::class, array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
 					$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
 				} elseif (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
@@ -296,7 +296,7 @@ class ValidatorResolver {
 					}
 				}
 
-				$validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, 'TYPO3\Flow\Annotations\Validate');
+				$validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, \TYPO3\Flow\Annotations\Validate::class);
 				foreach ($validateAnnotations as $validateAnnotation) {
 					if (count(array_intersect($validateAnnotation->validationGroups, $validationGroups)) === 0) {
 					// In this case, the validation groups for the property do not match current validation context
@@ -368,8 +368,8 @@ class ValidatorResolver {
 	 * @Flow\CompileStatic
 	 */
 	static public function getPolyTypeObjectValidatorImplementationClassNames($objectManager) {
-		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
-		$result = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface');
+		$reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+		$result = $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface::class);
 		return $result;
 	}
 
@@ -410,8 +410,8 @@ class ValidatorResolver {
 	 * @Flow\CompileStatic
 	 */
 	static public function getValidatorImplementationClassNames($objectManager) {
-		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
-		$classNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+		$reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+		$classNames = $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
 		return array_flip($classNames);
 	}
 

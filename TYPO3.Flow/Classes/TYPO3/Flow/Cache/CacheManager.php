@@ -60,8 +60,8 @@ class CacheManager {
 	 */
 	protected $cacheConfigurations = array(
 		'Default' => array(
-			'frontend' => 'TYPO3\Flow\Cache\Frontend\VariableFrontend',
-			'backend' => 'TYPO3\Flow\Cache\Backend\FileBackend',
+			'frontend' => \TYPO3\Flow\Cache\Frontend\VariableFrontend::class,
+			'backend' => \TYPO3\Flow\Cache\Backend\FileBackend::class,
 			'backendOptions' => array(),
 			'persistent' => FALSE
 		)

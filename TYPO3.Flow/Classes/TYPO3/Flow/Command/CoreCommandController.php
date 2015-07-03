@@ -405,7 +405,7 @@ class CoreCommandController extends CommandController {
 		$suggestions = array();
 
 		$availableCommands = $this->bootstrap->getObjectManager()
-			->get('TYPO3\Flow\Cli\CommandManager')
+			->get(\TYPO3\Flow\Cli\CommandManager::class)
 			->getAvailableCommands();
 
 		/** @var $command \TYPO3\Flow\Cli\Command */

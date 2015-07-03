@@ -31,7 +31,7 @@ class LocaleTypeConverter extends AbstractTypeConverter {
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\Flow\I18n\Locale';
+	protected $targetType = \TYPO3\Flow\I18n\Locale::class;
 
 	/**
 	 * @var integer

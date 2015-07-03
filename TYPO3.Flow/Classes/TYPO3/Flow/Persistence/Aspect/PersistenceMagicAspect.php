@@ -103,7 +103,7 @@ class PersistenceMagicAspect {
 		foreach ($properties as $property) {
 			// Currently, private properties are transient. Should this behaviour change, they need to be included
 			// in the value hash generation
-			if ($this->reflectionService->isPropertyAnnotatedWith($proxyClassName, $property, 'TYPO3\\Flow\\Annotations\\Transient')
+			if ($this->reflectionService->isPropertyAnnotatedWith($proxyClassName, $property, \TYPO3\Flow\Annotations\Transient::class)
 				|| $this->reflectionService->isPropertyPrivate($proxyClassName, $property)) {
 				continue;
 			}

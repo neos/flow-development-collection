@@ -37,8 +37,8 @@ class ComponentContextTest extends UnitTestCase {
 	protected $mockHttpResponse;
 
 	public function setUp() {
-		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-		$this->mockHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+		$this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
 
 		$this->componentContext = new ComponentContext($this->mockHttpRequest, $this->mockHttpResponse);
 	}
@@ -55,7 +55,7 @@ class ComponentContextTest extends UnitTestCase {
 	 */
 	public function replaceHttpRequestReplacesTheCurrentRequest() {
 		/** @var Request $mockNewHttpRequest */
-		$mockNewHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockNewHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$this->componentContext->replaceHttpRequest($mockNewHttpRequest);
 		$this->assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
 	}
@@ -72,7 +72,7 @@ class ComponentContextTest extends UnitTestCase {
 	 */
 	public function replaceHttpResponseReplacesTheCurrentResponse() {
 		/** @var Response $mockNewHttpResponse */
-		$mockNewHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->disableOriginalConstructor()->getMock();
+		$mockNewHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
 		$this->componentContext->replaceHttpResponse($mockNewHttpResponse);
 		$this->assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
 	}

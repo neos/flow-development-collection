@@ -36,10 +36,10 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $commandManager;
 
 	public function setUp() {
-		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
-		$this->commandManager = $this->getMock('TYPO3\Flow\Cli\CommandManager', array('getAvailableCommands'));
+		$this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+		$this->commandManager = $this->getMock(\TYPO3\Flow\Cli\CommandManager::class, array('getAvailableCommands'));
 
-		$this->mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE);
+		$this->mockBootstrap = $this->getMock(\TYPO3\Flow\Core\Bootstrap::class, array(), array(), '', FALSE);
 		$this->commandManager->injectBootstrap($this->mockBootstrap);
 	}
 
@@ -49,8 +49,8 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getAvailableCommandsReturnsAllAvailableCommands() {
 		$commandManager = new CommandManager();
 		$commandManager->injectReflectionService($this->mockReflectionService);
-		$mockCommandControllerClassNames = array('TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController', 'TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController');
-		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with('TYPO3\Flow\Cli\CommandController')->will($this->returnValue($mockCommandControllerClassNames));
+		$mockCommandControllerClassNames = array(\TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController::class, \TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController::class);
+		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with(\TYPO3\Flow\Cli\CommandController::class)->will($this->returnValue($mockCommandControllerClassNames));
 
 		$commands = $commandManager->getAvailableCommands();
 		$this->assertEquals(3, count($commands));
@@ -63,7 +63,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCommandByIdentifierReturnsCommandIfIdentifierIsEqual() {
-		$mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
 		$mockCommands = array($mockCommand);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -75,7 +75,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCommandByIdentifierWorksCaseInsensitive() {
-		$mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
 		$mockCommands = array($mockCommand);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -87,7 +87,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCommandByIdentifierAllowsThePackageKeyToOnlyContainTheLastPartOfThePackageNamespaceIfCommandsAreUnambiguous() {
-		$mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('some.package.key:controller:command'));
 		$mockCommands = array($mockCommand);
 		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -101,7 +101,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\NoSuchCommandException
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfNoMatchingCommandWasFound() {
-		$mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
 		$mockCommands = array($mockCommand);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -114,9 +114,9 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfMoreThanOneMatchingCommandWasFound() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller:command'));
 		$mockCommands = array($mockCommand1, $mockCommand2);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -129,13 +129,13 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfOnlyPackageKeyIsSpecifiedAndContainsMoreThanOneCommand() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
-		$mockCommand3 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand3 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
-		$mockCommand4 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand4 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
 		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -147,9 +147,9 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCommandsByIdentifierReturnsAnEmptyArrayIfNoCommandMatches() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
 		$mockCommands = array($mockCommand1, $mockCommand2);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -161,13 +161,13 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCommandsByIdentifierReturnsAllCommandsOfTheSpecifiedPackage() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
-		$mockCommand3 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand3 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
-		$mockCommand4 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand4 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
 		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -180,7 +180,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getShortestIdentifierForCommandAlwaysReturnsShortNameForFlowHelpCommand() {
-		$mockHelpCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockHelpCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockHelpCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('typo3.flow:help:help'));
 		$commandIdentifier = $this->commandManager->getShortestIdentifierForCommand($mockHelpCommand);
 		$this->assertSame('help', $commandIdentifier);
@@ -190,9 +190,9 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getShortestIdentifierForCommandReturnsTheCompleteIdentifiersForCustomHelpCommands() {
-		$mockFlowHelpCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockFlowHelpCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockFlowHelpCommand->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('typo3.flow:help:help'));
-		$mockCustomHelpCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCustomHelpCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCustomHelpCommand->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('custom.package:help:help'));
 		$mockCommands = array($mockFlowHelpCommand, $mockCustomHelpCommand);
 		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -205,13 +205,13 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getShortestIdentifierForCommandReturnsShortestUnambiguousCommandIdentifiers() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
-		$mockCommand3 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand3 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
-		$mockCommand4 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand4 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
 		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
 		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
@@ -226,9 +226,9 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getShortestIdentifierForCommandReturnsCompleteCommandIdentifierForCommandsWithTheSameControllerAndCommandName() {
-		$mockCommand1 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand1 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
-		$mockCommand2 = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
+		$mockCommand2 = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', FALSE);
 		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller:command'));
 		$mockCommands = array($mockCommand1, $mockCommand2);
 		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));

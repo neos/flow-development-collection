@@ -45,10 +45,10 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $policyEnforcementAspect;
 
 	public function setUp() {
-		$this->mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$this->mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$this->mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
-		$this->mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', FALSE);
+		$this->mockAdviceChain = $this->getMock(\TYPO3\Flow\Aop\Advice\AdviceChain::class, array(), array(), '', FALSE);
+		$this->mockPolicyEnforcementInterceptor = $this->getMock(\TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement::class, array(), array(), '', FALSE);
+		$this->mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
 		$this->policyEnforcementAspect = new PolicyEnforcementAspect($this->mockPolicyEnforcementInterceptor, $this->mockSecurityContext);
 	}
 

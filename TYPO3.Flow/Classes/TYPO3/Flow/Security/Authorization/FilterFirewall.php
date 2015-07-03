@@ -108,7 +108,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);
 			$interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
-			$this->filters[] = $this->objectManager->get('TYPO3\Flow\Security\Authorization\RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\RequestFilter::class, $requestPattern, $interceptor);
 		}
 	}
 }

@@ -115,7 +115,7 @@ class Compiler {
 	 * @return \TYPO3\Flow\Object\Proxy\ProxyClass|boolean
 	 */
 	public function getProxyClass($fullClassName) {
-		if (interface_exists($fullClassName) || in_array('TYPO3\Flow\Tests\BaseTestCase', class_parents($fullClassName))) {
+		if (interface_exists($fullClassName) || in_array(\TYPO3\Flow\Tests\BaseTestCase::class, class_parents($fullClassName))) {
 			return FALSE;
 		}
 
@@ -128,7 +128,7 @@ class Compiler {
 			return FALSE;
 		}
 
-		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\Flow\Annotations\Proxy');
+		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, \TYPO3\Flow\Annotations\Proxy::class);
 		if ($proxyAnnotation !== NULL && $proxyAnnotation->enabled === FALSE) {
 			return FALSE;
 		}

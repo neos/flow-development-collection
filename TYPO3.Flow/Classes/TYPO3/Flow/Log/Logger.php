@@ -203,7 +203,7 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface {
 	protected function renderRequestInfo() {
 		$output = '';
 		if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-			$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+			$bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
 			/* @var Bootstrap $bootstrap */
 			$requestHandler = $bootstrap->getActiveRequestHandler();
 			if ($requestHandler instanceof HttpRequestHandlerInterface) {

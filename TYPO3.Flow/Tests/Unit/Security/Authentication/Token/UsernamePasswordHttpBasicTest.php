@@ -45,7 +45,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase {
 		);
 
 		$httpRequest = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
 		$this->token->updateCredentials($mockActionRequest);
@@ -66,7 +66,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase {
 		);
 
 		$httpRequest = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 		$this->token->updateCredentials($mockActionRequest);
 
@@ -79,7 +79,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase {
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived() {
 		$httpRequest = Request::create(new Uri('http://foo.com'));
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 		$this->token->updateCredentials($mockActionRequest);
 

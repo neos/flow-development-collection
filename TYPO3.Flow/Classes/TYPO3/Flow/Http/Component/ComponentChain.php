@@ -51,8 +51,8 @@ class ComponentChain implements ComponentInterface {
 				continue;
 			}
 			$component->handle($componentContext);
-			if ($componentContext->getParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel') === TRUE) {
-				$componentContext->setParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', NULL);
+			if ($componentContext->getParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel') === TRUE) {
+				$componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', NULL);
 				return;
 			}
 		}

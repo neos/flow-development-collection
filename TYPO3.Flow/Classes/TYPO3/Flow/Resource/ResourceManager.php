@@ -516,7 +516,7 @@ class ResourceManager {
 			if (in_array($scheme, stream_get_wrappers())) {
 				stream_wrapper_unregister($scheme);
 			}
-			stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
+			stream_wrapper_register($scheme, \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::class);
 			StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
 	}
@@ -565,7 +565,7 @@ class ResourceManager {
 	 * @Flow\CompileStatic
 	 */
 	static protected function getStreamWrapperImplementationClassNames($objectManager) {
-		return $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
+		return $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class)->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Resource\Streams\StreamWrapperInterface::class);
 	}
 
 	/**

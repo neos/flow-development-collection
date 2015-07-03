@@ -86,8 +86,8 @@ class PersistentObjectConverter extends ObjectConverter {
 	 */
 	public function canConvertFrom($source, $targetType) {
 		return (
-			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\Entity') ||
-			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\ValueObject') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\Entity::class) ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class) ||
 			$this->reflectionService->isClassAnnotatedWith($targetType, 'Doctrine\ORM\Mapping\Entity')
 		);
 	}
@@ -118,7 +118,7 @@ class PersistentObjectConverter extends ObjectConverter {
 	 * @throws InvalidTargetException
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration) {
-		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
+		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
@@ -153,7 +153,7 @@ class PersistentObjectConverter extends ObjectConverter {
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
-			if ($this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\Flow\Annotations\ValueObject')) {
+			if ($this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class)) {
 				// Unset identity for value objects to use constructor mapping, since the identity is determined from
 				// property values after construction
 				unset($source['__identity']);
@@ -216,11 +216,11 @@ class PersistentObjectConverter extends ObjectConverter {
 	 */
 	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['__identity'])) {
-			if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
+			if ($configuration === NULL || $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
 				throw new InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
 			}
 			$object = $this->buildObject($convertedChildProperties, $targetType);
-		} elseif ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) === TRUE) {
+		} elseif ($configuration !== NULL && $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) === TRUE) {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 			if ($object === NULL) {
 				$object = $this->buildObject($convertedChildProperties, $targetType);
@@ -233,7 +233,7 @@ class PersistentObjectConverter extends ObjectConverter {
 				return new TargetNotFoundError(sprintf('Object of type %s with identity "%s" not found.', $targetType, print_r($source['__identity'], TRUE)), 1412283038);
 			}
 
-			if (count($convertedChildProperties) > 0 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
+			if (count($convertedChildProperties) > 0 && ($configuration === NULL || $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
 				throw new InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 			}
 		}

@@ -39,7 +39,7 @@ class UniqueEntityValidatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
 
-		$this->postRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository');
+		$this->postRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository::class);
 	}
 
 	/**

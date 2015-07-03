@@ -36,7 +36,7 @@ class SessionConverter extends AbstractTypeConverter {
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\Flow\Session\Session';
+	protected $targetType = \TYPO3\Flow\Session\Session::class;
 
 	/**
 	 * @var integer

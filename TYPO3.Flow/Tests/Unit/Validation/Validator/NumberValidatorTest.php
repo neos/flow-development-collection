@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\NumberValidator';
+	protected $validatorClassName = \TYPO3\Flow\Validation\Validator\NumberValidator::class;
 
 	/**
 	 * @var \TYPO3\Flow\I18n\Locale
@@ -35,7 +35,7 @@ class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
 		parent::setUp();
 		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
 
-		$this->mockNumberParser = $this->getMock('TYPO3\Flow\I18n\Parser\NumberParser');
+		$this->mockNumberParser = $this->getMock(\TYPO3\Flow\I18n\Parser\NumberParser::class);
 
 	}
 

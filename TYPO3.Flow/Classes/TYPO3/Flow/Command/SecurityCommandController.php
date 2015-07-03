@@ -220,10 +220,10 @@ class SecurityCommandController extends CommandController {
 	public function showUnprotectedActionsCommand() {
 		$methodPrivileges = array();
 		foreach ($this->policyService->getRoles(TRUE) as $role) {
-			$methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface'));
+			$methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class));
 		}
 
-		$controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
+		$controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass(\TYPO3\Flow\Mvc\Controller\AbstractController::class);
 		$allActionsAreProtected = TRUE;
 		foreach ($controllerClassNames as $controllerClassName) {
 			if ($this->reflectionService->isClassAbstract($controllerClassName)) {

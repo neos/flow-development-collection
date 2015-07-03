@@ -26,7 +26,7 @@ class PersistentObjectSerializer extends AbstractTypeConverter {
 	/**
 	 * @var array
 	 */
-	protected $sourceTypes = array('TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface');
+	protected $sourceTypes = array(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface::class);
 
 	/**
 	 * @var string

@@ -419,11 +419,11 @@ class ReflectionService {
 		if (count($classNamesFound) === 1) {
 			return $classNamesFound[0];
 		}
-		if (count($classNamesFound) === 2 && isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
-			if (isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
+		if (count($classNamesFound) === 2 && isset($this->classReflectionData[\TYPO3\Flow\Object\Proxy\ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+			if (isset($this->classReflectionData[\TYPO3\Flow\Object\Proxy\ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
 				return $classNamesFound[0];
 			}
-			if (isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
+			if (isset($this->classReflectionData[\TYPO3\Flow\Object\Proxy\ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
 				return $classNamesFound[1];
 			}
 		}
@@ -1224,8 +1224,8 @@ class ReflectionService {
 			foreach ($newClassNames as $className) {
 				$count++;
 				$this->reflectClass($className);
-				if ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject')) {
-					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\Flow\Annotations\Scope');
+				if ($this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class)) {
+					$scopeAnnotation = $this->getClassAnnotation($className, \TYPO3\Flow\Annotations\Scope::class);
 					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
 						throw new Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
 					}
@@ -1268,7 +1268,7 @@ class ReflectionService {
 		$this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
 
 		$className = trim($className, '\\');
-		if (strpos($className, 'TYPO3\Flow\Persistence\Doctrine\Proxies') === 0 && array_search('Doctrine\ORM\Proxy\Proxy', class_implements($className))) {
+		if (strpos($className, 'TYPO3\Flow\Persistence\Doctrine\Proxies') === 0 && array_search(\Doctrine\ORM\Proxy\Proxy::class, class_implements($className))) {
 			// Somebody tried to reflect a doctrine proxy, which will have severe side effects.
 			// see bug http://forge.typo3.org/issues/29449 for details.
 			throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
@@ -1467,15 +1467,15 @@ class ReflectionService {
 	protected function buildClassSchemata(array $classNames) {
 		foreach ($classNames as $className) {
 			$classSchema = new ClassSchema($className);
-			if ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity')) {
+			if ($this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity')) {
 				$classSchema->setModelType(ClassSchema::MODELTYPE_ENTITY);
-				$classSchema->setLazyLoadableObject($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Lazy'));
+				$classSchema->setLazyLoadableObject($this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Lazy::class));
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
 				if ($this->isClassReflected($possibleRepositoryClassName) === TRUE) {
 					$classSchema->setRepositoryClassName($possibleRepositoryClassName);
 				}
-			} elseif ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject')) {
+			} elseif ($this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class)) {
 				$this->checkValueObjectRequirements($className);
 				$classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
@@ -1506,11 +1506,11 @@ class ReflectionService {
 
 		foreach ($this->getClassPropertyNames($className) as $propertyName) {
 
-			if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
+			if ($this->isPropertyAnnotatedWith($className, $propertyName, \TYPO3\Flow\Annotations\Transient::class)) {
 				continue;
 			}
 
-			if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Inject')) {
+			if ($this->isPropertyAnnotatedWith($className, $propertyName, \TYPO3\Flow\Annotations\Inject::class)) {
 				continue;
 			}
 
@@ -1532,9 +1532,9 @@ class ReflectionService {
 					$needsArtificialIdentity = FALSE;
 				}
 
-				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Lazy'), $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient'));
+				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, \TYPO3\Flow\Annotations\Lazy::class), $this->isPropertyAnnotatedWith($className, $propertyName, \TYPO3\Flow\Annotations\Transient::class));
 
-				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Identity')) {
+				if ($this->isPropertyAnnotatedWith($className, $propertyName, \TYPO3\Flow\Annotations\Identity::class)) {
 					$classSchema->markAsIdentityProperty($propertyName);
 				}
 			}
@@ -1560,11 +1560,11 @@ class ReflectionService {
 	 * @throws Exception\ClassSchemaConstraintViolationException
 	 */
 	protected function completeRepositoryAssignments() {
-		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\Flow\Persistence\RepositoryInterface') as $repositoryClassName) {
+		foreach ($this->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Persistence\RepositoryInterface::class) as $repositoryClassName) {
 			// need to be extra careful because this code could be called
 			// during a cache:flush run with corrupted reflection cache
 			if (class_exists($repositoryClassName) && !$this->isClassAbstract($repositoryClassName)) {
-				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\Flow\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\Flow\Annotations\Scope')->value !== 'singleton') {
+				if (!$this->isClassAnnotatedWith($repositoryClassName, \TYPO3\Flow\Annotations\Scope::class) || $this->getClassAnnotation($repositoryClassName, \TYPO3\Flow\Annotations\Scope::class)->value !== 'singleton') {
 					throw new ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
 				}
 				if (defined($repositoryClassName . '::ENTITY_CLASSNAME') && isset($this->classSchemata[$repositoryClassName::ENTITY_CLASSNAME])) {

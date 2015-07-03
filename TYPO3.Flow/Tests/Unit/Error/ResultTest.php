@@ -85,7 +85,7 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function forPropertyShouldReturnSubResult() {
 		$container2 = $this->result->forProperty('foo.bar');
-		$this->assertInstanceOf('TYPO3\Flow\Error\Result', $container2);
+		$this->assertInstanceOf(\TYPO3\Flow\Error\Result::class, $container2);
 		$this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
 	}
 

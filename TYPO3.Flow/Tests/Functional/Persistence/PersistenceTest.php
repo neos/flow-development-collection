@@ -70,7 +70,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->insertExampleEntity();
 
 		$allResults = $this->testEntityRepository->findAll();
-		$this->assertInstanceOf('TYPO3\Flow\Persistence\Doctrine\QueryResult', $allResults);
+		$this->assertInstanceOf(\TYPO3\Flow\Persistence\Doctrine\QueryResult::class, $allResults);
 		$this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
 
 		$allResultsArray = $allResults->toArray();
@@ -175,7 +175,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier() {
 		$expectedEntity = new TestEntity();
 		$uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
-		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
 		$this->assertSame($expectedEntity, $actualEntity);
 	}
 
@@ -278,8 +278,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		// only with the Object Identifier
 		$this->persistenceManager->clearState();
 
-		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
-		$lazyLoadedEntity = $entityManager->getReference('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity', $theObjectIdentifier);
+		$entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
+		$lazyLoadedEntity = $entityManager->getReference(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $theObjectIdentifier);
 		$lazyLoadedEntity->setName('a');
 		$this->testEntityRepository->update($lazyLoadedEntity);
 		$this->persistenceManager->persistAll();
@@ -311,7 +311,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->removeExampleEntities();
 		$this->insertExampleEntity();
 		$this->persistenceManager->persistAll();
-		$eventSubscriber = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber');
+		$eventSubscriber = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber::class);
 		$this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
@@ -324,7 +324,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->removeExampleEntities();
 		$this->insertExampleEntity();
 		$this->persistenceManager->persistAll();
-		$eventSubscriber = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener');
+		$eventSubscriber = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener::class);
 		$this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
@@ -383,7 +383,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
 		$this->assertNull($persistedExtendedTypesEntity->getCommonObject(), 'Common Object');
 		$this->assertNull($persistedExtendedTypesEntity->getDateTime(), 'DateTime');
 		$this->assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
@@ -412,8 +412,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject', $persistedExtendedTypesEntity->getCommonObject());
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
 		$this->assertEquals('foo', $persistedExtendedTypesEntity->getCommonObject()->getFoo());
 	}
 
@@ -431,7 +431,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
 		$this->assertEquals(array('foo' => 'bar'), $persistedExtendedTypesEntity->getJsonArray());
 	}
 
@@ -456,8 +456,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		// Restore test env timezone
 		ini_restore('date.timezone');
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
-		$this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTime());
 		$this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
 		$this->assertEquals('Arctic/Longyearbyen', $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
 	}
@@ -475,8 +475,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
-		$this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTime());
 		$this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
 		$this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
 	}
@@ -508,8 +508,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		// Restore test env timezone
 		ini_restore('date.timezone');
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
-		$this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTimeTz());
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTimeTz());
 		$this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeTz()->getTimestamp());
 		$this->assertEquals(ini_get('datetime.timezone'), $persistedExtendedTypesEntity->getDateTimeTz()->getTimezone()->getName());
 	}
@@ -527,7 +527,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
 		$this->assertEquals('2008-11-16', $persistedExtendedTypesEntity->getDate()->format('Y-m-d'));
 	}
 
@@ -544,7 +544,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
 		$this->assertEquals('19:03:30', $persistedExtendedTypesEntity->getTime()->format('H:i:s'));
 	}
 
@@ -562,7 +562,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
 		$persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity', $persistedExtendedTypesEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
 		$this->assertEquals(array('bar'), $persistedExtendedTypesEntity->getSimpleArray());
 	}
 

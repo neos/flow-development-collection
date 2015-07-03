@@ -52,7 +52,7 @@ class SqlFilter extends DoctrineSqlFilter {
 		 * yet fully initialized. By this we get a half built account object that will end up in access denied exception,
 		 * as it has no roles (and other properties) set
 		 */
-		if ($this->securityContext->areAuthorizationChecksDisabled() || $targetEntity->getName() === 'TYPO3\Flow\Security\Account') {
+		if ($this->securityContext->areAuthorizationChecksDisabled() || $targetEntity->getName() === \TYPO3\Flow\Security\Account::class) {
 			return '';
 		}
 		if (!$this->securityContext->isInitialized()) {
@@ -70,7 +70,7 @@ class SqlFilter extends DoctrineSqlFilter {
 		$deniedConstraints = array();
 		foreach ($this->securityContext->getRoles() as $role) {
 
-			$entityPrivileges = $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface');
+			$entityPrivileges = $role->getPrivilegesByType(\TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface::class);
 			/** @var EntityPrivilegeInterface $privilege */
 			foreach ($entityPrivileges as $privilege) {
 				if (!$privilege->matchesEntityType($targetEntity->getName())) {
@@ -106,11 +106,11 @@ class SqlFilter extends DoctrineSqlFilter {
 	 */
 	protected function initializeDependencies() {
 		if ($this->securityContext === NULL) {
-			$this->securityContext = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Security\Context');
+			$this->securityContext = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Security\Context::class);
 		}
 
 		if ($this->policyService === NULL) {
-			$this->policyService = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+			$this->policyService = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
 		}
 	}
 }

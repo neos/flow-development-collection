@@ -32,9 +32,9 @@ class ReflectionServiceTest extends UnitTestCase {
 	protected $mockAnnotationReader;
 
 	public function setUp() {
-		$this->reflectionService = $this->getAccessibleMock('TYPO3\Flow\Reflection\ReflectionService', NULL);
+		$this->reflectionService = $this->getAccessibleMock(\TYPO3\Flow\Reflection\ReflectionService::class, NULL);
 
-		$this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
+		$this->mockAnnotationReader = $this->getMockBuilder(\Doctrine\Common\Annotations\Reader::class)->disableOriginalConstructor()->getMock();
 		$this->mockAnnotationReader->expects($this->any())->method('getClassAnnotations')->will($this->returnValue(array()));
 		$this->inject($this->reflectionService, 'annotationReader', $this->mockAnnotationReader);
 	}
@@ -60,7 +60,7 @@ class ReflectionServiceTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
 	 */
 	public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename() {
-		$this->reflectionService->_call('reflectClass', 'TYPO3\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent');
+		$this->reflectionService->_call('reflectClass', \TYPO3\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent::class);
 	}
 
 	/**
