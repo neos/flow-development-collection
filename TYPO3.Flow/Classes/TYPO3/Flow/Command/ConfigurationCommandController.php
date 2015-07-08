@@ -18,6 +18,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
 use TYPO3\Flow\Configuration\Exception\SchemaValidationException;
 use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\SchemaGenerator;
 
@@ -131,22 +132,34 @@ class ConfigurationCommandController extends CommandController {
 		try {
 			$result = $this->configurationSchemaValidator->validate($type, $path, $validatedSchemaFiles);
 		} catch (SchemaValidationException $exception) {
-			$this->outputLine('<b>Error:</b>');
+			$this->outputLine('<b>Exception:</b>');
 			$this->outputFormatted($exception->getMessage(), array(), 4);
 			$this->quit(2);
+			return;
 		}
 
 		if ($verbose) {
-			$this->outputLine('Loaded Schema Files:');
+			$this->outputLine('<b>Loaded Schema Files:</b>');
 			foreach ($validatedSchemaFiles as $validatedSchemaFile) {
 				$this->outputLine('- ' . substr($validatedSchemaFile, strlen(FLOW_PATH_ROOT)));
 			}
 			$this->outputLine();
+			if ($result->hasNotices()) {
+				$notices = $result->getFlattenedNotices();
+				$this->outputLine('<b>%d notices:</b>', array(count($notices)));
+				/** @var Notice $notice */
+				foreach ($notices as $path => $pathNotices) {
+					foreach ($pathNotices as $notice) {
+						$this->outputLine(' - %s -> %s', array($path, $notice->render()));
+					}
+				}
+				$this->outputLine();
+			}
 		}
 
 		if ($result->hasErrors()) {
 			$errors = $result->getFlattenedErrors();
-			$this->outputLine('<b>%s errors were found:</b>', array(count($errors)));
+			$this->outputLine('<b>%d errors were found:</b>', array(count($errors)));
 			/** @var Error $error */
 			foreach ($errors as $path => $pathErrors) {
 				foreach ($pathErrors as $error) {
