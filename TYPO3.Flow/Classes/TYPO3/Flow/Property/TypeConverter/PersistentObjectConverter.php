@@ -159,6 +159,9 @@ class PersistentObjectConverter extends ObjectConverter {
 				unset($source['__identity']);
 			}
 			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
+			if ($object instanceof TargetNotFoundError) {
+				return $object;
+			}
 		} elseif (is_string($source)) {
 			if ($source === '') {
 				return NULL;
