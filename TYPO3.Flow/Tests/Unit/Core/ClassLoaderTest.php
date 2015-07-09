@@ -65,12 +65,12 @@ class ClassLoaderTest extends UnitTestCase {
 
 		$this->classLoader = new ClassLoader();
 
-		$this->mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$this->mockPackage1 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$this->mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyApp'));
 		$this->mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/Classes/'));
 		$this->mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
 
-		$this->mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$this->mockPackage2 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$this->mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyAppAddon'));
 		$this->mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/'));
 		$this->mockPackage2->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/'));
@@ -218,13 +218,13 @@ class ClassLoaderTest extends UnitTestCase {
 	public function classesFromOverlayedPsr4PackagesAreLoaded() {
 		$this->classLoader = new ClassLoader();
 
-		$mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage1 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$mockPackage1->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
 		$mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Subscriber\\Log'));
 		$mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
 		$mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
 
-		$mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage2 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$mockPackage2->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
 		$mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage'));
 		$mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));
@@ -253,13 +253,13 @@ class ClassLoaderTest extends UnitTestCase {
 	public function classesFromOverlayedPsr4PackagesAreOverwritten() {
 		$this->classLoader = new ClassLoader();
 
-		$mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage1 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$mockPackage1->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
 		$mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Foo'));
 		$mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
 		$mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/subPackage/src/'));
 
-		$mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$mockPackage2 = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->disableOriginalConstructor()->getMock();
 		$mockPackage2->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
 		$mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage'));
 		$mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Libraries/test/mainPackage/src/'));

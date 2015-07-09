@@ -55,19 +55,19 @@ class RouterTest extends UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+		$this->router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('dummy'));
 
-		$this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+		$this->mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
 		$this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
 
-		$this->mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$this->mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();
 		$this->mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriPath')->will($this->returnValue(FALSE));
 		$this->mockRouterCachingService->expects($this->any())->method('getCachedMatchResults')->will($this->returnValue(FALSE));
 		$this->inject($this->router, 'routerCachingService', $this->mockRouterCachingService);
 
-		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 	}
 
 	/**
@@ -75,13 +75,13 @@ class RouterTest extends UnitTestCase {
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
 		/** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		// not saying anything, but seems better than to expect the exception we'd get otherwise
 		/** @var Route|\PHPUnit_Framework_MockObject_MockObject $mockRoute */
-		$mockRoute = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
+		$mockRoute = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
 		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
 		$mockRoute->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
 
@@ -153,19 +153,19 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheResolvedUriPathIfAny() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 		$routeValues = array('foo' => 'bar');
 
-		$route1 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
+		$route1 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, array('resolves'), array(), '', FALSE);
 		$route1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
 
-		$route2 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves', 'getResolvedUriPath'), array(), '', FALSE);
+		$route2 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, array('resolves', 'getResolvedUriPath'), array(), '', FALSE);
 		$route2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
 		$route2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('route2'));
 
-		$route3 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
+		$route3 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, array('resolves'), array(), '', FALSE);
 
 		$mockRoutes = array($route1, $route2, $route3);
 
@@ -181,14 +181,14 @@ class RouterTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException
 	 */
 	public function resolveThrowsExceptionIfNoMatchingRouteWasFound() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
-		$route1 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
+		$route1 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
 		$route1->expects($this->once())->method('resolves')->will($this->returnValue(FALSE));
 
-		$route2 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
+		$route2 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
 		$route2->expects($this->once())->method('resolves')->will($this->returnValue(FALSE));
 
 		$mockRoutes = array($route1, $route2);
@@ -209,14 +209,14 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveSetsLastResolvedRoute() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$routeValues = array('some' => 'route values');
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
 
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
@@ -230,14 +230,14 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveReturnsCachedResolvedUriPathIfFoundInCache() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$routeValues = array('some' => 'route values');
 		$cachedResolvedUriPath = 'some/cached/Request/Path';
 
-		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();
 		$mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue($cachedResolvedUriPath));
 		$router->_set('routerCachingService', $mockRouterCachingService);
 
@@ -249,16 +249,16 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveStoresResolvedUriPathInCacheIfNotFoundInCache() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$routeValues = array('some' => 'route values');
 		$resolvedUriPath = 'some/resolved/Request/Path';
 
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
 		$mockRoute2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue($resolvedUriPath));
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
@@ -272,16 +272,16 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveDoesNotStoreResolvedUriPathInCacheIfItsNull() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$routeValues = array('some' => 'route values');
 		$resolvedUriPath = NULL;
 
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
 		$mockRoute2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue($resolvedUriPath));
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
@@ -295,14 +295,14 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function routeReturnsCachedMatchResultsIfFoundInCache() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$cachedMatchResults = array('some' => 'cached results');
 
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();
 		$mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($mockHttpRequest)->will($this->returnValue($cachedMatchResults));
 		$this->inject($router, 'routerCachingService', $mockRouterCachingService);
 
@@ -315,17 +315,17 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function routeStoresMatchResultsInCacheIfNotFoundInCache() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$matchResults = array('some' => 'match results');
 
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
 		$mockRoute2->expects($this->once())->method('getMatchResults')->will($this->returnValue($matchResults));
 
@@ -340,23 +340,23 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function routeDoesNotStoreMatchResultsInCacheIfTheyAreNull() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$matchResults = NULL;
 
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
 		$mockRoute2->expects($this->once())->method('getMatchResults')->will($this->returnValue($matchResults));
 
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
 
-		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();
 		$mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($mockHttpRequest)->will($this->returnValue(FALSE));
 		$mockRouterCachingService->expects($this->never())->method('storeMatchResults');
 		$router->_set('routerCachingService', $mockRouterCachingService);
@@ -375,15 +375,15 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function routeSetsLastMatchedRoute() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
-		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->getMock();
 		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
 
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
@@ -398,7 +398,7 @@ class RouterTest extends UnitTestCase {
 	 */
 	public function routeLoadsRoutesConfigurationFromConfigurationManagerIfNotSetExplicitly() {
 		/** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('dummy'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
@@ -412,12 +412,12 @@ class RouterTest extends UnitTestCase {
 		);
 
 		/** @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject $mockConfigurationManager */
-		$mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+		$mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_ROUTES)->will($this->returnValue($routesConfiguration));
 		$this->inject($router, 'configurationManager', $mockConfigurationManager);
 
 		/** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
 		$router->route($mockHttpRequest);
 
@@ -431,7 +431,7 @@ class RouterTest extends UnitTestCase {
 	 */
 	public function routeDoesNotLoadRoutesConfigurationFromConfigurationManagerIfItsSetExplicitly() {
 		/** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+		$router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('dummy'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
@@ -445,12 +445,12 @@ class RouterTest extends UnitTestCase {
 		);
 
 		/** @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject $mockConfigurationManager */
-		$mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+		$mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 		$mockConfigurationManager->expects($this->never())->method('getConfiguration');
 		$this->inject($router, 'configurationManager', $mockConfigurationManager);
 
 		/** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
 		$router->setRoutesConfiguration($routesConfiguration);
 		$router->route($mockHttpRequest);

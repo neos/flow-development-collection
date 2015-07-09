@@ -21,7 +21,7 @@ class AbstractViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignAddsValueToInternalVariableCollection() {
-		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\AbstractView::class, array('setControllerContext', 'render'));
 		$view
 			->assign('foo', 'FooValue')
 			->assign('bar', 'BarValue');
@@ -35,7 +35,7 @@ class AbstractViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignCanOverridePreviouslyAssignedValues() {
-		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\AbstractView::class, array('setControllerContext', 'render'));
 		$view->assign('foo', 'FooValue');
 		$view->assign('foo', 'FooValueOverridden');
 
@@ -48,7 +48,7 @@ class AbstractViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignMultipleAddsValuesToInternalVariableCollection() {
-		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\AbstractView::class, array('setControllerContext', 'render'));
 		$view
 			->assignMultiple(array('foo' => 'FooValue', 'bar' => 'BarValue'))
 			->assignMultiple(array('baz' => 'BazValue'));
@@ -62,7 +62,7 @@ class AbstractViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignMultipleCanOverridePreviouslyAssignedValues() {
-		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\AbstractView::class, array('setControllerContext', 'render'));
 		$view->assign('foo', 'FooValue');
 		$view->assignMultiple(array('foo' => 'FooValueOverridden', 'bar' => 'BarValue'));
 

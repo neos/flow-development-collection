@@ -41,7 +41,7 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
-		$backend->injectEnvironment($this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE));
+		$backend->injectEnvironment($this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', FALSE));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
@@ -186,12 +186,12 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$thisCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = $this->setUpBackend();
 		$thisBackend->setCache($thisCache);
 
-		$thatCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = $this->setUpBackend();
 		$thatBackend->setCache($thatCache);
@@ -210,9 +210,9 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \TYPO3\Flow\Cache\Backend\PdoBackend
 	 */
 	protected function setUpBackend() {
-		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', FALSE);
 
-		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
 		$backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));

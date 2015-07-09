@@ -44,7 +44,7 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getQueryReturnsQueryObject() {
-		$this->assertInstanceOf('TYPO3\Flow\Persistence\QueryInterface', $this->queryResult->getQuery());
+		$this->assertInstanceOf(\TYPO3\Flow\Persistence\QueryInterface::class, $this->queryResult->getQuery());
 	}
 
 	/**

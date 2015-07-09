@@ -75,7 +75,7 @@ class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewObjectNameChanged() {
 		$response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationc/index');
-		$this->assertEquals('TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView', $response->getContent());
+		$this->assertEquals(\TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView::class, $response->getContent());
 	}
 
 	/**

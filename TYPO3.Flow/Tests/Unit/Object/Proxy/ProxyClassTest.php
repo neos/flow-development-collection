@@ -69,11 +69,11 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider proxyClassesDataProvider
 	 */
 	public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode) {
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('isClassAbstract')->will($this->returnValue(strpos($expectedProxyCode, 'abstract ') !== FALSE));
 		$mockReflectionService->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($originalClassAnnotations));
 
-		$mockProxyClass = $this->getAccessibleMock('TYPO3\Flow\Object\Proxy\ProxyClass', array('buildClassDocumentation'), array($originalClassName), '', TRUE);
+		$mockProxyClass = $this->getAccessibleMock(\TYPO3\Flow\Object\Proxy\ProxyClass::class, array('buildClassDocumentation'), array($originalClassName), '', TRUE);
 		$mockProxyClass->expects($this->any())->method('buildClassDocumentation')->will($this->returnValue($originalClassDocumentation));
 		$mockProxyClass->injectReflectionService($mockReflectionService);
 		foreach ($originalClassConstants as $originalClassConstant) {

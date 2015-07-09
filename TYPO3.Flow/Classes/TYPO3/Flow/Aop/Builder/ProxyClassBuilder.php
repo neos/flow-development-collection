@@ -188,7 +188,7 @@ class ProxyClassBuilder {
 	public function build() {
 		$allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
 		$possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
-		$actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\Aspect');
+		$actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\Aspect::class);
 		sort($possibleTargetClassNames);
 		sort($actualAspectClassNames);
 
@@ -248,24 +248,6 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Returns an array of method names and advices which were applied to the specified class. If the
-	 * target class has no adviced methods, an empty array is returned.
-	 *
-	 * @param string $targetClassName Name of the target class
-	 * @return mixed An array of method names and their advices as array of \TYPO3\Flow\Aop\Advice\AdviceInterface
-	 * @throws \TYPO3\Flow\Aop\Exception
-	 */
-	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
-		throw new \TYPO3\Flow\Aop\Exception('This method is currently not supported.');
-
-		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) {
-			return array();
-		} else {
-			return $this->advicedMethodsInformationByTargetClass[$targetClassName];
-		}
-	}
-
-	/**
 	 * Determines which of the given classes are potentially proxyable
 	 * and returns their names in an array.
 	 *
@@ -277,7 +259,7 @@ class ProxyClassBuilder {
 		foreach ($classNamesByPackage as $classNames) {
 			foreach ($classNames as $className) {
 				if (!in_array(substr($className, 0, 15), $this->blacklistedSubPackages)) {
-					if (!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Aspect') &&
+					if (!$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Aspect::class) &&
 						!$this->reflectionService->isClassFinal($className)) {
 						$proxyableClasses[] = $className;
 					}
@@ -319,42 +301,42 @@ class ProxyClassBuilder {
 			foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
 				$annotationClass = get_class($annotation);
 				switch ($annotationClass) {
-					case 'TYPO3\Flow\Annotations\Around' :
+					case \TYPO3\Flow\Annotations\Around::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice($aspectClassName, $methodName);
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 						$advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
 						$aspectContainer->addAdvisor($advisor);
 					break;
-					case 'TYPO3\Flow\Annotations\Before' :
+					case \TYPO3\Flow\Annotations\Before::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$advice = new \TYPO3\Flow\Aop\Advice\BeforeAdvice($aspectClassName, $methodName);
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 						$advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
 						$aspectContainer->addAdvisor($advisor);
 					break;
-					case 'TYPO3\Flow\Annotations\AfterReturning' :
+					case \TYPO3\Flow\Annotations\AfterReturning::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$advice = new \TYPO3\Flow\Aop\Advice\AfterReturningAdvice($aspectClassName, $methodName);
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 						$advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
 						$aspectContainer->addAdvisor($advisor);
 					break;
-					case 'TYPO3\Flow\Annotations\AfterThrowing' :
+					case \TYPO3\Flow\Annotations\AfterThrowing::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$advice = new \TYPO3\Flow\Aop\Advice\AfterThrowingAdvice($aspectClassName, $methodName);
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 						$advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
 						$aspectContainer->addAdvisor($advisor);
 					break;
-					case 'TYPO3\Flow\Annotations\After' :
+					case \TYPO3\Flow\Annotations\After::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$advice = new \TYPO3\Flow\Aop\Advice\AfterAdvice($aspectClassName, $methodName);
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 						$advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
 						$aspectContainer->addAdvisor($advisor);
 					break;
-					case 'TYPO3\Flow\Annotations\Pointcut' :
+					case \TYPO3\Flow\Annotations\Pointcut::class :
 						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->expression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
 						$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->expression, $pointcutFilterComposite, $aspectClassName, $methodName);
 						$aspectContainer->addPointcut($pointcut);
@@ -362,21 +344,21 @@ class ProxyClassBuilder {
 				}
 			}
 		}
-		$introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, 'TYPO3\Flow\Annotations\Introduce');
+		$introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, \TYPO3\Flow\Annotations\Introduce::class);
 		if ($introduceAnnotation !== NULL) {
 			if ($introduceAnnotation->interfaceName === NULL) {
 				throw new \TYPO3\Flow\Aop\Exception('The interface introduction in class "' . $aspectClassName . '" does not contain the required interface name).', 1172694761);
 			}
-			$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, 'TYPO3\Flow\Annotations\Introduce'));
+			$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, \TYPO3\Flow\Annotations\Introduce::class));
 			$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 			$introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
 			$aspectContainer->addInterfaceIntroduction($introduction);
 		}
 
 		foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
-			$introduceAnnotation = $this->reflectionService->getPropertyAnnotation($aspectClassName, $propertyName, 'TYPO3\Flow\Annotations\Introduce');
+			$introduceAnnotation = $this->reflectionService->getPropertyAnnotation($aspectClassName, $propertyName, \TYPO3\Flow\Annotations\Introduce::class);
 			if ($introduceAnnotation !== NULL) {
-				$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $propertyName, 'TYPO3\Flow\Annotations\Introduce'));
+				$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $propertyName, \TYPO3\Flow\Annotations\Introduce::class));
 				$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 				$introduction = new PropertyIntroduction($aspectClassName, $propertyName, $pointcut);
 				$aspectContainer->addPropertyIntroduction($introduction);
@@ -426,7 +408,7 @@ class ProxyClassBuilder {
 			$propertyName = $propertyIntroduction->getPropertyName();
 			$declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();
 			$possiblePropertyTypes = $this->reflectionService->getPropertyTagValues($declaringAspectClassName, $propertyName, 'var');
-			if (count($possiblePropertyTypes) > 0 && !$this->reflectionService->isPropertyAnnotatedWith($declaringAspectClassName, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
+			if (count($possiblePropertyTypes) > 0 && !$this->reflectionService->isPropertyAnnotatedWith($declaringAspectClassName, $propertyName, \TYPO3\Flow\Annotations\Transient::class)) {
 				$classSchema = $this->reflectionService->getClassSchema($targetClassName);
 				if ($classSchema !== NULL) {
 					$classSchema->addProperty($propertyName, $possiblePropertyTypes[0]);
@@ -497,8 +479,8 @@ class ProxyClassBuilder {
 	 *
 	 * 	$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(
 	 * 		'getSomeProperty' => array(
-	 * 			'TYPO3\Flow\Aop\Advice\AroundAdvice' => array(
-	 * 				new \TYPO3\Flow\Aop\Advice\AroundAdvice('TYPO3\Foo\SomeAspect', 'aroundAdvice', \\TYPO3\\Flow\\Core\\Bootstrap::$staticObjectManager, function() { ... }),
+	 * 			\TYPO3\Flow\Aop\Advice\AroundAdvice::class => array(
+	 * 				new \TYPO3\Flow\Aop\Advice\AroundAdvice(\TYPO3\Foo\SomeAspect::class, 'aroundAdvice', \TYPO3\Flow\Core\Bootstrap::$staticObjectManager, function() { ... }),
 	 * 			),
 	 * 		),
 	 * 	);

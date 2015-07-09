@@ -23,7 +23,7 @@ class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	private $configurationGenerator;
 
 	public function setUp() {
-		$this->configurationGenerator = $this->getAccessibleMock('TYPO3\Flow\Utility\SchemaGenerator', array('getError'));
+		$this->configurationGenerator = $this->getAccessibleMock(\TYPO3\Flow\Utility\SchemaGenerator::class, array('getError'));
 	}
 
 	/**

@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class BooleanValueValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\BooleanValueValidator';
+	protected $validatorClassName = \TYPO3\Flow\Validation\Validator\BooleanValueValidator::class;
 
 	/**
 	 * @test

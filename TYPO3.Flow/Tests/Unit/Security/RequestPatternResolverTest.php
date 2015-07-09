@@ -19,10 +19,10 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\NoRequestPatternFoundException
+	 * @expectedException \TYPO3\Flow\Security\Exception\NoRequestPatternFoundException
 	 */
 	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
 		$requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);
@@ -44,7 +44,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			return FALSE;
 		};
 
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
 		$requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);
@@ -57,7 +57,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingRequestPatternClass')->will($this->returnValue('ExistingRequestPatternClass'));
 
 		$requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);

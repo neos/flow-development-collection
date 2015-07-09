@@ -47,7 +47,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider {
 	 * @return array
 	 */
 	public function getTokenClassNames() {
-		return array('TYPO3\Flow\Security\Authentication\Token\UsernamePassword', 'TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic');
+		return array(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, \TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic::class);
 	}
 
 	/**

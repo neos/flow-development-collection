@@ -45,7 +45,7 @@ class AccountTest extends UnitTestCase {
 		$customerRole = new Role('TYPO3.Flow:Customer');
 		$this->customerRole = $customerRole;
 
-		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
+		$mockPolicyService = $this->getMock(\TYPO3\Flow\Security\Policy\PolicyService::class);
 		$mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function($roleIdentifier) use ($administratorRole, $customerRole) {
 			switch($roleIdentifier) {
 				case 'TYPO3.Flow:Administrator':
@@ -66,7 +66,7 @@ class AccountTest extends UnitTestCase {
 			}
 		}));
 
-		$this->account = $this->getAccessibleMock('TYPO3\Flow\Security\Account', array('dummy'));
+		$this->account = $this->getAccessibleMock(\TYPO3\Flow\Security\Account::class, array('dummy'));
 		$this->account->_set('policyService', $mockPolicyService);
 	}
 
@@ -208,7 +208,7 @@ class AccountTest extends UnitTestCase {
 		$partyService = $this->getMock('TYPO3\Party\Domain\Service\PartyService', array('getAssignedPartyOfAccount'));
 		$partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
 
-		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$objectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 		$objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(TRUE));
 		$objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
 
@@ -239,7 +239,7 @@ class AccountTest extends UnitTestCase {
 		$partyService = $this->getMock('DummyService', array('assignAccountToParty'));
 		$partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
 
-		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$objectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 		$objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(TRUE));
 		$objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
 

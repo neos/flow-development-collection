@@ -42,11 +42,11 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * Sets up this test case
 	 */
 	public function setUp() {
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
-		$this->mockSession = $this->getMockBuilder('TYPO3\Flow\Session\SessionInterface')->getMock();
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('dummy'), array(), '', FALSE);
+		$this->mockSession = $this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->getMock();
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
 
-		$this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->disableOriginalConstructor()->getMock();
+		$this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 	}
 
@@ -54,10 +54,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function authenticateDelegatesAuthenticationToTheCorrectProvidersInTheCorrectOrder() {
-		$mockProvider1 = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface', array(), array(), 'mockAuthenticationProvider1');
-		$mockProvider2 = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface', array(), array(), 'mockAuthenticationProvider2');
-		$mockToken1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken1');
-		$mockToken2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken2');
+		$mockProvider1 = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface::class, array(), array(), 'mockAuthenticationProvider1');
+		$mockProvider2 = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface::class, array(), array(), 'mockAuthenticationProvider2');
+		$mockToken1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), 'mockAuthenticationToken1');
+		$mockToken2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), 'mockAuthenticationToken2');
 
 		$mockToken1->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$mockToken2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
@@ -85,9 +85,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 		$account = new Account();
 		$account->setAccountIdentifier('admin');
 
-		$securityContext = $this->getMock('TYPO3\Flow\Security\Context', array('getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens'), array(), '', FALSE);
+		$securityContext = $this->getMock(\TYPO3\Flow\Security\Context::class, array('getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens'), array(), '', FALSE);
 
-		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+		$token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
 		$token->expects($this->any())->method('getAccount')->will($this->returnValue($account));
 
 		$token->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
@@ -105,10 +105,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function authenticateAuthenticatesOnlyTokensWithStatusAuthenticationNeeded() {
-		$mockProvider = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface');
-		$mockToken1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken11');
-		$mockToken2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken12');
-		$mockToken3 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken13');
+		$mockProvider = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface::class);
+		$mockToken1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), 'mockAuthenticationToken11');
+		$mockToken2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), 'mockAuthenticationToken12');
+		$mockToken3 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), 'mockAuthenticationToken13');
 
 		$mockToken1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$mockToken2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
@@ -134,8 +134,8 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
 
 		$token1->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(FALSE));
@@ -152,8 +152,8 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
 
 		$token1->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(FALSE));
@@ -170,7 +170,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function isAuthenticatedReturnsTrueIfAnTokenCouldBeAuthenticated() {
-		$mockToken = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$mockToken = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$this->mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken)));
@@ -182,9 +182,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function isAuthenticatedReturnsFalseIfNoTokenIsAuthenticated() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$authenticationTokens = array($token1, $token2);
@@ -198,9 +198,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function isAuthenticatedReturnsTrueIfAtLeastOneTokenIsAuthenticated() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$authenticationTokens = array($token1, $token2);
@@ -214,9 +214,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function isAuthenticatedReturnsFalseIfNoTokenIsAuthenticatedWithStrategyAnyToken() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$authenticationTokens = array($token1, $token2);
@@ -231,9 +231,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function isAuthenticatedReturnsTrueIfOneTokenIsAuthenticatedWithStrategyAnyToken() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$authenticationTokens = array($token1, $token2);
@@ -250,7 +250,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	public function logoutReturnsIfNoAccountIsAuthenticated() {
 		$this->mockSecurityContext->expects($this->never())->method('isInitialized');
 		/** @var AuthenticationProviderManager|\PHPUnit_Framework_MockObject_MockObject $authenticationProviderManager */
-		$authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('isAuthenticated'), array(), '', FALSE);
+		$authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('isAuthenticated'), array(), '', FALSE);
 		$authenticationProviderManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$authenticationProviderManager->logout();
 
@@ -260,10 +260,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function logoutSetsTheAuthenticationStatusOfAllActiveAuthenticationTokensToNoCredentialsGiven() {
-		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('setAuthenticationStatus')->with(TokenInterface::NO_CREDENTIALS_GIVEN);
-		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token2->expects($this->once())->method('setAuthenticationStatus')->with(TokenInterface::NO_CREDENTIALS_GIVEN);
 
 		$authenticationTokens = array($token1, $token2);
@@ -277,14 +277,14 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function logoutDestroysSessionIfStarted() {
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('emitLoggedOut'), array(), '', FALSE);
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
 
 		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
 		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(TRUE));
 
-		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
@@ -298,11 +298,11 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function logoutDoesNotDestroySessionIfNotStarted() {
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('emitLoggedOut'), array(), '', FALSE);
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
 
-		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
@@ -316,14 +316,14 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function logoutEmitsLoggedOutSignalBeforeDestroyingSession() {
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('emitLoggedOut'), array(), '', FALSE);
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
 
 		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
 		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(TRUE));
 
-		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
@@ -345,14 +345,14 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function logoutRefreshesTokensInSecurityContext() {
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('emitLoggedOut'), array(), '', FALSE);
 		$this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
 		$this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
 
 		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
 		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(TRUE));
 
-		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class, array(), array(), '', FALSE);
 		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
@@ -386,10 +386,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase {
 			),
 		);
 
-		$mockProviderResolver = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
-		$mockRequestPatternResolver = $this->getMock('TYPO3\Flow\Security\RequestPatternResolver', array(), array(), '', FALSE);
+		$mockProviderResolver = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver::class, array(), array(), '', FALSE);
+		$mockRequestPatternResolver = $this->getMock(\TYPO3\Flow\Security\RequestPatternResolver::class, array(), array(), '', FALSE);
 
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array($mockProviderResolver, $mockRequestPatternResolver));
+		$this->authenticationProviderManager = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, array('authenticate'), array($mockProviderResolver, $mockRequestPatternResolver));
 		$this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
 	}
 }

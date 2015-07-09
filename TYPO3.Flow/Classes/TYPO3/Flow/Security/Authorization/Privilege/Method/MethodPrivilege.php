@@ -126,7 +126,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 	public function getPointcutFilterComposite() {
 		if ($this->pointcutFilter === NULL) {
 			/** @var MethodTargetExpressionParser $methodTargetExpressionParser */
-			$methodTargetExpressionParser = $this->objectManager->get('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser');
+			$methodTargetExpressionParser = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class);
 			$this->pointcutFilter = $methodTargetExpressionParser->parse($this->getParsedMatcher(), 'Policy privilege "' . $this->getPrivilegeTargetIdentifier() . '"');
 		}
 

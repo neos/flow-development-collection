@@ -90,15 +90,15 @@ class DispatchComponent implements ComponentInterface {
 	public function handle(ComponentContext $componentContext) {
 		$httpRequest = $componentContext->getHttpRequest();
 		/** @var $actionRequest ActionRequest */
-		$actionRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $httpRequest);
+		$actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
 		$this->securityContext->setRequest($actionRequest);
 
-		$routingMatchResults = $componentContext->getParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults');
+		$routingMatchResults = $componentContext->getParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults');
 
 		$actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
 		$this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-		$componentContext->setParameter('TYPO3\Flow\Mvc\DispatchComponent', 'actionRequest', $actionRequest);
+		$componentContext->setParameter(\TYPO3\Flow\Mvc\DispatchComponent::class, 'actionRequest', $actionRequest);
 		$this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
 	}
 
@@ -109,7 +109,7 @@ class DispatchComponent implements ComponentInterface {
 	 */
 	protected function mergeArguments(HttpRequest $httpRequest, array $routingMatchResults = NULL) {
 		// HTTP body arguments
-		$this->propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+		$this->propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
 		$arguments = $this->propertyMapper->convert($httpRequest->getContent(), 'array', $this->propertyMappingConfiguration);
 
 		// HTTP arguments (e.g. GET parameters)

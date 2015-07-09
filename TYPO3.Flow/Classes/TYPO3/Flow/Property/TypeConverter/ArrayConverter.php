@@ -90,7 +90,7 @@ class ArrayConverter extends AbstractTypeConverter {
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('array', 'string', 'TYPO3\Flow\Resource\Resource');
+	protected $sourceTypes = array('array', 'string', \TYPO3\Flow\Resource\Resource::class);
 
 	/**
 	 * @var string
@@ -144,7 +144,7 @@ class ArrayConverter extends AbstractTypeConverter {
 						'data' => base64_encode(file_get_contents('resource://' . $source->getSha1()))
 					);
 				case self::RESOURCE_EXPORT_TYPE_FILE:
-					$targetStream = fopen($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
+					$targetStream = fopen($configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
 					stream_copy_to_stream($source->getStream(), $targetStream);
 					fclose($targetStream);
 					return array(
@@ -170,7 +170,7 @@ class ArrayConverter extends AbstractTypeConverter {
 			return self::DEFAULT_STRING_DELIMITER;
 		}
 
-		$stringDelimiter = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_STRING_DELIMITER);
+		$stringDelimiter = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_DELIMITER);
 		if ($stringDelimiter === NULL) {
 			return self::DEFAULT_STRING_DELIMITER;
 		} elseif (!is_string($stringDelimiter)) {
@@ -190,7 +190,7 @@ class ArrayConverter extends AbstractTypeConverter {
 			return self::DEFAULT_STRING_FORMAT;
 		}
 
-		$stringFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_STRING_FORMAT);
+		$stringFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_FORMAT);
 		if ($stringFormat === NULL) {
 			return self::DEFAULT_STRING_FORMAT;
 		} elseif (!is_string($stringFormat)) {
@@ -210,7 +210,7 @@ class ArrayConverter extends AbstractTypeConverter {
 			return self::DEFAULT_RESOURCE_EXPORT_TYPE;
 		}
 
-		$exportType = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
+		$exportType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
 		if ($exportType === NULL) {
 			return self::DEFAULT_RESOURCE_EXPORT_TYPE;
 		} elseif (!is_string($exportType)) {

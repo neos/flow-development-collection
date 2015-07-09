@@ -22,7 +22,7 @@ class TestEntityCDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Rep
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC';
+	const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class;
 
 	/**
 	 * Returns all TestEntityC objects from persistence

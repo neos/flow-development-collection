@@ -91,7 +91,7 @@ class BehatTestHelper {
 	 * @return void
 	 */
 	public function initializeObject() {
-		self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+		self::$bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
 		$this->isolated = FALSE;
 	}
 

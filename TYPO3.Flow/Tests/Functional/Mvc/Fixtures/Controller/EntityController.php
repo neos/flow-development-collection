@@ -41,11 +41,11 @@ class EntityController extends ActionController {
 	protected function initializeUpdateAction() {
 		$this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
 			->allowAllProperties()
-			->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+			->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 		$this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
 			->forProperty('subEntities.*')
 			->allowAllProperties()
-			->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+			->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 	}
 
 	/**

@@ -51,12 +51,12 @@ class RouteTest extends UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallBack')));
-		$this->route = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Route', array('dummy'));
+		$this->route = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Route::class, array('dummy'));
 		$this->route->_set('objectManager', $this->mockObjectManager);
 
-		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$this->mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) { return $array; }));
 		$this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
 	}
@@ -67,7 +67,7 @@ class RouteTest extends UnitTestCase {
 	 */
 	protected function routeMatchesPath($routePath) {
 		/** @var Request $mockHttpRequest|\PHPUnit_Framework_MockObject_MockObject */
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
 
 		return $this->route->matches($mockHttpRequest);
@@ -130,7 +130,7 @@ class RouteTest extends UnitTestCase {
 				)
 			)
 		);
-		$mockRoutePartHandler = $this->getMock('TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface');
+		$mockRoutePartHandler = $this->getMock(\TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface::class);
 		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
 		$this->route->parse();
@@ -145,12 +145,12 @@ class RouteTest extends UnitTestCase {
 		$this->route->setRoutePartsConfiguration(
 			array(
 				'key1' => array(
-					'handler' => 'TYPO3\Flow\Mvc\Routing\StaticRoutePart',
+					'handler' => \TYPO3\Flow\Mvc\Routing\StaticRoutePart::class,
 				)
 			)
 		);
-		$mockRoutePartHandler = $this->getMock('TYPO3\Flow\Mvc\Routing\StaticRoutePart');
-		$this->mockObjectManager->expects($this->once())->method('get')->with('TYPO3\Flow\Mvc\Routing\StaticRoutePart')->will($this->returnValue($mockRoutePartHandler));
+		$mockRoutePartHandler = $this->getMock(\TYPO3\Flow\Mvc\Routing\StaticRoutePart::class);
+		$this->mockObjectManager->expects($this->once())->method('get')->with(\TYPO3\Flow\Mvc\Routing\StaticRoutePart::class)->will($this->returnValue($mockRoutePartHandler));
 
 		$this->route->parse();
 	}
@@ -170,7 +170,7 @@ class RouteTest extends UnitTestCase {
 
 		$this->route->parse();
 		$identityRoutePart = current($this->route->_get('routeParts'));
-		$this->assertInstanceOf('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', $identityRoutePart);
+		$this->assertInstanceOf(\TYPO3\Flow\Mvc\Routing\IdentityRoutePart::class, $identityRoutePart);
 		$this->assertSame('SomeObjectType', $identityRoutePart->getObjectType());
 	}
 
@@ -412,9 +412,9 @@ class RouteTest extends UnitTestCase {
 	 */
 	public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue) {
 		if ($shouldThrowException === TRUE) {
-			$this->setExpectedException('TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException');
+			$this->setExpectedException(\TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException::class);
 		}
-		$mockRoutePart = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(TRUE));
 		$mockRoutePart->expects($this->any())->method('getName')->will($this->returnValue('TestRoutePart'));
 		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
@@ -444,17 +444,17 @@ class RouteTest extends UnitTestCase {
 	 * @test
 	 */
 	public function matchesRecursivelyMergesMatchResults() {
-		$mockRoutePart1 = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart1 = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart1->expects($this->once())->method('match')->will($this->returnValue(TRUE));
 		$mockRoutePart1->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart1'));
 		$mockRoutePart1->expects($this->once())->method('getValue')->will($this->returnValue('foo'));
 
-		$mockRoutePart2 = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart2 = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart2->expects($this->once())->method('match')->will($this->returnValue(TRUE));
 		$mockRoutePart2->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('someOtherRoutePart'));
 		$mockRoutePart2->expects($this->once())->method('getValue')->will($this->returnValue('bar'));
 
-		$mockRoutePart3 = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart3 = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart3->expects($this->once())->method('match')->will($this->returnValue(TRUE));
 		$mockRoutePart3->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart2'));
 		$mockRoutePart3->expects($this->once())->method('getValue')->will($this->returnValue('baz'));
@@ -710,13 +710,13 @@ class RouteTest extends UnitTestCase {
 		$this->route->setHttpMethods(array('POST', 'PUT'));
 
 		/** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
 		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
 		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
 		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
 		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
@@ -732,13 +732,13 @@ class RouteTest extends UnitTestCase {
 		$this->route->setHttpMethods(array('POST', 'PUT'));
 
 		/** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
 		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
 		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
 		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
 		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
@@ -898,7 +898,7 @@ class RouteTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolvedUriPathIsNullAfterUnsuccessfulResolve() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 		$this->route = new Route($this->mockObjectManager, $mockObjectManager);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
@@ -924,7 +924,7 @@ class RouteTest extends UnitTestCase {
 		);
 		$this->routeValues = array('key2' => 'value2');
 		$mockRoutePartHandler = new MockRoutePartHandler();
-		$this->mockObjectManager->expects($this->once())->method('get')->with('TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+		$this->mockObjectManager->expects($this->once())->method('get')->with(\TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler::class)->will($this->returnValue($mockRoutePartHandler));
 		$this->route->resolves($this->routeValues);
 
 		$this->assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriPath());
@@ -966,7 +966,7 @@ class RouteTest extends UnitTestCase {
 
 		$convertedArray = array('foo' => 'bar', 'someObject' => array('__identity' => 'x'), 'baz' => array('someOtherObject' => array('__identity' => 'y')));
 
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArray)->will($this->returnValue($convertedArray));
 		$this->inject($this->route, 'persistenceManager', $mockPersistenceManager);
 
@@ -997,7 +997,7 @@ class RouteTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException
 	 */
 	public function resolvesThrowsExceptionIfRoutePartValueIsNoString() {
-		$mockRoutePart = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
 		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(TRUE));
 		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue(array('not a' => 'string')));
@@ -1013,7 +1013,7 @@ class RouteTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException
 	 */
 	public function resolvesThrowsExceptionIfRoutePartDefaultValueIsNoString() {
-		$mockRoutePart = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
 		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(FALSE));
 		$mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue(array('not a' => 'string')));
@@ -1031,13 +1031,13 @@ class RouteTest extends UnitTestCase {
 		$defaultValues = array('foo' => 'bar');
 		$routeValues = array('bar' => 'baz');
 
-		$mockRoutePart = $this->getMock('TYPO3\Flow\Mvc\Routing\RoutePartInterface');
+		$mockRoutePart = $this->getMock(\TYPO3\Flow\Mvc\Routing\RoutePartInterface::class);
 		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
 		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(FALSE));
 		$mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue('defaultValue'));
 
 		/** @var Route|\PHPUnit_Framework_MockObject_MockObject $route */
-		$route = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Route', array('compareAndRemoveMatchingDefaultValues'));
+		$route = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Route::class, array('compareAndRemoveMatchingDefaultValues'));
 		$route->setAppendExceedingArguments(TRUE);
 		$this->inject($route, 'persistenceManager', $this->mockPersistenceManager);
 		$route->setUriPattern('foo');
@@ -1153,7 +1153,7 @@ class RouteTest extends UnitTestCase {
 				'key1' => 'SomeDefaultValue',
 			)
 		);
-		$mockRoutePartHandler = $this->getMock('TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface');
+		$mockRoutePartHandler = $this->getMock(\TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface::class);
 		$mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
 		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
@@ -1179,7 +1179,7 @@ class RouteTest extends UnitTestCase {
 				)
 			)
 		);
-		$mockRoutePartHandler = $this->getMock('TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface');
+		$mockRoutePartHandler = $this->getMock(\TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface::class);
 		$mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
 		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 

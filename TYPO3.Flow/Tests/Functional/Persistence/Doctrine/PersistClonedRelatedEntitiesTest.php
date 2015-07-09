@@ -36,7 +36,7 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
 		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
-		$this->testEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository');
+		$this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
 
 		$clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
 		$clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
-		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity', $clonedLoadedEntity);
+		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $clonedLoadedEntity);
 	}
 
 }

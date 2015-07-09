@@ -182,7 +182,7 @@ class PointcutExpressionParser {
 
 		$filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
 		$filter->injectReflectionService($this->reflectionService);
-		$filter->injectSystemLogger($this->objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface'));
+		$filter->injectSystemLogger($this->objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 		$pointcutFilterComposite->addFilter($operator, $filter);
 	}
 
@@ -216,7 +216,7 @@ class PointcutExpressionParser {
 
 		$filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
 		$filter->injectReflectionService($this->reflectionService);
-		$filter->injectSystemLogger($this->objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface'));
+		$filter->injectSystemLogger($this->objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 		$pointcutFilterComposite->addFilter($operator, $filter);
 	}
 
@@ -271,7 +271,7 @@ class PointcutExpressionParser {
 		$classNameFilter->injectReflectionService($this->reflectionService);
 		$methodNameFilter = new PointcutMethodNameFilter($methodNamePattern, $methodVisibility, $methodArgumentConstraints);
 		/** @var SystemLoggerInterface $systemLogger */
-		$systemLogger = $this->objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface');
+		$systemLogger = $this->objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 		$methodNameFilter->injectSystemLogger($systemLogger);
 		$methodNameFilter->injectReflectionService($this->reflectionService);
 
@@ -350,7 +350,7 @@ class PointcutExpressionParser {
 	protected function parseDesignatorSetting($operator, $configurationPath, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutSettingFilter($configurationPath);
 		/** @var ConfigurationManager $configurationManager */
-		$configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+		$configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
 		$filter->injectConfigurationManager($configurationManager);
 
 		$pointcutFilterComposite->addFilter($operator, $filter);

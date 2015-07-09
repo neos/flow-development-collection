@@ -45,13 +45,13 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		vfsStream::setup('Foo');
 		$this->cacheManager = new \TYPO3\Flow\Cache\CacheManager();
 
-		$this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+		$this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 		$this->cacheManager->injectEnvironment($this->mockEnvironment);
 
-		$this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+		$this->mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 		$this->cacheManager->injectSystemLogger($this->mockSystemLogger);
-		$this->mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+		$this->mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 		$this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);
 	}
 
@@ -62,7 +62,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface
 	 */
 	protected function registerCache($cacheIdentifier) {
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
 		$cache->expects($this->any())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
 		$this->cacheManager->registerCache($cache);
 
@@ -74,10 +74,10 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException
 	 */
 	public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
 		$this->cacheManager->registerCache($cache1);
@@ -88,10 +88,10 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function managerReturnsThePreviouslyRegisteredCached() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 
-		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 
 		$this->cacheManager->registerCache($cache1);
@@ -105,7 +105,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Cache\Exception\NoSuchCacheException
 	 */
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
-		$cache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
 		$this->cacheManager->registerCache($cache);
@@ -118,7 +118,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasCacheReturnsCorrectResult() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$this->cacheManager->registerCache($cache1);
 
@@ -130,11 +130,11 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isCachePersistentReturnsCorrectResult() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$this->cacheManager->registerCache($cache1);
 
-		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 		$this->cacheManager->registerCache($cache2, TRUE);
 
@@ -146,17 +146,17 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
 		$this->cacheManager->registerCache($cache1);
 
-		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 		$cache2->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
 		$this->cacheManager->registerCache($cache2);
 
-		$persistentCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$persistentCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$persistentCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('persistentCache'));
 		$persistentCache->expects($this->never())->method('flushByTag')->with($this->equalTo('theTag'));
 		$this->cacheManager->registerCache($persistentCache, TRUE);
@@ -168,17 +168,17 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches() {
-		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache1 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flush');
 		$this->cacheManager->registerCache($cache1);
 
-		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$cache2 = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 		$cache2->expects($this->once())->method('flush');
 		$this->cacheManager->registerCache($cache2);
 
-		$persistentCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
+		$persistentCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
 		$persistentCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('persistentCache'));
 		$persistentCache->expects($this->never())->method('flush');
 		$this->cacheManager->registerCache($persistentCache, TRUE);

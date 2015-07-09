@@ -58,6 +58,8 @@ class ProxyClass {
 	protected $constants = array();
 
 	/**
+	 * Note: Not using ProxyInterface::class here, since the interface names must have a leading backslash.
+	 *
 	 * @var array
 	 */
 	protected $interfaces = array('\TYPO3\Flow\Object\Proxy\ProxyInterface');

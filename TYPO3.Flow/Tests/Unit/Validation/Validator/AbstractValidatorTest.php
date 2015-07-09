@@ -20,7 +20,7 @@ class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $validator;
 
 	public function setUp() {
-		$this->validator = $this->getAccessibleMockForAbstractClass('\TYPO3\Flow\Validation\Validator\AbstractValidator', array(), '', FALSE );
+		$this->validator = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Validation\Validator\AbstractValidator::class, array(), '', FALSE );
 		$this->validator->_set( 'supportedOptions', array(
 			'placeHolder'   	=> array('default', 'Desc', 'mixed', FALSE),
 			'secondPlaceHolder' => array('default', 'Desc', 'mixed'),
@@ -35,7 +35,7 @@ class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->validator->__construct( array( 'thirdPlaceHolder' => 'dummy' ) );
 
-		$this->assertInstanceOf('\TYPO3\Flow\Validation\Validator\AbstractValidator', $this->validator);
+		$this->assertInstanceOf(\TYPO3\Flow\Validation\Validator\AbstractValidator::class, $this->validator);
 
 	}
 

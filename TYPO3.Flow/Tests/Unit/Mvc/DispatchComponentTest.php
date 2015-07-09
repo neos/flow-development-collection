@@ -84,30 +84,30 @@ class DispatchComponentTest extends UnitTestCase {
 	public function setUp() {
 		$this->dispatchComponent = new DispatchComponent();
 
-		$this->mockComponentContext = $this->getMockBuilder('TYPO3\Flow\Http\Component\ComponentContext')->disableOriginalConstructor()->getMock();
+		$this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 		$this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-		$this->mockHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->disableOriginalConstructor()->getMock();
+		$this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
 		$this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
 
-		$this->mockDispatcher = $this->getMockBuilder('TYPO3\Flow\Mvc\Dispatcher')->getMock();
+		$this->mockDispatcher = $this->getMockBuilder(\TYPO3\Flow\Mvc\Dispatcher::class)->getMock();
 		$this->inject($this->dispatchComponent, 'dispatcher', $this->mockDispatcher);
 
-		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-		$this->mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManagerInterface')->getMock();
-		$this->mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest', $this->mockHttpRequest)->will($this->returnValue($this->mockActionRequest));
+		$this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+		$this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class, $this->mockHttpRequest)->will($this->returnValue($this->mockActionRequest));
 		$this->inject($this->dispatchComponent, 'objectManager', $this->mockObjectManager);
 
-		$this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->getMock();
+		$this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->getMock();
 		$this->inject($this->dispatchComponent, 'securityContext', $this->mockSecurityContext);
 
-		$this->mockPropertyMappingConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfiguration')->disableOriginalConstructor()->getMock();
+		$this->mockPropertyMappingConfiguration = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
 		$this->inject($this->dispatchComponent, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
 
-		$this->mockPropertyMapper = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMapper')->disableOriginalConstructor()->getMock();
+		$this->mockPropertyMapper = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->getMock();
 		$this->inject($this->dispatchComponent, 'propertyMapper', $this->mockPropertyMapper);
 	}
 
@@ -166,7 +166,7 @@ class DispatchComponentTest extends UnitTestCase {
 		);
 
 		$this->mockActionRequest->expects($this->once())->method('setArguments')->with($matchResults);
-		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults')->will($this->returnValue($matchResults));
+		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults')->will($this->returnValue($matchResults));
 		$this->dispatchComponent->handle($this->mockComponentContext);
 	}
 
@@ -189,7 +189,7 @@ class DispatchComponentTest extends UnitTestCase {
 		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
 
-		$this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with('TYPO3\Flow\Mvc\DispatchComponent', 'actionRequest', $this->mockActionRequest);
+		$this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(\TYPO3\Flow\Mvc\DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
 
 		$this->dispatchComponent->handle($this->mockComponentContext);
 	}
@@ -245,7 +245,7 @@ class DispatchComponentTest extends UnitTestCase {
 	public function handleMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = NULL, array $expectedArguments) {
 		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue($requestArguments));
 		$this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue($requestBodyArguments));
-		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults')->will($this->returnValue($routingMatchResults));
+		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults')->will($this->returnValue($routingMatchResults));
 
 		$this->mockActionRequest->expects($this->once())->method('setArguments')->with($expectedArguments);
 
@@ -258,7 +258,7 @@ class DispatchComponentTest extends UnitTestCase {
 	public function handleMergesInternalArgumentsWithRoutingMatchResults() {
 		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('__internalArgument1' => 'request', '__internalArgument2' => 'request', '__internalArgument3' => 'request')));
 		$this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array('__internalArgument2' => 'requestBody', '__internalArgument3' => 'requestBody')));
-		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults')->will($this->returnValue(array('__internalArgument3' => 'routing')));
+		$this->mockComponentContext->expects($this->atLeastOnce())->method('getParameter')->with(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults')->will($this->returnValue(array('__internalArgument3' => 'routing')));
 
 		$this->mockActionRequest->expects($this->once())->method('setArguments')->with(array('__internalArgument1' => 'request', '__internalArgument2' => 'requestBody', '__internalArgument3' => 'routing'));
 

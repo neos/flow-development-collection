@@ -49,7 +49,7 @@ class EntityManagerFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \Doctrine\ORM\Configuration
 	 */
 	protected function buildAndPrepareDqlCustomStringConfiguration() {
-		$entityManagerFactory = $this->getAccessibleMock('TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory', array('dummy'));
+		$entityManagerFactory = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory::class, array('dummy'));
 		$configuration = new \Doctrine\ORM\Configuration;
 
 		$settingsArray = array(

@@ -19,10 +19,10 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\NoInterceptorFoundException
+	 * @expectedException \TYPO3\Flow\Security\Exception\NoInterceptorFoundException
 	 */
 	public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
 		$interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -44,7 +44,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			return FALSE;
 		};
 
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
 		$interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -57,7 +57,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
 
 		$interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);

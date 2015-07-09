@@ -32,7 +32,7 @@ class CompilerTest extends UnitTestCase {
 	protected $compiler;
 
 	protected function setUp() {
-		$this->compiler = $this->getAccessibleMock('TYPO3\Flow\Object\Proxy\Compiler', NULL);
+		$this->compiler = $this->getAccessibleMock(\TYPO3\Flow\Object\Proxy\Compiler::class, NULL);
 	}
 
 	/**

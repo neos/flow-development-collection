@@ -132,7 +132,7 @@ class StringConverter extends AbstractTypeConverter {
 			return self::DEFAULT_DATE_FORMAT;
 		}
 
-		$dateFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_DATE_FORMAT);
+		$dateFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_DATE_FORMAT);
 		if ($dateFormat === NULL) {
 			return self::DEFAULT_DATE_FORMAT;
 		} elseif ($dateFormat !== NULL && !is_string($dateFormat)) {
@@ -156,7 +156,7 @@ class StringConverter extends AbstractTypeConverter {
 			return self::DEFAULT_CSV_DELIMITER;
 		}
 
-		$csvDelimiter = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_CSV_DELIMITER);
+		$csvDelimiter = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_CSV_DELIMITER);
 		if ($csvDelimiter === NULL) {
 			return self::DEFAULT_CSV_DELIMITER;
 		} elseif (!is_string($csvDelimiter)) {
@@ -180,7 +180,7 @@ class StringConverter extends AbstractTypeConverter {
 			return self::DEFAULT_ARRAY_FORMAT;
 		}
 
-		$arrayFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_ARRAY_FORMAT);
+		$arrayFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_ARRAY_FORMAT);
 		if ($arrayFormat === NULL) {
 			return self::DEFAULT_ARRAY_FORMAT;
 		} elseif (!is_string($arrayFormat)) {

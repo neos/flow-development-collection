@@ -111,8 +111,8 @@ class ObjectArray extends Types\ArrayType {
 	 */
 	protected function initializeDependencies() {
 		if ($this->persistenceManager === NULL) {
-			$this->persistenceManager = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-			$this->reflectionService = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+			$this->persistenceManager = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+			$this->reflectionService = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
 		}
 	}
 
@@ -164,8 +164,8 @@ class ObjectArray extends Types\ArrayType {
 				throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
 			} elseif ($this->persistenceManager->isNewObject($value) === FALSE
 				&& (
-					$this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\Entity')
-					|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\ValueObject')
+					$this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\Entity::class)
+					|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\ValueObject::class)
 					|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
 				)
 			) {

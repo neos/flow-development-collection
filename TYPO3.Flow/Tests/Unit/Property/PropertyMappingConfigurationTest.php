@@ -105,7 +105,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setTypeConverterOptionsCanBeRetrievedAgain() {
-		$mockTypeConverterClass = $this->getMockClass('TYPO3\Flow\Property\TypeConverterInterface');
+		$mockTypeConverterClass = $this->getMockClass(\TYPO3\Flow\Property\TypeConverterInterface::class);
 
 		$this->propertyMappingConfiguration->setTypeConverterOptions($mockTypeConverterClass, array('k1' => 'v1', 'k2' => 'v2'));
 		$this->assertEquals('v1', $this->propertyMappingConfiguration->getConfigurationValue($mockTypeConverterClass, 'k1'));
@@ -116,14 +116,14 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function nonexistentTypeConverterOptionsReturnNull() {
-		$this->assertNull($this->propertyMappingConfiguration->getConfigurationValue('foo', 'bar'));
+		$this->assertNull($this->propertyMappingConfiguration->getConfigurationValue(\foo::class, 'bar'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function setTypeConverterOptionsShouldOverrideAlreadySetOptions() {
-		$mockTypeConverterClass = $this->getMockClass('TYPO3\Flow\Property\TypeConverterInterface');
+		$mockTypeConverterClass = $this->getMockClass(\TYPO3\Flow\Property\TypeConverterInterface::class);
 		$this->propertyMappingConfiguration->setTypeConverterOptions($mockTypeConverterClass, array('k1' => 'v1', 'k2' => 'v2'));
 		$this->propertyMappingConfiguration->setTypeConverterOptions($mockTypeConverterClass, array('k3' => 'v3'));
 
@@ -135,7 +135,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setTypeConverterOptionShouldOverrideAlreadySetOptions() {
-		$mockTypeConverterClass = $this->getMockClass('TYPO3\Flow\Property\TypeConverterInterface');
+		$mockTypeConverterClass = $this->getMockClass(\TYPO3\Flow\Property\TypeConverterInterface::class);
 		$this->propertyMappingConfiguration->setTypeConverterOptions($mockTypeConverterClass, array('k1' => 'v1', 'k2' => 'v2'));
 		$this->propertyMappingConfiguration->setTypeConverterOption($mockTypeConverterClass, 'k1', 'v3');
 
@@ -154,7 +154,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getTypeConverterReturnsTypeConverterIfItHasBeenSet() {
-		$mockTypeConverter = $this->getMock('TYPO3\Flow\Property\TypeConverterInterface');
+		$mockTypeConverter = $this->getMock(\TYPO3\Flow\Property\TypeConverterInterface::class);
 		$this->propertyMappingConfiguration->setTypeConverter($mockTypeConverter);
 		$this->assertSame($mockTypeConverter, $this->propertyMappingConfiguration->getTypeConverter());
 	}
@@ -182,7 +182,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return array Signature: $methodToTestForFluentInterface [, $argumentsForMethod = array() ]
 	 */
 	public function fluentInterfaceMethodsDataProvider() {
-		$mockTypeConverterClass = $this->getMockClass('TYPO3\Flow\Property\TypeConverterInterface');
+		$mockTypeConverterClass = $this->getMockClass(\TYPO3\Flow\Property\TypeConverterInterface::class);
 
 		return array(
 			array('allowAllProperties'),
@@ -191,7 +191,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('setMapping', array('k1', 'k1a')),
 			array('setTypeConverterOptions', array($mockTypeConverterClass, array('k1' => 'v1', 'k2' => 'v2'))),
 			array('setTypeConverterOption', array($mockTypeConverterClass, 'k1', 'v3')),
-			array('setTypeConverter', array($this->getMock('TYPO3\Flow\Property\TypeConverterInterface'))),
+			array('setTypeConverter', array($this->getMock(\TYPO3\Flow\Property\TypeConverterInterface::class))),
 		);
 	}
 
@@ -212,7 +212,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->propertyMappingConfiguration->forProperty('items.*')->setTypeConverterOptions('stdClass', array('k1' => 'v1'));
 
 		$configuration = $this->propertyMappingConfiguration->getConfigurationFor('items')->getConfigurationFor('6');
-		$this->assertSame('v1', $configuration->getConfigurationValue('stdClass', 'k1'));
+		$this->assertSame('v1', $configuration->getConfigurationValue(\stdClass::class, 'k1'));
 	}
 
 	/**
@@ -223,7 +223,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->propertyMappingConfiguration->forProperty('items.*.foo')->setTypeConverterOptions('stdClass', array('k1' => 'v1'));
 
 		$configuration = $this->propertyMappingConfiguration->forProperty('items.6.foo');
-		$this->assertSame('v1', $configuration->getConfigurationValue('stdClass', 'k1'));
+		$this->assertSame('v1', $configuration->getConfigurationValue(\stdClass::class, 'k1'));
 	}
 
 	/**

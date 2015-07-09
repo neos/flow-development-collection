@@ -28,7 +28,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			}'
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('isMethodFinal'), array(), '', FALSE);
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array('isMethodFinal'), array(), '', FALSE);
 		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(TRUE));
 
 		$methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
@@ -50,7 +50,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			}'
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
 		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(TRUE, FALSE, FALSE, TRUE));
 		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(FALSE, TRUE, FALSE, FALSE));
 		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->will($this->returnValue(FALSE));
@@ -84,14 +84,14 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
 		$mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
 				array('arg1' => array()),
 				array('arg1' => array(), 'arg2' => array()),
 				array('arg1' => array(), 'arg2' => array(), 'arg3' => array())
 		));
 
-		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\Logger');
+		$mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\Logger::class);
 		$mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
 			'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
 		));

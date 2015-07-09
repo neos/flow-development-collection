@@ -23,7 +23,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $configurationValidator;
 
 	public function setUp() {
-		$this->configurationValidator = $this->getAccessibleMock('TYPO3\Flow\Utility\SchemaValidator', array('getError'));
+		$this->configurationValidator = $this->getAccessibleMock(\TYPO3\Flow\Utility\SchemaValidator::class, array('getError'));
 	}
 
 	/**
@@ -599,8 +599,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesStringTypePropertyWithFormatClassNameConstraintDataProvider() {
 		return array(
-			array('\TYPO3\Flow\Package\PackageManager', TRUE),
-			array('\TYPO3\Flow\UnknownClass', FALSE),
+			array(\TYPO3\Flow\Package\PackageManager::class, TRUE),
+			array('TYPO3\Flow\UnknownClass', FALSE),
 			array('foobar', FALSE),
 			array('foo bar', FALSE),
 			array('foo/bar', FALSE),
@@ -626,7 +626,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraintDataProvider() {
 		return array(
-			array('\TYPO3\Flow\Package\PackageManagerInterface', TRUE),
+			array(\TYPO3\Flow\Package\PackageManagerInterface::class, TRUE),
 			array('\TYPO3\Flow\UnknownClass', FALSE),
 			array('foobar', FALSE),
 			array('foo bar', FALSE),

@@ -209,9 +209,9 @@ class ProxyClassBuilder {
 	protected function buildSetRelatedEntitiesCode() {
 		return "
 	if (property_exists(\$this, 'Flow_Persistence_RelatedEntities') && is_array(\$this->Flow_Persistence_RelatedEntities)) {
-		\$persistenceManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface');
+		\$persistenceManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Persistence\\PersistenceManagerInterface::class);
 		foreach (\$this->Flow_Persistence_RelatedEntities as \$entityInformation) {
-			if(\$entityInformation['entityType'] === 'TYPO3\Flow\Resource\ResourcePointer') continue;
+			if(\$entityInformation['entityType'] === \\TYPO3\\Flow\\Resource\\ResourcePointer::class) continue;
 			\$entity = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
 			if (isset(\$entityInformation['entityPath'])) {
 				\$this->\$entityInformation['propertyName'] = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->\$entityInformation['propertyName'], \$entityInformation['entityPath'], \$entity);
@@ -237,14 +237,14 @@ class ProxyClassBuilder {
 		if ($this->reflectionService->hasMethod($className, '__sleep') === FALSE) {
 
 			$code = "\t\t\$this->Flow_Object_PropertiesToSerialize = array();
-	\$reflectionService = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Reflection\\ReflectionService');
+	\$reflectionService = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Reflection\\ReflectionService::class);
 	\$reflectedClass = new \\ReflectionClass('" . $className . "');
 	\$allReflectedProperties = \$reflectedClass->getProperties();
 	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'Flow_Aop_Proxy_groupedAdviceChains', 'Flow_Aop_Proxy_methodIsInAdviceMode'))) continue;
 		if (isset(\$this->Flow_Injected_Properties) && is_array(\$this->Flow_Injected_Properties) && in_array(\$propertyName, \$this->Flow_Injected_Properties)) continue;
-		if (\$reflectionProperty->isStatic() || \$reflectionService->isPropertyAnnotatedWith('" . $className . "', \$propertyName, 'TYPO3\\Flow\\Annotations\\Transient')) continue;
+		if (\$reflectionProperty->isStatic() || \$reflectionService->isPropertyAnnotatedWith('" . $className . "', \$propertyName, \\TYPO3\\Flow\\Annotations\\Transient::class)) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			if (count(\$this->\$propertyName) > 0) {
 				foreach (\$this->\$propertyName as \$key => \$value) {
@@ -264,12 +264,12 @@ class ProxyClassBuilder {
 					\$className = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
 				}
 			}
-			if (\$this->\$propertyName instanceof \\TYPO3\\Flow\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName) || \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+			if (\$this->\$propertyName instanceof \\TYPO3\\Flow\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Persistence\\PersistenceManagerInterface::class)->isNewObject(\$this->\$propertyName) || \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				if (!property_exists(\$this, 'Flow_Persistence_RelatedEntities') || !is_array(\$this->Flow_Persistence_RelatedEntities)) {
 					\$this->Flow_Persistence_RelatedEntities = array();
 					\$this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
 				}
-				\$identifier = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$this->\$propertyName);
+				\$identifier = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Persistence\\PersistenceManagerInterface::class)->getIdentifierByObject(\$this->\$propertyName);
 				if (!\$identifier && \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 					\$identifier = current(\\TYPO3\\Flow\\Reflection\\ObjectAccess::getProperty(\$this->\$propertyName, '_identifier', TRUE));
 				}
@@ -280,7 +280,7 @@ class ProxyClassBuilder {
 				);
 				continue;
 			}
-			if (\$className !== FALSE && (\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getScope(\$className) === \\TYPO3\\Flow\\Object\\Configuration\\Configuration::SCOPE_SINGLETON || \$className === 'TYPO3\\Flow\\Object\\DependencyInjection\\DependencyProxy')) {
+			if (\$className !== FALSE && (\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getScope(\$className) === \\TYPO3\\Flow\\Object\\Configuration\\Configuration::SCOPE_SINGLETON || \$className === \\TYPO3\\Flow\\Object\\DependencyInjection\\DependencyProxy::class)) {
 				continue;
 			}
 		}
@@ -302,7 +302,7 @@ class ProxyClassBuilder {
 			foreach (\$propertyValue as \$key => \$value) {
 				\$this->searchForEntitiesAndStoreIdentifierArray(\$path . '.' . \$key, \$value, \$originalPropertyName);
 			}
-		} elseif (\$propertyValue instanceof \\TYPO3\\Flow\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface')->isNewObject(\$propertyValue) || \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+		} elseif (\$propertyValue instanceof \\TYPO3\\Flow\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Persistence\\PersistenceManagerInterface::class)->isNewObject(\$propertyValue) || \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 			if (!property_exists(\$this, 'Flow_Persistence_RelatedEntities') || !is_array(\$this->Flow_Persistence_RelatedEntities)) {
 				\$this->Flow_Persistence_RelatedEntities = array();
 				\$this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
@@ -312,7 +312,7 @@ class ProxyClassBuilder {
 			} else {
 				\$className = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$propertyValue));
 			}
-			\$identifier = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$propertyValue);
+			\$identifier = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Persistence\\PersistenceManagerInterface::class)->getIdentifierByObject(\$propertyValue);
 			if (!\$identifier && \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				\$identifier = current(\\TYPO3\\Flow\\Reflection\\ObjectAccess::getProperty(\$propertyValue, '_identifier', TRUE));
 			}
@@ -565,9 +565,9 @@ class ProxyClassBuilder {
 	public function buildPropertyInjectionCodeByConfigurationTypeAndPath(Configuration $objectConfiguration, $propertyName, $configurationType, $configurationPath = NULL) {
 		$className = $objectConfiguration->getClassName();
 		if ($configurationPath !== NULL) {
-			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\'' . $configurationType . '\', \'' . $configurationPath . '\')';
+			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\', \'' . $configurationPath . '\')';
 		} else {
-			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\'' . $configurationType . '\')';
+			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\')';
 		}
 
 		$result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
@@ -733,7 +733,7 @@ class ProxyClassBuilder {
 	 */
 	protected function compileStaticMethods($className, $proxyClass) {
 		if ($this->classesWithCompileStaticAnnotation === NULL) {
-			$this->classesWithCompileStaticAnnotation = array_flip($this->reflectionService->getClassesContainingMethodsAnnotatedWith('TYPO3\Flow\Annotations\CompileStatic'));
+			$this->classesWithCompileStaticAnnotation = array_flip($this->reflectionService->getClassesContainingMethodsAnnotatedWith(\TYPO3\Flow\Annotations\CompileStatic::class));
 		}
 		if (!isset($this->classesWithCompileStaticAnnotation[$className])) {
 			return;
@@ -741,7 +741,7 @@ class ProxyClassBuilder {
 
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
-			if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, 'TYPO3\Flow\Annotations\CompileStatic')) {
+			if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, \TYPO3\Flow\Annotations\CompileStatic::class)) {
 				$compiledMethod = $proxyClass->getMethod($methodName);
 
 				$value = call_user_func(array($className, $methodName), $this->objectManager);

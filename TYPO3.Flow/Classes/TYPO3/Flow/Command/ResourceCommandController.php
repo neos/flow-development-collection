@@ -132,7 +132,7 @@ class ResourceCommandController extends CommandController {
 		$this->outputLine();
 
 		if ($mediaPackagePresent && count($brokenResources) > 0) {
-			$assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
+			$assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
 			/* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
 
 			foreach ($brokenResources as $resource) {

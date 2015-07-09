@@ -57,7 +57,7 @@ class UriTemplate {
 
 		self::$variables = $variables;
 
-		return preg_replace_callback('/\{([^\}]+)\}/', array('TYPO3\Flow\Http\UriTemplate', 'expandMatch'), $template);
+		return preg_replace_callback('/\{([^\}]+)\}/', array(\TYPO3\Flow\Http\UriTemplate::class, 'expandMatch'), $template);
 	}
 
 	/**

@@ -39,7 +39,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$this->markTestSkipped('memcached not reachable');
 		}
 
-		$this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', FALSE);
 	}
 
 	/**
@@ -221,14 +221,14 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function flushRemovesOnlyOwnEntries() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 
-		$thisCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 		$thisBackend->initializeObject();
 
-		$thatCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$thatBackend->injectEnvironment($this->mockEnvironment);
@@ -266,7 +266,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \TYPO3\Flow\Cache\Backend\MemcachedBackend
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', FALSE);
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}

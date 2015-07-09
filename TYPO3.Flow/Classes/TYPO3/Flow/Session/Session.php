@@ -342,7 +342,7 @@ class Session implements SessionInterface {
 						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
 						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objectManager->setInstance($objectName, $object);
-							$this->objectManager->get('TYPO3\Flow\Session\Aspect\LazyLoadingAspect')->registerSessionInstance($objectName, $object);
+							$this->objectManager->get(\TYPO3\Flow\Session\Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
 						}
 					}
 				}
@@ -633,7 +633,7 @@ class Session implements SessionInterface {
 			if ($this->metaDataCache->has($this->sessionIdentifier)) {
 				// Security context can't be injected and must be retrieved manually
 				// because it relies on this very session object:
-				$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+				$securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
 				if ($securityContext->isInitialized()) {
 					$this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
 				}

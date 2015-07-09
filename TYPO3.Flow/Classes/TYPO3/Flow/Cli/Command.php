@@ -116,7 +116,7 @@ class Command {
 		$lines = explode(chr(10), $commandMethodReflection->getDescription());
 		$shortDescription = ((count($lines) > 0) ? trim($lines[0]) : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
 
-		if ($commandMethodReflection->getDeclaringClass()->implementsInterface('TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface')) {
+		if ($commandMethodReflection->getDeclaringClass()->implementsInterface(\TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface::class)) {
 			$shortDescription = call_user_func(array($this->controllerClassName, 'processDescription'), $this->controllerCommandName, $shortDescription, $this->objectManager);
 		}
 		return $shortDescription;
@@ -141,7 +141,7 @@ class Command {
 			}
 		}
 		$description = implode(chr(10), $descriptionLines);
-		if ($commandMethodReflection->getDeclaringClass()->implementsInterface('TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface')) {
+		if ($commandMethodReflection->getDeclaringClass()->implementsInterface(\TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface::class)) {
 			$description = call_user_func(array($this->controllerClassName, 'processDescription'), $this->controllerCommandName, $description, $this->objectManager);
 		}
 		return $description;

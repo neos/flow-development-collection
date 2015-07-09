@@ -22,5 +22,5 @@ class TestEntityDDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Rep
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD';
+	const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD::class;
 }

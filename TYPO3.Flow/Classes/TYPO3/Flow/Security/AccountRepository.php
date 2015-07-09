@@ -28,7 +28,7 @@ class AccountRepository extends Repository {
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Security\Account';
+	const ENTITY_CLASSNAME = \TYPO3\Flow\Security\Account::class;
 
 	/**
 	 * @var array

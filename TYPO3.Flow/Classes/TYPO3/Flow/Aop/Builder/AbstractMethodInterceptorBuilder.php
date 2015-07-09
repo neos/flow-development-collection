@@ -152,11 +152,11 @@ abstract class AbstractMethodInterceptorBuilder {
 	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName, $declaringClassName) {
 		$advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterAdvice::class])) {
 			$advicesCode .= "\n\t\t\$result = NULL;\n\t\t\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\BeforeAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\BeforeAdvice::class])) {
 			$advicesCode .= '
 				if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\BeforeAdvice\'])) {
 					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\BeforeAdvice\'];
@@ -170,7 +170,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AroundAdvice::class])) {
 			$advicesCode .= '
 				$adviceChains = $this->Flow_Aop_Proxy_getAdviceChains(\'' . $methodName . '\');
 				$adviceChain = $adviceChains[\'TYPO3\Flow\Aop\Advice\AroundAdvice\'];
@@ -187,7 +187,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterReturningAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterReturningAdvice::class])) {
 			$advicesCode .= '
 				if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterReturningAdvice\'])) {
 					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterReturningAdvice\'];
@@ -201,7 +201,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterAdvice::class])) {
 			$advicesCode .= '
 				if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'])) {
 					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'];
@@ -216,13 +216,13 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterAdvice::class])) {
 			$advicesCode .= '
 			} catch (\Exception $exception) {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterThrowingAdvice::class])) {
 			$advicesCode .= '
 				if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterThrowingAdvice\'])) {
 					$advices =  $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterThrowingAdvice\'];
@@ -236,7 +236,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterAdvice::class])) {
 			$advicesCode .= '
 				if (!$afterAdviceInvoked && isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'])) {
 					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'];
@@ -248,7 +248,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset ($groupedAdvices[\TYPO3\Flow\Aop\Advice\AfterAdvice::class])) {
 			$advicesCode .= '
 				throw $exception;
 		}

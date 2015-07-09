@@ -23,8 +23,8 @@ class HttpBasicTest extends UnitTestCase {
 	 * @test
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
+		$mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+		$mockResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->getMock();
 
 		$entryPoint = new HttpBasic();
 		$entryPoint->setOptions(array('realm' => 'realm string'));

@@ -162,8 +162,8 @@ class ObjectSerializer {
 			} elseif (is_object($propertyValue)
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& (
-							$this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\Entity')
-							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\ValueObject')
+							$this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\Entity::class)
+							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\ValueObject::class)
 							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
 						)) {
 

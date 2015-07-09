@@ -227,7 +227,7 @@ class RequestTest extends UnitTestCase {
 		$request = Request::create($uri);
 
 		$subRequest = $request->createActionRequest();
-		$this->assertInstanceOf('TYPO3\Flow\Mvc\ActionRequest', $subRequest);
+		$this->assertInstanceOf(\TYPO3\Flow\Mvc\ActionRequest::class, $subRequest);
 		$this->assertSame($request, $subRequest->getParentRequest());
 	}
 
@@ -1037,7 +1037,7 @@ class RequestTest extends UnitTestCase {
 			)
 		);
 
-		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', FALSE);
 		$result = $request->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
@@ -1096,7 +1096,7 @@ class RequestTest extends UnitTestCase {
 			),
 		);
 
-		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', FALSE);
 		$result = $request->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
@@ -1125,7 +1125,7 @@ class RequestTest extends UnitTestCase {
 	 * @dataProvider qualityValues
 	 */
 	public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues) {
-		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', FALSE);
 		$actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
 		$this->assertSame($expectedValues, $actualValues);
 	}

@@ -39,9 +39,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->view = $this->getMock('TYPO3\Flow\Mvc\View\JsonView', array('loadConfigurationFromYamlFile'));
-		$this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$this->response = $this->getMock('TYPO3\Flow\Http\Response', array());
+		$this->view = $this->getMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('loadConfigurationFromYamlFile'));
+		$this->controllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array(), array(), '', FALSE);
+		$this->response = $this->getMock(\TYPO3\Flow\Http\Response::class, array());
 		$this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
 		$this->view->setControllerContext($this->controllerContext);
 	}
@@ -101,7 +101,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$output[] = array($object, $configuration, $expected, 'array of objects should be serialized');
 
 		$properties = array('foo' => 'bar', 'prohibited' => 'xxx');
-		$nestedObject = $this->getMock('Test' . md5(uniqid(mt_rand(), TRUE)), array('getName', 'getPath', 'getProperties', 'getOther'));
+		$nestedObject = $this->getMock(\Test::class . md5(uniqid(mt_rand(), TRUE)), array('getName', 'getPath', 'getProperties', 'getOther'));
 		$nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
 		$nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
 		$nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
@@ -147,7 +147,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider jsonViewTestData
 	 */
 	public function testTransformValue($object, $configuration, $expected, $description) {
-		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$jsonView = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('dummy'), array(), '', FALSE);
 
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -188,8 +188,8 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider objectIdentifierExposureTestData
 	 */
 	public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description) {
-		$persistenceManagerMock = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array('getIdentifierByObject'));
-		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$persistenceManagerMock = $this->getMock(\TYPO3\Flow\Persistence\Generic\PersistenceManager::class, array('getIdentifierByObject'));
+		$jsonView = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('dummy'), array(), '', FALSE);
 		$jsonView->_set('persistenceManager', $persistenceManagerMock);
 
 		$persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->will($this->returnValue($dummyIdentifier));
@@ -247,7 +247,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 
-		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$jsonView = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('dummy'), array(), '', FALSE);
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
 		$this->assertEquals($expected, $actual);
 	}
@@ -414,7 +414,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renderTransformsJsonSerializableValues() {
-		$value = $this->getMock('JsonSerializable', array('jsonSerialize'));
+		$value = $this->getMock(\JsonSerializable::class, array('jsonSerialize'));
 		$value->expects($this->any())->method('jsonSerialize')->will($this->returnValue(array('name' => 'Foo', 'age' => 42)));
 
 		$this->view->assign('value', $value);

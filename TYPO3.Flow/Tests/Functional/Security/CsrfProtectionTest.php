@@ -37,8 +37,8 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$accountRepository = $this->objectManager->get('\TYPO3\Flow\Security\AccountRepository');
-		$accountFactory = $this->objectManager->get('\TYPO3\Flow\Security\AccountFactory');
+		$accountRepository = $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class);
+		$accountFactory = $this->objectManager->get(\TYPO3\Flow\Security\AccountFactory::class);
 
 		$account = $accountFactory->createAccountWithPassword('admin', 'password', array('TYPO3.Flow:Administrator'), 'UsernamePasswordTestingProvider');
 		$accountRepository->add($account);
@@ -67,7 +67,6 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function postRequestOnRestrictedActionWithoutCsrfTokenCausesAccessDeniedException() {
 		$this->markTestIncomplete('Needs to be implemented');
-		return;
 
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'admin';

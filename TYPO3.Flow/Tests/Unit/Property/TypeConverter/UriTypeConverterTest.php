@@ -42,21 +42,21 @@ class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function targetTypeIsUri() {
-		$this->assertSame('TYPO3\Flow\Http\Uri', $this->typeConverter->getSupportedTargetType());
+		$this->assertSame(\TYPO3\Flow\Http\Uri::class, $this->typeConverter->getSupportedTargetType());
 	}
 
 	/**
 	 * @test
 	 */
 	public function typeConverterReturnsUriOnValidUri() {
-		$this->assertInstanceOf('TYPO3\Flow\Http\Uri', $this->typeConverter->convertFrom('http://localhost/foo', 'TYPO3\Flow\Http\Uri'));
+		$this->assertInstanceOf(\TYPO3\Flow\Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', \TYPO3\Flow\Http\Uri::class));
 	}
 
 	/**
 	 * @test
 	 */
 	public function typeConverterReturnsErrorOnMalformedUri() {
-		$actual = $this->typeConverter->convertFrom('http:////localhost', 'TYPO3\Flow\Http\Uri');
-		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actual);
+		$actual = $this->typeConverter->convertFrom('http:////localhost', \TYPO3\Flow\Http\Uri::class);
+		$this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $actual);
 	}
 }

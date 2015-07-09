@@ -35,12 +35,12 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	protected $mockResourceManager;
 
 	public function setUp() {
-		$this->resourceTypeConverter = $this->getAccessibleMock('TYPO3\Flow\Resource\ResourceTypeConverter', array('dummy'));
+		$this->resourceTypeConverter = $this->getAccessibleMock(\TYPO3\Flow\Resource\ResourceTypeConverter::class, array('dummy'));
 
-		$this->mockPersistenceManager = $this->getMockBuilder('TYPO3\Flow\Persistence\PersistenceManagerInterface')->getMock();
+		$this->mockPersistenceManager = $this->getMockBuilder(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->getMock();
 		$this->resourceTypeConverter->_set('persistenceManager', $this->mockPersistenceManager);
 
-		$this->mockResourceManager = $this->getMockBuilder('TYPO3\Flow\Resource\ResourceManager')->getMock();
+		$this->mockResourceManager = $this->getMockBuilder(\TYPO3\Flow\Resource\ResourceManager::class)->getMock();
 		$this->resourceTypeConverter->_set('resourceManager', $this->mockResourceManager);
 	}
 
@@ -49,7 +49,7 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'array'), $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
-		$this->assertEquals('TYPO3\Flow\Resource\Resource', $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(\TYPO3\Flow\Resource\Resource::class, $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->resourceTypeConverter->getPriority(), 'Priority does not match');
 	}
 
@@ -57,21 +57,21 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithErrorSet() {
-		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('error' => \UPLOAD_ERR_OK), 'TYPO3\Flow\Resource\Resource'));
+		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('error' => \UPLOAD_ERR_OK), \TYPO3\Flow\Resource\Resource::class));
 	}
 
 	/**
 	 * @test
 	 */
 	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithOriginallySubmittedResourceSet() {
-		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('originallySubmittedResource' => 'SomeResource'), 'TYPO3\Flow\Resource\Resource'));
+		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('originallySubmittedResource' => 'SomeResource'), \TYPO3\Flow\Resource\Resource::class));
 	}
 
 	/**
 	 * @test
 	 */
 	public function convertFromReturnsNullIfSourceArrayIsEmpty() {
-		$this->assertNull($this->resourceTypeConverter->convertFrom(array(), 'TYPO3\Flow\Resource\Resource'));
+		$this->assertNull($this->resourceTypeConverter->convertFrom(array(), \TYPO3\Flow\Resource\Resource::class));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class ResourceTypeConverterTest extends UnitTestCase {
 	 */
 	public function convertFromReturnsNullIfNoFileWasUploaded() {
 		$source = array('error' => \UPLOAD_ERR_NO_FILE);
-		$this->assertNull($this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource'));
+		$this->assertNull($this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class));
 	}
 
 	/**
@@ -95,11 +95,11 @@ class ResourceTypeConverterTest extends UnitTestCase {
 
 		$expectedResource = new Resource();
 		$this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
-		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', 'TYPO3\Flow\Resource\Resource')->will($this->returnValue($expectedResource));
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', \TYPO3\Flow\Resource\Resource::class)->will($this->returnValue($expectedResource));
 
-		$actualResource = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+		$actualResource = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
 
-		$this->assertInstanceOf('TYPO3\Flow\Resource\Resource', $actualResource);
+		$this->assertInstanceOf(\TYPO3\Flow\Resource\Resource::class, $actualResource);
 		$this->assertSame($expectedResource, $actualResource);
 	}
 
@@ -115,9 +115,9 @@ class ResourceTypeConverterTest extends UnitTestCase {
 		);
 
 		$this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
-		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', 'TYPO3\Flow\Resource\Resource')->will($this->returnValue(NULL));
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', \TYPO3\Flow\Resource\Resource::class)->will($this->returnValue(NULL));
 
-		$actualResource = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+		$actualResource = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
 
 		$this->assertNull($actualResource);
 	}
@@ -130,8 +130,8 @@ class ResourceTypeConverterTest extends UnitTestCase {
 			'error' => \UPLOAD_ERR_PARTIAL
 		);
 
-		$actualResult = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
-		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
+		$actualResult = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
+		$this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $actualResult);
 	}
 
 	/**
@@ -142,11 +142,11 @@ class ResourceTypeConverterTest extends UnitTestCase {
 			'error' => \UPLOAD_ERR_CANT_WRITE
 		);
 
-		$mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+		$mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
 		$mockSystemLogger->expects($this->once())->method('log');
 		$this->resourceTypeConverter->_set('systemLogger', $mockSystemLogger);
 
-		$this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+		$this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
 	}
 
 
@@ -158,10 +158,10 @@ class ResourceTypeConverterTest extends UnitTestCase {
 			'tmp_name' => 'SomeFilename',
 			'error' => \UPLOAD_ERR_OK
 		);
-		$mockResource = $this->getMockBuilder('TYPO3\Flow\Resource\Resource')->getMock();
+		$mockResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->getMock();
 		$this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->returnValue($mockResource));
 
-		$actualResult = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
+		$actualResult = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
 		$this->assertSame($mockResource, $actualResult);
 	}
 
@@ -175,7 +175,7 @@ class ResourceTypeConverterTest extends UnitTestCase {
 		);
 		$this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->returnValue(FALSE));
 
-		$actualResult = $this->resourceTypeConverter->convertFrom($source, 'TYPO3\Flow\Resource\Resource');
-		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
+		$actualResult = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
+		$this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $actualResult);
 	}
 }

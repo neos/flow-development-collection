@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class RegularExpressionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\RegularExpressionValidator';
+	protected $validatorClassName = \TYPO3\Flow\Validation\Validator\RegularExpressionValidator::class;
 
 	/**
 	 * Looks empty - and that's the purpose: do not run the parent's setUp().

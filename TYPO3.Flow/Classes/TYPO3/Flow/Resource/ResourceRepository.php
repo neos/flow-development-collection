@@ -29,7 +29,7 @@ class ResourceRepository extends Repository {
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Resource\Resource';
+	const ENTITY_CLASSNAME = \TYPO3\Flow\Resource\Resource::class;
 
 	/**
 	 * @var \SplObjectStorage

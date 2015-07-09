@@ -26,7 +26,7 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $token;
 
 	public function setup() {
-		$this->token = $this->getMockForAbstractClass('TYPO3\Flow\Security\Authentication\Token\AbstractToken');
+		$this->token = $this->getMockForAbstractClass(\TYPO3\Flow\Security\Authentication\Token\AbstractToken::class);
 	}
 
 	/**
@@ -103,7 +103,7 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function setRequestPatternsOnlyAcceptsRequestPatterns() {
 		$uriRequestPattern = new UriRequestPattern('http://mydomain.com/some/path/pattern');

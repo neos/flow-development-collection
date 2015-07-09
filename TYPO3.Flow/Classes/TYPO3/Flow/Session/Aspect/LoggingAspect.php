@@ -125,7 +125,7 @@ class LoggingAspect {
 	 */
 	protected function getClassName(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$className = $joinPoint->getClassName();
-		if (substr($className, 0, 18) === 'TYPO3\Flow\Session') {
+		if (substr($className, 0, 18) === \TYPO3\Flow\Session::class) {
 			$className = substr($className, 19);
 		}
 		return $className;

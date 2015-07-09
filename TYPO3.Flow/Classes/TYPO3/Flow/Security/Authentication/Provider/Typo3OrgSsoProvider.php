@@ -45,7 +45,7 @@ class Typo3OrgSsoProvider extends AbstractProvider {
 	 * @return array
 	 */
 	public function getTokenClassNames() {
-		return array('TYPO3\Flow\Security\Authentication\Token\Typo3OrgSsoToken');
+		return array(\TYPO3\Flow\Security\Authentication\Token\Typo3OrgSsoToken::class);
 	}
 
 	/**

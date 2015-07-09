@@ -42,14 +42,14 @@ class RoutingComponent implements ComponentInterface {
 	 * Resolve a route for the request
 	 *
 	 * Stores the resolved route values in the ComponentContext to pass them
-	 * to other components. They can be accessed via ComponentContext::getParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults');
+	 * to other components. They can be accessed via ComponentContext::getParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults');
 	 *
 	 * @param ComponentContext $componentContext
 	 * @return void
 	 */
 	public function handle(ComponentContext $componentContext) {
 		$matchResults = $this->router->route($componentContext->getHttpRequest());
-		$componentContext->setParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults', $matchResults);
+		$componentContext->setParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults', $matchResults);
 	}
 
 }

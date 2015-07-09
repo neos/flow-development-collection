@@ -83,7 +83,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\Flow\Resource\Resource';
+	protected $targetType = \TYPO3\Flow\Resource\Resource::class;
 
 	/**
 	 * @var integer
@@ -158,7 +158,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 	protected function handleFileUploads(array $source, PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['originallySubmittedResource']) && isset($source['originallySubmittedResource']['__identity'])) {
-				return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], 'TYPO3\Flow\Resource\Resource');
+				return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], \TYPO3\Flow\Resource\Resource::class);
 			}
 			return NULL;
 		}
@@ -207,7 +207,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 				return $resource;
 			}
 
-			if ($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== TRUE) {
+			if ($configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== TRUE) {
 				throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
 			}
 		}
@@ -224,7 +224,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 			if (isset($source['data'])) {
 				$resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], $collectionName, $givenResourceIdentity);
 			} elseif ($hash !== NULL) {
-				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
+				$resource = $this->resourceManager->importResource($configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
 				if (is_array($source) && isset($source['filename'])) {
 					$resource->setFilename($source['filename']);
 				}
@@ -252,7 +252,7 @@ class ResourceTypeConverter extends AbstractTypeConverter {
 		if ($configuration === NULL) {
 			return ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
 		}
-		$collectionName = $configuration->getConfigurationValue('TYPO3\Flow\Resource\ResourceTypeConverter', self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
+		$collectionName = $configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
 		if (isset($source['__collectionName']) && $source['__collectionName'] !== '') {
 			$collectionName = $source['__collectionName'];
 		}
