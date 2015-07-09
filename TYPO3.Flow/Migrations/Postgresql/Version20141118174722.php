@@ -52,24 +52,32 @@ class Version20141118174722 extends AbstractMigration {
 		$resourcesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, sha1, filename FROM typo3_flow_resource_resource');
 		while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
 			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'];
-			if (!file_exists($resourcePathAndFilename)) {
+			$newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', TRUE) . '/' . $resourceInfo['sha1'];
+
+			$mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
+			if (file_exists($resourcePathAndFilename)) {
+				$md5 = md5_file($resourcePathAndFilename);
+				$filesize = filesize($resourcePathAndFilename);
+
+				if (!file_exists(dirname($newResourcePathAndFilename))) {
+					Files::createDirectoryRecursively(dirname($newResourcePathAndFilename));
+				}
+				$result = @rename($resourcePathAndFilename, $newResourcePathAndFilename);
+			} elseif (file_exists($newResourcePathAndFilename)) {
+				$md5 = md5_file($newResourcePathAndFilename);
+				$filesize = filesize($newResourcePathAndFilename);
+
+				$result = TRUE;
+			} else {
 				$this->write(sprintf('Error while migrating database for the new resource management: the resource file "%s" (original filename: %s) was not found, but the resource object with uuid %s needs this file.', $resourcePathAndFilename, $resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
 				continue;
 			}
 
-			$md5 = md5_file($resourcePathAndFilename);
-			$filesize = filesize($resourcePathAndFilename);
-			$mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
 			$this->connection->executeUpdate(
 				'UPDATE typo3_flow_resource_resource SET collectionname = ?, mediatype = ?, md5 = ?, filesize = ? WHERE persistence_object_identifier = ?',
 				array('persistent', $mediaType, $md5, $filesize, $resourceInfo['persistence_object_identifier'])
 			);
 
-			$newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', TRUE) . '/' . $resourceInfo['sha1'];
-			if (!file_exists(dirname($newResourcePathAndFilename))) {
-				Files::createDirectoryRecursively(dirname($newResourcePathAndFilename));
-			}
-			$result = @rename($resourcePathAndFilename, $newResourcePathAndFilename);
 			if ($result === FALSE) {
 				$this->write(sprintf('Could not move the data file of resource "%s" from its legacy location at %s to the correct location %s.', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
 			}
