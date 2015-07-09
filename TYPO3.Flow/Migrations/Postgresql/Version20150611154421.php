@@ -22,18 +22,20 @@ class Version20150611154421 extends AbstractMigration {
 			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', TRUE) . '/' . $resourceInfo['sha1'];
 			$newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'][0] . '/' . $resourceInfo['sha1'][1] . '/' . $resourceInfo['sha1'][2] . '/' . $resourceInfo['sha1'][3] . '/' . $resourceInfo['sha1'];
 
-			if (!file_exists($resourcePathAndFilename)) {
-				$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its legacy location at "%s" to the correct location "%s" because the source file does not exist.', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
-				continue;
-			}
-			if (!file_exists(dirname($newResourcePathAndFilename))) {
-				Files::createDirectoryRecursively(dirname($newResourcePathAndFilename));
-			}
-			if (@rename($resourcePathAndFilename, $newResourcePathAndFilename) === FALSE) {
-				$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its legacy location at "%s" to the correct location "%s".', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
+			if (!file_exists($newResourcePathAndFilename)) {
+				if (!file_exists($resourcePathAndFilename)) {
+					$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its legacy location at "%s" to the correct location "%s" because the source file does not exist.', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
+					continue;
+				}
+				if (!file_exists(dirname($newResourcePathAndFilename))) {
+					Files::createDirectoryRecursively(dirname($newResourcePathAndFilename));
+				}
+				if (@rename($resourcePathAndFilename, $newResourcePathAndFilename) === FALSE) {
+					$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its legacy location at "%s" to the correct location "%s".', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
+				}
+				Files::removeEmptyDirectoriesOnPath(dirname($resourcePathAndFilename));
 			}
 		}
-		Files::removeEmptyDirectoriesOnPath(FLOW_PATH_DATA . 'Persistent/Resources/');
 	}
 
 	/**
@@ -48,17 +50,19 @@ class Version20150611154421 extends AbstractMigration {
 			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'][0] . '/' . $resourceInfo['sha1'][1] . '/' . $resourceInfo['sha1'][2] . '/' . $resourceInfo['sha1'][3] . '/' . $resourceInfo['sha1'];
 			$legacyResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', TRUE) . '/' . $resourceInfo['sha1'];
 
-			if (!file_exists($resourcePathAndFilename)) {
-				$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its location at "%s" to the legacy location "%s" because the source file does not exist.', $resourceInfo['sha1'], $resourcePathAndFilename, $legacyResourcePathAndFilename));
-				continue;
-			}
-			if (!file_exists(dirname($legacyResourcePathAndFilename))) {
-				Files::createDirectoryRecursively(dirname($legacyResourcePathAndFilename));
-			}
-			if (@rename($resourcePathAndFilename, $legacyResourcePathAndFilename) === FALSE) {
-				$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its location at "%s" to the legacy location "%s".', $resourceInfo['sha1'], $resourcePathAndFilename, $legacyResourcePathAndFilename));
+			if (!file_exists($legacyResourcePathAndFilename)) {
+				if (!file_exists($resourcePathAndFilename)) {
+					$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its location at "%s" to the legacy location "%s" because the source file does not exist.', $resourceInfo['sha1'], $resourcePathAndFilename, $legacyResourcePathAndFilename));
+					continue;
+				}
+				if (!file_exists(dirname($legacyResourcePathAndFilename))) {
+					Files::createDirectoryRecursively(dirname($legacyResourcePathAndFilename));
+				}
+				if (@rename($resourcePathAndFilename, $legacyResourcePathAndFilename) === FALSE) {
+					$this->write(sprintf('<warning>Could not move the data file of resource "%s" from its location at "%s" to the legacy location "%s".', $resourceInfo['sha1'], $resourcePathAndFilename, $legacyResourcePathAndFilename));
+				}
+				Files::removeEmptyDirectoriesOnPath(dirname($resourcePathAndFilename));
 			}
 		}
-		Files::removeEmptyDirectoriesOnPath(FLOW_PATH_DATA . 'Persistent/Resources/');
 	}
 }
