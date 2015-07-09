@@ -23,6 +23,7 @@ use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
 
 /**
  * A method privilege, able to restrict method calls based on pointcut expressions
+ * @Flow\Proxy(false)
  */
 class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterface {
 
