@@ -16,6 +16,7 @@ use TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Property\TypeConverterInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -211,6 +212,24 @@ class PersistentObjectConverterTest extends UnitTestCase {
 		);
 		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 		$this->converter->convertFrom($source, 'MySpecialType', array('foo' => 'bar'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertFromReturnsTargetNotFoundErrorIfHandleArrayDataFails() {
+		$identifier = '550e8400-e29b-11d4-a716-446655440000';
+		$object = new \stdClass();
+		$object->someProperty = 'asdf';
+
+		$source = array(
+			'__identity' => $identifier,
+			'foo' => 'bar'
+		);
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue(NULL));
+		$actualResult = $this->converter->convertFrom($source, 'MySpecialType', array('foo' => 'bar'));
+
+		$this->assertInstanceOf(TargetNotFoundError::class, $actualResult);
 	}
 
 	/**
