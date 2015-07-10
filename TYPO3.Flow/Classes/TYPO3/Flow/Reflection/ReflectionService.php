@@ -1613,8 +1613,11 @@ class ReflectionService {
 			}
 
 			foreach (class_parents($className) as $parentClassName) {
+				if (!isset($this->classSchemata[$parentClassName])) {
+					continue;
+				}
 				if ($this->isClassAbstract($parentClassName) === FALSE && $this->classSchemata[$parentClassName]->isAggregateRoot() === FALSE) {
-					throw new Exception('In a class hierarchy either all or no classes must be an aggregate root, "' . $className . '" is one but the parent class "' . $parentClassName . '" is not. You probably want to add a repository for "' . $parentClassName . '"', 1316009511);
+					throw new Exception(sprintf('In a class hierarchy of entities either all or no classes must be an aggregate root, "%1$s" is one but the parent class "%2$s" is not. You probably want to add a repository for "%2$s" or remove the Entity annotation.', $className, $parentClassName), 1316009511);
 				}
 			}
 		}
