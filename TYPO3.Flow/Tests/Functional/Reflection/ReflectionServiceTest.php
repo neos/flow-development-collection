@@ -38,6 +38,18 @@ class ReflectionServiceTest extends FunctionalTestCase {
 	}
 
 	/**
+	 * Test for https://jira.neos.io/browse/FLOW-316
+	 *
+	 * @test
+	 */
+	public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses() {
+		$this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
+
+		// dummy assertion to suppress PHPUnit warning
+		$this->assertTrue(TRUE);
+	}
+
+	/**
 	 * @test
 	 */
 	public function theReflectionServiceCorrectlyBuildsMethodTagsValues() {
