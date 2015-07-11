@@ -190,6 +190,63 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'expectedResult' => array($myObject5)
 			),
 
+			'Notinstanceof test works (1)' => array(
+				'sourceObjects' => array($myObject),
+				'filter' => '[!instanceof foo]',
+				'expectedResult' => array($myObject)
+			),
+			'Notinstanceof test works (2)' => array(
+				'sourceObjects' => array($myObject),
+				'filter' => '[  !instanceof \stdClass  ]',
+				'expectedResult' => array()
+			),
+			'Notinstanceof test works (with test for object)' => array(
+				'sourceObjects' => array($myObject),
+				'filter' => '[  !instanceof object  ]',
+				'expectedResult' => array()
+			),
+			'Notinstanceof test works (with test for string)' => array(
+				'sourceObjects' => array('myString'),
+				'filter' => '[  !instanceof string  ]',
+				'expectedResult' => array()
+			),
+
+			'Notinstanceof test works (with test for integer)' => array(
+				'sourceObjects' => array(42, '42', 400, 'foo'),
+				'filter' => '[  !instanceof integer  ]',
+				'expectedResult' => array('42', 'foo')
+			),
+
+			'Notinstanceof test works (with test for integer 2)' => array(
+				'sourceObjects' => array(42, '42', 400, 'foo'),
+				'filter' => '[  !instanceof int  ]',
+				'expectedResult' => array('42', 'foo')
+			),
+
+			'Notinstanceof test works (with test for boolean)' => array(
+				'sourceObjects' => array(FALSE, '', TRUE),
+				'filter' => '[  !instanceof boolean  ]',
+				'expectedResult' => array('')
+			),
+
+			'Notinstanceof test works (with test for float)' => array(
+				'sourceObjects' => array(FALSE, 42, 42.5, TRUE),
+				'filter' => '[  !instanceof float  ]',
+				'expectedResult' => array(FALSE, 42, TRUE)
+			),
+
+			'Notinstanceof test works (with test for array)' => array(
+				'sourceObjects' => array(FALSE, 42, 42.5, TRUE, array('foo')),
+				'filter' => '[  !instanceof array  ]',
+				'expectedResult' => array(FALSE, 42, 42.5, TRUE)
+			),
+
+			'Notinstanceof test works on attributes' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+				'filter' => '[ isHidden !instanceof boolean ]',
+				'expectedResult' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject6)
+			),
+
 			'Begin query match' => array(
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '[ myProperty ^= as ]',
