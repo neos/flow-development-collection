@@ -5,12 +5,12 @@
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
 			<target xml:lang="fr">Authentication obligatoire</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="fr" state="translated">Nom d'utilisateur</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="fr" state="translated">Mot de passe</target></trans-unit>
+			<target xml:lang="fr">Mot de passe</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
 			<target xml:lang="fr">Nouveau mot de passe</target></trans-unit>

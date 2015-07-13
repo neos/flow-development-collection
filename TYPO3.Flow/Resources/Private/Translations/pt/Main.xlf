@@ -2,30 +2,30 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="pt-BR">
     <body>
-      <trans-unit id="authentication.required" xml:space="preserve">
+      <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target xml:lang="pt-BR" state="translated">Autenticação necessária</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+			<target xml:lang="pt-BR">Autenticação necessária</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="pt-BR" state="translated">Nome de Usuário</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="pt-BR">Nome de Usuário</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="pt-BR" state="translated">Senha</target></trans-unit>
-      <trans-unit id="authentication.new-password" xml:space="preserve">
+			<target xml:lang="pt-BR">Senha</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
-			<target xml:lang="pt-BR" state="translated">Nova senha</target></trans-unit>
-      <trans-unit id="authentication.login" xml:space="preserve">
+			<target xml:lang="pt-BR">Nova senha</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="pt-BR" state="translated">Conectar</target></trans-unit>
-      <trans-unit id="authentication.logout" xml:space="preserve">
+			<target xml:lang="pt-BR">Conectar</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target xml:lang="pt-BR" state="translated">Sair</target></trans-unit>
-      <trans-unit id="update" xml:space="preserve">
+			<target xml:lang="pt-BR">Sair</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target xml:lang="pt-BR" state="translated">Atualizar</target></trans-unit>
-      <trans-unit id="submit" xml:space="preserve">
+			<target xml:lang="pt-BR">Atualizar</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target xml:lang="pt-BR" state="translated">Enviar</target></trans-unit>
+			<target xml:lang="pt-BR">Enviar</target></trans-unit>
     </body>
   </file>
 </xliff>

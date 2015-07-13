@@ -188,12 +188,12 @@
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
 			<target xml:lang="es-ES" state="needs-translation">The given value is not a Image instance</target></trans-unit>
-      <trans-unit id="1328029406" xml:space="preserve">
+      <trans-unit id="1328029406" xml:space="preserve" approved="yes">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="es-ES" state="translated">La orientación de la imagen debe ser "{0}"</target></trans-unit>
-      <trans-unit id="1328029362" xml:space="preserve">
+			<target xml:lang="es-ES">La orientación de la imagen debe ser "{0}"</target></trans-unit>
+      <trans-unit id="1328029362" xml:space="preserve" approved="yes">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="es-ES" state="translated">La orientación de imagen "{0}" no está permitida</target></trans-unit>
+			<target xml:lang="es-ES">La orientación de imagen "{0}" no está permitida</target></trans-unit>
     </body>
   </file>
 </xliff>

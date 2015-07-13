@@ -2,30 +2,30 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="cs">
     <body>
-      <trans-unit id="authentication.required" xml:space="preserve">
+      <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target xml:lang="cs" state="translated">Vyžadováno ověření</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+			<target xml:lang="cs">Vyžadováno ověření</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="cs" state="translated">Uživatelské jméno</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="cs">Uživatelské jméno</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="cs" state="translated">Heslo</target></trans-unit>
-      <trans-unit id="authentication.new-password" xml:space="preserve">
+			<target xml:lang="cs">Heslo</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
-			<target xml:lang="cs" state="translated">Nové heslo</target></trans-unit>
-      <trans-unit id="authentication.login" xml:space="preserve">
+			<target xml:lang="cs">Nové heslo</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="cs" state="translated">Přihlásit</target></trans-unit>
-      <trans-unit id="authentication.logout" xml:space="preserve">
+			<target xml:lang="cs">Přihlásit</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target xml:lang="cs" state="translated">Odhlásit</target></trans-unit>
-      <trans-unit id="update" xml:space="preserve">
+			<target xml:lang="cs">Odhlásit</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target xml:lang="cs" state="translated">Aktualizovat</target></trans-unit>
-      <trans-unit id="submit" xml:space="preserve">
+			<target xml:lang="cs">Aktualizovat</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target xml:lang="cs" state="translated">Odeslat</target></trans-unit>
+			<target xml:lang="cs">Odeslat</target></trans-unit>
     </body>
   </file>
 </xliff>
