@@ -45,7 +45,7 @@ class Tools {
 				}
 
 				$meta = self::readPackageMetaData(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')));
-				$composerManifest = self::readPackageManifest(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')));
+				$composerManifest = self::readComposerManifest(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')));
 
 				$packagesData[$packageKey] = array(
 					'packageKey' => $packageKey,
@@ -63,15 +63,26 @@ class Tools {
 	 * Read the package manifest from the composer.json file at $pathAndFileName
 	 *
 	 * @param string $pathAndFileName
-	 * @return mixed|NULL
+	 * @return array
 	 */
-	static protected function readPackageManifest($pathAndFileName) {
+	static public function readComposerManifest($pathAndFileName) {
 		if (file_exists($pathAndFileName)) {
 			$json = file_get_contents($pathAndFileName);
-			return json_decode($json);
+			return json_decode($json, TRUE);
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	 * Write the manifest to the given file.
+	 *
+	 * @param array $manifest
+	 * @param string $pathAndFilename
+	 * @return void
+	 */
+	static public function writeComposerManifest(array $manifest, $pathAndFilename) {
+		file_put_contents($pathAndFilename, json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 	}
 
 	/**
