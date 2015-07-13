@@ -29,16 +29,45 @@ class Git {
 	}
 
 	/**
-	 * Check whether the working copy is clean.
+	 * Check whether the given $path points to the top-level of a git repository
 	 *
 	 * @param string $path
 	 * @return boolean
 	 */
-	static public function isWorkingCopyClean($path) {
+	static public function isWorkingCopyRoot($path) {
+		if (!self::isWorkingCopy($path)) {
+			return FALSE;
+		}
+		chdir($path);
+		$output = array();
+		exec('git rev-parse --show-cdup', $output);
+		return implode('', $output) === '';
+	}
+
+	/**
+	 * Check whether the given $path is inside a git repository
+	 *
+	 * @param string $path
+	 * @return boolean
+	 */
+	static public function isWorkingCopy($path) {
+		chdir($path);
+		$output = array();
+		exec('git rev-parse --git-dir 2> /dev/null', $output);
+		return implode('', $output) !== '';
+	}
+
+	/**
+	 * Check whether the working copy has uncommitted changes.
+	 *
+	 * @param string $path
+	 * @return boolean
+	 */
+	static public function isWorkingCopyDirty($path) {
 		chdir($path);
 		$output = array();
 		exec('git status --porcelain', $output);
-		return $output === array();
+		return $output !== array();
 	}
 
 	/**
@@ -104,9 +133,24 @@ class Git {
 	 * @return boolean
 	 */
 	static public function logContains($path, $searchTerm) {
+		return self::getLog($path, $searchTerm) !== array();
+	}
+
+	/**
+	 * Returns the git log for the specified $path, optionally filtered for $searchTerm
+	 *
+	 * @param string $path
+	 * @param string $searchTerm optional term to filter the log for
+	 * @return array
+	 */
+	static public function getLog($path, $searchTerm = NULL) {
 		$output = array();
 		chdir($path);
-		exec('git log -F --oneline --grep=' . escapeshellarg($searchTerm), $output);
-		return $output !== array();
+		if ($searchTerm !== NULL) {
+			exec('git log -F --grep=' . escapeshellarg($searchTerm), $output);
+		} else {
+			exec('git log', $output);
+		}
+		return $output;
 	}
 }

@@ -125,25 +125,42 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function(AbstractMigration
 	}
 });
 
-$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES, function (AbstractMigration $migration, $packageKey, $reason) {
+$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED, function (AbstractMigration $migration, $reason) use ($migrationsManager) {
 	outputMigrationHeadline($migration);
-	outputLine('  Skipping %s: %s', array($packageKey, $reason));
+	outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason));
 	outputLine();
 });
 
 if ($verbose) {
-	$migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED, function (AbstractMigration $migration, $packageKey, $reason) {
+	$migrationsManager->on(Manager::EVENT_MIGRATION_ALREADY_APPLIED, function (AbstractMigration $migration, $reason) use ($migrationsManager) {
 		outputMigrationHeadline($migration);
-		outputLine('  Skipping %s: %s', array($packageKey, $reason));
+		outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason));
 		outputLine();
 	});
 }
 
-$migrationsManager->on(Manager::EVENT_MIGRATION_EXECUTED, function(AbstractMigration $migration, $packageKey, $migrationResult) {
+$migrationsManager->on(Manager::EVENT_MIGRATION_EXECUTED, function(AbstractMigration $migration) use ($migrationsManager) {
 	outputMigrationHeadline($migration);
-	outputLine('  Migrated %s:', array($packageKey));
+	outputLine('  Migrated %s', array($migrationsManager->getCurrentPackageKey()));
+});
+
+if ($verbose) {
+	$migrationsManager->on(Manager::EVENT_MIGRATION_COMMIT_SKIPPED, function (AbstractMigration $migration, $reason) {
+		outputLine('  Skipping commit: %s', array($reason));
+	});
+}
+
+$migrationsManager->on(Manager::EVENT_MIGRATION_COMMITTED, function(AbstractMigration $migration, $commitResult) {
+	outputMigrationHeadline($migration);
 	outputLine();
-	outputLine($migrationResult);
+	outputLine($commitResult);
+});
+
+$migrationsManager->on(Manager::EVENT_MIGRATION_LOG_IMPORTED, function(AbstractMigration $migration, $importResult) {
+	outputMigrationHeadline($migration);
+	outputLine('  Import migration log from Git history', array(), 0, STYLE_SUCCESS);
+	outputLine('  Commit result:');
+	outputLine($importResult);
 });
 
 $lastMigration = NULL;
@@ -162,7 +179,7 @@ function outputMigrationHeadline(AbstractMigration $migration) {
 
 outputLine('Migrating...');
 try {
-	$migrationsManager->migrate($packageKey, $versionNumber);
+	$migrationsManager->migrate($packageKey, $versionNumber, flagIsSet('force'));
 } catch (\Exception $exception) {
 	outputLine('EXCEPTION: %s', array($exception->getMessage()));
 	exit(255);
