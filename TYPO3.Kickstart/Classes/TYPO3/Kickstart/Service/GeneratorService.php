@@ -308,8 +308,8 @@ class GeneratorService {
 	 *
 	 * @param string $packageKey The package key
 	 * @param string $modelName The name of the model
-	 * @return array An array of generated filenames
 	 * @param boolean $overwrite Overwrite any existing files?
+	 * @return array An array of generated filenames
 	 */
 	public function generateRepository($packageKey, $modelName, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
@@ -331,6 +331,41 @@ class GeneratorService {
 		$targetPathAndFilename = $repositoryPath . $repositoryFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
+
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate a documentation skeleton for the package key
+	 *
+	 * @param string $packageKey The package key
+	 * @return array An array of generated filenames
+	 */
+	public function generateDocumentation($packageKey) {
+		$contextVariables = array();
+		$contextVariables['packageKey'] = $packageKey;
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/conf.py';
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'conf.py';
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/Makefile';
+		$fileContent = file_get_contents($templatePathAndFilename);
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'Makefile';
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/index.rst';
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'index.rst';
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_build/.gitignore';
+		$this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_static/.gitignore';
+		$this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
+		$targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_templates/.gitignore';
+		$this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
 
 		return $this->generatedFiles;
 	}
