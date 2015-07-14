@@ -319,6 +319,10 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('string' => '{a:"String"}'),
 			array('string' => '{a:\'String\'}'),
 
+			// empty string value
+			array('string' => '{a:""}'),
+			array('string' => '{a:\'\'}'),
+
 			// nested arrays
 			array('string' => '{a:{bla:{x:z}, b: a}}'),
 			array('string' => '{a:"{bla{{}"}'),
@@ -331,6 +335,8 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('string' => '{  \'foo\'  : "bar" }'),
 			array('string' => '{"a":{bla:{x:z}, b: a}}'),
 			array('string' => '{a:{bla:{"x":z}, b: a}}'),
+			array('string' => '{"@a": "bar"}'),
+			array('string' => '{\'_b\': "bar"}')
 		);
 	}
 
@@ -346,10 +352,23 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function dataProviderInvalidSCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS() {
+		return array(
+			array('string' => '{"foo\': "bar"}'),
+			array('string' => '{"": "bar"}'),
+			array('string' => '{\'\': "bar"}'),
+		);
+	}
+
+	/**
+	 * @param string $string
+	 * @dataProvider dataProviderInvalidSCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS()
 	 * @test
 	 */
-	public function SCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS_doesNotMatchKeysWithMixedStyleQuotes() {
-		$success = preg_match(TemplateParser::$SCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS, '{"foo\': "bar"}', $matches) === 1;
+	public function SCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS_doesNotMatchInvalidSyntax($string) {
+		$success = preg_match(TemplateParser::$SCAN_PATTERN_SHORTHANDSYNTAX_ARRAYS, $string, $matches) === 1;
 		$this->assertFalse($success);
 	}
 
@@ -359,7 +378,7 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function testSPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS() {
 		$pattern = TemplateParser::$SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS;
 
-		$source = '{a: b, e: {c:d, "e":f, \'g\': "h"}}';
+		$source = '{a: b, e: {c:d, "e#":f, \'g\': "h"}}';
 		$success = preg_match_all($pattern, $source, $matches, PREG_SET_ORDER) > 0;
 
 		$expected = array(
@@ -375,9 +394,9 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				4 => 'b'
 			),
 			1 => array(
-				0 => 'e: {c:d, "e":f, \'g\': "h"}',
-				'ArrayPart' => 'e: {c:d, "e":f, \'g\': "h"}',
-				1 => 'e: {c:d, "e":f, \'g\': "h"}',
+				0 => 'e: {c:d, "e#":f, \'g\': "h"}',
+				'ArrayPart' => 'e: {c:d, "e#":f, \'g\': "h"}',
+				1 => 'e: {c:d, "e#":f, \'g\': "h"}',
 				'Key' => 'e',
 				2 => 'e',
 				'QuotedString' => '',
@@ -386,8 +405,8 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				4 => '',
 				'Number' => '',
 				5 => '',
-				'Subarray' => 'c:d, "e":f, \'g\': "h"',
-				6 => 'c:d, "e":f, \'g\': "h"'
+				'Subarray' => 'c:d, "e#":f, \'g\': "h"',
+				6 => 'c:d, "e#":f, \'g\': "h"'
 			)
 		);
 		$this->assertTrue($success);
@@ -400,7 +419,7 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS_matchesQuotedKeys() {
 		$pattern = TemplateParser::$SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS;
 
-		$source = '{"a": b}';
+		$source = '{"a": b, \'c\': d}';
 		$success = preg_match_all($pattern, $source, $matches, PREG_SET_ORDER) > 0;
 
 		$expected = array(
@@ -413,7 +432,18 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'QuotedString' => '',
 				3 => '',
 				'VariableIdentifier' => 'b',
-				4 => 'b',
+				4 => 'b'
+			),
+			1 => array(
+				0 => '\'c\': d',
+				'ArrayPart' => '\'c\': d',
+				1 => '\'c\': d',
+				'Key' => '\'c\'',
+				2 => '\'c\'',
+				'QuotedString' => '',
+				3 => '',
+				'VariableIdentifier' => 'd',
+				4 => 'd'
 			)
 		);
 		$this->assertTrue($success);
@@ -421,13 +451,24 @@ class TemplateParserPatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function dataProviderInvalidSPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS() {
+		return array(
+			array('string' => '{"a\': b}'),
+			array('string' => '{"": "bar"}'),
+			array('string' => '{\'\': "bar"}'),
+		);
+	}
+
+	/**
+	 * @param string $string
+	 * @dataProvider dataProviderInvalidSPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS()
 	 * @test
 	 */
-	public function SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS_doesNotMatchKeysWithMixedStyleQuotes() {
+	public function SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS_doesNotMatchInvalidSyntax($string) {
 		$pattern = TemplateParser::$SPLIT_PATTERN_SHORTHANDSYNTAX_ARRAY_PARTS;
-
-		$source = '{"a\': b}';
-		$success = preg_match_all($pattern, $source, $matches, PREG_SET_ORDER) > 0;
+		$success = preg_match_all($pattern, $string, $matches, PREG_SET_ORDER) > 0;
 		$this->assertFalse($success);
 	}
 
