@@ -53,6 +53,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 		$this->packageManager->createPackage($packageKey);
 		$this->actionControllerCommand($packageKey, 'Standard');
+		$this->documentationCommand($packageKey);
 	}
 
 	/**
@@ -247,6 +248,26 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 
 		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName, $force);
+		$this->outputLine(implode(PHP_EOL, $generatedFiles));
+	}
+
+	/**
+	 * Kickstart documentation
+	 *
+	 * Generates a documentation skeleton for the given package.
+	 *
+	 * @param string $packageKey The package key of the package for the documentation
+	 * @return string
+	 */
+	public function documentationCommand($packageKey) {
+		$this->validatePackageKey($packageKey);
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			$this->outputLine('Package "%s" is not available.', array($packageKey));
+			exit(2);
+		}
+
+		$generatedFiles = $this->generatorService->generateDocumentation($packageKey);
+
 		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
 
