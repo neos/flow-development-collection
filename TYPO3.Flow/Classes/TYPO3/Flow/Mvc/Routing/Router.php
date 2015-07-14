@@ -110,9 +110,11 @@ class Router implements RouterInterface {
 				if ($matchResults !== NULL) {
 					$this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
 				}
+				$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $route->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
 				return $matchResults;
 			}
 		}
+		$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
 		return NULL;
 	}
 
