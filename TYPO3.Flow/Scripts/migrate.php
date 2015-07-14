@@ -39,6 +39,10 @@ define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
 define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');
 define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
 define('MAXIMUM_LINE_LENGTH', 84);
+define('STYLE_DEFAULT', 0);
+define('STYLE_ERROR', 31);
+define('STYLE_WARNING', 33);
+define('STYLE_SUCCESS', 32);
 
 
 if(flagIsSet('packages-path')) {
@@ -58,11 +62,11 @@ $packageKey = getFlagValue('package-key');
 $versionNumber = NULL;
 if (flagIsSet('version')) {
 	if (preg_match('/[0-9]{12,14}/', getFlagValue('version'), $matches) !== 1) {
-		outputLine('EXCEPTION: invalid version "%s" specified, please provide the 12 or 14 digit timestamp of the version you want to target.', array(getFlagValue('version')));
+		outputLine('EXCEPTION: invalid version "%s" specified, please provide the 12 or 14 digit timestamp of the version you want to target.', array(getFlagValue('version')), 0, STYLE_ERROR);
 		exit(255);
 	}
 	$versionNumber = $matches[0];
-	// see https://jira.typo3.org/browse/FLOW-110
+	// see https://jira.neos.io/browse/FLOW-110
 	if (strlen($versionNumber) === 12) {
 		$versionNumber .= '00';
 	}
@@ -74,7 +78,7 @@ if (flagIsSet('status')) {
 	try {
 		$status = $migrationsManager->getStatus($packageKey, $versionNumber);
 	} catch (\Exception $exception) {
-		outputLine('EXCEPTION: %s', array($exception->getMessage()));
+		outputLine('EXCEPTION: %s', array($exception->getMessage()), 0, STYLE_ERROR);
 		exit(255);
 	}
 
@@ -116,7 +120,7 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function(AbstractMigration
 	}
 	if ($migration->hasWarnings()) {
 		outputHeadline('Warnings', 2);
-		outputBulletList($migration->getWarnings());
+		outputBulletList($migration->getWarnings(), STYLE_WARNING);
 		outputSeparator();
 	}
 	if ($verbose) {
@@ -127,7 +131,7 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function(AbstractMigration
 
 $migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED, function (AbstractMigration $migration, $reason) use ($migrationsManager) {
 	outputMigrationHeadline($migration);
-	outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason));
+	outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason), 0, STYLE_WARNING);
 	outputLine();
 });
 
@@ -141,12 +145,12 @@ if ($verbose) {
 
 $migrationsManager->on(Manager::EVENT_MIGRATION_EXECUTED, function(AbstractMigration $migration) use ($migrationsManager) {
 	outputMigrationHeadline($migration);
-	outputLine('  Migrated %s', array($migrationsManager->getCurrentPackageKey()));
+	outputLine('  Migrated %s', array($migrationsManager->getCurrentPackageKey()), 0, STYLE_SUCCESS);
 });
 
 if ($verbose) {
 	$migrationsManager->on(Manager::EVENT_MIGRATION_COMMIT_SKIPPED, function (AbstractMigration $migration, $reason) {
-		outputLine('  Skipping commit: %s', array($reason));
+		outputLine('  Skipping commit: %s', array($reason), 0, STYLE_WARNING);
 	});
 }
 
@@ -181,7 +185,7 @@ outputLine('Migrating...');
 try {
 	$migrationsManager->migrate($packageKey, $versionNumber, flagIsSet('force'));
 } catch (\Exception $exception) {
-	outputLine('EXCEPTION: %s', array($exception->getMessage()));
+	outputLine('EXCEPTION: %s', array($exception->getMessage()), 0, STYLE_ERROR);
 	exit(255);
 }
 outputLine('Done.');
@@ -230,11 +234,15 @@ function formatVersion($timestamp) {
  * @param string $text Text to output
  * @param array $arguments Optional arguments to use for sprintf
  * @param integer $indention
+ * @param integer $style one of the STYLE_* constants
  * @return void
  */
-function outputLine($text = '', array $arguments = array(), $indention = 0) {
+function outputLine($text = '', array $arguments = array(), $indention = 0, $style = STYLE_DEFAULT) {
 	if ($arguments !== array()) {
 		$text = vsprintf($text, $arguments);
+	}
+	if ($style !== STYLE_DEFAULT && hasColorSupport()) {
+		$text = "\x1B[" . $style . "m" . $text . "\x1B[0m";
 	}
 	if ($indention > 0) {
 		$wrappedLines = explode(PHP_EOL, wordwrap($text, MAXIMUM_LINE_LENGTH, PHP_EOL, TRUE));
@@ -243,6 +251,17 @@ function outputLine($text = '', array $arguments = array(), $indention = 0) {
 		echo wordwrap($text, MAXIMUM_LINE_LENGTH, PHP_EOL, TRUE);
 	}
 	echo PHP_EOL;
+}
+
+/**
+ * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
+ */
+function hasColorSupport() {
+	if (DIRECTORY_SEPARATOR === '\\') {
+		return getenv('ANSICON') !== FALSE || getenv('ConEmuANSI') === 'ON';
+	}
+
+	return function_exists('posix_isatty') && @posix_isatty(STDOUT);
 }
 
 /**
@@ -273,10 +292,11 @@ function outputSeparator($character = '-') {
 
 /**
  * @param array $items
+ * @param integer $style one of the STYLE_* constants
  * @return void
  */
-function outputBulletList(array $items) {
+function outputBulletList(array $items, $style = STYLE_DEFAULT) {
 	foreach ($items as $item) {
-		outputLine('  * ' . $item, array(), 4);
+		outputLine('  * ' . $item, array(), 4, $style);
 	}
 }
