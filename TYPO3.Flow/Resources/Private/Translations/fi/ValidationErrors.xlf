@@ -172,28 +172,28 @@
       <trans-unit id="1319801859" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
 			<target xml:lang="fi">Kuvan todellinen leveys {0,number} on suurempi kuin sallittu enimmäisleveys {1,number}</target></trans-unit>
-      <trans-unit id="1319801925" xml:space="preserve">
+      <trans-unit id="1319801925" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="fi" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
-      <trans-unit id="1319801929" xml:space="preserve">
+			<target xml:lang="fi">Kuvan korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target><alt-trans><target xml:lang="fi">Kuvan todellinen korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target></alt-trans></trans-unit>
+      <trans-unit id="1319801929" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="fi" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
-      <trans-unit id="1319813336" xml:space="preserve">
+			<target xml:lang="fi">Kuvan korkeus {0,number} on suurempi kuin sallittu enimmäiskorkeus {1,number}</target></trans-unit>
+      <trans-unit id="1319813336" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="fi" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
-      <trans-unit id="1319813355" xml:space="preserve">
+			<target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian pieni sallitulle vähimmäisresoluutiolle {2,number}</target><alt-trans><target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian pieni vaaditulle resoluutiolle {2,number}</target></alt-trans></trans-unit>
+      <trans-unit id="1319813355" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="fi" state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian suuri sallitulle enimmäisresoluutiolle {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>
 			<target xml:lang="fi">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
-      <trans-unit id="1328029406" xml:space="preserve">
+      <trans-unit id="1328029406" xml:space="preserve" approved="yes">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="fi" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
-      <trans-unit id="1328029362" xml:space="preserve">
+			<target xml:lang="fi">Kuvan suunnan on oltava "{0}"</target></trans-unit>
+      <trans-unit id="1328029362" xml:space="preserve" approved="yes">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="fi" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="fi">Kuvan suunta "{0}" ei ole sallittu</target></trans-unit>
     </body>
   </file>
 </xliff>
