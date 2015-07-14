@@ -36,26 +36,31 @@ FilterGroup: :Filter ( S ',' S :Filter )*
 		$result['Filters'][] = $sub;
 	}
 
-Filter: ( :IdentifierFilter ) ? ( :PropertyNameFilter ) ?  ( AttributeFilters:AttributeFilter )*
+Filter: ( PathFilter | IdentifierFilter | PropertyNameFilter )?  ( AttributeFilters:AttributeFilter )*
+	function PathFilter(&$result, $sub) {
+		$result['PathFilter'] = $sub['text'];
+	}
+	function IdentifierFilter(&$result, $sub) {
+		$result['IdentifierFilter'] = substr($sub['text'], 1);
+	}
+	function PropertyNameFilter(&$result, $sub) {
+		$result['PropertyNameFilter'] = $sub['Identifier'];
+	}
 	function AttributeFilters(&$result, $sub) {
 		if (!isset($result['AttributeFilters'])) {
 			$result['AttributeFilters'] = array();
 		}
 		$result['AttributeFilters'][] = $sub;
 	}
-	function PropertyNameFilter(&$result, $sub) {
-		$result['PropertyNameFilter'] = $sub['Identifier'];
-	}
-	function IdentifierFilter(&$result, $sub) {
-		$result['IdentifierFilter'] = substr($sub['text'], 1);
-	}
+
+IdentifierFilter: '#':ObjectIdentifier
 
 PropertyNameFilter: Identifier
 	function Identifier(&$result, $sub) {
 		$result['Identifier'] = $sub['text'];
 	}
 
-IdentifierFilter: '#':ObjectIdentifier
+PathFilter: ( '/' ( Identifier ( '/' Identifier )* )? ) | ( Identifier '/' Identifier ( '/' Identifier )* )
 
 AttributeFilter:
   '[' S

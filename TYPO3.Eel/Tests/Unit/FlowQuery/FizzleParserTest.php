@@ -76,6 +76,26 @@ class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function pathFilterIsMatched() {
+		$parser = new \PhpPeg\ParserTestWrapper($this, \TYPO3\Eel\FlowQuery\FizzleParser::class);
+		$parser->assertMatches('Filter', '/sites/foo');
+		$parser->assertMatches('Filter', 'foo/bar');
+		$parser->assertMatches('Filter', 'foo/node_1234-5678');
+		$parser->assertMatches('Filter', '/');
+		$parser->assertDoesntMatch('Filter', 'foo/');
+		$parser->assertDoesntMatch('Filter', '/foo/');
+		$parser->assertDoesntMatch('Filter', 'foo//bar');
+		$parser->assertDoesntMatch('Filter', 'foo/bar?');
+		$parser->assertDoesntMatch('Filter', '*foo/bar');
+		$parser->assertDoesntMatch('PathFilter', 'foo');
+
+		$actual = $parser->match('Filter', 'foo/bar');
+		$this->assertSame('foo/bar', $actual['PathFilter']);
+	}
+
+	/**
+	 * @test
+	 */
 	public function attributeFilterIsMatched() {
 		$parser = new \PhpPeg\ParserTestWrapper($this, \TYPO3\Eel\FlowQuery\FizzleParser::class);
 		$parser->assertMatches('AttributeFilter', '[foo]');
