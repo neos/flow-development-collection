@@ -23,10 +23,13 @@ class Manager {
 
 	const EVENT_MIGRATION_START = 'migrationStart';
 	const EVENT_MIGRATION_EXECUTE = 'migrationExecute';
-	const EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES = 'migrationSkippedLocalChanges';
-	const EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED = 'migrationSkippedAlreadyApplied';
+	const EVENT_MIGRATION_SKIPPED = 'migrationSkipped';
+	const EVENT_MIGRATION_ALREADY_APPLIED = 'migrationAlreadyApplied';
 	const EVENT_MIGRATION_EXECUTED = 'migrationExecuted';
+	const EVENT_MIGRATION_COMMITTED = 'migrationCommitted';
+	const EVENT_MIGRATION_COMMIT_SKIPPED = 'commitSkipped';
 	const EVENT_MIGRATION_DONE = 'migrationDone';
+	const EVENT_MIGRATION_LOG_IMPORTED = 'migrationLogImported';
 
 	/**
 	 * @var string
@@ -42,6 +45,13 @@ class Manager {
 	 * @var array
 	 */
 	protected $packagesData = NULL;
+
+	/**
+	 * The currently iterated package data (package key, composer manifest, ...)
+	 *
+	 * @var array
+	 */
+	protected $currentPackageData = NULL;
 
 	/**
 	 * @var AbstractMigration[]
@@ -70,6 +80,13 @@ class Manager {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getCurrentPackageKey() {
+		return isset($this->currentPackageData) ? $this->currentPackageData['packageKey'] : NULL;
+	}
+
+	/**
 	 * Returns the migration status for all packages.
 	 *
 	 * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
@@ -79,17 +96,17 @@ class Manager {
 	public function getStatus($packageKey = NULL, $versionNumber = NULL) {
 		$status = array();
 		$migrations = $this->getMigrations($versionNumber);
-		foreach ($this->getPackagesData($packageKey) as $packageKey => $packageData) {
+		foreach ($this->getPackagesData($packageKey) as &$this->currentPackageData) {
 			$packageStatus = array();
 			foreach ($migrations as $migration) {
-				if ($this->hasMigrationApplied($packageData['path'], $migration)) {
+				if ($this->hasMigrationApplied($migration)) {
 					$state = self::STATE_MIGRATED;
 				} else {
 					$state = self::STATE_NOT_MIGRATED;
 				}
 				$packageStatus[$migration->getVersionNumber()] = array('migration' => $migration, 'state' => $state);
 			}
-			$status[$packageKey] = $packageStatus;
+			$status[$this->currentPackageData['packageKey']] = $packageStatus;
 		}
 		return $status;
 	}
@@ -102,17 +119,18 @@ class Manager {
 	 *
 	 * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
 	 * @param string $versionNumber version of the migration to execute (e.g. "20120126163610"), or NULL to execute all migrations
+	 * @param boolean $force if TRUE migrations will be applied even if the corresponding package is not a git working copy or contains local changes
 	 * @return void
 	 */
-	public function migrate($packageKey = NULL, $versionNumber = NULL) {
+	public function migrate($packageKey = NULL, $versionNumber = NULL, $force = FALSE) {
 		$packagesData = $this->getPackagesData($packageKey);
 		foreach ($this->getMigrations($versionNumber) as $migration) {
 			$this->triggerEvent(self::EVENT_MIGRATION_START, array($migration));
-			foreach ($packagesData as $key => $packageData) {
-				if ($packageKey === NULL && $this->shouldPackageBeSkippedByDefault($packageData)) {
+			foreach ($packagesData as &$this->currentPackageData) {
+				if ($packageKey === NULL && $this->shouldPackageBeSkippedByDefault()) {
 					continue;
 				}
-				$this->migratePackage($key, $packageData, $migration);
+				$this->migratePackage($migration, $force);
 			}
 			$this->triggerEvent(self::EVENT_MIGRATION_DONE, array($migration));
 		}
@@ -121,14 +139,13 @@ class Manager {
 	/**
 	 * By default we skip "TYPO3.*" packages and all packages of the ignored categories (@see ignoredPackageCategories)
 	 *
-	 * @param array $packageData @see getPackagesData()
 	 * @return boolean
 	 */
-	protected function shouldPackageBeSkippedByDefault(array $packageData) {
-		if (strpos($packageData['packageKey'], 'TYPO3.') === 0) {
+	protected function shouldPackageBeSkippedByDefault() {
+		if (strpos($this->currentPackageData['packageKey'], 'TYPO3.') === 0) {
 			return TRUE;
 		}
-		if (in_array($packageData['category'], $this->ignoredPackageCategories)) {
+		if (in_array($this->currentPackageData['category'], $this->ignoredPackageCategories)) {
 			return TRUE;
 		}
 		return FALSE;
@@ -137,43 +154,138 @@ class Manager {
 	/**
 	 * Apply the given migration to the package and commit the result.
 	 *
-	 * @param string $packageKey
-	 * @param array $packageData
 	 * @param AbstractMigration $migration
+	 * @param boolean $force if TRUE the migration will be applied even if the current package is not a git working copy or contains local changes
 	 * @return void
 	 * @throws \RuntimeException
 	 */
-	protected function migratePackage($packageKey, array $packageData, AbstractMigration $migration) {
-		$packagePath = $packageData['path'];
-		if (!Git::isWorkingCopyClean($packagePath)) {
-			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED_LOCAL_CHANGES, array($migration, $packageKey, 'working copy contains local changes'));
+	protected function migratePackage(AbstractMigration $migration, $force = FALSE) {
+		$packagePath = $this->currentPackageData['path'];
+		if ($this->hasMigrationApplied($migration)) {
+			$this->triggerEvent(self::EVENT_MIGRATION_ALREADY_APPLIED, array($migration, 'Migration already applied'));
 			return;
 		}
-		if ($this->hasMigrationApplied($packagePath, $migration)) {
-			$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED_ALREADY_APPLIED, array($migration, $packageKey, 'migration already applied'));
-			return;
+		$isWorkingCopy = Git::isWorkingCopy($packagePath);
+		$hasLocalChanges = Git::isWorkingCopyDirty($packagePath);
+		if (!$force) {
+			if (!$isWorkingCopy) {
+				$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, 'Not a Git working copy, use --force to apply changes anyways'));
+				return;
+			}
+			if ($hasLocalChanges) {
+				$this->triggerEvent(self::EVENT_MIGRATION_SKIPPED, array($migration, 'Working copy contains local changes, use --force to apply changes anyways'));
+				return;
+			}
 		}
-		$this->triggerEvent(self::EVENT_MIGRATION_EXECUTE, array($migration, $packageKey));
+
+		if ($isWorkingCopy) {
+			$importResult = $this->importMigrationLogFromGitHistory(!$hasLocalChanges);
+			if ($importResult !== NULL) {
+				$this->triggerEvent(self::EVENT_MIGRATION_LOG_IMPORTED, array($migration, $importResult));
+			}
+		}
+
+		$this->triggerEvent(self::EVENT_MIGRATION_EXECUTE, array($migration));
 		try {
-			$migration->prepare($this->packagesData[$packageKey]);
+			$migration->prepare($this->currentPackageData);
 			$migration->up();
 			$migration->execute();
-			$migrationResult = $this->commitMigration($packagePath, $migration);
-			$this->triggerEvent(self::EVENT_MIGRATION_EXECUTED, array($migration, $packageKey, $migrationResult));
+			$commitMessageNotice = NULL;
+			if ($isWorkingCopy && !Git::isWorkingCopyDirty($packagePath)) {
+				$commitMessageNotice = 'Note: This migration did not produce any changes, so the commit simply marks the migration as applied. This makes sure it will not be applied again.';
+			}
+			$this->markMigrationApplied($migration);
+			$this->triggerEvent(self::EVENT_MIGRATION_EXECUTED, array($migration));
+			if ($hasLocalChanges || !$isWorkingCopy) {
+				$this->triggerEvent(self::EVENT_MIGRATION_COMMIT_SKIPPED, array($migration, $hasLocalChanges ? 'Working copy contains local changes' : 'No Git working copy'));
+			} else {
+				$migrationResult = $this->commitMigration($migration, $commitMessageNotice);
+				$this->triggerEvent(self::EVENT_MIGRATION_COMMITTED, array($migration, $migrationResult));
+			}
 		} catch (\Exception $exception) {
-			throw new \RuntimeException(sprintf('Applying migration "%s" to "%s" failed: "%s"', $migration->getIdentifier(), $packageKey, $exception->getMessage()), 1421692982, $exception);
+			throw new \RuntimeException(sprintf('Applying migration "%s" to "%s" failed: "%s"', $migration->getIdentifier(), $this->currentPackageData['packageKey'], $exception->getMessage()), 1421692982, $exception);
+		}
+	}
+
+	/**
+	 * Whether or not the given $migration has been applied to the current package
+	 *
+	 * @param AbstractMigration $migration
+	 * @return boolean
+	 */
+	protected function hasMigrationApplied(AbstractMigration $migration) {
+		// if the "applied-flow-migrations" section doesn't exist, we fall back to checking the git log for applied migrations for backwards compatibility
+		if (!isset($this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'])) {
+			return Git::logContains($this->currentPackageData['path'], 'Migration: ' . $migration->getIdentifier());
+		}
+		return in_array($migration->getIdentifier(), $this->currentPackageData['composerManifest']['extra']['applied-flow-migrations']);
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function writeComposerManifest() {
+		$composerFilePathAndName = Files::concatenatePaths([$this->currentPackageData['path'], 'composer.json']);
+		file_put_contents($composerFilePathAndName, json_encode($this->currentPackageData['composerManifest'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+	}
+
+	/**
+	 * Imports the core migration log from the git history if it has not been imported previously (the "applied-flow-migrations" composer manifest property does not exist)
+	 *
+	 * @param boolean $commitChanges if TRUE the modified composer manifest is committed - if it changed
+	 * @return string
+	 */
+	protected function importMigrationLogFromGitHistory($commitChanges = FALSE) {
+		if (isset($this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'])) {
+			return NULL;
+		}
+		$migrationCommitMessages = Git::getLog($this->currentPackageData['path'], 'Migration:');
+		$appliedMigrationIdentifiers = [];
+		foreach ($migrationCommitMessages as $commitMessage) {
+			if (preg_match('/^\s*Migration\:\s?([^\s]*)/', $commitMessage, $matches) === 1) {
+				$appliedMigrationIdentifiers[] = $matches[1];
+			}
+		}
+		if ($appliedMigrationIdentifiers === array()) {
+			return NULL;
+		}
+		if (!isset($this->currentPackageData['composerManifest']->extra)) {
+			$this->currentPackageData['composerManifest']->extra = new \stdClass();
+		}
+		$this->currentPackageData['composerManifest']->extra->{'applied-flow-migrations'} = array_unique($appliedMigrationIdentifiers);
+		$this->writeComposerManifest();
+
+		$this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'] = array_values(array_unique($appliedMigrationIdentifiers));
+		$composerFilePathAndName = Files::concatenatePaths([$this->currentPackageData['path'], 'composer.json']);
+		Tools::writeComposerManifest($this->currentPackageData['composerManifest'], $composerFilePathAndName);
+
+		if ($commitChanges) {
+			$commitMessage = '[TASK] Import core migration log to composer.json' . chr(10) . chr(10);
+			$commitMessage .= wordwrap('This commit imports the core migration log to the "extra" section of the composer manifest.', 72);
+
+			list ($returnCode, $output) = Git::commitAll($this->currentPackageData['path'], $commitMessage);
+			if ($returnCode === 0) {
+				return '    ' . implode(PHP_EOL . '    ', $output) . PHP_EOL;
+			} else {
+				return '    No changes were committed.' . PHP_EOL;
+			}
+
 		}
 	}
 
 	/**
 	 * Whether or not the given migration has been applied in the given path
 	 *
-	 * @param string $packagePath
 	 * @param AbstractMigration $migration
 	 * @return boolean
 	 */
-	protected function hasMigrationApplied($packagePath, AbstractMigration $migration) {
-		return Git::logContains($packagePath, 'Migration: ' . $migration->getIdentifier());
+	protected function markMigrationApplied(AbstractMigration $migration) {
+		if (!isset($this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'])) {
+			$this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'] = [];
+		}
+		$this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'][] = $migration->getIdentifier();
+		$composerFilePathAndName = Files::concatenatePaths([$this->currentPackageData['path'], 'composer.json']);
+		Tools::writeComposerManifest($this->currentPackageData['composerManifest'], $composerFilePathAndName);
 	}
 
 	/**
@@ -181,26 +293,29 @@ class Manager {
 	 * that was did the changes is given with $versionNumber and $versionPackageKey
 	 * and will be recorded in the commit message.
 	 *
-	 * @param string $packagePath
 	 * @param AbstractMigration $migration
+	 * @param string $commitMessageNotice
 	 * @return string
 	 */
-	protected function commitMigration($packagePath, AbstractMigration $migration) {
+	protected function commitMigration(AbstractMigration $migration, $commitMessageNotice = NULL) {
 		$migrationIdentifier = $migration->getIdentifier();
-		$commitMessage = sprintf('[TASK] Apply migration %s', $migrationIdentifier) . chr(10) . chr(10);
+		$commitMessageSubject = sprintf('[TASK] Apply migration %s', $migrationIdentifier);
+		if (!Git::isWorkingCopyRoot($this->currentPackageData['path'])) {
+			$commitMessageSubject .= sprintf(' to package "%s"', $this->currentPackageData['packageKey']);
+		}
+		$commitMessage = $commitMessageSubject . chr(10) . chr(10);
 		$description = $migration->getDescription();
 		if ($description !== NULL) {
 			$commitMessage .= wordwrap($description, 72);
 		} else {
 			$commitMessage .= wordwrap(sprintf('This commit contains the result of applying migration %s to this package.', $migrationIdentifier), 72);
 		}
-		$commitMessage .= chr(10) . chr(10);
-		if (Git::isWorkingCopyClean($packagePath)) {
-			$commitMessage .= wordwrap('Note: This migration did not produce any changes, so the commit simply marks the migration as applied. This makes sure it will not be applied again.', 72) . chr(10) . chr(10);
-		}
-		$commitMessage .= sprintf('Migration: %s', $migrationIdentifier);
 
-		list ($returnCode, $output) = Git::commitAll($packagePath, $commitMessage);
+		if ($commitMessageNotice !== NULL) {
+			$commitMessage .=  chr(10) . chr(10) . wordwrap($commitMessageNotice, 72) . chr(10) . chr(10);
+		}
+
+		list ($returnCode, $output) = Git::commitAll($this->currentPackageData['path'], $commitMessage);
 		if ($returnCode === 0) {
 			return '    ' . implode(PHP_EOL . '    ', $output) . PHP_EOL;
 		} else {
