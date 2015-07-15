@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Configuration;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Error\Result;
 
 /**
@@ -133,7 +134,7 @@ class ConfigurationSchemaValidator {
 			}
 
 			if (empty($data)) {
-				throw new Exception\SchemaValidationException('The schema file "' . $schemaFileInfo['file'] . '" is empty.', 1364985445);
+				$result->addNotice(new Notice('No configuration found, skipping schema "%s".', 1364985445, array(substr($schemaFileInfo['file'], strlen(FLOW_PATH_ROOT)))));
 			} else {
 				$parsedSchema = \Symfony\Component\Yaml\Yaml::parse($schemaFileInfo['file']);
 				$validationResultForSingleSchema = $this->schemaValidator->validate($data, $parsedSchema);
