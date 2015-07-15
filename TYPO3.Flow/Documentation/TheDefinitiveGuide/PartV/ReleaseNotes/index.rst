@@ -1,0 +1,7 @@
+Release Notes
+=============
+
+.. toctree::
+	:glob:
+
+	*

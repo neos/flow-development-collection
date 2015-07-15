@@ -1,0 +1,125 @@
+========================
+3.0.0 (not released yet)
+========================
+
+Today,<month> <day> <year>, we’re happy to announce **Flow 3.0.0** final.
+This is the first major release since two years and it comes with numerous improvements and fixes.
+As usual we tried to keep this update as compatible as possible to previous versions. Although adhering to `Semantic Versioning <http://semver.org>`_ this new major release allowed us to introduce some adjustments that might need your manual interaction. So if you’re upgrading from an earlier version of Flow, make sure to carefully read the upgrade instructions.
+
+Important changes:
+==================
+
+Minimum PHP version requirement: 5.5
+------------------------------------
+
+*Current Status: FIXME*
+
+PHP 5.4 is already more than three years old and its "end of life" is announced for `September 2015 <http://php.net/supported-versions.php>`_
+With Flow 3.0 the minimum PHP version requirement has been increased from **5.3.2** to **5.5.0**.
+If your PHP version is lower, the Bootstrap will stop with a corresponding error.
+
+Flow 3.0 runs on **HHVM** and includes the groundwork for PHP 7 support.
+
+Upgrade of distribution packages and libraries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Currently we use the same version schema for all Flow core packages. That means that all packages in "Packages/Framework" will get a new version 3.0 with this release.
+Besides we took the chance to update some of the 3rd party libraries that are used by Flow, namely:
+
+* doctrine/orm: **2.3** -> **2.4**
+* phpunit/phpunit: **4.3** -> **4.5**
+* mikey179/vfsstream: **1.2** -> **1.4**
+
+Reworked Security Framework
+---------------------------
+
+The Security Framework has been revised and now introduces the concept of ``privileges``. It also includes a restructuring of the privilege voting process.
+As a consequence it is now much easier to extend the built-in privilege types (formerly called ``resources``) even providing support for *Domain specific languages*.
+A core migration will take care of adjusting the ``Policy.yaml``-files of 3rd party packages.
+
+See the chapter :ref:`ch-security` for details.
+
+Removed "security.enable" setting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``TYPO3.Flow.security.enable`` flag and all mentions and usages of it have been removed.
+
+This setting was initially intended for performance reasons (for applications without security features) and in order to disable security for (functional) tests. For the latter we use a different approach since a while and the performance hit of security features is also negligible since Flow pre-compiles classes. Besides the flag was never evaluated consistently.
+
+Disabled security for CLI
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Previously it wasn't possible to execute protected methods via CLI as authentication only works for HTTP requests.
+Now security is disabled for CLI requests.
+
+Note: This bugfix has also been backported to 2.1, 2.2 and 2.3
+
+Multi-Storage / Multi-Target Resource Management
+------------------------------------------------
+
+Flow 3.0 comes with a completely overhauled Resource Management which allows for storage and publication of persistent or static resources (assets) in the local file system or other services, such as *Amazon S3™*  or *Rackspace™ CloudFiles*. It also introduces the concept of collections which allows for grouping resources into collections with specific storage and publication rules.
+
+Existing persistent resources are migrated through the Doctrine migration contained in this feature.
+
+The ``TYPO3.Media`` package was subject of a major rewrite based on the new Resource Management.
+
+Fluid: Consistent escaping behavior
+-----------------------------------
+
+Fluid 3.0 comes with a major rework of the interceptors that are currently
+mostly used to automatically apply ``htmlspecialchars()`` to dynamic strings
+in Fluid templates.
+
+A core migration will adjust 3rd party ViewHelper implementations but it's likely that some manual tweaking of custom templates is required especially when using the ``translate`` or ``uri.*`` ViewHelpers (see upgrading instructions for further details).
+
+Decoupling of TYPO3.Party package
+---------------------------------
+
+The ``TYPO3.Party`` package is no longer part of the Flow base distribution for following reasons:
+
+- For projects without user management this was a unnecessary dependency
+- Unlike ``Account`` the *party* belongs to the domain of the application - for simple domains the structure of the party package model might have been over-complex for others not reflecting the actual domain.
+
+Of course you're free to install the package and use it as before (see upgrading instructions for further details).
+
+
+Other changes
+-------------
+
+MVC:
+^^^^
+
+The validation and mapping of controller arguments has been improved allowing for custom handling of mapping errors by overriding ``ActionController::handleTargetNotFoundError()``.
+Besides ``CSRF protection`` has been stabilized. It no longer depends on AOP and issues more comprehensible exceptions and log entries.
+
+Fluid:
+^^^^^^
+
+In addition to the above mentioned change, Fluid 3.0 comes with some great improvements that will ease integrators lifes:
+
+- Configurable namespaces, Throw exception for unresolved namespaces, Add PackageKeys as namespaces
+- Improved error handling (e.g. if a VH could not be resolved)
+- Improvements in Forms
+- Allow usage of "else" argument with child nodes in AbstractConditionViewHelper
+
+DB / Doctrine:
+^^^^^^^^^^^^^^
+Charset and collation in all MySQL migrations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Add charset and collation to all MySQL migrations (a new command..)
+- Improved VO support
+- Reconnect the EntityManager automatically
+
+
+CLI:
+^^^^
+
+- Improved core migration handling
+- Make use of advanced console features (output structured data as table, interactivity)
+
+
+Last...
+^^^^^^^
+
+...but not least Flow 3.0 includes some general improvements regarding 3rd party packages (Make ignoreTags configuration more flexible, Exclude Non-Flow packages from object management by default) better error handling (human readable messages, recursive logging of exceptions) and numerous other fixes and smaller improvements like the new ``InjectConfiguration`` annotation that allows for injecting all kinds of configuration. Not to forget about the **Embedded Development Web Server** that enables you to get started without having to install the whole web server stack.

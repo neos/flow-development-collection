@@ -1,0 +1,146 @@
+====================
+2.3.0-beta3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/26/
+
+* Commit: `9d1f83b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9d1f83bf8febf7300d221dddad1303d1083b2e12>`_
+
+[BUGFIX] Adjust settings schema to "HTTP components for handling requests"
+-----------------------------------------------------------------------------------------
+
+This fixes the ``TYPO3.Flow.http.schema.yaml`` according to the
+"HTTP Components" feature introduced with
+I1e2491dba5adc125a7b85a574c9b51c9ae2ff18f
+
+Fixes: FLOW-35
+* Related: `#52064 <http://forge.typo3.org/issues/52064>`_
+* Commit: `61f2155 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/61f2155c4e95566d9384e99d6c8fdf1ef0c68e88>`_
+
+[BUGFIX] PHP Notice when multiple namespace roots are set
+-----------------------------------------------------------------------------------------
+
+The ``Package`` class triggers a PHP Notice when a composer manifest
+contains several search paths for the same prefix (see [1])::
+
+    {
+      "autoload": {
+        "psr-0": {
+          "Foo\\\\": ["src/", "tests/"]
+        }
+      }
+    }
+
+This commit changes the behaviour to using the first path as class
+path when multiple paths are defined.
+
+[1] https://getcomposer.org/doc/04-schema.md#psr-0
+
+Resolves: FLOW-94
+
+* Commit: `a095526 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a095526d9b8ef582e8b29cf5b6654e177e7aef1f>`_
+
+[BUGFIX] Support custom factories for constructor argument injection
+-----------------------------------------------------------------------------------------
+
+It should be possible to use custom factories (``factoryObjectName``)
+for constructor injection (``arguments``) the same way as they
+can be used for property injection.
+
+Resolves: FLOW-135
+
+* Commit: `7a8553f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7a8553fe695c1b92f75b80311f37878901cca3c3>`_
+
+[BUGFIX] Prevent iteration over empty collection
+-----------------------------------------------------------------------------------------
+
+This shouldn't make a difference but with the current way
+properties are serialized in the TYPO3CR it can happen that
+you have ArrayCollections which do contain a NULL value instead
+of an array. This will break on the next serialization and this
+prevents it.
+
+* Commit: `0a869f1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0a869f137a966470ee1aab0695561d85cb079cc8>`_
+
+[BUGFIX] Use bin2hex in ObjectArray when using PostgreSQL
+-----------------------------------------------------------------------------------------
+
+The ObjectArray type still uses serialize() to convert to the database
+value, thus producing data that cannot be used as is for a BYTEA column.
+
+With this change, the serialized string is run through bin2hex() when
+writing to the database and through hex2bin on the way back, if the
+system runs on PostgreSQL.
+
+For PHP versions prior 5.4 a hex2bin() replacement is used.
+
+Fixes: FLOW-132
+
+* Commit: `1e764d0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1e764d084aeb82a4c9c26c41521f5835179ec7c8>`_
+
+[TASK] Remove unused flag from BaseTestCase
+-----------------------------------------------------------------------------------------
+
+That flag has been deprecated sine PHPUnit 3.3, so it is time to say
+goodbye.
+
+* Commit: `aae3e55 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/aae3e552edb472b9ccd95c6177e3df2a1fbab2a8>`_
+
+[TASK] Add "suggest" and "conflict" dependencies to newly created composer manifests
+-----------------------------------------------------------------------------------------
+
+Newly created composer manifests only contained the "require" dependencies
+of the package meta data. With this change also suggested and conflicting
+dependencies are added.
+
+Related: NEOS-785
+
+* Commit: `12cd73c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/12cd73c1bba5e1b81868a8f47e3df3d10058db14>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Improve ViewHelper documentation
+-----------------------------------------------------------------------------------------
+
+The documentation of a few ViewHelpers is tweaked so it renders
+correctly.
+
+* Commit: `154d374 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/154d374b44ec46ef1b641c17fa69b9bf6071e9b3>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
