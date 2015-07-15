@@ -59,6 +59,43 @@ class Version20150214130800 extends AbstractMigration {
 		if ($affectedViewHelperClassNames !== array()) {
 			$this->showWarning('Added "escapeOutput" property to following ViewHelpers:' . PHP_EOL . ' * ' . implode(PHP_EOL . ' * ', $affectedViewHelperClassNames) . PHP_EOL . PHP_EOL . 'If an affected ViewHelper does not render HTML output, you should set this property TRUE in order to ensure sanitization of the output!');
 		}
+
+		$this->addWarningsForAffectedViewHelpers($this->targetPackageData['path']);
+	}
+
+	/**
+	 * Add a warning for each HTML file that uses one of the f:uri.* or the f:format.json ViewHelpers
+	 *
+	 * @param string $packagePath
+	 * @return void
+	 */
+	protected function addWarningsForAffectedViewHelpers($packagePath) {
+		$foundAffectedViewHelpers = array();
+		$allPathsAndFilenames = Files::readDirectoryRecursively($packagePath, NULL, TRUE);
+		foreach ($allPathsAndFilenames as $pathAndFilename) {
+			$pathInfo = pathinfo($pathAndFilename);
+			if (!isset($pathInfo['filename']) || $pathInfo['extension'] !== 'html') {
+				continue;
+			}
+			$fileContents = file_get_contents($pathAndFilename);
+			preg_match_all('/f\:(uri\.[\w]+|format\.json)/', $fileContents, $matches, PREG_SET_ORDER);
+			foreach ($matches as $match) {
+				$viewHelperName = $match[1];
+				if (!isset($foundAffectedViewHelpers[$viewHelperName])) {
+					$foundAffectedViewHelpers[$viewHelperName] = array();
+				}
+				$truncatedPathAndFilename = substr($pathAndFilename, strlen($packagePath) + 1);
+				if (!in_array($truncatedPathAndFilename, $foundAffectedViewHelpers[$viewHelperName])) {
+					$foundAffectedViewHelpers[$viewHelperName][] = $truncatedPathAndFilename;
+				}
+			}
+		}
+		foreach ($foundAffectedViewHelpers as $viewHelperName => $filePathsAndNames) {
+			$this->showWarning(sprintf('The behavior of the "%s" ViewHelper has been changed to produce escaped output.' . chr(10)
+				. 'This package makes use of this ViewHelper in the following files:' . chr(10) . '- %s' . chr(10)
+				. 'See upgrading instructions for further details.' . chr(10),
+				$viewHelperName, implode(chr(10) . '- ', $filePathsAndNames)));
+		}
 	}
 
 }
