@@ -35,7 +35,7 @@ properties:
             'providerOptions': { type: dictionary }
             'requestPatterns':
               type: dictionary
-              additionalProperties: FALSE
+              additionalProperties: TRUE
               properties:
                 'controllerObjectName': { type: string }
                 'csrfProtection': { type: 'null' }
