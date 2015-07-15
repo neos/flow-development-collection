@@ -420,3 +420,63 @@ TYPO3:
         # The directory must be writable and Flow will automatically create a sub
         # directory (named after the context) which will contain the actual temporary files.
         temporaryDirectoryBase: %FLOW_PATH_DATA%Temporary/
+
+  # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.
+  # These settings are only used in generating Documentation.
+  DocTools:
+    collections:
+      'Flow':
+        commandReferences:
+          - 'Flow:FlowCommands'
+        references:
+          - 'Flow:FluidViewHelpers'
+          - 'Flow:FlowValidators'
+          - 'Flow:FlowTypeConverters'
+          - 'Flow:FlowAnnotations'
+
+    commandReferences:
+      'Flow:FlowCommands':
+        title: 'Flow Command Reference'
+        packageKeys:
+          - 'TYPO3.Flow'
+          - 'TYPO3.Party'
+          - 'TYPO3.Fluid'
+          - 'TYPO3.Kickstart'
+          - 'TYPO3.Welcome'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
+
+    references:
+      'Flow:FluidViewHelpers':
+        title: 'Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/FluidViewHelperReference.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+      'Flow:FlowValidators':
+        title: 'Flow Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^TYPO3\\Flow\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+      'Flow:FlowTypeConverters':
+        title: 'Flow TypeConverter Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/TypeConverterReference.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter'
+          classNamePattern: '/^TYPO3\\Flow\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowTypeConverterClassParser'
+      'Flow:FlowAnnotations':
+        title: 'Flow Annotation Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/AnnotationReference.rst'
+        affectedClasses:
+          classNamePattern: '/^TYPO3\\Flow\\Annotations\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowAnnotationClassParser'
