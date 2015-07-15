@@ -114,8 +114,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 	 * @throws ClassSchemaNotFoundException
 	 */
 	protected function getClassSchema($className) {
-		$className = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
-
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
 			throw new ClassSchemaNotFoundException('No class schema found for "' . $className . '".', 1295973082);
@@ -133,11 +131,30 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 	 * @throws ClassSchemaNotFoundException
 	 */
 	protected function isAggregateRoot($className, $propertySourceHint) {
-		$className = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+		$className = $this->getUnproxiedClassName($className);
 		try {
 			$classSchema = $this->getClassSchema($className);
 
 			return $classSchema->isAggregateRoot();
+		} catch (ClassSchemaNotFoundException $exception) {
+			throw new ClassSchemaNotFoundException('No class schema found for "' . $className . '". The class should probably marked as entity or value object! This happened while examining "' . $propertySourceHint . '"', 1340185197);
+		}
+	}
+
+	/**
+	 * Check for $className being a value object.
+	 *
+	 * @param string $className
+	 * @param string $propertySourceHint
+	 * @return boolean
+	 * @throws ClassSchemaNotFoundException
+	 */
+	protected function isValueObject($className, $propertySourceHint) {
+		$className = $this->getUnproxiedClassName($className);
+		try {
+			$classSchema = $this->getClassSchema($className);
+
+			return $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT;
 		} catch (ClassSchemaNotFoundException $exception) {
 			throw new ClassSchemaNotFoundException('No class schema found for "' . $className . '". The class should probably marked as entity or value object! This happened while examining "' . $propertySourceHint . '"', 1340185197);
 		}
@@ -484,7 +501,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
 				} else {
-					$className = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
+					$className = $this->getUnproxiedClassName($property->getDeclaringClass()->getName());
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($className);
 				}
@@ -545,12 +562,15 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
 				if ($oneToOneAnnotation->cascade) {
 					$mapping['cascade'] = $oneToOneAnnotation->cascade;
+				} elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
+					$mapping['cascade'] = array('persist');
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				if ($oneToOneAnnotation->orphanRemoval) {
 					$mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
-				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE &&
+						  $this->isValueObject($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $oneToOneAnnotation->fetch);
@@ -564,13 +584,16 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 				}
 				if ($oneToManyAnnotation->cascade) {
 					$mapping['cascade'] = $oneToManyAnnotation->cascade;
+				} elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
+					$mapping['cascade'] = array('persist');
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				$mapping['indexBy'] = $oneToManyAnnotation->indexBy;
 				if ($oneToManyAnnotation->orphanRemoval) {
 					$mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
-				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE &&
+					$this->isValueObject($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $oneToManyAnnotation->fetch);
@@ -588,6 +611,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
 				if ($manyToOneAnnotation->cascade) {
 					$mapping['cascade'] = $manyToOneAnnotation->cascade;
+				} elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
+					$mapping['cascade'] = array('persist');
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
@@ -623,6 +648,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
 				if ($manyToManyAnnotation->cascade) {
 					$mapping['cascade'] = $manyToManyAnnotation->cascade;
+				} elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
+					$mapping['cascade'] = array('persist');
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
@@ -1053,6 +1080,18 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 		}
 
 		return $mapping;
+	}
+
+	/**
+	 * Returns the classname after stripping a potentially present Compiler::ORIGINAL_CLASSNAME_SUFFIX.
+	 *
+	 * @param string $className
+	 * @return string
+	 */
+	protected function getUnproxiedClassName($className) {
+		$className = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+
+		return $className;
 	}
 
 	/**
