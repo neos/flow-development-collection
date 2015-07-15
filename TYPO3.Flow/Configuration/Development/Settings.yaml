@@ -39,3 +39,7 @@ TYPO3:
         backendOptions:
           logFileURL: '%FLOW_PATH_DATA%Logs/Query_Development.log'
           severityThreshold: '%LOG_DEBUG%'
+      i18nLogger:
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/I18n_Development.log'
+          severityThreshold: '%LOG_DEBUG%'

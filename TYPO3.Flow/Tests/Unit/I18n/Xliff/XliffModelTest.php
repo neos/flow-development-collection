@@ -38,7 +38,7 @@ class XliffModelTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->model = new \TYPO3\Flow\I18n\Xliff\XliffModel($mockFilename, new \TYPO3\Flow\I18n\Locale('de'));
 		$this->model->injectCache($this->mockCache);
 		$this->model->injectParser($this->mockXliffParser);
-		$this->inject($this->model, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', FALSE));
+		$this->inject($this->model, 'i18nLogger', $this->getMock('TYPO3\Flow\Log\LoggerInterface', array(), array(), '', FALSE));
 		$this->model->initializeObject();
 	}
 
@@ -93,11 +93,11 @@ class XliffModelTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockXliffParser = $this->getMock('TYPO3\Flow\I18n\Xliff\XliffParser');
 		$this->mockXliffParser->expects($this->once())->method('getParsedData')->will($this->returnValue(array()));
 
-		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', FALSE);
-		$mockSystemLogger->expects($this->once())->method('log')->with($this->stringStartsWith('No trans-unit elements were found'), LOG_DEBUG);
+		$mockLogger = $this->getMock('TYPO3\Flow\Log\LoggerInterface', array(), array(), '', FALSE);
+		$mockLogger->expects($this->once())->method('log')->with($this->stringStartsWith('No trans-unit elements were found'), LOG_DEBUG);
 
 		$this->model->injectParser($this->mockXliffParser);
-		$this->inject($this->model, 'systemLogger', $mockSystemLogger);
+		$this->inject($this->model, 'i18nLogger', $mockLogger);
 		$this->model->initializeObject();
 
 		$this->model->getTargetBySource('foo');
