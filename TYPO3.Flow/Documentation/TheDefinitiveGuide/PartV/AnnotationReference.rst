@@ -1,10 +1,12 @@
-.. _Flow Annotation Reference:
+.. _`Flow Annotation Reference`:
 
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2015-07-14
+This reference was automatically generated from code on 2015-07-15
 
+
+.. _`Flow Annotation Reference: After`:
 
 After
 -----
@@ -25,6 +27,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: AfterReturning`:
+
 AfterReturning
 --------------
 
@@ -43,6 +47,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: AfterThrowing`:
 
 AfterThrowing
 -------------
@@ -63,6 +69,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Around`:
+
 Around
 ------
 
@@ -82,6 +90,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Aspect`:
+
 Aspect
 ------
 
@@ -95,6 +105,8 @@ pointcut expressions and advice.
 
 
 
+
+.. _`Flow Annotation Reference: Autowiring`:
 
 Autowiring
 ----------
@@ -115,6 +127,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Before`:
+
 Before
 ------
 
@@ -134,6 +148,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: CompileStatic`:
+
 CompileStatic
 -------------
 
@@ -141,6 +157,8 @@ CompileStatic
 
 
 
+
+.. _`Flow Annotation Reference: Entity`:
 
 Entity
 ------
@@ -165,6 +183,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: FlushesCaches`:
+
 FlushesCaches
 -------------
 
@@ -177,6 +197,8 @@ Usually used for framework purposes only.
 
 
 
+
+.. _`Flow Annotation Reference: Identity`:
 
 Identity
 --------
@@ -194,6 +216,8 @@ created - thus the limitations of that need to be observed.
 
 
 
+
+.. _`Flow Annotation Reference: IgnoreValidation`:
 
 IgnoreValidation
 ----------------
@@ -217,6 +241,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: Inject`:
 
 Inject
 ------
@@ -248,6 +274,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: InjectConfiguration`:
 
 InjectConfiguration
 -------------------
@@ -284,6 +312,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Internal`:
+
 Internal
 --------
 
@@ -297,6 +327,8 @@ Usually used for framework purposes only.
 
 
 
+
+.. _`Flow Annotation Reference: Introduce`:
 
 Introduce
 ---------
@@ -319,6 +351,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Lazy`:
+
 Lazy
 ----
 
@@ -332,6 +366,8 @@ layer of Flow. For Doctrine based persistence this is ignored.
 
 
 
+
+.. _`Flow Annotation Reference: Pointcut`:
 
 Pointcut
 --------
@@ -351,6 +387,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: Proxy`:
 
 Proxy
 -----
@@ -373,6 +411,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Scope`:
+
 Scope
 -----
 
@@ -390,6 +430,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: Session`:
 
 Session
 -------
@@ -410,6 +452,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: Signal`:
+
 Signal
 ------
 
@@ -422,6 +466,8 @@ to be a usable signal.
 
 
 
+
+.. _`Flow Annotation Reference: SkipCsrfProtection`:
 
 SkipCsrfProtection
 ------------------
@@ -439,6 +485,8 @@ skipped in those cases.
 
 
 
+.. _`Flow Annotation Reference: Transient`:
+
 Transient
 ---------
 
@@ -453,6 +501,8 @@ during runtime.
 
 
 
+
+.. _`Flow Annotation Reference: Validate`:
 
 Validate
 --------
@@ -478,6 +528,8 @@ Arguments
 
 
 
+.. _`Flow Annotation Reference: ValidationGroups`:
+
 ValidationGroups
 ----------------
 
@@ -492,6 +544,8 @@ Arguments
 
 
 
+
+.. _`Flow Annotation Reference: ValueObject`:
 
 ValueObject
 -----------
