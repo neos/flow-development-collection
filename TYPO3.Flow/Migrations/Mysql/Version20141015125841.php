@@ -41,7 +41,7 @@ class Version20141015125841 extends AbstractMigration {
 		$resourcesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, sha1, filename FROM typo3_flow_resource_resource');
 		while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
 			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'];
-			$newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', TRUE) . '/' . $resourceInfo['sha1'];
+			$newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'][0] . '/' . $resourceInfo['sha1'][1] . '/' . $resourceInfo['sha1'][2] . '/' . $resourceInfo['sha1'][3] . '/' . $resourceInfo['sha1'];
 
 			$mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
 			if (file_exists($resourcePathAndFilename)) {
@@ -102,7 +102,7 @@ class Version20141015125841 extends AbstractMigration {
 				array($resourceInfo['resourcepointer'])
 			);
 
-			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['resourcepointer'], 5, '/', TRUE) . '/' . $resourceInfo['resourcepointer'];
+			$resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['resourcepointer'][0] . '/' . $resourceInfo['resourcepointer'][1] . '/' . $resourceInfo['resourcepointer'][2] . '/' . $resourceInfo['resourcepointer'][3] . '/' . $resourceInfo['resourcepointer'];
 			if (!file_exists($resourcePathAndFilename)) {
 				$this->write(sprintf('Error while migrating database for the old resource management: the resource file "%s" was not found.', $resourcePathAndFilename));
 				continue;
