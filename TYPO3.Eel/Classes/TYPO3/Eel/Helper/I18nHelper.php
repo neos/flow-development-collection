@@ -118,8 +118,11 @@ class I18nHelper implements ProtectedContextAwareInterface {
 			->arguments($arguments)
 			->source($source)
 			->package($package)
-			->quantity($quantity)
-			->locale($locale);
+			->quantity($quantity);
+
+		if ($locale !== NULL) {
+			$translationParameterToken->locale($locale);
+		}
 
 		return $translationParameterToken->translate();
 	}
