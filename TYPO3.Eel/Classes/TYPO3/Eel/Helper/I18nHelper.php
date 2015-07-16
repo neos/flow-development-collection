@@ -51,6 +51,8 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
  */
 class I18nHelper implements ProtectedContextAwareInterface {
 
+	const I18N_LABEL_ID_PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+:[a-z0-9.]+:.+$/i';
+
 	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Eel\Helper\I18n\TranslationParameterTokenFactory
@@ -85,10 +87,9 @@ class I18nHelper implements ProtectedContextAwareInterface {
 			$source == 'Main' &&
 			$package == NULL &&
 			$quantity == NULL &&
-			$locale == NULL &&
-			substr_count($id, ':') === 2
+			$locale == NULL
 		) {
-			return $this->translateByShortHandString($id);
+			return preg_match(self::I18N_LABEL_ID_PATTERN, $id) === 1 ? $this->translateByShortHandString($id) : $id;
 		}
 
 		return $this->translateByExplicitlyPassedOrderedArguments($id, $value, $arguments, $source, $package, $quantity, $locale);
