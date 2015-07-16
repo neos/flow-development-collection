@@ -1,0 +1,6 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'baseUri':
+    type: [string, 'null']
+    required: TRUE
