@@ -4,7 +4,7 @@
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve" approved="yes">
-				<source>Only the characters a to z and numbers are allowed</source>
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="nl">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
@@ -30,7 +30,7 @@
 			<target xml:lang="nl">De gegeven datum moet tussen {0} en {1} liggen</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve" approved="yes">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="nl">De opgegeven datum mag niet na {0} liggen</target><alt-trans><target xml:lang="nl">De gegeven datum moet niet na {0} liggen</target></alt-trans></trans-unit>
+			<target xml:lang="nl">De opgegeven datum mag niet na {0} liggen</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve" approved="yes">
 				<source>The given date must be before {0}</source>
 			<target xml:lang="nl">De opgegeven datum moet voor {0} liggen</target></trans-unit>
@@ -78,12 +78,12 @@
 				<source>Value is no valid I18n locale identifier</source>
 			<target xml:lang="nl">Waarde is geen geldig I18n landinstelling-id</target></trans-unit>
       <!-- NotEmptyValidator -->
-      <trans-unit id="1221560910" xml:space="preserve">
+      <trans-unit id="1221560910" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="nl" state="translated">Dit is een verplicht veld</target></trans-unit>
-      <trans-unit id="1221560718" xml:space="preserve">
+			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
+      <trans-unit id="1221560718" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="nl" state="translated">Dit is een verplicht veld</target></trans-unit>
+			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>

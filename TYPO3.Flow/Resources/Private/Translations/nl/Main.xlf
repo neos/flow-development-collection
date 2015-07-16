@@ -16,7 +16,7 @@
 			<target xml:lang="nl">Nieuw wachtwoord</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="nl">Inloggen</target><alt-trans><target xml:lang="nl">Login</target></alt-trans></trans-unit>
+			<target xml:lang="nl">Log in</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="nl">Log uit</target></trans-unit>
@@ -25,7 +25,7 @@
 			<target xml:lang="nl">Bijwerken</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target xml:lang="nl">Verstuur</target><alt-trans><target xml:lang="nl">Versturen</target></alt-trans></trans-unit>
+			<target xml:lang="nl">Verstuur</target></trans-unit>
     </body>
   </file>
 </xliff>

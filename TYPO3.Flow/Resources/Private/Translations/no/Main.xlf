@@ -5,18 +5,18 @@
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
 			<target xml:lang="no" state="needs-translation">Authentication required</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="no" state="needs-translation">Username</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="no">Brukernavn</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="no" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="no">Passord</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="no" state="needs-translation">New password</target></trans-unit>
-      <trans-unit id="authentication.login" xml:space="preserve">
+      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="no" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="no">Logg inn</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target xml:lang="no" state="needs-translation">Logout</target></trans-unit>
