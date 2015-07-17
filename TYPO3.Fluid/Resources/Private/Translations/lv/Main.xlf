@@ -2,12 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Fluid" source-language="en" datatype="plaintext" target-language="lv">
     <body>
-      <trans-unit id="widget.paginate.previous" xml:space="preserve" approved="yes">
+      <trans-unit id="widget.paginate.previous" xml:space="preserve">
 				<source>previous</source>
-			<target xml:lang="lv">iepriekšējā</target></trans-unit>
-      <trans-unit id="widget.paginate.next" xml:space="preserve" approved="yes">
+			<target xml:lang="lv" state="translated">iepriekšējā</target></trans-unit>
+      <trans-unit id="widget.paginate.next" xml:space="preserve">
 				<source>next</source>
-			<target xml:lang="lv">nākamo</target></trans-unit>
+			<target xml:lang="lv" state="translated">nākamo</target></trans-unit>
     </body>
   </file>
 </xliff>
