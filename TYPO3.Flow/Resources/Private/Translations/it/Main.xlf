@@ -5,9 +5,9 @@
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
 			<target xml:lang="it" state="needs-translation">Authentication required</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
+      <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="it">Nome utente</target></trans-unit>
+			<target xml:lang="it" state="translated">Nome utente</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="it" state="needs-translation">Password</target></trans-unit>

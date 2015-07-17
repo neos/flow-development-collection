@@ -3,13 +3,13 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="fr">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
+      <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
+			<target xml:lang="fr" state="translated">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
       <!-- BooleanValueValidator -->
-      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
+      <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="fr">La valeur devrait être {0}.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La valeur devrait être {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
@@ -116,20 +116,24 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="fr">La longueur de ce texte doit être comprise entre {0, number} et {1, number} caractères</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]" xml:space="preserve" approved="yes">
-					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="fr">Ce champ doit contenir au moins {0,number} caractère</target></trans-unit>
-        <trans-unit id="1238108068[1]" xml:space="preserve" approved="yes">
-					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="fr">Ce champ doit contenir au moins {0,number} caractères</target></trans-unit>
+        <trans-unit id="1238108068[0]" approved="yes">
+          <source/>
+          <target xml:lang="fr"/>
+        </trans-unit>
+        <trans-unit id="1238108068[1]" approved="yes">
+          <source/>
+          <target xml:lang="fr"/>
+        </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]" xml:space="preserve" approved="yes">
-					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="fr">Ce texte ne doit pas dépasser {0,number} caractère</target></trans-unit>
-        <trans-unit id="1238108069[1]" xml:space="preserve" approved="yes">
-					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="fr">Ce texte ne doit pas dépasser {0,number} caractères</target></trans-unit>
+        <trans-unit id="1238108069[0]" approved="yes">
+          <source/>
+          <target xml:lang="fr"/>
+        </trans-unit>
+        <trans-unit id="1238108069[1]" approved="yes">
+          <source/>
+          <target xml:lang="fr"/>
+        </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve" approved="yes">

@@ -3,9 +3,9 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="nl">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
+      <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="nl">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
+			<target xml:lang="nl" state="translated">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
@@ -78,12 +78,12 @@
 				<source>Value is no valid I18n locale identifier</source>
 			<target xml:lang="nl">Waarde is geen geldig I18n landinstelling-id</target></trans-unit>
       <!-- NotEmptyValidator -->
-      <trans-unit id="1221560910" xml:space="preserve" approved="yes">
+      <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
-      <trans-unit id="1221560718" xml:space="preserve" approved="yes">
+			<target xml:lang="nl" state="translated">Dit is een verplicht veld</target></trans-unit>
+      <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dit is een verplicht veld</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>
@@ -116,20 +116,24 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="nl">De lengte van deze tekst moet tussen {0,number} en {1,number} tekens liggen</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]" xml:space="preserve" approved="yes">
-					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="nl">Dit veld moet ten minste {0,number} karakter(s) bevatten</target></trans-unit>
-        <trans-unit id="1238108068[1]" xml:space="preserve" approved="yes">
-					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="nl">Dit veld moet ten minste {0,number} karakter(s) bevatten</target></trans-unit>
+        <trans-unit id="1238108068[0]" approved="yes">
+          <source/>
+          <target xml:lang="nl"/>
+        </trans-unit>
+        <trans-unit id="1238108068[1]" approved="yes">
+          <source/>
+          <target xml:lang="nl"/>
+        </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]" xml:space="preserve" approved="yes">
-					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="nl">Deze tekst mag niet langer zijn dan {0,number} karakter(s)</target></trans-unit>
-        <trans-unit id="1238108069[1]" xml:space="preserve" approved="yes">
-					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="nl">Deze tekst mag niet langer zijn dan {0,number} karakter(s)</target></trans-unit>
+        <trans-unit id="1238108069[0]" approved="yes">
+          <source/>
+          <target xml:lang="nl"/>
+        </trans-unit>
+        <trans-unit id="1238108069[1]" approved="yes">
+          <source/>
+          <target xml:lang="nl"/>
+        </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve" approved="yes">

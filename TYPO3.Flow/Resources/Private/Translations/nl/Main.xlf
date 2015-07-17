@@ -5,18 +5,18 @@
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
 			<target xml:lang="nl">Verificatie vereist</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
+      <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
+			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="nl">Wachtwoord</target></trans-unit>
+			<target xml:lang="nl" state="translated">Wachtwoord</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
 			<target xml:lang="nl">Nieuw wachtwoord</target></trans-unit>
-      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
+      <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="nl">Log in</target></trans-unit>
+			<target xml:lang="nl" state="translated">Log in</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="nl">Log uit</target></trans-unit>
