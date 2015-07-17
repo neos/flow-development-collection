@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="la-LA" state="translated">crwdns172:0crwdne172:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns172:0crwdne172:0</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="la-LA" state="translated">crwdns173:0crwdne173:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns173:0crwdne173:0</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="la-LA" state="translated">crwdns174:0crwdne174:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns174:0crwdne174:0</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="la-LA" state="translated">crwdns175:0crwdne175:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns175:0crwdne175:0</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="la-LA" state="translated">crwdns176:0crwdne176:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns176:0crwdne176:0</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="la-LA" state="translated">crwdns177:0crwdne177:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns177:0crwdne177:0</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="la-LA" state="translated">crwdns178:0crwdne178:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns178:0crwdne178:0</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="la-LA" state="translated">crwdns179:0crwdne179:0</target></trans-unit>
+			<target xml:lang="la-LA" state="needs-translation">crwdns179:0crwdne179:0</target></trans-unit>
     </body>
   </file>
 </xliff>
