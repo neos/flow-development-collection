@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-07-16
+The following reference was automatically generated from code on 2015-07-17
 
 
 .. _`Flow Command Reference: TYPO3.FLOW`:
@@ -1410,6 +1410,27 @@ Related commands
 
 ``typo3.kickstart:kickstart:actioncontroller``
   Kickstart a new action controller
+
+
+
+.. _`Flow Command Reference: TYPO3.KICKSTART typo3.kickstart:kickstart:documentation`:
+
+``typo3.kickstart:kickstart:documentation``
+*******************************************
+
+**Kickstart documentation**
+
+Generates a documentation skeleton for the given package.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package for the documentation
+
+
+
+
 
 
 
