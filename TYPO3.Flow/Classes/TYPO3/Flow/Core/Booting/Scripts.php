@@ -180,26 +180,6 @@ class Scripts {
 		$packageManager->injectSystemLogger($systemLogger);
 	}
 
-
-	/**
-	 * Initializes the Lock Manager
-	 *
-	 * @param Bootstrap $bootstrap
-	 * @return void
-	 */
-	static public function initializeLockManager(Bootstrap $bootstrap) {
-		$systemLogger = $bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class);
-
-		$lockManager = new \TYPO3\Flow\Core\LockManager();
-		$lockManager->injectEnvironment($bootstrap->getEarlyInstance(\TYPO3\Flow\Utility\Environment::class));
-		$lockManager->injectSystemLogger($systemLogger);
-		$lockManager->initializeObject();
-
-		$lockManager->exitIfSiteLocked();
-
-		$bootstrap->setEarlyInstance(\TYPO3\Flow\Core\LockManager::class, $lockManager);
-	}
-
 	/**
 	 * Initializes the error handling
 	 *
