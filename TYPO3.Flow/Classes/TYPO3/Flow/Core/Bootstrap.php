@@ -256,13 +256,18 @@ class Bootstrap {
 	public function buildEssentialsSequence($identifier) {
 		$sequence = new Sequence($identifier);
 
+		if ($this->context->isProduction()) {
+			$lockManager = new \TYPO3\Flow\Core\LockManager();
+			$lockManager->exitIfSiteLocked();
+			if ($identifier === 'compiletime') {
+				$lockManager->lockSiteOrExit();
+			}
+			$this->setEarlyInstance(\TYPO3\Flow\Core\LockManager::class, $lockManager);
+		}
+
 		$sequence->addStep(new Step('typo3.flow:annotationregistry', array('TYPO3\Flow\Core\Booting\Scripts', 'registerClassLoaderInAnnotationRegistry')));
 		$sequence->addStep(new Step('typo3.flow:configuration', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeConfiguration')), 'typo3.flow:annotationregistry');
 		$sequence->addStep(new Step('typo3.flow:systemlogger', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemLogger')), 'typo3.flow:configuration');
-
-		if ($this->context->isProduction()) {
-			$sequence->addStep(new Step('typo3.flow:lockmanager', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeLockManager')), 'typo3.flow:systemlogger');
-		}
 
 		$sequence->addStep(new Step('typo3.flow:errorhandling', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeErrorHandling')), 'typo3.flow:systemlogger');
 		$sequence->addStep(new Step('typo3.flow:cachemanagement', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeCacheManagement')), 'typo3.flow:systemlogger');
@@ -278,11 +283,6 @@ class Bootstrap {
 	 */
 	public function buildCompiletimeSequence() {
 		$sequence = $this->buildEssentialsSequence('compiletime');
-
-		if ($this->context->isProduction()) {
-			$bootstrap = $this;
-			$sequence->addStep(new Step('typo3.flow:lockmanager:locksiteorexit', function() use ($bootstrap) { $bootstrap->getEarlyInstance('TYPO3\Flow\Core\LockManager')->lockSiteOrExit(); } ), 'typo3.flow:systemlogger');
-		}
 
 		$sequence->addStep(new Step('typo3.flow:cachemanagement:forceflush', array('TYPO3\Flow\Core\Booting\Scripts', 'forceFlushCachesIfNecessary')), 'typo3.flow:systemlogger');
 		$sequence->addStep(new Step('typo3.flow:objectmanagement:compiletime:create', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow:systemlogger');
