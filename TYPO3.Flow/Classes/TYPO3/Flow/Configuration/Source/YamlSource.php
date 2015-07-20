@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Configuration\Source;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -91,7 +92,7 @@ class YamlSource {
 							throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
 						}
 					} else {
-						$loadedConfiguration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename);
+						$loadedConfiguration = Yaml::parse($pathAndFilename);
 					}
 
 					if (is_array($loadedConfiguration)) {
@@ -117,7 +118,12 @@ class YamlSource {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99, 2);
+		if ($this->usePhpYamlExtension) {
+			$yaml = yaml_emit($configuration);
+		} else {
+			$yaml = Yaml::dump($configuration, 99, 2);
+		}
+
 		file_put_contents($pathAndFilename . '.yaml', $header . chr(10) . $yaml);
 	}
 

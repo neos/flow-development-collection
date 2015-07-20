@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Configuration\Source;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Configuration\Source\YamlSource;
 
 /**
  * Testcase for the YAML configuration source
@@ -31,7 +32,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function returnsEmptyArrayOnNonExistingFile() {
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$configuration = $configurationSource->load('/ThisFileDoesNotExist');
 		$this->assertEquals(array(), $configuration, 'No empty array was returned.');
 	}
@@ -41,7 +42,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
 		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
 	}
@@ -51,7 +52,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function saveWritesArrayToGivenFileAsYAML() {
 		$pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$mockConfiguration = array(
 			'configurationFileHasBeenLoaded' => TRUE,
 			'foo' => array(
@@ -72,7 +73,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
 		file_put_contents($pathAndFilename . '.yaml', $comment);
 
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
 		$yaml = file_get_contents($pathAndFilename . '.yaml');
@@ -95,7 +96,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertSame($expectedConfiguration, $configuration);
 	}
@@ -117,7 +118,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 		$pathAndFilename = __DIR__ . '/../Fixture/SplitYamlConfigurationFile';
-		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configurationSource = new YamlSource();
 		$configuration = $configurationSource->load($pathAndFilename, TRUE);
 		$this->assertSame($expectedConfiguration, $configuration);
 	}
