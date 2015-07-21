@@ -162,4 +162,23 @@ class TypeHandling {
 		}
 		return $binaryData;
 	}
+
+	/**
+	 * Return simple type or class for object
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	static public function getTypeForValue($value) {
+		if (is_object($value)) {
+			if ($value instanceof \Doctrine\ORM\Proxy\Proxy) {
+				$type = get_parent_class($value);
+			} else {
+				$type = get_class($value);
+			}
+		} else {
+			$type = gettype($value);
+		}
+		return $type;
+	}
 }

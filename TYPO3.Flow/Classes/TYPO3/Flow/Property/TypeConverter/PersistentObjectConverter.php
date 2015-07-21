@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays or strings to persistent objects. It does the following:
@@ -164,7 +165,7 @@ class PersistentObjectConverter extends ObjectConverter {
 		}
 
 
-		$objectConstructorArguments = $this->getConstructorArgumentsForClass(get_class($object));
+		$objectConstructorArguments = $this->getConstructorArgumentsForClass(TypeHandling::getTypeForValue($object));
 
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			// We need to check for "immutable" constructor arguments that have no setter and remove them.
@@ -176,7 +177,7 @@ class PersistentObjectConverter extends ObjectConverter {
 					$exceptionMessage = sprintf(
 						'Property "%s" having a value of type "%s" could not be set in target object of type "%s". The property has no setter and is not equal to the value in the object, in that case it would have been skipped.',
 						$propertyName,
-						(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
+						(is_object($propertyValue) ? TypeHandling::getTypeForValue($propertyValue) : gettype($propertyValue)),
 						$targetType
 					);
 					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1421498771);
@@ -187,7 +188,7 @@ class PersistentObjectConverter extends ObjectConverter {
 				$exceptionMessage = sprintf(
 					'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
 					$propertyName,
-					(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
+					(is_object($propertyValue) ? TypeHandling::getTypeForValue($propertyValue) : gettype($propertyValue)),
 					$targetType
 				);
 				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1297935345);
