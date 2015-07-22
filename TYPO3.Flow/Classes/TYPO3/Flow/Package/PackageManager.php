@@ -775,7 +775,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 */
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
-		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 4) {
+		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 5) {
 			$this->packageStatesConfiguration = array();
 		}
 		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
@@ -1041,7 +1041,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected function sortAndSavePackageStates() {
 		$this->sortAvailablePackagesByDependencies();
 
-		$this->packageStatesConfiguration['version'] = 4;
+		$this->packageStatesConfiguration['version'] = 5;
 
 		$fileDescription = "# PackageStates.php\n\n";
 		$fileDescription .= "# This file is maintained by Flow's package management. Although you can edit it\n";
