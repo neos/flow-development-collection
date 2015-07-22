@@ -21,17 +21,10 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class LockManager {
 
+	/**
+	 * @var integer
+	 */
 	const LOCKFILE_MAXIMUM_AGE = 90;
-
-	/**
-	 * @var \TYPO3\Flow\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
 
 	/**
 	 * @var string
@@ -39,43 +32,17 @@ class LockManager {
 	protected $lockPathAndFilename;
 
 	/**
-	 * @var boolean
+	 * @var resource
 	 */
-	protected $siteLocked = FALSE;
+	protected $lockResource;
 
 	/**
-	 * Injects the environment utility
-	 *
-	 * @param \TYPO3\Flow\Utility\Environment $environment
-	 * @return void
+	 * Builds the manager
 	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * Initializes the manager
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->lockPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Flow.lock';
-		if (file_exists($this->lockPathAndFilename)) {
-			if (filemtime($this->lockPathAndFilename) < (time() - self::LOCKFILE_MAXIMUM_AGE)) {
-				unlink($this->lockPathAndFilename);;
-			} else {
-				$this->siteLocked = TRUE;
-			}
+	public function __construct() {
+		$this->lockPathAndFilename = rtrim(sys_get_temp_dir(), '/') . '/' . md5(FLOW_PATH_ROOT) . '_Flow.lock';
+		if (file_exists($this->lockPathAndFilename) && filemtime($this->lockPathAndFilename) < (time() - self::LOCKFILE_MAXIMUM_AGE)) {
+			@unlink($this->lockPathAndFilename);
 		}
 	}
 
@@ -86,7 +53,7 @@ class LockManager {
 	 * @api
 	 */
 	public function isSiteLocked() {
-		return $this->siteLocked;
+		return file_exists($this->lockPathAndFilename);
 	}
 
 	/**
@@ -96,15 +63,7 @@ class LockManager {
 	 */
 	public function exitIfSiteLocked() {
 		if ($this->isSiteLocked() === TRUE) {
-			if (FLOW_SAPITYPE === 'Web') {
-				header('HTTP/1.1 503 Service Temporarily Unavailable');
-				readfile(FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html');
-			} else {
-				$expiresIn = abs((time() - self::LOCKFILE_MAXIMUM_AGE - filemtime($this->lockPathAndFilename)));
-				echo 'Site is currently locked, exiting.' . PHP_EOL . 'The current lock will expire after ' . $expiresIn . ' seconds.' . PHP_EOL;
-			}
-			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
-			exit(1);
+			$this->doExit();
 		}
 	}
 
@@ -115,10 +74,11 @@ class LockManager {
 	 * @api
 	 */
 	public function lockSiteOrExit() {
-		$this->exitIfSiteLocked();
-		$this->systemLogger->log('Locking site. Lock file: ' . $this->lockPathAndFilename, LOG_NOTICE);
-		$this->siteLocked = TRUE;
-		file_put_contents($this->lockPathAndFilename, '');
+		$this->lockResource = fopen($this->lockPathAndFilename, 'w+');
+		if (!flock($this->lockResource, LOCK_EX | LOCK_NB)) {
+			fclose($this->lockResource);
+			$this->doExit();
+		}
 	}
 
 	/**
@@ -128,14 +88,26 @@ class LockManager {
 	 * @api
 	 */
 	public function unlockSite() {
-		if ($this->siteLocked === TRUE) {
-			if (file_exists($this->lockPathAndFilename)) {
-				unlink($this->lockPathAndFilename);
-			} else {
-				$this->systemLogger->log('Site is locked but no lockfile could be found.', LOG_WARNING);
-			}
-			$this->siteLocked = FALSE;
-			$this->systemLogger->log('Unlocked site.', LOG_NOTICE);
+		if (is_resource($this->lockResource)) {
+			unlink($this->lockPathAndFilename);
+			flock($this->lockResource, LOCK_UN);
+			fclose($this->lockResource);
 		}
+	}
+
+	/**
+	 * Exit and emit a message about the reason.
+	 *
+	 * @return void
+	 */
+	protected function doExit() {
+		if (FLOW_SAPITYPE === 'Web') {
+			header('HTTP/1.1 503 Service Temporarily Unavailable');
+			readfile(FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html');
+		} else {
+			$expiresIn = abs((time() - self::LOCKFILE_MAXIMUM_AGE - filemtime($this->lockPathAndFilename)));
+			echo 'Site is currently locked, exiting.' . PHP_EOL . 'The current lock will expire after ' . $expiresIn . ' seconds.' . PHP_EOL;
+		}
+		exit(1);
 	}
 }
