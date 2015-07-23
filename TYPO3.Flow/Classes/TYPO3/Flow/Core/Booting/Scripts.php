@@ -77,9 +77,6 @@ class Scripts {
 		\TYPO3\Flow\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
 
 		echo 'Force-flushed caches for "' . $bootstrap->getContext() . '" context.' . PHP_EOL;
-
-		$bootstrap->getEarlyInstance('TYPO3\Flow\Core\LockManager')->unlockSite();
-
 		exit(0);
 	}
 
