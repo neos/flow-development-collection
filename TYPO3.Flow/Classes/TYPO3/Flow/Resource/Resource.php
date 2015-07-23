@@ -144,6 +144,8 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 	/**
 	 * Returns a stream for use with read-only file operations such as reading or copying.
 	 *
+	 * Note: The caller is responsible to close the returned resource by calling fclose($stream)
+	 *
 	 * @return resource | boolean A stream which points to the data of this resource for read-access or FALSE if the stream could not be obtained
 	 * @api
 	 */
@@ -384,6 +386,8 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface {
 				throw new Exception(sprintf('Could not open stream for resource %s ("%s") from collection "%s" while trying to create a temporary local copy.', $this->sha1, $this->filename, $this->collectionName), 1416221863);
 			}
 			stream_copy_to_stream($resourceStream, $temporaryFileHandle);
+			fclose($resourceStream);
+			fclose($temporaryFileHandle);
 			$this->temporaryLocalCopyPathAndFilename = $temporaryPathAndFilename;
 		}
 
