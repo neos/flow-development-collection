@@ -1,7 +1,9 @@
 {
     "name": "neos/flow-development-collection",
     "description": "Flow packages in a joined repository for pull requests.",
-    "license": ["MIT"],
+    "license": [
+        "MIT"
+    ],
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
@@ -10,6 +12,7 @@
         "ext-json": ">=1.2.0",
         "ext-mbstring": "*",
         "ext-reflection": "*",
+        "ramsey/uuid": "^3.0.0",
         "doctrine/orm": "2.4.*",
         "doctrine/migrations": "1.0.*",
         "symfony/yaml": "2.5.*",
@@ -26,7 +29,8 @@
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
-        "typo3/party": "To make use of basic user handling"
+        "typo3/party": "To make use of basic user handling",
+        "php-uuid": "For fast generation of UUIDs used in the persistence."
     },
     "autoload": {
         "psr-0": {
