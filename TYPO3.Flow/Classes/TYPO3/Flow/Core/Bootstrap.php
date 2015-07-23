@@ -262,7 +262,7 @@ class Bootstrap {
 			if ($identifier === 'compiletime') {
 				$lockManager->lockSiteOrExit();
 			}
-			$this->setEarlyInstance(\TYPO3\Flow\Core\LockManager::class, $lockManager);
+			$this->setEarlyInstance('TYPO3\Flow\Core\LockManager', $lockManager);
 		}
 
 		$sequence->addStep(new Step('typo3.flow:annotationregistry', array('TYPO3\Flow\Core\Booting\Scripts', 'registerClassLoaderInAnnotationRegistry')));
