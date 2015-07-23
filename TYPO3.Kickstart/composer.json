@@ -4,7 +4,7 @@
     "description": "A simple generator for controller and views.",
     "license": "LGPL-3.0+",
     "require": {
-        "typo3/flow": "3.0.0-beta6"
+        "typo3/flow": "~3.0.0"
     },
     "autoload": {
         "psr-0": {
