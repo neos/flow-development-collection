@@ -1,10 +1,12 @@
-.. _Flow TypeConverter Reference:
+.. _`Flow TypeConverter Reference`:
 
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2015-07-15
+This reference was automatically generated from code on 2015-07-23
 
+
+.. _`Flow TypeConverter Reference: ArrayConverter`:
 
 ArrayConverter
 --------------
@@ -30,6 +32,8 @@ Converter which transforms various types to arrays.
 
 
 
+.. _`Flow TypeConverter Reference: ArrayFromObjectConverter`:
+
 ArrayFromObjectConverter
 ------------------------
 
@@ -43,6 +47,8 @@ TypeConverter which converts generic objects to arrays by converting and returni
 
 
 
+.. _`Flow TypeConverter Reference: ArrayTypeConverter`:
+
 ArrayTypeConverter
 ------------------
 
@@ -55,6 +61,8 @@ Converts Doctrine collections to arrays
 
 
 
+
+.. _`Flow TypeConverter Reference: BooleanConverter`:
 
 BooleanConverter
 ----------------
@@ -76,6 +84,8 @@ Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 
 
 
 
+.. _`Flow TypeConverter Reference: CollectionConverter`:
+
 CollectionConverter
 -------------------
 
@@ -92,6 +102,8 @@ type converters and the result will be used to populate a Doctrine ArrayCollecti
 
 
 
+
+.. _`Flow TypeConverter Reference: DateTimeConverter`:
 
 DateTimeConverter
 -----------------
@@ -143,6 +155,8 @@ As an alternative to providing the date as string, you might supply day, month a
 
 
 
+
+.. _`Flow TypeConverter Reference: FloatConverter`:
 
 FloatConverter
 --------------
@@ -225,6 +239,8 @@ pattern should be used. In most cases leaving this DEFAULT would be the correct 
 
 
 
+.. _`Flow TypeConverter Reference: IntegerConverter`:
+
 IntegerConverter
 ----------------
 
@@ -244,6 +260,8 @@ Converter which transforms to an integer.
 
 
 
+.. _`Flow TypeConverter Reference: LocaleTypeConverter`:
+
 LocaleTypeConverter
 -------------------
 
@@ -256,6 +274,8 @@ Converter which transforms strings to a Locale object.
 
 
 
+
+.. _`Flow TypeConverter Reference: MediaTypeConverter`:
 
 MediaTypeConverter
 ------------------
@@ -271,6 +291,8 @@ based media types as well as urlencoded content.
 
 
 
+
+.. _`Flow TypeConverter Reference: ObjectConverter`:
 
 ObjectConverter
 ---------------
@@ -292,6 +314,8 @@ the respective values. For the mechanics used to set the values see ObjectAccess
 
 
 
+
+.. _`Flow TypeConverter Reference: PersistentObjectConverter`:
 
 PersistentObjectConverter
 -------------------------
@@ -318,6 +342,8 @@ This converter transforms arrays or strings to persistent objects. It does the f
 
 
 
+.. _`Flow TypeConverter Reference: PersistentObjectSerializer`:
+
 PersistentObjectSerializer
 --------------------------
 
@@ -333,6 +359,8 @@ as the serialized value.
 
 
 
+
+.. _`Flow TypeConverter Reference: ResourceTypeConverter`:
 
 ResourceTypeConverter
 ---------------------
@@ -379,6 +407,8 @@ Has two major working modes:
 
 
 
+.. _`Flow TypeConverter Reference: RoleConverter`:
+
 RoleConverter
 -------------
 
@@ -391,6 +421,8 @@ This converter transforms strings to role instances
 
 
 
+
+.. _`Flow TypeConverter Reference: SessionConverter`:
 
 SessionConverter
 ----------------
@@ -406,6 +438,8 @@ Given a session ID this will return an instance of TYPO3\Flow\Session\Session.
 
 
 
+
+.. _`Flow TypeConverter Reference: StringConverter`:
 
 StringConverter
 ---------------
@@ -432,6 +466,8 @@ For array to CSV string, the delimiter can be set via CONFIGURATION_CSV_DELIMITE
 
 
 
+.. _`Flow TypeConverter Reference: TypedArrayConverter`:
+
 TypedArrayConverter
 -------------------
 
@@ -447,6 +483,8 @@ the element type <T> of the target array using an available type converter.
 
 
 
+
+.. _`Flow TypeConverter Reference: UriTypeConverter`:
 
 UriTypeConverter
 ----------------
