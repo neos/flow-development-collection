@@ -10,7 +10,7 @@
 			<target xml:lang="it" state="translated">Nome utente</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="it" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="it" state="translated">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="it" state="needs-translation">New password</target></trans-unit>
