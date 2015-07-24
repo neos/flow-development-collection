@@ -104,7 +104,10 @@ class Scripts {
 
 		echo 'Force-flushed caches for "' . $bootstrap->getContext() . '" context.' . PHP_EOL;
 
-		$bootstrap->getEarlyInstance(\TYPO3\Flow\Core\LockManager::class)->unlockSite();
+		// In production the site will be locked as this is a compiletime request so we need to take care to remove that lock again.
+		if ($bootstrap->getContext()->isProduction()) {
+			$bootstrap->getEarlyInstance(\TYPO3\Flow\Core\LockManager::class)->unlockSite();
+		}
 
 		exit(0);
 	}
