@@ -45,12 +45,30 @@ class FileSystemTarget implements TargetInterface {
 	protected $path;
 
 	/**
-	 * Publicly accessible web URI which points to the root path of this target.
-	 * Can be relative to website's base Uri, for example "_Resources/MySpecialTarget/"
+	 * The configured publicly accessible web URI which points to the root path of this target.
+	 * Can be relative to website's base Uri, for example "_Resources/MySpecialTarget/".
+	 * If resources should be served from a different domain, make sure to specify an absolute URI though
 	 *
 	 * @var string
 	 */
 	protected $baseUri = '';
+
+	/**
+	 * The configured TYPO3.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
+	 * and if it can't be determined from the current request (e.g. in CLI mode)
+	 *
+	 * @Flow\InjectConfiguration(package="TYPO3.Flow", path="http.baseUri")
+	 * @var string
+	 */
+	protected $httpBaseUri;
+
+	/**
+	 * The resolved absolute web URI for this target. If $baseUri was absolute this will be the same,
+	 * otherwise the request base uri will be prepended.
+	 *
+	 * @var string
+	 */
+	protected $absoluteBaseUri;
 
 	/**
 	 * If the generated URI path segment containing the sha1 should be divided into multiple segments
@@ -98,12 +116,6 @@ class FileSystemTarget implements TargetInterface {
 		foreach ($this->options as $key => $value) {
 			switch ($key) {
 				case 'baseUri':
-					if (strpos($value, '://') === FALSE && $value[0] !== '/') {
-						$this->baseUri = $this->detectResourcesBaseUri() . $value;
-					} else {
-						$this->baseUri = $value;
-					}
-					break;
 				case 'path':
 					$this->$key = $value;
 					break;
@@ -192,7 +204,7 @@ class FileSystemTarget implements TargetInterface {
 	 * @return string The URI
 	 */
 	public function getPublicStaticResourceUri($relativePathAndFilename) {
-		return $this->baseUri . $this->encodeRelativePathAndFilenameForUri($relativePathAndFilename);
+		return $this->getResourcesBaseUri() . $this->encodeRelativePathAndFilenameForUri($relativePathAndFilename);
 	}
 
 	/**
@@ -203,7 +215,7 @@ class FileSystemTarget implements TargetInterface {
 	 * @throws Exception
 	 */
 	public function getPublicPersistentResourceUri(Resource $resource) {
-		return $this->baseUri . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
+		return $this->getResourcesBaseUri() . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
 	}
 
 	/**
@@ -271,21 +283,38 @@ class FileSystemTarget implements TargetInterface {
 	}
 
 	/**
-	 * Detects and returns the website's base URI
+	 * Returns the resolved absolute base URI for resources of this target.
 	 *
-	 * @return string The website's base URI
+	 * @return string The absolute base URI for resources in this target
+	 */
+	protected function getResourcesBaseUri() {
+		if ($this->absoluteBaseUri === NULL) {
+			$this->absoluteBaseUri = $this->detectResourcesBaseUri();
+		}
+
+		return $this->absoluteBaseUri;
+	}
+
+	/**
+	 * Detects and returns the website's absolute base URI
+	 *
+	 * @return string The resolved resource base URI, @see getResourcesBaseUri()
+	 * @throws Exception if the baseUri can't be resolved
 	 */
 	protected function detectResourcesBaseUri() {
-		$uri = '';
+		if ($this->baseUri !== '' && ($this->baseUri[0] === '/' || strpos($this->baseUri, '://') !== FALSE)) {
+			return $this->baseUri;
+		}
+
 		$requestHandler = $this->bootstrap->getActiveRequestHandler();
 		if ($requestHandler instanceof HttpRequestHandlerInterface) {
-			// In functional tests or some other obscure scenarios we might end up without a current HTTP request:
-			$request = $requestHandler->getHttpRequest();
-			if ($request instanceof Request) {
-				$uri = $requestHandler->getHttpRequest()->getBaseUri();
-			}
+			return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
 		}
-		return (string)$uri;
+
+		if ($this->httpBaseUri === NULL) {
+			throw new Exception(sprintf('The base URI for resources could not be detected. Please specify the "TYPO3.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
+		}
+		return $this->httpBaseUri . $this->baseUri;
 	}
 
 	/**
