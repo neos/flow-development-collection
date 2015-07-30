@@ -45,6 +45,8 @@ use TYPO3\Flow\Cache\Exception as CacheException;
  */
 class RedisBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface {
 
+	const MIN_REDIS_VERSION = '2.6.0';
+
 	/**
 	 * @var \Redis
 	 */
@@ -115,7 +117,10 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		}
 
 		$this->redis->multi();
-		$this->redis->set($this->buildKey('entry:' . $entryIdentifier), $data, $setOptions);
+		$result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $data, $setOptions);
+		if (!$result instanceof \Redis) {
+			$this->verifyRedisVersionIsSupported();
+		}
 		$this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
 		foreach ($tags as $tag) {
 			$this->redis->sAdd($this->buildKey('tag:' . $tag), $entryIdentifier);
@@ -403,6 +408,23 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		}
 		$redis->select($this->database);
 		return $redis;
+	}
+
+	/**
+	 * @return void
+	 * @throws CacheException
+	 */
+	protected function verifyRedisVersionIsSupported() {
+		// Redis client could be in multi mode, discard for checking the version
+		$this->redis->discard();
+
+		$serverInfo = $this->redis->info();
+		if (!isset($serverInfo['redis_version'])) {
+			throw new CacheException('Unsupported Redis version, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251553);
+		}
+		if (version_compare($serverInfo['redis_version'], self::MIN_REDIS_VERSION) < 0) {
+			throw new CacheException('Redis version ' . $serverInfo['redis_version'] . ' not supported, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251628);
+		}
 	}
 
 }

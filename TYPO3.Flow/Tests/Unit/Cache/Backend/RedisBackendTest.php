@@ -45,13 +45,6 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		if (version_compare($phpredisVersion, '1.2.0', '<')) {
 			$this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to verson 1.2.0+.', $phpredisVersion));
 		}
-		try {
-			if (!@fsockopen('127.0.0.1', 6379)) {
-				$this->markTestSkipped('redis server not reachable');
-			}
-		} catch (\Exception $e) {
-			$this->markTestSkipped('redis server not reachable');
-		}
 
 		$this->redis = $this->getMockBuilder('\Redis')->disableOriginalConstructor()->getMock();
 		$this->cache = $this->getMock('\TYPO3\Flow\Cache\Frontend\FrontendInterface');
@@ -102,9 +95,14 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->backend->setDefaultLifetime($defaultLifetime);
 		$expected = array('ex' => $defaultLifetime);
 
+		$this->redis->expects($this->any())
+			->method('multi')
+			->willReturn($this->redis);
+
 		$this->redis->expects($this->once())
 			->method('set')
-			->with($this->anything(), $this->anything(), $expected);
+			->with($this->anything(), $this->anything(), $expected)
+			->willReturn($this->redis);
 
 		$this->backend->set('foo', 'bar');
 	}
@@ -117,9 +115,14 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->backend->setDefaultLifetime($defaultLifetime);
 		$expected = array('ex' => 1600);
 
+		$this->redis->expects($this->any())
+			->method('multi')
+			->willReturn($this->redis);
+
 		$this->redis->expects($this->once())
 			->method('set')
-			->with($this->anything(), $this->anything(), $expected);
+			->with($this->anything(), $this->anything(), $expected)
+			->willReturn($this->redis);
 
 		$this->backend->set('foo', 'bar', array(), 1600);
 	}
@@ -128,9 +131,14 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setAddsEntryToRedis() {
+		$this->redis->expects($this->any())
+			->method('multi')
+			->willReturn($this->redis);
+
 		$this->redis->expects($this->once())
 			->method('set')
-			->with('Foo_Cache:entry:entry_1', 'foo');
+			->with('Foo_Cache:entry:entry_1', 'foo')
+			->willReturn($this->redis);
 
 		$this->backend->set('entry_1', 'foo');
 	}
