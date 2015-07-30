@@ -4,3 +4,4 @@ TYPO3:
     something: 'foo'
     '@bar': 1
     aboolean: TRUE
+    'Foo.Bar:Baz': 'a quoted key'

@@ -118,12 +118,7 @@ class YamlSource {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		if ($this->usePhpYamlExtension) {
-			$yaml = yaml_emit($configuration);
-		} else {
-			$yaml = Yaml::dump($configuration, 99, 2);
-		}
-
+		$yaml = Yaml::dump($configuration, 99, 2);
 		file_put_contents($pathAndFilename . '.yaml', $header . chr(10) . $yaml);
 	}
 
