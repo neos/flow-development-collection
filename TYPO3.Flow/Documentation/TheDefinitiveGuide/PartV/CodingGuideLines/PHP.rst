@@ -1,3 +1,5 @@
+.. _ch-php-coding-guidelines:
+
 ======================================
 PHP Coding Guidelines & Best Practices
 ======================================

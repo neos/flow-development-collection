@@ -2,15 +2,13 @@
 Routing
 =======
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>, Bastian Waidelich <bastian@typo3.org>
-
 Although the basic functions like creating or updating a post work well
 already, the URIs still have a little blemish. The index of posts can only be
-reached by the cumbersome address http://dev.tutorial.local/typo3.blog/post
+reached by the cumbersome address http://dev.tutorial.local/acme.blog/post
 and the URL for editing a post refers to the post's UUID instead of the
 human-readable identifier.
 
-TYPO3 Flow's routing mechanism allows for beautifying these URIs by simple but
+Flow's routing mechanism allows for beautifying these URIs by simple but
 powerful configuration options.
 
 Post Index Route
@@ -22,7 +20,7 @@ edit a file called *Routes.yaml* in the global *Configuration/* directory
 This file already contains a few routes which we ignore for the time being.
 
 Please insert the following configuration *at the top of the file* (before the
-TYPO3CR route) and make sure that you use spaces exactly like in the example
+'Welcome' route) and make sure that you use spaces exactly like in the example
 (remember, spaces have a meaning in YAML files and tabs are not allowed):
 
 .. code-block:: yaml
@@ -31,7 +29,7 @@ TYPO3CR route) and make sure that you use spaces exactly like in the example
 	  name: 'Post index'
 	  uriPattern:    'posts'
 	  defaults:
-	    '@package':    'TYPO3.Blog'
+	    '@package':    'Acme.Blog'
 	    '@controller': 'Post'
 	    '@action':     'index'
 	    '@format':     'html'
@@ -54,11 +52,11 @@ Composite Routes
 
 As you can imagine, you rarely define only one route per package and storing
 all routes in one file can easily become confusing. To keep the global
-*Routes.yaml* clean you may define sub routes which include - if their own URI
+*Routes.yaml* clean you may define *sub routes* which include - if their own URI
 pattern matches - further routes provided by your package.
 
 The *Flow* sub route configuration for example includes further routes if
-the URI path starts with the string '``TYPO3CR``'. Only the URI part contained
+no earlier routes in ``Routes.yaml`` matched first. Only the URI part contained
 in the less-than and greater-than signs will be passed to the sub routes:
 
 .. code-block:: yaml
@@ -89,11 +87,11 @@ route configuration:
 	  name: 'Blog'
 	  uriPattern: '<BlogSubroutes>'
 	  defaults:
-	    '@package': 'TYPO3.Blog'
+	    '@package': 'Acme.Blog'
 	    '@format':  'html'
 	  subRoutes:
 	    'BlogSubroutes':
-	      package: 'TYPO3.Blog'
+	      package: 'Acme.Blog'
 
 .. note::
 	We use "``BlogSubroutes``" here as name for the sub routes. You can name this as you like but it has to be
@@ -101,7 +99,7 @@ route configuration:
 
 For this to work you need to create a new *Routes.yaml* file in the
 *Configuration* folder of your *Blog* package
-(*Packages/Application/TYPO3.Blog/Configuration/Routes.yaml*) and paste the
+(*Packages/Application/Acme.Blog/Configuration/Routes.yaml*) and paste the
 route you already created:
 
 *Configuration/Routes.yaml*:
@@ -116,7 +114,7 @@ route you already created:
 	  name: 'Post index'
 	  uriPattern:    'posts'
 	  defaults:
-	    '@package':    'TYPO3.Blog'
+	    '@package':    'Acme.Blog'
 	    '@controller': 'Post'
 	    '@action':     'index'
 	    '@format':     'html'
@@ -128,7 +126,7 @@ route you already created:
 An Action Route
 ===============
 
-The URI pointing to the ``newAction`` is still http://dev.tutorial.local/typo3.blog/post/new
+The URI pointing to the ``newAction`` is still http://dev.tutorial.local/acme.blog/post/new
 so let's beautify the action URIs as well by inserting a new route before the
 '``Blogs``' route:
 
@@ -155,7 +153,7 @@ However, the edit link still looks it bit ugly:
 
 .. code-block:: none
 
-	http://dev.tutorial.local/post/edit?post%5B__identity%5D=229e2b23-b6f3-4422-8b7a-efb196dbc88b
+	http://dev.tutorial.local/acme.blog/post/edit?post%5B__identity%5D=229e2b23-b6f3-4422-8b7a-efb196dbc88b
 
 For getting rid of this long identifier we need the help of a new route that can handle
 the post object.
@@ -167,7 +165,7 @@ Our goal is to produce an URI like:
 
 .. code-block:: none
 
-	http://dev.tutorial.local/post/2010/01/18/post-title/edit
+	http://dev.tutorial.local/posts/2010/01/18/post-title/edit
 
 and use this as our edit link. That's done by adding following route at the
 **top of the file**:
@@ -183,8 +181,8 @@ and use this as our edit link. That's done by adding following route at the
 	    '@controller':  'Post'
 	  routeParts:
 	    post:
-	      objectType: 'TYPO3\Blog\Domain\Model\Post'
-	      uriPattern: '{date:Y}/{date:m}/{date:d}/{title}'
+	      objectType: 'Acme\Blog\Domain\Model\Post'
+	      uriPattern: '{date:Y}/{date:m}/{date:d}/{subject}'
 
 The "``Single post actions``" route now handles all actions where a post needs to
 be specified (i.e. show, edit, update and delete).
@@ -196,7 +194,7 @@ More on Routing
 ===============
 
 The more an application grows, the more complex routing can become and
-sometimes you'll wonder which route TYPO3 Flow eventually chose. One way to get
+sometimes you'll wonder which route Flow eventually chose. One way to get
 this information is looking at the log file which is by default
 located in *Data/Logs/System_Development.log*:
 

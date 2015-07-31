@@ -2,43 +2,41 @@
 Requirements
 ============
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
-
-TYPO3 Flow is being developed and tested on multiple platforms and pretty easy to set
+Flow is being developed and tested on multiple platforms and pretty easy to set
 up. Nevertheless we recommend that you go through the following list before installing
-TYPO3 Flow, because a server with exotic *php.ini* settings or wrong file permissions can
+Flow, because a server with exotic *php.ini* settings or wrong file permissions can
 easily spoil your day.
 
 Server Environment
 ==================
 
-Not surprisingly, you'll need a web server for running your TYPO3 Flow-based web
-application. We recommend Apache (though IIS and others work too – we just
+Not surprisingly, you'll need a web server for running your Flow-based web
+application. We recommend *Apache* (though *nginx*, *IIS* and others work too – we just
 haven't really tested them). Please make sure that the
 `mod_rewrite <http://httpd.apache.org/docs/current/mod/mod_rewrite.html>`_ module is
 enabled.
 
 .. tip::
 
-	To enable TYPO3 Flow to create symlinks on Windows Server 2008 and higher you need
+	To enable Flow to create symlinks on Windows Server 2008 and higher you need
 	to do some extra configuration. In IIS you need to configure `Authentication` for
 	your site configuration to use a specific user in the `Anonymous Authentication`
 	setting. The configured user should also be allowed to create symlinks using the
 	local security policy `Local Policies > User Rights Assignments > Create symbolic links`
 
-TYPO3 Flow's persistence mechanism requires a `database supported by Doctrine DBAL
+Flow's persistence mechanism requires a `database supported by Doctrine DBAL
 <http://www.doctrine-project.org/projects/dbal.html>`_.
 
 PHP
 ===
 
-TYPO3 Flow was one of the first PHP projects taking advantage of namespaces and
+Flow was one of the first PHP projects taking advantage of namespaces and
 other features introduced in PHP version 5.3. By now we started using features of
-PHP 5.5, so make sure you have PHP 5.5.0 or later available on your web server. Make
-sure your PHP CLI binary is the same version!
+PHP 5.5, so make sure you have **PHP 5.5.0** or later available on your web server. Make
+sure your PHP CLI binary is the **same version**!
 
 The default settings and extensions of the PHP distribution should work fine
-with TYPO3 Flow but it doesn't hurt checking if the PHP modules ``mbstring``, ``tokenizer``
+with Flow but it doesn't hurt checking if the PHP modules ``mbstring``, ``tokenizer``
 and ``pdo_mysql`` are enabled, especially if you compiled PHP yourself.
 
 .. note::

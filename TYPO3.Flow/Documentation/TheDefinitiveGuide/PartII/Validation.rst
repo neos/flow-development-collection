@@ -2,21 +2,27 @@
 Validation
 ==========
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
-
 Hopefully the examples of the previous chapters made you shudder or at least
 raised some questions. Although it's surely nice to have one-liners for actions
 like ``create`` and ``update`` we need some more code to validate the incoming
-values before they are eventually persisted. You need to make sure  that a post
-title only consists of regular characters and spaces, at least 3 and at maximum
-50 (depending on your preference) and doesn't contain any HTML or other
-evil markup.
+values before they are eventually persisted and the outgoing content before it's
+rendered to the browser.
 
-But do you really want all these checks in your action methods? Shouldn't we
+You won't have to care too much about the latter if you're using Fluid to render
+your View because, because it *escapes* your data *by default*.
+As a result, even if the post subject contains the string
+``<script>alert("danger")</script>`` outputting it via ``{post.subject}`` will
+result in the unaesthetic but harmless
+``&lt;script&gt;alert(&quot;danger&quot;)&lt;/script&gt;``.
+
+But most applications come with additional rules that apply to the domain model.
+Maybe you want to make sure that a post subject must consist of at least 3 and
+at maximum 50 characters for example.
+But do you really want these checks in your action methods? Shouldn't we
 rather separate the concerns [#]_ of the action methods (show, create,
 update, ...) from others like validation, logging and security?
 
-Fortunately TYPO3 Flow's validation framework doesn't ask you to add any additional
+Fortunately Flow's validation framework doesn't ask you to add any additional
 PHP code to your action methods. Validation has been extracted as a separated
 concern which does it's job almost transparently to the developer.
 
@@ -39,29 +45,34 @@ three types:
 
 .. note::
 	Base model and supplemental rules are not covered by this tutorial.
+	Detailed information is available in :doc:`Part III - Validation <../PartIII/Validation`.
 
 Rules for the base properties are defined directly in the model in form
 of annotations:
 
-*Classes/TYPO3/Blog/Domain/Model/Post.php*:
+*Classes/Acme/Blog/Domain/Model/Post.php*:
 
 .. code-block:: php
 
 	/**
-	 * @var string
 	 * @Flow\Validate(type="NotEmpty")
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=5, "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=3, "maximum"=50 })
+	 * @var string
 	 */
-	protected $title;
-
-	...
+	protected $subject;
 
 	/**
-	 * @var string
 	 * @Flow\Validate(type="NotEmpty")
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=2, "maximum"=50 })
+	 * @var string
 	 */
 	protected $author;
+
+	/**
+	 * @Flow\Validate(type="NotEmpty")
+	 * @ORM\ManyToOne(inversedBy="posts")
+	 * @var Blog
+	 */
+	protected $blog;
 
 The ``Validate`` annotations define one or more validation rules which should apply to a
 property. Multiple rules can be defined in dedicated lines by further ``Validate``
@@ -82,8 +93,8 @@ annotations.
 	that every validator could principally be empty.
 
 .. tip::
-	TYPO3 Flow provides a range of built-in validators which can be found in the
-	*Flow\Validation\Validator* sub package. The names used in the
+	Flow provides a range of built-in validators which can be found in the
+	``Flow\Validation\Validator`` sub package. The names used in the
 	``type`` attributes are just the unqualified class names of these validators.
 
 	It is possible and very simple to program custom validators by implementing
@@ -92,7 +103,7 @@ annotations.
 	class name (i.e. including the namespace).
 
 Make sure the above validation rules are set in your ``Post`` model, click on the
-plus sign above the list of posts and submit the empty form. If all went fine,
+``Create a new post`` link below the list of posts and submit the *empty* form. If all went fine,
 you should end up again in the **new post** form, with the tiny difference
 that the text boxes for title and author are now framed in red:
 
@@ -106,45 +117,55 @@ Displaying Validation Errors
 ============================
 
 The validation rules seem to be in effect but the output could be a bit more
-meaningful. Please open the *New.html* template file again because we'd like
-to display a list of error messages for exactly this case when the form has
-been submitted but contained errors.
+meaningful. We'd like to display a list of error messages for exactly this case when
+the form has been submitted but contained errors.
 
 Fluid comes with a specialized view helper which allows for iterating over
-validation errors. Just add the ``<f:form.errors>`` view helper to your
-*New.html* template as shown in this example:
+validation errors, the ``<f:form.validationResults>`` view helper.
+We'll need validation results for the *create* and the *update* case, so let's put the
+View Helper in a new partial ``FormErrors``::
+
+*Resources/Private/Partials/FormErrors.html*:
+
+.. code-block:: html
+
+	<f:form.validationResults for="{for}">
+		<f:if condition="{validationResults.flattenedErrors}">
+			<dl class="errors">
+				<f:for each="{validationResults.flattenedErrors}" key="propertyName" as="errors">
+					<dt>
+						{propertyName}:
+					</dt>
+					<dd>
+						<f:for each="{errors}" as="error">{error}</f:for>
+					</dd>
+				</f:for>
+			</dl>
+		</f:if>
+	</f:form.validationResults>
+
+And include that partial to both, the ``New.html`` and the ``Edit.html`` templates just above the
+form::
 
 *Resources/Private/Templates/Post/New.html*:
 
-.. code-block:: xml
+.. code-block:: html
 
-	<f:layout name="Default" />
-
-	<f:section name="mainbox">
-		<h2 class="flow-firstHeader">Create a new post</h2>
-		<f:flashMessages class="flashmessages"/>
-		<f:form.validationResults for="newPost">
-			<f:if condition="{validationResults.flattenedErrors}">
-				<div class="error">
-					<dl>
-						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
-							<dt>{propertyPath}</dt>
-							<dd>
-								<ul>
-									<f:for each="{errors}" as="error">
-										<li>{error -> f:translate(id: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}</li>
-									</f:for>
-								</ul>
-							</dd>
-						</f:for>
-					</dl>
-				</div>
-			</f:if>
-		</f:form.validationResults>
-
+	<f:render partial="FormErrors" arguments="{for: 'newPost'}" />
+	<f:form action="create" objectName="newPost">
 	...
 
-Similar to the ``<f:for>`` view helper ``<f:form.errors>`` defines a loop
+and::
+
+*Resources/Private/Templates/Post/Edit.html*:
+
+.. code-block:: html
+
+	<f:render partial="FormErrors" arguments="{for: 'post'}" />
+	<f:form action="update" object="{post}" objectName="post">
+	...
+
+Similar to the ``<f:for>`` view helper ``<f:form.validationResults>`` defines a loop
 iterating over validation errors. The attribute ``as`` is optional and if it's
 not specified (like in the above example) ``as="error"`` is assumed.
 
@@ -162,104 +183,51 @@ should see some more verbose error messages:
 
 	More verbose validation errors shown in form
 
-Validating Updated Arguments
-============================
+Validating Existing Data
+========================
 
-Now that you know how validation errors can be displayed, you should add a
-``<f:form.errors>`` view helper to the *Edit.html* template as well:
+The validation rules are enforced as soon as the GET or POST arguments are mapped to the action's arguments.
+But what if you add new validation rules when there are already persisted entities that might violate these?
+For example if you had created a post with a subject of "xy" and added the ``StringLength`` annotation
+afterwards?
 
-*Resources/Private/Templates/Post/Edit.html*:
+Doing so would prevent you from invoking any of the actions for that particular post.
+All you will see is an error message::
 
-.. code-block:: xml
-
-	<f:layout name="Default" />
-
-	<f:section name="mainbox">
-		<h2 class="flow-firstHeader">Edit post &quot;{post.title}&quot;</h2>
-		<f:flashMessages class="flashmessages"/>
-		<f:form.validationResults for="post">
-			<f:if condition="{validationResults.flattenedErrors}">
-				<div class="error">
-					<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></f:for>
-				</div>
-			</f:if>
-		</f:form.validationResults>
-
-	...
-
-Try updating a post with an empty title and you should see the following:
-
-.. figure:: Images/UpdateActionInfiniteLoop.png
-	:alt: Infinite loop in update action
-	:class: screenshot-detail
-
-	Infinite loop in update action
-
-Can you imagine what happened? Let's look at the ``editAction`` again:
-
-*Classes/TYPO3/Blog/Controller/PostController.php*:
-
-.. code-block:: php
-
-	/**
-	 * Shows a form for editing an existing post object
-	 *
-	 * @param \TYPO3\Blog\Domain\Model\Post $post The post to edit
-	 * @return void
-	 */
-	public function editAction(Post $post) {
-		$blog = $this->blogRepository->findActive();
-		$this->view->assign('blog', $blog);
-		$this->view->assign('post', $post);
-	}
+	Validation failed while trying to call Acme\Blog\Controller\PostController->showAction().
 
 
-When you started to edit the post, the ``editAction`` received the original
-``Post`` object as its argument. The object was assigned to the Fluid template
-which displayed its current property values. Now you submitted the form with an
-empty title resulting in a new request, this time with the ``updateAction`` as
-its target.
-
-Before the ``updateAction`` could be called, TYPO3 Flow analyzed the
-incoming request. And because it recognized one argument as a ``Post`` object,
-it invoked the respective validation rules – which failed due to the
-empty title. In these cases TYPO3 Flow forwards the request to the referring action
-which is, in this case, the ``editAction``.
-
-The ``editAction`` expects a (valid) post as its argument but unfortunately the
-post is not valid. Because for TYPO3 Flow this action call is like any other action
-call it does not execute the ``editAction`` but instead tries to dispatch the
-request to another action which can handle the error. This is, unfortunately,
-still the ``editAction`` which in the end results in an infinite loop.
-
-So the problem is that TYPO3 Flow tries to validate the ``$post`` argument for the
-``editAction`` although we don't need a valid post at this point. What's
-important is that the post submitted to``updateAction`` or ``createAction`` is
-valid, but we don't really care about the ``editAction`` or ``newAction`` which
-only displays the form.
+So the problem is that Flow tries to validate the ``$post`` argument for the
+action although we don't need a valid post at this point.
+What's important is that the post submitted to ``updateAction`` or ``createAction`` is
+valid, but we don't really care about the ``showAction`` or ``editAction`` which only displays the post or a form.
 
 There's a very simple remedy to this problem: don't validate the post. With one
 additional annotation the whole mechanism works as expected:
 
-*Classes/TYPO3/Blog/Controller/PostController.php*:
+*Classes/Acme/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
 	/**
-	 * Shows a form for editing an existing post object
+	 * Displays a single post
 	 *
-	 * @param \TYPO3\Blog\Domain\Model\Post $post The post to edit
 	 * @Flow\IgnoreValidation("$post")
+	 * @param Post $post
 	 * @return void
 	 */
-	public function editAction(Post $post) {
-		$blog = $this->blogRepository->findActive();
-		$this->view->assign('blog', $blog);
-		$this->view->assign('post', $post);
+	public function showAction(Post $post) {
+		$this->view->assignMultiple([
+			'post' => $post,
+			'nextPost' => $this->postRepository->findNext($post),
+			'previousPost' => $this->postRepository->findPrevious($post),
+		]);
 	}
 
-Now the ``editAction`` can be called even though ``$post`` is not valid and the
-error message is displayed above the edit form.
+
+Now the ``showAction`` can be called even though ``$post`` is not valid.
+You probably want to add the same annotation to the ``editAction`` and even the ``deleteAction`` so that
+invalid posts can be fixed or removed.
 
 -----
 
