@@ -3,9 +3,9 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="fr">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve">
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="fr" state="translated">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
+			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
