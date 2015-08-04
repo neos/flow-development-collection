@@ -16,6 +16,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use TYPO3\Flow\Resource\Storage\WritableFileSystemStorage;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Test case for the WritableFileSystemStorage class
@@ -58,6 +59,23 @@ class WritableFileSystemStorageTest extends UnitTestCase {
 
 		// dummy assertion to suppress PHPUnit warning
 		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function importTemporaryFileSkipsFilesThatAlreadyExist() {
+		$mockTempFile = vfsStream::newFile('SomeTemporaryFile', 0333)
+			->withContent('fixture')
+			->at($this->mockDirectory);
+
+		$finalTargetPathAndFilename = $this->writableFileSystemStorage->_call('getStoragePathAndFilenameByHash', sha1('fixture'));
+		Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
+		file_put_contents($finalTargetPathAndFilename, 'existing file');
+
+		$this->writableFileSystemStorage->_call('importTemporaryFile', $mockTempFile->url(), 'default');
+
+		$this->assertSame('existing file', file_get_contents($finalTargetPathAndFilename));
 	}
 
 }
