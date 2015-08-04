@@ -125,6 +125,29 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 		$this->fixFilePermissions($temporaryFile);
 		$sha1Hash = sha1_file($temporaryFile);
 		$finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
+
+		if (!is_file($finalTargetPathAndFilename)) {
+			$this->moveTemporaryFileToFinalDestination($temporaryFile, $finalTargetPathAndFilename);
+		}
+
+		$resource = new Resource();
+		$resource->setFileSize(filesize($finalTargetPathAndFilename));
+		$resource->setCollectionName($collectionName);
+		$resource->setSha1($sha1Hash);
+		$resource->setMd5(md5_file($finalTargetPathAndFilename));
+
+		return $resource;
+	}
+
+	/**
+	 * Move a temporary file to the final destination, creating missing path segments on the way.
+	 *
+	 * @param string $temporaryFile
+	 * @param string $finalTargetPathAndFilename
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function moveTemporaryFileToFinalDestination($temporaryFile, $finalTargetPathAndFilename) {
 		if (!file_exists(dirname($finalTargetPathAndFilename))) {
 			Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
 		}
@@ -134,14 +157,6 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 		}
 
 		$this->fixFilePermissions($finalTargetPathAndFilename);
-
-		$resource = new Resource();
-		$resource->setFileSize(filesize($finalTargetPathAndFilename));
-		$resource->setCollectionName($collectionName);
-		$resource->setSha1($sha1Hash);
-		$resource->setMd5(md5_file($finalTargetPathAndFilename));
-
-		return $resource;
 	}
 
 	/**
