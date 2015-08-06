@@ -5,12 +5,12 @@
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
 			<target xml:lang="ru" state="translated">Требуется авторизация</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="ru" state="translated">Имя пользователя</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="ru" state="translated">Пароль</target></trans-unit>
+			<target xml:lang="ru">Пароль</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="ru" state="translated">Новый пароль</target></trans-unit>

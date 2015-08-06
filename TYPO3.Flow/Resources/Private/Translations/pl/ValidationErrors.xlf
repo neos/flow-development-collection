@@ -3,72 +3,72 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="pl">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve">
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="pl" state="translated">Dozwolone są tylko znaki od a do z i cyfry</target></trans-unit>
+			<target xml:lang="pl">Dozwolone są tylko znaki od a do z i cyfry</target></trans-unit>
       <!-- BooleanValueValidator -->
-      <trans-unit id="1361044943" xml:space="preserve">
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="pl" state="translated">Oczekuje się, że podana wartość będzie {0}.</target></trans-unit>
+			<target xml:lang="pl">Oczekuje się, że podana wartość będzie {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
 			<target xml:lang="pl" state="translated">Podany element nie jest zbiorem</target></trans-unit>
       <!-- CountValidator -->
-      <trans-unit id="1253718666" xml:space="preserve">
+      <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
-			<target xml:lang="pl" state="translated">Podany element nie jest policzalny</target></trans-unit>
-      <trans-unit id="1253718831" xml:space="preserve">
+			<target xml:lang="pl">Podany element nie jest policzalny</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve" approved="yes">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="pl" state="translated">Licznik musi być pomiędzy {0,number} a {1,number}</target></trans-unit>
+			<target xml:lang="pl">Licznik musi być pomiędzy {0,number} a {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
-      <trans-unit id="1324314378" xml:space="preserve">
+      <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="pl" state="translated">Podana wartość nie jest poprawną datą</target></trans-unit>
-      <trans-unit id="1325615630" xml:space="preserve">
+			<target xml:lang="pl">Podana wartość nie jest poprawną datą</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="pl" state="translated">Podana data musi być pomiędzy {0} i {1}</target></trans-unit>
-      <trans-unit id="1324315107" xml:space="preserve">
+			<target xml:lang="pl">Podana data musi być pomiędzy {0} i {1}</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve" approved="yes">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="pl" state="translated">Podana data musi być po {0}</target></trans-unit>
-      <trans-unit id="1324315115" xml:space="preserve">
+			<target xml:lang="pl">Podana data musi być po {0}</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve" approved="yes">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="pl" state="translated">Podana data musi być przed {0}</target></trans-unit>
+			<target xml:lang="pl">Podana data musi być przed {0}</target></trans-unit>
       <!-- DateTimeValidator -->
-      <trans-unit id="1281454676" xml:space="preserve">
+      <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="pl" state="translated">Opcja "locale" może być tylko identyfiaktorem ciągu znaków lub obiektem Locale</target></trans-unit>
-      <trans-unit id="1281454830" xml:space="preserve">
+			<target xml:lang="pl">Opcja "locale" może być tylko identyfiaktorem ciągu znaków lub obiektem Locale</target></trans-unit>
+      <trans-unit id="1281454830" xml:space="preserve" approved="yes">
 				<source>A valid time is expected</source>
-			<target xml:lang="pl" state="translated">Oczekiwany jest poprawny czas</target></trans-unit>
-      <trans-unit id="1281454831" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwany jest poprawny czas</target></trans-unit>
+      <trans-unit id="1281454831" xml:space="preserve" approved="yes">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="pl" state="translated">Oczekiwana jest poprawna data i czas</target></trans-unit>
-      <trans-unit id="1281454832" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwana jest poprawna data i czas</target></trans-unit>
+      <trans-unit id="1281454832" xml:space="preserve" approved="yes">
 				<source>A valid date is expected</source>
-			<target xml:lang="pl" state="translated">Oczekiwana jest poprawna data</target></trans-unit>
+			<target xml:lang="pl">Oczekiwana jest poprawna data</target></trans-unit>
       <!-- EmailAddressValidator -->
-      <trans-unit id="1221559976" xml:space="preserve">
+      <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="pl" state="translated">Proszę podać poprawny adres email</target></trans-unit>
+			<target xml:lang="pl">Proszę podać poprawny adres email</target></trans-unit>
       <!-- FloatValidator -->
-      <trans-unit id="1221560288" xml:space="preserve">
+      <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
-			<target xml:lang="pl" state="translated">Oczekiwana jest poprawna liczba zmiennoprzecinkowa</target></trans-unit>
-      <trans-unit id="1332934124" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwana jest poprawna liczba zmiennoprzecinkowa</target></trans-unit>
+      <trans-unit id="1332934124" xml:space="preserve" approved="yes">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="pl" state="translated">"{0}" nie można być przekonwertowany na wartość zmiennoprzecinkową</target></trans-unit>
+			<target xml:lang="pl">"{0}" nie można być przekonwertowany na wartość zmiennoprzecinkową</target></trans-unit>
       <!-- GenericObjectValidator -->
-      <trans-unit id="1241099149" xml:space="preserve">
+      <trans-unit id="1241099149" xml:space="preserve" approved="yes">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="pl" state="translated">Oczekiwano obiektu, otrzymano {0}</target></trans-unit>
+			<target xml:lang="pl">Oczekiwano obiektu, otrzymano {0}</target></trans-unit>
       <!-- IntegerValidator -->
-      <trans-unit id="1221560494" xml:space="preserve">
+      <trans-unit id="1221560494" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="pl" state="translated">Oczekiwana jest poprawna liczba całkowita</target></trans-unit>
-      <trans-unit id="1332933658" xml:space="preserve">
+			<target xml:lang="pl">Oczekiwana jest poprawna liczba całkowita</target></trans-unit>
+      <trans-unit id="1332933658" xml:space="preserve" approved="yes">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="pl" state="translated">"{0}" nie jest liczbą całkowitą.</target></trans-unit>
+			<target xml:lang="pl">"{0}" nie jest liczbą całkowitą.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -92,9 +92,9 @@
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
 			<target xml:lang="pl" state="translated">Proszę podać poprawną liczbę pomiędzy {0,number} a {1,number}</target></trans-unit>
       <!-- NumberValidator -->
-      <trans-unit id="1281286579" xml:space="preserve">
+      <trans-unit id="1281286579" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="pl" state="translated">Opcja "locale" może być tylko identyfiaktorem ciągu znaków lub obiektem Locale</target></trans-unit>
+			<target xml:lang="pl">Opcja "locale" może być tylko identyfiaktorem ciągu znaków lub obiektem Locale</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
 			<target xml:lang="pl" state="translated">Oczekiwana jest poprawna liczba procentowa</target></trans-unit>
