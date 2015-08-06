@@ -173,7 +173,7 @@
 			<target xml:lang="ru" state="translated">Формат изображения "{0}" не допускается</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="ru" state="translated">Загружаемый файл не является годным изображением</target></trans-unit>
+			<target xml:lang="ru" state="translated">Загруженный файл не является годным изображением</target><alt-trans><target xml:lang="ru">Загружаемый файл не является годным изображением</target></alt-trans></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
