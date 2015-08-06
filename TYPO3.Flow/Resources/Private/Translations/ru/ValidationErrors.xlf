@@ -3,31 +3,31 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="ru">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve">
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="ru" state="translated">Разрешены только латинские малые буквы и цифры</target></trans-unit>
+			<target xml:lang="ru">Разрешены только латинские(a до z, умлауты, ...) малые буквы и цифры.</target><alt-trans><target xml:lang="ru">Разрешены только латинские малые буквы и цифры</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
-      <trans-unit id="1361044943" xml:space="preserve">
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="ru" state="translated">Заданное значение будет {0}.</target></trans-unit>
+			<target xml:lang="ru">Заданное значение будет {0}.</target></trans-unit>
       <!-- CollectionValidator -->
-      <trans-unit id="1317204797" xml:space="preserve">
+      <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="ru" state="translated">Содержимое не является коллекцией</target></trans-unit>
+			<target xml:lang="ru">Содержимое не является коллекцией</target></trans-unit>
       <!-- CountValidator -->
-      <trans-unit id="1253718666" xml:space="preserve">
+      <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
-			<target xml:lang="ru" state="translated">Содержимое не является исчислимым</target></trans-unit>
-      <trans-unit id="1253718831" xml:space="preserve">
+			<target xml:lang="ru">Содержимое не является исчислимым</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve" approved="yes">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="ru" state="translated">Число должно быть между {0,number} и {1,number}</target><alt-trans><target xml:lang="ru">Число должен быть между {0,number} и {1,number}</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Число должно быть между {0,number} и {1,number}</target><alt-trans><target xml:lang="ru">Число должен быть между {0,number} и {1,number}</target></alt-trans></trans-unit>
       <!-- DateTimeRangeValidator -->
-      <trans-unit id="1324314378" xml:space="preserve">
+      <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="ru" state="translated">Заданное значение не является годной датой</target></trans-unit>
-      <trans-unit id="1325615630" xml:space="preserve">
+			<target xml:lang="ru">Заданное значение не является годной датой</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="ru" state="translated">Заданная дата должна быть между {0} и {1}</target></trans-unit>
+			<target xml:lang="ru">Заданная дата должна быть между {0} и {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target xml:lang="ru" state="translated">Заданная дата должна быть позже {0}</target></trans-unit>
