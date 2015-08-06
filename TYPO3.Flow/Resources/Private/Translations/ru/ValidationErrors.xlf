@@ -20,7 +20,7 @@
 			<target xml:lang="ru" state="translated">Содержимое не является исчислимым</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="ru" state="translated">Число должен быть между {0,number} и {1,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Число должно быть между {0,number} и {1,number}</target><alt-trans><target xml:lang="ru">Число должен быть между {0,number} и {1,number}</target></alt-trans></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
@@ -118,29 +118,29 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source/>
-          <target xml:lang="ru" state="needs-translation"/>
+          <target xml:lang="ru" state="translated"/>
         </trans-unit>
       </group>
       <!-- StringValidator -->
@@ -180,32 +180,32 @@
 			<target xml:lang="ru" state="translated">Данное значение не является изображением</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="ru" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ширина {0,number} данного изображения меньше, чем допустимая минимальная ширина {1,number}</target><alt-trans><target xml:lang="ru">Ширина {0,number} данного изображения меньше, чем допустимые минимальная ширина {1,number}</target></alt-trans></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="ru" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ширина {0,number} данного изображения выше, чем допустимая максимальная ширина {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="ru" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Высота {0,number} данного изображения меньше, чем допустимая минимальная высота {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="ru" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Высота {0,number} данного изображения выше, чем допустимая максимальная высота {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="ru" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Размер {0,number} x {1,number} данного изображения слишком мал для требуемого минимального разрешения {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="ru" state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="ru" state="translated">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого максимального разрешения {2,number}</target><alt-trans><target xml:lang="ru">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого махимального разрешения {2,number}</target></alt-trans></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
 			<target xml:lang="ru" state="translated">Данное значение не является изображением</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="ru" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ориентация изображения должна быть «{0}»</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="ru" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="ru" state="translated">Ориентация изображения «{0}» не допускается</target></trans-unit>
     </body>
   </file>
 </xliff>
