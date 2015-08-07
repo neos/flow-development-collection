@@ -5,207 +5,207 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="lv" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tikai rakstzīmes (līdz z … umlauts) un numuri ir atļauti.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="lv" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Konkrētā vērtība būs {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="lv" state="needs-translation">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attiecīgais elements nav kolekcija</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="lv" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attiecīgais elements nav saskaitāms</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Skaitlim ir jābūt starp {0,number} un {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="lv" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noteiktā vērtība nav derīgs datums</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="lv" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dotajam datumam jābūt starp {0} un {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="lv" state="needs-translation">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dotajam datumam jābūt pēc {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="lv" state="needs-translation">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Dotajam datumam jābūt pirms {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="lv" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="lv" state="translated">Opciju "locale"var iestatīt tikai uz "string identifier" vai "Locale object" vērtību</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs laiks</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Teik gaidīts derīgs datums un laiks</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs datums</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="lv" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="lv" state="translated">Norādiet derīgu e-pasta adresi</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs mainīgais</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="lv" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
+			<target xml:lang="lv" state="translated">"{0}" nevar konvertēt par mainīgo</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="lv" state="needs-translation">Object expected, {0} given</target></trans-unit>
+			<target xml:lang="lv" state="translated">Objektu, sagaidāms, {0}, ņemot</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid integer number is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts vesels skaitlis</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
 			<target xml:lang="lv" state="translated">"{0}" nav vesels skaitlis.</target><alt-trans><target xml:lang="lv">"{0}" ir nav vesels skaitlis.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="lv" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ir paredzēts tikai burtus, ciparus, atstarpes un dažas interpunkcija zīmes</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="lv" state="needs-translation">Value is no valid I18n locale identifier</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vērtība nav derīgs I18n lokalizācijas identifikators</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="lv" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šī vērtība ir obligāta</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="lv" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="lv" state="translated">Šī vērtība ir obligāta</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid number is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs skaitlis</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Lūdzu, ievadiet derīgu skaitli starp {0,number} un {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="lv" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="lv" state="translated">Opciju "locale"var iestatīt tikai uz "string identifier" vai "Locale object" vērtību</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid percent number is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts procentu skaitlis</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid decimal number is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts derīgs decimālskaitlis</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="lv" state="needs-translation">The given subject did not match the pattern. Got: {0}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saturs neatbilst šablonam. Sanāca: {0}</target></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-			<target xml:lang="lv" state="needs-translation">The given object could not be converted to a string</target></trans-unit>
+			<target xml:lang="lv" state="translated">Konkrēto objektu nevar konvertēt uz virkni</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target xml:lang="lv" state="needs-translation">The given value is not a valid string</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noteiktā vērtība nav derīga virknei</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target xml:lang="lv" state="needs-translation">The length of this text must be between {0,number} and {1,number} characters</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tekstsa garumam ir jābūt starp {0,number} un {1,number} rakstzīmēm</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source/>
-          <target xml:lang="lv" state="needs-translation"/>
+          <target xml:lang="lv" state="translated"/>
         </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="lv" state="needs-translation">A valid string is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīta derīga virkne</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="lv" state="needs-translation">Valid text without any XML tags is expected</target></trans-unit>
+			<target xml:lang="lv" state="translated">Tiek gaidīts teksts bez jebkādiem XML tagiem</target><alt-trans><target xml:lang="lv">Tiek gaidīts derīgs teksts, bez jebkādiem XML tagiem</target></alt-trans></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="lv" state="needs-translation">The given subject is not a valid UUID</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attiecīgā vērtībā nav derīgs UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="lv" state="needs-translation">No validator found for electronic address of type "{0}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">Elektroniskās adreses "{0}" validators nav atrasts</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="lv" state="needs-translation">The person name cannot be empty</target></trans-unit>
+			<target xml:lang="lv" state="translated">Personas vārds nevar būt tukšs</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="lv" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noteiktā vērtība nav attēls</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="lv" state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla tips "{0}" nav atļauts</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="lv" state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target xml:lang="lv" state="translated">Augšupielādētais fails nav derīgs attēls</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="lv" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noteiktā vērtība nav attēls</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla platums {0,number} ir mazāks par pieļaujamo minimālo platumu {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla platums {0,number} ir lielāks par atļauto maksimālo platumu {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla augstums {0,number} ir mazāks par pieļaujamo minimālo augstumu {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="lv" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla augstums {0,number} ir lielāks par pieļaujamo minimālo augstumu {1,number}</target><alt-trans><target xml:lang="lv">Attēla augstums {0,number} ir mazāks par pieļaujamo minimālo augstumu {1,number}</target></alt-trans></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="lv" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla izmērs {0,number} x {1,number} ir ar pārāk zemu nepieciešamo minimālo izšķirtspēju {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="lv" state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla izmērs {0,number} x {1,number} ir ar pārāk lielu atļauto maksimālo izšķirtspēju {2,number}</target><alt-trans><target xml:lang="lv">Attēla izmērs {0,number} x {1,number} ir ar pārāk lielu nepieciešamo maksimālo izšķirtspēju {2,number}</target></alt-trans></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="lv" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noteiktā vērtība nav attēls</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="lv" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla orientācija ir jābūt "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="lv" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="lv" state="translated">Attēla orientācija "{0}" nav atļauta</target></trans-unit>
     </body>
   </file>
 </xliff>
