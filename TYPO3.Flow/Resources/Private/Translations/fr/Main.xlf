@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target xml:lang="fr">Authentication obligatoire</target></trans-unit>
+			<target xml:lang="fr">Authentication obligatoire</target><alt-trans><target xml:lang="fr">Authentification obligatoire</target></alt-trans></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
@@ -16,7 +16,7 @@
 			<target xml:lang="fr">Nouveau mot de passe</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target xml:lang="fr">Se connecter</target></trans-unit>
+			<target xml:lang="fr">Se connecter</target><alt-trans><target xml:lang="fr">Connexion</target></alt-trans></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target xml:lang="fr">Déconnexion</target></trans-unit>
@@ -25,7 +25,7 @@
 			<target xml:lang="fr">Mise à jour</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target xml:lang="fr">Soumettre</target></trans-unit>
+			<target xml:lang="fr">Soumettre</target><alt-trans><target xml:lang="fr">Envoyer</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

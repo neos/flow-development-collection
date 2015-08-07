@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
+			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target><alt-trans><target xml:lang="fr">Seuls les caractères de A à Z et les nombres sont autorisés.</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -50,7 +50,7 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="fr">S'il vous plaît, indiquer une adresse email valide</target></trans-unit>
+			<target xml:lang="fr">S'il vous plaît, indiquer une adresse email valide</target><alt-trans><target xml:lang="fr">Veuillez entrer une adresse e-mail valide</target></alt-trans></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
@@ -90,7 +90,7 @@
 			<target xml:lang="fr">Un nombre valide est attendu</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="fr">S'il vous plaît entrer un nombre valide compris entre {0, number} et {1, number}</target></trans-unit>
+			<target xml:lang="fr">S'il vous plaît entrer un nombre valide compris entre {0, number} et {1, number}</target><alt-trans><target xml:lang="fr">Veuillez entrer un numéro valide entre {0,number} et {1,number}</target></alt-trans></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
