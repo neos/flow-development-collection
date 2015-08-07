@@ -68,7 +68,7 @@
 			<target xml:lang="lv" state="needs-translation">A valid integer number is expected</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="lv" state="translated">"{0}" ir nav vesels skaitlis.</target></trans-unit>
+			<target xml:lang="lv" state="translated">"{0}" nav vesels skaitlis.</target><alt-trans><target xml:lang="lv">"{0}" ir nav vesels skaitlis.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
