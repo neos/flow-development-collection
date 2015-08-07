@@ -7,9 +7,9 @@
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target><alt-trans><target xml:lang="fr">Seuls les caractères de A à Z et les nombres sont autorisés.</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
-      <trans-unit id="1361044943" xml:space="preserve">
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="fr" state="translated">La valeur devrait être {0}.</target></trans-unit>
+			<target xml:lang="fr">La valeur devrait être {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
