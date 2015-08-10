@@ -264,6 +264,8 @@ class Bootstrap {
 			$lockManager->exitIfSiteLocked();
 			if ($identifier === 'compiletime') {
 				$lockManager->lockSiteOrExit();
+				// make sure the site is unlocked even if the script ends unexpectedly due to an error/exception
+				register_shutdown_function(array($lockManager, 'unlockSite'));
 			}
 			$this->setEarlyInstance(\TYPO3\Flow\Core\LockManager::class, $lockManager);
 		}
