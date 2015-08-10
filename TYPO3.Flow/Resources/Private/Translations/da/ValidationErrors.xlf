@@ -3,31 +3,31 @@
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="da">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve">
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="da" state="translated">Kun tegnene a-z og tal er tilladt</target></trans-unit>
+			<target xml:lang="da">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target><alt-trans><target xml:lang="da">Kun tegnene a-z og tal er tilladt</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
-      <trans-unit id="1361044943" xml:space="preserve">
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="da" state="translated">Den angivne værdi forventes at være {0}.</target></trans-unit>
+			<target xml:lang="da">Den angivne værdi forventes at være {0}.</target></trans-unit>
       <!-- CollectionValidator -->
-      <trans-unit id="1317204797" xml:space="preserve">
+      <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="da" state="translated">Givet emne er ikke en samling</target></trans-unit>
+			<target xml:lang="da">Givet emne er ikke en samling</target></trans-unit>
       <!-- CountValidator -->
-      <trans-unit id="1253718666" xml:space="preserve">
+      <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
-			<target xml:lang="da" state="translated">Givet emne er ikke tællelig</target></trans-unit>
-      <trans-unit id="1253718831" xml:space="preserve">
+			<target xml:lang="da">Givet emne er ikke tællelig</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve" approved="yes">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="da" state="translated">Optællingen skal være mellem {0,number} og {1,number}</target></trans-unit>
+			<target xml:lang="da">Optællingen skal være mellem {0,number} og {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
-      <trans-unit id="1324314378" xml:space="preserve">
+      <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="da" state="translated">Den angivne værdi er ikke en gyldig dato</target></trans-unit>
-      <trans-unit id="1325615630" xml:space="preserve">
+			<target xml:lang="da">Den angivne værdi er ikke en gyldig dato</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="da" state="translated">Den angivne dato skal være mellem {0} og {1}</target></trans-unit>
+			<target xml:lang="da">Den angivne dato skal være mellem {0} og {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target xml:lang="da" state="translated">Den angivne dato skal være efter {0}</target></trans-unit>
