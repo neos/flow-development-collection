@@ -1,0 +1,22 @@
+HTTP/1.1 200 OK
+Server: Apache/2.2.17 (Ubuntu)
+X-Powered-By: PHP/5.5.1-1ubuntu7.2
+X-Flow-Powered: Flow/1.2
+Cache-Control: public, s-maxage=600
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Type: text/html; charset=UTF-8
+Content-Length: 3795
+Date: Wed, 29 Aug 2012 09:03:49 GMT
+Age: 550
+Via: 1.1 varnish
+Connection: keep-alive
+Set-Cookie: tg=426148; expires=Sun, 16-Oct-2022 17:53:36 GMT; path=/
+Set-Cookie: dmvk=507d9f20317a5; path=/; domain=.example.org
+Set-Cookie: ql_n=0; expires=Wed, 16-Oct-2013 17:53:36 GMT; path=/
+Set-Cookie: masscast=null; path=/
+
+<!DOCTYPE html>
+<html>
+the body
+</html>

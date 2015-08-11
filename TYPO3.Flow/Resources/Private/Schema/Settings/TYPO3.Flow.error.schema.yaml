@@ -1,0 +1,44 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'exceptionHandler':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'className': { type: string, required: TRUE, format: class-name }
+      'defaultRenderingOptions':
+        type: dictionary
+      'renderingGroups':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'matchingStatusCodes':
+              type: array
+              items: { type: integer }
+            'options': { type: dictionary }
+            'matchingExceptionClassNames':
+              type: array
+              items: { type: string, required: TRUE, format: class-name }
+
+  'errorHandler':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'exceptionalErrors':
+        type: array
+        required: TRUE
+        items: { type: [string, integer] }
+
+  'debugger':
+    type: dictionary
+    additionalProperties: FALSE
+    required: FALSE
+    properties:
+      'ignoredClasses':
+        type: dictionary
+        required: TRUE
+        patternProperties: { '/.*/': { type: boolean } }

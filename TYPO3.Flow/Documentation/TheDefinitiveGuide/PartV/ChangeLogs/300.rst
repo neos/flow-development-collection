@@ -1,0 +1,338 @@
+====================
+3.0.0
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Flow%20-%20Release/60/
+
+* Commit: `761cb2a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/761cb2abc13a778158c6b011838776aba1763e4a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8f14c75 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8f14c754ed4c78976de787478bba1bf07a0212c8>`_
+
+[BUGFIX] Stabilize site lock and release lock upon errors
+-----------------------------------------------------------------------------------------
+
+This change adds a separate file to track the *status* of the
+site lock in addition to the actual lock file.
+
+Besides this registers ``LockManager::unlockSite()`` as shutdown
+function to make sure that the lock is released when the scripts
+ends, to prevent that a site stays locked if an PHP error or
+exception occurred.
+
+Background:
+
+Due to a regression introduced with
+Ib701d67b3c7ed81a09e340583ffd2ee768857b83 the site lock could not
+be released reliably on Windows systems because the lock file
+was not unlinked. This is solved by using an additional file to
+track the status of the lock.
+
+* Fixes: `FLOW-365 <https://jira.neos.io/browse/FLOW-365>`_
+* Related: `FLOW-348 <https://jira.neos.io/browse/FLOW-348>`_
+
+* Commit: `fd8d4e4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fd8d4e44b76bdeca64663922c51bbaa6aef47acd>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `17923bd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/17923bddecc50681d7df14a2e9f7e21b4be00c4f>`_
+
+[BUGFIX] Creating new symlinks should work still if target exists.
+-----------------------------------------------------------------------------------------
+
+On publishing public resource folders, it is possible, that the
+symlinked target directory already exists. On Windows environments this
+causes an "Permission Denied" error and breaks the publishing.
+
+To prevent this issues we can just check the existence of a linked
+directory on target path and remove this before renaming the new symlink
+to new target.
+
+* Fixes: `FLOW-363 <https://jira.neos.io/browse/FLOW-363>`_
+* Commit: `ff2729f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ff2729f4893ae91929a26e42f36d33e81ffcf808>`_
+
+[TASK] Update Release Notes and Upgrading Instructions
+-----------------------------------------------------------------------------------------
+
+This tweaks and finalizes the Flow 3.0 Release Notes and adds an
+``Upgrade Instructions`` section.
+
+Besides this removes some left-over occurrences of "TYPO3 Flow".
+
+* Commit: `0b4e9ae <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0b4e9ae896d769ef6d9325556e7c08be0beac897>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `b375ee8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b375ee889447f95668cc990da439ad89bdfb7ccb>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7cfff6f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7cfff6f991d90a839fa75edf2376522216ccf49c>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `b60852a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b60852a6e9d156d78068df312f84355fa34c9c43>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `72216dd <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/72216dd40a1ce22109d50187845e2285a2b494ad>`_
+
+[BUGFIX] Skip existing files when importing temporary resources
+-----------------------------------------------------------------------------------------
+
+When a file is imported to the WriteableFilesystemStorage it would
+previously always override the final file even if it already existed.
+In case this same file has an open file handle, that can fail depending
+on the used environment (Windows). Cases where the target file exists
+and is opened can happen easily if a stream was opened to the target
+file via the ``ResourceManager``. For example if you want to copy an
+existing ``Resource`` this will happen.
+
+* Fixes: `FLOW-363 <https://jira.neos.io/browse/FLOW-363>`_
+* Commit: `0d747fc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0d747fc1b5e1547b2f2fe48f716ecc183499ea3b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `d339247 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d3392478acfdf531f560705c7d4857cb824b289e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `29fc26a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/29fc26a201475bf6d56388d2b9bace25aec49dea>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `68f2062 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/68f2062762ac48b35a9366cdabe7a3e702ade841>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `4e17020 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4e17020e843ece193dbad933f938f6380501ea4e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `a8b8584 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a8b85849692fb7f13a9b9c154b70f71b989301b1>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `72227be <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/72227be2936c788d7ac821ac04af079c775e683a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `232610d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/232610dd2a72b3870f5b0e316173ee1915bb1d61>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `22229fe <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/22229fe878f86cd2b2a3aa692a099876d83b4e7a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `c2dc4b8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c2dc4b825e1e51140a3ff46aeb51e97ebbe27ae3>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8363fd7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8363fd761052a3c7a1064b3c02f216161cef84d4>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `df4fa52 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/df4fa52c363dbc85235872d35ac96e938982a575>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `94672f9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/94672f910e4daeb33f57f2b13920c3605163e6dc>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e6b829b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e6b829bd42529d3c38671f7b68b4c2f4d2400305>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `629dc14 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/629dc14cff1cbeed2b29a6b7381bfc01924cc647>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `9c2b2ec <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9c2b2ec9ddd3e3e52fde914e743bd0b86192f408>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `5f708b0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5f708b01fe3103084a10e6c91bedfb57df777902>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `4628be7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4628be7b6e7aa1aa12cad622bb95df7df4ed3742>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `021b2ba <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/021b2ba75f0bb950b7ae13b0f954ac6875c16a66>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `602e574 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/602e574a4737eb0bd01867e06d625acf298dc7ca>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `67438a8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/67438a8ddcf76ec68ffc0cfa576aeba0dc78a96c>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7e38170 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7e38170512693fb6ba2db3f0a756228792380caa>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `dbd1bd1 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/dbd1bd153450b400d6eab24dddd7a1273400be81>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `1fe0d3b <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/1fe0d3b931c33a0f52b464f443a77564d9c2aeb3>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2ae6a2f <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/2ae6a2fcd54d781bb0c7a99d9deba4502e7c9e8a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2359b9e <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/2359b9e970b2f383a8a360668a73b2061a542a40>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `717daac <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/717daacd609ac6c4232664b8bfe60208ee1b2304>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `94b7741 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/94b7741e8fac36dab9105517307a864d04ab99d6>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `6346d4c <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/6346d4cbf4e0dfdc531c8e6bcd1603d35cc52b5b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `a468633 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/a46863395b350e9d781035f148c91634c4fc631a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `22e7ec1 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/22e7ec16a85b1416546b0d87821c7a19417b9d0f>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f44d9cd <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/f44d9cd93e7b2c682dffcc0724b92ae306c7cf52>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ea7374d <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/ea7374dbf82c13d7e866cc1d0b39e5e80915201f>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `bdb5aba <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/bdb5aba9872dcf98a62f6b62655ca777e75e67c0>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `3639934 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/36399346529b5c5b0eeb4b19a2b589b26db4dfe2>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ae6a2f1 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/ae6a2f1e24256f7cd865f27f6ef980b58e7f7cba>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `2508b44 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/2508b44a917f5431180457bdb4689d3e79dd439b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `29beb61 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/29beb6120e4af85aafb7cd3ce13438259c326f60>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e10ec4a <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/e10ec4a523311f5caf1a35cfefcc3c1e149b4b61>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `6ec9009 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/6ec9009944426d046fe7388ace7adcf1d6c5fb9a>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e35c1bb <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/e35c1bb9e09a995d2f22c2d8daff719d1a61b0b4>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `8472f01 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/8472f01b00e30b26d6046bf9db82e3333a141a7d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

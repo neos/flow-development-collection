@@ -1,0 +1,183 @@
+====================
+3.0.0-beta3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Do not require dev-master of doctrine/migrations
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that 1.0 is being worked on,
+require @dev instead and delegate the version to the Flow package.
+
+Related: FLOW-300
+
+* Commit: `69fdaa4 <https://git.typo3.org/Flow/Distributions/Base.git/commit/69fdaa4a05cef0ef900278f09e3fe1a117238d1b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Correct indentation in ``EelExpressionRecognizer``
+-----------------------------------------------------------------------------------------
+
+* Commit: `3914c09 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/3914c09f4c43864be0409a001b9405d4acc84d5b>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `96e05b4 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/96e05b4a6d587d90aeaf9a824c1bbfaab3d7233d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/51/
+
+* Commit: `183cf7a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/183cf7ab641baae26df3c854d9735759c76d4ace>`_
+
+[BUGFIX] Do not register lifecycles for unproxied entities
+-----------------------------------------------------------------------------------------
+
+When entities are annotated @Flow\\Proxy(false), lifecycle methods for
+fix* are still registered in the AnnotationDriver, leading to an
+exception being thrown by doctrine that the lifecycle callback method
+does not exist.
+
+Since unproxied classes are not supposed to work with AOP/DI and those
+fix* methods only deal with that, the registration of those fixes is
+unneeded in that case.
+
+This changeset fixes that, by only registering lifecycle callbacks on
+entities that are proxied.
+
+Fixes: FLOW-258
+
+* Commit: `613051e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/613051e7064684e2dd3fa34edeb3ab776ae71c2e>`_
+
+[FEATURE] Request patterns for host name and IP addresses
+-----------------------------------------------------------------------------------------
+
+This change adds RequestPatterns for **host name** and **IP addresses**.
+Host names are configurable with a simple wildcard ('*') pattern, IP
+addresses use ``CIDR`` style pattern with support for both ``IPv4`` and
+``IPv6`` following ``RFC4632`` and ``RFC4291``.
+
+Examples:
+
+Only grant access to clients with IPs from *192.168.178.0* to
+*192.168.178.255*::
+
+  TYPO3:
+    Flow:
+      security:
+        firewall:
+          rejectAll: TRUE
+          filters:
+            'ip':
+              patternType:  'Ip'
+              patternValue: '192.168.178.0/24'
+              interceptor:  'AccessGrant'
+
+Protect an area of your application file based authentication **and** IP
+check (only trigger authentication and entry points for clients with an
+IP of ``127.0.0.1``)::
+
+  TYPO3:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'LocalNetworkProvider':
+              provider: 'FileBasedSimpleKeyProvider'
+              providerOptions:
+                keyName: 'AdminKey'
+                authenticateRoles: ['Acme.SomePackage:Administrator']
+              requestPatterns:
+                controllerObjectName: 'Acme\\SomePackage\\Controller\\Administration\\.*'
+                ip: '::7F00:1'
+
+* Resolves: `#49522 <http://forge.typo3.org/issues/49522>`_
+* Commit: `2c1c4a3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2c1c4a323cac2670b41584aa213109584de778fe>`_
+
+[BUGFIX] First Functional test run should not be marked risky
+-----------------------------------------------------------------------------------------
+
+Changing globals inside of the test code (which includes the setUp method)
+will set the test to risky and immediately skip the execution of the test.
+Globals are now changed in ``setupBeforeClass`` to avoid this problem.
+
+* Commit: `5c188b4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5c188b4e2230021d44c4b0bbb97ecf9dc4d8f217>`_
+
+[BUGFIX] Check if migrations exist before trying to register them
+-----------------------------------------------------------------------------------------
+
+Currently the check for the existence of migration files is delegated
+to the doctrine/migration third party library.
+
+The behavior has changed and an exception is thrown if the folder doesn't
+exist. To not let the third party library handle that and to prevent this,
+the check is done upstream in Flow.
+
+Fixes: FLOW-301
+
+* Commit: `a6ff94b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a6ff94b6c134c5ec42781b2e48c521ebec81b72a>`_
+
+[TASK] Require doctrine/migrations 1.0.*
+-----------------------------------------------------------------------------------------
+
+With doctrine/migrations not having had a stable branch for years,
+Flow always required dev-master. Now that 1.0 is being worked on,
+require that instead.
+
+Related: FLOW-300
+
+* Commit: `c9e9567 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c9e95672965e79b67e50b40ba3ed5cac7e9a0e39>`_
+
+[BUGFIX] Save unicode characters unescaped in JsonArrayType
+-----------------------------------------------------------------------------------------
+
+As there might be the need of a string search in the JSON data
+all unicode characters should be stored unescaped to allow them
+to be properly searched and compared.
+
+* Commit: `c25b1eb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c25b1eb4d77ceedd3e90e33247e5b7f3b7434413>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `b0a633a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b0a633aeebbdff990f3a8e8e715aaf725352cea2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `5180304 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5180304ff4143534b0f67f980716a316b94129bd>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `8124f33 <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/8124f3347b62fcfca94b91c240c7fe234e50d26d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `7bbcddd <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/7bbcddd01f58b69565da4d2a8b7b55c16de85a65>`_
+
