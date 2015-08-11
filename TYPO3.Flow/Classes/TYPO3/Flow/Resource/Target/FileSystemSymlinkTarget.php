@@ -66,6 +66,10 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 		}
 
 		try {
+			if (Files::is_link($targetPathAndFilename)) {
+				Files::unlink($targetPathAndFilename);
+			}
+
 			$temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
 			symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
 			$result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
@@ -99,6 +103,10 @@ class FileSystemSymlinkTarget extends FileSystemTarget {
 		}
 
 		try {
+			if (Files::is_link($targetPathAndFilename)) {
+				Files::unlink($targetPathAndFilename);
+			}
+
 			$temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
 			symlink($sourcePath, $temporaryTargetPathAndFilename);
 			$result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
