@@ -5,12 +5,12 @@
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
 			<target xml:lang="nl">Verificatie vereist</target></trans-unit>
-      <trans-unit id="authentication.username" xml:space="preserve">
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
-      <trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="nl">Gebruikersnaam</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target xml:lang="nl" state="translated">Wachtwoord</target></trans-unit>
+			<target xml:lang="nl">Wachtwoord</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
 			<target xml:lang="nl">Nieuw wachtwoord</target></trans-unit>
