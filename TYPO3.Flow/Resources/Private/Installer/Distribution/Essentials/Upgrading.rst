@@ -1,16 +1,15 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 2.3 based
-applications to TYPO3 Flow 3.0.
+This file contains instructions for upgrading your Flow 2.3 based applications to Flow 3.0.
 
 What has changed
 ----------------
 
-Flow 3.0 comes with numerous fixes and improvements. Here's a list of
-changes that might need special attention when upgrading.
+Flow 3.0 comes with numerous fixes and improvements. Here's a list of changes that might need special attention when
+upgrading.
 For a full list head over to the ChangeLogs:
-http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartV/ChangeLogs/
+http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartV/ChangeLogs/
 
 In general make sure to run the commands::
 
@@ -18,6 +17,7 @@ In general make sure to run the commands::
  ./flow core:migrate
  ./flow database:setcharset
  ./flow doctrine:migrate
+ ./flow resource:publish
 
 when upgrading (see below).
 
@@ -30,7 +30,7 @@ from `5.3.2` to `5.5.0`.
 If your PHP version is lower, the Bootstrap will stop with a corresponding
 error.
 
-See `FLOW-217 <https://jira.typo3.org/browse/FLOW-217>`_
+See `FLOW-217 <https://jira.neos.io/browse/FLOW-217>`_
 
 Decoupling of TYPO3.Party package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,7 +59,7 @@ They still work if the Party package is installed, but usage of those methods sh
 be replaced with custom service calls (see Party package for an example of a simple
 PartyService).
 
-See `FLOW-5 <https://jira.typo3.org/browse/FLOW-5>`_
+See `FLOW-5 <https://jira.neos.io/browse/FLOW-5>`_
 
 Reworked Security Framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -75,7 +75,7 @@ API of the security framework won't work without adjustments.
 
 The new Policy.yaml syntax is covered by code migrations.
 
-See `FLOW-11 <https://jira.typo3.org/browse/FLOW-11>`
+See `FLOW-11 <https://jira.neos.io/browse/FLOW-11>`_
 
 
 Multi-Storage / Multi-Target Resource Management
@@ -90,7 +90,16 @@ storage and publication rules.
 Existing persistent resources are migrated through the Doctrine migration contained in
 this feature.
 
-See `FLOW-108 <https://jira.typo3.org/browse/FLOW-108>`_
+Because it can be expensive if the target is configured to be stored on a remote server, publishing of existing resources
+is not done automatically any longer when in *Production Context*.
+To trigger publishing of resources, run the::
+
+ ./flow resource:publish
+
+command and/or make sure that this is executed via your deployment scripts.
+This is only important during upgrading and deployment. At runtime new resources will be published automagically still.
+
+See `FLOW-108 <https://jira.neos.io/browse/FLOW-108>`_
 
 Charset and collation in all MySQL migrations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -98,14 +107,13 @@ Charset and collation in all MySQL migrations
 All MySQL migrations now explicitly specify charset and collation as suggested by
 `Doctrine <https://github.com/doctrine/dbal/blob/master/UPGRADE.md#creating-mysql-tables-now-defaults-to-utf-8>`_.
 
-
 This is breaking if you have existing tables that do not use the ``utf8`` charset and
 ``utf8_unicode_ci`` collation. To solve this you need to convert the existing tables.
 This can be done using the command::
 
  ./flow database:setcharset
 
-See `NEOS-800 <https://jira.typo3.org/browse/NEOS-800>`_
+See `NEOS-800 <https://jira.neos.io/browse/NEOS-800>`_
 
 Exclude Non-Flow packages from object management by default
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -148,7 +156,7 @@ run the::
 
 command.
 
-See `FLOW-103 <https://jira.typo3.org/browse/FLOW-103>`_
+See `FLOW-103 <https://jira.neos.io/browse/FLOW-103>`_
 
 Adjusted "ignoreTags" configuration syntax
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -184,7 +192,7 @@ explicitly now::
         ignoredTags:
           'someTag': FALSE
 
-See `FLOW-199 <https://jira.typo3.org/browse/FLOW-199>`_
+See `FLOW-199 <https://jira.neos.io/browse/FLOW-199>`_
 
 Remove obsolete "security.enable" Setting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -198,7 +206,7 @@ For the latter we use a different approach since a while and the performance hit
 security features is also negligible since Flow pre-compiles classes.
 Besides the flag was never evaluated consistently.
 
-See `FLOW-181 <https://jira.typo3.org/browse/FLOW-181>`_
+See `FLOW-181 <https://jira.neos.io/browse/FLOW-181>`_
 
 New annotation "InjectConfiguration"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -233,7 +241,7 @@ So if you have code like the following::
 
 you should consider using the new annotation instead.
 
-See `FLOW-148 <https://jira.typo3.org/browse/FLOW-148>`_
+See `FLOW-148 <https://jira.neos.io/browse/FLOW-148>`_
 
 Fluid: Consistent escaping behavior
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -290,7 +298,7 @@ A core migration adjusts existing ViewHelpers by adding
 ``$escapeOutput = FALSE;`` for backwards compatibility. You should go
 through each affected ViewHelper to verify if that flag is really needed.
 
-See `FLOW-26 <https://jira.typo3.org/browse/FLOW-26>`_
+See `FLOW-26 <https://jira.neos.io/browse/FLOW-26>`_
 
 Fluid: Submitted form data has precedence over value argument
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -318,7 +326,7 @@ If you call that method in your custom ViewHelpers you should use
 ``AbstractFormFieldViewHelper::getValueAttribute()`` instead and call ``AbstractFormFieldViewHelper::addAdditionalIdentityPropertiesIfNeeded()``
 explicitly if the ViewHelper might be bound to (sub)entities.
 
-See `FLOW-213 <https://jira.typo3.org/browse/FLOW-213>`_
+See `FLOW-213 <https://jira.neos.io/browse/FLOW-213>`_
 
 Fluid: Throw exception for unresolved namespaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -340,7 +348,7 @@ Specific namespaces can be ignored like this::
   {namespace xs*}  <!-- ignores namespaces starting with "xs" -->
   {namespace foo}  <!-- ignores the namespace "foo" -->
 
-See `FLOW-150 <https://jira.typo3.org/browse/FLOW-150>`_
+See `FLOW-150 <https://jira.neos.io/browse/FLOW-150>`_
 
 Further breaking changes
 ------------------------
@@ -350,7 +358,7 @@ Further breaking changes
 * [TASK] Fix order of DB migrations related to role handling (see `d1641d4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d1641d40b73f5cc716693e0fd1ae7e79abbb07d2>`_)
 * [BUGFIX] SessionManagerInterface and SessionInterface are incomplete (see `0c8ed7d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0c8ed7daed836e80b36b951d61fbd24295f7f24c>`_)
 * [BUGFIX] Correct object modification exception trigger (see `525a894 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/525a8942af2866966c8b86c6995734b7885e451c>`_)
-* [BUGFIX] Skip automatic persistence for updated entities (see `FLOW-84 <https://jira.typo3.org/browse/FLOW-84>`_)
+* [BUGFIX] Skip automatic persistence for updated entities (see `FLOW-84 <https://jira.neos.io/browse/FLOW-84>`_)
 * [TASK] Remove usage of ReflectionService in ViewHelpers (see `3adb3c3 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/3adb3c3ded8ff90bbce1a0386a6a120fe0dde322>`_)
 
 Upgrading your Web Server Configuration
@@ -387,17 +395,21 @@ Upgrading your Packages
 Upgrading existing code
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Here comes the easier part. As with earlier changes to TYPO3 Flow that
-required code changes on the user side we provide a code migration tool.
-Given you have a TYPO3 Flow system with your (outdated) package in place
-you should run the following before attempting to fix anything by hand::
+Here comes the easier part. As with earlier changes to Flow that required code changes on the user side we provide a code
+migration tool.
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
 
  ./flow core:migrate --package-key Acme.Demo
 
-The package key is optional, if left out it will work on all packages
-it finds (except for library packages and packages prefixed with
-"TYPO3.*") - for the first run you might want to limit things a little to
-keep the overview, though.
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*") - for the first run you might want to limit things a little to keep the overview, though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
 
 Inside core:migrate
 """""""""""""""""""
@@ -442,8 +454,8 @@ In a nutshell, running::
  ./flow core:migrate
  ./flow doctrine:migrationgenerate
 
-padded with some manual checking and adjustments needs to be done. That
-should result in a working package.
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
 with us. The `support page <http://flow.typo3.org/support/>`_ provides more
