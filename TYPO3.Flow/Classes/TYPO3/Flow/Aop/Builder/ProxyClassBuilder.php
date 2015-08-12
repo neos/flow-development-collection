@@ -477,9 +477,9 @@ class ProxyClassBuilder
         $this->buildInvokeJoinPointMethodCode($targetClassName);
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
-        $proxyClass->addProperty('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'array()');
-        $proxyClass->addProperty('Flow_Aop_Proxy_groupedAdviceChains', 'array()');
-        $proxyClass->addProperty('Flow_Aop_Proxy_methodIsInAdviceMode', 'array()');
+        $proxyClass->addProperty('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'array()', 'protected');
+        $proxyClass->addProperty('Flow_Aop_Proxy_groupedAdviceChains', 'array()', 'protected');
+        $proxyClass->addProperty('Flow_Aop_Proxy_methodIsInAdviceMode', 'array()', 'protected');
 
         return true;
     }
@@ -533,20 +533,18 @@ class ProxyClassBuilder
         }
 
         $methodsAndAdvicesArrayCode = "\n\t\t\$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
-        $methodsAndAdvicesArrayCode .= "\t\t\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
         foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
-            $methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
+            $methodsAndAdvicesArrayCode .= "\t\t\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices['$methodName'] = array(\n";
             foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $adviceConfigurations) {
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
+                $methodsAndAdvicesArrayCode .= "\t\t\t'" . $adviceType . "' => array(\n";
                 foreach ($adviceConfigurations as $adviceConfiguration) {
                     $advice = $adviceConfiguration['advice'];
-                    $methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
+                    $methodsAndAdvicesArrayCode .= "\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
                 }
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
+                $methodsAndAdvicesArrayCode .= "\t\t\t),\n";
             }
-            $methodsAndAdvicesArrayCode .= "\t\t\t),\n";
+            $methodsAndAdvicesArrayCode .= "\t\t);\n";
         }
-        $methodsAndAdvicesArrayCode .= "\t\t);\n";
         return  $methodsAndAdvicesArrayCode;
     }
 
