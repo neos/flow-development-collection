@@ -138,7 +138,7 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
 	/**
 	 * Returns the credentials (username and password) of this token.
 	 *
-	 * @return object $credentials The needed credentials to authenticate this token
+	 * @return array $credentials The needed credentials to authenticate this token
 	 */
 	public function getCredentials() {
 		return $this->credentials;
