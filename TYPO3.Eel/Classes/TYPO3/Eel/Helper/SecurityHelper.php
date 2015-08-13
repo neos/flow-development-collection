@@ -41,6 +41,25 @@ class SecurityHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Returns TRUE, if at least one of the currently authenticated accounts holds
+	 * a role with the given identifier, also recursively.
+	 *
+	 * @param string $roleIdentifier The string representation of the role to search for
+	 * @return boolean TRUE, if a role with the given string representation was found
+	 */
+	public function hasRole($roleIdentifier) {
+		if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
+			return TRUE;
+		}
+
+		if ($this->securityContext->canBeInitialized()) {
+			return $this->securityContext->hasRole($roleIdentifier);
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * All methods are considered safe
 	 *
 	 * @param string $methodName
