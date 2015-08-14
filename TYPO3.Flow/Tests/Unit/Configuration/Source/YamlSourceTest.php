@@ -62,13 +62,31 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationSource->save($pathAndFilename, $mockConfiguration);
 
 		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
-		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file.');
+		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
 	}
 
 	/**
 	 * @test
 	 */
-	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
+	public function saveKeepsQuotedKey() {
+		$pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
+		$configurationSource = new YamlSource();
+		$mockConfiguration = array(
+			'configurationFileHasBeenLoaded' => TRUE,
+			'foo' => array(
+				'Foo.Bar:Baz' => 'a quoted key'
+			)
+		);
+		$configurationSource->save($pathAndFilename, $mockConfiguration);
+
+		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
+		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function saveDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
 		$pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
 		$comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
 		file_put_contents($pathAndFilename . '.yaml', $comment);
@@ -91,7 +109,8 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'Flow' => array(
 					'something' => 'foo',
 					'@bar' => 1,
-					'aboolean' => TRUE
+					'aboolean' => TRUE,
+					'Foo.Bar:Baz' => 'a quoted key'
 				)
 			)
 		);
