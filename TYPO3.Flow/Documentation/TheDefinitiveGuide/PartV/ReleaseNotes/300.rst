@@ -56,7 +56,7 @@ of security features is also negligible since Flow pre-compiles classes. Besides
 Disabled security for CLI
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Previously it wasn't possible to execute protected methods via CLI as authentication only works for HTTP requests.
+Previously it wasn't possible to execute methods protected by the security framework via CLI as authentication only works for HTTP requests.
 Now security is disabled for CLI requests.
 
 Note: This bugfix has also been backported to Flow 2.1, 2.2 and 2.3
