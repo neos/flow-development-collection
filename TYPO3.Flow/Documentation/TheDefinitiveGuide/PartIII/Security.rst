@@ -481,12 +481,21 @@ controllers will be authenticated by the default username/password provider.
 |                      | for the current .      |                                          |
 |                      | request                | ``My\Application\AdministrationArea\.*`` |
 +----------------------+------------------------+------------------------------------------+
-| Uri                  | Matches on the uri     | Expects one regular expression, to       |
+| uri                  | Matches on the uri     | Expects one regular expression, to       |
 |                      | of the current request.| match on the request uri.                |
 |                      |                        |                                          |
 |                      |                        | For example.:                            |
 |                      |                        |                                          |
 |                      |                        | ``/admin/.*``                            |
++----------------------+------------------------+------------------------------------------+
+| host                 | Matches on the host    | Expects one wildcard expression, to      |
+|                      | part of the current    | match on the hostname, e.g.              |
+|                      | request                | ``*.mydomain.com``                       |
++----------------------+------------------------+------------------------------------------+
+| ip                   | Matches on the user ip | Expects one CIDR expression, to match    |
+|                      | address of the current | on the source ip, e.g.                   |
+|                      | request                | ``192.168.178.0/24`` or                  |
+|                      |                        | ``fd9e:21a7:a92c:2323::/96``             |
 +----------------------+------------------------+------------------------------------------+
 
 Authentication entry points
