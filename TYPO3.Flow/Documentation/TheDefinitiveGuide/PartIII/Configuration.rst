@@ -112,9 +112,9 @@ which come with the TYPO3 Flow distribution for getting more examples.
 
 	    xhprof:
 	      rootDirectory: '' # path to the XHProf library
-	      outputDirectory: %FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/ # output directory
+	      outputDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/' # output directory
 
-	    profilingTemplatesDirectory: %FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/
+	    profilingTemplatesDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/'
 
 
 .. warning::
@@ -419,7 +419,7 @@ with the following deviations from the specification:
 
 * The "type" constraint is required for all properties.
 * The validator only executes the checks that make sense for a specific type,
-  see list of possible contstraints below.
+  see list of possible constraints below.
 * The "format" constraint for string type has additional class-name and
   instance-name options.
 * The "dependencies" constraint of the spec is not implemented.

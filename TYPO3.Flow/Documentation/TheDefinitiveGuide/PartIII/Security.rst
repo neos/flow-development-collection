@@ -764,18 +764,18 @@ methods.
 
 .. code-block:: yaml
 
-    privilegeTargets:
+  privilegeTargets:
 
-       'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-         'Acme.MyPackage:RestrictedController.customerAction':
-           matcher: 'method(Acme\MyPackage\Controller\RestrictedController->customerAction())'
+      'Acme.MyPackage:RestrictedController.customerAction':
+        matcher: 'method(Acme\MyPackage\Controller\RestrictedController->customerAction())'
 
-          'Acme.MyPackage:RestrictedController.adminAction':
-           matcher: 'method(Acme\MyPackage\Controller\RestrictedController->adminAction())'
+      'Acme.MyPackage:RestrictedController.adminAction':
+        matcher: 'method(Acme\MyPackage\Controller\RestrictedController->adminAction())'
 
-         'Acme.MyPackage:editOwnPost':
-           matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.userService.currentUser))'
+      'Acme.MyPackage:editOwnPost':
+        matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.userService.currentUser))'
 
 
 
@@ -818,14 +818,14 @@ privileges to them.
 
   roles:
     'Acme.MyPackage:Administrator':
-                privileges: []
+      privileges: []
 
     'Acme.MyPackage:Customer':
-                privileges: []
+      privileges: []
 
     'Acme.MyPackage:PrivilegedCustomer':
-                parentRoles: ['Acme.MyPackage:Customer']
-                privileges: []
+      parentRoles: ['Acme.MyPackage:Customer']
+      privileges: []
 
 The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
 ``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
@@ -848,29 +848,29 @@ extends our roles definition accordingly:
 
   roles:
     'Acme.MyPackage:Administrator’:
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-                    permission: GRANT
+      privileges:
+        -
+        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+        permission: GRANT
+        -
+        privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
+        permission: GRANT
+        -
+        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+        permission: GRANT
 
     'Acme.MyPackage:Customer':
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-                    permission: GRANT
+      privileges:
+        -
+        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+        permission: GRANT
 
     'Acme.MyPackage:PrivilegedCustomer':
-                parentRoles: ['Acme.MyPackage:Customer']
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-                    permission: GRANT
+      parentRoles: ['Acme.MyPackage:Customer']
+      privileges:
+        -
+        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+        permission: GRANT
 
 
 This will end up in ``Administrators`` being able to call all the methods matched by the
@@ -903,34 +903,34 @@ allowed to approve an invoice or not. The respective MethodPrivilege could look 
 
 .. code-block:: yaml
 
-    privilegeTargets:
+  privilegeTargets:
 
-       'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-         'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros':
-           matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 100))'
+      'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros':
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 100))'
 
-         'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
-           matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 1000))'
+      'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 1000))'
 
-  roles:
-    'Acme.MyPackage:Employee:
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
-                    permission: DENY
+    roles:
+      'Acme.MyPackage:Employee':
+        privileges:
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
+          permission: GRANT
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
+          permission: DENY
 
-    'Acme.MyPackage:CEO:
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
-                    permission: GRANT
+      'Acme.MyPackage:CEO':
+        privileges:
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
+          permission: GRANT
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
+          permission: GRANT
 
 While this example policy is pretty straight forward, you can imagine, that introducing further approval levels will end
 up in a lot of specific privilege targets to be created. For this we introduced a concept called privilege parameters.
@@ -938,39 +938,39 @@ The following Policy expresses the exact same functionality as above:
 
 .. code-block:: yaml
 
-    privilegeTargets:
+  privilegeTargets:
 
-       'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-         'Acme.MyPackage:InvoiceService.ApproveInvoice':
-           matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > {amount}))'
+      'Acme.MyPackage:InvoiceService.ApproveInvoice':
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > {amount}))'
 
-  roles:
-    'Acme.MyPackage:Employee:
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-                    parameters:
-                      amount: 100
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-                    parameters:
-                      amount: 1000
-                    permission: DENY
+    roles:
+      'Acme.MyPackage:Employee':
+        privileges:
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+          parameters:
+            amount: 100
+            permission: GRANT
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+          parameters:
+            amount: 1000
+            permission: DENY
 
-    'Acme.MyPackage:CEO:
-                privileges:
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-                    parameters:
-                      amount: 100
-                    permission: GRANT
-                  -
-                    privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-                    parameters:
-                      amount: 1000
-                    permission: GRANT
+      'Acme.MyPackage:CEO':
+        privileges:
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+          parameters:
+            amount: 100
+            permission: GRANT
+          -
+          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+          parameters:
+            amount: 1000
+            permission: GRANT
 
 As you can see we saved one privilege target definition. The specific amount will not be defined in the privilege target
 anymore, but is passed along as parameter with the permission for a specific role. Of course, a privilege target can
@@ -1031,15 +1031,15 @@ The following example shows the matcher syntax used for entity privilege targets
 .. code-block:: yaml
 
   'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-  
-   'Acme.MyPackage.RestrictableEntity.AllEntitiesOfTypeRestrictableEntity':
-     matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
-  
-   'Acme.MyPackage.HiddenEntities':
-     matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
-  
-   'Acme.MyPackage.OthersEntities':
-     matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+
+    'Acme.MyPackage.RestrictableEntity.AllEntitiesOfTypeRestrictableEntity':
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
+
+    'Acme.MyPackage.HiddenEntities':
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
+
+    'Acme.MyPackage.OthersEntities':
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
 
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
 values and use global objects for comparison. Global objects (e.g. the currently authenticated account) are registered
@@ -1049,18 +1049,18 @@ entities. The following examples, taken from the functional tests, show some mor
 .. code-block:: yaml
 
   'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
-  
-   'Acme.MyPackage.RelatedStringProperty':
-     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
-  
-   'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject:
+
+    'Acme.MyPackage.RelatedStringProperty':
+      matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
+
+    'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject:
      matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
-  
-   'Acme.MyPackage.CompareStringPropertyWithCollection':
-     matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
-  
-   'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
-     matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
+
+    'Acme.MyPackage.CompareStringPropertyWithCollection':
+      matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
+
+    'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
+      matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
 
 
 Internal workings of entity restrictions (EntityPrivilege)
