@@ -113,8 +113,8 @@ class Browser {
 	 * (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html, 14.30 Location)
 	 *
 	 * @param string|\TYPO3\Flow\Http\Uri $uri
-	 * @param string $method
-	 * @param array $arguments
+	 * @param string $method Request method, for example "GET"
+	 * @param array $arguments Arguments to send in the request body
 	 * @param array $files
 	 * @param array $server
 	 * @param string $content
