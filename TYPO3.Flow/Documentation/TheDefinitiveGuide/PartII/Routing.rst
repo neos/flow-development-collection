@@ -27,7 +27,7 @@ Please insert the following configuration *at the top of the file* (before the
 
 	-
 	  name: 'Post index'
-	  uriPattern:    'posts'
+	  uriPattern: 'posts'
 	  defaults:
 	    '@package':    'Acme.Blog'
 	    '@controller': 'Post'
@@ -112,7 +112,7 @@ route you already created:
 
 	-
 	  name: 'Post index'
-	  uriPattern:    'posts'
+	  uriPattern: 'posts'
 	  defaults:
 	    '@package':    'Acme.Blog'
 	    '@controller': 'Post'
@@ -136,7 +136,7 @@ so let's beautify the action URIs as well by inserting a new route before the
 
 	-
 	  name: 'Post actions'
-	  uriPattern:    'posts/{@action}'
+	  uriPattern: 'posts/{@action}'
 	  defaults:
 	    '@controller': 'Post'
 
@@ -176,7 +176,7 @@ and use this as our edit link. That's done by adding following route at the
 
 	-
 	  name: 'Single post actions'
-	  uriPattern:     'posts/{post}/{@action}'
+	  uriPattern: 'posts/{post}/{@action}'
 	  defaults:
 	    '@controller':  'Post'
 	  routeParts:

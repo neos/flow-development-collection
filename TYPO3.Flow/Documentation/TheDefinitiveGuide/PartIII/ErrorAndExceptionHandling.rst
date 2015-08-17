@@ -62,7 +62,7 @@ The exception handler to be used can be configured through an entry in Settings.
 	      exceptionHandler:
 	        # Defines the global, last-resort exception handler.
 	        # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
-	        className: TYPO3\Flow\Error\ProductionExceptionHandler
+	        className: 'TYPO3\Flow\Error\ProductionExceptionHandler'
 
 Reference Code
 --------------
