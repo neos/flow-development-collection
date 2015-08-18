@@ -1,0 +1,31 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'storages':
+    type: dictionary
+    required: TRUE
+    additionalProperties:
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+        'storage': { type: string, required: TRUE }
+        'storageOptions': { type: dictionary, additionalProperties: TRUE }
+  'collections':
+    type: dictionary
+    required: TRUE
+    additionalProperties:
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+        'storage': { type: string, required: TRUE }
+        'target': { type: string, required: TRUE }
+        'pathPatterns': { type: array,  items: { type: string }}
+  'targets':
+    type: dictionary
+    required: TRUE
+    additionalProperties:
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+        'target': { type: string, required: TRUE }
+        'targetOptions': { type: dictionary, additionalProperties: TRUE }

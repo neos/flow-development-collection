@@ -1,0 +1,19 @@
+type: dictionary
+properties:
+  'Default':
+    type: dictionary
+    required: TRUE
+    additionalProperties: FALSE
+    properties:
+      'backend': {type: string, format: class-name, required: TRUE}
+      'frontend': {type: string, format: class-name, required: TRUE}
+      'backendOptions': {type: dictionary}
+      'persistent': {type: boolean}
+additionalProperties:
+  type: dictionary
+  additionalProperties: FALSE
+  properties:
+    'backend': {type: string, format: class-name}
+    'frontend': {type: string, format: class-name}
+    'backendOptions': {type: dictionary}
+    'persistent': {type: boolean}

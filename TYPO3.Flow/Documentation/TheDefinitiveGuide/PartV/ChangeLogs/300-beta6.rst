@@ -1,0 +1,257 @@
+====================
+3.0.0-beta6
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Remove I18n helper again
+-----------------------------------------------------------------------------------------
+
+This basically reverts commit 728177b1d6ebd51fb6203da65a074aee90182493.
+
+Functionality has been moved to the existing Flow
+``TranslationHelper`` to avoid duplicate helpers and
+a hard dependency on Flow in EEL.
+
+* Commit: `221b4da <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/221b4da2355e3fe92278d2a9dc7640b6f7aada74>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `9bdc3f7 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/9bdc3f74673a13b34e04a06ab770d6e9c776b473>`_
+
+[BUGFIX] Return simple string when id provided isn't a i18n label
+-----------------------------------------------------------------------------------------
+
+When using the I18nHelper and providing only the id argument,
+it should return the string as is if it's not a valid label id.
+
+* Related: `NEOS-1362 <https://jira.neos.io/browse/NEOS-1362>`_
+
+(cherry picked from commit 26cd2f7e8c00366a8cb407ef86bf76976dfd400b)
+
+* Commit: `f23e59d <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/f23e59d0bc9b0056e22949e59669a3a2e3c297f0>`_
+
+[BUGFIX] Only set locale in I18nHelper if not NULL
+-----------------------------------------------------------------------------------------
+
+When providing a single argument (id) to the translate method
+the helper tries to set the locale in the translation parameter
+token to NULL, which results in an exception.
+
+* Related: `NEOS-1362 <https://jira.neos.io/browse/NEOS-1362>`_
+
+(cherry picked from commit fe411b4dcd348828fb4c89729878833afc001f1a)
+
+* Commit: `8d7d41d <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/8d7d41d3c9832e7a4c8a62203c2cb4e32405ed86>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://jenkins.neos.io/job/Flow%20-%20Release/58/
+
+* Commit: `148d7ac <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/148d7acec0c001e8eba56ab2c996c2e6dbba8e59>`_
+
+[TASK] Merge Eel I18n helper into TranslationHelper in Flow
+-----------------------------------------------------------------------------------------
+
+The I18n helper cannot reside in EEL as it creates a hard dependency
+on Flow that we want to avoid. Instead it should be merged into the
+TranslationHelper in Flow that already existed.
+
+* Commit: `2265108 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/22651081fccd86b88fd94ac8fbf842b238ec5804>`_
+
+[!!!][TASK] Increase ``PackageStates`` version
+-----------------------------------------------------------------------------------------
+
+Flow 3.0 depends on some new 3rd party package versions. Because the
+name of some of those packages have been changed the casing, this
+leads to exceptions like::
+
+ Package "doctrine.instantiator" is already registered as "Doctrine.Instantiator"
+
+By increasing the version, the ``PackageStates.php`` file will be re-
+generated automatically, removing obsolete package keys.
+
+This is a breaking change because it will re-activate any previously
+disabled packages!
+If you want to avoid that, temporarily move affected packages into a
+separate directory or disable them after upgrading.
+
+* Related: `FLOW-156 <https://jira.neos.io/browse/FLOW-156>`_
+* Commit: `d9287ff <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d9287ff271215a49cd68cb589038b20867236947>`_
+
+[BUGFIX] Fix site locking
+-----------------------------------------------------------------------------------------
+
+Site locking is prone to race conditions and should initialize much
+earlier in the request and use a reliable locking method.
+
+This change moves the Locking to be beginning of the ``Bootstrap``
+``Sequence`` and changes the locking method to use ``flock`` which
+is less prone to race conditions.
+
+* Fixes: `FLOW-348 <https://jira.neos.io/browse/FLOW-348>`_
+* Commit: `f1968d2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f1968d261cab79d97bf9d5b720027945c9a3e758>`_
+
+[BUGFIX] PersistentObjectConverter should correctly detect class
+-----------------------------------------------------------------------------------------
+
+The ``PersistentObjectConverter`` needs to know the class of an object
+after conversion, as the object can be a doctrine proxy the use of
+get_class is not correct and replaced by the TypeHandling utility which
+resolves the correct name even with a doctrine proxy.
+
+* Fixes: `NEOS-1440 <https://jira.neos.io/browse/NEOS-1440>`_
+* Commit: `5a2c11a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5a2c11a0425bcff2da53e15a1184698ff33ac682>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f8fa3f4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f8fa3f447f3039340371a07d73622f099814ca5e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f324dc0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f324dc0efb9fc47aecbc2062540a61d5b39c11ea>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `abe1805 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/abe18054e23f7a9d78f4c3af9f7d63abc3332f4b>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `1227952 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/12279522fc66cf6430c7d3c4a76edb872bf67325>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `ecf56b8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ecf56b83055f615541df6041adbea37e17032865>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `6f0e049 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6f0e0496e1a95c0e9823c675d6e470402ecb47c8>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `e249c69 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e249c693970249cd768aaf77ab28963c0ee4d302>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `de6da58 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/de6da589be81e1b230e56ca80366858e6cf85e8a>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `8be1175 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8be11753d00c059ccfa0103f0bae74b47dae68bb>`_
+
+[TASK] Remove ChangeLogs for other branches from documentation
+-----------------------------------------------------------------------------------------
+
+Having the ChangeLogs of all previous branches only balloons the
+documentation without a real gain.
+
+* Commit: `e17b8e8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e17b8e816af0dcedb5f77dfdbc64c4948d9225c3>`_
+
+[TASK] Move Doc Config from DocTools package
+-----------------------------------------------------------------------------------------
+
+This moves the doc configuration from the DocTools package to the Flow
+package so that it can be changed per branch. To see the DocTools
+change, refer to I9b56df70f6b5140b41b41893a8fb6f516b8f1843
+
+* Commit: `ce63ffe <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ce63ffe569d2ca08a3944b1c198542d842b0ebc1>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `b749c4e <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/b749c4e466765593a9a84a477d5489f785bad0f4>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `374243d <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/374243daf0e1cc391d3bfbeee2d9ad42238d88cb>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `7646250 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/7646250be5aae75441fda41eb53babea8244c81e>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `f568ee0 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/f568ee01995fd331be725dd270a53389e0ae8dd9>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `1e62e41 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/1e62e4183caaebdb2b5a11b17ed059631a4df6b1>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `0ae03e4 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/0ae03e40a4731fc8729338507487438be7c5787d>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `87a4042 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/87a4042d2f79afc519ddd88c46e3f2a0bdf1ce61>`_
+
+[TASK] Update translations from translation tool
+-----------------------------------------------------------------------------------------
+
+* Commit: `cd16f48 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/cd16f483aa138b7f76a6831d494c75473725a1ab>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `6339984 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/6339984b95886e71c1e3b75fc1652a1268a8d699>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] Allow to kickstart documentation for a package
+-----------------------------------------------------------------------------------------
+
+The new kickstart:documentation command allows to create the needed
+skeleton for Sphinx-based documentation: conf.py, Makefile and a basic
+index.rst file.
+
+(cherry picked from commit 2c4dcd294d19fa5bd6a5ba7c33280a2300b165b9)
+
+* Commit: `ed86aa7 <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/ed86aa7192c50fcff6bb2f7def15c8f2baa116d4>`_
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `81ce3bc <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/81ce3bc34d1ee36ad0716b72649f9832874947da>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Relax dependencies to allow any branch version
+-----------------------------------------------------------------------------------------
+
+* Commit: `9375d57 <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/9375d57832b7470c4e61f74422062eefaf4a1a13>`_
+
