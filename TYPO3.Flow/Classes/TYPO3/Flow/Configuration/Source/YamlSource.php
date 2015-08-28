@@ -87,7 +87,8 @@ class YamlSource {
 			if (is_file($pathAndFilename)) {
 				try {
 					if ($this->usePhpYamlExtension) {
-						$loadedConfiguration = @yaml_parse_file($pathAndFilename);
+						$yaml = file_get_contents($pathAndFilename);
+						$loadedConfiguration = @yaml_parse($yaml);
 						if ($loadedConfiguration === FALSE) {
 							throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
 						}
