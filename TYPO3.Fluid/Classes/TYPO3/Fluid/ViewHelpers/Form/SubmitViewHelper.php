@@ -25,7 +25,7 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
  * </output>
  *
  * <code title="Dummy content for template preview">
- * <f:submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
+ * <f:form.submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
  * </code>
  * <output>
  * <input type="submit" name="mySubmit" value="Send Mail" />
