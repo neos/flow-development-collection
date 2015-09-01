@@ -18,7 +18,7 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Fluid\View\StandaloneView;
 
-require_once('Exception.php');
+require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Error/Exception.php');
 
 /**
  * An abstract exception handler
