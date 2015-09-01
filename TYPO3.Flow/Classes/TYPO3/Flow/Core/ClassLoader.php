@@ -219,7 +219,7 @@ class ClassLoader {
 
 			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
 			if (is_file($possibleFilePath)) {
-				$result = include($possibleFilePath);
+				$result = include_once($possibleFilePath);
 				if ($result !== FALSE) {
 					return TRUE;
 				}
