@@ -11,15 +11,8 @@ namespace TYPO3\Flow\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-// Those are needed before the autoloader is active
-require_once(__DIR__ . '/ApplicationContext.php');
-require_once(__DIR__ . '/../Exception.php');
+// This is needed for the initial environment check and before the autoloader is active
 require_once(__DIR__ . '/../Utility/Files.php');
-require_once(__DIR__ . '/../Package/PackageInterface.php');
-require_once(__DIR__ . '/../Package/Package.php');
-require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
-require_once(__DIR__ . '/../Package/PackageManager.php');
-require_once(__DIR__ . '/Booting/Scripts.php');
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
@@ -84,13 +77,20 @@ class Bootstrap {
 	protected $earlyInstances = array();
 
 	/**
-	 * Constructor
-	 *
 	 * @param string $context The application context, for example "Production" or "Development"
 	 */
 	public function __construct($context) {
 		$this->defineConstants();
 		$this->ensureRequiredEnvironment();
+
+		// Those are needed before the autoloader is active
+		require_once(__DIR__ . '/ApplicationContext.php');
+		require_once(__DIR__ . '/../Exception.php');
+		require_once(__DIR__ . '/../Package/PackageInterface.php');
+		require_once(__DIR__ . '/../Package/Package.php');
+		require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
+		require_once(__DIR__ . '/../Package/PackageManager.php');
+		require_once(__DIR__ . '/Booting/Scripts.php');
 
 		$this->context = new ApplicationContext($context);
 		$this->earlyInstances[__CLASS__] = $this;
@@ -268,15 +268,15 @@ class Bootstrap {
 				// make sure the site is unlocked even if the script ends unexpectedly due to an error/exception
 				register_shutdown_function(array($lockManager, 'unlockSite'));
 			}
-			$this->setEarlyInstance(\TYPO3\Flow\Core\LockManager::class, $lockManager);
+			$this->setEarlyInstance('TYPO3\Flow\Core\LockManager', $lockManager);
 		}
 
-		$sequence->addStep(new Step('typo3.flow:annotationregistry', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'registerClassLoaderInAnnotationRegistry')));
-		$sequence->addStep(new Step('typo3.flow:configuration', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeConfiguration')), 'typo3.flow:annotationregistry');
-		$sequence->addStep(new Step('typo3.flow:systemlogger', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSystemLogger')), 'typo3.flow:configuration');
+		$sequence->addStep(new Step('typo3.flow:annotationregistry', array('TYPO3\Flow\Core\Booting\Scripts', 'registerClassLoaderInAnnotationRegistry')));
+		$sequence->addStep(new Step('typo3.flow:configuration', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeConfiguration')), 'typo3.flow:annotationregistry');
+		$sequence->addStep(new Step('typo3.flow:systemlogger', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemLogger')), 'typo3.flow:configuration');
 
-		$sequence->addStep(new Step('typo3.flow:errorhandling', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeErrorHandling')), 'typo3.flow:systemlogger');
-		$sequence->addStep(new Step('typo3.flow:cachemanagement', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeCacheManagement')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:errorhandling', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeErrorHandling')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:cachemanagement', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeCacheManagement')), 'typo3.flow:systemlogger');
 		return $sequence;
 	}
 
@@ -290,11 +290,11 @@ class Bootstrap {
 	public function buildCompiletimeSequence() {
 		$sequence = $this->buildEssentialsSequence('compiletime');
 
-		$sequence->addStep(new Step('typo3.flow:cachemanagement:forceflush', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'forceFlushCachesIfNecessary')), 'typo3.flow:systemlogger');
-		$sequence->addStep(new Step('typo3.flow:objectmanagement:compiletime:create', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow:systemlogger');
-		$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:compiletime:create');
-		$sequence->addStep(new Step('typo3.flow:reflectionservice', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeReflectionService')), 'typo3.flow:systemfilemonitor');
-		$sequence->addStep(new Step('typo3.flow:objectmanagement:compiletime:finalize', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeObjectManagerCompileTimeFinalize')), 'typo3.flow:reflectionservice');
+		$sequence->addStep(new Step('typo3.flow:cachemanagement:forceflush', array('TYPO3\Flow\Core\Booting\Scripts', 'forceFlushCachesIfNecessary')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:compiletime:create', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:compiletime:create');
+		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:systemfilemonitor');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:compiletime:finalize', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeFinalize')), 'typo3.flow:reflectionservice');
 		return $sequence;
 	}
 
@@ -307,19 +307,19 @@ class Bootstrap {
 	 */
 	public function buildRuntimeSequence() {
 		$sequence = $this->buildEssentialsSequence('runtime');
-		$sequence->addStep(new Step('typo3.flow:objectmanagement:proxyclasses', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeProxyClasses')), 'typo3.flow:systemlogger');
-		$sequence->addStep(new Step('typo3.flow:classloader:cache', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeClassLoaderClassesCache')), 'typo3.flow:objectmanagement:proxyclasses');
-		$sequence->addStep(new Step('typo3.flow:objectmanagement:runtime', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeObjectManager')), 'typo3.flow:classloader:cache');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:proxyclasses', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:classloader:cache', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow:objectmanagement:proxyclasses');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:runtime', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow:classloader:cache');
 
 		if (!$this->context->isProduction()) {
-			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
-			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'recompileClasses')), 'typo3.flow:systemfilemonitor');
+			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array('TYPO3\Flow\Core\Booting\Scripts', 'recompileClasses')), 'typo3.flow:systemfilemonitor');
 		}
 
-		$sequence->addStep(new Step('typo3.flow:reflectionservice', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
-		$sequence->addStep(new Step('typo3.flow:persistence', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializePersistence')), 'typo3.flow:reflectionservice');
-		$sequence->addStep(new Step('typo3.flow:resources', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeResources')), 'typo3.flow:persistence');
-		$sequence->addStep(new Step('typo3.flow:session', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSession')), 'typo3.flow:resources');
+		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
+		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:reflectionservice');
+		$sequence->addStep(new Step('typo3.flow:resources', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeResources')), 'typo3.flow:persistence');
+		$sequence->addStep(new Step('typo3.flow:session', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSession')), 'typo3.flow:resources');
 		return $sequence;
 	}
 
@@ -344,7 +344,7 @@ class Bootstrap {
 	 * @api
 	 */
 	public function getSignalSlotDispatcher() {
-		return $this->earlyInstances[\TYPO3\Flow\SignalSlot\Dispatcher::class];
+		return $this->earlyInstances['TYPO3\Flow\SignalSlot\Dispatcher'];
 	}
 
 	/**
@@ -378,11 +378,11 @@ class Bootstrap {
 	 * @throws FlowException
 	 */
 	public function getObjectManager() {
-		if (!isset($this->earlyInstances[\TYPO3\Flow\Object\ObjectManagerInterface::class])) {
+		if (!isset($this->earlyInstances['TYPO3\Flow\Object\ObjectManagerInterface'])) {
 			debug_print_backtrace();
 			throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
 		}
-		return $this->earlyInstances[\TYPO3\Flow\Object\ObjectManagerInterface::class];
+		return $this->earlyInstances['TYPO3\Flow\Object\ObjectManagerInterface'];
 	}
 
 	/**
@@ -421,7 +421,7 @@ class Bootstrap {
 	 * @Flow\Signal
 	 */
 	protected function emitFinishedCompiletimeRun() {
-		$this->earlyInstances[\TYPO3\Flow\SignalSlot\Dispatcher::class]->dispatch(__CLASS__, 'finishedCompiletimeRun', array());
+		$this->earlyInstances['TYPO3\Flow\SignalSlot\Dispatcher']->dispatch(__CLASS__, 'finishedCompiletimeRun', array());
 	}
 
 	/**
@@ -431,7 +431,7 @@ class Bootstrap {
 	 * @Flow\Signal
 	 */
 	protected function emitFinishedRuntimeRun() {
-		$this->earlyInstances[\TYPO3\Flow\SignalSlot\Dispatcher::class]->dispatch(__CLASS__, 'finishedRuntimeRun', array());
+		$this->earlyInstances['TYPO3\Flow\SignalSlot\Dispatcher']->dispatch(__CLASS__, 'finishedRuntimeRun', array());
 	}
 
 	/**
@@ -442,7 +442,7 @@ class Bootstrap {
 	 * @Flow\Signal
 	 */
 	protected function emitBootstrapShuttingDown($runLevel) {
-		$this->earlyInstances[\TYPO3\Flow\SignalSlot\Dispatcher::class]->dispatch(__CLASS__, 'bootstrapShuttingDown', array($runLevel));
+		$this->earlyInstances['TYPO3\Flow\SignalSlot\Dispatcher']->dispatch(__CLASS__, 'bootstrapShuttingDown', array($runLevel));
 	}
 
 	/**
