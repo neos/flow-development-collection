@@ -154,7 +154,6 @@ class Scripts {
 		$settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
 		$environment = new \TYPO3\Flow\Utility\Environment($context);
-		$environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
 
 		$configurationManager->injectEnvironment($environment);
 		$packageManager->injectSettings($settings);
@@ -573,6 +572,7 @@ class Scripts {
 	public static function buildPhpCommand(array $settings) {
 		$subRequestEnvironmentVariables = array(
 			'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
+			'FLOW_PATH_TEMPORARY' => FLOW_PATH_TEMPORARY,
 			'FLOW_CONTEXT' => $settings['core']['context']
 		);
 		if (isset($settings['core']['subRequestEnvironmentVariables'])) {

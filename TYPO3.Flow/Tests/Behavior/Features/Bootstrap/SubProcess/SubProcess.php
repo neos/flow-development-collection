@@ -81,7 +81,7 @@ class SubProcess {
 	 * @throws \RuntimeException
 	 */
 	protected function launchSubProcess() {
-		$systemCommand = 'FLOW_ROOTPATH=' . escapeshellarg(FLOW_PATH_ROOT) . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINDIR . '/php -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php') . ' --start-slave';
+		$systemCommand = 'FLOW_ROOTPATH=' . escapeshellarg(FLOW_PATH_ROOT) . ' FLOW_PATH_TEMPORARY=' . escapeshellarg(FLOW_PATH_TEMPORARY) . ' ' . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINDIR . '/php -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php') . ' --start-slave';
 		$descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
 		$this->subProcess = proc_open($systemCommand, $descriptorSpecification, $this->pipes);
 		if (!is_resource($this->subProcess)) {

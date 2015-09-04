@@ -95,15 +95,16 @@ in the `Reference Manual <http://flowframework.readthedocs.org/en/stable/>`_.
 
 	To avoid errors you should change the cache configuration so it points to a
 	location with a very short absolute file path, for example ``C:\\tmp\\``.
-	Do that by adding the following to the file ``Configuration/Settings.yaml``:
+	Do that by setting the ``FLOW_PATH_TEMPORARY_BASE`` environment variable -
+	For example in the virtual host part of your Apache configuration:
 
-	*Configuration/Settings.yaml*:
+	*httpd.conf*:
 
-	.. code-block:: yaml
+	.. code-block:: none
 
-		utility:
-		  environment:
-		    temporaryDirectoryBase: 'C\\:tmp\\'
+		<VirtualHost ...>
+			SetEnv FLOW_PATH_TEMPORARY_BASE "C\\:tmp\\"
+		</VirtualHost>
 
 .. important::
 	Parsing the YAML configuration files takes a bit of time which remarkably

@@ -129,7 +129,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		$this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';
 
 		if ((strlen($this->cacheDirectory) + 23) > $this->environment->getMaximumPathLength()) {
-			throw new \TYPO3\Flow\Cache\Exception('The length of the temporary cache path "' . $this->cacheDirectory . '" exceeds the maximum path length of ' . ($this->environment->getMaximumPathLength() - 23) . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+			throw new \TYPO3\Flow\Cache\Exception('The length of the temporary cache path "' . $this->cacheDirectory . '" exceeds the maximum path length of ' . ($this->environment->getMaximumPathLength() - 23) . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
 		}
 	}
 

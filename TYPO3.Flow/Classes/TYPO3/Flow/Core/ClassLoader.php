@@ -440,7 +440,7 @@ class ClassLoader {
 	 * @return void
 	 */
 	public function initializeAvailableProxyClasses(ApplicationContext $context) {
-		$proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
+		$proxyClasses = @include(FLOW_PATH_TEMPORARY . '/AvailableProxyClasses.php');
 		if ($proxyClasses !== FALSE) {
 			$this->availableProxyClasses = $proxyClasses;
 		}
