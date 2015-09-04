@@ -440,10 +440,12 @@ class ClassLoader
         }
 
         if ($context !== null) {
-            $proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
-            if ($proxyClasses !== false) {
-                $this->availableProxyClasses = $proxyClasses;
-            }
+			// see Environment::createTemporaryDirectory()
+			$temporaryDirectory = FLOW_PATH_DATA . 'Temporary/' . str_replace('/', '/SubContext', (string)$context) . '/';
+			$proxyClasses = @include($temporaryDirectory . '/AvailableProxyClasses.php');
+			if ($proxyClasses !== false) {
+				$this->availableProxyClasses = $proxyClasses;
+			}
         }
     }
 
