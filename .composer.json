@@ -1,0 +1,17 @@
+{
+  "name": "neos/flow-development-collection",
+  "description": "Flow packages in a joined repository for pull requests.",
+  "type": "neos-package-collection",
+  "require": {
+  },
+  "replace": {
+  },
+  "suggest": {
+  },
+  "autoload": {
+  },
+  "extra": {
+    "installer-name": "Framework"
+  }
+}
+
