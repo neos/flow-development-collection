@@ -1,5 +1,8 @@
 .. image:: https://travis-ci.org/neos/flow-development-collection.svg
     :target: https://travis-ci.org/neos/flow-development-collection
+.. image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
+   :target: https://codeclimate.com/github/neos/flow-development-collection
+   :alt: Code Climate
 
 ---------------------------
 Flow development collection
