@@ -1,0 +1,9 @@
+exclude_paths:
+  # Auto-generated classes from the PEG parser generator
+  - TYPO3.Eel/Classes/TYPO3/Eel/FlowQuery/FizzleParser.php
+  - TYPO3.Eel/Classes/TYPO3/Eel/EelParser.php
+  - TYPO3.Eel/Classes/TYPO3/Eel/AbstractParser.php
+  # 3rd partx code
+  - TYPO3.Eel/Resources/Private/PHP/php-peg/**
+  - TYPO3.Flow/Resources/Public/Security/JavaScript/JSBN/**
+  - TYPO3.Flow/Resources/PHP/iSecurity/**
