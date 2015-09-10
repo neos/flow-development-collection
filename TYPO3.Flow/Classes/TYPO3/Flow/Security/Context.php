@@ -121,7 +121,7 @@ class Context {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\SessionManager
+	 * @var \TYPO3\Flow\Session\SessionManagerInterface
 	 */
 	protected $sessionManager;
 
