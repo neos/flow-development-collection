@@ -24,7 +24,7 @@ class InstallerScripts {
 
 	/**
 	 * Make sure required paths and files are available outside of Package
-	 * Run on every Composer install or update - most be configured in root manifest
+	 * Run on every Composer install or update - must be configured in root manifest
 	 *
 	 * @param CommandEvent $event
 	 * @return void
@@ -53,23 +53,45 @@ class InstallerScripts {
 		}
 		$package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
 		$packageExtraConfig = $package->getExtra();
+		$installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
 
-		if (isset($packageExtraConfig['typo3/flow'])) {
-			if (isset($packageExtraConfig['typo3/flow']['post-install']) && $operation->getJobType() === 'install') {
-				self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
-			} elseif (isset($packageExtraConfig['typo3/flow']['post-update']) && $operation->getJobType() === 'update') {
-				self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
+		$evaluatedInstallerResources = FALSE;
+		if (isset($packageExtraConfig['neos']['installer-resource-folders'])) {
+			foreach ($packageExtraConfig['neos']['installer-resource-folders'] as $installerResourceDirectory) {
+				static::copyDistributionFiles($installPath . $installerResourceDirectory);
 			}
+			$evaluatedInstallerResources = TRUE;
+		}
 
-			$installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
-			if (isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === TRUE) {
-				if (is_dir($installPath . 'Resources/Private/Installer/Distribution/Essentials')) {
-					Files::copyDirectoryRecursively($installPath . 'Resources/Private/Installer/Distribution/Essentials', getcwd() . '/', FALSE, TRUE);
-				}
-				if (is_dir($installPath . 'Resources/Private/Installer/Distribution/Defaults')) {
-					Files::copyDirectoryRecursively($installPath . 'Resources/Private/Installer/Distribution/Defaults', getcwd() . '/', TRUE, TRUE);
-				}
-			}
+		if (isset($packageExtraConfig['typo3/flow']['post-install']) && $operation->getJobType() === 'install') {
+			self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
+		}
+
+		if (isset($packageExtraConfig['typo3/flow']['post-update']) && $operation->getJobType() === 'update') {
+			self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
+		}
+
+		// TODO: Deprecated from Flow 3.1 remove three versions after.
+		if (!$evaluatedInstallerResources && isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === TRUE) {
+			static::copyDistributionFiles($installPath . 'Resources/Private/Installer/');
+		}
+	}
+
+	/**
+	 * Copies any distribution files to their place if needed.
+	 *
+	 * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
+	 * @return void
+	 */
+	static protected function copyDistributionFiles($installerResourcesDirectory) {
+		$essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
+		if (is_dir($essentialsPath)) {
+			Files::copyDirectoryRecursively($essentialsPath, getcwd() . '/', FALSE, TRUE);
+		}
+
+		$defaultsPath = $installerResourcesDirectory . 'Distribution/Defaults';
+		if (is_dir($defaultsPath)) {
+			Files::copyDirectoryRecursively($defaultsPath, getcwd() . '/', TRUE, TRUE);
 		}
 	}
 
