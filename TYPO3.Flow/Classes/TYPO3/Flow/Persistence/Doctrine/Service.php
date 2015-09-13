@@ -55,6 +55,11 @@ class Service {
 	protected $environment;
 
 	/**
+	 * @var array
+	 */
+	protected $configuration = array();
+
+	/**
 	 * Validates the metadata mapping for Doctrine, using the SchemaValidator
 	 * of Doctrine.
 	 *
@@ -160,6 +165,9 @@ class Service {
 	 * @return \Doctrine\DBAL\Migrations\Configuration\Configuration
 	 */
 	protected function getMigrationConfiguration() {
+		if ($this->configuration !== array()) {
+			return $this->configuration;
+		}
 		$this->output = array();
 		$that = $this;
 		$outputWriter = new \Doctrine\DBAL\Migrations\OutputWriter(
@@ -193,7 +201,44 @@ class Service {
 			}
 		}
 
-		return $configuration;
+		$this->configuration = $configuration;
+
+		return $this->configuration;
+	}
+
+	/**
+	 * Returns the current migration version
+	 *
+	 * @return integer
+	 */
+	public function getCurrentVersion() {
+		$configuration = $this->getMigrationConfiguration();
+		return $this->formatVersionNumber($configuration->getCurrentVersion());
+	}
+
+	/**
+	 * Returns the current migration version
+	 *
+	 * @return integer
+	 */
+	public function getNextVersion() {
+		$configuration = $this->getMigrationConfiguration();
+		return $this->formatVersionNumber($configuration->getNextVersion());
+	}
+
+	/**
+	 * @param string $version
+	 * @return integer
+	 */
+	protected function formatVersionNumber($version) {
+		$configuration = $this->getMigrationConfiguration();
+		if ($version) {
+			$formattedVersion = $configuration->formatVersion($version) . ' (' . $version . ')';
+		} else {
+			$formattedVersion = 0;
+		}
+
+		return $formattedVersion;
 	}
 
 	/**
@@ -203,13 +248,8 @@ class Service {
 	 */
 	public function getMigrationStatus() {
 		$configuration = $this->getMigrationConfiguration();
+		$currentVersionFormatted = $this->getCurrentVersion();
 
-		$currentVersion = $configuration->getCurrentVersion();
-		if ($currentVersion) {
-			$currentVersionFormatted = $configuration->formatVersion($currentVersion) . ' (' . $currentVersion . ')';
-		} else {
-			$currentVersionFormatted = 0;
-		}
 		$latestVersion = $configuration->getLatestVersion();
 		if ($latestVersion) {
 			$latestVersionFormatted = $configuration->formatVersion($latestVersion) . ' (' . $latestVersion . ')';
