@@ -99,6 +99,7 @@ class FlockLockStrategy implements LockStrategyInterface {
 				$success = FALSE;
 			}
 			fclose($this->filePointer);
+			Files::unlink($this->lockFileName);
 		}
 
 		return $success;
