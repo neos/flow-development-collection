@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Annotations\After;
 
 /**
  * Interface for a Flow Package class
@@ -28,6 +29,8 @@ interface PackageInterface
     const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
     const DIRECTORY_RESOURCES = 'Resources/';
 
+    const DEFAULT_COMPOSER_TYPE = 'typo3-flow-package';
+
     /**
      * Invokes custom PHP code directly after the package manager has been initialized.
      *
@@ -35,13 +38,6 @@ interface PackageInterface
      * @return void
      */
     public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap);
-
-    /**
-     * Returns the package meta object of this package.
-     *
-     * @return \TYPO3\Flow\Package\MetaData
-     */
-    public function getPackageMetaData();
 
     /**
      * Returns the array of filenames of the class files
@@ -60,10 +56,27 @@ interface PackageInterface
     public function getPackageKey();
 
     /**
+     * Returns the packages composer name
+     *
+     * @return string
+     * @api
+     */
+    public function getComposerName();
+
+    /**
+     * Returns an array of all declared autoload namespaces contained in this package
+     *
+     * @return string[]
+     * @api
+     */
+    public function getNamespaces();
+
+    /**
      * Returns the PHP namespace of classes in this package.
      *
      * @return string
      * @api
+     * @deprecated Use getNamespaces()
      */
     public function getNamespace();
 
@@ -104,6 +117,7 @@ interface PackageInterface
      *
      * @return string Path to this package's Classes directory
      * @api
+     * @deprecated
      */
     public function getClassesPath();
 
@@ -113,6 +127,7 @@ interface PackageInterface
      *
      * @return string Path to this package's Classes directory
      * @api
+     * @deprecated
      */
     public function getClassesNamespaceEntryPath();
 
@@ -133,26 +148,19 @@ interface PackageInterface
     public function getConfigurationPath();
 
     /**
-     * Returns the full path to this package's Package.xml file
+     * Get the composer manifest for package. Optionally accessing specific parts by giving a path.
      *
-     * @return string Path to this package's Package.xml file
+     * @param string $path A path of "." separated keys to directly access some specific part of the composer manifest.
+     * @return mixed
      * @api
      */
-    public function getMetaPath();
+    public function getComposerManifest($path = null);
 
     /**
-     * Returns the full path to the package's documentation directory
+     * Retrieve a version number for this package.
      *
-     * @return string Full path to the package's documentation directory
+     * @return string
      * @api
      */
-    public function getDocumentationPath();
-
-    /**
-     * Returns the available documentations for this package
-     *
-     * @return array Array of \TYPO3\Flow\Package\Documentation
-     * @api
-     */
-    public function getPackageDocumentations();
+    public function getInstalledVersion();
 }

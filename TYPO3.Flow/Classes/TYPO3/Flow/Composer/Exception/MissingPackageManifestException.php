@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Package\Exception;
+namespace TYPO3\Flow\Composer\Exception;
 
 /*
  * This file is part of the TYPO3.Flow package.

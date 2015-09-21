@@ -18,6 +18,10 @@ namespace TYPO3\Flow\Package;
  */
 interface PackageManagerInterface
 {
+    const PACKAGE_STATE_INACTIVE = 'inactive';
+
+    const PACKAGE_STATE_ACTIVE = 'active';
+
     /**
      * Initializes the package manager
      *
@@ -127,13 +131,12 @@ interface PackageManagerInterface
      * Create a new package, given the package key
      *
      * @param string $packageKey The package key to use for the new package
-     * @param \TYPO3\Flow\Package\MetaData $packageMetaData Package metadata
+     * @param array $manifest The composer manifest for the new package, missing information will be added.
      * @param string $packagesPath If specified, the package will be created in this path
-     * @param string $packageType If specified, the package type will be set
      * @return \TYPO3\Flow\Package\Package The newly created package
      * @api
      */
-    public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null, $packagesPath = null, $packageType = null);
+    public function createPackage($packageKey, array $manifest = [], $packagesPath = null);
 
     /**
      * Deactivates a package if it is in the list of active packages
@@ -186,24 +189,6 @@ interface PackageManagerInterface
     public function refreezePackage($packageKey);
 
     /**
-     * Register a native Flow package
-     *
-     * @param PackageInterface $package The Package to be registered
-     * @param boolean $sortAndSave allows for not saving packagestates when used in loops etc.
-     * @return PackageInterface
-     * @throws Exception\CorruptPackageException
-     */
-    public function registerPackage(PackageInterface $package, $sortAndSave = true);
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @throws Exception\InvalidPackageStateException
-     */
-    public function unregisterPackage(PackageInterface $package);
-
-    /**
      * Removes a package from registry and deletes it from filesystem
      *
      * @param string $packageKey package to delete
@@ -211,4 +196,12 @@ interface PackageManagerInterface
      * @api
      */
     public function deletePackage($packageKey);
+
+    /**
+     * Rescans available packages, order and write a new PackageStates file.
+     *
+     * @return array The found and sorted package states.
+     * @api
+     */
+    public function rescanPackages();
 }
