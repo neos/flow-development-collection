@@ -16,6 +16,7 @@ use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceMetaDataInterface;
+use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -160,6 +161,26 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
+     * Checks if the PackageStorage has been previously initialized with symlinks
+     * and clears them. Otherwise the original sources would be overwritten.
+     *
+     * @param \TYPO3\Flow\Resource\Storage\StorageInterface $storage
+     * @return void
+     */
+    protected function checkAndRemovePackageSymlinks($storage)
+    {
+        if (!$storage instanceof PackageStorage) {
+            return;
+        }
+        foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
+            $targetPathAndFilename = $this->path . $packageKey;
+            if (Files::is_link($targetPathAndFilename)) {
+                Files::unlink($targetPathAndFilename);
+            }
+        }
+    }
+
+    /**
      * Publishes the whole collection to this target
      *
      * @param \TYPO3\Flow\Resource\CollectionInterface $collection The collection to publish
@@ -168,6 +189,8 @@ class FileSystemTarget implements TargetInterface
      */
     public function publishCollection(CollectionInterface $collection)
     {
+        $storage = $collection->getStorage();
+        $this->checkAndRemovePackageSymlinks($storage);
         foreach ($collection->getObjects() as $object) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
             $sourceStream = $object->getStream();
@@ -264,9 +287,17 @@ class FileSystemTarget implements TargetInterface
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
+        $streamMetaData = stream_get_meta_data($sourceStream);
+        $sourcePathAndFilename = $streamMetaData['uri'];
 
         if (@fstat($sourceStream) === false) {
             throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
+        }
+
+        // If you switch from FileSystemSymlinkTarget than we need to remove the symlink before trying to write the file
+        $targetPathAndFilenameInfo = new \SplFileInfo($targetPathAndFilename);
+        if ($targetPathAndFilenameInfo->isLink() && $targetPathAndFilenameInfo->getRealPath() === $sourcePathAndFilename) {
+            Files::unlink($targetPathAndFilename);
         }
 
         if (!file_exists(dirname($targetPathAndFilename))) {
