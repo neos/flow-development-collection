@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  *
  * @api
  */
-class InvalidFormatLengthException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException {
-
+class InvalidFormatLengthException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException
+{
 }

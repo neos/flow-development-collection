@@ -23,34 +23,34 @@ use TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException;
  *
  * @api
  */
-abstract class AbstractWidgetController extends ActionController {
+abstract class AbstractWidgetController extends ActionController
+{
+    /**
+     * Configuration for this widget.
+     *
+     * @var array
+     * @api
+     */
+    protected $widgetConfiguration;
 
-	/**
-	 * Configuration for this widget.
-	 *
-	 * @var array
-	 * @api
-	 */
-	protected $widgetConfiguration;
-
-	/**
-	 * Handles a request. The result output is returned by altering the given response.
-	 *
-	 * @param RequestInterface $request The request object
-	 * @param ResponseInterface $response The response, modified by this handler
-	 * @return void
-	 * @throws WidgetContextNotFoundException
-	 * @api
-	 */
-	public function processRequest(RequestInterface $request, ResponseInterface $response) {
-		/** @var $request \TYPO3\Flow\Mvc\ActionRequest */
-		/** @var $widgetContext WidgetContext */
-		$widgetContext = $request->getInternalArgument('__widgetContext');
-		if ($widgetContext === NULL) {
-			throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
-		}
-		$this->widgetConfiguration = $widgetContext->getWidgetConfiguration();
-		parent::processRequest($request, $response);
-	}
-
+    /**
+     * Handles a request. The result output is returned by altering the given response.
+     *
+     * @param RequestInterface $request The request object
+     * @param ResponseInterface $response The response, modified by this handler
+     * @return void
+     * @throws WidgetContextNotFoundException
+     * @api
+     */
+    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    {
+        /** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+        /** @var $widgetContext WidgetContext */
+        $widgetContext = $request->getInternalArgument('__widgetContext');
+        if ($widgetContext === null) {
+            throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
+        }
+        $this->widgetConfiguration = $widgetContext->getWidgetConfiguration();
+        parent::processRequest($request, $response);
+    }
 }

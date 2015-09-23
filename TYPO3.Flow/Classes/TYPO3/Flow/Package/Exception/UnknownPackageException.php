@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Package\Exception;
  *
  * @api
  */
-class UnknownPackageException extends \TYPO3\Flow\Package\Exception {
-
+class UnknownPackageException extends \TYPO3\Flow\Package\Exception
+{
 }

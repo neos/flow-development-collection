@@ -14,6 +14,6 @@ namespace TYPO3\Eel;
 /**
  * An exception that is thrown when methods are accessed which are not allowed
  */
-class NotAllowedException extends EvaluationException {
-
+class NotAllowedException extends EvaluationException
+{
 }

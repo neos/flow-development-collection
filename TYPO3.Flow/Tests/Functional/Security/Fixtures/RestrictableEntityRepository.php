@@ -15,11 +15,10 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  * A repository for comments
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
-
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
-
+class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
 }

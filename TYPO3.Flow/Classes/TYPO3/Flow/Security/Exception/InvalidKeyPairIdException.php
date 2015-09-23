@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidKeyPairIdException extends \TYPO3\Flow\Security\Exception {
+class InvalidKeyPairIdException extends \TYPO3\Flow\Security\Exception
+{
 }

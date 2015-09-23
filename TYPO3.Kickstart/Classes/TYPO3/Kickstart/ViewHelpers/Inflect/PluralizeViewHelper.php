@@ -26,21 +26,22 @@ use TYPO3\Flow\Annotations as Flow;
  * content of {variable} in its plural form (foo => foos)
  *
  */
-class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+{
+    /**
+     * @var \TYPO3\Kickstart\Utility\Inflector
+     * @Flow\Inject
+     */
+    protected $inflector;
 
-	/**
-	 * @var \TYPO3\Kickstart\Utility\Inflector
-	 * @Flow\Inject
-	 */
-	protected $inflector;
-
-	/**
-	 * Pluralize a word
-	 *
-	 * @return string The pluralized string
-	 */
-	public function render() {
-		$content = $this->renderChildren();
-		return $this->inflector->pluralize($content);
-	}
+    /**
+     * Pluralize a word
+     *
+     * @return string The pluralized string
+     */
+    public function render()
+    {
+        $content = $this->renderChildren();
+        return $this->inflector->pluralize($content);
+    }
 }

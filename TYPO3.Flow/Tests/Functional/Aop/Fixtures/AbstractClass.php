@@ -16,20 +16,20 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * An abstract class with an abstract and a concrete method
  *
  */
-abstract class AbstractClass {
+abstract class AbstractClass
+{
+    /**
+     * @param $foo
+     * @return string
+     */
+    abstract public function abstractMethod($foo);
 
-	/**
-	 * @param $foo
-	 * @return string
-	 */
-	abstract public function abstractMethod($foo);
-
-	/**
-	 * @param $foo
-	 * @return string
-	 */
-	public function concreteMethod($foo) {
-		return "foo: $foo";
-	}
-
+    /**
+     * @param $foo
+     * @return string
+     */
+    public function concreteMethod($foo)
+    {
+        return "foo: $foo";
+    }
 }

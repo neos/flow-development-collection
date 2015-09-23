@@ -19,36 +19,38 @@ use TYPO3\Flow\Tests\FunctionalTestCase;
 /**
  * Functional tests for the ActionRequest
  */
-class ActionRequestTest extends FunctionalTestCase {
+class ActionRequestTest extends FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function actionRequestStripsParentHttpRequest()
+    {
+        $httpRequest = Request::create(new Uri('http://typo3.org'));
 
-	/**
-	 * @test
-	 */
-	public function actionRequestStripsParentHttpRequest() {
-		$httpRequest = Request::create(new Uri('http://typo3.org'));
+        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest->setControllerActionName('foo');
+        $serializedActionRequest = serialize($actionRequest);
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setControllerActionName('foo');
-		$serializedActionRequest = serialize($actionRequest);
+        /* @var $unserializedActionRequest ActionRequest */
+        $unserializedActionRequest = unserialize($serializedActionRequest);
+        $this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
+        $this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
+    }
 
-		/* @var $unserializedActionRequest ActionRequest */
-		$unserializedActionRequest = unserialize($serializedActionRequest);
-		$this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
-		$this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
-	}
+    /**
+     * @test
+     */
+    public function actionRequestDoesNotStripParentActionRequest()
+    {
+        $httpRequest = Request::create(new Uri('http://typo3.org'));
 
-	/**
-	 * @test
-	 */
-	public function actionRequestDoesNotStripParentActionRequest() {
-		$httpRequest = Request::create(new Uri('http://typo3.org'));
+        $parentActionRequest = new ActionRequest($httpRequest);
+        $actionRequest = new ActionRequest($parentActionRequest);
+        $serializedActionRequest = serialize($actionRequest);
 
-		$parentActionRequest = new ActionRequest($httpRequest);
-		$actionRequest = new ActionRequest($parentActionRequest);
-		$serializedActionRequest = serialize($actionRequest);
-
-		/* @var $unserializedActionRequest ActionRequest */
-		$unserializedActionRequest = unserialize($serializedActionRequest);
-		$this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
-	}
+        /* @var $unserializedActionRequest ActionRequest */
+        $unserializedActionRequest = unserialize($serializedActionRequest);
+        $this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
+    }
 }

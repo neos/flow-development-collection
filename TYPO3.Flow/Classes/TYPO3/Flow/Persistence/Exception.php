@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence;
  *
  * @api
  */
-class Exception extends \TYPO3\Flow\Exception {
+class Exception extends \TYPO3\Flow\Exception
+{
 }

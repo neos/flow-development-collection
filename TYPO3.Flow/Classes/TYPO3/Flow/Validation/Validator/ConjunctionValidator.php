@@ -17,31 +17,32 @@ namespace TYPO3\Flow\Validation\Validator;
  *
  * @api
  */
-class ConjunctionValidator extends AbstractCompositeValidator {
+class ConjunctionValidator extends AbstractCompositeValidator
+{
+    /**
+     * Checks if the given value is valid according to the validators of the conjunction.
+     * Every validator has to be valid, to make the whole conjunction valid.
+     *
+     * @param mixed $value The value that should be validated
+     * @return \TYPO3\Flow\Error\Result
+     * @api
+     */
+    public function validate($value)
+    {
+        $validators = $this->getValidators();
+        if ($validators->count() > 0) {
+            $result = null;
+            foreach ($validators as $validator) {
+                if ($result === null) {
+                    $result = $validator->validate($value);
+                } else {
+                    $result->merge($validator->validate($value));
+                }
+            }
+        } else {
+            $result = new \TYPO3\Flow\Error\Result();
+        }
 
-	/**
-	 * Checks if the given value is valid according to the validators of the conjunction.
-	 * Every validator has to be valid, to make the whole conjunction valid.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return \TYPO3\Flow\Error\Result
-	 * @api
-	 */
-	public function validate($value) {
-		$validators = $this->getValidators();
-		if ($validators->count() > 0) {
-			$result = NULL;
-			foreach ($validators as $validator) {
-				if ($result === NULL) {
-					$result = $validator->validate($value);
-				} else {
-					$result->merge($validator->validate($value));
-				}
-			}
-		} else {
-			$result = new \TYPO3\Flow\Error\Result();
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 }

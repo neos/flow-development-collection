@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Property\Exception;
  *
  * @api
  */
-class InvalidTargetException extends \TYPO3\Flow\Property\Exception {
-
+class InvalidTargetException extends \TYPO3\Flow\Property\Exception
+{
 }

@@ -24,6 +24,6 @@ namespace TYPO3\Flow\Tests\Functional\Property\Fixtures;
 /**
  * A simple subclass for PropertyMapper test
  */
-class TestSubclass extends TestClass {
-
+class TestSubclass extends TestClass
+{
 }

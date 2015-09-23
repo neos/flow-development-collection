@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Exception;
  *
  * @api
  */
-class InvalidQueryException extends \TYPO3\Flow\Persistence\Exception {
+class InvalidQueryException extends \TYPO3\Flow\Persistence\Exception
+{
 }

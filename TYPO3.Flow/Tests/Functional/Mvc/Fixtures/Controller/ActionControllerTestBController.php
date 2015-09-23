@@ -18,123 +18,136 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    public function initializeAction()
+    {
+        $this->arguments['argument']->getPropertyMappingConfiguration()->allowAllProperties();
+    }
 
-	public function initializeAction() {
-		$this->arguments['argument']->getPropertyMappingConfiguration()->allowAllProperties();
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @Flow\IgnoreValidation(argumentName="$argument")
+     * @return string
+     */
+    public function showObjectArgumentAction(TestObjectArgument $argument)
+    {
+        return $argument->getEmailAddress();
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @Flow\IgnoreValidation(argumentName="$argument")
-	 * @return string
-	 */
-	public function showObjectArgumentAction(TestObjectArgument $argument) {
-		return $argument->getEmailAddress();
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @return string
+     */
+    public function requiredObjectAction(TestObjectArgument $argument)
+    {
+        return $argument->getEmailAddress();
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @return string
-	 */
-	public function requiredObjectAction(TestObjectArgument $argument) {
-		return $argument->getEmailAddress();
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @return string
+     */
+    public function optionalObjectAction(TestObjectArgument $argument = null)
+    {
+        if ($argument === null) {
+            return 'null';
+        }
+        return $argument->getEmailAddress();
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @return string
-	 */
-	public function optionalObjectAction(TestObjectArgument $argument = NULL) {
-		if ($argument === NULL) {
-			return 'null';
-		}
-		return $argument->getEmailAddress();
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @Flow\ValidationGroups({"notValidatedGroup"})
+     * @return string
+     */
+    public function notValidatedGroupObjectAction(TestObjectArgument $argument)
+    {
+        return $argument->getEmailAddress();
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @Flow\ValidationGroups({"notValidatedGroup"})
-	 * @return string
-	 */
-	public function notValidatedGroupObjectAction(TestObjectArgument $argument) {
-		return $argument->getEmailAddress();
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @Flow\ValidationGroups({"validatedGroup"})
+     * @return string
+     */
+    public function validatedGroupObjectAction(TestObjectArgument $argument)
+    {
+        return $argument->getEmailAddress();
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @Flow\ValidationGroups({"validatedGroup"})
-	 * @return string
-	 */
-	public function validatedGroupObjectAction(TestObjectArgument $argument) {
-		return $argument->getEmailAddress();
-	}
+    /**
+     * @param string $argument
+     * @return string
+     */
+    public function requiredStringAction($argument)
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param string $argument
-	 * @return string
-	 */
-	public function requiredStringAction($argument) {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param string $argument
+     * @return string
+     */
+    public function optionalStringAction($argument = 'default')
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param string $argument
-	 * @return string
-	 */
-	public function optionalStringAction($argument = 'default') {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param integer $argument
+     * @return string
+     */
+    public function requiredIntegerAction($argument)
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param integer $argument
-	 * @return string
-	 */
-	public function requiredIntegerAction($argument) {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param integer $argument
+     * @return string
+     */
+    public function optionalIntegerAction($argument = 123)
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param integer $argument
-	 * @return string
-	 */
-	public function optionalIntegerAction($argument = 123) {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param float $argument
+     * @return string
+     */
+    public function requiredFloatAction($argument)
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param float $argument
-	 * @return string
-	 */
-	public function requiredFloatAction($argument) {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param float $argument
+     * @return string
+     */
+    public function optionalFloatAction($argument = 112.34)
+    {
+        return var_export($argument, true);
+    }
 
-	/**
-	 * @param float $argument
-	 * @return string
-	 */
-	public function optionalFloatAction($argument = 112.34) {
-		return var_export($argument, TRUE);
-	}
+    /**
+     * @param \DateTime $argument
+     * @return string
+     */
+    public function requiredDateAction(\DateTime $argument)
+    {
+        return $argument->format('Y-m-d');
+    }
 
-	/**
-	 * @param \DateTime $argument
-	 * @return string
-	 */
-	public function requiredDateAction(\DateTime $argument) {
-		return $argument->format('Y-m-d');
-	}
-
-	/**
-	 * @param \DateTime $argument
-	 * @return string
-	 */
-	public function optionalDateAction(\DateTime $argument = NULL) {
-		if ($argument === NULL) {
-			return 'null';
-		}
-		return $argument->format('Y-m-d');
-	}
-
+    /**
+     * @param \DateTime $argument
+     * @return string
+     */
+    public function optionalDateAction(\DateTime $argument = null)
+    {
+        if ($argument === null) {
+            return 'null';
+        }
+        return $argument->format('Y-m-d');
+    }
 }

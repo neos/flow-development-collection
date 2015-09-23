@@ -19,29 +19,31 @@ use Doctrine\ORM\Mapping as ORM;
  * Used in \TYPO3\Flow\Cache\FactoryTest
  *
  */
-class MockBackend extends \TYPO3\Flow\Cache\Backend\NullBackend {
+class MockBackend extends \TYPO3\Flow\Cache\Backend\NullBackend
+{
+    /**
+     * @var mixed
+     */
+    protected $someOption;
 
-	/**
-	 * @var mixed
-	 */
-	protected $someOption;
+    /**
+     * Sets some option
+     *
+     * @param mixed $value
+     * @return void
+     */
+    public function setSomeOption($value)
+    {
+        $this->someOption = $value;
+    }
 
-	/**
-	 * Sets some option
-	 *
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function setSomeOption($value) {
-		$this->someOption = $value;
-	}
-
-	/**
-	 * Returns the option value
-	 *
-	 * @return mixed
-	 */
-	public function getSomeOption() {
-		return $this->someOption;
-	}
+    /**
+     * Returns the option value
+     *
+     * @return mixed
+     */
+    public function getSomeOption()
+    {
+        return $this->someOption;
+    }
 }

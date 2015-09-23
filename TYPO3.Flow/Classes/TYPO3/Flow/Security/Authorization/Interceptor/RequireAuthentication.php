@@ -19,28 +19,30 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class RequireAuthentication implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
+class RequireAuthentication implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+{
+    /**
+     * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+     */
+    protected $authenticationManager = null;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
-	 */
-	protected $authenticationManager = NULL;
+    /**
+     * Constructor.
+     *
+     * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+     */
+    public function __construct(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager)
+    {
+        $this->authenticationManager = $authenticationManager;
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 */
-	public function __construct(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
-		$this->authenticationManager = $authenticationManager;
-	}
-
-	/**
-	 * Invokes the the authentication, if needed.
-	 *
-	 * @return boolean TRUE if the security checks was passed
-	 */
-	public function invoke() {
-		$this->authenticationManager->authenticate();
-	}
+    /**
+     * Invokes the the authentication, if needed.
+     *
+     * @return boolean TRUE if the security checks was passed
+     */
+    public function invoke()
+    {
+        $this->authenticationManager->authenticate();
+    }
 }

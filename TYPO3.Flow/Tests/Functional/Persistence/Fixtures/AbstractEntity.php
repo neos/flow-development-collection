@@ -20,6 +20,6 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\InheritanceType("JOINED")
  */
-abstract class AbstractEntity {
-
+abstract class AbstractEntity
+{
 }

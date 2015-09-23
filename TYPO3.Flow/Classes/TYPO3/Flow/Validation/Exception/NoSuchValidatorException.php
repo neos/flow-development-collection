@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Validation\Exception;
  *
  * @api
  */
-class NoSuchValidatorException extends \TYPO3\Flow\Validation\Exception {
-
+class NoSuchValidatorException extends \TYPO3\Flow\Validation\Exception
+{
 }

@@ -18,18 +18,17 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class SingletonClassD {
+class SingletonClassD
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC
+     */
+    public $prototypeClassC;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC
-	 */
-	public $prototypeClassC;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
-	 */
-	public $prototypeClassA;
-
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+     */
+    public $prototypeClassA;
 }

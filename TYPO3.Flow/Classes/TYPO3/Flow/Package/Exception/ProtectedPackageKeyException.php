@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Package\Exception;
  *
  * @api
  */
-class ProtectedPackageKeyException extends \TYPO3\Flow\Package\Exception {
-
+class ProtectedPackageKeyException extends \TYPO3\Flow\Package\Exception
+{
 }

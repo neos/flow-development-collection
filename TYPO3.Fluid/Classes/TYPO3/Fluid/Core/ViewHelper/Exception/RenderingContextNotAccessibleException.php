@@ -18,5 +18,6 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class RenderingContextNotAccessibleException extends ViewHelper\Exception {
+class RenderingContextNotAccessibleException extends ViewHelper\Exception
+{
 }

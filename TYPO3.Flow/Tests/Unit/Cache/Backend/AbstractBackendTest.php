@@ -17,19 +17,20 @@ use TYPO3\Flow\Core\ApplicationContext;
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
+     */
+    protected $backend;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
-	 */
-	protected $backend;
-
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
-		eval('
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
+        eval('
 			class ' . $className. ' extends \TYPO3\Flow\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
@@ -47,15 +48,16 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				}
 			}
 		');
-		$this->backend = new $className(new ApplicationContext('Testing'));
-	}
+        $this->backend = new $className(new ApplicationContext('Testing'));
+    }
 
-	/**
-	 * @test
-	 */
-	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
-		$className = get_class($this->backend);
-		$backend = new $className(new ApplicationContext('Testing'), array('someOption' => 'someValue'));
-		$this->assertSame('someValue', $backend->getSomeOption());
-	}
+    /**
+     * @test
+     */
+    public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
+    {
+        $className = get_class($this->backend);
+        $backend = new $className(new ApplicationContext('Testing'), array('someOption' => 'someValue'));
+        $this->assertSame('someValue', $backend->getSomeOption());
+    }
 }

@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Exception;
  *
  * @api
  */
-class VoidImplementationException extends \TYPO3\Flow\Aop\Exception {
-
+class VoidImplementationException extends \TYPO3\Flow\Aop\Exception
+{
 }

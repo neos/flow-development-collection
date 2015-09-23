@@ -17,4 +17,6 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class Constraint {}
+class Constraint
+{
+}

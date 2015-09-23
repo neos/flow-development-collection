@@ -15,9 +15,11 @@ namespace TYPO3\Fluid\View\Fixture;
  * [Enter description here]
  *
  */
-class TransparentSyntaxTreeNode extends \TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode {
-	public $variableContainer;
+class TransparentSyntaxTreeNode extends \TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode
+{
+    public $variableContainer;
 
-	public function evaluate(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-	}
+    public function evaluate(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext)
+    {
+    }
 }

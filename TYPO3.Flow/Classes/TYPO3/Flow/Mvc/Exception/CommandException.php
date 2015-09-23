@@ -15,5 +15,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  * Base command exception
  *
  */
-class CommandException extends \TYPO3\Flow\Mvc\Exception {
+class CommandException extends \TYPO3\Flow\Mvc\Exception
+{
 }

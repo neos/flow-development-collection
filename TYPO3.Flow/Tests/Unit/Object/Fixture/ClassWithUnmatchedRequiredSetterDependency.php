@@ -1,11 +1,12 @@
 <?php
 namespace TYPO3\Flow\Tests\Object\Fixture;
 
-class ClassWithUnmatchedRequiredSetterDependency {
+class ClassWithUnmatchedRequiredSetterDependency
+{
+    public $requiredSetterArgument;
 
-	public $requiredSetterArgument;
-
-	public function injectRequiredSetterArgument(\stdClass $setterArgument) {
-		$this->requiredSetterArgument = $setterArgument;
-	}
+    public function injectRequiredSetterArgument(\stdClass $setterArgument)
+    {
+        $this->requiredSetterArgument = $setterArgument;
+    }
 }

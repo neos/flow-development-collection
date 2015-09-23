@@ -20,27 +20,26 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\Table(name="persistence_onetooneentity")
  */
-class OneToOneEntity {
+class OneToOneEntity
+{
+    /**
+     * Self-referencing
+     * @var OneToOneEntity
+     * @ORM\OneToOne
+     */
+    protected $selfReferencing;
 
-	/**
-	 * Self-referencing
-	 * @var OneToOneEntity
-	 * @ORM\OneToOne
-	 */
-	protected $selfReferencing;
+    /**
+     * Bidirectional relation owning side
+     * @var OneToOneEntity2
+     * @ORM\OneToOne(inversedBy="bidirectionalRelation")
+     */
+    protected $bidirectionalRelation;
 
-	/**
-	 * Bidirectional relation owning side
-	 * @var OneToOneEntity2
-	 * @ORM\OneToOne(inversedBy="bidirectionalRelation")
-	 */
-	protected $bidirectionalRelation;
-
-	/**
-	 * Unidirectional relation
-	 * @var OneToOneEntity2
-	 * @ORM\OneToOne
-	 */
-	protected $unidirectionalRelation;
-
+    /**
+     * Unidirectional relation
+     * @var OneToOneEntity2
+     * @ORM\OneToOne
+     */
+    protected $unidirectionalRelation;
 }

@@ -16,11 +16,10 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class NoSuchViewException extends \TYPO3\Flow\Mvc\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 500;
-
+class NoSuchViewException extends \TYPO3\Flow\Mvc\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 500;
 }

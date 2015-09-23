@@ -17,15 +17,14 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
  * This is a regular action controller which serves as the starting point for testing
  * the redirect/forward behavior of widgets.
  */
-class RedirectTestController extends ActionController {
-
-	/**
-	 * Includes the widget through its Index.html template and renders it.
-	 *
-	 * @return string
-	 */
-	public function indexAction() {
-	}
-
+class RedirectTestController extends ActionController
+{
+    /**
+     * Includes the widget through its Index.html template and renders it.
+     *
+     * @return string
+     */
+    public function indexAction()
+    {
+    }
 }
-?>

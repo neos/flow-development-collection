@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class OperationNotPermittedException extends \TYPO3\Flow\Security\Exception {
+class OperationNotPermittedException extends \TYPO3\Flow\Security\Exception
+{
 }

@@ -15,6 +15,6 @@ namespace TYPO3\Flow\Utility\Exception;
  * An Invalid Type Exception
  *
  */
-class InvalidTypeException extends \TYPO3\Flow\Exception {
-
+class InvalidTypeException extends \TYPO3\Flow\Exception
+{
 }

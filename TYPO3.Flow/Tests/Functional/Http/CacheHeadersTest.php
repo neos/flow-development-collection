@@ -14,13 +14,13 @@ namespace TYPO3\Flow\Tests\Functional\Http;
 /**
  * Functional tests for the HTTP cache header support
  */
-class CacheHeadersTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function x() {
-		$this->markTestIncomplete('This is a dummy that needs some love.');
-	}
-
+class CacheHeadersTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function x()
+    {
+        $this->markTestIncomplete('This is a dummy that needs some love.');
+    }
 }

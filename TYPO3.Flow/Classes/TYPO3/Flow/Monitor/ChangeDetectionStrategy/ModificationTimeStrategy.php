@@ -13,97 +13,100 @@ namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
 
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Monitor\FileMonitor;
-
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A change detection strategy based on modification times
  */
-class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements ChangeDetectionStrategyInterface
+{
+    /**
+     * @var \TYPO3\Flow\Monitor\FileMonitor
+     */
+    protected $fileMonitor;
 
-	/**
-	 * @var \TYPO3\Flow\Monitor\FileMonitor
-	 */
-	protected $fileMonitor;
+    /**
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $cache;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
-	 */
-	protected $cache;
+    /**
+     * @var array
+     */
+    protected $filesAndModificationTimes = array();
 
-	/**
-	 * @var array
-	 */
-	protected $filesAndModificationTimes = array();
+    /**
+     * If the modification times changed and therefore need to be cached
+     * @var boolean
+     */
+    protected $modificationTimesChanged = false;
 
-	/**
-	 * If the modification times changed and therefore need to be cached
-	 * @var boolean
-	 */
-	protected $modificationTimesChanged = FALSE;
+    /**
+     * Injects the Flow_Monitor cache
+     *
+     * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
+     * @return void
+     */
+    public function injectCache(StringFrontend $cache)
+    {
+        $this->cache = $cache;
+    }
 
-	/**
-	 * Injects the Flow_Monitor cache
-	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
-	 * @return void
-	 */
-	public function injectCache(StringFrontend $cache) {
-		$this->cache = $cache;
-	}
+    /**
+     * Initializes this strategy
+     *
+     * @param FileMonitor $fileMonitor
+     * @return void
+     */
+    public function setFileMonitor(FileMonitor $fileMonitor)
+    {
+        $this->fileMonitor = $fileMonitor;
+        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), true);
+    }
 
-	/**
-	 * Initializes this strategy
-	 *
-	 * @param FileMonitor $fileMonitor
-	 * @return void
-	 */
-	public function setFileMonitor(FileMonitor $fileMonitor) {
-		$this->fileMonitor = $fileMonitor;
-		$this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), TRUE);
-	}
+    /**
+     * Checks if the specified file has changed
+     *
+     * @param string $pathAndFilename
+     * @return integer One of the STATUS_* constants
+     */
+    public function getFileStatus($pathAndFilename)
+    {
+        $actualModificationTime = @filemtime($pathAndFilename);
+        if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
+            if ($actualModificationTime !== false) {
+                if ($this->filesAndModificationTimes[$pathAndFilename] === $actualModificationTime) {
+                    return self::STATUS_UNCHANGED;
+                } else {
+                    $this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
+                    $this->modificationTimesChanged = true;
+                    return self::STATUS_CHANGED;
+                }
+            } else {
+                unset($this->filesAndModificationTimes[$pathAndFilename]);
+                $this->modificationTimesChanged = true;
+                return self::STATUS_DELETED;
+            }
+        } else {
+            if ($actualModificationTime !== false) {
+                $this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
+                $this->modificationTimesChanged = true;
+                return self::STATUS_CREATED;
+            } else {
+                return self::STATUS_UNCHANGED;
+            }
+        }
+    }
 
-	/**
-	 * Checks if the specified file has changed
-	 *
-	 * @param string $pathAndFilename
-	 * @return integer One of the STATUS_* constants
-	 */
-	public function getFileStatus($pathAndFilename) {
-		$actualModificationTime = @filemtime($pathAndFilename);
-		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
-			if ($actualModificationTime !== FALSE) {
-				if ($this->filesAndModificationTimes[$pathAndFilename] === $actualModificationTime) {
-					return self::STATUS_UNCHANGED;
-				} else {
-					$this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
-					$this->modificationTimesChanged = TRUE;
-					return self::STATUS_CHANGED;
-				}
-			} else {
-				unset($this->filesAndModificationTimes[$pathAndFilename]);
-				$this->modificationTimesChanged = TRUE;
-				return self::STATUS_DELETED;
-			}
-		} else {
-			if ($actualModificationTime !== FALSE) {
-				$this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
-				$this->modificationTimesChanged = TRUE;
-				return self::STATUS_CREATED;
-			} else {
-				return self::STATUS_UNCHANGED;
-			}
-		}
-	}
-
-	/**
-	 * Caches the file modification times
-	 *
-	 * @return void
-	 */
-	public function shutdownObject() {
-		if ($this->modificationTimesChanged === TRUE) {
-			$this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes));
-		}
-	}
+    /**
+     * Caches the file modification times
+     *
+     * @return void
+     */
+    public function shutdownObject()
+    {
+        if ($this->modificationTimesChanged === true) {
+            $this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes));
+        }
+    }
 }

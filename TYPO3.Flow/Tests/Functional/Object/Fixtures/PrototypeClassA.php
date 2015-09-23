@@ -19,46 +19,50 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @Flow\Entity
  */
-class PrototypeClassA implements PrototypeClassAishInterface {
+class PrototypeClassA implements PrototypeClassAishInterface
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
+     */
+    protected $singletonA;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
-	 */
-	protected $singletonA;
+    /**
+     * @var string
+     */
+    protected $someProperty;
 
-	/**
-	 * @var string
-	 */
-	protected $someProperty;
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
+     * @return void
+     */
+    public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA)
+    {
+        $this->singletonA = $singletonA;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
-	 * @return void
-	 */
-	public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
-		$this->singletonA = $singletonA;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
+     */
+    public function getSingletonA()
+    {
+        return $this->singletonA;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
-	 */
-	public function getSingletonA() {
-		return $this->singletonA;
-	}
+    /**
+     * @param string $someProperty The property value
+     * @return void
+     * @Flow\Session(autoStart=true)
+     */
+    public function setSomeProperty($someProperty)
+    {
+        $this->someProperty = $someProperty;
+    }
 
-	/**
-	 * @param string $someProperty The property value
-	 * @return void
-	 * @Flow\Session(autoStart=true)
-	 */
-	public function setSomeProperty($someProperty) {
-		$this->someProperty = $someProperty;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSomeProperty() {
-		return $this->someProperty;
-	}
+    /**
+     * @return string
+     */
+    public function getSomeProperty()
+    {
+        return $this->someProperty;
+    }
 }

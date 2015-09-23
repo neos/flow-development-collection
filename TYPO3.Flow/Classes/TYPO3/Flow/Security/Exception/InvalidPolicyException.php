@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidPolicyException extends \TYPO3\Flow\Security\Exception {
-
+class InvalidPolicyException extends \TYPO3\Flow\Security\Exception
+{
 }

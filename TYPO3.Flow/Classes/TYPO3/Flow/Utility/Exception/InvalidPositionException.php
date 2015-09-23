@@ -17,6 +17,6 @@ namespace TYPO3\Flow\Utility\Exception;
  * This exception is thrown by the ArraySorter if the given subject contains invalid "position" metadata
  *
  */
-class InvalidPositionException extends \TYPO3\Flow\Exception {
-
+class InvalidPositionException extends \TYPO3\Flow\Exception
+{
 }

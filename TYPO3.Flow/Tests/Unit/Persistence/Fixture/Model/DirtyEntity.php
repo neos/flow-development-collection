@@ -18,50 +18,54 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class DirtyEntity implements \TYPO3\Flow\Aop\ProxyInterface {
+class DirtyEntity implements \TYPO3\Flow\Aop\ProxyInterface
+{
+    /**
+     * Just a normal string
+     *
+     * @var string
+     */
+    public $someString;
 
-	/**
-	 * Just a normal string
-	 *
-	 * @var string
-	 */
-	public $someString;
+    /**
+     * @var integer
+     */
+    public $someInteger;
 
-	/**
-	 * @var integer
-	 */
-	public $someInteger;
+    /**
+     * Invokes the joinpoint - calls the target methods.
+     *
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
+     * @return mixed Result of the target (ie. original) method
+     */
+    public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+    }
 
-	/**
-	 * Invokes the joinpoint - calls the target methods.
-	 *
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
-	 * @return mixed Result of the target (ie. original) method
-	 */
-	public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+    /**
+     * Returns TRUE as this is a DirtyEntity
+     *
+     * @return boolean
+     */
+    public function Flow_Persistence_isDirty()
+    {
+        return true;
+    }
 
-	}
-
-	/**
-	 * Returns TRUE as this is a DirtyEntity
-	 *
-	 * @return boolean
-	 */
-	public function Flow_Persistence_isDirty() {
-		return TRUE;
-	}
-
-	/**
-	 * Dummy method for mock creation
-	 * @param string $propertyName
-	 * @return void
-	 */
-	public function Flow_Persistence_memorizeCleanState($propertyName = NULL) {}
+    /**
+     * Dummy method for mock creation
+     * @param string $propertyName
+     * @return void
+     */
+    public function Flow_Persistence_memorizeCleanState($propertyName = null)
+    {
+    }
 
 
-	/**
-	 * A stub to satisfy the Flow Proxy Interface
-	 */
-	public function __wakeup() {}
-
+    /**
+     * A stub to satisfy the Flow Proxy Interface
+     */
+    public function __wakeup()
+    {
+    }
 }

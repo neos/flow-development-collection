@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Object\Exception;
  *
  * @api
  */
-class WrongScopeException extends \TYPO3\Flow\Object\Exception {
-
+class WrongScopeException extends \TYPO3\Flow\Object\Exception
+{
 }

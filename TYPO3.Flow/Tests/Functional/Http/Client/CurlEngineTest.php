@@ -16,30 +16,31 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
  *
  * @requires extension curl
  */
-class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected $testableSecurityEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $curlEngine = $this->objectManager->get('TYPO3\Flow\Http\Client\CurlEngine');
+        $this->browser->setRequestEngine($curlEngine);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		$curlEngine = $this->objectManager->get('TYPO3\Flow\Http\Client\CurlEngine');
-		$this->browser->setRequestEngine($curlEngine);
-	}
-
-	/**
-	 * Check if the Curl Engine can send a GET request to typo3.org
-	 *
-	 * @test
-	 */
-	public function getRequestReturnsResponse() {
-		$response = $this->browser->request('http://typo3.org');
-		$this->assertContains('This website is powered by TYPO3', $response->getContent());
-	}
-
+    /**
+     * Check if the Curl Engine can send a GET request to typo3.org
+     *
+     * @test
+     */
+    public function getRequestReturnsResponse()
+    {
+        $response = $this->browser->request('http://typo3.org');
+        $this->assertContains('This website is powered by TYPO3', $response->getContent());
+    }
 }

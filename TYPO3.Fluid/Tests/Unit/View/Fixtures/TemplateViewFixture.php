@@ -14,13 +14,15 @@ namespace TYPO3\Fluid\View\Fixture;
 /**
  * Template view fixture
  */
-class TemplateViewFixture extends \TYPO3\Fluid\View\TemplateView {
+class TemplateViewFixture extends \TYPO3\Fluid\View\TemplateView
+{
+    public $syntaxTree;
 
-	public $syntaxTree;
+    protected function resolveTemplateFile()
+    {
+    }
 
-	protected function resolveTemplateFile() {
-	}
-
-	protected function loadTemplateFile($templateFilePath) {
-	}
+    protected function loadTemplateFile($templateFilePath)
+    {
+    }
 }

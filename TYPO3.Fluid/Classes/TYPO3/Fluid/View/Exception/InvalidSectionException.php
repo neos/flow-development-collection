@@ -18,5 +18,6 @@ use TYPO3\Fluid\View;
  *
  * @api
  */
-class InvalidSectionException extends View\Exception {
+class InvalidSectionException extends View\Exception
+{
 }

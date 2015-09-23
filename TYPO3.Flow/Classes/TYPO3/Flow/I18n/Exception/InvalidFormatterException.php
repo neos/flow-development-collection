@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class InvalidFormatterException extends \TYPO3\Flow\I18n\Exception {
-
+class InvalidFormatterException extends \TYPO3\Flow\I18n\Exception
+{
 }

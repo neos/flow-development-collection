@@ -18,22 +18,21 @@ use TYPO3\Flow\Core\RequestHandlerInterface;
  *
  * @api
  */
-interface HttpRequestHandlerInterface extends RequestHandlerInterface {
+interface HttpRequestHandlerInterface extends RequestHandlerInterface
+{
+    /**
+     * Returns the currently processed HTTP request
+     *
+     * @return \TYPO3\Flow\Http\Request
+     * @api
+     */
+    public function getHttpRequest();
 
-	/**
-	 * Returns the currently processed HTTP request
-	 *
-	 * @return \TYPO3\Flow\Http\Request
-	 * @api
-	 */
-	public function getHttpRequest();
-
-	/**
-	 * Returns the HTTP response corresponding to the currently handled request
-	 *
-	 * @return \TYPO3\Flow\Http\Response
-	 * @api
-	 */
-	public function getHttpResponse();
-
+    /**
+     * Returns the HTTP response corresponding to the currently handled request
+     *
+     * @return \TYPO3\Flow\Http\Response
+     * @api
+     */
+    public function getHttpResponse();
 }

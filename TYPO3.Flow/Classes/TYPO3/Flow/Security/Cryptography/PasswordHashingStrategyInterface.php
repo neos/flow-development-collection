@@ -15,25 +15,24 @@ namespace TYPO3\Flow\Security\Cryptography;
  * A password hashing strategy interface
  *
  */
-interface PasswordHashingStrategyInterface {
+interface PasswordHashingStrategyInterface
+{
+    /**
+     * Hash a password for storage
+     *
+     * @param string $password Cleartext password that will be hashed
+     * @param string $staticSalt Optional static salt that will not be stored in the hashed password
+     * @return string The hashed password with dynamic salt (if used)
+     */
+    public function hashPassword($password, $staticSalt = null);
 
-	/**
-	 * Hash a password for storage
-	 *
-	 * @param string $password Cleartext password that will be hashed
-	 * @param string $staticSalt Optional static salt that will not be stored in the hashed password
-	 * @return string The hashed password with dynamic salt (if used)
-	 */
-	public function hashPassword($password, $staticSalt = NULL);
-
-	/**
-	 * Validate a hashed password against a cleartext password
-	 *
-	 * @param string $password
-	 * @param string $hashedPasswordAndSalt Hashed password with dynamic salt (if used)
-	 * @param string $staticSalt Optional static salt that will not be stored in the hashed password
-	 * @return boolean TRUE if the given cleartext password matched the hashed password
-	 */
-	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL);
-
+    /**
+     * Validate a hashed password against a cleartext password
+     *
+     * @param string $password
+     * @param string $hashedPasswordAndSalt Hashed password with dynamic salt (if used)
+     * @param string $staticSalt Optional static salt that will not be stored in the hashed password
+     * @return boolean TRUE if the given cleartext password matched the hashed password
+     */
+    public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null);
 }

@@ -22,6 +22,6 @@ namespace TYPO3\Flow\Tests;
  *
  * @api
  */
-abstract class UnitTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
-
+abstract class UnitTestCase extends \TYPO3\Flow\Tests\BaseTestCase
+{
 }

@@ -18,5 +18,6 @@ use TYPO3\Fluid;
  *
  * @api
  */
-class Exception extends Fluid\Exception {
+class Exception extends Fluid\Exception
+{
 }

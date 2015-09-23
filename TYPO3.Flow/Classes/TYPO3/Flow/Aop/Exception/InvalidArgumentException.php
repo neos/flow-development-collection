@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Exception;
  *
  * @api
  */
-class InvalidArgumentException extends \TYPO3\Flow\Aop\Exception {
-
+class InvalidArgumentException extends \TYPO3\Flow\Aop\Exception
+{
 }

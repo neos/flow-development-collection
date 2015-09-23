@@ -17,5 +17,6 @@ namespace TYPO3\Flow\Persistence\Exception;
  *
  * @api
  */
-class ObjectValidationFailedException extends \TYPO3\Flow\Persistence\Exception {
+class ObjectValidationFailedException extends \TYPO3\Flow\Persistence\Exception
+{
 }

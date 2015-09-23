@@ -44,24 +44,25 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
  *
  * @api
  */
-class PaginateViewHelper extends AbstractWidgetViewHelper {
+class PaginateViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Controller\PaginateController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var Controller\PaginateController
-	 */
-	protected $controller;
-
-	/**
-	 * Render this view helper
-	 *
-	 * @param QueryResultInterface $objects
-	 * @param string $as
-	 * @param array $configuration
-	 * @return string
-	 */
-	public function render(QueryResultInterface $objects, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99)) {
-		$response = $this->initiateSubRequest();
-		return $response->getContent();
-	}
+    /**
+     * Render this view helper
+     *
+     * @param QueryResultInterface $objects
+     * @param string $as
+     * @param array $configuration
+     * @return string
+     */
+    public function render(QueryResultInterface $objects, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99))
+    {
+        $response = $this->initiateSubRequest();
+        return $response->getContent();
+    }
 }

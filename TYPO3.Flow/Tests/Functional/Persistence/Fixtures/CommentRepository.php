@@ -15,11 +15,10 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * A repository for comments
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class CommentRepository extends \TYPO3\Flow\Persistence\Repository {
-
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment';
-
+class CommentRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment';
 }

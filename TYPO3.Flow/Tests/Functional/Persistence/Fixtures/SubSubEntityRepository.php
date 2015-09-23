@@ -15,19 +15,19 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * A repository for SubSubEntity
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity';
 
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity';
-
-	public function findAll() {
-		$result = parent::findAll();
-		foreach ($result as $instance) {
-			$instance->setContent($instance->getContent() . ' - touched by SubSubEntityRepository');
-		}
-		return $result;
-	}
-
+    public function findAll()
+    {
+        $result = parent::findAll();
+        foreach ($result as $instance) {
+            $instance->setContent($instance->getContent() . ' - touched by SubSubEntityRepository');
+        }
+        return $result;
+    }
 }

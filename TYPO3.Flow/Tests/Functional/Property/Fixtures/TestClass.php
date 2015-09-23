@@ -17,66 +17,71 @@ use Doctrine\ORM\Mapping as ORM;
  * A simple class for PropertyMapper test
  *
  */
-class TestClass {
+class TestClass
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var integer
+     */
+    protected $size;
 
-	/**
-	 * @var integer
-	 */
-	protected $size;
+    /**
+     * @var boolean
+     */
+    protected $signedCla;
 
-	/**
-	 * @var boolean
-	 */
-	protected $signedCla;
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 * @return void
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return integer
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
 
-	/**
-	 * @return integer
-	 */
-	public function getSize() {
-		return $this->size;
-	}
+    /**
+     * @param integer $size
+     * @return void
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
 
-	/**
-	 * @param integer $size
-	 * @return void
-	 */
-	public function setSize($size) {
-		$this->size = $size;
-	}
+    /**
+     * @return boolean
+     */
+    public function getSignedCla()
+    {
+        return $this->signedCla;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function getSignedCla() {
-		return $this->signedCla;
-	}
-
-	/**
-	 * @param boolean $signedCla
-	 * @return void
-	 */
-	public function setSignedCla($signedCla) {
-		$this->signedCla = $signedCla;
-	}
-
+    /**
+     * @param boolean $signedCla
+     * @return void
+     */
+    public function setSignedCla($signedCla)
+    {
+        $this->signedCla = $signedCla;
+    }
 }

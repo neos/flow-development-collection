@@ -19,27 +19,28 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class Comment {
+class Comment
+{
+    /**
+     * @var string
+     */
+    protected $content = '';
 
-	/**
-	 * @var string
-	 */
-	protected $content = '';
+    /**
+     * @return string
+     * @ORM\PrePersist
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	/**
-	 * @return string
-	 * @ORM\PrePersist
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-
-	/**
-	 * @param string $content
-	 * @return void
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
+    /**
+     * @param string $content
+     * @return void
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
 }

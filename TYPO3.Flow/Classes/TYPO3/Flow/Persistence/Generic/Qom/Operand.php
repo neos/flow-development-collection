@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  * An operand to a binary operation specified by a Comparison.
  *
  */
-class Operand {
-
+class Operand
+{
 }

@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Composer\Exception;
  *
  * @api
  */
-class UnexpectedOperationException extends \TYPO3\Flow\Composer\Exception {
-
+class UnexpectedOperationException extends \TYPO3\Flow\Composer\Exception
+{
 }

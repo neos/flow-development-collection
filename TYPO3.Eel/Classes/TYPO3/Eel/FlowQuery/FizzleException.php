@@ -11,5 +11,6 @@ namespace TYPO3\Eel\FlowQuery;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-class FizzleException extends \TYPO3\Flow\Exception {
+class FizzleException extends \TYPO3\Flow\Exception
+{
 }

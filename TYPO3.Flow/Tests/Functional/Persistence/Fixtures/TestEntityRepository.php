@@ -15,11 +15,10 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * A repository for the test entities
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class TestEntityRepository extends \TYPO3\Flow\Persistence\Repository {
-
-	/**
-	 * @var array
-	 */
-	protected $defaultOrderings = array('name' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
-
+class TestEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = array('name' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 }

@@ -13,17 +13,17 @@ namespace TYPO3\Flow\Tests\Object\Fixture;
 
 /**
  */
-class ClassWithInjectSettingsMethod {
+class ClassWithInjectSettingsMethod
+{
+    public $settings;
 
-	public $settings;
-
-	/**
-	 * Inject the settings of the Flow package
-	 *
-	 * @param array $settings
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
-
+    /**
+     * Inject the settings of the Flow package
+     *
+     * @param array $settings
+     */
+    public function injectSettings(array $settings)
+    {
+        $this->settings = $settings;
+    }
 }

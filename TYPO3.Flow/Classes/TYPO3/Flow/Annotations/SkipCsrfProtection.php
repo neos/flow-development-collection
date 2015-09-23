@@ -22,4 +22,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class SkipCsrfProtection {}
+final class SkipCsrfProtection
+{
+}

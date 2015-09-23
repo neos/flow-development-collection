@@ -18,14 +18,15 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class AccessGrant implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
-
-	/**
-	 * Invokes nothing, always returns TRUE.
-	 *
-	 * @return boolean Always returns TRUE
-	 */
-	public function invoke() {
-		return TRUE;
-	}
+class AccessGrant implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+{
+    /**
+     * Invokes nothing, always returns TRUE.
+     *
+     * @return boolean Always returns TRUE
+     */
+    public function invoke()
+    {
+        return true;
+    }
 }

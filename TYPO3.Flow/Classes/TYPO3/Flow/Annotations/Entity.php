@@ -20,18 +20,17 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("CLASS")
  */
-final class Entity {
+final class Entity
+{
+    /**
+     * Name of the repository class to use for managing the entity.
+     * @var string
+     */
+    public $repositoryClass;
 
-	/**
-	 * Name of the repository class to use for managing the entity.
-	 * @var string
-	 */
-	public $repositoryClass;
-
-	/**
-	 * Whether the entity should be read-only.
-	 * @var boolean
-	 */
-	public $readOnly = FALSE;
-
+    /**
+     * Whether the entity should be read-only.
+     * @var boolean
+     */
+    public $readOnly = false;
 }

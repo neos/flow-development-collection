@@ -18,14 +18,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @api
  */
-interface CacheAwareInterface {
-
-	/**
-	 * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
-	 * related to this object.
-	 *
-	 * @return string
-	 */
-	public function getCacheEntryIdentifier();
-
+interface CacheAwareInterface
+{
+    /**
+     * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
+     * related to this object.
+     *
+     * @return string
+     */
+    public function getCacheEntryIdentifier();
 }

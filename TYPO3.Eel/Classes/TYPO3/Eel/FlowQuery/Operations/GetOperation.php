@@ -24,40 +24,41 @@ use TYPO3\Flow\Annotations as Flow;
  * value contained in the context at the index given as argument is
  * returned. If no such index exists, NULL is returned.
  */
-class GetOperation extends AbstractOperation {
+class GetOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'get';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'get';
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the context index to fetch from
-	 * @return mixed
-	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
-		$context = $flowQuery->getContext();
-		if (isset($arguments[0])) {
-			$index = $arguments[0];
-			if (isset($context[$index])) {
-				return $context[$index];
-			} else {
-				return NULL;
-			}
-		} else {
-			return $context;
-		}
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the context index to fetch from
+     * @return mixed
+     */
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    {
+        $context = $flowQuery->getContext();
+        if (isset($arguments[0])) {
+            $index = $arguments[0];
+            if (isset($context[$index])) {
+                return $context[$index];
+            } else {
+                return null;
+            }
+        } else {
+            return $context;
+        }
+    }
 }

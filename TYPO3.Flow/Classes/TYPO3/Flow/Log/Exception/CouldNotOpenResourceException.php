@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Log\Exception;
  *
  * @api
  */
-class CouldNotOpenResourceException extends \TYPO3\Flow\Cache\Exception {
-
+class CouldNotOpenResourceException extends \TYPO3\Flow\Cache\Exception
+{
 }

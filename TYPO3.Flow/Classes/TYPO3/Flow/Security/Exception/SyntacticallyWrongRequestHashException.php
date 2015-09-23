@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class SyntacticallyWrongRequestHashException extends \TYPO3\Flow\Security\Exception {
+class SyntacticallyWrongRequestHashException extends \TYPO3\Flow\Security\Exception
+{
 }

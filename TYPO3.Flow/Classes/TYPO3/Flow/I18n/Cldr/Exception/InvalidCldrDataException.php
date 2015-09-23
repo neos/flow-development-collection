@@ -18,6 +18,6 @@ namespace TYPO3\Flow\I18n\Cldr\Exception;
  *
  * @api
  */
-class InvalidCldrDataException extends \TYPO3\Flow\I18n\Exception {
-
+class InvalidCldrDataException extends \TYPO3\Flow\I18n\Exception
+{
 }

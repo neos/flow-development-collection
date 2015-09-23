@@ -19,35 +19,36 @@ use TYPO3\Flow\Annotations as Flow;
  * Without arguments is evaluates to TRUE if the context is not empty. If arguments
  * are given, they are used to filter the context before evaluation.
  */
-class IsOperation extends AbstractOperation {
+class IsOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'is';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'is';
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the filter arguments
-	 * @return boolean
-	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
-		if (count($arguments) == 0) {
-			return count($flowQuery->getContext()) > 0;
-		} else {
-			$flowQuery->pushOperation('is', array());
-			$flowQuery->pushOperation('filter', $arguments);
-		}
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the filter arguments
+     * @return boolean
+     */
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    {
+        if (count($arguments) == 0) {
+            return count($flowQuery->getContext()) > 0;
+        } else {
+            $flowQuery->pushOperation('is', array());
+            $flowQuery->pushOperation('filter', $arguments);
+        }
+    }
 }

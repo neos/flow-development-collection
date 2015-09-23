@@ -19,15 +19,16 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * @see \TYPO3\Fluid\ViewHelpers\IfViewHelper
  * @api
  */
-class ThenViewHelper extends AbstractViewHelper {
-
-	/**
-	 * Just render everything.
-	 *
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render() {
-		return $this->renderChildren();
-	}
+class ThenViewHelper extends AbstractViewHelper
+{
+    /**
+     * Just render everything.
+     *
+     * @return string the rendered string
+     * @api
+     */
+    public function render()
+    {
+        return $this->renderChildren();
+    }
 }

@@ -15,21 +15,22 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
 /**
  */
-class BaseViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase {
+class BaseViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
+{
+    /**
+     * @test
+     */
+    public function renderTakesBaseUriFromControllerContext()
+    {
+        $baseUri = new \TYPO3\Flow\Http\Uri('http://typo3.org/');
 
-	/**
-	 * @test
-	 */
-	public function renderTakesBaseUriFromControllerContext() {
-		$baseUri = new \TYPO3\Flow\Http\Uri('http://typo3.org/');
+        $this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create($baseUri)));
 
-		$this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create($baseUri)));
+        $viewHelper = new \TYPO3\Fluid\ViewHelpers\BaseViewHelper();
+        $this->injectDependenciesIntoViewHelper($viewHelper);
 
-		$viewHelper = new \TYPO3\Fluid\ViewHelpers\BaseViewHelper();
-		$this->injectDependenciesIntoViewHelper($viewHelper);
-
-		$expectedResult = '<base href="' . $baseUri . '" />';
-		$actualResult = $viewHelper->render();
-		$this->assertSame($expectedResult, $actualResult);
-	}
+        $expectedResult = '<base href="' . $baseUri . '" />';
+        $actualResult = $viewHelper->render();
+        $this->assertSame($expectedResult, $actualResult);
+    }
 }

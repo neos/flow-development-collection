@@ -15,15 +15,17 @@ namespace TYPO3\Flow\Mvc\Routing\Fixtures;
  * A mock RoutePartHandler
  *
  */
-class MockRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
+class MockRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart
+{
+    protected function matchValue($value)
+    {
+        $this->value = '_match_invoked_';
+        return true;
+    }
 
-	protected function matchValue($value) {
-		$this->value = '_match_invoked_';
-		return TRUE;
-	}
-
-	protected function resolveValue($value) {
-		$this->value = '_resolve_invoked_';
-		return TRUE;
-	}
+    protected function resolveValue($value)
+    {
+        $this->value = '_resolve_invoked_';
+        return true;
+    }
 }

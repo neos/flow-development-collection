@@ -29,14 +29,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * It is currently used *internally* and might change without further notice.
  */
-interface TemplateObjectAccessInterface {
-
-	/**
-	 * Post-Processor which is called whenever this object is encountered in a Fluid
-	 * object access.
-	 *
-	 * @return mixed the value which should be returned to the caller, or which should be traversed further.
-	 */
-	public function objectAccess();
-
+interface TemplateObjectAccessInterface
+{
+    /**
+     * Post-Processor which is called whenever this object is encountered in a Fluid
+     * object access.
+     *
+     * @return mixed the value which should be returned to the caller, or which should be traversed further.
+     */
+    public function objectAccess();
 }

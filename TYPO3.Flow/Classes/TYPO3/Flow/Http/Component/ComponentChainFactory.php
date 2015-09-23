@@ -20,44 +20,44 @@ use TYPO3\Flow\Utility\PositionalArraySorter;
  *
  * @Flow\Scope("singleton")
  */
-class ComponentChainFactory {
+class ComponentChainFactory
+{
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @param array $chainConfiguration
+     * @return ComponentChain
+     * @throws Exception
+     */
+    public function create(array $chainConfiguration)
+    {
+        if (empty($chainConfiguration)) {
+            return null;
+        }
+        $arraySorter = new PositionalArraySorter($chainConfiguration);
+        $sortedChainConfiguration = $arraySorter->toArray();
 
-	/**
-	 * @param array $chainConfiguration
-	 * @return ComponentChain
-	 * @throws Exception
-	 */
-	public function create(array $chainConfiguration) {
-		if (empty($chainConfiguration)) {
-			return NULL;
-		}
-		$arraySorter = new PositionalArraySorter($chainConfiguration);
-		$sortedChainConfiguration = $arraySorter->toArray();
+        $chainComponents = array();
+        foreach ($sortedChainConfiguration as $componentName => $configuration) {
+            $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : array();
+            if (isset($configuration['chain'])) {
+                $component = $this->create($configuration['chain']);
+            } else {
+                if (!isset($configuration['component'])) {
+                    throw new Exception(sprintf('Component chain could not be created because no component class name is configured for component "%s"', $componentName), 1401718283);
+                }
+                $component = $this->objectManager->get($configuration['component'], $componentOptions);
+                if (!$component instanceof ComponentInterface) {
+                    throw new Exception(sprintf('Component chain could not be created because the class "%s" does not implement the ComponentInterface, in component "%s" does not implement', $configuration['component'], $componentName), 1401718283);
+                }
+            }
+            $chainComponents[] = $component;
+        }
 
-		$chainComponents = array();
-		foreach ($sortedChainConfiguration as $componentName => $configuration) {
-			$componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : array();
-			if (isset($configuration['chain'])) {
-				$component = $this->create($configuration['chain']);
-			} else {
-				if (!isset($configuration['component'])) {
-					throw new Exception(sprintf('Component chain could not be created because no component class name is configured for component "%s"', $componentName), 1401718283);
-				}
-				$component = $this->objectManager->get($configuration['component'], $componentOptions);
-				if (!$component instanceof ComponentInterface) {
-					throw new Exception(sprintf('Component chain could not be created because the class "%s" does not implement the ComponentInterface, in component "%s" does not implement', $configuration['component'], $componentName), 1401718283);
-				}
-			}
-			$chainComponents[] = $component;
-		}
-
-		return new ComponentChain(array('components' => $chainComponents));
-	}
-
+        return new ComponentChain(array('components' => $chainComponents));
+    }
 }

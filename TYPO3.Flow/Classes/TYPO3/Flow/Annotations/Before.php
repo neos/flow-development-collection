@@ -18,23 +18,23 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class Before {
+final class Before
+{
+    /**
+     * The pointcut expression. (Can be given as anonymous argument.)
+     * @var string
+     */
+    public $pointcutExpression;
 
-	/**
-	 * The pointcut expression. (Can be given as anonymous argument.)
-	 * @var string
-	 */
-	public $pointcutExpression;
-
-	/**
-	 * @param array $values
-	 * @throws \InvalidArgumentException
-	 */
-	public function __construct(array $values) {
-		if (!isset($values['value']) && !isset($values['pointcutExpression'])) {
-			throw new \InvalidArgumentException('A Before annotation must specify a pointcut expression.', 1318456622);
-		}
-		$this->pointcutExpression = isset($values['pointcutExpression']) ? $values['pointcutExpression'] : $values['value'];
-	}
-
+    /**
+     * @param array $values
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(array $values)
+    {
+        if (!isset($values['value']) && !isset($values['pointcutExpression'])) {
+            throw new \InvalidArgumentException('A Before annotation must specify a pointcut expression.', 1318456622);
+        }
+        $this->pointcutExpression = isset($values['pointcutExpression']) ? $values['pointcutExpression'] : $values['value'];
+    }
 }

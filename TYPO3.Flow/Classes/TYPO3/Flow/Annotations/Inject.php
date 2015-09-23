@@ -20,48 +20,48 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("PROPERTY")
  */
-final class Inject {
+final class Inject
+{
+    /**
+     * Whether the dependency should be injected instantly or if a lazy dependency
+     * proxy should be injected instead
+     *
+     * @var boolean
+     */
+    public $lazy = true;
 
-	/**
-	 * Whether the dependency should be injected instantly or if a lazy dependency
-	 * proxy should be injected instead
-	 *
-	 * @var boolean
-	 */
-	public $lazy = TRUE;
+    /**
+     * Path of a setting (without the package key) which should be injected into the property.
+     * Example: security.enable
+     *
+     * @var string
+     */
+    public $setting;
 
-	/**
-	 * Path of a setting (without the package key) which should be injected into the property.
-	 * Example: security.enable
-	 *
-	 * @var string
-	 */
-	public $setting;
+    /**
+     * Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
+     * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
+     * used.
+     *
+     * Example: TYPO3.Flow
+     *
+     * @var string
+     */
+    public $package;
 
-	/**
-	 * Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
-	 * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
-	 * used.
-	 *
-	 * Example: TYPO3.Flow
-	 *
-	 * @var string
-	 */
-	public $package;
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['lazy'])) {
-			$this->lazy = (boolean)$values['lazy'];
-		}
-		if (isset($values['setting'])) {
-			$this->setting = (string)$values['setting'];
-		}
-		if (isset($values['package'])) {
-			$this->package = (string)$values['package'];
-		}
-	}
-
+    /**
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['lazy'])) {
+            $this->lazy = (boolean)$values['lazy'];
+        }
+        if (isset($values['setting'])) {
+            $this->setting = (string)$values['setting'];
+        }
+        if (isset($values['package'])) {
+            $this->package = (string)$values['package'];
+        }
+    }
 }

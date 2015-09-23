@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Exception;
  *
  * @api
  */
-class IllegalObjectTypeException extends \TYPO3\Flow\Persistence\Exception {
+class IllegalObjectTypeException extends \TYPO3\Flow\Persistence\Exception
+{
 }

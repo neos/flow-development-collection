@@ -19,14 +19,15 @@ namespace TYPO3\Flow\Tests\Functional\Resource\Publishing;
  * of the normal FileSystemPublishingTarget.
  *
  */
-class TestingFileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget {
-
-	/**
-	 * Always returns a fixed base URI of http://baseuri/_Resources/
-	 *
-	 * @return void
-	 */
-	protected function detectResourcesBaseUri() {
-		$this->resourcesBaseUri = 'http://baseuri/_Resources/';
-	}
+class TestingFileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget
+{
+    /**
+     * Always returns a fixed base URI of http://baseuri/_Resources/
+     *
+     * @return void
+     */
+    protected function detectResourcesBaseUri()
+    {
+        $this->resourcesBaseUri = 'http://baseuri/_Resources/';
+    }
 }

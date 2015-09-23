@@ -25,47 +25,49 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand {
+class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+{
+    /**
+     * @var string
+     */
+    protected $selectorName;
 
-	/**
-	 * @var string
-	 */
-	protected $selectorName;
+    /**
+     * @var string
+     */
+    protected $propertyName;
 
-	/**
-	 * @var string
-	 */
-	protected $propertyName;
+    /**
+     * Constructs this PropertyValue instance
+     *
+     * @param string $propertyName
+     * @param string $selectorName
+     */
+    public function __construct($propertyName, $selectorName = '')
+    {
+        $this->propertyName = $propertyName;
+        $this->selectorName = $selectorName;
+    }
 
-	/**
-	 * Constructs this PropertyValue instance
-	 *
-	 * @param string $propertyName
-	 * @param string $selectorName
-	 */
-	public function __construct($propertyName, $selectorName = '') {
-		$this->propertyName = $propertyName;
-		$this->selectorName = $selectorName;
-	}
+    /**
+     * Gets the name of the selector against which to evaluate this operand.
+     *
+     * @return string the selector name; non-null
+     * @api
+     */
+    public function getSelectorName()
+    {
+        return $this->selectorName;
+    }
 
-	/**
-	 * Gets the name of the selector against which to evaluate this operand.
-	 *
-	 * @return string the selector name; non-null
-	 * @api
-	 */
-	public function getSelectorName() {
-		return $this->selectorName;
-	}
-
-	/**
-	 * Gets the name of the property.
-	 *
-	 * @return string the property name; non-null
-	 * @api
-	 */
-	public function getPropertyName() {
-		return $this->propertyName;
-	}
-
+    /**
+     * Gets the name of the property.
+     *
+     * @return string the property name; non-null
+     * @api
+     */
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
 }

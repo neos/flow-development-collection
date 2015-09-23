@@ -48,19 +48,20 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class CommentViewHelper extends AbstractViewHelper {
+class CommentViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
-
-	/**
-	 * Comments out the tag content
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function render() {
-	}
+    /**
+     * Comments out the tag content
+     *
+     * @return string
+     * @api
+     */
+    public function render()
+    {
+    }
 }

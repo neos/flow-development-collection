@@ -20,31 +20,30 @@ use TYPO3\Flow\Annotations as Flow;
  * make sure to inject this interface instead of the concrete SessionManager
  * implementation.
  */
-interface SessionManagerInterface {
+interface SessionManagerInterface
+{
+    /**
+     * Returns the currently active session which stores session data for the
+     * current HTTP request on this local system.
+     *
+     * @return \TYPO3\Flow\Session\SessionInterface
+     */
+    public function getCurrentSession();
 
-	/**
-	 * Returns the currently active session which stores session data for the
-	 * current HTTP request on this local system.
-	 *
-	 * @return \TYPO3\Flow\Session\SessionInterface
-	 */
-	public function getCurrentSession();
+    /**
+     * Returns the specified session. If no session with the given identifier exists,
+     * NULL is returned.
+     *
+     * @param string $sessionIdentifier The session identifier
+     * @return \TYPO3\Flow\Session\SessionInterface
+     */
+    public function getSession($sessionIdentifier);
 
-	/**
-	 * Returns the specified session. If no session with the given identifier exists,
-	 * NULL is returned.
-	 *
-	 * @param string $sessionIdentifier The session identifier
-	 * @return \TYPO3\Flow\Session\SessionInterface
-	 */
-	public function getSession($sessionIdentifier);
-
-	/**
-	 * Returns all active sessions, even remote ones.
-	 *
-	 * @return array<\TYPO3\Flow\Session\Session>
-	 * @api
-	 */
-	public function getActiveSessions();
-
+    /**
+     * Returns all active sessions, even remote ones.
+     *
+     * @return array<\TYPO3\Flow\Session\Session>
+     * @api
+     */
+    public function getActiveSessions();
 }

@@ -19,9 +19,9 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class Package extends BasePackage {
-
-	const EelExpressionRecognizer = '/
+class Package extends BasePackage
+{
+    const EelExpressionRecognizer = '/
 			^\${(?P<exp>
 				(?:
 					{ (?P>exp) }			# match object literal expression recursively

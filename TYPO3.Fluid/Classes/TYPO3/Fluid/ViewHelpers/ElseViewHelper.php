@@ -33,13 +33,14 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * @see TYPO3\Fluid\ViewHelpers\IfViewHelper
  * @api
  */
-class ElseViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render() {
-		return $this->renderChildren();
-	}
+class ElseViewHelper extends AbstractViewHelper
+{
+    /**
+     * @return string the rendered string
+     * @api
+     */
+    public function render()
+    {
+        return $this->renderChildren();
+    }
 }

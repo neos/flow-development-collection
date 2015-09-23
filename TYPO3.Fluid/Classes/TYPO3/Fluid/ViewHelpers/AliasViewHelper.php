@@ -44,23 +44,24 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class AliasViewHelper extends AbstractViewHelper {
-
-	/**
-	 * Renders alias
-	 *
-	 * @param array $map array that specifies which variables should be mapped to which alias
-	 * @return string Rendered string
-	 * @api
-	 */
-	public function render(array $map) {
-		foreach ($map as $aliasName => $value) {
-			$this->templateVariableContainer->add($aliasName, $value);
-		}
-		$output = $this->renderChildren();
-		foreach ($map as $aliasName => $value) {
-			$this->templateVariableContainer->remove($aliasName);
-		}
-		return $output;
-	}
+class AliasViewHelper extends AbstractViewHelper
+{
+    /**
+     * Renders alias
+     *
+     * @param array $map array that specifies which variables should be mapped to which alias
+     * @return string Rendered string
+     * @api
+     */
+    public function render(array $map)
+    {
+        foreach ($map as $aliasName => $value) {
+            $this->templateVariableContainer->add($aliasName, $value);
+        }
+        $output = $this->renderChildren();
+        foreach ($map as $aliasName => $value) {
+            $this->templateVariableContainer->remove($aliasName);
+        }
+        return $output;
+    }
 }

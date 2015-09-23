@@ -18,15 +18,14 @@ use TYPO3\Flow\Http\Request;
  * Interface for a Request Engine which can be used by a HTTP Client implementation
  * for sending requests and returning responses.
  */
-interface RequestEngineInterface {
-
-	/**
-	 * Sends the given HTTP request
-	 *
-	 * @param \TYPO3\Flow\Http\Request $request
-	 * @return \TYPO3\Flow\Http\Response
-	 * @throws \TYPO3\Flow\Http\Exception
-	 */
-	public function sendRequest(Request $request);
-
+interface RequestEngineInterface
+{
+    /**
+     * Sends the given HTTP request
+     *
+     * @param \TYPO3\Flow\Http\Request $request
+     * @return \TYPO3\Flow\Http\Response
+     * @throws \TYPO3\Flow\Http\Exception
+     */
+    public function sendRequest(Request $request);
 }

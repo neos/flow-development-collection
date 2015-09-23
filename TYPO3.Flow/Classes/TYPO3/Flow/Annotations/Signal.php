@@ -19,4 +19,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class Signal {}
+final class Signal
+{
+}

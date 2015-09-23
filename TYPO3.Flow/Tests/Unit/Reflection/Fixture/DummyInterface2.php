@@ -15,5 +15,6 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * Dummy interface number 2 for the Reflection tests
  *
  */
-interface DummyInterface2 {
+interface DummyInterface2
+{
 }

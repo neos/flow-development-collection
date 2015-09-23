@@ -16,17 +16,17 @@ namespace TYPO3\Flow\Persistence\Generic;
  *
  * @api
  */
-class QueryFactory implements \TYPO3\Flow\Persistence\Generic\QueryFactoryInterface {
-
-	/**
-	 * Creates a query object working on the given class name
-	 *
-	 * @param string $className
-	 * @return \TYPO3\Flow\Persistence\QueryInterface
-	 * @api
-	 */
-	public function create($className) {
-		return new \TYPO3\Flow\Persistence\Generic\Query($className);
-	}
-
+class QueryFactory implements \TYPO3\Flow\Persistence\Generic\QueryFactoryInterface
+{
+    /**
+     * Creates a query object working on the given class name
+     *
+     * @param string $className
+     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @api
+     */
+    public function create($className)
+    {
+        return new \TYPO3\Flow\Persistence\Generic\Query($className);
+    }
 }

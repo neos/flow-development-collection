@@ -18,28 +18,31 @@ use TYPO3\Flow\Annotations as Flow;
  * A concrete class for testing signals in abstract classes
  *
  */
-class SubClass extends AbstractClass {
+class SubClass extends AbstractClass
+{
+    public $slotWasCalled = false;
 
-	public $slotWasCalled = FALSE;
+    /**
+     * @return void
+     */
+    public function triggerSomethingSignalFromSubClass()
+    {
+        $this->emitSomething();
+    }
 
-	/**
-	 * @return void
-	 */
-	public function triggerSomethingSignalFromSubClass() {
-		$this->emitSomething();
-	}
+    /**
+     * @Flow\Signal
+     * @return void
+     */
+    public function emitSomething()
+    {
+    }
 
-	/**
-	 * @Flow\Signal
-	 * @return void
-	 */
-	public function emitSomething() {
-	}
-
-	/**
-	 * @return void
-	 */
-	public function somethingSlot() {
-		$this->slotWasCalled = TRUE;
-	}
+    /**
+     * @return void
+     */
+    public function somethingSlot()
+    {
+        $this->slotWasCalled = true;
+    }
 }

@@ -14,9 +14,9 @@ namespace TYPO3\Fluid\ViewHelpers\Fixtures;
 /**
  * [Enter description here]
  */
-class EmptySyntaxTreeNode extends \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode {
-
-	public function __construct() {
-
-	}
+class EmptySyntaxTreeNode extends \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode
+{
+    public function __construct()
+    {
+    }
 }

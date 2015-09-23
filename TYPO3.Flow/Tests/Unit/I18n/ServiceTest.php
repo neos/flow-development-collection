@@ -27,147 +27,155 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the Locale Service class.
  *
  */
-class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        vfsStream::setup('Foo');
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		vfsStream::setup('Foo');
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameReturnsCorrectlyLocalizedFilename()
+    {
+        $desiredLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+        $parentLocale = new \TYPO3\Flow\I18n\Locale('en');
+        $localeChain = array('en_GB' => $desiredLocale, 'en' => $parentLocale);
+        $filename = 'vfs://Foo/Bar/Public/images/foobar.png';
+        $expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en.png';
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameReturnsCorrectlyLocalizedFilename() {
-		$desiredLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
-		$parentLocale = new \TYPO3\Flow\I18n\Locale('en');
-		$localeChain = array('en_GB' => $desiredLocale, 'en' => $parentLocale);
-		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
-		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en.png';
+        mkdir(dirname($filename), 0777, true);
+        file_put_contents($expectedFilename, 'FooBar');
 
-		mkdir(dirname($filename), 0777, TRUE);
-		file_put_contents($expectedFilename, 'FooBar');
+        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
-		$service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
-		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
+        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        $this->assertEquals($expectedFilename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
-		$this->assertEquals($expectedFilename, $result);
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameIgnoresDotsInFilePath()
+    {
+        vfsStream::setup('Foo.Bar');
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameIgnoresDotsInFilePath() {
-		vfsStream::setup('Foo.Bar');
+        $desiredLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+        $parentLocale = new \TYPO3\Flow\I18n\Locale('en');
+        $localeChain = array('en_GB' => $desiredLocale, 'en' => $parentLocale);
+        $filename = 'vfs://Foo.Bar/Public/images';
+        $expectedFilename = 'vfs://Foo.Bar/Public/images';
 
-		$desiredLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
-		$parentLocale = new \TYPO3\Flow\I18n\Locale('en');
-		$localeChain = array('en_GB' => $desiredLocale, 'en' => $parentLocale);
-		$filename = 'vfs://Foo.Bar/Public/images';
-		$expectedFilename = 'vfs://Foo.Bar/Public/images';
+        mkdir($filename, 0777, true);
 
-		mkdir($filename, 0777, TRUE);
+        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
-		$service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
-		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
+        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        $this->assertEquals($expectedFilename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
-		$this->assertEquals($expectedFilename, $result);
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameReturnsCorrectFilenameIfExtensionIsMissing()
+    {
+        mkdir('vfs://Foo/Bar/Public/images/', 0777, true);
+        file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB', 'FooBar');
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameReturnsCorrectFilenameIfExtensionIsMissing() {
-		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
-		file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB', 'FooBar');
+        $filename = 'vfs://Foo/Bar/Public/images/foobar';
+        $expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en_GB';
 
-		$filename = 'vfs://Foo/Bar/Public/images/foobar';
-		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en_GB';
+        $service = new \TYPO3\Flow\I18n\Service();
 
-		$service = new \TYPO3\Flow\I18n\Service();
+        list($result, ) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('en_GB'), true);
+        $this->assertEquals($expectedFilename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('en_GB'), TRUE);
-		$this->assertEquals($expectedFilename, $result);
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameReturnsCorrectFilenameInStrictMode()
+    {
+        mkdir('vfs://Foo/Bar/Public/images/', 0777, true);
+        file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB.png', 'FooBar');
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameReturnsCorrectFilenameInStrictMode() {
-		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
-		file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB.png', 'FooBar');
+        $filename = 'vfs://Foo/Bar/Public/images/foobar.png';
+        $expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en_GB.png';
 
-		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
-		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en_GB.png';
+        $service = new \TYPO3\Flow\I18n\Service();
 
-		$service = new \TYPO3\Flow\I18n\Service();
+        list($result, ) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('en_GB'), true);
+        $this->assertEquals($expectedFilename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('en_GB'), TRUE);
-		$this->assertEquals($expectedFilename, $result);
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameReturnsOriginalFilenameInStrictModeIfNoLocalizedFileExists()
+    {
+        $filename = 'vfs://Foo/Bar/Public/images/foobar.png';
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameReturnsOriginalFilenameInStrictModeIfNoLocalizedFileExists() {
-		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
+        $service = new \TYPO3\Flow\I18n\Service();
 
-		$service = new \TYPO3\Flow\I18n\Service();
+        list($result, ) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('pl'), true);
+        $this->assertEquals($filename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\Flow\I18n\Locale('pl'), TRUE);
-		$this->assertEquals($filename, $result);
-	}
+    /**
+     * @test
+     */
+    public function getLocalizedFilenameReturnsOriginalFilenameIfNoLocalizedFileExists()
+    {
+        $filename = 'vfs://Foo/Bar/Public/images/foobar.png';
+        $desiredLocale = new \TYPO3\Flow\I18n\Locale('de_CH');
+        $localeChain = array('de_CH' => $desiredLocale, 'en' => new \TYPO3\Flow\I18n\Locale('en'));
 
-	/**
-	 * @test
-	 */
-	public function getLocalizedFilenameReturnsOriginalFilenameIfNoLocalizedFileExists() {
-		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
-		$desiredLocale = new \TYPO3\Flow\I18n\Locale('de_CH');
-		$localeChain = array('de_CH' => $desiredLocale, 'en' => new \TYPO3\Flow\I18n\Locale('en'));
+        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
-		$service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
-		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
+        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        $this->assertEquals($filename, $result);
+    }
 
-		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
-		$this->assertEquals($filename, $result);
-	}
+    /**
+     * @test
+     */
+    public function initializeCorrectlyGeneratesAvailableLocales()
+    {
+        mkdir('vfs://Foo/Bar/Private/Translations', 0777, true);
+        foreach (array('en', 'sr_Cyrl_RS') as $localeIdentifier) {
+            file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
+        }
+        foreach (array('en_GB', 'sr') as $localeIdentifier) {
+            file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
+        }
 
-	/**
-	 * @test
-	 */
-	public function initializeCorrectlyGeneratesAvailableLocales() {
-		mkdir('vfs://Foo/Bar/Private/Translations', 0777, TRUE);
-		foreach (array('en', 'sr_Cyrl_RS') as $localeIdentifier) {
-			file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
-		}
-		foreach (array('en_GB', 'sr') as $localeIdentifier) {
-			file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
-		}
+        $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-		$mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
+        $mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
+        $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
-		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
+        $mockLocaleCollection = $this->getMock('TYPO3\Flow\I18n\LocaleCollection');
+        $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
-		$mockLocaleCollection = $this->getMock('TYPO3\Flow\I18n\LocaleCollection');
-		$mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
+        $mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => false, 'order' => array())));
 
-		$mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => FALSE, 'order' => array())));
+        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', false);
+        $mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(false));
 
-		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(FALSE));
-
-		$service = $this->getAccessibleMock('TYPO3\Flow\I18n\Service', array('dummy'));
-		$service->_set('localeBasePath', 'vfs://Foo/');
-		$this->inject($service, 'packageManager', $mockPackageManager);
-		$this->inject($service, 'localeCollection', $mockLocaleCollection);
-		$service->injectSettings($mockSettings);
-		$this->inject($service, 'cache', $mockCache);
-		$service->initializeObject();
-	}
+        $service = $this->getAccessibleMock('TYPO3\Flow\I18n\Service', array('dummy'));
+        $service->_set('localeBasePath', 'vfs://Foo/');
+        $this->inject($service, 'packageManager', $mockPackageManager);
+        $this->inject($service, 'localeCollection', $mockLocaleCollection);
+        $service->injectSettings($mockSettings);
+        $this->inject($service, 'cache', $mockCache);
+        $service->initializeObject();
+    }
 }

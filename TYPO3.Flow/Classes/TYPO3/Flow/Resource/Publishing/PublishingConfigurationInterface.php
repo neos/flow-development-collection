@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Resource\Publishing;
  *
  * implementations must be tagged entity
  */
-interface PublishingConfigurationInterface {
-
+interface PublishingConfigurationInterface
+{
 }

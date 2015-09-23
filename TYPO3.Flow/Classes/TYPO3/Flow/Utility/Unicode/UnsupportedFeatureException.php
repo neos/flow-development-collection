@@ -19,5 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-class UnsupportedFeatureException extends \Exception {
+class UnsupportedFeatureException extends \Exception
+{
 }

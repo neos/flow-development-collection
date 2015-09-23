@@ -16,12 +16,11 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassDsub extends PrototypeClassD {
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD
-	 */
-	protected $objectD;
-
+class PrototypeClassDsub extends PrototypeClassD
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD
+     */
+    protected $objectD;
 }

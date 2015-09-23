@@ -23,20 +23,21 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class LabelValidator extends AbstractValidator {
+class LabelValidator extends AbstractValidator
+{
+    const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 
-	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
-
-	/**
-	 * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @api
-	 */
-	protected function isValid($value) {
-		if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
-			$this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
-		}
-	}
+    /**
+     * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @api
+     */
+    protected function isValid($value)
+    {
+        if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
+            $this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
+        }
+    }
 }

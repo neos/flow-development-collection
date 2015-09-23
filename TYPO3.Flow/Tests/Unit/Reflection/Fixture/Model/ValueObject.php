@@ -18,15 +18,14 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\ValueObject
  */
-class ValueObject {
+class ValueObject
+{
+    /**
+     * Some string
+     *
+     * @var string
+     */
+    protected $aString;
 
-	/**
-	 * Some string
-	 *
-	 * @var string
-	 */
-	protected $aString;
-
-	protected $propertyWithoutAnnotation;
-
+    protected $propertyWithoutAnnotation;
 }

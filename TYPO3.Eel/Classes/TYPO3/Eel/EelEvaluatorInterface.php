@@ -14,15 +14,14 @@ namespace TYPO3\Eel;
 /**
  * An Eel evaluator interface
  */
-interface EelEvaluatorInterface {
-
-	/**
-	 * Evaluate an expression under a given context
-	 *
-	 * @param string $expression The expression to evaluate
-	 * @param Context $context The context to provide to the expression
-	 * @return mixed The evaluated expression
-	 */
-	public function evaluate($expression, Context $context);
-
+interface EelEvaluatorInterface
+{
+    /**
+     * Evaluate an expression under a given context
+     *
+     * @param string $expression The expression to evaluate
+     * @param Context $context The context to provide to the expression
+     * @return mixed The evaluated expression
+     */
+    public function evaluate($expression, Context $context);
 }

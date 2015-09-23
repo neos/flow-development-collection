@@ -16,18 +16,18 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class that is declared singleton from Objects.yaml with constructor injection
  */
-class SingletonClassG {
+class SingletonClassG
+{
+    /**
+     * @var PrototypeClassAishInterface
+     */
+    public $prototypeA;
 
-	/**
-	 * @var PrototypeClassAishInterface
-	 */
-	public $prototypeA;
-
-	/**
-	 * @param PrototypeClassAishInterface $prototypeA
-	 */
-	public function __construct(PrototypeClassAishInterface $prototypeA) {
-		$this->prototypeA = $prototypeA;
-	}
-
+    /**
+     * @param PrototypeClassAishInterface $prototypeA
+     */
+    public function __construct(PrototypeClassAishInterface $prototypeA)
+    {
+        $this->prototypeA = $prototypeA;
+    }
 }

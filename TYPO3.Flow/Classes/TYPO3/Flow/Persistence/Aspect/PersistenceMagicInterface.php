@@ -15,4 +15,6 @@ namespace TYPO3\Flow\Persistence\Aspect;
  * A marker interface used to support object persistence
  *
  */
-interface PersistenceMagicInterface {}
+interface PersistenceMagicInterface
+{
+}

@@ -16,15 +16,15 @@ namespace TYPO3\Flow\Validation;
  * This object holds a validation error.
  *
  */
-class Error extends \TYPO3\Flow\Error\Error {
+class Error extends \TYPO3\Flow\Error\Error
+{
+    /**
+     * @var string
+     */
+    protected $message = 'Unknown validation error';
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Unknown validation error';
-
-	/**
-	 * @var string
-	 */
-	protected $code = 1201447005;
+    /**
+     * @var string
+     */
+    protected $code = 1201447005;
 }
