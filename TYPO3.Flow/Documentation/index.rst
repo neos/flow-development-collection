@@ -1,7 +1,7 @@
 TYPO3 Flow |version| Documentation
 ==================================
 
-Flow is a free PHP framework licensed under the LGPL, developed to power the enterprise Neos CMS.
+Flow is a free PHP framework licensed under the MIT license, developed to power the enterprise Neos CMS.
 
 This version of the documentation covering Flow |release| has been rendered at: |today|
 

@@ -1,7 +1,7 @@
 #                                                                        #
-# Configuration for the TYPO3 Flow Framework                             #
+# Configuration for the Flow Framework                                   #
 #                                                                        #
-# This file contains the default base configuration for the TYPO3 Flow   #
+# This file contains the default base configuration for the Flow         #
 # Framework. Don't modify this file but add configuration options to     #
 # the Settings.yaml file in the in global Configuration/ directory       #
 # instead.                                                               #
@@ -39,7 +39,7 @@ TYPO3:
 
     core:
 
-      # TYPO3 Flow's application context
+      # Flow's application context
       # This setting is automatically set by the configuration manager and can't be set manually.
       context: ''
 
@@ -130,7 +130,7 @@ TYPO3:
 
     log:
 
-      # Settings for TYPO3 Flow's default loggers
+      # Settings for Flow's default loggers
       systemLogger:
         logger: TYPO3\Flow\Log\Logger
         backend: TYPO3\Flow\Log\Backend\FileBackend
