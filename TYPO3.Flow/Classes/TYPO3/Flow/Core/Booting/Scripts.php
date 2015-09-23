@@ -542,6 +542,8 @@ class Scripts
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         $output = array();
+        // Output errors in response
+        $command .= ' 2>&1';
         exec($command, $output, $result);
         if ($result !== 0) {
             if (count($output) > 0) {
