@@ -19,73 +19,80 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntityB {
+class TestEntityB
+{
+    /**
+     * @var string
+     */
+    protected $stringValue;
 
-	/**
-	 * @var string
-	 */
-	protected $stringValue;
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
+     * @ORM\OneToOne(mappedBy="relatedEntityB")
+     */
+    protected $relatedEntityA;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
-	 * @ORM\OneToOne(mappedBy="relatedEntityB")
-	 */
-	protected $relatedEntityA;
+    /**
+     * @var \TYPO3\Flow\Security\Account
+     * @ORM\ManyToOne
+     */
+    protected $ownerAccount;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Account
-	 * @ORM\ManyToOne
-	 */
-	protected $ownerAccount;
+    /**
+     * Constructor
+     *
+     * @param string $stringValue
+     */
+    public function __construct($stringValue)
+    {
+        $this->stringValue = $stringValue;
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $stringValue
-	 */
-	public function __construct($stringValue) {
-		$this->stringValue = $stringValue;
-	}
+    /**
+     * @param string $stringValue
+     */
+    public function setStringValue($stringValue)
+    {
+        $this->stringValue = $stringValue;
+    }
 
-	/**
-	 * @param string $stringValue
-	 */
-	public function setStringValue($stringValue) {
-		$this->stringValue = $stringValue;
-	}
+    /**
+     * @return string
+     */
+    public function getStringValue()
+    {
+        return $this->stringValue;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getStringValue() {
-		return $this->stringValue;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA $relatedEntityA
+     */
+    public function setRelatedEntityA($relatedEntityA)
+    {
+        $this->relatedEntityA = $relatedEntityA;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA $relatedEntityA
-	 */
-	public function setRelatedEntityA($relatedEntityA) {
-		$this->relatedEntityA = $relatedEntityA;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
+     */
+    public function getRelatedEntityA()
+    {
+        return $this->relatedEntityA;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
-	 */
-	public function getRelatedEntityA() {
-		return $this->relatedEntityA;
-	}
+    /**
+     * @param \TYPO3\Flow\Security\Account $ownerAccount
+     */
+    public function setOwnerAccount($ownerAccount)
+    {
+        $this->ownerAccount = $ownerAccount;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Security\Account $ownerAccount
-	 */
-	public function setOwnerAccount($ownerAccount) {
-		$this->ownerAccount = $ownerAccount;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Security\Account
-	 */
-	public function getOwnerAccount() {
-		return $this->ownerAccount;
-	}
+    /**
+     * @return \TYPO3\Flow\Security\Account
+     */
+    public function getOwnerAccount()
+    {
+        return $this->ownerAccount;
+    }
 }

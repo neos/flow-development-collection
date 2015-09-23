@@ -20,105 +20,115 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class Post {
+class Post
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var User
+     * @ORM\ManyToOne(cascade={"all"})
+     */
+    protected $author;
 
-	/**
-	 * @var User
-	 * @ORM\ManyToOne(cascade={"all"})
-	 */
-	protected $author;
+    /**
+     * @var boolean
+     * @ORM\Column(nullable=true)
+     */
+    protected $private;
 
-	/**
-	 * @var boolean
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $private;
+    /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     */
+    protected $category;
 
-	/**
-	 * @var string
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $category;
+    /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     */
+    protected $subCategory;
 
-	/**
-	 * @var string
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $subCategory;
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @param User $author
+     * @return void
+     */
+    public function setAuthor(User $author)
+    {
+        $this->author = $author;
+    }
 
-	/**
-	 * @param User $author
-	 * @return void
-	 */
-	public function setAuthor(User $author) {
-		$this->author = $author;
-	}
+    /**
+     * @return User
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
 
-	/**
-	 * @return User
-	 */
-	public function getAuthor() {
-		return $this->author;
-	}
+    /**
+     * @param boolean $private
+     */
+    public function setPrivate($private)
+    {
+        $this->private = $private;
+    }
 
-	/**
-	 * @param boolean $private
-	 */
-	public function setPrivate($private) {
-		$this->private = $private;
-	}
+    /**
+     * @return boolean
+     */
+    public function getPrivate()
+    {
+        return $this->private;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function getPrivate() {
-		return $this->private;
-	}
+    /**
+     * @param string $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
 
-	/**
-	 * @param string $category
-	 */
-	public function setCategory($category) {
-		$this->category = $category;
-	}
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getCategory() {
-		return $this->category;
-	}
+    /**
+     * @param string $subCategory
+     */
+    public function setSubCategory($subCategory)
+    {
+        $this->subCategory = $subCategory;
+    }
 
-	/**
-	 * @param string $subCategory
-	 */
-	public function setSubCategory($subCategory) {
-		$this->subCategory = $subCategory;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSubCategory() {
-		return $this->subCategory;
-	}
+    /**
+     * @return string
+     */
+    public function getSubCategory()
+    {
+        return $this->subCategory;
+    }
 }

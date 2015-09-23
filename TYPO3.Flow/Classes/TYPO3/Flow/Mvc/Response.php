@@ -17,64 +17,69 @@ namespace TYPO3\Flow\Mvc;
  *
  * @api
  */
-class Response implements \TYPO3\Flow\Mvc\ResponseInterface {
+class Response implements \TYPO3\Flow\Mvc\ResponseInterface
+{
+    /**
+     * @var string
+     */
+    protected $content = null;
 
-	/**
-	 * @var string
-	 */
-	protected $content = NULL;
+    /**
+     * Overrides and sets the content of the response
+     *
+     * @param string $content The response content
+     * @return void
+     * @api
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
 
-	/**
-	 * Overrides and sets the content of the response
-	 *
-	 * @param string $content The response content
-	 * @return void
-	 * @api
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
+    /**
+     * Appends content to the already existing content.
+     *
+     * @param string $content More response content
+     * @return void
+     * @api
+     */
+    public function appendContent($content)
+    {
+        $this->content .= $content;
+    }
 
-	/**
-	 * Appends content to the already existing content.
-	 *
-	 * @param string $content More response content
-	 * @return void
-	 * @api
-	 */
-	public function appendContent($content) {
-		$this->content .= $content;
-	}
+    /**
+     * Returns the response content without sending it.
+     *
+     * @return string The response content
+     * @api
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	/**
-	 * Returns the response content without sending it.
-	 *
-	 * @return string The response content
-	 * @api
-	 */
-	public function getContent() {
-		return $this->content;
-	}
+    /**
+     * Sends the response
+     *
+     * @return void
+     * @api
+     */
+    public function send()
+    {
+        if ($this->content !== null) {
+            echo $this->getContent();
+        }
+    }
 
-	/**
-	 * Sends the response
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function send() {
-		if ($this->content !== NULL) {
-			echo $this->getContent();
-		}
-	}
-
-	/**
-	 * Returns the content of the response.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function __toString() {
-		return $this->getContent();
-	}
+    /**
+     * Returns the content of the response.
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        return $this->getContent();
+    }
 }

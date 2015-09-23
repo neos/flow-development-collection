@@ -16,6 +16,6 @@ use TYPO3\Flow\Error\Error;
 /**
  * A "target not found" error that is issued when a referenced object/value could not be fetched
  */
-class TargetNotFoundError extends Error {
-
+class TargetNotFoundError extends Error
+{
 }

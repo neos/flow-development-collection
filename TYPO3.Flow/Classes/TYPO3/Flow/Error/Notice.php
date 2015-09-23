@@ -17,12 +17,11 @@ namespace TYPO3\Flow\Error;
  *
  * @api
  */
-class Notice extends Message {
-
-	/**
-	 * The severity of this message ('Notice').
-	 * @var string
-	 */
-	protected $severity = self::SEVERITY_NOTICE;
-
+class Notice extends Message
+{
+    /**
+     * The severity of this message ('Notice').
+     * @var string
+     */
+    protected $severity = self::SEVERITY_NOTICE;
 }

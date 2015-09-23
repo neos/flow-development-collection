@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class IndexOutOfBoundsException extends \TYPO3\Flow\I18n\Exception {
-
+class IndexOutOfBoundsException extends \TYPO3\Flow\I18n\Exception
+{
 }

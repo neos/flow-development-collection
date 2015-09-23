@@ -15,24 +15,24 @@ namespace TYPO3\Flow\Tests\Functional\SignalSlot;
  * Test suite for Signal Slot
  *
  */
-class SignalSlotTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class SignalSlotTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function signalsDeclaredInAbstractClassesAreFunctionalInSubClasses()
+    {
+        $subClass = new Fixtures\SubClass();
 
-	/**
-	 * @test
-	 */
-	public function signalsDeclaredInAbstractClassesAreFunctionalInSubClasses() {
-		$subClass = new Fixtures\SubClass();
+        $dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
+        $dispatcher->connect(\TYPO3\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass::class, 'something', $subClass, 'somethingSlot');
 
-		$dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
-		$dispatcher->connect(\TYPO3\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass::class, 'something', $subClass, 'somethingSlot');
+        $subClass->triggerSomethingSignalFromSubClass();
+        $this->assertTrue($subClass->slotWasCalled, 'from sub class');
 
-		$subClass->triggerSomethingSignalFromSubClass();
-		$this->assertTrue($subClass->slotWasCalled, 'from sub class');
+        $subClass->slotWasCalled = false;
 
-		$subClass->slotWasCalled = FALSE;
-
-		$subClass->triggerSomethingSignalFromAbstractClass();
-		$this->assertTrue($subClass->slotWasCalled, 'from abstract class');
-	}
-
+        $subClass->triggerSomethingSignalFromAbstractClass();
+        $this->assertTrue($subClass->slotWasCalled, 'from abstract class');
+    }
 }

@@ -17,25 +17,27 @@ use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 /**
  * A method privilege subject
  */
-class MethodPrivilegeSubject implements PrivilegeSubjectInterface {
+class MethodPrivilegeSubject implements PrivilegeSubjectInterface
+{
+    /**
+     * @var JoinPointInterface
+     */
+    protected $joinPoint;
 
-	/**
-	 * @var JoinPointInterface
-	 */
-	protected $joinPoint;
+    /**
+     * @param JoinPointInterface $joinPoint
+     * @return void
+     */
+    public function __construct(JoinPointInterface $joinPoint)
+    {
+        $this->joinPoint = $joinPoint;
+    }
 
-	/**
-	 * @param JoinPointInterface $joinPoint
-	 * @return void
-	 */
-	public function __construct(JoinPointInterface $joinPoint) {
-		$this->joinPoint = $joinPoint;
-	}
-
-	/**
-	 * @return JoinPointInterface
-	 */
-	public function getJoinPoint() {
-		return $this->joinPoint;
-	}
+    /**
+     * @return JoinPointInterface
+     */
+    public function getJoinPoint()
+    {
+        return $this->joinPoint;
+    }
 }

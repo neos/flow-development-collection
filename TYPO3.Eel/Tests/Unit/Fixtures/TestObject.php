@@ -16,72 +16,78 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
 /**
  * Test fixture object
  */
-class TestObject implements ProtectedContextAwareInterface {
+class TestObject implements ProtectedContextAwareInterface
+{
+    /**
+     * @var string
+     */
+    protected $property;
 
-	/**
-	 * @var string
-	 */
-	protected $property;
+    /**
+     * @var boolean
+     */
+    protected $booleanProperty;
 
-	/**
-	 * @var boolean
-	 */
-	protected $booleanProperty;
+    /**
+     * @var string
+     */
+    protected $dynamicMethodName;
 
-	/**
-	 * @var string
-	 */
-	protected $dynamicMethodName;
+    /**
+     * @return string
+     */
+    public function getProperty()
+    {
+        return $this->property;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getProperty() {
-		return $this->property;
-	}
+    /**
+     * @param $property
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
+    }
 
-	/**
-	 * @param $property
-	 */
-	public function setProperty($property) {
-		$this->property = $property;
-	}
+    /**
+     * @param boolean $booleanProperty
+     */
+    public function setBooleanProperty($booleanProperty)
+    {
+        $this->booleanProperty = $booleanProperty;
+    }
 
-	/**
-	 * @param boolean $booleanProperty
-	 */
-	public function setBooleanProperty($booleanProperty) {
-		$this->booleanProperty = $booleanProperty;
-	}
+    /**
+     * @return boolean
+     */
+    public function isBooleanProperty()
+    {
+        return $this->booleanProperty;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function isBooleanProperty() {
-		return $this->booleanProperty;
-	}
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function callMe($name)
+    {
+        return 'Hello, ' . $name . '!';
+    }
 
-	/**
-	 * @param string $name
-	 * @return string
-	 */
-	public function callMe($name) {
-		return 'Hello, ' . $name . '!';
-	}
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return $methodName === $this->dynamicMethodName;
+    }
 
-	/**
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return $methodName === $this->dynamicMethodName;
-	}
-
-	/**
-	 * @param string $dynamicMethodName
-	 */
-	public function setDynamicMethodName($dynamicMethodName) {
-		$this->dynamicMethodName = $dynamicMethodName;
-	}
-
+    /**
+     * @param string $dynamicMethodName
+     */
+    public function setDynamicMethodName($dynamicMethodName)
+    {
+        $this->dynamicMethodName = $dynamicMethodName;
+    }
 }

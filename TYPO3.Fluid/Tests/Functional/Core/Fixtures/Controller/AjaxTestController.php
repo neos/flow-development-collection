@@ -19,22 +19,23 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
  * simulates the place where you'd integrate an AJAX widget and helps us rendering
  * a valid URI we can use for sending an AJAX request to the test widget.
  */
-class AjaxTestController extends ActionController {
+class AjaxTestController extends ActionController
+{
+    /**
+     * Includes the widget through its Index.html template and renders it.
+     *
+     * @return string
+     */
+    public function indexAction()
+    {
+    }
 
-	/**
-	 * Includes the widget through its Index.html template and renders it.
-	 *
-	 * @return string
-	 */
-	public function indexAction() {
-	}
-
-	/**
-	 * Renders and returns the URI pointing to the widget for an AJAX call.
-	 *
-	 * @return string
-	 */
-	public function widgetUriAction() {
-	}
-
+    /**
+     * Renders and returns the URI pointing to the widget for an AJAX call.
+     *
+     * @return string
+     */
+    public function widgetUriAction()
+    {
+    }
 }

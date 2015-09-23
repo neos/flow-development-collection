@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidRoutePartValueException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidRoutePartValueException extends \TYPO3\Flow\Mvc\Exception
+{
 }

@@ -15,19 +15,20 @@ namespace TYPO3\Flow\Tests\Unit\Log\Backend;
  * Testcase for the abstract log backend
  *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @var \TYPO3\Flow\Log\Backend\AbstractBackend
+     */
+    protected $backendClassName;
 
-	/**
-	 * @var \TYPO3\Flow\Log\Backend\AbstractBackend
-	 */
-	protected $backendClassName;
-
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		$this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
-		eval('
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
+        eval('
 			class ' . $this->backendClassName . ' extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 				public function open() {}
 				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
@@ -40,15 +41,15 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				}
 			}
 		');
-	}
+    }
 
-	/**
-	 * @test
-	 */
-	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
-		$className = $this->backendClassName;
-		$backend = new $className(array('someOption' => 'someValue'));
-		$this->assertSame('someValue', $backend->getSomeOption());
-	}
-
+    /**
+     * @test
+     */
+    public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
+    {
+        $className = $this->backendClassName;
+        $backend = new $className(array('someOption' => 'someValue'));
+        $this->assertSame('someValue', $backend->getSomeOption());
+    }
 }

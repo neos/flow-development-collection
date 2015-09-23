@@ -22,39 +22,42 @@ use TYPO3\Flow\Security\RequestPatternInterface;
  * Example: *.typo3.org will match "flow.typo3.org" and "neos.typo3.org", but not "typo3.org"
  *          www.mydomain.* will match all TLDs of www.mydomain, but not "blog.mydomain.net" or "mydomain.com"
  */
-class Host implements RequestPatternInterface {
+class Host implements RequestPatternInterface
+{
+    /**
+     * @var string
+     */
+    protected $hostPattern = '';
 
-	/**
-	 * @var string
-	 */
-	protected $hostPattern = '';
+    /**
+     * @return string The set pattern
+     */
+    public function getPattern()
+    {
+        return $this->hostPattern;
+    }
 
-	/**
-	 * @return string The set pattern
-	 */
-	public function getPattern() {
-		return $this->hostPattern;
-	}
+    /**
+     * @param string $hostPattern The host pattern
+     * @return void
+     */
+    public function setPattern($hostPattern)
+    {
+        $this->hostPattern = $hostPattern;
+    }
 
-	/**
-	 * @param string $hostPattern The host pattern
-	 * @return void
-	 */
-	public function setPattern($hostPattern) {
-		$this->hostPattern = $hostPattern;
-	}
-
-	/**
-	 * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set host pattern rules
-	 *
-	 * @param RequestInterface $request The request that should be matched
-	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 */
-	public function matchRequest(RequestInterface $request) {
-		if (!$request instanceof ActionRequest) {
-			return FALSE;
-		}
-		$hostPattern = str_replace('\\*', '.*', preg_quote($this->hostPattern, '/'));
-		return preg_match('/^' . $hostPattern . '$/', $request->getHttpRequest()->getUri()->getHost()) === 1;
-	}
+    /**
+     * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set host pattern rules
+     *
+     * @param RequestInterface $request The request that should be matched
+     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     */
+    public function matchRequest(RequestInterface $request)
+    {
+        if (!$request instanceof ActionRequest) {
+            return false;
+        }
+        $hostPattern = str_replace('\\*', '.*', preg_quote($this->hostPattern, '/'));
+        return preg_match('/^' . $hostPattern . '$/', $request->getHttpRequest()->getUri()->getHost()) === 1;
+    }
 }

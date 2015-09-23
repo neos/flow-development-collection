@@ -16,5 +16,6 @@ use TYPO3\Fluid\Core\Widget;
 /**
  * An exception if no widget context could be found inside the AjaxWidgetContextHolder.
  */
-class RenderingContextNotFoundException extends Widget\Exception {
+class RenderingContextNotFoundException extends Widget\Exception
+{
 }

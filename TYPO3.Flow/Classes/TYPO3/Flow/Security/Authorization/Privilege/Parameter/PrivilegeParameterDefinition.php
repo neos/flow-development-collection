@@ -16,38 +16,40 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A privilege parameter definition
  */
-class PrivilegeParameterDefinition {
+class PrivilegeParameterDefinition
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var string
+     */
+    protected $parameterClassName;
 
-	/**
-	 * @var string
-	 */
-	protected $parameterClassName;
+    /**
+     * @param string $name
+     * @param string $parameterClassName
+     */
+    public function __construct($name, $parameterClassName)
+    {
+        $this->name = $name;
+        $this->parameterClassName = $parameterClassName;
+    }
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @param string $name
-	 * @param string $parameterClassName
-	 */
-	public function __construct($name, $parameterClassName) {
-		$this->name = $name;
-		$this->parameterClassName = $parameterClassName;
-	}
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getParameterClassName() {
-		return $this->parameterClassName;
-	}
-
+    /**
+     * @return string
+     */
+    public function getParameterClassName()
+    {
+        return $this->parameterClassName;
+    }
 }

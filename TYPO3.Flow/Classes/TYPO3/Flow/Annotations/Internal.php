@@ -20,4 +20,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class Internal {}
+final class Internal
+{
+}

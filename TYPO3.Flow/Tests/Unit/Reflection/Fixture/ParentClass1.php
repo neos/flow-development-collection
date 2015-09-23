@@ -15,5 +15,6 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * Dummy class for the Reflection tests
  *
  */
-class ParentClass1 {
+class ParentClass1
+{
 }

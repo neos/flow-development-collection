@@ -16,16 +16,16 @@ namespace TYPO3\Flow\Mvc\Routing;
  *
  * @api
  */
-interface DynamicRoutePartInterface extends \TYPO3\Flow\Mvc\Routing\RoutePartInterface {
-
-	/**
-	 * Sets split string of the Route Part.
-	 * The split string represents the border of a Dynamic Route Part.
-	 * If it is empty, Route Part will be equal to the remaining request path.
-	 *
-	 * @param string $splitString
-	 * @return void
-	 * @api
-	 */
-	public function setSplitString($splitString);
+interface DynamicRoutePartInterface extends \TYPO3\Flow\Mvc\Routing\RoutePartInterface
+{
+    /**
+     * Sets split string of the Route Part.
+     * The split string represents the border of a Dynamic Route Part.
+     * If it is empty, Route Part will be equal to the remaining request path.
+     *
+     * @param string $splitString
+     * @return void
+     * @api
+     */
+    public function setSplitString($splitString);
 }

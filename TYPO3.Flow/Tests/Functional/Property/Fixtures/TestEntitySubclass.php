@@ -28,6 +28,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntitySubclass extends TestEntity {
-
+class TestEntitySubclass extends TestEntity
+{
 }

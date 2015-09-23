@@ -5,9 +5,9 @@ use TYPO3\Flow\Utility\Files;
  * Entry Point (Router) for PHP's embedded HTTP server. Use ./flow server:run to execute.
  */
 
-if (strpos($_SERVER['REQUEST_URI'], '_Resources/') !== FALSE) {
-	// published resources shall be served directly
-	return FALSE;
+if (strpos($_SERVER['REQUEST_URI'], '_Resources/') !== false) {
+    // published resources shall be served directly
+    return false;
 }
 
 require(__DIR__. '/../Classes/TYPO3/Flow/Core/Bootstrap.php');

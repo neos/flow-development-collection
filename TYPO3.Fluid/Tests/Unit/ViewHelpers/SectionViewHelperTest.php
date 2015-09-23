@@ -15,25 +15,26 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers;
  * Testcase for SectionViewHelper
  *
  */
-class SectionViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class SectionViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function sectionIsAddedToParseVariableContainer()
+    {
+        $section = new \TYPO3\Fluid\ViewHelpers\SectionViewHelper();
 
-	/**
-	 * @test
-	 */
-	public function sectionIsAddedToParseVariableContainer() {
-		$section = new \TYPO3\Fluid\ViewHelpers\SectionViewHelper();
+        $viewHelperNodeMock = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array(), array(), '', false);
+        $viewHelperArguments = array(
+            'name' => new \TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode('sectionName')
+        );
 
-		$viewHelperNodeMock = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array(), array(), '', FALSE);
-		$viewHelperArguments = array(
-			'name' => new \TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode('sectionName')
-		);
+        $variableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer();
 
-		$variableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer();
+        $section->postParseEvent($viewHelperNodeMock, $viewHelperArguments, $variableContainer);
 
-		$section->postParseEvent($viewHelperNodeMock, $viewHelperArguments, $variableContainer);
-
-		$this->assertTrue($variableContainer->exists('sections'), 'Sections array was not created, albeit it should.');
-		$sections = $variableContainer->get('sections');
-		$this->assertEquals($sections['sectionName'], $viewHelperNodeMock, 'ViewHelperNode for section was not stored.');
-	}
+        $this->assertTrue($variableContainer->exists('sections'), 'Sections array was not created, albeit it should.');
+        $sections = $variableContainer->get('sections');
+        $this->assertEquals($sections['sectionName'], $viewHelperNodeMock, 'ViewHelperNode for section was not stored.');
+    }
 }

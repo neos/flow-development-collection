@@ -43,35 +43,36 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class DebugViewHelper extends AbstractViewHelper {
+class DebugViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeChildren = FALSE;
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * Wrapper for \TYPO3\Flow\var_dump()
+     *
+     * @param string $title
+     * @param boolean $typeOnly Whether only the type should be returned instead of the whole chain.
+     * @return string debug string
+     */
+    public function render($title = null, $typeOnly = false)
+    {
+        $expressionToExamine = $this->renderChildren();
+        if ($typeOnly === true && $expressionToExamine !== null) {
+            $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
+        }
 
-	/**
-	 * Wrapper for \TYPO3\Flow\var_dump()
-	 *
-	 * @param string $title
-	 * @param boolean $typeOnly Whether only the type should be returned instead of the whole chain.
-	 * @return string debug string
-	 */
-	public function render($title = NULL, $typeOnly = FALSE) {
-		$expressionToExamine = $this->renderChildren();
-		if ($typeOnly === TRUE && $expressionToExamine !== NULL) {
-			$expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
-		}
-
-		ob_start();
-		\TYPO3\Flow\var_dump($expressionToExamine, $title);
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
-	}
+        ob_start();
+        \TYPO3\Flow\var_dump($expressionToExamine, $title);
+        $output = ob_get_contents();
+        ob_end_clean();
+        return $output;
+    }
 }

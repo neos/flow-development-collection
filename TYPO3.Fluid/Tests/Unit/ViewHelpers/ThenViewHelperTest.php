@@ -16,16 +16,17 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 /**
  * Testcase for ElseViewHelper
  */
-class ThenViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase {
+class ThenViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
+{
+    /**
+     * @test
+     */
+    public function renderRendersChildren()
+    {
+        $viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\ThenViewHelper::class, array('renderChildren'));
 
-	/**
-	 * @test
-	 */
-	public function renderRendersChildren() {
-		$viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\ThenViewHelper::class, array('renderChildren'));
-
-		$viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('foo'));
-		$actualResult = $viewHelper->render();
-		$this->assertEquals('foo', $actualResult);
-	}
+        $viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('foo'));
+        $actualResult = $viewHelper->render();
+        $this->assertEquals('foo', $actualResult);
+    }
 }

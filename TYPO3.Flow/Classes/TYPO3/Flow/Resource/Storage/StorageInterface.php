@@ -19,51 +19,50 @@ use TYPO3\Flow\Resource\Resource;
  *
  * @api
  */
-interface StorageInterface {
+interface StorageInterface
+{
+    /**
+     * Returns the instance name of this storage
+     *
+     * @return string
+     * @api
+     */
+    public function getName();
 
-	/**
-	 * Returns the instance name of this storage
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getName();
+    /**
+     * Returns a stream handle which can be used internally to open / copy the given resource
+     * stored in this storage.
+     *
+     * @param \TYPO3\Flow\Resource\Resource $resource The resource stored in this storage
+     * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
+     * @api
+     */
+    public function getStreamByResource(Resource $resource);
 
-	/**
-	 * Returns a stream handle which can be used internally to open / copy the given resource
-	 * stored in this storage.
-	 *
-	 * @param \TYPO3\Flow\Resource\Resource $resource The resource stored in this storage
-	 * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
-	 * @api
-	 */
-	public function getStreamByResource(Resource $resource);
+    /**
+     * Returns a stream handle which can be used internally to open / copy the given resource
+     * stored in this storage.
+     *
+     * @param string $relativePath A path relative to the storage root, for example "MyFirstDirectory/SecondDirectory/Foo.css"
+     * @return resource | boolean A URI (for example the full path and filename) leading to the resource file or FALSE if it does not exist
+     * @api
+     */
+    public function getStreamByResourcePath($relativePath);
 
-	/**
-	 * Returns a stream handle which can be used internally to open / copy the given resource
-	 * stored in this storage.
-	 *
-	 * @param string $relativePath A path relative to the storage root, for example "MyFirstDirectory/SecondDirectory/Foo.css"
-	 * @return resource | boolean A URI (for example the full path and filename) leading to the resource file or FALSE if it does not exist
-	 * @api
-	 */
-	public function getStreamByResourcePath($relativePath);
+    /**
+     * Retrieve all Objects stored in this storage.
+     *
+     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @api
+     */
+    public function getObjects();
 
-	/**
-	 * Retrieve all Objects stored in this storage.
-	 *
-	 * @return array<\TYPO3\Flow\Resource\Storage\Object>
-	 * @api
-	 */
-	public function getObjects();
-
-	/**
-	 * Retrieve all Objects stored in this storage, filtered by the given collection name
-	 *
-	 * @param CollectionInterface $collection
-	 * @return array<\TYPO3\Flow\Resource\Storage\Object>
-	 * @api
-	 */
-	public function getObjectsByCollection(CollectionInterface $collection);
-
+    /**
+     * Retrieve all Objects stored in this storage, filtered by the given collection name
+     *
+     * @param CollectionInterface $collection
+     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @api
+     */
+    public function getObjectsByCollection(CollectionInterface $collection);
 }

@@ -17,107 +17,110 @@ use TYPO3\Flow\I18n\EelHelper\TranslationParameterToken;
 /**
  * Tests for TranslateHelper
  */
-class TranslationHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class TranslationHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function translateReturnsCorrectlyConfiguredTranslationParameterTokenWhenCalledWithLongArgumentList()
+    {
+        $mockTranslationParameterToken = $this->getMockBuilder(TranslationParameterToken::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-	/**
-	 * @test
-	 */
-	public function translateReturnsCorrectlyConfiguredTranslationParameterTokenWhenCalledWithLongArgumentList() {
-		$mockTranslationParameterToken = $this->getMockBuilder(TranslationParameterToken::class)
-			->disableOriginalConstructor()
-			->getMock();
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('value', 'SomeValue')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('value', 'SomeValue')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('arguments', array('a', 'couple', 'of', 'arguments'))
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('arguments', array('a', 'couple', 'of', 'arguments'))
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('source', 'SomeSource')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('source', 'SomeSource')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('package', 'Some.PackageKey')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('package', 'Some.PackageKey')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('quantity', 42)
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('quantity', 42)
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('locale', 'SomeLocale')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('locale', 'SomeLocale')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('translate')
+            ->willReturn('I am a translation result');
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('translate')
-			->willReturn('I am a translation result');
-
-		$mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
-		$mockTranslationHelper->expects(static::once())
-			->method('createTranslationParameterToken', 'SomeId')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
+        $mockTranslationHelper->expects(static::once())
+            ->method('createTranslationParameterToken', 'SomeId')
+            ->willReturn($mockTranslationParameterToken);
 
 
-		$result = $mockTranslationHelper->translate('SomeId', 'SomeValue', array('a', 'couple', 'of', 'arguments'), 'SomeSource', 'Some.PackageKey', 42, 'SomeLocale');
-		$this->assertEquals('I am a translation result', $result);
-	}
+        $result = $mockTranslationHelper->translate('SomeId', 'SomeValue', array('a', 'couple', 'of', 'arguments'), 'SomeSource', 'Some.PackageKey', 42, 'SomeLocale');
+        $this->assertEquals('I am a translation result', $result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function translateReturnsCorrectlyConfiguredTranslationParameterTokenWhenCalledWithShortHandString() {
-		$mockTranslationParameterToken = $this->getMockBuilder(TranslationParameterToken::class)
-			->disableOriginalConstructor()
-			->getMock();
+    /**
+     * @test
+     */
+    public function translateReturnsCorrectlyConfiguredTranslationParameterTokenWhenCalledWithShortHandString()
+    {
+        $mockTranslationParameterToken = $this->getMockBuilder(TranslationParameterToken::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('source', 'SomeSource')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('source', 'SomeSource')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('package', 'Some.PackageKey')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('package', 'Some.PackageKey')
+            ->willReturn($mockTranslationParameterToken);
 
-		$mockTranslationParameterToken->expects($this->once())
-			->method('translate')
-			->willReturn('I am a translation result');
+        $mockTranslationParameterToken->expects($this->once())
+            ->method('translate')
+            ->willReturn('I am a translation result');
 
-		$mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
-		$mockTranslationHelper->expects(static::once())
-			->method('createTranslationParameterToken', 'SomeId')
-			->willReturn($mockTranslationParameterToken);
+        $mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
+        $mockTranslationHelper->expects(static::once())
+            ->method('createTranslationParameterToken', 'SomeId')
+            ->willReturn($mockTranslationParameterToken);
 
-		$result = $mockTranslationHelper->translate('Some.PackageKey:SomeSource:SomeId');
-		$this->assertEquals('I am a translation result', $result);
-	}
+        $result = $mockTranslationHelper->translate('Some.PackageKey:SomeSource:SomeId');
+        $this->assertEquals('I am a translation result', $result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function idReturnsTranslationParameterTokenWithPreconfiguredId() {
-		$mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
-		$mockTranslationHelper->expects(static::once())
-			->method('createTranslationParameterToken', 'SomeId')
-			->willReturn('TranslationParameterTokenWithPreconfiguredId');
+    /**
+     * @test
+     */
+    public function idReturnsTranslationParameterTokenWithPreconfiguredId()
+    {
+        $mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
+        $mockTranslationHelper->expects(static::once())
+            ->method('createTranslationParameterToken', 'SomeId')
+            ->willReturn('TranslationParameterTokenWithPreconfiguredId');
 
-		$result = $mockTranslationHelper->id('SomeId');
-		$this->assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
-	}
+        $result = $mockTranslationHelper->id('SomeId');
+        $this->assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function valueReturnsTranslationParameterTokenWithPreconfiguredValue() {
-		$mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
-		$mockTranslationHelper->expects(static::once())
-			->method('createTranslationParameterToken', NULL, 'SomeValue')
-			->willReturn('TranslationParameterTokenWithPreconfiguredValue');
+    /**
+     * @test
+     */
+    public function valueReturnsTranslationParameterTokenWithPreconfiguredValue()
+    {
+        $mockTranslationHelper = $this->getMock(TranslationHelper::class, array('createTranslationParameterToken'));
+        $mockTranslationHelper->expects(static::once())
+            ->method('createTranslationParameterToken', null, 'SomeValue')
+            ->willReturn('TranslationParameterTokenWithPreconfiguredValue');
 
-		$result = $mockTranslationHelper->value('SomeValue');
-		$this->assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
-	}
-
+        $result = $mockTranslationHelper->value('SomeValue');
+        $this->assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
+    }
 }

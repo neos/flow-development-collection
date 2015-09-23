@@ -16,9 +16,10 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * @Flow\Scope("prototype")
  */
-class Greeter implements GreeterInterface {
-
-	public function greet($who) {
-		return 'Hello ' . $who . '!';
-	}
+class Greeter implements GreeterInterface
+{
+    public function greet($who)
+    {
+        return 'Hello ' . $who . '!';
+    }
 }

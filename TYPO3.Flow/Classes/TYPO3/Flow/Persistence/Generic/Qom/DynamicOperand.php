@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  * An operand whose value can only be determined in evaluating the query.
  *
  */
-class DynamicOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand {
-
+class DynamicOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand
+{
 }

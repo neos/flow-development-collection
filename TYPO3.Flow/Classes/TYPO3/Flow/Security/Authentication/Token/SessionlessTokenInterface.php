@@ -14,5 +14,6 @@ namespace TYPO3\Flow\Security\Authentication\Token;
 /**
  * Marker interface for authentication tokens which don't need a session.
  */
-interface SessionlessTokenInterface {
+interface SessionlessTokenInterface
+{
 }

@@ -19,36 +19,37 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
  */
-class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder {
+class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder
+{
+    /**
+     * Builds interception PHP code for an adviced constructor
+     *
+     * @param string $methodName Name of the method to build an interceptor for
+     * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+     * @param string $targetClassName Name of the target class to build the interceptor for
+     * @return string PHP code of the interceptor
+     * @throws \TYPO3\Flow\Aop\Exception
+     */
+    public function build($methodName, array $interceptedMethods, $targetClassName)
+    {
+        if ($methodName !== '__construct') {
+            throw new \TYPO3\Flow\Aop\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+        }
 
-	/**
-	 * Builds interception PHP code for an adviced constructor
-	 *
-	 * @param string $methodName Name of the method to build an interceptor for
-	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
-	 * @param string $targetClassName Name of the target class to build the interceptor for
-	 * @return string PHP code of the interceptor
-	 * @throws \TYPO3\Flow\Aop\Exception
-	 */
-	public function build($methodName, array $interceptedMethods, $targetClassName) {
-		if ($methodName !== '__construct') {
-			throw new \TYPO3\Flow\Aop\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
-		}
+        $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
+        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
+        if ($declaringClassName !== $targetClassName) {
+            $proxyMethod->setMethodParametersCode($this->buildMethodParametersCode($declaringClassName, $methodName, true));
+        }
 
-		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
-		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
-		if ($declaringClassName !== $targetClassName) {
-			$proxyMethod->setMethodParametersCode($this->buildMethodParametersCode($declaringClassName, $methodName, TRUE));
-		}
+        $groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
+        $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
-		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
-		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
-
-		if ($methodName !== NULL) {
-			$proxyMethod->addPreParentCallCode('
+        if ($methodName !== null) {
+            $proxyMethod->addPreParentCallCode('
 			if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ');
-			$proxyMethod->addPostParentCallCode('
+            $proxyMethod->addPostParentCallCode('
 			} else {
 				$this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 				try {
@@ -61,7 +62,6 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\Abstr
 				return;
 			}
 ');
-		}
-	}
-
+        }
+    }
 }

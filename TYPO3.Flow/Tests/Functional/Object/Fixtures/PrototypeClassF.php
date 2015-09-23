@@ -16,45 +16,48 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassF {
+class PrototypeClassF
+{
+    /**
+     * @Flow\Transient
+     * @var string
+     */
+    protected $transientProperty;
 
-	/**
-	 * @Flow\Transient
-	 * @var string
-	 */
-	protected $transientProperty;
+    /**
+     * @var string
+     */
+    protected $nonTransientProperty;
 
-	/**
-	 * @var string
-	 */
-	protected $nonTransientProperty;
+    /**
+     * @param string $transientProperty
+     */
+    public function setTransientProperty($transientProperty)
+    {
+        $this->transientProperty = $transientProperty;
+    }
 
-	/**
-	 * @param string $transientProperty
-	 */
-	public function setTransientProperty($transientProperty) {
-		$this->transientProperty = $transientProperty;
-	}
+    /**
+     * @return string
+     */
+    public function getTransientProperty()
+    {
+        return $this->transientProperty;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getTransientProperty() {
-		return $this->transientProperty;
-	}
+    /**
+     * @param string $nonTransientProperty
+     */
+    public function setNonTransientProperty($nonTransientProperty)
+    {
+        $this->nonTransientProperty = $nonTransientProperty;
+    }
 
-	/**
-	 * @param string $nonTransientProperty
-	 */
-	public function setNonTransientProperty($nonTransientProperty) {
-		$this->nonTransientProperty = $nonTransientProperty;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getNonTransientProperty() {
-		return $this->nonTransientProperty;
-	}
-
+    /**
+     * @return string
+     */
+    public function getNonTransientProperty()
+    {
+        return $this->nonTransientProperty;
+    }
 }

@@ -17,60 +17,64 @@ use TYPO3\Flow\Utility\PhpAnalyzer;
 /**
  * Testcase for the PhpAnalyzer utility class
  */
-class PhpAnalyzerTest extends UnitTestCase {
+class PhpAnalyzerTest extends UnitTestCase
+{
+    /**
+     * @return array
+     */
+    public function sampleClasses()
+    {
+        return array(
+            array('phpCode' => '', 'namespace' => null, 'className' => null, 'fqn' => null),
+            array('phpCode' => 'namespace Foo;', 'namespace' => null, 'className' => null, 'fqn' => null),
+            array('phpCode' => 'class Bar {}', 'namespace' => null, 'className' => null, 'fqn' => null),
+            array('phpCode' => '<?php class {}', 'namespace' => null, 'className' => null, 'fqn' => null),
 
-	/**
-	 * @return array
-	 */
-	public function sampleClasses() {
-		return array(
-			array('phpCode' => '', 'namespace' => NULL, 'className' => NULL, 'fqn' => NULL),
-			array('phpCode' => 'namespace Foo;', 'namespace' => NULL, 'className' => NULL, 'fqn' => NULL),
-			array('phpCode' => 'class Bar {}', 'namespace' => NULL, 'className' => NULL, 'fqn' => NULL),
-			array('phpCode' => '<?php class {}', 'namespace' => NULL, 'className' => NULL, 'fqn' => NULL),
+            array('phpCode' => '<?php class SomeClass {}', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
+            array('phpCode' => '<?php namespace Foo\Bar; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
 
-			array('phpCode' => '<?php class SomeClass {}', 'namespace' => NULL, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
-			array('phpCode' => '<?php namespace Foo\Bar; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
+            array('phpCode' => '<?php namespace \Foo\Bar\; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
+            array('phpCode' => '<?php ' . chr(13) . '  namespace  Foo\Bar {' . chr(13) . '	 class    SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
+            array('phpCode' => 'foo <?php class SomeClass', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
+        );
+    }
 
-			array('phpCode' => '<?php namespace \Foo\Bar\; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
-			array('phpCode' => '<?php ' . chr(13) . '  namespace  Foo\Bar {' . chr(13) . '	 class    SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
-			array('phpCode' => 'foo <?php class SomeClass', 'namespace' => NULL, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
-		);
-	}
+    /**
+     * @param string $phpCode
+     * @param string $namespace
+     * @test
+     * @dataProvider sampleClasses
+     */
+    public function extractNamespaceTests($phpCode, $namespace)
+    {
+        $phpAnalyzer = new PhpAnalyzer($phpCode);
+        $this->assertSame($namespace, $phpAnalyzer->extractNamespace());
+    }
 
-	/**
-	 * @param string $phpCode
-	 * @param string $namespace
-	 * @test
-	 * @dataProvider sampleClasses
-	 */
-	public function extractNamespaceTests($phpCode, $namespace) {
-		$phpAnalyzer = new PhpAnalyzer($phpCode);
-		$this->assertSame($namespace, $phpAnalyzer->extractNamespace());
-	}
+    /**
+     * @param string $phpCode
+     * @param string $namespace
+     * @param string $className
+     * @test
+     * @dataProvider sampleClasses
+     */
+    public function extractClassNameTests($phpCode, $namespace, $className)
+    {
+        $phpAnalyzer = new PhpAnalyzer($phpCode);
+        $this->assertSame($className, $phpAnalyzer->extractClassName());
+    }
 
-	/**
-	 * @param string $phpCode
-	 * @param string $namespace
-	 * @param string $className
-	 * @test
-	 * @dataProvider sampleClasses
-	 */
-	public function extractClassNameTests($phpCode, $namespace, $className) {
-		$phpAnalyzer = new PhpAnalyzer($phpCode);
-		$this->assertSame($className, $phpAnalyzer->extractClassName());
-	}
-
-	/**
-	 * @param string $phpCode
-	 * @param string $namespace
-	 * @param string $className
-	 * @param string $fqn
-	 * @test
-	 * @dataProvider sampleClasses
-	 */
-	public function extractFullyQualifiedClassNameTests($phpCode, $namespace, $className, $fqn) {
-		$phpAnalyzer = new PhpAnalyzer($phpCode);
-		$this->assertSame($fqn, $phpAnalyzer->extractFullyQualifiedClassName());
-	}
+    /**
+     * @param string $phpCode
+     * @param string $namespace
+     * @param string $className
+     * @param string $fqn
+     * @test
+     * @dataProvider sampleClasses
+     */
+    public function extractFullyQualifiedClassNameTests($phpCode, $namespace, $className, $fqn)
+    {
+        $phpAnalyzer = new PhpAnalyzer($phpCode);
+        $this->assertSame($fqn, $phpAnalyzer->extractFullyQualifiedClassName());
+    }
 }

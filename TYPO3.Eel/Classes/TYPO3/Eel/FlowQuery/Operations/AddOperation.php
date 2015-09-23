@@ -16,36 +16,37 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Add another $flowQuery object to the current one.
  */
-class AddOperation extends AbstractOperation {
+class AddOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'add';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'add';
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the elements to add (as array in index 0)
-	 * @return void
-	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
-		$output = array();
-		foreach ($flowQuery->getContext() as $element) {
-			$output[] = $element;
-		}
-		if (isset($arguments[0])) {
-			if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
-				foreach ($arguments[0] as $element) {
-					$output[] = $element;
-				}
-			} else {
-				$output[] = $arguments[0];
-			}
-		}
-		$flowQuery->setContext($output);
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the elements to add (as array in index 0)
+     * @return void
+     */
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    {
+        $output = array();
+        foreach ($flowQuery->getContext() as $element) {
+            $output[] = $element;
+        }
+        if (isset($arguments[0])) {
+            if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
+                foreach ($arguments[0] as $element) {
+                    $output[] = $element;
+                }
+            } else {
+                $output[] = $arguments[0];
+            }
+        }
+        $flowQuery->setContext($output);
+    }
 }

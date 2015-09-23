@@ -19,29 +19,30 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class LogicalNot extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
+class LogicalNot extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+{
+    /**
+     * @var \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+     */
+    protected $constraint;
 
-	/**
-	 * @var \TYPO3\Flow\Persistence\Generic\Qom\Constraint
-	 */
-	protected $constraint;
+    /**
+     *
+     * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint
+     */
+    public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint)
+    {
+        $this->constraint = $constraint;
+    }
 
-	/**
-	 *
-	 * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint
-	 */
-	public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint) {
-		$this->constraint = $constraint;
-	}
-
-	/**
-	 * Gets the constraint negated by this Not constraint.
-	 *
-	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint; non-null
-	 * @api
-	 */
-	public function getConstraint() {
-		return $this->constraint;
-	}
-
+    /**
+     * Gets the constraint negated by this Not constraint.
+     *
+     * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint; non-null
+     * @api
+     */
+    public function getConstraint()
+    {
+        return $this->constraint;
+    }
 }

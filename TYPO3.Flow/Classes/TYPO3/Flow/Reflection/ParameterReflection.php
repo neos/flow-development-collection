@@ -18,35 +18,36 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class ParameterReflection extends \ReflectionParameter {
+class ParameterReflection extends \ReflectionParameter
+{
+    /**
+     * @var string
+     */
+    protected $parameterClassName;
 
-	/**
-	 * @var string
-	 */
-	protected $parameterClassName;
+    /**
+     * Returns the declaring class
+     *
+     * @return \TYPO3\Flow\Reflection\ClassReflection The declaring class
+     */
+    public function getDeclaringClass()
+    {
+        return new ClassReflection(parent::getDeclaringClass()->getName());
+    }
 
-	/**
-	 * Returns the declaring class
-	 *
-	 * @return \TYPO3\Flow\Reflection\ClassReflection The declaring class
-	 */
-	public function getDeclaringClass() {
-		return new ClassReflection(parent::getDeclaringClass()->getName());
-	}
+    /**
+     * Returns the parameter class
+     *
+     * @return \TYPO3\Flow\Reflection\ClassReflection The parameter class
+     */
+    public function getClass()
+    {
+        try {
+            $class = parent::getClass();
+        } catch (\Exception $exception) {
+            return null;
+        }
 
-	/**
-	 * Returns the parameter class
-	 *
-	 * @return \TYPO3\Flow\Reflection\ClassReflection The parameter class
-	 */
-	public function getClass() {
-		try {
-			$class = parent::getClass();
-		} catch (\Exception $exception) {
-			return NULL;
-		}
-
-		return is_object($class) ? new ClassReflection($class->getName()) : NULL;
-	}
-
+        return is_object($class) ? new ClassReflection($class->getName()) : null;
+    }
 }

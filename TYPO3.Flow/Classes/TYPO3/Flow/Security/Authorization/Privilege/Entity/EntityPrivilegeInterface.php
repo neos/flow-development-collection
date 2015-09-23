@@ -21,19 +21,18 @@ use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
  * This privilege is capable of filtering entities retrieved from
  * the persistence layer. Usually by rewriting SQL queries.
  */
-interface EntityPrivilegeInterface extends PrivilegeInterface {
+interface EntityPrivilegeInterface extends PrivilegeInterface
+{
+    /**
+     * @param $entityType
+     * @return bool
+     */
+    public function matchesEntityType($entityType);
 
-	/**
-	 * @param $entityType
-	 * @return bool
-	 */
-	public function matchesEntityType($entityType);
-
-	/**
-	 * @param ClassMetadata $targetEntity
-	 * @param string $targetTableAlias
-	 * @return string
-	 */
-	public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias);
-
+    /**
+     * @param ClassMetadata $targetEntity
+     * @param string $targetTableAlias
+     * @return string
+     */
+    public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias);
 }

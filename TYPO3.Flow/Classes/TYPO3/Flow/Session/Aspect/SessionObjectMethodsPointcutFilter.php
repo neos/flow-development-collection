@@ -19,78 +19,83 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
+class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+{
+    /**
+     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
+     * @return void
+     */
+    public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * Checks if the specified class and method matches against the filter
+     *
+     * @param string $className Name of the class to check against
+     * @param string $methodName Name of the method to check against
+     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+     * @return boolean TRUE if the class / method match, otherwise FALSE
+     */
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    {
+        if ($methodName === null) {
+            return false;
+        }
 
-	/**
-	 * Checks if the specified class and method matches against the filter
-	 *
-	 * @param string $className Name of the class to check against
-	 * @param string $methodName Name of the method to check against
-	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class / method match, otherwise FALSE
-	 */
-	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($methodName === NULL) {
-			return FALSE;
-		}
+        $objectName = $this->objectManager->getObjectNameByClassName($className);
+        if (empty($objectName)) {
+            return false;
+        }
 
-		$objectName = $this->objectManager->getObjectNameByClassName($className);
-		if (empty($objectName)) {
-			return FALSE;
-		}
+        if ($this->objectManager->getScope($objectName) !== ObjectConfiguration::SCOPE_SESSION) {
+            return false;
+        }
 
-		if ($this->objectManager->getScope($objectName) !== ObjectConfiguration::SCOPE_SESSION) {
-			return FALSE;
-		}
+        if (preg_match('/^__wakeup|__construct|__destruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*$/', $methodName) !== 0) {
+            return false;
+        }
 
-		if (preg_match('/^__wakeup|__construct|__destruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*$/', $methodName) !== 0) {
-			return FALSE;
-		}
+        return true;
+    }
 
-		return TRUE;
-	}
+    /**
+     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     *
+     * @return boolean TRUE if this filter has runtime evaluations
+     */
+    public function hasRuntimeEvaluationsDefinition()
+    {
+        return false;
+    }
 
-	/**
-	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
-	 *
-	 * @return boolean TRUE if this filter has runtime evaluations
-	 */
-	public function hasRuntimeEvaluationsDefinition() {
-		return FALSE;
-	}
+    /**
+     * Returns runtime evaluations for a previously matched pointcut
+     *
+     * @return array Runtime evaluations
+     */
+    public function getRuntimeEvaluationsDefinition()
+    {
+        return array();
+    }
 
-	/**
-	 * Returns runtime evaluations for a previously matched pointcut
-	 *
-	 * @return array Runtime evaluations
-	 */
-	public function getRuntimeEvaluationsDefinition() {
-		return array();
-	}
-
-	/**
-	 * This method is used to optimize the matching process.
-	 *
-	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
-	 */
-	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
-		$sessionClasses = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
-		$sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
-		return $classNameIndex->intersect($sessionClasses);
-	}
+    /**
+     * This method is used to optimize the matching process.
+     *
+     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     */
+    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    {
+        $sessionClasses = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
+        return $classNameIndex->intersect($sessionClasses);
+    }
 }

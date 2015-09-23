@@ -15,14 +15,15 @@ namespace TYPO3\Flow\Tests\Unit\Security\Policy;
  * Testcase for the policy expression parser
  *
  */
-class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
-	 */
-	public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression() {
-		$parser = $this->getMock(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class, array('parseDesignatorMethod'));
-		$parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
-	}
+class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
+     */
+    public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression()
+    {
+        $parser = $this->getMock(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class, array('parseDesignatorMethod'));
+        $parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
+    }
 }

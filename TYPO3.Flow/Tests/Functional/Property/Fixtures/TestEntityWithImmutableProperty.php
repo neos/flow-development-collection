@@ -20,52 +20,58 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\Table(name="property_testentity_immutable")
  */
-class TestEntityWithImmutableProperty {
+class TestEntityWithImmutableProperty
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     *
+     * @var integer
+     */
+    protected $age;
 
-	/**
-	 *
-	 * @var integer
-	 */
-	protected $age;
+    /**
+     *
+     * @var float
+     */
+    protected $averageNumberOfKids;
 
-	/**
-	 *
-	 * @var float
-	 */
-	protected $averageNumberOfKids;
+    /**
+     * @param string $name Sets the immutable name property that has no setter.
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name Sets the immutable name property that has no setter.
-	 */
-	public function __construct($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    public function getAge()
+    {
+        return $this->age;
+    }
 
-	public function getAge() {
-		return $this->age;
-	}
+    public function setAge($age)
+    {
+        $this->age = $age;
+    }
 
-	public function setAge($age) {
-		$this->age = $age;
-	}
+    public function getAverageNumberOfKids()
+    {
+        return $this->averageNumberOfKids;
+    }
 
-	public function getAverageNumberOfKids() {
-		return $this->averageNumberOfKids;
-	}
-
-	public function setAverageNumberOfKids($averageNumberOfKids) {
-		$this->averageNumberOfKids = $averageNumberOfKids;
-	}
+    public function setAverageNumberOfKids($averageNumberOfKids)
+    {
+        $this->averageNumberOfKids = $averageNumberOfKids;
+    }
 }

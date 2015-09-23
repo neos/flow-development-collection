@@ -15,36 +15,39 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  * Functional tests for the Object Manager features
  *
  */
-class ObjectManagerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class ObjectManagerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function ifOnlyOneImplementationExistsGetReturnsTheImplementationByTheSpecifiedInterface()
+    {
+        $objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
+        $objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
 
-	/**
-	 * @test
-	 */
-	public function ifOnlyOneImplementationExistsGetReturnsTheImplementationByTheSpecifiedInterface() {
-		$objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
-		$objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByInterface);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByClassName);
+    }
 
-		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByInterface);
-		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $objectByClassName);
-	}
+    /**
+     * @test
+     */
+    public function prototypeIsTheDefaultScopeIfNothingElseWasDefined()
+    {
+        $instanceA = new \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB();
+        $instanceB = new \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB();
 
-	/**
-	 * @test
-	 */
-	public function prototypeIsTheDefaultScopeIfNothingElseWasDefined() {
-		$instanceA = new \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB();
-		$instanceB = new \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB();
+        $this->assertNotSame($instanceA, $instanceB);
+    }
 
-		$this->assertNotSame($instanceA, $instanceB);
-	}
+    /**
+     * @test
+     */
+    public function interfaceObjectsHaveTheScopeDefinedInTheImplementationClassIfNothingElseWasSpecified()
+    {
+        $objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
+        $objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
 
-	/**
-	 * @test
-	 */
-	public function interfaceObjectsHaveTheScopeDefinedInTheImplementationClassIfNothingElseWasSpecified() {
-		$objectByInterface = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA::class);
-		$objectByClassName = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class);
-
-		$this->assertSame($objectByInterface, $objectByClassName);
-	}
+        $this->assertSame($objectByInterface, $objectByClassName);
+    }
 }

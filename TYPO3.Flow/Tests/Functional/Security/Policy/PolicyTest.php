@@ -14,35 +14,36 @@ namespace TYPO3\Flow\Tests\Functional\Security\Policy;
 /**
  * Testcase for the security policy behavior
  */
-class PolicyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class PolicyTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected $testableSecurityEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
+    /**
+     * @test
+     */
+    public function nonAuthenticatedUsersHaveTheEverybodyAndAnonymousRole()
+    {
+        $hasEverybodyRole = false;
+        $hasAnonymousRole = false;
 
-	/**
-	 * @test
-	 */
-	public function nonAuthenticatedUsersHaveTheEverybodyAndAnonymousRole() {
-		$hasEverybodyRole = FALSE;
-		$hasAnonymousRole = FALSE;
+        foreach ($this->securityContext->getRoles() as $role) {
+            if ((string)$role === 'TYPO3.Flow:Everybody') {
+                $hasEverybodyRole = true;
+            }
+            if ((string)$role === 'TYPO3.Flow:Anonymous') {
+                $hasAnonymousRole = true;
+            }
+        }
 
-		foreach ($this->securityContext->getRoles() as $role) {
-			if ((string)$role === 'TYPO3.Flow:Everybody') {
-				$hasEverybodyRole = TRUE;
-			}
-			if ((string)$role === 'TYPO3.Flow:Anonymous') {
-				$hasAnonymousRole = TRUE;
-			}
-		}
+        $this->assertEquals(2, count($this->securityContext->getRoles()));
 
-		$this->assertEquals(2, count($this->securityContext->getRoles()));
+        $this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Everybody'), 'Everybody - hasRole()');
+        $this->assertTrue($hasEverybodyRole, 'Everybody - getRoles()');
 
-		$this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Everybody'), 'Everybody - hasRole()');
-		$this->assertTrue($hasEverybodyRole, 'Everybody - getRoles()');
-
-		$this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Anonymous'), 'Anonymous - hasRole()');
-		$this->assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
-	}
+        $this->assertTrue($this->securityContext->hasRole('TYPO3.Flow:Anonymous'), 'Anonymous - hasRole()');
+        $this->assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
+    }
 }

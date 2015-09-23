@@ -16,11 +16,10 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Just a Plain Old PHP Object as non-abstract base class for the Aggregate Root "EntityExtendingPlainObject"
  */
-class NonEntity {
-
-	/**
-	 * @var string
-	 */
-	protected $somePropertyOfTheBaseClass;
-
+class NonEntity
+{
+    /**
+     * @var string
+     */
+    protected $somePropertyOfTheBaseClass;
 }

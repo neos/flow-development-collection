@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Exception;
  *
  * @api
  */
-class CircularPointcutReferenceException extends \TYPO3\Flow\Aop\Exception {
-
+class CircularPointcutReferenceException extends \TYPO3\Flow\Aop\Exception
+{
 }

@@ -19,26 +19,28 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @package TYPO3\Flow\Tests\Functional\Persistence\Fixtures
  */
-class CommonObject {
+class CommonObject
+{
+    /**
+     * @var string
+     */
+    protected $foo;
 
-	/**
-	 * @var string
-	 */
-	protected $foo;
+    /**
+     * @param string $foo
+     * @return $this
+     */
+    public function setFoo($foo = null)
+    {
+        $this->foo = $foo;
+        return $this;
+    }
 
-	/**
-	 * @param string $foo
-	 * @return $this
-	 */
-	public function setFoo($foo = NULL) {
-		$this->foo = $foo;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFoo() {
-		return $this->foo;
-	}
+    /**
+     * @return string
+     */
+    public function getFoo()
+    {
+        return $this->foo;
+    }
 }

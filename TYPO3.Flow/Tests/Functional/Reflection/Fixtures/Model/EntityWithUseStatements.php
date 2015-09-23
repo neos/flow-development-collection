@@ -20,45 +20,49 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class EntityWithUseStatements {
+class EntityWithUseStatements
+{
+    /**
+     * @var SubSubEntity
+     * @ORM\OneToOne
+     */
+    protected $subSubEntity;
 
-	/**
-	 * @var SubSubEntity
-	 * @ORM\OneToOne
-	 */
-	protected $subSubEntity;
+    /**
+     * @var PF\SubEntity
+     * @ORM\OneToOne
+     */
+    protected $propertyFromOtherNamespace;
 
-	/**
-	 * @var PF\SubEntity
-	 * @ORM\OneToOne
-	 */
-	protected $propertyFromOtherNamespace;
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity $parameter
+     * @return void
+     */
+    public function fullyQualifiedClassName(SubEntity $parameter)
+    {
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity $parameter
-	 * @return void
-	 */
-	public function fullyQualifiedClassName(SubEntity $parameter) {
-	}
+    /**
+     * @param PF\SubEntity $parameter
+     * @return void
+     */
+    public function aliasedClassName(SubEntity $parameter)
+    {
+    }
 
-	/**
-	 * @param PF\SubEntity $parameter
-	 * @return void
-	 */
-	public function aliasedClassName(SubEntity $parameter) {
-	}
+    /**
+     * @param SubEntity $parameter
+     * @return void
+     */
+    public function relativeClassName(SubEntity $parameter)
+    {
+    }
 
-	/**
-	 * @param SubEntity $parameter
-	 * @return void
-	 */
-	public function relativeClassName(SubEntity $parameter) {
-	}
-
-	/**
-	 * @param float $parameter
-	 * @return void
-	 */
-	public function simpleType($parameter) {
-	}
+    /**
+     * @param float $parameter
+     * @return void
+     */
+    public function simpleType($parameter)
+    {
+    }
 }

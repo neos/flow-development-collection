@@ -20,38 +20,38 @@ use TYPO3\Flow\Property\PropertyMapper;
  *
  * @Flow\Scope("singleton")
  */
-class TypeConverterCommandController extends CommandController {
+class TypeConverterCommandController extends CommandController
+{
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
-	/**
-	 * @Flow\Inject
-	 * @var PropertyMapper
-	 */
-	protected $propertyMapper;
+    /**
+     * Lists all currently active and registered type converters
+     *
+     * All active converters are listed with ordered by priority and grouped by
+     * source type first and target type second.
+     *
+     * @return void
+     */
+    public function listCommand()
+    {
+        foreach ($this->propertyMapper->getTypeConverters() as $sourceType => $targetTypePriorityAndInstance) {
+            $this->outputLine();
+            $this->outputLine('<b>Source type "%s":</b>', array($sourceType));
 
-	/**
-	 * Lists all currently active and registered type converters
-	 *
-	 * All active converters are listed with ordered by priority and grouped by
-	 * source type first and target type second.
-	 *
-	 * @return void
-	 */
-	public function listCommand() {
-		foreach ($this->propertyMapper->getTypeConverters() as $sourceType => $targetTypePriorityAndInstance) {
-			$this->outputLine();
-			$this->outputLine('<b>Source type "%s":</b>', array($sourceType));
+            foreach ($targetTypePriorityAndInstance as $targetType => $priorityAndInstance) {
+                $this->outputFormatted('<b>Target type "%s":</b>', array($targetType), 4);
 
-			foreach ($targetTypePriorityAndInstance as $targetType => $priorityAndInstance) {
-				$this->outputFormatted('<b>Target type "%s":</b>', array($targetType), 4);
-
-				krsort($priorityAndInstance);
-				foreach ($priorityAndInstance as $priority => $instance) {
-					$this->outputFormatted('%3s: %s', array($priority, get_class($instance)), 8);
-				}
-				$this->outputLine();
-			}
-			$this->outputLine();
-		}
-	}
-
+                krsort($priorityAndInstance);
+                foreach ($priorityAndInstance as $priority => $instance) {
+                    $this->outputFormatted('%3s: %s', array($priority, get_class($instance)), 8);
+                }
+                $this->outputLine();
+            }
+            $this->outputLine();
+        }
+    }
 }

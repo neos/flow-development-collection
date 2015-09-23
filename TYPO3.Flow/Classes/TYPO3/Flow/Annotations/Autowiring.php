@@ -18,23 +18,23 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target({"METHOD", "CLASS"})
  */
-final class Autowiring {
+final class Autowiring
+{
+    /**
+     * Whether autowiring is enabled. (Can be given as anonymous argument.)
+     * @var boolean
+     */
+    public $enabled = true;
 
-	/**
-	 * Whether autowiring is enabled. (Can be given as anonymous argument.)
-	 * @var boolean
-	 */
-	public $enabled = TRUE;
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['enabled'])) {
-			$this->enabled = (boolean)$values['enabled'];
-		} elseif (isset($values['value'])) {
-			$this->enabled = (boolean)$values['value'];
-		}
-	}
-
+    /**
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['enabled'])) {
+            $this->enabled = (boolean)$values['enabled'];
+        } elseif (isset($values['value'])) {
+            $this->enabled = (boolean)$values['value'];
+        }
+    }
 }

@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Object\Exception;
  *
  * @api
  */
-class InvalidClassException extends \TYPO3\Flow\Object\Exception {
-
+class InvalidClassException extends \TYPO3\Flow\Object\Exception
+{
 }

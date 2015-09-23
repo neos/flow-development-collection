@@ -19,83 +19,90 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class RestrictableEntity {
+class RestrictableEntity
+{
+    /**
+     * @var boolean
+     */
+    protected $hidden = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $hidden = FALSE;
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var \TYPO3\Flow\Security\Account
+     * @ORM\ManyToOne
+     */
+    protected $ownerAccount;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Account
-	 * @ORM\ManyToOne
-	 */
-	protected $ownerAccount;
+    /**
+     * @var \DateTime
+     * @ORM\Column(nullable=true)
+     */
+    protected $deletedOn;
 
-	/**
-	 * @var \DateTime
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $deletedOn;
+    /**
+     * Constructor
+     *
+     * @param string $name The name of the entity
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $name The name of the entity
-	 */
-	public function __construct($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return boolean Returns TRUE, if this entity is hidden
+     */
+    public function isHidden()
+    {
+        return $this->hidden;
+    }
 
-	/**
-	 * @return boolean Returns TRUE, if this entity is hidden
-	 */
-	public function isHidden() {
-		return $this->hidden;
-	}
+    /**
+     * @param boolean $hidden
+     */
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
+    }
 
-	/**
-	 * @param boolean $hidden
-	 */
-	public function setHidden($hidden) {
-		$this->hidden = $hidden;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @param \TYPO3\Flow\Security\Account $ownerAccount
+     */
+    public function setOwnerAccount($ownerAccount)
+    {
+        $this->ownerAccount = $ownerAccount;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Security\Account $ownerAccount
-	 */
-	public function setOwnerAccount($ownerAccount) {
-		$this->ownerAccount = $ownerAccount;
-	}
+    /**
+     * @return \TYPO3\Flow\Security\Account
+     */
+    public function getOwnerAccount()
+    {
+        return $this->ownerAccount;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Security\Account
-	 */
-	public function getOwnerAccount() {
-		return $this->ownerAccount;
-	}
-
-	public function delete() {
-		$this->deletedOn = new \DateTime();
-	}
-
+    public function delete()
+    {
+        $this->deletedOn = new \DateTime();
+    }
 }

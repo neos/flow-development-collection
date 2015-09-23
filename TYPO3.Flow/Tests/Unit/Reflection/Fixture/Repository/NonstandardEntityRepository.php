@@ -19,11 +19,10 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class NonstandardEntityRepository extends \TYPO3\Flow\Persistence\Repository {
-
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity::class;
-
+class NonstandardEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity::class;
 }

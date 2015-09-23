@@ -17,40 +17,42 @@ use TYPO3\Eel\CompilingEvaluator;
 /**
  * Compiling evaluator test
  */
-class CompilingEvaluatorTest extends AbstractEvaluatorTest {
+class CompilingEvaluatorTest extends AbstractEvaluatorTest
+{
+    /**
+     * @return \TYPO3\Eel\Context
+     */
+    protected function createEvaluator()
+    {
+        return new CompilingEvaluator();
+    }
 
-	/**
-	 * @return \TYPO3\Eel\Context
-	 */
-	protected function createEvaluator() {
-		return new CompilingEvaluator();
-	}
+    /**
+     * @test
+     */
+    public function doubleQuotedStringLiteralVariablesAreEscaped()
+    {
+        $context = new Context('hidden');
+        $this->assertEvaluated('some {$context->unwrap()} string with \'quoted stuff\'', '"some {$context->unwrap()} string with \'quoted stuff\'"', $context);
+    }
 
-	/**
-	 * @test
-	 */
-	public function doubleQuotedStringLiteralVariablesAreEscaped() {
-		$context = new Context('hidden');
-		$this->assertEvaluated('some {$context->unwrap()} string with \'quoted stuff\'', '"some {$context->unwrap()} string with \'quoted stuff\'"', $context);
-	}
+    /**
+     * Assert that the expression is evaluated to the expected result
+     * under the given context. It also ensures that the Eel expression is
+     * recognized using the predefined regular expression.
+     *
+     * @param mixed $expected
+     * @param string $expression
+     * @param \TYPO3\Eel\Context $context
+     */
+    protected function assertEvaluated($expected, $expression, $context)
+    {
+        $evaluator = $this->getAccessibleMock(\TYPO3\Eel\CompilingEvaluator::class, array('dummy'));
+        // note, this is not a public method. We should expect expressions coming in here to be trimmed already.
+        $code = $evaluator->_call('generateEvaluatorCode', trim($expression));
+        $this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');
 
-	/**
-	 * Assert that the expression is evaluated to the expected result
-	 * under the given context. It also ensures that the Eel expression is
-	 * recognized using the predefined regular expression.
-	 *
-	 * @param mixed $expected
-	 * @param string $expression
-	 * @param \TYPO3\Eel\Context $context
-	 */
-	protected function assertEvaluated($expected, $expression, $context) {
-		$evaluator = $this->getAccessibleMock(\TYPO3\Eel\CompilingEvaluator::class, array('dummy'));
-		// note, this is not a public method. We should expect expressions coming in here to be trimmed already.
-		$code = $evaluator->_call('generateEvaluatorCode', trim($expression));
-		$this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');
-
-		$wrappedExpression = '${' . $expression . '}';
-		$this->assertSame(1, preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
-	}
-
+        $wrappedExpression = '${' . $expression . '}';
+        $this->assertSame(1, preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
+    }
 }

@@ -48,27 +48,28 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfAccessViewHelper extends AbstractConditionViewHelper {
+class IfAccessViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
-
-	/**
-	 * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
-	 *
-	 * @param string $privilegeTarget The Privilege target identifier
-	 * @param array $parameters optional privilege target parameters to be evaluated
-	 * @return string the rendered then/else child nodes depending on the access
-	 * @api
-	 */
-	public function render($privilegeTarget, array $parameters = array()) {
-		if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+    /**
+     * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
+     *
+     * @param string $privilegeTarget The Privilege target identifier
+     * @param array $parameters optional privilege target parameters to be evaluated
+     * @return string the rendered then/else child nodes depending on the access
+     * @api
+     */
+    public function render($privilegeTarget, array $parameters = array())
+    {
+        if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

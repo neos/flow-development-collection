@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidPrivilegeTypeException extends \TYPO3\Flow\Security\Exception {
-
+class InvalidPrivilegeTypeException extends \TYPO3\Flow\Security\Exception
+{
 }

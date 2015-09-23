@@ -61,32 +61,33 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class ResultsViewHelper extends AbstractViewHelper {
+class ResultsViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * Iterates through selected errors of the request.
+     *
+     * @param string $for The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
+     * @param string $as The name of the variable to store the current error
+     * @return string Rendered string
+     * @api
+     */
+    public function render($for = '', $as = 'validationResults')
+    {
+        $request = $this->controllerContext->getRequest();
+        /** @var $validationResults Result */
+        $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
+        if ($validationResults !== null && $for !== '') {
+            $validationResults = $validationResults->forProperty($for);
+        }
+        $this->templateVariableContainer->add($as, $validationResults);
+        $output = $this->renderChildren();
+        $this->templateVariableContainer->remove($as);
 
-	/**
-	 * Iterates through selected errors of the request.
-	 *
-	 * @param string $for The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
-	 * @param string $as The name of the variable to store the current error
-	 * @return string Rendered string
-	 * @api
-	 */
-	public function render($for = '', $as = 'validationResults') {
-		$request = $this->controllerContext->getRequest();
-		/** @var $validationResults Result */
-		$validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-		if ($validationResults !== NULL && $for !== '') {
-			$validationResults = $validationResults->forProperty($for);
-		}
-		$this->templateVariableContainer->add($as, $validationResults);
-		$output = $this->renderChildren();
-		$this->templateVariableContainer->remove($as);
-
-		return $output;
-	}
+        return $output;
+    }
 }

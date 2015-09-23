@@ -28,42 +28,43 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
  *
  * @api
  */
-class HiddenViewHelper extends AbstractFormFieldViewHelper {
+class HiddenViewHelper extends AbstractFormFieldViewHelper
+{
+    /**
+     * @var string
+     */
+    protected $tagName = 'input';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'input';
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+    }
 
-	/**
-	 * Initialize the arguments.
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-	}
+    /**
+     * Renders the hidden field.
+     *
+     * @return string
+     * @api
+     */
+    public function render()
+    {
+        $name = $this->getName();
+        $this->registerFieldNameForFormTokenGeneration($name);
 
-	/**
-	 * Renders the hidden field.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function render() {
-		$name = $this->getName();
-		$this->registerFieldNameForFormTokenGeneration($name);
+        $this->tag->addAttribute('type', 'hidden');
+        $this->tag->addAttribute('name', $name);
+        $this->tag->addAttribute('value', $this->getValueAttribute(true));
 
-		$this->tag->addAttribute('type', 'hidden');
-		$this->tag->addAttribute('name', $name);
-		$this->tag->addAttribute('value', $this->getValueAttribute(TRUE));
+        $this->addAdditionalIdentityPropertiesIfNeeded();
+        $this->setErrorClassAttribute();
 
-		$this->addAdditionalIdentityPropertiesIfNeeded();
-		$this->setErrorClassAttribute();
-
-		return $this->tag->render();
-	}
-
+        return $this->tag->render();
+    }
 }

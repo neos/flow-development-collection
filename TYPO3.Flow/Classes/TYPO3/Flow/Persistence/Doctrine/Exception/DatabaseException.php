@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Doctrine\Exception;
  *
  * @api
  */
-class DatabaseException extends \TYPO3\Flow\Persistence\Exception {
+class DatabaseException extends \TYPO3\Flow\Persistence\Exception
+{
 }

@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class NoInterceptorFoundException extends \TYPO3\Flow\Security\Exception {
+class NoInterceptorFoundException extends \TYPO3\Flow\Security\Exception
+{
 }

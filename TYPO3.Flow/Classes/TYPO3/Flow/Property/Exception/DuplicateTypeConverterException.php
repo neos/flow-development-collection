@@ -15,6 +15,6 @@ namespace TYPO3\Flow\Property\Exception;
  * A "Duplicate Type Converter" Exception
  *
  */
-class DuplicateTypeConverterException extends \TYPO3\Flow\Property\Exception {
-
+class DuplicateTypeConverterException extends \TYPO3\Flow\Property\Exception
+{
 }

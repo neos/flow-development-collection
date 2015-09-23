@@ -18,6 +18,6 @@ use TYPO3\Flow\Persistence\Repository;
  * A repository for the test entities
  * @Flow\Scope("singleton")
  */
-class ExtendedTypesEntityRepository extends Repository {
-
+class ExtendedTypesEntityRepository extends Repository
+{
 }

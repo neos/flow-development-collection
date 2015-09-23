@@ -14,15 +14,15 @@ namespace TYPO3\Flow\Tests\Functional\Utility;
 /**
  * Functional test for the Now class
  */
-class NowTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function nowReturnsAUniqueTimestamp() {
-		$now = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
-		$alsoNow = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
-		$this->assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
-	}
-
+class NowTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function nowReturnsAUniqueTimestamp()
+    {
+        $now = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
+        $alsoNow = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
+        $this->assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
+    }
 }

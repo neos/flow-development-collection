@@ -30,20 +30,21 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @deprecated since 2.1.0 this ViewHelper is no longer required for regular links and forms
  */
-class BaseViewHelper extends AbstractViewHelper {
+class BaseViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
-
-	/**
-	 * Render the "Base" tag by outputting $httpRequest->getBaseUri()
-	 *
-	 * @return string "base"-Tag.
-	 * @api
-	 */
-	public function render() {
-		return '<base href="' . htmlspecialchars($this->controllerContext->getRequest()->getHttpRequest()->getBaseUri()) . '" />';
-	}
+    /**
+     * Render the "Base" tag by outputting $httpRequest->getBaseUri()
+     *
+     * @return string "base"-Tag.
+     * @api
+     */
+    public function render()
+    {
+        return '<base href="' . htmlspecialchars($this->controllerContext->getRequest()->getHttpRequest()->getBaseUri()) . '" />';
+    }
 }

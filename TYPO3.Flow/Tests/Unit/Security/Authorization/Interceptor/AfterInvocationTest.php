@@ -15,19 +15,20 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization\Interceptor;
  * Testcase for the policy enforcement interceptor
  *
  */
-class AfterInvocationTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AfterInvocationTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function invokeReturnsTheResultPreviouslySetBySetResultIfTheMethodIsNotIntercepted()
+    {
+        $mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
+        $mockAfterInvocationManager = $this->getMock(\TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface::class);
 
-	/**
-	 * @test
-	 */
-	public function invokeReturnsTheResultPreviouslySetBySetResultIfTheMethodIsNotIntercepted() {
-		$mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
-		$mockAfterInvocationManager = $this->getMock(\TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface::class);
+        $theResult = new \ArrayObject(array('some' => 'stuff'));
 
-		$theResult = new \ArrayObject(array('some' => 'stuff'));
-
-		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\AfterInvocation($mockSecurityContext, $mockAfterInvocationManager);
-		$interceptor->setResult($theResult);
-		$this->assertSame($theResult, $interceptor->invoke());
-	}
+        $interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\AfterInvocation($mockSecurityContext, $mockAfterInvocationManager);
+        $interceptor->setResult($theResult);
+        $this->assertSame($theResult, $interceptor->invoke());
+    }
 }

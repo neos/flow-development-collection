@@ -16,34 +16,35 @@ use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
  * A type converter to create behat scenario table parameters. This is
  * needed when processing behat scenarios/steps in an isolated process.
  */
-class TableNodeConverter extends AbstractTypeConverter {
+class TableNodeConverter extends AbstractTypeConverter
+{
+    /**
+     * @var array<string>
+     */
+    protected $sourceTypes = array('string');
 
-	/**
-	 * @var array<string>
-	 */
-	protected $sourceTypes = array('string');
+    /**
+     * @var string
+     */
+    protected $targetType = \TYPO3\Flow\Tests\Functional\Command\TableNode::class;
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = \TYPO3\Flow\Tests\Functional\Command\TableNode::class;
+    /**
+     * @var integer
+     */
+    protected $priority = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * Actually convert from $source to $targetType, by doing a typecast.
-	 *
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return float|\TYPO3\Flow\Error\Error
-	 * @api
-	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return new TableNode(json_decode($source, TRUE));
-	}
+    /**
+     * Actually convert from $source to $targetType, by doing a typecast.
+     *
+     * @param mixed $source
+     * @param string $targetType
+     * @param array $convertedChildProperties
+     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @return float|\TYPO3\Flow\Error\Error
+     * @api
+     */
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    {
+        return new TableNode(json_decode($source, true));
+    }
 }

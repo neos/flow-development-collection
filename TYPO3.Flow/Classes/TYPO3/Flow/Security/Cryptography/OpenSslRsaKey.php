@@ -16,44 +16,47 @@ namespace TYPO3\Flow\Security\Cryptography;
  * An RSA key
  *
  */
-class OpenSslRsaKey {
+class OpenSslRsaKey
+{
+    /**
+     * @var string
+     */
+    protected $modulus;
 
-	/**
-	 * @var string
-	 */
-	protected $modulus;
+    /**
+     * @var string
+     */
+    protected $keyString;
 
-	/**
-	 * @var string
-	 */
-	protected $keyString;
+    /**
+     * Constructor
+     *
+     * @param string $modulus The HEX modulus
+     * @param string $keyString The private key string
+     */
+    public function __construct($modulus, $keyString)
+    {
+        $this->modulus = $modulus;
+        $this->keyString = $keyString;
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $modulus The HEX modulus
-	 * @param string $keyString The private key string
-	 */
-	public function __construct($modulus, $keyString) {
-		$this->modulus = $modulus;
-		$this->keyString = $keyString;
-	}
+    /**
+     * Returns the modulus in HEX representation
+     *
+     * @return string The modulus
+     */
+    public function getModulus()
+    {
+        return $this->modulus;
+    }
 
-	/**
-	 * Returns the modulus in HEX representation
-	 *
-	 * @return string The modulus
-	 */
-	public function getModulus() {
-		return $this->modulus;
-	}
-
-	/**
-	 * Returns the key string
-	 *
-	 * @return string The key string
-	 */
-	public function getKeyString() {
-		return $this->keyString;
-	}
+    /**
+     * Returns the key string
+     *
+     * @return string The key string
+     */
+    public function getKeyString()
+    {
+        return $this->keyString;
+    }
 }

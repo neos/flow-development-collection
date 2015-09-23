@@ -17,21 +17,21 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("CLASS")
  */
-final class Scope {
+final class Scope
+{
+    /**
+     * The scope of an object: prototype, singleton, session. (Usually given as anonymous argument.)
+     * @var string
+     */
+    public $value = 'prototype';
 
-	/**
-	 * The scope of an object: prototype, singleton, session. (Usually given as anonymous argument.)
-	 * @var string
-	 */
-	public $value = 'prototype';
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['value'])) {
-			$this->value = $values['value'];
-		}
-	}
-
+    /**
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['value'])) {
+            $this->value = $values['value'];
+        }
+    }
 }

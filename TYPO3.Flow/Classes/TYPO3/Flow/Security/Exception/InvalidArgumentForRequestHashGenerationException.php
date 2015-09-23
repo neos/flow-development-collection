@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidArgumentForRequestHashGenerationException extends \TYPO3\Flow\Security\Exception {
+class InvalidArgumentForRequestHashGenerationException extends \TYPO3\Flow\Security\Exception
+{
 }

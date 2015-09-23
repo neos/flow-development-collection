@@ -17,22 +17,25 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
  * Testcase for the Inflector
  *
  */
-class InflectorTest extends \TYPO3\Flow\Tests\UnitTestCase {
-	/**
-	 * @test
-	 */
-	public function humanizeCamelCaseConvertsCamelCaseToSpacesAndUppercasesFirstWord() {
-		$inflector = new \TYPO3\Kickstart\Utility\Inflector();
-		$humanized = $inflector->humanizeCamelCase('BlogAuthor');
-		$this->assertEquals('Blog author', $humanized);
-	}
+class InflectorTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function humanizeCamelCaseConvertsCamelCaseToSpacesAndUppercasesFirstWord()
+    {
+        $inflector = new \TYPO3\Kickstart\Utility\Inflector();
+        $humanized = $inflector->humanizeCamelCase('BlogAuthor');
+        $this->assertEquals('Blog author', $humanized);
+    }
 
-	/**
-	 * @test
-	 */
-	public function pluralizePluralizesWords() {
-		$inflector = new \TYPO3\Kickstart\Utility\Inflector();
-		$this->assertEquals('boxes', $inflector->pluralize('box'));
-		$this->assertEquals('foos', $inflector->pluralize('foo'));
-	}
+    /**
+     * @test
+     */
+    public function pluralizePluralizesWords()
+    {
+        $inflector = new \TYPO3\Kickstart\Utility\Inflector();
+        $this->assertEquals('boxes', $inflector->pluralize('box'));
+        $this->assertEquals('foos', $inflector->pluralize('foo'));
+    }
 }

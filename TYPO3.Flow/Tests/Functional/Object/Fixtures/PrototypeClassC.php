@@ -14,25 +14,26 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassC {
+class PrototypeClassC
+{
+    /**
+     * @var string
+     */
+    public $settingsArgument;
 
-	/**
-	 * @var string
-	 */
-	public $settingsArgument;
+    /**
+     * @param string $settingsArgument
+     */
+    public function __construct($settingsArgument)
+    {
+        $this->settingsArgument = $settingsArgument;
+    }
 
-	/**
-	 * @param string $settingsArgument
-	 */
-	public function __construct($settingsArgument) {
-		$this->settingsArgument = $settingsArgument;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSettingsArgument() {
-		return $this->settingsArgument;
-	}
-
+    /**
+     * @return string
+     */
+    public function getSettingsArgument()
+    {
+        return $this->settingsArgument;
+    }
 }

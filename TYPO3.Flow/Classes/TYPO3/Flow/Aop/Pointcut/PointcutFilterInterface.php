@@ -18,39 +18,39 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-interface PointcutFilterInterface {
+interface PointcutFilterInterface
+{
+    /**
+     * Checks if the specified class and method matches against the filter
+     *
+     * @param string $className Name of the class to check against
+     * @param string $methodName Name of the method to check against
+     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+     * @return boolean TRUE if the class / method match, otherwise FALSE
+     */
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 
-	/**
-	 * Checks if the specified class and method matches against the filter
-	 *
-	 * @param string $className Name of the class to check against
-	 * @param string $methodName Name of the method to check against
-	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class / method match, otherwise FALSE
-	 */
-	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+    /**
+     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     *
+     * @return boolean TRUE if this filter has runtime evaluations
+     */
+    public function hasRuntimeEvaluationsDefinition();
 
-	/**
-	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
-	 *
-	 * @return boolean TRUE if this filter has runtime evaluations
-	 */
-	public function hasRuntimeEvaluationsDefinition();
-
-	/**
-	 * Returns runtime evaluations for a previously matched pointcut
-	 *
-	 * @return array Runtime evaluations
-	 */
-	public function getRuntimeEvaluationsDefinition();
+    /**
+     * Returns runtime evaluations for a previously matched pointcut
+     *
+     * @return array Runtime evaluations
+     */
+    public function getRuntimeEvaluationsDefinition();
 
 
-	/**
-	 * This method is used to optimize the matching process.
-	 *
-	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex An index of class names
-	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex The filtered result, with pointcuts possibly covered by this filter
-	 */
-	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex);
+    /**
+     * This method is used to optimize the matching process.
+     *
+     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex An index of class names
+     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex The filtered result, with pointcuts possibly covered by this filter
+     */
+    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex);
 }

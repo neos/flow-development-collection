@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Http\Client;
  *
  * @api
  */
-class CurlEngineException extends \TYPO3\Flow\Http\Exception {
-
+class CurlEngineException extends \TYPO3\Flow\Http\Exception
+{
 }

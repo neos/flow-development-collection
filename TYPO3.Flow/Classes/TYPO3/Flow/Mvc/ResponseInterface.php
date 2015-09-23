@@ -16,39 +16,39 @@ namespace TYPO3\Flow\Mvc;
  *
  * @api
  */
-interface ResponseInterface {
+interface ResponseInterface
+{
+    /**
+     * Overrides and sets the content of the response
+     *
+     * @param string $content The response content
+     * @return void
+     * @api
+     */
+    public function setContent($content);
 
-	/**
-	 * Overrides and sets the content of the response
-	 *
-	 * @param string $content The response content
-	 * @return void
-	 * @api
-	 */
-	public function setContent($content);
+    /**
+     * Appends content to the already existing content.
+     *
+     * @param string $content More response content
+     * @return void
+     * @api
+     */
+    public function appendContent($content);
 
-	/**
-	 * Appends content to the already existing content.
-	 *
-	 * @param string $content More response content
-	 * @return void
-	 * @api
-	 */
-	public function appendContent($content);
+    /**
+     * Returns the response content without sending it.
+     *
+     * @return string The response content
+     * @api
+     */
+    public function getContent();
 
-	/**
-	 * Returns the response content without sending it.
-	 *
-	 * @return string The response content
-	 * @api
-	 */
-	public function getContent();
-
-	/**
-	 * Sends the response
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function send();
+    /**
+     * Sends the response
+     *
+     * @return void
+     * @api
+     */
+    public function send();
 }

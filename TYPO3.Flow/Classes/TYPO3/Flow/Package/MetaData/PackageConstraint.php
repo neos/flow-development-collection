@@ -16,13 +16,14 @@ namespace TYPO3\Flow\Package\MetaData;
  * Package constraint meta model
  *
  */
-class PackageConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint {
-
-	/**
-	 * @return string The constraint scope
-	 * @see \TYPO3\Flow\Package\MetaData\Constraint::getConstraintScope()
-	 */
-	public function getConstraintScope() {
-		return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;
-	}
+class PackageConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint
+{
+    /**
+     * @return string The constraint scope
+     * @see \TYPO3\Flow\Package\MetaData\Constraint::getConstraintScope()
+     */
+    public function getConstraintScope()
+    {
+        return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;
+    }
 }

@@ -16,6 +16,6 @@ use TYPO3\Fluid\Core\Widget;
 /**
  * An exception if the widget controller has been changed
  */
-class InvalidControllerException extends Widget\Exception {
+class InvalidControllerException extends Widget\Exception
+{
 }
-?>

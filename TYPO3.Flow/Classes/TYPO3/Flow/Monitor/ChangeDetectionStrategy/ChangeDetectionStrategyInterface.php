@@ -18,35 +18,34 @@ use TYPO3\Flow\Monitor\FileMonitor;
  *
  * @api
  */
-interface ChangeDetectionStrategyInterface {
+interface ChangeDetectionStrategyInterface
+{
+    const STATUS_UNCHANGED = 0;
+    const STATUS_CREATED = 1;
+    const STATUS_CHANGED = 2;
+    const STATUS_DELETED = 3;
 
-	const STATUS_UNCHANGED = 0;
-	const STATUS_CREATED = 1;
-	const STATUS_CHANGED = 2;
-	const STATUS_DELETED = 3;
+    /**
+     * Checks if the specified file has changed
+     *
+     * @param string $pathAndFilename
+     * @return integer One of the STATUS_* constants
+     * @api
+     */
+    public function getFileStatus($pathAndFilename);
 
-	/**
-	 * Checks if the specified file has changed
-	 *
-	 * @param string $pathAndFilename
-	 * @return integer One of the STATUS_* constants
-	 * @api
-	 */
-	public function getFileStatus($pathAndFilename);
+    /**
+     * Creates a link to the file monitor using the strategy
+     *
+     * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor
+     * @return mixed
+     */
+    public function setFileMonitor(FileMonitor $fileMonitor);
 
-	/**
-	 * Creates a link to the file monitor using the strategy
-	 *
-	 * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor
-	 * @return mixed
-	 */
-	public function setFileMonitor(FileMonitor $fileMonitor);
-
-	/**
-	 * Commit any necessary data, like the current modification time.
-	 *
-	 * @return void
-	 */
-	public function shutdownObject();
-
+    /**
+     * Commit any necessary data, like the current modification time.
+     *
+     * @return void
+     */
+    public function shutdownObject();
 }

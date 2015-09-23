@@ -19,14 +19,13 @@ use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
  * by the ObjectAccessorNode on trying to evaluate them.
  *
  */
-interface RenderingContextAwareInterface {
-
-	/**
-	 * Sets the current rendering context
-	 *
-	 * @param RenderingContextInterface $renderingContext
-	 * @return void
-	 */
-	public function setRenderingContext(RenderingContextInterface $renderingContext);
-
+interface RenderingContextAwareInterface
+{
+    /**
+     * Sets the current rendering context
+     *
+     * @param RenderingContextInterface $renderingContext
+     * @return void
+     */
+    public function setRenderingContext(RenderingContextInterface $renderingContext);
 }

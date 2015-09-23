@@ -24,11 +24,11 @@ $rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/
 
 $mediaTypesAndFileExtensions = array();
 
-foreach(explode("\n", $rawList) as $line) {
-	preg_match_all('/^([a-z][^\s]+)\s+(.+)$/', $line, $matches, PREG_SET_ORDER);
-	if (count($matches) === 1) {
-		$mediaTypesAndFileExtensions[$matches[0][1]] = preg_split('/\s+/', $matches[0][2]);
-	}
+foreach (explode("\n", $rawList) as $line) {
+    preg_match_all('/^([a-z][^\s]+)\s+(.+)$/', $line, $matches, PREG_SET_ORDER);
+    if (count($matches) === 1) {
+        $mediaTypesAndFileExtensions[$matches[0][1]] = preg_split('/\s+/', $matches[0][2]);
+    }
 }
 
 ksort($mediaTypesAndFileExtensions);
@@ -37,17 +37,17 @@ $mediaTypesToFileExtensionsCode = '';
 $fileExtensionsAndMediaType = array();
 
 foreach ($mediaTypesAndFileExtensions as $mediaType => $fileExtensions) {
-	$mediaTypesToFileExtensionsCode .= "\t\t'$mediaType' => array('" . implode("', '", $fileExtensions) . "'),\n";
-	foreach ($fileExtensions as $fileExtension) {
-		$fileExtensionsAndMediaType[$fileExtension] = $mediaType;
-	}
+    $mediaTypesToFileExtensionsCode .= "\t\t'$mediaType' => array('" . implode("', '", $fileExtensions) . "'),\n";
+    foreach ($fileExtensions as $fileExtension) {
+        $fileExtensionsAndMediaType[$fileExtension] = $mediaType;
+    }
 }
 
 ksort($fileExtensionsAndMediaType);
 
 $fileExtensionsToMediaTypeCode = '';
 foreach ($fileExtensionsAndMediaType as $fileExtension => $mediaType) {
-	$fileExtensionsToMediaTypeCode .= "\t\t'$fileExtension' => '$mediaType',\n";
+    $fileExtensionsToMediaTypeCode .= "\t\t'$fileExtension' => '$mediaType',\n";
 }
 
 $classCode = file_get_contents($mediaTypesClassPathAndFilename);

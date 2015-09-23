@@ -18,35 +18,36 @@ use TYPO3\Flow\Annotations as Flow;
 
  * If arguments are given, these are used to filter the elements before counting.
  */
-class CountOperation extends AbstractOperation {
+class CountOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'count';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'count';
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments filter arguments for this operation
-	 * @return void|integer with the number of elements
-	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
-		if (count($arguments) == 0) {
-			return count($flowQuery->getContext());
-		} else {
-			$flowQuery->pushOperation('count', array());
-			$flowQuery->pushOperation('filter', $arguments);
-		}
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments filter arguments for this operation
+     * @return void|integer with the number of elements
+     */
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    {
+        if (count($arguments) == 0) {
+            return count($flowQuery->getContext());
+        } else {
+            $flowQuery->pushOperation('count', array());
+            $flowQuery->pushOperation('filter', $arguments);
+        }
+    }
 }

@@ -20,4 +20,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("CLASS")
  */
-final class Aspect {}
+final class Aspect
+{
+}

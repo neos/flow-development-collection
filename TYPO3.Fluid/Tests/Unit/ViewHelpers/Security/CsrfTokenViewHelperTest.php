@@ -16,19 +16,20 @@ use TYPO3\Flow\Tests\UnitTestCase;
 /**
  * Test case for the CsrfTokenViewHelper
  */
-class CsrfTokenViewHelperTest extends UnitTestCase {
+class CsrfTokenViewHelperTest extends UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext()
+    {
+        $mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
 
-	/**
-	 * @test
-	 */
-	public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext() {
-		$mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
-		$mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Security\CsrfTokenViewHelper::class, array('dummy'));
+        $viewHelper->_set('securityContext', $mockSecurityContext);
 
-		$viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Security\CsrfTokenViewHelper::class, array('dummy'));
-		$viewHelper->_set('securityContext', $mockSecurityContext);
-
-		$actualResult = $viewHelper->render();
-		$this->assertEquals('TheCsrfToken', $actualResult);
-	}
+        $actualResult = $viewHelper->render();
+        $this->assertEquals('TheCsrfToken', $actualResult);
+    }
 }

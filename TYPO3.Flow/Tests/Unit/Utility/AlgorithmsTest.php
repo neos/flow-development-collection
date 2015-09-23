@@ -17,66 +17,74 @@ use TYPO3\Flow\Utility\Algorithms;
  * Testcase for the Utility Algorithms class
  *
  */
-class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function generateUUIDGeneratesUuidLikeString()
+    {
+        $this->assertRegExp('/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', Algorithms::generateUUID());
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateUUIDGeneratesUuidLikeString() {
-		$this->assertRegExp('/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', Algorithms::generateUUID());
-	}
+    /**
+     * @test
+     */
+    public function generateUUIDGeneratesLowercaseString()
+    {
+        $uuid = Algorithms::generateUUID();
+        $this->assertSame(strtolower($uuid), $uuid);
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateUUIDGeneratesLowercaseString() {
-		$uuid = Algorithms::generateUUID();
-		$this->assertSame(strtolower($uuid), $uuid);
-	}
+    /**
+     * @test
+     */
+    public function generateUUIDGeneratesAtLeastNotTheSameUuidOnSubsequentCalls()
+    {
+        $this->assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateUUIDGeneratesAtLeastNotTheSameUuidOnSubsequentCalls() {
-		$this->assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
-	}
+    /**
+     * @test
+     */
+    public function generateRandomBytesGeneratesRandomBytes()
+    {
+        $this->assertEquals(20, strlen(Algorithms::generateRandomBytes(20)));
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateRandomBytesGeneratesRandomBytes() {
-		$this->assertEquals(20, strlen(Algorithms::generateRandomBytes(20)));
-	}
+    /**
+     * @test
+     */
+    public function generateRandomTokenGeneratesRandomToken()
+    {
+        $this->assertRegExp('/^[[:xdigit:]]{64}$/', Algorithms::generateRandomToken(32));
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateRandomTokenGeneratesRandomToken() {
-		$this->assertRegExp('/^[[:xdigit:]]{64}$/', Algorithms::generateRandomToken(32));
-	}
+    /**
+     * @test
+     */
+    public function generateRandomStringGeneratesAlnumCharactersPerDefault()
+    {
+        $this->assertRegExp('/^[a-z0-9]{64}$/i', Algorithms::generateRandomString(64));
+    }
 
-	/**
-	 * @test
-	 */
-	public function generateRandomStringGeneratesAlnumCharactersPerDefault() {
-		$this->assertRegExp('/^[a-z0-9]{64}$/i', Algorithms::generateRandomString(64));
-	}
+    /**
+     * signature: $regularExpression, $charactersClass
+     */
+    public function randomStringCharactersDataProvider()
+    {
+        return array(
+            array('/^[#~+]{64}$/', '#~+'),
+            array('/^[a-f2-4%]{64}$/', 'abcdef234%'),
+        );
+    }
 
-	/**
-	 * signature: $regularExpression, $charactersClass
-	 */
-	public function randomStringCharactersDataProvider() {
-		return array(
-			array('/^[#~+]{64}$/', '#~+'),
-			array('/^[a-f2-4%]{64}$/', 'abcdef234%'),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider randomStringCharactersDataProvider
-	 */
-	public function generateRandomStringGeneratesOnlyDefinedCharactersRange($regularExpression, $charactersClass) {
-		$this->assertRegExp($regularExpression, Algorithms::generateRandomString(64, $charactersClass));
-	}
+    /**
+     * @test
+     * @dataProvider randomStringCharactersDataProvider
+     */
+    public function generateRandomStringGeneratesOnlyDefinedCharactersRange($regularExpression, $charactersClass)
+    {
+        $this->assertRegExp($regularExpression, Algorithms::generateRandomString(64, $charactersClass));
+    }
 }

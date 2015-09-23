@@ -17,54 +17,56 @@ use TYPO3\Flow\Tests\UnitTestCase;
 /**
  * Testcase for for TYPO3\Flow\Security\Policy\Role
  */
-class RoleTest extends UnitTestCase {
+class RoleTest extends UnitTestCase
+{
+    /**
+     * data provider
+     *
+     * @return array
+     */
+    public function roleIdentifiersAndPackageKeysAndNames()
+    {
+        return array(
+            array('TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'),
+            array('Acme.Demo:Test', 'Test', 'Acme.Demo'),
+            array('Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub')
+        );
+    }
 
-	/**
-	 * data provider
-	 *
-	 * @return array
-	 */
-	public function roleIdentifiersAndPackageKeysAndNames() {
-		return array(
-			array('TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'),
-			array('Acme.Demo:Test', 'Test', 'Acme.Demo'),
-			array('Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub')
-		);
-	}
+    /**
+     * @dataProvider roleIdentifiersAndPackageKeysAndNames
+     * @test
+     */
+    public function setNameAndPackageKeyWorks($roleIdentifier, $name, $packageKey)
+    {
+        $role = new Role($roleIdentifier);
 
-	/**
-	 * @dataProvider roleIdentifiersAndPackageKeysAndNames
-	 * @test
-	 */
-	public function setNameAndPackageKeyWorks($roleIdentifier, $name, $packageKey) {
-		$role = new Role($roleIdentifier);
+        $this->assertEquals($name, $role->getName());
+        $this->assertEquals($packageKey, $role->getPackageKey());
+    }
 
-		$this->assertEquals($name, $role->getName());
-		$this->assertEquals($packageKey, $role->getPackageKey());
-	}
+    /**
+     * @test
+     */
+    public function setParentRolesMakesSureThatParentRolesDontContainDuplicates()
+    {
+        /** @var Role|\PHPUnit_Framework_MockObject_MockObject $role */
+        $role = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Test'));
 
-	/**
-	 * @test
-	 */
-	public function setParentRolesMakesSureThatParentRolesDontContainDuplicates() {
-		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $role */
-		$role = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Test'));
+        /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole1 */
+        $parentRole1 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent1'));
+        /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole2 */
+        $parentRole2 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent2'));
 
-		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole1 */
-		$parentRole1 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent1'));
-		/** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole2 */
-		$parentRole2 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent2'));
+        $parentRole2->addParentRole($parentRole1);
+        $role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));
 
-		$parentRole2->addParentRole($parentRole1);
-		$role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));
+        $expectedParentRoles = array(
+            'Acme.Demo:Parent1' => $parentRole1,
+            'Acme.Demo:Parent2' => $parentRole2
+        );
 
-		$expectedParentRoles = array(
-			'Acme.Demo:Parent1' => $parentRole1,
-			'Acme.Demo:Parent2' => $parentRole2
-		);
-
-		$this->assertEquals(2, count($role->getParentRoles()));
-		$this->assertEquals($expectedParentRoles, $role->getParentRoles());
-	}
-
+        $this->assertEquals(2, count($role->getParentRoles()));
+        $this->assertEquals($expectedParentRoles, $role->getParentRoles());
+    }
 }

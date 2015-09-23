@@ -16,7 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Interface for a resource processing filter
  */
-interface FilterInterface {
-
+interface FilterInterface
+{
 }
-

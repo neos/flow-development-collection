@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Reflection\Exception;
  *
  * @api
  */
-class PropertyNotAccessibleException extends \TYPO3\Flow\Reflection\Exception {
+class PropertyNotAccessibleException extends \TYPO3\Flow\Reflection\Exception
+{
 }

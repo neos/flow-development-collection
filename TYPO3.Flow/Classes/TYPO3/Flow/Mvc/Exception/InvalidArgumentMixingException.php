@@ -14,5 +14,6 @@ namespace TYPO3\Flow\Mvc\Exception;
 /**
  * An "Invalid Argument Mixing" exception
  */
-class InvalidArgumentMixingException extends \TYPO3\Flow\Mvc\Exception {
+class InvalidArgumentMixingException extends \TYPO3\Flow\Mvc\Exception
+{
 }

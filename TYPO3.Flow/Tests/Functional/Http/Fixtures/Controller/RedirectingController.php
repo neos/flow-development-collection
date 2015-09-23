@@ -13,26 +13,29 @@ namespace TYPO3\Flow\Tests\Functional\Http\Fixtures\Controller;
 
 use TYPO3\Flow\Mvc\Controller\ActionController;
 
-class RedirectingController extends ActionController {
+class RedirectingController extends ActionController
+{
+    /**
+     * @return void
+     */
+    public function fromHereAction()
+    {
+        $this->redirect('toHere');
+    }
 
-	/**
-	 * @return void
-	 */
-	public function fromHereAction() {
-		$this->redirect('toHere');
-	}
+    /**
+     * @return void
+     */
+    public function toHereAction()
+    {
+        $this->redirect('toThere');
+    }
 
-	/**
-	 * @return void
-	 */
-	public function toHereAction() {
-		$this->redirect('toThere');
-	}
-
-	/**
-	 * @return string
-	 */
-	public function toThereAction() {
-		return 'arrived.';
-	}
+    /**
+     * @return string
+     */
+    public function toThereAction()
+    {
+        return 'arrived.';
+    }
 }

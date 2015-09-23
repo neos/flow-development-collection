@@ -14,43 +14,43 @@ namespace TYPO3\Flow\Tests\Functional\Http;
 /**
  * Functional tests for the HTTP Request Handler
  */
-class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @test
+     */
+    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController()
+    {
+        $foundRoute = false;
+        foreach ($this->router->getRoutes() as $route) {
+            if ($route->getName() === 'Flow :: Functional Test: HTTP - FooController') {
+                $foundRoute = true;
+            }
+        }
 
-	/**
-	 * @test
-	 */
-	public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController() {
-		$foundRoute = FALSE;
-		foreach ($this->router->getRoutes() as $route) {
-			if ($route->getName() === 'Flow :: Functional Test: HTTP - FooController') {
-				$foundRoute = TRUE;
-			}
-		}
+        if (!$foundRoute) {
+            $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
+            return;
+        }
 
-		if (!$foundRoute) {
-			$this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-			return;
-		}
+        $_SERVER = array(
+            'HTTP_HOST' => 'localhost',
+            'REQUEST_METHOD' => 'GET',
+            'QUERY_STRING' => '',
+            'REQUEST_URI' => '/typo3/flow/test/http/foo',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+        );
 
-		$_SERVER = array (
-			'HTTP_HOST' => 'localhost',
-			'REQUEST_METHOD' => 'GET',
-			'QUERY_STRING' => '',
-			'REQUEST_URI' => '/typo3/flow/test/http/foo',
-			'SCRIPT_NAME' => '/index.php',
-			'PHP_SELF' => '/index.php',
-		);
+        $requestHandler = $this->getAccessibleMock(\TYPO3\Flow\Http\RequestHandler::class, array('boot'), array(self::$bootstrap));
+        $requestHandler->exit = function () {};
+        $requestHandler->handleRequest();
 
-		$requestHandler = $this->getAccessibleMock(\TYPO3\Flow\Http\RequestHandler::class, array('boot'), array(self::$bootstrap));
-		$requestHandler->exit = function() {};
-		$requestHandler->handleRequest();
-
-		$this->expectOutputString('FooController responded');
-	}
-
+        $this->expectOutputString('FooController responded');
+    }
 }

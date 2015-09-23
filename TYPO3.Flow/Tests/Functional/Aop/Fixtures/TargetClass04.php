@@ -19,6 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TargetClass04 {
-
+class TargetClass04
+{
 }

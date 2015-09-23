@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Cache\Exception;
  *
  * @api
  */
-class InvalidDataException extends \TYPO3\Flow\Cache\Exception {
-
+class InvalidDataException extends \TYPO3\Flow\Cache\Exception
+{
 }

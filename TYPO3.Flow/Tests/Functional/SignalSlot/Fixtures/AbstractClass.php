@@ -18,20 +18,21 @@ use TYPO3\Flow\Annotations as Flow;
  * An abstract class with a signal
  *
  */
-abstract class AbstractClass {
+abstract class AbstractClass
+{
+    /**
+     * @return void
+     */
+    public function triggerSomethingSignalFromAbstractClass()
+    {
+        $this->emitSomething();
+    }
 
-	/**
-	 * @return void
-	 */
-	public function triggerSomethingSignalFromAbstractClass() {
-		$this->emitSomething();
-	}
-
-	/**
-	 * @Flow\Signal
-	 * @return void
-	 */
-	public function emitSomething() {
-	}
-
+    /**
+     * @Flow\Signal
+     * @return void
+     */
+    public function emitSomething()
+    {
+    }
 }

@@ -14,6 +14,6 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 /**
  * An interface which is used in the factory tests (Dependency Injection)
  */
-interface PrototypeClassAishInterface {
-
+interface PrototypeClassAishInterface
+{
 }

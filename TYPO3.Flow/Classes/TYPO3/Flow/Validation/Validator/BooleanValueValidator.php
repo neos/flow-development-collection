@@ -19,25 +19,26 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("prototype")
  */
-class BooleanValueValidator extends AbstractValidator {
+class BooleanValueValidator extends AbstractValidator
+{
+    /**
+     * @var array
+     */
+    protected $supportedOptions = array(
+        'expectedValue' => array(true, 'The expected boolean value', 'boolean')
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $supportedOptions = array(
-		'expectedValue' => array(TRUE, 'The expected boolean value', 'boolean')
-	);
-
-	/**
-	 * Checks if the given value is a specific boolean value.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @api
-	 */
-	protected function isValid($value) {
-		if ($value !== $this->options['expectedValue']) {
-			$this->addError('The given value is expected to be %1$s.', 1361044943, array($this->options['expectedValue'] ? 'TRUE' : 'FALSE'));
-		}
-	}
+    /**
+     * Checks if the given value is a specific boolean value.
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @api
+     */
+    protected function isValid($value)
+    {
+        if ($value !== $this->options['expectedValue']) {
+            $this->addError('The given value is expected to be %1$s.', 1361044943, array($this->options['expectedValue'] ? 'TRUE' : 'FALSE'));
+        }
+    }
 }

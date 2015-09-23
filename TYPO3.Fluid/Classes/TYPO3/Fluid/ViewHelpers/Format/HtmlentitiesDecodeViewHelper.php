@@ -38,52 +38,54 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class HtmlentitiesDecodeViewHelper extends AbstractViewHelper implements CompilableInterface {
+class HtmlentitiesDecodeViewHelper extends AbstractViewHelper implements CompilableInterface
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeChildren = FALSE;
+    /**
+     * Disable the output escaping interceptor so that the result is not htmlspecialchar'd
+     *
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * Disable the output escaping interceptor so that the result is not htmlspecialchar'd
-	 *
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
+     *
+     * @param string $value string to format
+     * @param boolean $keepQuotes if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+     * @param string $encoding
+     * @return string the altered string
+     * @see http://www.php.net/html_entity_decode
+     * @api
+     */
+    public function render($value = null, $keepQuotes = false, $encoding = 'UTF-8')
+    {
+        return self::renderStatic(array('value' => $value, 'keepQuotes' => $keepQuotes, 'encoding' => $encoding), $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
 
-	/**
-	 * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
-	 *
-	 * @param string $value string to format
-	 * @param boolean $keepQuotes if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-	 * @param string $encoding
-	 * @return string the altered string
-	 * @see http://www.php.net/html_entity_decode
-	 * @api
-	 */
-	public function render($value = NULL, $keepQuotes = FALSE, $encoding = 'UTF-8') {
-		return self::renderStatic(array('value' => $value, 'keepQuotes' => $keepQuotes, 'encoding' => $encoding), $this->buildRenderChildrenClosure(), $this->renderingContext);
-	}
+    /**
+     * Applies html_entity_decode() on the specified value.
+     *
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @return string
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        if ($value === null) {
+            $value = $renderChildrenClosure();
+        }
+        if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            return $value;
+        }
+        $flags = $arguments['keepQuotes'] ? ENT_NOQUOTES : ENT_COMPAT;
 
-	/**
-	 * Applies html_entity_decode() on the specified value.
-	 *
-	 * @param array $arguments
-	 * @param \Closure $renderChildrenClosure
-	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
-	 * @return string
-	 */
-	static public function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext) {
-		$value = $arguments['value'];
-		if ($value === NULL) {
-			$value = $renderChildrenClosure();
-		}
-		if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
-			return $value;
-		}
-		$flags = $arguments['keepQuotes'] ? ENT_NOQUOTES : ENT_COMPAT;
-
-		return html_entity_decode($value, $flags, $arguments['encoding']);
-	}
+        return html_entity_decode($value, $flags, $arguments['encoding']);
+    }
 }

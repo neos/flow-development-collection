@@ -18,6 +18,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * This is intentionally NOT an entity.
  */
-class SubSubSubNotEntity extends SubSubEntity {
-
+class SubSubSubNotEntity extends SubSubEntity
+{
 }

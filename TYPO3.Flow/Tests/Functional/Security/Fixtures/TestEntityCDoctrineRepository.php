@@ -17,20 +17,20 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * @Flow\Scope("singleton")
  */
-class TestEntityCDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository {
+class TestEntityCDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class;
 
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class;
-
-	/**
-	 * Returns all TestEntityC objects from persistence
-	 * @return array
-	 */
-	public function findAllWithDql() {
-		$query = $this->createDqlQuery('SELECT n FROM TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC n');
-		return $query->getResult();
-	}
-
+    /**
+     * Returns all TestEntityC objects from persistence
+     * @return array
+     */
+    public function findAllWithDql()
+    {
+        $query = $this->createDqlQuery('SELECT n FROM TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC n');
+        return $query->getResult();
+    }
 }

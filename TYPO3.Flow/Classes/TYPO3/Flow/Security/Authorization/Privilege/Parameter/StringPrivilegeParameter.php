@@ -16,27 +16,30 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A privilege parameter of type string
  */
-class StringPrivilegeParameter extends AbstractPrivilegeParameter {
+class StringPrivilegeParameter extends AbstractPrivilegeParameter
+{
+    /**
+     * @return array
+     */
+    public function getPossibleValues()
+    {
+        return null;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getPossibleValues() {
-		return NULL;
-	}
+    /**
+     * @param mixed $value
+     * @return boolean
+     */
+    public function validate($value)
+    {
+        return is_string($value);
+    }
 
-	/**
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	public function validate($value) {
-		return is_string($value);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getType() {
-		return 'String';
-	}
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return 'String';
+    }
 }

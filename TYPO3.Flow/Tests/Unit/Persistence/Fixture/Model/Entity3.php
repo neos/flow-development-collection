@@ -18,33 +18,34 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class Entity3 implements \TYPO3\Flow\Aop\ProxyInterface {
+class Entity3 implements \TYPO3\Flow\Aop\ProxyInterface
+{
+    /**
+     * Just a normal string
+     *
+     * @var string
+     */
+    public $someString;
 
-	/**
-	 * Just a normal string
-	 *
-	 * @var string
-	 */
-	public $someString;
+    /**
+     * @var integer
+     */
+    public $someInteger;
 
-	/**
-	 * @var integer
-	 */
-	public $someInteger;
+    /**
+     * Invokes the joinpoint - calls the target methods.
+     *
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
+     * @return mixed Result of the target (ie. original) method
+     */
+    public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+    }
 
-	/**
-	 * Invokes the joinpoint - calls the target methods.
-	 *
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
-	 * @return mixed Result of the target (ie. original) method
-	 */
-	public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-
-	}
-
-	/**
-	 * A stub to satisfy the Flow Proxy Interface
-	 */
-	public function __wakeup() {}
-
+    /**
+     * A stub to satisfy the Flow Proxy Interface
+     */
+    public function __wakeup()
+    {
+    }
 }

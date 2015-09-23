@@ -15,19 +15,20 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * Testcase for the controller object name request pattern
  *
  */
-class ControllerObjectNameTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ControllerObjectNameTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function requestMatchingBasicallyWorks()
+    {
+        $request = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array('getControllerObjectName'), array(), '', false);
+        $request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\Security\Controller\LoginController'));
 
-	/**
-	 * @test
-	 */
-	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\Security\Controller\LoginController'));
+        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\ControllerObjectName();
+        $requestPattern->setPattern('TYPO3\Flow\Security\.*');
 
-		$requestPattern = new \TYPO3\Flow\Security\RequestPattern\ControllerObjectName();
-		$requestPattern->setPattern('TYPO3\Flow\Security\.*');
-
-		$this->assertTrue($requestPattern->matchRequest($request));
-		$this->assertEquals('TYPO3\Flow\Security\.*', $requestPattern->getPattern());
-	}
+        $this->assertTrue($requestPattern->matchRequest($request));
+        $this->assertEquals('TYPO3\Flow\Security\.*', $requestPattern->getPattern());
+    }
 }

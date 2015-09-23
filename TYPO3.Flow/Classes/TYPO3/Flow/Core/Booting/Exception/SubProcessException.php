@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Core\Booting\Exception;
  *
  * @api
  */
-class SubProcessException extends \TYPO3\Flow\Exception {
-
+class SubProcessException extends \TYPO3\Flow\Exception
+{
 }

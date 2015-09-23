@@ -18,81 +18,86 @@ use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
  *
  * @api
  */
-class CacheEntryIterator implements \Iterator {
+class CacheEntryIterator implements \Iterator
+{
+    /**
+     * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
+     */
+    protected $frontend;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
-	 */
-	protected $frontend;
+    /**
+     * @var \TYPO3\Flow\Cache\Backend\IterableBackendInterface
+     */
+    protected $backend;
 
-	/**
-	 * @var \TYPO3\Flow\Cache\Backend\IterableBackendInterface
-	 */
-	protected $backend;
+    /**
+     * Constructs this Iterator
+     *
+     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $frontend Frontend of the cache to iterate over
+     * @param \TYPO3\Flow\Cache\Backend\IterableBackendInterface $backend Backend of the cache
+     * @param integer $chunkSize Determines the number of entries fetched by the backend at once (for future use)
+     */
+    public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend, $chunkSize = null)
+    {
+        $this->frontend = $frontend;
+        $this->backend = $backend;
+        $this->backend->rewind();
+    }
 
-	/**
-	 * Constructs this Iterator
-	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $frontend Frontend of the cache to iterate over
-	 * @param \TYPO3\Flow\Cache\Backend\IterableBackendInterface $backend Backend of the cache
-	 * @param integer $chunkSize Determines the number of entries fetched by the backend at once (for future use)
-	 */
-	public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend, $chunkSize = NULL) {
-		$this->frontend = $frontend;
-		$this->backend = $backend;
-		$this->backend->rewind();
-	}
+    /**
+     * Returns the data of the current cache entry pointed to by the cache entry
+     * iterator.
+     *
+     * @return mixed
+     * @api
+     */
+    public function current()
+    {
+        return $this->frontend->get($this->backend->key());
+    }
 
-	/**
-	 * Returns the data of the current cache entry pointed to by the cache entry
-	 * iterator.
-	 *
-	 * @return mixed
-	 * @api
-	 */
-	public function current() {
-		return $this->frontend->get($this->backend->key());
-	}
+    /**
+     * Move forward to the next cache entry
+     *
+     * @return void
+     * @api
+     */
+    public function next()
+    {
+        $this->backend->next();
+    }
 
-	/**
-	 * Move forward to the next cache entry
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function next() {
-		$this->backend->next();
-	}
+    /**
+     * Returns the identifier of the current cache entry pointed to by the cache
+     * entry iterator.
+     *
+     * @return string
+     * @api
+     */
+    public function key()
+    {
+        return $this->backend->key();
+    }
 
-	/**
-	 * Returns the identifier of the current cache entry pointed to by the cache
-	 * entry iterator.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function key() {
-		return $this->backend->key();
-	}
+    /**
+     * Checks if current position of the cache entry iterator is valid
+     *
+     * @return boolean TRUE if the current element of the iterator is valid, otherwise FALSE
+     * @api
+     */
+    public function valid()
+    {
+        return $this->backend->valid();
+    }
 
-	/**
-	 * Checks if current position of the cache entry iterator is valid
-	 *
-	 * @return boolean TRUE if the current element of the iterator is valid, otherwise FALSE
-	 * @api
-	 */
-	public function valid() {
-		return $this->backend->valid();
-	}
-
-	/**
-	 * Rewind the cache entry iterator to the first element
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function rewind() {
-		$this->backend->rewind();
-	}
-
+    /**
+     * Rewind the cache entry iterator to the first element
+     *
+     * @return void
+     * @api
+     */
+    public function rewind()
+    {
+        $this->backend->rewind();
+    }
 }

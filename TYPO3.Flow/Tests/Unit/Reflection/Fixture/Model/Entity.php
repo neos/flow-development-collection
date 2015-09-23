@@ -18,71 +18,72 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class Entity {
+class Entity
+{
+    /**
+     * An identity property
+     *
+     * @var string
+     * @Flow\Identity
+     */
+    protected $someIdentifier;
 
-	/**
-	 * An identity property
-	 *
-	 * @var string
-	 * @Flow\Identity
-	 */
-	protected $someIdentifier;
+    /**
+     * Just a normal string
+     *
+     * @var string
+     */
+    protected $someString;
 
-	/**
-	 * Just a normal string
-	 *
-	 * @var string
-	 */
-	protected $someString;
+    /**
+     * @var integer
+     */
+    protected $someInteger;
 
-	/**
-	 * @var integer
-	 */
-	protected $someInteger;
+    /**
+     * @var float
+     */
+    protected $someFloat;
 
-	/**
-	 * @var float
-	 */
-	protected $someFloat;
+    /**
+     * @var \DateTime
+     * @Flow\Identity
+     */
+    protected $someDate;
 
-	/**
-	 * @var \DateTime
-	 * @Flow\Identity
-	 */
-	protected $someDate;
+    /**
+     * @var \SplObjectStorage
+     * @Flow\Lazy
+     */
+    protected $someSplObjectStorage;
 
-	/**
-	 * @var \SplObjectStorage
-	 * @Flow\Lazy
-	 */
-	protected $someSplObjectStorage;
+    /**
+     * A transient string
+     *
+     * @var string
+     * @Flow\Transient
+     */
+    protected $someTransientString;
 
-	/**
-	 * A transient string
-	 *
-	 * @var string
-	 * @Flow\Transient
-	 */
-	protected $someTransientString;
+    /**
+     * @var boolean
+     */
+    protected $someBoolean;
 
-	/**
-	 * @var boolean
-	 */
-	protected $someBoolean;
+    /**
+     * Just an empty constructor
+     *
+     */
+    public function __construct()
+    {
+    }
 
-	/**
-	 * Just an empty constructor
-	 *
-	 */
-	public function __construct() {
-	}
-
-	/**
-	 * Just a dummy method
-	 *
-	 * @return void
-	 */
-	public function someDummyMethod() {
-	}
-
+    /**
+     * Just a dummy method
+     *
+     * @return void
+     */
+    public function someDummyMethod()
+    {
+    }
 }

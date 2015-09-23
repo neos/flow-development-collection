@@ -20,23 +20,23 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("CLASS")
  */
-final class Proxy {
+final class Proxy
+{
+    /**
+     * Whether proxy building for the target is disabled. (Can be given as anonymous argument.)
+     * @var boolean
+     */
+    public $enabled = true;
 
-	/**
-	 * Whether proxy building for the target is disabled. (Can be given as anonymous argument.)
-	 * @var boolean
-	 */
-	public $enabled = TRUE;
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['enabled'])) {
-			$this->enabled = (boolean)$values['enabled'];
-		} elseif (isset($values['value'])) {
-			$this->enabled = (boolean)$values['value'];
-		}
-	}
-
+    /**
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['enabled'])) {
+            $this->enabled = (boolean)$values['enabled'];
+        } elseif (isset($values['value'])) {
+            $this->enabled = (boolean)$values['value'];
+        }
+    }
 }

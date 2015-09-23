@@ -20,26 +20,27 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class User {
+class User
+{
+    /**
+     * @var string
+     * @Flow\Validate(type="EmailAddress")
+     */
+    protected $emailAddress;
 
-	/**
-	 * @var string
-	 * @Flow\Validate(type="EmailAddress")
-	 */
-	protected $emailAddress;
+    /**
+     * @return string
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getEmailAddress() {
-		return $this->emailAddress;
-	}
-
-	/**
-	 * @param string $email
-	 */
-	public function setEmailAddress($email) {
-		$this->emailAddress = $email;
-	}
-
+    /**
+     * @param string $email
+     */
+    public function setEmailAddress($email)
+    {
+        $this->emailAddress = $email;
+    }
 }

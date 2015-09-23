@@ -16,46 +16,49 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * An object argument with validation
  */
-class TestObjectArgument {
+class TestObjectArgument
+{
+    /**
+     * @var string
+     * @Flow\Validate(type="NotEmpty")
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 * @Flow\Validate(type="NotEmpty")
-	 */
-	protected $name;
+    /**
+     * @var string
+     * @Flow\Validate(type="EmailAddress",validationGroups={"Controller","Default","validatedGroup"})
+     */
+    protected $emailAddress;
 
-	/**
-	 * @var string
-	 * @Flow\Validate(type="EmailAddress",validationGroups={"Controller","Default","validatedGroup"})
-	 */
-	protected $emailAddress;
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return string
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getEmailAddress() {
-		return $this->emailAddress;
-	}
-
-	/**
-	 * @param string $emailAddress
-	 */
-	public function setEmailAddress($emailAddress) {
-		$this->emailAddress = $emailAddress;
-	}
-
+    /**
+     * @param string $emailAddress
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
+    }
 }

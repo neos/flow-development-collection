@@ -20,45 +20,48 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @Flow\Entity
  */
-class RelatedIndexEntity {
+class RelatedIndexEntity
+{
+    /**
+     * @var string
+     */
+    protected $sorting;
 
-	/**
-	 * @var string
-	 */
-	protected $sorting;
+    /**
+     * @var EntityWithIndexedRelation
+     * @ORM\ManyToOne
+     */
+    protected $entityWithIndexedRelation;
 
-	/**
-	 * @var EntityWithIndexedRelation
-	 * @ORM\ManyToOne
-	 */
-	protected $entityWithIndexedRelation;
+    /**
+     * @return string
+     */
+    public function getSorting()
+    {
+        return $this->sorting;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getSorting() {
-		return $this->sorting;
-	}
+    /**
+     * @param string $sorting
+     */
+    public function setSorting($sorting)
+    {
+        $this->sorting = $sorting;
+    }
 
-	/**
-	 * @param string $sorting
-	 */
-	public function setSorting($sorting) {
-		$this->sorting = $sorting;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation $entityWithIndexedRelation
+     */
+    public function setEntityWithIndexedRelation($entityWithIndexedRelation)
+    {
+        $this->entityWithIndexedRelation = $entityWithIndexedRelation;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation $entityWithIndexedRelation
-	 */
-	public function setEntityWithIndexedRelation($entityWithIndexedRelation) {
-		$this->entityWithIndexedRelation = $entityWithIndexedRelation;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation
-	 */
-	public function getEntityWithIndexedRelation() {
-		return $this->entityWithIndexedRelation;
-	}
-
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation
+     */
+    public function getEntityWithIndexedRelation()
+    {
+        return $this->entityWithIndexedRelation;
+    }
 }

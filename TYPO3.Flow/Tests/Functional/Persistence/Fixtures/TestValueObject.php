@@ -20,17 +20,18 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\ValueObject
  * @ORM\Table(name="persistence_testvalueobject")
  */
-class TestValueObject {
+class TestValueObject
+{
+    /**
+     * @var string
+     */
+    protected $value;
 
-	/**
-	 * @var string
-	 */
-	protected $value;
-
-	/**
-	 * @param string $value The string value of this value object
-	 */
-	public function __construct($value) {
-		$this->value = $value;
-	}
+    /**
+     * @param string $value The string value of this value object
+     */
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
 }

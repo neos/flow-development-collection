@@ -19,45 +19,49 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntityD {
+class TestEntityD
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @ORM\OneToMany(mappedBy="relatedEntityD")
+     */
+    protected $relatedEntityC;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
-	 * @ORM\OneToMany(mappedBy="relatedEntityD")
-	 */
-	protected $relatedEntityC;
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @ORM\ManyToOne(inversedBy="oneToManyToRelatedEntityD")
+     */
+    protected $manyToOneToRelatedEntityC;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
-	 * @ORM\ManyToOne(inversedBy="oneToManyToRelatedEntityD")
-	 */
-	protected $manyToOneToRelatedEntityC;
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $oneToManyToRelatedEntityC
+     */
+    public function setOneToManyToRelatedEntityC($oneToManyToRelatedEntityC)
+    {
+        $this->oneToManyToRelatedEntityC = $oneToManyToRelatedEntityC;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $oneToManyToRelatedEntityC
-	 */
-	public function setOneToManyToRelatedEntityC($oneToManyToRelatedEntityC) {
-		$this->oneToManyToRelatedEntityC = $oneToManyToRelatedEntityC;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     */
+    public function getOneToManyToRelatedEntityC()
+    {
+        return $this->oneToManyToRelatedEntityC;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
-	 */
-	public function getOneToManyToRelatedEntityC() {
-		return $this->oneToManyToRelatedEntityC;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $relatedEntityC
+     */
+    public function setRelatedEntityC($relatedEntityC)
+    {
+        $this->relatedEntityC = $relatedEntityC;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $relatedEntityC
-	 */
-	public function setRelatedEntityC($relatedEntityC) {
-		$this->relatedEntityC = $relatedEntityC;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
-	 */
-	public function getRelatedEntityC() {
-		return $this->relatedEntityC;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     */
+    public function getRelatedEntityC()
+    {
+        return $this->relatedEntityC;
+    }
 }

@@ -13,7 +13,6 @@ namespace TYPO3\Fluid\ViewHelpers\Uri;
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-
 /**
  * Email uri view helper.
  * Currently the specified email is simply prepended by "mailto:" but we might add spam protection.
@@ -29,14 +28,15 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class EmailViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param string $email The email address to be turned into a mailto uri.
-	 * @return string Rendered email uri
-	 * @api
-	 */
-	public function render($email) {
-		return 'mailto:' . $email;
-	}
+class EmailViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param string $email The email address to be turned into a mailto uri.
+     * @return string Rendered email uri
+     * @api
+     */
+    public function render($email)
+    {
+        return 'mailto:' . $email;
+    }
 }

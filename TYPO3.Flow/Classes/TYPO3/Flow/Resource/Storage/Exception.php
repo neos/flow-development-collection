@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Resource\Storage;
  *
  * @api
  */
-class Exception extends \TYPO3\Flow\Resource\Exception {
+class Exception extends \TYPO3\Flow\Resource\Exception
+{
 }

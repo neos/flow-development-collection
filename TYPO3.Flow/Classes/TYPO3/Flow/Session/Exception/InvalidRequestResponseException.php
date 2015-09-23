@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Session\Exception;
  *
  * @api
  */
-class InvalidRequestResponseException extends \TYPO3\Flow\Session\Exception {
+class InvalidRequestResponseException extends \TYPO3\Flow\Session\Exception
+{
 }

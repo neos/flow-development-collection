@@ -33,145 +33,149 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-class FormatResolver {
+class FormatResolver
+{
+    /**
+     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @var \TYPO3\Flow\I18n\Service
+     */
+    protected $localizationService;
 
-	/**
-	 * @var \TYPO3\Flow\I18n\Service
-	 */
-	protected $localizationService;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Reflection\ReflectionService
+     */
+    protected $reflectionService;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
+    /**
+     * Array of concrete formatters used by this class.
+     *
+     * @var array<\TYPO3\Flow\I18n\Formatter\FormatterInterface>
+     */
+    protected $formatters;
 
-	/**
-	 * Array of concrete formatters used by this class.
-	 *
-	 * @var array<\TYPO3\Flow\I18n\Formatter\FormatterInterface>
-	 */
-	protected $formatters;
+    /**
+     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * @param \TYPO3\Flow\I18n\Service $localizationService
+     * @return void
+     */
+    public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService)
+    {
+        $this->localizationService = $localizationService;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\I18n\Service $localizationService
-	 * @return void
-	 */
-	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
-		$this->localizationService = $localizationService;
-	}
+    /**
+     * Replaces all placeholders in text with corresponding values.
+     *
+     * A placeholder is a group of elements separated with comma. First element
+     * is required and defines index of value to insert (numeration starts from
+     * 0, and is directly used to access element from $values array). Second
+     * element is a name of formatter to use. It's optional, and if not given,
+     * value will be simply string-casted. Remaining elements are formatter-
+     * specific and they are directly passed to the formatter class.
+     *
+     * @param string $textWithPlaceholders String message with placeholder(s)
+     * @param array $arguments An array of values to replace placeholders with
+     * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
+     * @return string The $text with placeholders resolved
+     * @throws \TYPO3\Flow\I18n\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
+     * @throws \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException When trying to format nonexistent value
+     * @api
+     */
+    public function resolvePlaceholders($textWithPlaceholders, array $arguments, \TYPO3\Flow\I18n\Locale $locale = null)
+    {
+        if ($locale === null) {
+            $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
+        }
 
-	/**
-	 * Replaces all placeholders in text with corresponding values.
-	 *
-	 * A placeholder is a group of elements separated with comma. First element
-	 * is required and defines index of value to insert (numeration starts from
-	 * 0, and is directly used to access element from $values array). Second
-	 * element is a name of formatter to use. It's optional, and if not given,
-	 * value will be simply string-casted. Remaining elements are formatter-
-	 * specific and they are directly passed to the formatter class.
-	 *
-	 * @param string $textWithPlaceholders String message with placeholder(s)
-	 * @param array $arguments An array of values to replace placeholders with
-	 * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
-	 * @return string The $text with placeholders resolved
-	 * @throws \TYPO3\Flow\I18n\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
-	 * @throws \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException When trying to format nonexistent value
-	 * @api
-	 */
-	public function resolvePlaceholders($textWithPlaceholders, array $arguments, \TYPO3\Flow\I18n\Locale $locale = NULL) {
-		if ($locale === NULL) {
-			$locale = $this->localizationService->getConfiguration()->getDefaultLocale();
-		}
+        while (($startOfPlaceholder = strpos($textWithPlaceholders, '{')) !== false) {
+            $endOfPlaceholder = strpos($textWithPlaceholders, '}');
+            $startOfNextPlaceholder = strpos($textWithPlaceholders, '{', $startOfPlaceholder + 1);
 
-		while (($startOfPlaceholder = strpos($textWithPlaceholders, '{')) !== FALSE) {
-			$endOfPlaceholder = strpos($textWithPlaceholders, '}');
-			$startOfNextPlaceholder = strpos($textWithPlaceholders, '{', $startOfPlaceholder + 1);
+            if ($endOfPlaceholder === false || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== false && $startOfNextPlaceholder < $endOfPlaceholder)) {
+                // There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
+                throw new \TYPO3\Flow\I18n\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
+            }
 
-			if ($endOfPlaceholder === FALSE || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== FALSE && $startOfNextPlaceholder < $endOfPlaceholder)) {
-				// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
-				throw new \TYPO3\Flow\I18n\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
-			}
+            $contentBetweenBrackets = substr($textWithPlaceholders, $startOfPlaceholder + 1, $endOfPlaceholder - $startOfPlaceholder - 1);
+            $placeholderElements = explode(',', str_replace(' ', '', $contentBetweenBrackets));
 
-			$contentBetweenBrackets = substr($textWithPlaceholders, $startOfPlaceholder + 1, $endOfPlaceholder - $startOfPlaceholder - 1);
-			$placeholderElements = explode(',', str_replace(' ', '', $contentBetweenBrackets));
+            $valueIndex = $placeholderElements[0];
+            if (!array_key_exists($valueIndex, $arguments)) {
+                throw new \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException('Placeholder "' . $valueIndex . '" was not provided, make sure you provide values for every placeholder.', 1278057791);
+            }
 
-			$valueIndex = $placeholderElements[0];
-			if (!array_key_exists($valueIndex, $arguments)) {
-				throw new \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException('Placeholder "' . $valueIndex . '" was not provided, make sure you provide values for every placeholder.', 1278057791);
-			}
+            if (isset($placeholderElements[1])) {
+                $formatterName = $placeholderElements[1];
+                $formatter = $this->getFormatter($formatterName);
+                $formattedPlaceholder = $formatter->format($arguments[$valueIndex], $locale, array_slice($placeholderElements, 2));
+            } else {
+                // No formatter defined, just string-cast the value
+                $formattedPlaceholder = (string)($arguments[$valueIndex]);
+            }
 
-			if (isset($placeholderElements[1])) {
-				$formatterName = $placeholderElements[1];
-				$formatter = $this->getFormatter($formatterName);
-				$formattedPlaceholder = $formatter->format($arguments[$valueIndex], $locale, array_slice($placeholderElements, 2));
-			} else {
-				// No formatter defined, just string-cast the value
-				$formattedPlaceholder = (string)($arguments[$valueIndex]);
-			}
+            $textWithPlaceholders = str_replace('{' . $contentBetweenBrackets . '}', $formattedPlaceholder, $textWithPlaceholders);
+        }
 
-			$textWithPlaceholders = str_replace('{' . $contentBetweenBrackets . '}', $formattedPlaceholder, $textWithPlaceholders);
-		}
+        return $textWithPlaceholders;
+    }
 
-		return $textWithPlaceholders;
-	}
+    /**
+     * Returns instance of concrete formatter.
+     *
+     * The type provided has to be either a name of existing class placed in
+     * \TYPO3\Flow\I18n\Formatter namespace or a fully qualified class name;
+     * in both cases implementing this' package's FormatterInterface.
+     * For example, when $formatterName is 'number',
+     * the \TYPO3\Flow\I18n\Formatter\NumberFormatter class has to exist; when
+     * $formatterName is 'Acme\Foobar\I18nFormatter\SampleFormatter', this class
+     * must exist and implement TYPO3\Flow\I18n\Formatter\FormatterInterface.
+     *
+     * Throws exception if there is no formatter for name given or one could be
+     * retrieved but does not satisfy the FormatterInterface.
+     *
+     * @param string $formatterType Either one of the built-in formatters or fully qualified formatter class name
+     * @return \TYPO3\Flow\I18n\Formatter\FormatterInterface The concrete formatter class
+     * @throws \TYPO3\Flow\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
+     * @throws \TYPO3\Flow\I18n\Exception\InvalidFormatterException When formatter for a name given does not exist
+     */
+    protected function getFormatter($formatterType)
+    {
+        $foundFormatter = false;
+        $formatterType = ltrim($formatterType, '\\');
 
-	/**
-	 * Returns instance of concrete formatter.
-	 *
-	 * The type provided has to be either a name of existing class placed in
-	 * \TYPO3\Flow\I18n\Formatter namespace or a fully qualified class name;
-	 * in both cases implementing this' package's FormatterInterface.
-	 * For example, when $formatterName is 'number',
-	 * the \TYPO3\Flow\I18n\Formatter\NumberFormatter class has to exist; when
-	 * $formatterName is 'Acme\Foobar\I18nFormatter\SampleFormatter', this class
-	 * must exist and implement TYPO3\Flow\I18n\Formatter\FormatterInterface.
-	 *
-	 * Throws exception if there is no formatter for name given or one could be
-	 * retrieved but does not satisfy the FormatterInterface.
-	 *
-	 * @param string $formatterType Either one of the built-in formatters or fully qualified formatter class name
-	 * @return \TYPO3\Flow\I18n\Formatter\FormatterInterface The concrete formatter class
-	 * @throws \TYPO3\Flow\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
-	 * @throws \TYPO3\Flow\I18n\Exception\InvalidFormatterException When formatter for a name given does not exist
-	 */
-	protected function getFormatter($formatterType) {
-		$foundFormatter = FALSE;
-		$formatterType = ltrim($formatterType, '\\');
+        if (isset($this->formatters[$formatterType])) {
+            $foundFormatter = $this->formatters[$formatterType];
+        }
 
-		if (isset($this->formatters[$formatterType])) {
-			$foundFormatter = $this->formatters[$formatterType];
-		}
+        if ($foundFormatter === false) {
+            if ($this->objectManager->isRegistered($formatterType)) {
+                $possibleClassName = $formatterType;
+            } else {
+                $possibleClassName = sprintf('TYPO3\Flow\I18n\Formatter\%sFormatter', ucfirst($formatterType));
+                if (!$this->objectManager->isRegistered($possibleClassName)) {
+                    throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
+                }
+            }
+            if (!$this->reflectionService->isClassImplementationOf($possibleClassName, \TYPO3\Flow\I18n\Formatter\FormatterInterface::class)) {
+                throw new \TYPO3\Flow\I18n\Exception\InvalidFormatterException('The resolved internationalization formatter class name "' . $possibleClassName . '" does not implement "TYPO3\Flow\I18n\Formatter\FormatterInterface" as required.', 1358162557);
+            }
+            $foundFormatter = $this->objectManager->get($possibleClassName);
+        }
 
-		if ($foundFormatter === FALSE) {
-			if ($this->objectManager->isRegistered($formatterType)) {
-				$possibleClassName = $formatterType;
-			} else {
-				$possibleClassName = sprintf('TYPO3\Flow\I18n\Formatter\%sFormatter', ucfirst($formatterType));
-				if (!$this->objectManager->isRegistered($possibleClassName)) {
-					throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
-				}
-			}
-			if (!$this->reflectionService->isClassImplementationOf($possibleClassName, \TYPO3\Flow\I18n\Formatter\FormatterInterface::class)) {
-				throw new \TYPO3\Flow\I18n\Exception\InvalidFormatterException('The resolved internationalization formatter class name "' . $possibleClassName . '" does not implement "TYPO3\Flow\I18n\Formatter\FormatterInterface" as required.', 1358162557);
-			}
-			$foundFormatter = $this->objectManager->get($possibleClassName);
-		}
-
-		$this->formatters[$formatterType] = $foundFormatter;
-		return $foundFormatter;
-	}
+        $this->formatters[$formatterType] = $foundFormatter;
+        return $foundFormatter;
+    }
 }

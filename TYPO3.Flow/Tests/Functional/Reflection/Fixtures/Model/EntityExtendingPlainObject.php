@@ -18,11 +18,10 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class EntityExtendingPlainObject extends NonEntity {
-
-	/**
-	 * @var string
-	 */
-	protected $anotherPropertyOfTheEntity;
-
+class EntityExtendingPlainObject extends NonEntity
+{
+    /**
+     * @var string
+     */
+    protected $anotherPropertyOfTheEntity;
 }

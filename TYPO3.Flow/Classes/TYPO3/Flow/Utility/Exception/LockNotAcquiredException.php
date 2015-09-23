@@ -17,6 +17,6 @@ namespace TYPO3\Flow\Utility\Exception;
  * This exception is thrown by locking strategies if the lock could not be acquired.
  *
  */
-class LockNotAcquiredException extends \TYPO3\Flow\Exception {
-
+class LockNotAcquiredException extends \TYPO3\Flow\Exception
+{
 }

@@ -15,32 +15,31 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
  * Dummy class for the Reflection tests
  *
  */
-class DummyClassWithProperties {
+class DummyClassWithProperties
+{
+    /**
+     * The var annotation is intentional as "int" to check if the reflection service normalizes variable types.
+     *
+     * @var int
+     */
+    protected $intProperty;
 
-	/**
-	 * The var annotation is intentional as "int" to check if the reflection service normalizes variable types.
-	 *
-	 * @var int
-	 */
-	protected $intProperty;
+    /**
+     * This should result in the same type string as the "intProperty".
+     *
+     * @var integer
+     */
+    protected $integerProperty;
 
-	/**
-	 * This should result in the same type string as the "intProperty".
-	 *
-	 * @var integer
-	 */
-	protected $integerProperty;
+    /**
+     * Same as for int/integer for bool.
+     *
+     * @var bool
+     */
+    protected $boolProperty;
 
-	/**
-	 * Same as for int/integer for bool.
-	 *
-	 * @var bool
-	 */
-	protected $boolProperty;
-
-	/**
-	 * @var boolean
-	 */
-	protected $booleanProperty;
-
+    /**
+     * @var boolean
+     */
+    protected $booleanProperty;
 }

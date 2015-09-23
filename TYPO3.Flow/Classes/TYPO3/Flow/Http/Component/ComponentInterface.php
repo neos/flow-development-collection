@@ -21,23 +21,22 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @api
  */
-interface ComponentInterface {
+interface ComponentInterface
+{
+    /**
+     * Constructs the component and sets options
+     *
+     * Note: Constructors must not be defined in PHP interfaces, but this should be implemented in custom component implementations
+     *
+     * @param array $options The component options
+     * @api
+     */
+    // public function __construct(array $options = array());
 
-	/**
-	 * Constructs the component and sets options
-	 *
-	 * Note: Constructors must not be defined in PHP interfaces, but this should be implemented in custom component implementations
-	 *
-	 * @param array $options The component options
-	 * @api
-	 */
-	// public function __construct(array $options = array());
-
-	/**
-	 * @param ComponentContext $componentContext
-	 * @return void
-	 * @api
-	 */
-	public function handle(ComponentContext $componentContext);
-
+    /**
+     * @param ComponentContext $componentContext
+     * @return void
+     * @api
+     */
+    public function handle(ComponentContext $componentContext);
 }

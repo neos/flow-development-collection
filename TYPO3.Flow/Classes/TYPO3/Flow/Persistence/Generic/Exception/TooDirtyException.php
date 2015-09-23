@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Generic\Exception;
  *
  * @api
  */
-class TooDirtyException extends \TYPO3\Flow\Persistence\Exception {
+class TooDirtyException extends \TYPO3\Flow\Persistence\Exception
+{
 }

@@ -20,37 +20,39 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
 /**
  */
-class BaseViewHelperTest extends ViewHelperBaseTestcase {
+class BaseViewHelperTest extends ViewHelperBaseTestcase
+{
+    /**
+     * @test
+     */
+    public function renderTakesBaseUriFromControllerContext()
+    {
+        $baseUri = new Uri('http://typo3.org/');
 
-	/**
-	 * @test
-	 */
-	public function renderTakesBaseUriFromControllerContext() {
-		$baseUri = new Uri('http://typo3.org/');
+        $this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(Request::create($baseUri)));
 
-		$this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(Request::create($baseUri)));
+        $viewHelper = new BaseViewHelper();
+        $this->injectDependenciesIntoViewHelper($viewHelper);
 
-		$viewHelper = new BaseViewHelper();
-		$this->injectDependenciesIntoViewHelper($viewHelper);
+        $expectedResult = '<base href="' . htmlspecialchars($baseUri) . '" />';
+        $actualResult = $viewHelper->render();
+        $this->assertSame($expectedResult, $actualResult);
+    }
 
-		$expectedResult = '<base href="' . htmlspecialchars($baseUri) . '" />';
-		$actualResult = $viewHelper->render();
-		$this->assertSame($expectedResult, $actualResult);
-	}
+    /**
+     * @test
+     */
+    public function renderEscapesBaseUri()
+    {
+        $baseUri = new Uri('<some nasty uri>');
 
-	/**
-	 * @test
-	 */
-	public function renderEscapesBaseUri() {
-		$baseUri = new Uri('<some nasty uri>');
+        $this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(Request::create($baseUri)));
 
-		$this->request->expects($this->any())->method('getHttpRequest')->will($this->returnValue(Request::create($baseUri)));
+        $viewHelper = new BaseViewHelper();
+        $this->injectDependenciesIntoViewHelper($viewHelper);
 
-		$viewHelper = new BaseViewHelper();
-		$this->injectDependenciesIntoViewHelper($viewHelper);
-
-		$expectedResult = '<base href="http://' . htmlspecialchars($baseUri) . '/" />';
-		$actualResult = $viewHelper->render();
-		$this->assertSame($expectedResult, $actualResult);
-	}
+        $expectedResult = '<base href="http://' . htmlspecialchars($baseUri) . '/" />';
+        $actualResult = $viewHelper->render();
+        $this->assertSame($expectedResult, $actualResult);
+    }
 }

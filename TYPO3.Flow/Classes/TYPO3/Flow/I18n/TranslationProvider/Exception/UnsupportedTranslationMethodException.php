@@ -21,6 +21,6 @@ namespace TYPO3\Flow\I18n\TranslationProvider\Exception;
  *
  * @api
  */
-class UnsupportedTranslationMethodException extends \TYPO3\Flow\I18n\Exception {
-
+class UnsupportedTranslationMethodException extends \TYPO3\Flow\I18n\Exception
+{
 }
