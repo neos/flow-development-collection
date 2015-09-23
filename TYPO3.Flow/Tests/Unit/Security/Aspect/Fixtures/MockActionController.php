@@ -17,18 +17,20 @@ use TYPO3\Flow\Annotations as Flow;
  * A mock ActionController
  *
  */
-class MockActionController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class MockActionController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @return void
+     */
+    public function actionWithCsrfProtectionAction()
+    {
+    }
 
-	/**
-	 * @return void
-	 */
-	public function actionWithCsrfProtectionAction() {
-	}
-
-	/**
-	 * @Flow\SkipCsrfProtection
-	 * @return void
-	 */
-	public function actionWithoutCsrfProtectionAction() {
-	}
+    /**
+     * @Flow\SkipCsrfProtection
+     * @return void
+     */
+    public function actionWithoutCsrfProtectionAction()
+    {
+    }
 }

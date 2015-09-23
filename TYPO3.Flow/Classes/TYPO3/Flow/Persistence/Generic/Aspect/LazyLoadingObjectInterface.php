@@ -15,25 +15,24 @@ namespace TYPO3\Flow\Persistence\Generic\Aspect;
  * An interface used to introduce certain methods to support lazy loading objects
  *
  */
-interface LazyLoadingObjectInterface {
+interface LazyLoadingObjectInterface
+{
+    /**
+     * Signifies lazy loading of properties in an object
+     * @type integer
+     */
+    const LAZY_PROPERTIES = 1;
 
-	/**
-	 * Signifies lazy loading of properties in an object
-	 * @type integer
-	 */
-	const LAZY_PROPERTIES = 1;
+    /**
+     * Signifies lazy loading of properties in a SplObjectStorage
+     * @type integer
+     */
+    const LAZY_OBJECTSTORAGE = 2;
 
-	/**
-	 * Signifies lazy loading of properties in a SplObjectStorage
-	 * @type integer
-	 */
-	const LAZY_OBJECTSTORAGE = 2;
-
-	/**
-	 * Introduces an initialization method.
-	 *
-	 * @return void
-	 */
-	public function Flow_Persistence_LazyLoadingObject_initialize();
-
+    /**
+     * Introduces an initialization method.
+     *
+     * @return void
+     */
+    public function Flow_Persistence_LazyLoadingObject_initialize();
 }

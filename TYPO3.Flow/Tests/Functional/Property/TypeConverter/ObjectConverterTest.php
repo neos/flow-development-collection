@@ -18,102 +18,109 @@ use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  */
-class ObjectConverterTest extends FunctionalTestCase {
+class ObjectConverterTest extends FunctionalTestCase
+{
+    /**
+     * @var ObjectConverter
+     */
+    protected $converter;
 
-	/**
-	 * @var ObjectConverter
-	 */
-	protected $converter;
+    public function setUp()
+    {
+        parent::setUp();
+        $this->converter = $this->objectManager->get('TYPO3\Flow\Property\TypeConverter\ObjectConverter');
+    }
 
-	public function setUp() {
-		parent::setUp();
-		$this->converter = $this->objectManager->get('TYPO3\Flow\Property\TypeConverter\ObjectConverter');
-	}
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyImmediatelyReturnsConfiguredTargetTypeIfSetSo()
+    {
+        $propertyName = 'somePropertyName';
+        $expectedTargetType = 'someExpectedTargetType';
+        $configuration = new PropertyMappingConfiguration();
+        $configuration
+            ->forProperty($propertyName)
+            ->setTypeConverterOption(
+                'TYPO3\Flow\Property\TypeConverter\ObjectConverter',
+                ObjectConverter::CONFIGURATION_TARGET_TYPE,
+                $expectedTargetType);
 
-	/**
-	 * @test
-	 */
-	public function getTypeOfChildPropertyImmediatelyReturnsConfiguredTargetTypeIfSetSo() {
-		$propertyName = 'somePropertyName';
-		$expectedTargetType = 'someExpectedTargetType';
-		$configuration = new PropertyMappingConfiguration();
-		$configuration
-			->forProperty($propertyName)
-			->setTypeConverterOption(
-				'TYPO3\Flow\Property\TypeConverter\ObjectConverter',
-				ObjectConverter::CONFIGURATION_TARGET_TYPE,
-				$expectedTargetType);
+        $actual = $this->converter->getTypeOfChildProperty('irrelevant', $propertyName, $configuration);
+        $this->assertEquals($expectedTargetType, $actual);
+    }
 
-		$actual = $this->converter->getTypeOfChildProperty('irrelevant', $propertyName, $configuration);
-		$this->assertEquals($expectedTargetType, $actual);
-	}
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyReturnsCorrectTypeIfAConstructorArgumentForThatPropertyIsPresent()
+    {
+        $actual = $this->converter->getTypeOfChildProperty(
+            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            'dummy',
+            new PropertyMappingConfiguration()
+        );
+        $this->assertEquals('float', $actual);
+    }
 
-	/**
-	 * @test
-	 */
-	public function getTypeOfChildPropertyReturnsCorrectTypeIfAConstructorArgumentForThatPropertyIsPresent() {
-		$actual = $this->converter->getTypeOfChildProperty(
-			'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
-			'dummy',
-			new PropertyMappingConfiguration()
-		);
-		$this->assertEquals('float', $actual);
-	}
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyReturnsCorrectTypeIfASetterForThatPropertyIsPresent()
+    {
+        $actual = $this->converter->getTypeOfChildProperty(
+            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            'attributeWithStringTypeAnnotation',
+            new PropertyMappingConfiguration()
+        );
+        $this->assertEquals('string', $actual);
+    }
 
-	/**
-	 * @test
-	 */
-	public function getTypeOfChildPropertyReturnsCorrectTypeIfASetterForThatPropertyIsPresent() {
-		$actual = $this->converter->getTypeOfChildProperty(
-			'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
-			'attributeWithStringTypeAnnotation',
-			new PropertyMappingConfiguration()
-		);
-		$this->assertEquals('string', $actual);
-	}
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyThrowsExceptionIfThatPropertyIsPubliclyPresentButHasNoProperTypeAnnotation()
+    {
+        $this->setExpectedException('TYPO3\Flow\Property\Exception\InvalidTargetException', '', 1406821818);
+        $this->converter->getTypeOfChildProperty(
+            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            'somePublicPropertyWithoutVarAnnotation',
+            new PropertyMappingConfiguration()
+        );
+    }
 
-	/**
-	 * @test
-	 */
-	public function getTypeOfChildPropertyThrowsExceptionIfThatPropertyIsPubliclyPresentButHasNoProperTypeAnnotation() {
-		$this->setExpectedException('TYPO3\Flow\Property\Exception\InvalidTargetException', '', 1406821818);
-		$this->converter->getTypeOfChildProperty(
-			'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
-			'somePublicPropertyWithoutVarAnnotation',
-			new PropertyMappingConfiguration()
-		);
-	}
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyReturnsCorrectTypeIfThatPropertyIsPubliclyPresent()
+    {
+        $configuration = new PropertyMappingConfiguration();
+        $actual = $this->converter->getTypeOfChildProperty(
+            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            'somePublicProperty',
+            $configuration
+        );
+        $this->assertEquals('float', $actual);
+    }
 
-	/**
-	 * @test
-	 */
-	public function getTypeOfChildPropertyReturnsCorrectTypeIfThatPropertyIsPubliclyPresent() {
-		$configuration = new PropertyMappingConfiguration();
-		$actual = $this->converter->getTypeOfChildProperty(
-			'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
-			'somePublicProperty',
-			$configuration
-		);
-		$this->assertEquals('float', $actual);
-	}
+    /**
+     * @test
+     */
+    public function convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic()
+    {
+        $convertedObject = $this->converter->convertFrom(
+            'irrelevant',
+            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            array(
+                'propertyMeantForConstructorUsage' => 'theValue',
+                'propertyMeantForSetterUsage' => 'theValue',
+                'propertyMeantForPublicUsage' => 'theValue'
+            ),
+            new PropertyMappingConfiguration()
+        );
 
-	/**
-	 * @test
-	 */
-	public function convertFromUsesAppropriatePropertyPopulationMethodsInOrderConstructorSetterPublic() {
-		$convertedObject = $this->converter->convertFrom(
-			'irrelevant',
-			'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
-			array(
-				'propertyMeantForConstructorUsage' => 'theValue',
-				'propertyMeantForSetterUsage' => 'theValue',
-				'propertyMeantForPublicUsage' => 'theValue'
-			),
-			new PropertyMappingConfiguration()
-		);
-
-		$this->assertEquals('theValue set via Constructor', ObjectAccess::getProperty($convertedObject, 'propertyMeantForConstructorUsage', TRUE));
-		$this->assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', TRUE));
-		$this->assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', TRUE));
-	}
+        $this->assertEquals('theValue set via Constructor', ObjectAccess::getProperty($convertedObject, 'propertyMeantForConstructorUsage', true));
+        $this->assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', true));
+        $this->assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', true));
+    }
 }

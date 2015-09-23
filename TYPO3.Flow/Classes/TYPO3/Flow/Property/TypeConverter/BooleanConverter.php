@@ -23,42 +23,43 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class BooleanConverter extends AbstractTypeConverter {
+class BooleanConverter extends AbstractTypeConverter
+{
+    /**
+     * @var array<string>
+     */
+    protected $sourceTypes = array('boolean', 'string', 'integer', 'float');
 
-	/**
-	 * @var array<string>
-	 */
-	protected $sourceTypes = array('boolean', 'string', 'integer', 'float');
+    /**
+     * @var string
+     */
+    protected $targetType = 'boolean';
 
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'boolean';
+    /**
+     * @var integer
+     */
+    protected $priority = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
+    /**
+     * Actually convert from $source to $targetType
+     *
+     * @param mixed $source
+     * @param string $targetType
+     * @param array $convertedChildProperties
+     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @return boolean
+     * @api
+     */
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    {
+        if (is_bool($source)) {
+            return $source;
+        }
 
-	/**
-	 * Actually convert from $source to $targetType
-	 *
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return boolean
-	 * @api
-	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		if (is_bool($source)) {
-			return $source;
-		}
+        if (is_int($source) || is_float(($source))) {
+            return (boolean)$source;
+        }
 
-		if (is_int($source) || is_float(($source))) {
-			return (boolean)$source;
-		}
-
-		return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
-	}
+        return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
+    }
 }

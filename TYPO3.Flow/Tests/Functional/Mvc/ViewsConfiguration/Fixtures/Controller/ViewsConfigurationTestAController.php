@@ -17,35 +17,42 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 /**
  * A controller fixture
  */
-class ViewsConfigurationTestAController extends ActionController {
+class ViewsConfigurationTestAController extends ActionController
+{
+    /**
+     * @return string
+     */
+    public function firstAction()
+    {
+    }
 
-	/**
-	 * @return string
-	 */
-	public function firstAction() {
-	}
+    /**
+     * @return string
+     */
+    public function secondAction()
+    {
+    }
 
-	/**
-	 * @return string
-	 */
-	public function secondAction() {}
+    /**
+     * @return string
+     */
+    public function viewClassAction()
+    {
+        return get_class($this->view);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function viewClassAction() {
-		return get_class($this->view);
-	}
+    /**
+     * @return string
+     */
+    public function renderOtherAction()
+    {
+        $this->view->setTemplatePathAndFilename('resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/First.html');
+    }
 
-	/**
-	 * @return string
-	 */
-	public function renderOtherAction() {
-		$this->view->setTemplatePathAndFilename('resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/First.html');
-	}
-
-	/**
-	 * @return string
-	 */
-	public function widgetAction() {}
+    /**
+     * @return string
+     */
+    public function widgetAction()
+    {
+    }
 }

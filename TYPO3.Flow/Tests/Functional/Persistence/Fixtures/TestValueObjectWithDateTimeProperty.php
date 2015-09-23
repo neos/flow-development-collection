@@ -20,18 +20,18 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\ValueObject
  * @ORM\Table(name="persistence_testvalueobjectwithdatetimeproperty")
  */
-class TestValueObjectWithDateTimeProperty {
+class TestValueObjectWithDateTimeProperty
+{
+    /**
+     * @var \DateTime
+     */
+    protected $value1;
 
-	/**
-	 * @var \DateTime
-	 */
-	protected $value1;
-
-	/**
-	 * @param \DateTime $value1
-	 */
-	public function __construct($value1) {
-		$this->value1 = $value1;
-	}
+    /**
+     * @param \DateTime $value1
+     */
+    public function __construct($value1)
+    {
+        $this->value1 = $value1;
+    }
 }
-?>

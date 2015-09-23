@@ -45,37 +45,38 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class IdentifierViewHelper extends AbstractViewHelper {
+class IdentifierViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeChildren = FALSE;
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
-	 * Outputs the identifier of the specified object
-	 *
-	 * @param object $value the object to render the identifier for, or NULL if VH children should be used
-	 * @return mixed the identifier of $value, usually the UUID
-	 * @throws ViewHelper\Exception if the given value is no object
-	 * @api
-	 */
-	public function render($value = NULL) {
-		if ($value === NULL) {
-			$value = $this->renderChildren();
-		}
-		if ($value === NULL) {
-			return NULL;
-		}
-		if (!is_object($value)) {
-			throw new ViewHelper\Exception('f:format.identifier expects an object, ' . gettype($value) . ' given.', 1337700024);
-		}
-		return $this->persistenceManager->getIdentifierByObject($value);
-	}
+    /**
+     * Outputs the identifier of the specified object
+     *
+     * @param object $value the object to render the identifier for, or NULL if VH children should be used
+     * @return mixed the identifier of $value, usually the UUID
+     * @throws ViewHelper\Exception if the given value is no object
+     * @api
+     */
+    public function render($value = null)
+    {
+        if ($value === null) {
+            $value = $this->renderChildren();
+        }
+        if ($value === null) {
+            return null;
+        }
+        if (!is_object($value)) {
+            throw new ViewHelper\Exception('f:format.identifier expects an object, ' . gettype($value) . ' given.', 1337700024);
+        }
+        return $this->persistenceManager->getIdentifierByObject($value);
+    }
 }

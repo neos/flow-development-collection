@@ -15,53 +15,57 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Frontend;
  * Testcase for the PHP source code cache frontend
  *
  */
-class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @expectedException \InvalidArgumentException
+     * @test
+     */
+    public function setChecksIfTheIdentifierIsValid()
+    {
+        $cache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', false);
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
+        $cache->set('foo', 'bar');
+    }
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @test
-	 */
-	public function setChecksIfTheIdentifierIsValid() {
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
-		$cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(FALSE));
-		$cache->set('foo', 'bar');
-	}
+    /**
+     * @test
+     */
+    public function setPassesPhpSourceCodeTagsAndLifetimeToBackend()
+    {
+        $originalSourceCode = 'return "hello world!";';
+        $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
-	/**
-	 * @test
-	 */
-	public function setPassesPhpSourceCodeTagsAndLifetimeToBackend() {
-		$originalSourceCode = 'return "hello world!";';
-		$modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
+        $mockBackend = $this->getMock('TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', false);
+        $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
 
-		$mockBackend = $this->getMock('TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
-		$mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
+        $cache = $this->getAccessibleMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', false);
+        $cache->_set('backend', $mockBackend);
+        $cache->set('Foo-Bar', $originalSourceCode, array('tags'), 1234);
+    }
 
-		$cache = $this->getAccessibleMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
-		$cache->_set('backend', $mockBackend);
-		$cache->set('Foo-Bar', $originalSourceCode, array('tags'), 1234);
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
+     */
+    public function setThrowsInvalidDataExceptionOnNonStringValues()
+    {
+        $cache = $this->getMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', false);
+        $cache->set('Foo-Bar', array());
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
-	 */
-	public function setThrowsInvalidDataExceptionOnNonStringValues() {
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
-		$cache->set('Foo-Bar', array());
-	}
+    /**
+     * @test
+     */
+    public function requireOnceCallsTheBackendsRequireOnceMethod()
+    {
+        $mockBackend = $this->getMock('TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', false);
+        $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
-	/**
-	 * @test
-	 */
-	public function requireOnceCallsTheBackendsRequireOnceMethod() {
-		$mockBackend = $this->getMock('TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
-		$mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
+        $cache = $this->getAccessibleMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', false);
+        $cache->_set('backend', $mockBackend);
 
-		$cache = $this->getAccessibleMock('TYPO3\Flow\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
-		$cache->_set('backend', $mockBackend);
-
-		$result = $cache->requireOnce('Foo-Bar');
-		$this->assertSame('hello world!', $result);
-	}
+        $result = $cache->requireOnce('Foo-Bar');
+        $this->assertSame('hello world!', $result);
+    }
 }

@@ -14,6 +14,6 @@ namespace TYPO3\Flow\Package\Exception;
 /**
  * "Package states file not writable" Exception
  */
-class PackageStatesFileNotWritableException extends \TYPO3\Flow\Package\Exception {
-
+class PackageStatesFileNotWritableException extends \TYPO3\Flow\Package\Exception
+{
 }

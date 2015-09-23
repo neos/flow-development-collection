@@ -20,23 +20,24 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class DefaultCaseViewHelper extends AbstractViewHelper {
+class DefaultCaseViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
-
-	/**
-	 * @return string the contents of this view helper if no other "Case" view helper of the surrounding switch view helper matches
-	 * @throws ViewHelper\Exception
-	 * @api
-	 */
-	public function render() {
-		$viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
-		if (!$viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression')) {
-			throw new ViewHelper\Exception('The "default case" View helper can only be used within a switch View helper', 1368112037);
-		}
-		return $this->renderChildren();
-	}
+    /**
+     * @return string the contents of this view helper if no other "Case" view helper of the surrounding switch view helper matches
+     * @throws ViewHelper\Exception
+     * @api
+     */
+    public function render()
+    {
+        $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
+        if (!$viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression')) {
+            throw new ViewHelper\Exception('The "default case" View helper can only be used within a switch View helper', 1368112037);
+        }
+        return $this->renderChildren();
+    }
 }

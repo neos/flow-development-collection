@@ -18,6 +18,6 @@ use TYPO3\Flow\Http\Exception as HttpException;
  *
  * @api
  */
-class Exception extends HttpException {
-
+class Exception extends HttpException
+{
 }

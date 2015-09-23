@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidRequestMethodException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidRequestMethodException extends \TYPO3\Flow\Mvc\Exception
+{
 }

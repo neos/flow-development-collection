@@ -19,21 +19,21 @@ use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 /**
  * Contract for a privilege used to restrict method calls
  */
-interface MethodPrivilegeInterface extends PrivilegeInterface {
+interface MethodPrivilegeInterface extends PrivilegeInterface
+{
+    /**
+     * Returns TRUE, if this privilege covers the given method
+     *
+     * @param string $className
+     * @param string $methodName
+     * @return bool
+     */
+    public function matchesMethod($className, $methodName);
 
-	/**
-	 * Returns TRUE, if this privilege covers the given method
-	 *
-	 * @param string $className
-	 * @param string $methodName
-	 * @return bool
-	 */
-	public function matchesMethod($className, $methodName);
-
-	/**
-	 * Returns the pointcut filter composite, matching all methods covered by this privilege
-	 *
-	 * @return PointcutFilterComposite
-	 */
-	public function getPointcutFilterComposite();
+    /**
+     * Returns the pointcut filter composite, matching all methods covered by this privilege
+     *
+     * @return PointcutFilterComposite
+     */
+    public function getPointcutFilterComposite();
 }

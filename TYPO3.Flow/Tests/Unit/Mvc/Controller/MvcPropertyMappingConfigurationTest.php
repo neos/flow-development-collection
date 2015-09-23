@@ -16,38 +16,41 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  *
  * @covers \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
  */
-class MvcPropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class MvcPropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
+     */
+    protected $mvcPropertyMappingConfiguration;
 
-	/**
-	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
-	 */
-	protected $mvcPropertyMappingConfiguration;
+    /**
+     *
+     */
+    public function setUp()
+    {
+        $this->mvcPropertyMappingConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
+    }
 
-	/**
-	 *
-	 */
-	public function setUp() {
-		$this->mvcPropertyMappingConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
-	}
+    /**
+     * @return array Signature: $methodToTestForFluentInterface [, $argumentsForMethod = array() ]
+     */
+    public function fluentInterfaceMethodsDataProvider()
+    {
+        return array(
+            array('allowCreationForSubProperty', array('some.property.path')),
+            array('allowModificationForSubProperty', array('some.property.path')),
+            array('setTargetTypeForSubProperty', array('some.property.path', 'dummy\Target\Type')),
+            array('allowOverrideTargetType'),
+        );
+    }
 
-	/**
-	 * @return array Signature: $methodToTestForFluentInterface [, $argumentsForMethod = array() ]
-	 */
-	public function fluentInterfaceMethodsDataProvider() {
-		return array(
-			array('allowCreationForSubProperty', array('some.property.path')),
-			array('allowModificationForSubProperty', array('some.property.path')),
-			array('setTargetTypeForSubProperty', array('some.property.path', 'dummy\Target\Type')),
-			array('allowOverrideTargetType'),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider fluentInterfaceMethodsDataProvider
-	 */
-	public function respectiveMethodsProvideFluentInterface($methodToTestForFluentInterface, array $argumentsForMethod = array()) {
-		$actualResult = call_user_func_array(array($this->mvcPropertyMappingConfiguration, $methodToTestForFluentInterface), $argumentsForMethod);
-		$this->assertSame($this->mvcPropertyMappingConfiguration, $actualResult);
-	}
+    /**
+     * @test
+     * @dataProvider fluentInterfaceMethodsDataProvider
+     */
+    public function respectiveMethodsProvideFluentInterface($methodToTestForFluentInterface, array $argumentsForMethod = array())
+    {
+        $actualResult = call_user_func_array(array($this->mvcPropertyMappingConfiguration, $methodToTestForFluentInterface), $argumentsForMethod);
+        $this->assertSame($this->mvcPropertyMappingConfiguration, $actualResult);
+    }
 }

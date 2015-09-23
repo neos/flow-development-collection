@@ -17,11 +17,12 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 /**
  * A controller fixture
  */
-class ViewsConfigurationTestCController extends ActionController {
-
-	/**
-	 * @return string
-	 */
-	public function indexAction() {
-	}
+class ViewsConfigurationTestCController extends ActionController
+{
+    /**
+     * @return string
+     */
+    public function indexAction()
+    {
+    }
 }

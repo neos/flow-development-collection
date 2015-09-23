@@ -22,120 +22,127 @@ use TYPO3\Flow\Tests\UnitTestCase;
 /**
  * Tests for the ResourceStreamWrapper class
  */
-class ResourceStreamWrapperTest extends UnitTestCase {
+class ResourceStreamWrapperTest extends UnitTestCase
+{
+    /**
+     * @var ResourceStreamWrapper
+     */
+    protected $resourceStreamWrapper;
 
-	/**
-	 * @var ResourceStreamWrapper
-	 */
-	protected $resourceStreamWrapper;
+    /**
+     * @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockPackageManager;
 
-	/**
-	 * @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPackageManager;
+    /**
+     * @var ResourceManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockResourceManager;
 
-	/**
-	 * @var ResourceManager|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockResourceManager;
+    public function setUp()
+    {
+        vfsStream::setup('Foo');
 
-	public function setUp() {
-		vfsStream::setup('Foo');
+        $this->resourceStreamWrapper = new ResourceStreamWrapper();
 
-		$this->resourceStreamWrapper = new ResourceStreamWrapper();
+        $this->mockPackageManager = $this->getMockBuilder(PackageManagerInterface::class)->getMock();
+        $this->inject($this->resourceStreamWrapper, 'packageManager', $this->mockPackageManager);
 
-		$this->mockPackageManager = $this->getMockBuilder(PackageManagerInterface::class)->getMock();
-		$this->inject($this->resourceStreamWrapper, 'packageManager', $this->mockPackageManager);
+        $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
+        $this->inject($this->resourceStreamWrapper, 'resourceManager', $this->mockResourceManager);
+    }
 
-		$this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
-		$this->inject($this->resourceStreamWrapper, 'resourceManager', $this->mockResourceManager);
-	}
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function openThrowsExceptionForInvalidScheme()
+    {
+        $openedPathAndFilename = '';
+        $this->resourceStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
+    }
 
-	/**
-	 * @test
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function openThrowsExceptionForInvalidScheme() {
-		$openedPathAndFilename = '';
-		$this->resourceStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
-	}
+    /**
+     * @test
+     */
+    public function openResolvesALowerCaseSha1HashUsingTheResourceManager()
+    {
+        $sha1Hash = '68ac906495480a3404beee4874ed853a037a7a8f';
 
-	/**
-	 * @test
-	 */
-	public function openResolvesALowerCaseSha1HashUsingTheResourceManager() {
-		$sha1Hash = '68ac906495480a3404beee4874ed853a037a7a8f';
+        $tempFile = tmpfile();
 
-		$tempFile = tmpfile();
+        $mockResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
+        $this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
+        $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
-		$mockResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
-		$this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
-		$this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
+        $openedPathAndFilename = '';
+        $this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+    }
 
-		$openedPathAndFilename = '';
-		$this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-	}
+    /**
+     * @test
+     */
+    public function openResolvesAnUpperCaseSha1HashUsingTheResourceManager()
+    {
+        $sha1Hash = '68AC906495480A3404BEEE4874ED853A037A7A8F';
 
-	/**
-	 * @test
-	 */
-	public function openResolvesAnUpperCaseSha1HashUsingTheResourceManager() {
-		$sha1Hash = '68AC906495480A3404BEEE4874ED853A037A7A8F';
+        $tempFile = tmpfile();
 
-		$tempFile = tmpfile();
+        $mockResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
+        $this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
+        $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
-		$mockResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
-		$this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
-		$this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
+        $openedPathAndFilename = '';
+        $this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+    }
 
-		$openedPathAndFilename = '';
-		$this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Resource\Exception
+     */
+    public function openThrowsExceptionForNonExistingPackages()
+    {
+        $packageKey = 'Non.Existing.Package';
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Resource\Exception
-	 */
-	public function openThrowsExceptionForNonExistingPackages() {
-		$packageKey = 'Non.Existing.Package';
+        $openedPathAndFilename = '';
+        $this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);
+    }
 
-		$openedPathAndFilename = '';
-		$this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);
-	}
+    /**
+     * @test
+     */
+    public function openResolvesPackageKeysUsingThePackageManager()
+    {
+        $packageKey = 'Some.Package';
+        mkdir('vfs://Foo/Some/');
+        file_put_contents('vfs://Foo/Some/Path', 'fixture');
 
-	/**
-	 * @test
-	 */
-	public function openResolvesPackageKeysUsingThePackageManager() {
-		$packageKey = 'Some.Package';
-		mkdir('vfs://Foo/Some/');
-		file_put_contents('vfs://Foo/Some/Path', 'fixture');
+        $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-		$this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(TRUE));
+        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
+        $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
-		$mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
-		$mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
-		$this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
+        $openedPathAndFilename = '';
+        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+    }
 
-		$openedPathAndFilename = '';
-		$this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-	}
+    /**
+     * @test
+     */
+    public function openResolves40CharacterLongPackageKeysUsingThePackageManager()
+    {
+        $packageKey = 'Some.PackageKey.Containing.40.Characters';
+        mkdir('vfs://Foo/Some/');
+        file_put_contents('vfs://Foo/Some/Path', 'fixture');
 
-	/**
-	 * @test
-	 */
-	public function openResolves40CharacterLongPackageKeysUsingThePackageManager() {
-		$packageKey = 'Some.PackageKey.Containing.40.Characters';
-		mkdir('vfs://Foo/Some/');
-		file_put_contents('vfs://Foo/Some/Path', 'fixture');
+        $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-		$this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(TRUE));
+        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
+        $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
-		$mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
-		$mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
-		$this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
-
-		$openedPathAndFilename = '';
-		$this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-	}
+        $openedPathAndFilename = '';
+        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+    }
 }

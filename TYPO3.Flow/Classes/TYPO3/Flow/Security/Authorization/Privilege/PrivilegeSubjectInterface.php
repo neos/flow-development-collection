@@ -14,6 +14,6 @@ namespace TYPO3\Flow\Security\Authorization\Privilege;
 /**
  * Marker interface for privilege subjects
  */
-interface PrivilegeSubjectInterface {
-
+interface PrivilegeSubjectInterface
+{
 }

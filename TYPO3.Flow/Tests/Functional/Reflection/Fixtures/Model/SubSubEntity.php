@@ -18,13 +18,12 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class SubSubEntity extends SubEntity {
-
-	/**
-	 * Just yet another normal string
-	 *
-	 * @var string
-	 */
-	protected $yetAnotherString;
-
+class SubSubEntity extends SubEntity
+{
+    /**
+     * Just yet another normal string
+     *
+     * @var string
+     */
+    protected $yetAnotherString;
 }

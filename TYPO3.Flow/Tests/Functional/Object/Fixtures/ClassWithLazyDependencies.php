@@ -16,24 +16,23 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class which has lazy dependencies
  */
-class ClassWithLazyDependencies {
+class ClassWithLazyDependencies
+{
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
+     */
+    public $lazyA;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
-	 */
-	public $lazyA;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     */
+    public $lazyB;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
-	 */
-	public $lazyB;
-
-	/**
-	 * @Flow\Inject(lazy = FALSE)
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC
-	 */
-	public $eagerC;
-
+    /**
+     * @Flow\Inject(lazy = FALSE)
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC
+     */
+    public $eagerC;
 }

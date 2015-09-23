@@ -16,12 +16,11 @@ namespace TYPO3\Eel;
  *
  * Allows for custom, dynamic policies for allowed method calls
  */
-interface ProtectedContextAwareInterface {
-
-	/**
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName);
-
+interface ProtectedContextAwareInterface
+{
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName);
 }

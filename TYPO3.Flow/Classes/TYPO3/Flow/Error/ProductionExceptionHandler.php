@@ -20,48 +20,50 @@ use TYPO3\Flow\Http\Response;
  *
  * @Flow\Scope("singleton")
  */
-class ProductionExceptionHandler extends AbstractExceptionHandler {
+class ProductionExceptionHandler extends AbstractExceptionHandler
+{
+    /**
+     * Echoes an exception for the web.
+     *
+     * @param \Exception $exception The exception
+     * @return void
+     */
+    protected function echoExceptionWeb(\Exception $exception)
+    {
+        $statusCode = 500;
+        if ($exception instanceof FlowException) {
+            $statusCode = $exception->getStatusCode();
+        }
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : null;
+        if (!headers_sent()) {
+            header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
+        }
 
-	/**
-	 * Echoes an exception for the web.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	protected function echoExceptionWeb(\Exception $exception) {
-		$statusCode = 500;
-		if ($exception instanceof FlowException) {
-			$statusCode = $exception->getStatusCode();
-		}
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		$referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : NULL;
-		if (!headers_sent()) {
-			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
-		}
+        try {
+            if (isset($this->renderingOptions['templatePathAndFilename'])) {
+                echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+            } else {
+                echo $this->renderStatically($statusCode, $referenceCode);
+            }
+        } catch (\Exception $innerException) {
+            $this->systemLogger->logException($innerException);
+        }
+    }
 
-		try {
-			if (isset($this->renderingOptions['templatePathAndFilename'])) {
-				echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
-			} else {
-				echo $this->renderStatically($statusCode, $referenceCode);
-			}
-		} catch (\Exception $innerException) {
-			$this->systemLogger->logException($innerException);
-		}
-	}
+    /**
+     * Returns the statically rendered exception message
+     *
+     * @param integer $statusCode
+     * @param string $referenceCode
+     * @return string
+     */
+    protected function renderStatically($statusCode, $referenceCode)
+    {
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
-	/**
-	 * Returns the statically rendered exception message
-	 *
-	 * @param integer $statusCode
-	 * @param string $referenceCode
-	 * @return string
-	 */
-	protected function renderStatically($statusCode, $referenceCode) {
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		$referenceCodeMessage = ($referenceCode !== NULL) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
-
-		return '<!DOCTYPE html>
+        return '<!DOCTYPE html>
 			<html>
 				<head>
 					<meta charset="UTF-8">
@@ -148,5 +150,5 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 					</div>
 				</body>
 			</html>';
-	}
+    }
 }

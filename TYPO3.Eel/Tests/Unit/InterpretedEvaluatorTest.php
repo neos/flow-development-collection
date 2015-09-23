@@ -16,13 +16,13 @@ use TYPO3\Eel\InterpretedEvaluator;
 /**
  * Interpreted evaluator test
  */
-class InterpretedEvaluatorTest extends AbstractEvaluatorTest {
-
-	/**
-	 * @return \TYPO3\Eel\Context
-	 */
-	protected function createEvaluator() {
-		return new InterpretedEvaluator();
-	}
-
+class InterpretedEvaluatorTest extends AbstractEvaluatorTest
+{
+    /**
+     * @return \TYPO3\Eel\Context
+     */
+    protected function createEvaluator()
+    {
+        return new InterpretedEvaluator();
+    }
 }

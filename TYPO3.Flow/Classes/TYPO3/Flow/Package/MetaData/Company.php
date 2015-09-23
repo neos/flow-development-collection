@@ -16,14 +16,15 @@ namespace TYPO3\Flow\Package\MetaData;
  * Package company party meta model
  *
  */
-class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty {
-
-	/**
-	 * Get the party type
-	 *
-	 * @return string Party type "company"
-	 */
-	public function getPartyType() {
-		return \TYPO3\Flow\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
-	}
+class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty
+{
+    /**
+     * Get the party type
+     *
+     * @return string Party type "company"
+     */
+    public function getPartyType()
+    {
+        return \TYPO3\Flow\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
+    }
 }

@@ -15,30 +15,34 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * ArrayAccess class for the Reflection tests
  *
  */
-class ArrayAccessClass implements \ArrayAccess {
+class ArrayAccessClass implements \ArrayAccess
+{
+    protected $internalProperty = 'access through forceDirectAccess';
 
-	protected $internalProperty = 'access through forceDirectAccess';
+    protected $array = array();
 
-	protected $array = array();
+    public function __construct(array $array)
+    {
+        $this->array = $array;
+    }
 
-	public function __construct(array $array) {
-		$this->array = $array;
-	}
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->array);
+    }
 
-	public function offsetExists($offset) {
-		return array_key_exists($offset, $this->array);
-	}
+    public function offsetGet($offset)
+    {
+        return $this->array[$offset];
+    }
 
-	public function offsetGet($offset) {
-		return $this->array[$offset];
-	}
+    public function offsetSet($offset, $value)
+    {
+        $this->array[$offset] = $value;
+    }
 
-	public function offsetSet($offset, $value) {
-		$this->array[$offset] = $value;
-	}
-
-	public function offsetUnset($offset) {
-		unset($this->array[$offset]);
-	}
-
+    public function offsetUnset($offset)
+    {
+        unset($this->array[$offset]);
+    }
 }

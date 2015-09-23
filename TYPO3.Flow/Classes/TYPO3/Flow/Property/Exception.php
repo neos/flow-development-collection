@@ -16,18 +16,19 @@ namespace TYPO3\Flow\Property;
  *
  * @api
  */
-class Exception extends \TYPO3\Flow\Exception {
-
-	/**
-	 * Return the status code of the nested exception, if any.
-	 *
-	 * @return integer
-	 */
-	public function getStatusCode() {
-		$nestedException = $this->getPrevious();
-		if ($nestedException !== NULL && $nestedException instanceof \TYPO3\Flow\Exception) {
-			return $nestedException->getStatusCode();
-		}
-		return parent::getStatusCode();
-	}
+class Exception extends \TYPO3\Flow\Exception
+{
+    /**
+     * Return the status code of the nested exception, if any.
+     *
+     * @return integer
+     */
+    public function getStatusCode()
+    {
+        $nestedException = $this->getPrevious();
+        if ($nestedException !== null && $nestedException instanceof \TYPO3\Flow\Exception) {
+            return $nestedException->getStatusCode();
+        }
+        return parent::getStatusCode();
+    }
 }

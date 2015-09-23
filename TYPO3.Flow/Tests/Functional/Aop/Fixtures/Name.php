@@ -14,31 +14,34 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * A simple value object class for testing the AOP framework
  */
-class Name {
+class Name
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @param string $name
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function __construct($name) {
-		$this->name = $name;
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function __toString() {
-		return $this->name;
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
 }

@@ -15,16 +15,18 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
  * Testcase for the MVC Generic Response
  *
  */
-class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
-	/**
-	 * @test
-	 */
-	public function toStringReturnsContentOfResponse() {
-		$response = new \TYPO3\Flow\Mvc\Response();
-		$response->setContent('SomeContent');
+class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function toStringReturnsContentOfResponse()
+    {
+        $response = new \TYPO3\Flow\Mvc\Response();
+        $response->setContent('SomeContent');
 
-		$expected = 'SomeContent';
-		$actual = $response->__toString();
-		$this->assertEquals($expected, $actual);
-	}
+        $expected = 'SomeContent';
+        $actual = $response->__toString();
+        $this->assertEquals($expected, $actual);
+    }
 }

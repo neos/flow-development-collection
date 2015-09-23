@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Parser\Exception;
  *
  * @api
  */
-class InvalidParseStringException extends \TYPO3\Flow\I18n\Exception {
-
+class InvalidParseStringException extends \TYPO3\Flow\I18n\Exception
+{
 }

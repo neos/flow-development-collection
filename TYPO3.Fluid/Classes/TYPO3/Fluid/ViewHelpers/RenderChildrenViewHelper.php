@@ -47,87 +47,93 @@ use TYPO3\Fluid\Core\Widget\WidgetContext;
  *
  * @api
  */
-class RenderChildrenViewHelper extends AbstractViewHelper {
+class RenderChildrenViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * @param array $arguments
+     * @return string
+     */
+    public function render(array $arguments = array())
+    {
+        $renderingContext = $this->getWidgetRenderingContext();
+        $widgetChildNodes = $this->getWidgetChildNodes();
 
-	/**
-	 * @param array $arguments
-	 * @return string
-	 */
-	public function render(array $arguments = array()) {
-		$renderingContext = $this->getWidgetRenderingContext();
-		$widgetChildNodes = $this->getWidgetChildNodes();
+        $this->addArgumentsToTemplateVariableContainer($arguments);
+        $output = $widgetChildNodes->evaluate($renderingContext);
+        $this->removeArgumentsFromTemplateVariableContainer($arguments);
 
-		$this->addArgumentsToTemplateVariableContainer($arguments);
-		$output = $widgetChildNodes->evaluate($renderingContext);
-		$this->removeArgumentsFromTemplateVariableContainer($arguments);
+        return $output;
+    }
 
-		return $output;
-	}
+    /**
+     * Get the widget rendering context, or throw an exception if it cannot be found.
+     *
+     * @return RenderingContextInterface
+     * @throws RenderingContextNotFoundException
+     */
+    protected function getWidgetRenderingContext()
+    {
+        $renderingContext = $this->getWidgetContext()->getViewHelperChildNodeRenderingContext();
+        if (!($renderingContext instanceof RenderingContextInterface)) {
+            throw new RenderingContextNotFoundException('Rendering Context not found inside Widget. <f:renderChildren> has been used in an AJAX Request, but is only usable in non-ajax mode.', 1284986604);
+        }
+        return $renderingContext;
+    }
 
-	/**
-	 * Get the widget rendering context, or throw an exception if it cannot be found.
-	 *
-	 * @return RenderingContextInterface
-	 * @throws RenderingContextNotFoundException
-	 */
-	protected function getWidgetRenderingContext() {
-		$renderingContext = $this->getWidgetContext()->getViewHelperChildNodeRenderingContext();
-		if (!($renderingContext instanceof RenderingContextInterface)) {
-			throw new RenderingContextNotFoundException('Rendering Context not found inside Widget. <f:renderChildren> has been used in an AJAX Request, but is only usable in non-ajax mode.', 1284986604);
-		}
-		return $renderingContext;
-	}
+    /**
+     * @return RootNode
+     */
+    protected function getWidgetChildNodes()
+    {
+        return $this->getWidgetContext()->getViewHelperChildNodes();
+    }
 
-	/**
-	 * @return RootNode
-	 */
-	protected function getWidgetChildNodes() {
-		return $this->getWidgetContext()->getViewHelperChildNodes();
-	}
+    /**
+     * @return WidgetContext
+     * @throws WidgetContextNotFoundException
+     */
+    protected function getWidgetContext()
+    {
+        $request = $this->controllerContext->getRequest();
+        /** @var $widgetContext WidgetContext */
+        $widgetContext = $request->getInternalArgument('__widgetContext');
+        if ($widgetContext === null) {
+            throw new WidgetContextNotFoundException('The Request does not contain a widget context! <f:renderChildren> must be called inside a Widget Template.', 1284986120);
+        }
 
-	/**
-	 * @return WidgetContext
-	 * @throws WidgetContextNotFoundException
-	 */
-	protected function getWidgetContext() {
-		$request = $this->controllerContext->getRequest();
-		/** @var $widgetContext WidgetContext */
-		$widgetContext = $request->getInternalArgument('__widgetContext');
-		if ($widgetContext === NULL) {
-			throw new WidgetContextNotFoundException('The Request does not contain a widget context! <f:renderChildren> must be called inside a Widget Template.', 1284986120);
-		}
+        return $widgetContext;
+    }
 
-		return $widgetContext;
-	}
+    /**
+     * Add the given arguments to the TemplateVariableContainer of the widget.
+     *
+     * @param array $arguments
+     * @return void
+     */
+    protected function addArgumentsToTemplateVariableContainer(array $arguments)
+    {
+        $templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
+        foreach ($arguments as $identifier => $value) {
+            $templateVariableContainer->add($identifier, $value);
+        }
+    }
 
-	/**
-	 * Add the given arguments to the TemplateVariableContainer of the widget.
-	 *
-	 * @param array $arguments
-	 * @return void
-	 */
-	protected function addArgumentsToTemplateVariableContainer(array $arguments) {
-		$templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
-		foreach ($arguments as $identifier => $value) {
-			$templateVariableContainer->add($identifier, $value);
-		}
-	}
-
-	/**
-	 * Remove the given arguments from the TemplateVariableContainer of the widget.
-	 *
-	 * @param array $arguments
-	 * @return void
-	 */
-	protected function removeArgumentsFromTemplateVariableContainer(array $arguments) {
-		$templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
-		foreach ($arguments as $identifier => $value) {
-			$templateVariableContainer->remove($identifier);
-		}
-	}
+    /**
+     * Remove the given arguments from the TemplateVariableContainer of the widget.
+     *
+     * @param array $arguments
+     * @return void
+     */
+    protected function removeArgumentsFromTemplateVariableContainer(array $arguments)
+    {
+        $templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
+        foreach ($arguments as $identifier => $value) {
+            $templateVariableContainer->remove($identifier);
+        }
+    }
 }

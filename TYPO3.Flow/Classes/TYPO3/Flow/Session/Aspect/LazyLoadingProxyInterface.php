@@ -14,5 +14,6 @@ namespace TYPO3\Flow\Session\Aspect;
 /**
  * Marker interface for a Session Lazy Loading Proxy
  */
-interface LazyLoadingProxyInterface {
+interface LazyLoadingProxyInterface
+{
 }

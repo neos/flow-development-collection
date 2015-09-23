@@ -22,39 +22,39 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
+class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter
+{
+    /**
+     * Walks down a SelectStatement AST node, modifying it to retrieve a COUNT
+     *
+     * @param \Doctrine\ORM\Query\AST\SelectStatement $AST
+     * @return void
+     */
+    public function walkSelectStatement(\Doctrine\ORM\Query\AST\SelectStatement $AST)
+    {
+        $parent = null;
+        $parentName = null;
+        foreach ($this->_getQueryComponents() as $dqlAlias => $qComp) {
+            if ($qComp['parent'] === null && $qComp['nestingLevel'] == 0) {
+                $parent = $qComp;
+                $parentName = $dqlAlias;
+                break;
+            }
+        }
 
-	/**
-	 * Walks down a SelectStatement AST node, modifying it to retrieve a COUNT
-	 *
-	 * @param \Doctrine\ORM\Query\AST\SelectStatement $AST
-	 * @return void
-	 */
-	public function walkSelectStatement(\Doctrine\ORM\Query\AST\SelectStatement $AST) {
-		$parent = NULL;
-		$parentName = NULL;
-		foreach ($this->_getQueryComponents() AS $dqlAlias => $qComp) {
-			if ($qComp['parent'] === NULL && $qComp['nestingLevel'] == 0) {
-				$parent = $qComp;
-				$parentName = $dqlAlias;
-				break;
-			}
-		}
+        $pathExpression = new PathExpression(
+            PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION, $parentName,
+            $parent['metadata']->getSingleIdentifierFieldName()
+        );
+        $pathExpression->type = PathExpression::TYPE_STATE_FIELD;
 
-		$pathExpression = new PathExpression(
-			PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION, $parentName,
-			$parent['metadata']->getSingleIdentifierFieldName()
-		);
-		$pathExpression->type = PathExpression::TYPE_STATE_FIELD;
+        $AST->selectClause->selectExpressions = array(
+            new \Doctrine\ORM\Query\AST\SelectExpression(
+                new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, true), null
+            )
+        );
 
-		$AST->selectClause->selectExpressions = array(
-			new \Doctrine\ORM\Query\AST\SelectExpression(
-				new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, TRUE), NULL
-			)
-		);
-
-		// ORDER BY is not needed, only increases query execution through unnecessary sorting.
-		$AST->orderByClause = NULL;
-	}
-
+        // ORDER BY is not needed, only increases query execution through unnecessary sorting.
+        $AST->orderByClause = null;
+    }
 }

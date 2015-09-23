@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class NoAuthenticationProviderFoundException extends \TYPO3\Flow\Security\Exception {
+class NoAuthenticationProviderFoundException extends \TYPO3\Flow\Security\Exception
+{
 }

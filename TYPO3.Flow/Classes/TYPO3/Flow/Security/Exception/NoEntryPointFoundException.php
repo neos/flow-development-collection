@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class NoEntryPointFoundException extends \TYPO3\Flow\Security\Exception {
+class NoEntryPointFoundException extends \TYPO3\Flow\Security\Exception
+{
 }

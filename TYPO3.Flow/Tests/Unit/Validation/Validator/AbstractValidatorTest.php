@@ -15,38 +15,36 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * Testcase for the Abstract Validator
  *
  */
-class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    protected $validator;
 
-	protected $validator;
+    public function setUp()
+    {
+        $this->validator = $this->getAccessibleMockForAbstractClass('\TYPO3\Flow\Validation\Validator\AbstractValidator', array(), '', false);
+        $this->validator->_set('supportedOptions', array(
+            'placeHolder'    => array('default', 'Desc', 'mixed', false),
+            'secondPlaceHolder' => array('default', 'Desc', 'mixed'),
+            'thirdPlaceHolder'  => array('default', 'Desc', 'mixed', true),
+        ));
+    }
 
-	public function setUp() {
-		$this->validator = $this->getAccessibleMockForAbstractClass('\TYPO3\Flow\Validation\Validator\AbstractValidator', array(), '', FALSE );
-		$this->validator->_set( 'supportedOptions', array(
-			'placeHolder'   	=> array('default', 'Desc', 'mixed', FALSE),
-			'secondPlaceHolder' => array('default', 'Desc', 'mixed'),
-			'thirdPlaceHolder'  => array('default', 'Desc', 'mixed', TRUE),
-		) );
-	}
+    /**
+     * @test
+     */
+    public function abstractValidatorConstructWithRequiredOptionShouldNotFail()
+    {
+        $this->validator->__construct(array( 'thirdPlaceHolder' => 'dummy' ));
 
-	/**
-	 * @test
-	 */
-	public function abstractValidatorConstructWithRequiredOptionShouldNotFail() {
+        $this->assertInstanceOf('\TYPO3\Flow\Validation\Validator\AbstractValidator', $this->validator);
+    }
 
-		$this->validator->__construct( array( 'thirdPlaceHolder' => 'dummy' ) );
-
-		$this->assertInstanceOf('\TYPO3\Flow\Validation\Validator\AbstractValidator', $this->validator);
-
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
-	 */
-	public function abstractValidatorConstructWithoutRequiredOptionShouldFail() {
-
-		$this->validator->__construct( array() );
-
-	}
-
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     */
+    public function abstractValidatorConstructWithoutRequiredOptionShouldFail()
+    {
+        $this->validator->__construct(array());
+    }
 }

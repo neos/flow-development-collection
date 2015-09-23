@@ -17,67 +17,71 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the number validator
  *
  */
-class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+{
+    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\NumberValidator';
 
-	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\NumberValidator';
+    /**
+     * @var \TYPO3\Flow\I18n\Locale
+     */
+    protected $sampleLocale;
 
-	/**
-	 * @var \TYPO3\Flow\I18n\Locale
-	 */
-	protected $sampleLocale;
+    protected $numberParser;
 
-	protected $numberParser;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+        $this->mockNumberParser = $this->getMock('TYPO3\Flow\I18n\Parser\NumberParser');
+    }
 
-		$this->mockNumberParser = $this->getMock('TYPO3\Flow\I18n\Parser\NumberParser');
+    /**
+     * @test
+     */
+    public function validateReturnsNoErrorIfTheGivenValueIsNull()
+    {
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
+    }
 
-	}
+    /**
+     * @test
+     */
+    public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
+    {
+        $this->assertFalse($this->validator->validate('')->hasErrors());
+    }
 
-	/**
-	 * @test
-	 */
-	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
-		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
-	}
+    /**
+     * @test
+     */
+    public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject()
+    {
+        $sampleInvalidNumber = 'this is not a number';
 
-	/**
-	 * @test
-	 */
-	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
-		$this->assertFalse($this->validator->validate('')->hasErrors());
-	}
+        $this->mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->will($this->returnValue(false));
 
-	/**
-	 * @test
-	 */
-	public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
-		$sampleInvalidNumber = 'this is not a number';
+        $this->validatorOptions(array('locale' => $this->sampleLocale));
+        $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-		$this->mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
+        $this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+    }
 
-		$this->validatorOptions(array('locale' => $this->sampleLocale));
-		$this->inject($this->validator, 'numberParser', $this->mockNumberParser);
+    /**
+     * @test
+     */
+    public function returnsFalseForIncorrectValues()
+    {
+        $sampleInvalidNumber = 'this is not a number';
 
-		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
-	}
+        $this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(false));
 
-	/**
-	 * @test
-	 */
-	public function returnsFalseForIncorrectValues() {
-		$sampleInvalidNumber = 'this is not a number';
+        $this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
+        $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-		$this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
-
-		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
-		$this->inject($this->validator, 'numberParser', $this->mockNumberParser);
-
-		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
-	}
+        $this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+    }
 }

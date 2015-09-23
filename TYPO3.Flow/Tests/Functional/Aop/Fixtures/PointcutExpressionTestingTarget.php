@@ -14,13 +14,13 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * A target class for testing pointcut expressions
  */
-class PointcutExpressionTestingTarget {
-
-	/**
-	 * @return boolean
-	 */
-	public function testSettingFilter() {
-		return FALSE;
-	}
-
+class PointcutExpressionTestingTarget
+{
+    /**
+     * @return boolean
+     */
+    public function testSettingFilter()
+    {
+        return false;
+    }
 }

@@ -18,24 +18,26 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntitySubclassWithNewField extends TestEntity {
+class TestEntitySubclassWithNewField extends TestEntity
+{
+    /**
+     * @var string
+     */
+    protected $testField;
 
-	/**
-	 * @var string
-	 */
-	protected $testField;
+    /**
+     * @param string $testField
+     */
+    public function setTestField($testField)
+    {
+        $this->testField = $testField;
+    }
 
-	/**
-	 * @param string $testField
-	 */
-	public function setTestField($testField) {
-		$this->testField = $testField;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTestField() {
-		return $this->testField;
-	}
+    /**
+     * @return string
+     */
+    public function getTestField()
+    {
+        return $this->testField;
+    }
 }

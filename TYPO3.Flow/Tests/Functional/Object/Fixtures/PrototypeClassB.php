@@ -14,26 +14,27 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassB {
+class PrototypeClassB
+{
+    /**
+     * @var string
+     */
+    protected $someProperty;
 
-	/**
-	 * @var string
-	 */
-	protected $someProperty;
+    /**
+     * @param string $someProperty
+     * @return void
+     */
+    public function setSomeProperty($someProperty)
+    {
+        $this->someProperty = $someProperty;
+    }
 
-	/**
-	 * @param string $someProperty
-	 * @return void
-	 */
-	public function setSomeProperty($someProperty) {
-		$this->someProperty = $someProperty;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSomeProperty() {
-		return $this->someProperty;
-	}
-
+    /**
+     * @return string
+     */
+    public function getSomeProperty()
+    {
+        return $this->someProperty;
+    }
 }

@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  *
  * @sometag2
  */
-class TaggedClass2 {
-
+class TaggedClass2
+{
 }

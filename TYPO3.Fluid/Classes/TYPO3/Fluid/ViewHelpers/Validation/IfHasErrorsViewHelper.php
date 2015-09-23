@@ -39,30 +39,31 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasErrorsViewHelper extends AbstractConditionViewHelper {
+class IfHasErrorsViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * Renders <f:then> child if there are validation errors. The check can be narrowed down to
+     * specific property paths.
+     * If no errors are there, it renders the <f:else>-child.
+     *
+     * @param string $for The argument or property name or path to check for error(s)
+     * @return string
+     * @api
+     */
+    public function render($for = null)
+    {
+        /** @var $request ActionRequest */
+        $request = $this->controllerContext->getRequest();
+        /** @var $validationResults Result */
+        $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
-	/**
-	 * Renders <f:then> child if there are validation errors. The check can be narrowed down to
-	 * specific property paths.
-	 * If no errors are there, it renders the <f:else>-child.
-	 *
-	 * @param string $for The argument or property name or path to check for error(s)
-	 * @return string
-	 * @api
-	 */
-	public function render($for = NULL) {
-		/** @var $request ActionRequest */
-		$request = $this->controllerContext->getRequest();
-		/** @var $validationResults Result */
-		$validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-
-		if ($validationResults !== NULL) {
-				// if $for is not set, ->forProperty will return the initial Result object untouched
-			$validationResults = $validationResults->forProperty($for);
-			if ($validationResults->hasErrors()) {
-				return $this->renderThenChild();
-			}
-		}
-		return $this->renderElseChild();
-	}
+        if ($validationResults !== null) {
+            // if $for is not set, ->forProperty will return the initial Result object untouched
+            $validationResults = $validationResults->forProperty($for);
+            if ($validationResults->hasErrors()) {
+                return $this->renderThenChild();
+            }
+        }
+        return $this->renderElseChild();
+    }
 }

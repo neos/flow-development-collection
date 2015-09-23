@@ -56,39 +56,40 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  *
  * @api
  */
-class NumberViewHelper extends AbstractLocaleAwareViewHelper {
+class NumberViewHelper extends AbstractLocaleAwareViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
 
-	/**
-	 * @Flow\Inject
-	 * @var NumberFormatter
-	 */
-	protected $numberFormatter;
+    /**
+     * Format the numeric value as a number with grouped thousands, decimal point and
+     * precision.
+     *
+     * @param int $decimals The number of digits after the decimal point
+     * @param string $decimalSeparator The decimal point character
+     * @param string $thousandsSeparator The character for grouping the thousand digits
+     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
+     * @return string The formatted number
+     * @api
+     * @throws ViewHelperException
+     */
+    public function render($decimals = 2, $decimalSeparator = '.', $thousandsSeparator = ',', $localeFormatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
+    {
+        $stringToFormat = $this->renderChildren();
 
-	/**
-	 * Format the numeric value as a number with grouped thousands, decimal point and
-	 * precision.
-	 *
-	 * @param int $decimals The number of digits after the decimal point
-	 * @param string $decimalSeparator The decimal point character
-	 * @param string $thousandsSeparator The character for grouping the thousand digits
-	 * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
-	 * @return string The formatted number
-	 * @api
-	 * @throws ViewHelperException
-	 */
-	public function render($decimals = 2, $decimalSeparator = '.', $thousandsSeparator = ',', $localeFormatLength = NumbersReader::FORMAT_LENGTH_DEFAULT) {
-		$stringToFormat = $this->renderChildren();
-
-		$useLocale = $this->getLocale();
-		if ($useLocale !== NULL) {
-			try {
-				$output = $this->numberFormatter->formatDecimalNumber($stringToFormat, $useLocale, $localeFormatLength);
-			} catch (I18nException $exception) {
-				throw new ViewHelperException($exception->getMessage(), 1382351148, $exception);
-			}
-		} else {
-			$output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
-		}
-		return $output;
-	}
+        $useLocale = $this->getLocale();
+        if ($useLocale !== null) {
+            try {
+                $output = $this->numberFormatter->formatDecimalNumber($stringToFormat, $useLocale, $localeFormatLength);
+            } catch (I18nException $exception) {
+                throw new ViewHelperException($exception->getMessage(), 1382351148, $exception);
+            }
+        } else {
+            $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+        }
+        return $output;
+    }
 }

@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-interface IterableBackendInterface extends BackendInterface, \Iterator {
+interface IterableBackendInterface extends BackendInterface, \Iterator
+{
 }

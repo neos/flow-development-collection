@@ -21,17 +21,18 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class LocaleIdentifierValidator extends AbstractValidator {
-
-	/**
-	 * Is valid if the given value is a valid "locale identifier".
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 */
-	protected function isValid($value) {
-		if (!preg_match(\TYPO3\Flow\I18n\Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
-			$this->addError('Value is no valid I18n locale identifier.', 1327090892);
-		}
-	}
+class LocaleIdentifierValidator extends AbstractValidator
+{
+    /**
+     * Is valid if the given value is a valid "locale identifier".
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     */
+    protected function isValid($value)
+    {
+        if (!preg_match(\TYPO3\Flow\I18n\Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
+            $this->addError('Value is no valid I18n locale identifier.', 1327090892);
+        }
+    }
 }

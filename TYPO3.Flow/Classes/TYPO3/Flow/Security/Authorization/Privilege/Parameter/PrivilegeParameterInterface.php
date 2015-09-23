@@ -16,49 +16,49 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Contract for a privilege parameter
  */
-interface PrivilegeParameterInterface {
+interface PrivilegeParameterInterface
+{
+    /**
+     * Note: We can't define constructors in interfaces, but this is assumed to exist in the concrete implementation!
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    //public function __construct($name, $value);
 
-	/**
-	 * Note: We can't define constructors in interfaces, but this is assumed to exist in the concrete implementation!
-	 *
-	 * @param string $name
-	 * @param mixed $value
-	 */
-	//public function __construct($name, $value);
+    /**
+     * Name of this parameter
+     *
+     * @return string
+     */
+    public function getName();
 
-	/**
-	 * Name of this parameter
-	 *
-	 * @return string
-	 */
-	public function getName();
+    /**
+     * The value of this parameter
+     *
+     * @return mixed
+     */
+    public function getValue();
 
-	/**
-	 * The value of this parameter
-	 *
-	 * @return mixed
-	 */
-	public function getValue();
+    /**
+     * @return array
+     */
+    public function getPossibleValues();
 
-	/**
-	 * @return array
-	 */
-	public function getPossibleValues();
+    /**
+     * @param mixed $value
+     * @return boolean
+     */
+    public function validate($value);
 
-	/**
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	public function validate($value);
+    /**
+     * @return string
+     */
+    public function getType();
 
-	/**
-	 * @return string
-	 */
-	public function getType();
-
-	/**
-	 * Returns the string representation of this parameter
-	 * @return string
-	 */
-	public function __toString();
+    /**
+     * Returns the string representation of this parameter
+     * @return string
+     */
+    public function __toString();
 }

@@ -16,15 +16,16 @@ use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 /**
  * Root node of every syntax tree.
  */
-class RootNode extends AbstractNode {
-
-	/**
-	 * Evaluate the root node, by evaluating the subtree.
-	 *
-	 * @param RenderingContextInterface $renderingContext
-	 * @return mixed Evaluated subtree
-	 */
-	public function evaluate(RenderingContextInterface $renderingContext) {
-		return $this->evaluateChildNodes($renderingContext);
-	}
+class RootNode extends AbstractNode
+{
+    /**
+     * Evaluate the root node, by evaluating the subtree.
+     *
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed Evaluated subtree
+     */
+    public function evaluate(RenderingContextInterface $renderingContext)
+    {
+        return $this->evaluateChildNodes($renderingContext);
+    }
 }

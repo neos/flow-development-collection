@@ -27,15 +27,16 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * TextWithMixedCase
  *
  */
-class UcfirstViewHelper extends AbstractViewHelper {
-
-	/**
-	 * Uppercase first character
-	 *
-	 * @return string The altered string.
-	 */
-	public function render() {
-		$content = $this->renderChildren();
-		return ucfirst($content);
-	}
+class UcfirstViewHelper extends AbstractViewHelper
+{
+    /**
+     * Uppercase first character
+     *
+     * @return string The altered string.
+     */
+    public function render()
+    {
+        $content = $this->renderChildren();
+        return ucfirst($content);
+    }
 }

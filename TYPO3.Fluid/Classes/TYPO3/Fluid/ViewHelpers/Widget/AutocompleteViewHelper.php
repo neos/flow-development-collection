@@ -28,28 +28,29 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
  *
  * @api
  */
-class AutocompleteViewHelper extends AbstractWidgetViewHelper {
+class AutocompleteViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @var bool
+     */
+    protected $ajaxWidget = true;
 
-	/**
-	 * @var bool
-	 */
-	protected $ajaxWidget = TRUE;
+    /**
+     * @Flow\Inject
+     * @var Controller\AutocompleteController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var Controller\AutocompleteController
-	 */
-	protected $controller;
-
-	/**
-	 *
-	 * @param QueryResultInterface $objects
-	 * @param string $for
-	 * @param string $searchProperty
-	 * @param array $configuration
-	 * @return string
-	 */
-	public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10)) {
-		return $this->initiateSubRequest();
-	}
+    /**
+     *
+     * @param QueryResultInterface $objects
+     * @param string $for
+     * @param string $searchProperty
+     * @param array $configuration
+     * @return string
+     */
+    public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10))
+    {
+        return $this->initiateSubRequest();
+    }
 }

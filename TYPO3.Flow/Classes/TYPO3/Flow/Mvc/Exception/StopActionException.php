@@ -21,6 +21,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class StopActionException extends \TYPO3\Flow\Mvc\Exception {
-
+class StopActionException extends \TYPO3\Flow\Mvc\Exception
+{
 }

@@ -20,4 +20,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */
-final class Lazy {}
+final class Lazy
+{
+}

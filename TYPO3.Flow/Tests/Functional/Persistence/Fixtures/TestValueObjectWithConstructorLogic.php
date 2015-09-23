@@ -20,36 +20,36 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\ValueObject
  * @ORM\Table(name="persistence_testvalueobjectwithconstructorlogic")
  */
-class TestValueObjectWithConstructorLogic {
+class TestValueObjectWithConstructorLogic
+{
+    /**
+     * @var string
+     */
+    protected $value1;
 
-	/**
-	 * @var string
-	 */
-	protected $value1;
+    /**
+     * @var string
+     */
+    protected $value2;
 
-	/**
-	 * @var string
-	 */
-	protected $value2;
+    /**
+     * @var int
+     */
+    protected $calculatedValue;
 
-	/**
-	 * @var int
-	 */
-	protected $calculatedValue;
+    /**
+     * @param string $value1
+     * @param string $value2
+     */
+    public function __construct($value1, $value2)
+    {
+        $this->value1 = trim($value1);
+        $this->value2 = trim($value2);
 
-	/**
-	 * @param string $value1
-	 * @param string $value2
-	 */
-	public function __construct($value1, $value2) {
-		$this->value1 = trim($value1);
-		$this->value2 = trim($value2);
-
-		if (strlen($value1) > 5) {
-			$this->calculatedValue = 100;
-		} else {
-			$this->calculatedValue = 50;
-		}
-	}
+        if (strlen($value1) > 5) {
+            $this->calculatedValue = 100;
+        } else {
+            $this->calculatedValue = 50;
+        }
+    }
 }
-?>

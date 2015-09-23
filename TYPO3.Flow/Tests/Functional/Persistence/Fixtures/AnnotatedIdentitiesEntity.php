@@ -19,46 +19,49 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class AnnotatedIdentitiesEntity {
+class AnnotatedIdentitiesEntity
+{
+    /**
+     * @Flow\Identity
+     * @var string
+     */
+    protected $author;
 
-	/**
-	 * @Flow\Identity
-	 * @var string
-	 */
-	protected $author;
+    /**
+     * @Flow\Identity
+     * @var string
+     */
+    protected $title;
 
-	/**
-	 * @Flow\Identity
-	 * @var string
-	 */
-	protected $title;
+    /**
+     * @param string $author
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+    }
 
-	/**
-	 * @param string $author
-	 */
-	public function setAuthor($author) {
-		$this->author = $author;
-	}
+    /**
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getAuthor() {
-		return $this->author;
-	}
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
 
-	/**
-	 * @param string $title
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
 }

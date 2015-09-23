@@ -20,13 +20,12 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\Table(name="persistence_onetooneentity2")
  */
-class OneToOneEntity2 {
-
-	/**
-	 * Bidirectional relation inverse side
-	 * @var OneToOneEntity
-	 * @ORM\OneToOne(mappedBy="bidirectionalRelation")
-	 */
-	protected $bidirectionalRelation;
-
+class OneToOneEntity2
+{
+    /**
+     * Bidirectional relation inverse side
+     * @var OneToOneEntity
+     * @ORM\OneToOne(mappedBy="bidirectionalRelation")
+     */
+    protected $bidirectionalRelation;
 }

@@ -19,35 +19,36 @@ use TYPO3\Flow\Security\Context as SecurityContext;
  * Helper for security related information
  *
  */
-class SecurityHelper implements ProtectedContextAwareInterface {
+class SecurityHelper implements ProtectedContextAwareInterface
+{
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var SecurityContext
-	 */
-	protected $securityContext;
+    /**
+     * Get the account of the first authenticated token.
+     *
+     * @return \TYPO3\Flow\Security\Account|NULL
+     */
+    public function getAccount()
+    {
+        if ($this->securityContext->canBeInitialized()) {
+            return $this->securityContext->getAccount();
+        }
 
-	/**
-	 * Get the account of the first authenticated token.
-	 *
-	 * @return \TYPO3\Flow\Security\Account|NULL
-	 */
-	public function getAccount() {
-		if ($this->securityContext->canBeInitialized()) {
-			return $this->securityContext->getAccount();
-		}
+        return null;
+    }
 
-		return NULL;
-	}
-
-	/**
-	 * All methods are considered safe
-	 *
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return TRUE;
-	}
-
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
 }

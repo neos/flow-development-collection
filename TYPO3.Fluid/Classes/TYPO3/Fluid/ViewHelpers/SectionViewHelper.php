@@ -62,70 +62,74 @@ use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
  *
  * @api
  */
-class SectionViewHelper extends AbstractViewHelper implements PostParseInterface, CompilableInterface {
+class SectionViewHelper extends AbstractViewHelper implements PostParseInterface, CompilableInterface
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('name', 'string', 'Name of the section', true);
+    }
 
-	/**
-	 * Initialize the arguments.
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		$this->registerArgument('name', 'string', 'Name of the section', TRUE);
-	}
+    /**
+     * Save the associated ViewHelper node in a static public class variable.
+     * called directly after the ViewHelper was built.
+     *
+     * @param ViewHelperNode $syntaxTreeNode
+     * @param array $viewHelperArguments<TextNode>
+     * @param TemplateVariableContainer $variableContainer
+     * @return void
+     */
+    public static function postParseEvent(ViewHelperNode $syntaxTreeNode, array $viewHelperArguments, TemplateVariableContainer $variableContainer)
+    {
+        /** @var $nameArgument TextNode */
+        $nameArgument = $viewHelperArguments['name'];
+        $sectionName = $nameArgument->getText();
+        if (!$variableContainer->exists('sections')) {
+            $variableContainer->add('sections', array());
+        }
+        $sections = $variableContainer->get('sections');
+        $sections[$sectionName] = $syntaxTreeNode;
+        $variableContainer->remove('sections');
+        $variableContainer->add('sections', $sections);
+    }
 
-	/**
-	 * Save the associated ViewHelper node in a static public class variable.
-	 * called directly after the ViewHelper was built.
-	 *
-	 * @param ViewHelperNode $syntaxTreeNode
-	 * @param array $viewHelperArguments<TextNode>
-	 * @param TemplateVariableContainer $variableContainer
-	 * @return void
-	 */
-	static public function postParseEvent(ViewHelperNode $syntaxTreeNode, array $viewHelperArguments, TemplateVariableContainer $variableContainer) {
-		/** @var $nameArgument TextNode */
-		$nameArgument = $viewHelperArguments['name'];
-		$sectionName = $nameArgument->getText();
-		if (!$variableContainer->exists('sections')) {
-			$variableContainer->add('sections', array());
-		}
-		$sections = $variableContainer->get('sections');
-		$sections[$sectionName] = $syntaxTreeNode;
-		$variableContainer->remove('sections');
-		$variableContainer->add('sections', $sections);
-	}
+    /**
+     * Rendering directly returns all child nodes.
+     *
+     * @return string HTML String of all child nodes.
+     * @api
+     */
+    public function render()
+    {
+        if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection')) {
+            $this->viewHelperVariableContainer->remove('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection');
+            return $this->renderChildren();
+        }
+        return '';
+    }
 
-	/**
-	 * Rendering directly returns all child nodes.
-	 *
-	 * @return string HTML String of all child nodes.
-	 * @api
-	 */
-	public function render() {
-		if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection')) {
-			$this->viewHelperVariableContainer->remove('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection');
-			return $this->renderChildren();
-		}
-		return '';
-	}
-
-	/**
-	 * The inner contents of a section should not be rendered.
-	 *
-	 * @param string $argumentsVariableName
-	 * @param string $renderChildrenClosureVariableName
-	 * @param string $initializationPhpCode
-	 * @param AbstractNode $syntaxTreeNode
-	 * @param TemplateCompiler $templateCompiler
-	 * @return string
-	 */
-	public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler) {
-		return '\'\'';
-	}
+    /**
+     * The inner contents of a section should not be rendered.
+     *
+     * @param string $argumentsVariableName
+     * @param string $renderChildrenClosureVariableName
+     * @param string $initializationPhpCode
+     * @param AbstractNode $syntaxTreeNode
+     * @param TemplateCompiler $templateCompiler
+     * @return string
+     */
+    public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler)
+    {
+        return '\'\'';
+    }
 }

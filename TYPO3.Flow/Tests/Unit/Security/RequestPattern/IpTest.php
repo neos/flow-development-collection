@@ -16,42 +16,43 @@ use TYPO3\Flow\Http\Request;
 /**
  * Testcase for the IP request pattern
  */
-class IpTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class IpTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * Data provider with valid and invalid IP ranges
+     */
+    public function validAndInvalidIpPatterns()
+    {
+        return array(
+            array('127.0.0.1', '127.0.0.1', true),
+            array('127.0.0.0/24', '127.0.0.1', true),
+            array('255.255.255.255/0', '127.0.0.1', true),
+            array('127.0.255.255/16', '127.0.0.1', true),
+            array('127.0.0.1/32', '127.0.0.1', true),
+            array('1:2::3:4', '1:2:0:0:0:0:3:4', true),
+            array('127.0.0.2/32', '127.0.0.1', false),
+            array('127.0.1.0/24', '127.0.0.1', false),
+            array('127.0.0.255/31', '127.0.0.1', false),
+            array('::1', '127.0.0.1', false),
+            array('::127.0.0.1', '127.0.0.1', true),
+            array('127.0.0.1', '::127.0.0.1', true),
+        );
+    }
 
-	/**
-	 * Data provider with valid and invalid IP ranges
-	 */
-	public function validAndInvalidIpPatterns() {
-		return array(
-			array('127.0.0.1', '127.0.0.1', TRUE),
-			array('127.0.0.0/24', '127.0.0.1', TRUE),
-			array('255.255.255.255/0', '127.0.0.1', TRUE),
-			array('127.0.255.255/16', '127.0.0.1', TRUE),
-			array('127.0.0.1/32', '127.0.0.1', TRUE),
-			array('1:2::3:4', '1:2:0:0:0:0:3:4', TRUE),
-			array('127.0.0.2/32', '127.0.0.1', FALSE),
-			array('127.0.1.0/24', '127.0.0.1', FALSE),
-			array('127.0.0.255/31', '127.0.0.1', FALSE),
-			array('::1', '127.0.0.1', FALSE),
-			array('::127.0.0.1', '127.0.0.1', TRUE),
-			array('127.0.0.1', '::127.0.0.1', TRUE),
-		);
-	}
+    /**
+     * @dataProvider validAndInvalidIpPatterns
+     * @test
+     */
+    public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
+    {
+        $requestMock = $this->getMock('\TYPO3\Flow\Http\Request', array('getClientIpAddress'), array(), '', false);
+        $requestMock->expects($this->once())->method('getClientIpAddress')->will($this->returnValue($ip));
+        $actionRequestMock = $this->getMock('\TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', false);
+        $actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
 
-	/**
-	 * @dataProvider validAndInvalidIpPatterns
-	 * @test
-	 */
-	public function requestMatchingBasicallyWorks($pattern, $ip, $expected) {
-		$requestMock = $this->getMock('\TYPO3\Flow\Http\Request', array('getClientIpAddress'), array(), '', FALSE);
-		$requestMock->expects($this->once())->method('getClientIpAddress')->will($this->returnValue($ip));
-		$actionRequestMock = $this->getMock('\TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
+        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Ip();
 
-		$requestPattern = new \TYPO3\Flow\Security\RequestPattern\Ip();
-
-		$requestPattern->setPattern($pattern);
-		$this->assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
-	}
+        $requestPattern->setPattern($pattern);
+        $this->assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
+    }
 }
-?>

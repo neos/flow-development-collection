@@ -18,43 +18,45 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\ValueObject
  */
-class TestValueobject {
+class TestValueobject
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     *
+     * @var integer
+     */
+    protected $age;
 
-	/**
-	 *
-	 * @var integer
-	 */
-	protected $age;
+    /**
+     *
+     * @param string $name
+     * @param integer $age
+     */
+    public function __construct($name, $age)
+    {
+        $this->name = $name;
+        $this->age = $age;
+    }
 
-	/**
-	 *
-	 * @param string $name
-	 * @param integer $age
-	 */
-	public function __construct($name, $age) {
-		$this->name = $name;
-		$this->age = $age;
-	}
+    /**
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 *
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 *
-	 * @return integer
-	 */
-	public function getAge() {
-		return $this->age;
-	}
-
+    /**
+     *
+     * @return integer
+     */
+    public function getAge()
+    {
+        return $this->age;
+    }
 }

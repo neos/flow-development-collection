@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  *
  * @api
  */
-class UnableToFindFormatException extends \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException {
-
+class UnableToFindFormatException extends \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException
+{
 }

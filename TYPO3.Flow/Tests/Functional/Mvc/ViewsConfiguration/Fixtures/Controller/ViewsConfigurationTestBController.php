@@ -17,11 +17,12 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 /**
  * A controller fixture
  */
-class ViewsConfigurationTestBController extends ActionController {
-
-	/**
-	 * @return string
-	 */
-	public function firstAction() {
-	}
+class ViewsConfigurationTestBController extends ActionController
+{
+    /**
+     * @return string
+     */
+    public function firstAction()
+    {
+    }
 }

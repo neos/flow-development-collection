@@ -16,5 +16,6 @@ namespace TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class Exception extends \TYPO3\Fluid\Core\Exception {
+class Exception extends \TYPO3\Fluid\Core\Exception
+{
 }

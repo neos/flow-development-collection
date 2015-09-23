@@ -22,133 +22,139 @@ use TYPO3\Flow\Tests\UnitTestCase;
  * Testcase for the doctrine persistence manager
  *
  */
-class PersistenceManagerTest extends UnitTestCase {
+class PersistenceManagerTest extends UnitTestCase
+{
+    /**
+     * @var PersistenceManager
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @var PersistenceManager
-	 */
-	protected $persistenceManager;
+    /**
+     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockEntityManager;
 
-	/**
-	 * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockEntityManager;
+    /**
+     * @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockUnitOfWork;
 
-	/**
-	 * @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockUnitOfWork;
+    /**
+     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockConnection;
 
-	/**
-	 * @var Connection|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockConnection;
+    /**
+     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockSystemLogger;
 
-	/**
-	 * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockSystemLogger;
+    public function setUp()
+    {
+        $this->persistenceManager = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\PersistenceManager')->setMethods(array('emitAllObjectsPersisted'))->getMock();
 
-	public function setUp() {
-		$this->persistenceManager = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\PersistenceManager')->setMethods(array('emitAllObjectsPersisted'))->getMock();
+        $this->mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager->expects($this->any())->method('isOpen')->will($this->returnValue(true));
+        $this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
 
-		$this->mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-		$this->mockEntityManager->expects($this->any())->method('isOpen')->will($this->returnValue(TRUE));
-		$this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
+        $this->mockUnitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->will($this->returnValue($this->mockUnitOfWork));
 
-		$this->mockUnitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
-		$this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->will($this->returnValue($this->mockUnitOfWork));
+        $this->mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
 
-		$this->mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
-		$this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
+        $this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+        $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
+    }
 
-		$this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
-		$this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
-	}
+    /**
+     * @test
+     */
+    public function getIdentifierByObjectUsesUnitOfWorkIdentityWithEmptyFlowPersistenceIdentifier()
+    {
+        $entity = (object)array(
+            'Persistence_Object_Identifier' => null
+        );
 
-	/**
-	 * @test
-	 */
-	public function getIdentifierByObjectUsesUnitOfWorkIdentityWithEmptyFlowPersistenceIdentifier() {
-		$entity = (object)array(
-			'Persistence_Object_Identifier' => NULL
-		);
+        $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->will($this->returnValue(true));
+        $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->will($this->returnValue(array('SomeIdentifier')));
 
-		$this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->will($this->returnValue(TRUE));
-		$this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->will($this->returnValue(array('SomeIdentifier')));
+        $this->assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
+    }
 
-		$this->assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Persistence\Exception
+     * @expectedExceptionMessageRegExp /^Detected modified or new objects/
+     */
+    public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
+    {
+        $mockObject = new \stdClass();
+        $scheduledEntityUpdates = array(spl_object_hash($mockObject) => $mockObject);
+        $scheduledEntityDeletes = array();
+        $scheduledEntityInsertions = array();
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Persistence\Exception
-	 * @expectedExceptionMessageRegExp /^Detected modified or new objects/
-	 */
-	public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue() {
-		$mockObject = new \stdClass();
-		$scheduledEntityUpdates = array(spl_object_hash($mockObject) => $mockObject);
-		$scheduledEntityDeletes = array();
-		$scheduledEntityInsertions = array();
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
+        $this->mockEntityManager->expects($this->never())->method('flush');
 
-		$this->mockEntityManager->expects($this->never())->method('flush');
+        $this->persistenceManager->persistAll(true);
+    }
 
-		$this->persistenceManager->persistAll(TRUE);
-	}
+    /**
+     * @test
+     */
+    public function persistAllRespectsObjectWhitelistIfOnlyWhitelistedObjectsFlagIsTrue()
+    {
+        $mockObject = new \stdClass();
+        $scheduledEntityUpdates = array(spl_object_hash($mockObject) => $mockObject);
+        $scheduledEntityDeletes = array();
+        $scheduledEntityInsertions = array();
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
 
-	/**
-	 * @test
-	 */
-	public function persistAllRespectsObjectWhitelistIfOnlyWhitelistedObjectsFlagIsTrue() {
-		$mockObject = new \stdClass();
-		$scheduledEntityUpdates = array(spl_object_hash($mockObject) => $mockObject);
-		$scheduledEntityDeletes = array();
-		$scheduledEntityInsertions = array();
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
-		$this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
+        $this->mockEntityManager->expects($this->once())->method('flush');
 
-		$this->mockEntityManager->expects($this->once())->method('flush');
+        $this->persistenceManager->whitelistObject($mockObject);
+        $this->persistenceManager->persistAll(true);
+    }
 
-		$this->persistenceManager->whitelistObject($mockObject);
-		$this->persistenceManager->persistAll(TRUE);
-	}
+    /**
+     * @test
+     */
+    public function persistAllAbortsIfConnectionIsClosed()
+    {
+        $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $mockEntityManager->expects($this->atLeastOnce())->method('isOpen')->will($this->returnValue(false));
+        $this->inject($this->persistenceManager, 'entityManager', $mockEntityManager);
 
-	/**
-	 * @test
-	 */
-	public function persistAllAbortsIfConnectionIsClosed() {
-		$mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-		$mockEntityManager->expects($this->atLeastOnce())->method('isOpen')->will($this->returnValue(FALSE));
-		$this->inject($this->persistenceManager, 'entityManager', $mockEntityManager);
+        $mockEntityManager->expects($this->never())->method('flush');
+        $this->persistenceManager->persistAll();
+    }
 
-		$mockEntityManager->expects($this->never())->method('flush');
-		$this->persistenceManager->persistAll();
-	}
+    /**
+     * @test
+     */
+    public function persistAllEmitsAllObjectsPersistedSignal()
+    {
+        $this->mockEntityManager->expects($this->once())->method('flush');
+        $this->persistenceManager->expects($this->once())->method('emitAllObjectsPersisted');
 
-	/**
-	 * @test
-	 */
-	public function persistAllEmitsAllObjectsPersistedSignal() {
-		$this->mockEntityManager->expects($this->once())->method('flush');
-		$this->persistenceManager->expects($this->once())->method('emitAllObjectsPersisted');
+        $this->persistenceManager->persistAll();
+    }
 
-		$this->persistenceManager->persistAll();
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Error\Exception
+     */
+    public function persistAllReconnectsConnectionOnFailure()
+    {
+        $this->mockEntityManager->expects($this->exactly(2))->method('flush')->will($this->throwException(new \TYPO3\Flow\Error\Exception('Dummy connection error')));
+        $this->mockConnection->expects($this->at(0))->method('close');
+        $this->mockConnection->expects($this->at(1))->method('connect');
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Error\Exception
-	 */
-	public function persistAllReconnectsConnectionOnFailure() {
-		$this->mockEntityManager->expects($this->exactly(2))->method('flush')->will($this->throwException(new \TYPO3\Flow\Error\Exception('Dummy connection error')));
-		$this->mockConnection->expects($this->at(0))->method('close');
-		$this->mockConnection->expects($this->at(1))->method('connect');
-
-		$this->persistenceManager->persistAll();
-	}
-
+        $this->persistenceManager->persistAll();
+    }
 }

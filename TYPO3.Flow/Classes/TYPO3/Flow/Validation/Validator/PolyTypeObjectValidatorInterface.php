@@ -16,26 +16,25 @@ namespace TYPO3\Flow\Validation\Validator;
  *
  * @api
  */
-interface PolyTypeObjectValidatorInterface extends ObjectValidatorInterface {
+interface PolyTypeObjectValidatorInterface extends ObjectValidatorInterface
+{
+    /**
+     * Checks the given target can be validated by the validator implementation.
+     *
+     * @param mixed $target The object or class name to be checked
+     * @return boolean TRUE if the target can be validated
+     * @api
+     */
+    public function canValidate($target);
 
-	/**
-	 * Checks the given target can be validated by the validator implementation.
-	 *
-	 * @param mixed $target The object or class name to be checked
-	 * @return boolean TRUE if the target can be validated
-	 * @api
-	 */
-	public function canValidate($target);
-
-	/**
-	 * Return the priority of this validator.
-	 *
-	 * Validators with a high priority are chosen before low priority and only one
-	 * of multiple capable validators will be used.
-	 *
-	 * @return integer
-	 * @api
-	 */
-	public function getPriority();
-
+    /**
+     * Return the priority of this validator.
+     *
+     * Validators with a high priority are chosen before low priority and only one
+     * of multiple capable validators will be used.
+     *
+     * @return integer
+     * @api
+     */
+    public function getPriority();
 }

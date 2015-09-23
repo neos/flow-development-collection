@@ -20,34 +20,36 @@ use TYPO3\Flow\Utility\Arrays;
 /**
  * Functional tests for the Debugger
  */
-class DebuggerTest extends FunctionalTestCase {
-
-	/**
-	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
-	 */
-	protected $configurationManager;
-
-
-	public function setUp() {
-		parent::setUp();
-		$this->configurationManager = $this->objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
-		Debugger::clearState();
-	}
+class DebuggerTest extends FunctionalTestCase
+{
+    /**
+     * @var \TYPO3\Flow\Configuration\ConfigurationManager
+     */
+    protected $configurationManager;
 
 
-	/**
-	 * @test
-	 */
-	public function ignoredClassesCanBeOverwrittenBySettings() {
-		$object = new ApplicationContext('Development');
-		$this->assertEquals('TYPO3\Flow\Core\ApplicationContext prototype object', Debugger::renderDump($object, 10, TRUE));
-		Debugger::clearState();
+    public function setUp()
+    {
+        parent::setUp();
+        $this->configurationManager = $this->objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
+        Debugger::clearState();
+    }
 
-		$currentConfiguration = ObjectAccess::getProperty($this->configurationManager, 'configurations', TRUE);
-		$configurationOverwrite['Settings']['TYPO3']['Flow']['error']['debugger']['ignoredClasses']['TYPO3\\\\Flow\\\\Core\\\\.*'] = FALSE;
-		$newConfiguration = Arrays::arrayMergeRecursiveOverrule($currentConfiguration, $configurationOverwrite);
-		ObjectAccess::setProperty($this->configurationManager, 'configurations', $newConfiguration, TRUE);
 
-		$this->assertContains('rootContextString', Debugger::renderDump($object, 10, TRUE));
-	}
+    /**
+     * @test
+     */
+    public function ignoredClassesCanBeOverwrittenBySettings()
+    {
+        $object = new ApplicationContext('Development');
+        $this->assertEquals('TYPO3\Flow\Core\ApplicationContext prototype object', Debugger::renderDump($object, 10, true));
+        Debugger::clearState();
+
+        $currentConfiguration = ObjectAccess::getProperty($this->configurationManager, 'configurations', true);
+        $configurationOverwrite['Settings']['TYPO3']['Flow']['error']['debugger']['ignoredClasses']['TYPO3\\\\Flow\\\\Core\\\\.*'] = false;
+        $newConfiguration = Arrays::arrayMergeRecursiveOverrule($currentConfiguration, $configurationOverwrite);
+        ObjectAccess::setProperty($this->configurationManager, 'configurations', $newConfiguration, true);
+
+        $this->assertContains('rootContextString', Debugger::renderDump($object, 10, true));
+    }
 }

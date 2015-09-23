@@ -19,15 +19,16 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class RawValidator extends AbstractValidator {
-
-	/**
-	 * This validator is always valid.
-	 *
-	 * @param mixed $value The value that should be validated (not used here)
-	 * @return void
-	 * @api
-	 */
-	public function isValid($value) {
-	}
+class RawValidator extends AbstractValidator
+{
+    /**
+     * This validator is always valid.
+     *
+     * @param mixed $value The value that should be validated (not used here)
+     * @return void
+     * @api
+     */
+    public function isValid($value)
+    {
+    }
 }

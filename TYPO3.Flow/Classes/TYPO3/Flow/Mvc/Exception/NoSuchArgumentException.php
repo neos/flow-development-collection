@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class NoSuchArgumentException extends \TYPO3\Flow\Mvc\Exception {
-
+class NoSuchArgumentException extends \TYPO3\Flow\Mvc\Exception
+{
 }

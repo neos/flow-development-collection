@@ -18,17 +18,18 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A SQL generator to create a condition matching anything.
  */
-class TrueConditionGenerator implements SqlGeneratorInterface {
-
-	/**
-	 * Returns an SQL query part that is basically a no-op in order to match any entity
-	 *
-	 * @param DoctrineSqlFilter $sqlFilter
-	 * @param ClassMetadata $targetEntity
-	 * @param string $targetTableAlias
-	 * @return string
-	 */
-	public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias) {
-		return ' (1=1) ';
-	}
+class TrueConditionGenerator implements SqlGeneratorInterface
+{
+    /**
+     * Returns an SQL query part that is basically a no-op in order to match any entity
+     *
+     * @param DoctrineSqlFilter $sqlFilter
+     * @param ClassMetadata $targetEntity
+     * @param string $targetTableAlias
+     * @return string
+     */
+    public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
+    {
+        return ' (1=1) ';
+    }
 }

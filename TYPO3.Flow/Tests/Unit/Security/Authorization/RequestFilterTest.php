@@ -14,63 +14,67 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
 /**
  * Testcase for request filters
  */
-class RequestFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RequestFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function theSetIncerceptorIsCalledIfTheRequestPatternMatches()
+    {
+        $request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
+        $requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
+        $interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
 
-	/**
-	 * @test
-	 */
-	public function theSetIncerceptorIsCalledIfTheRequestPatternMatches() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
-		$requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
-		$interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
+        $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(true));
+        $interceptor->expects($this->once())->method('invoke');
 
-		$requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(TRUE));
-		$interceptor->expects($this->once())->method('invoke');
+        $requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter->filterRequest($request);
+    }
 
-		$requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
-		$requestFilter->filterRequest($request);
-	}
+    /**
+     * @test
+     */
+    public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch()
+    {
+        $request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
+        $requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
+        $interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
 
-	/**
-	 * @test
-	 */
-	public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
-		$requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
-		$interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
+        $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(false));
+        $interceptor->expects($this->never())->method('invoke');
 
-		$requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(FALSE));
-		$interceptor->expects($this->never())->method('invoke');
+        $requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter->filterRequest($request);
+    }
 
-		$requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
-		$requestFilter->filterRequest($request);
-	}
+    /**
+     * @test
+     */
+    public function theFilterReturnsTrueIfThePatternMatched()
+    {
+        $request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
+        $requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
+        $interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
 
-	/**
-	 * @test
-	 */
-	public function theFilterReturnsTrueIfThePatternMatched() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
-		$requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
-		$interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
+        $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(true));
 
-		$requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(TRUE));
+        $requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $this->assertTrue($requestFilter->filterRequest($request));
+    }
 
-		$requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
-		$this->assertTrue($requestFilter->filterRequest($request));
-	}
+    /**
+     * @test
+     */
+    public function theFilterReturnsFalseIfThePatternDidNotMatch()
+    {
+        $request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
+        $requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
+        $interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
 
-	/**
-	 * @test
-	 */
-	public function theFilterReturnsFalseIfThePatternDidNotMatch() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\RequestInterface');
-		$requestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
-		$interceptor = $this->getMock('TYPO3\Flow\Security\Authorization\InterceptorInterface');
+        $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(false));
 
-		$requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(FALSE));
-
-		$requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
-		$this->assertFalse($requestFilter->filterRequest($request));
-	}
+        $requestFilter = new \TYPO3\Flow\Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $this->assertFalse($requestFilter->filterRequest($request));
+    }
 }

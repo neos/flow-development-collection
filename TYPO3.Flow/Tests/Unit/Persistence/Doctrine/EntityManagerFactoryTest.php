@@ -13,61 +13,64 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
 
 /**
  */
-class EntityManagerFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class EntityManagerFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function dqlCustomStringFunctionCanCorrectlyBeAppliedToConfiguration()
+    {
+        $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-	/**
-	 * @test
-	 */
-	public function dqlCustomStringFunctionCanCorrectlyBeAppliedToConfiguration() {
-		$configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
+        $this->assertEquals('Some\Foo\StringClass', $configuration->getCustomStringFunction('FOOSTRING'));
+        $this->assertEquals('Some\Bar\StringClass', $configuration->getCustomStringFunction('BARSTRING'));
+    }
 
-		$this->assertEquals('Some\Foo\StringClass', $configuration->getCustomStringFunction('FOOSTRING'));
-		$this->assertEquals('Some\Bar\StringClass', $configuration->getCustomStringFunction('BARSTRING'));
-	}
+    /**
+     * @test
+     */
+    public function dqlCustomNumericFunctionCanCorrectlyBeAppliedToConfiguration()
+    {
+        $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-	/**
-	 * @test
-	 */
-	public function dqlCustomNumericFunctionCanCorrectlyBeAppliedToConfiguration() {
-		$configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
+        $this->assertEquals('Some\Foo\NumericClass', $configuration->getCustomNumericFunction('FOONUMERIC'));
+        $this->assertEquals('Some\Bar\NumericClass', $configuration->getCustomNumericFunction('BARNUMERIC'));
+    }
 
-		$this->assertEquals('Some\Foo\NumericClass', $configuration->getCustomNumericFunction('FOONUMERIC'));
-		$this->assertEquals('Some\Bar\NumericClass', $configuration->getCustomNumericFunction('BARNUMERIC'));
-	}
+    /**
+     * @test
+     */
+    public function dqlCustomDateTimeFunctionCanCorrectlyBeAppliedToConfiguration()
+    {
+        $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-	/**
-	 * @test
-	 */
-	public function dqlCustomDateTimeFunctionCanCorrectlyBeAppliedToConfiguration() {
-		$configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
+        $this->assertEquals('Some\Foo\DateTimeClass', $configuration->getCustomDatetimeFunction('FOODATETIME'));
+        $this->assertEquals('Some\Bar\DateTimeClass', $configuration->getCustomDatetimeFunction('BARDATETIME'));
+    }
 
-		$this->assertEquals('Some\Foo\DateTimeClass', $configuration->getCustomDatetimeFunction('FOODATETIME'));
-		$this->assertEquals('Some\Bar\DateTimeClass', $configuration->getCustomDatetimeFunction('BARDATETIME'));
-	}
+    /**
+     * @return \Doctrine\ORM\Configuration
+     */
+    protected function buildAndPrepareDqlCustomStringConfiguration()
+    {
+        $entityManagerFactory = $this->getAccessibleMock('TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory', array('dummy'));
+        $configuration = new \Doctrine\ORM\Configuration;
 
-	/**
-	 * @return \Doctrine\ORM\Configuration
-	 */
-	protected function buildAndPrepareDqlCustomStringConfiguration() {
-		$entityManagerFactory = $this->getAccessibleMock('TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory', array('dummy'));
-		$configuration = new \Doctrine\ORM\Configuration;
-
-		$settingsArray = array(
-			'customStringFunctions' => array(
-				'FOOSTRING' => 'Some\Foo\StringClass',
-				'BARSTRING' => 'Some\Bar\StringClass'
-			),
-			'customNumericFunctions' => array(
-				'FOONUMERIC' => 'Some\Foo\NumericClass',
-				'BARNUMERIC' => 'Some\Bar\NumericClass'
-			),
-			'customDatetimeFunctions' => array(
-				'FOODATETIME' => 'Some\Foo\DateTimeClass',
-				'BARDATETIME' => 'Some\Bar\DateTimeClass'
-			),
-		);
-		$entityManagerFactory->_call('applyDqlSettingsToConfiguration', $settingsArray, $configuration);
-		return $configuration;
-	}
-
+        $settingsArray = array(
+            'customStringFunctions' => array(
+                'FOOSTRING' => 'Some\Foo\StringClass',
+                'BARSTRING' => 'Some\Bar\StringClass'
+            ),
+            'customNumericFunctions' => array(
+                'FOONUMERIC' => 'Some\Foo\NumericClass',
+                'BARNUMERIC' => 'Some\Bar\NumericClass'
+            ),
+            'customDatetimeFunctions' => array(
+                'FOODATETIME' => 'Some\Foo\DateTimeClass',
+                'BARDATETIME' => 'Some\Bar\DateTimeClass'
+            ),
+        );
+        $entityManagerFactory->_call('applyDqlSettingsToConfiguration', $settingsArray, $configuration);
+        return $configuration;
+    }
 }

@@ -26,30 +26,29 @@ namespace TYPO3\Flow\Persistence;
  *
  * @api
  */
-interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess {
+interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
+{
+    /**
+     * Returns a clone of the query object
+     *
+     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @api
+     */
+    public function getQuery();
 
-	/**
-	 * Returns a clone of the query object
-	 *
-	 * @return \TYPO3\Flow\Persistence\QueryInterface
-	 * @api
-	 */
-	public function getQuery();
+    /**
+     * Returns the first object in the result set
+     *
+     * @return object
+     * @api
+     */
+    public function getFirst();
 
-	/**
-	 * Returns the first object in the result set
-	 *
-	 * @return object
-	 * @api
-	 */
-	public function getFirst();
-
-	/**
-	 * Returns an array with the objects in the result set
-	 *
-	 * @return array
-	 * @api
-	 */
-	public function toArray();
-
+    /**
+     * Returns an array with the objects in the result set
+     *
+     * @return array
+     * @api
+     */
+    public function toArray();
 }

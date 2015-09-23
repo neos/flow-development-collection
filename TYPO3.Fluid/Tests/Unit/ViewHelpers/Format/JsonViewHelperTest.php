@@ -18,64 +18,68 @@ use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 /**
  * Test for \TYPO3\Fluid\ViewHelpers\Format\JsonViewHelper
  */
-class JsonViewHelperTest extends ViewHelperBaseTestcase {
+class JsonViewHelperTest extends ViewHelperBaseTestcase
+{
+    /**
+     * @var \TYPO3\Fluid\ViewHelpers\Format\JsonViewHelper
+     */
+    protected $viewHelper;
 
-	/**
-	 * @var \TYPO3\Fluid\ViewHelpers\Format\JsonViewHelper
-	 */
-	protected $viewHelper;
+    public function setUp()
+    {
+        parent::setUp();
+        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\JsonViewHelper', array('renderChildren'));
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+        $this->viewHelper->initializeArguments();
+    }
 
-	public function setUp() {
-		parent::setUp();
-		$this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\JsonViewHelper', array('renderChildren'));
-		$this->injectDependenciesIntoViewHelper($this->viewHelper);
-		$this->viewHelper->initializeArguments();
-	}
+    /**
+     * @test
+     */
+    public function viewHelperConvertsSimpleAssociativeArrayGivenAsChildren()
+    {
+        $this->viewHelper
+                ->expects($this->once())
+                ->method('renderChildren')
+                ->will($this->returnValue(array('foo' => 'bar')));
 
-	/**
-	 * @test
-	 */
-	public function viewHelperConvertsSimpleAssociativeArrayGivenAsChildren() {
-		$this->viewHelper
-				->expects($this->once())
-				->method('renderChildren')
-				->will($this->returnValue(array('foo' => 'bar')));
+        $actualResult = $this->viewHelper->render();
+        $this->assertEquals('{"foo":"bar"}', $actualResult);
+    }
 
-		$actualResult = $this->viewHelper->render();
-		$this->assertEquals('{"foo":"bar"}', $actualResult);
-	}
+    /**
+     * @test
+     */
+    public function viewHelperConvertsSimpleAssociativeArrayGivenAsDataArgument()
+    {
+        $this->viewHelper
+                ->expects($this->never())
+                ->method('renderChildren');
 
-	/**
-	 * @test
-	 */
-	public function viewHelperConvertsSimpleAssociativeArrayGivenAsDataArgument() {
-		$this->viewHelper
-				->expects($this->never())
-				->method('renderChildren');
+        $actualResult = $this->viewHelper->render(array('foo' => 'bar'));
+        $this->assertEquals('{"foo":"bar"}', $actualResult);
+    }
 
-		$actualResult = $this->viewHelper->render(array('foo' => 'bar'));
-		$this->assertEquals('{"foo":"bar"}', $actualResult);
-	}
+    /**
+     * @test
+     */
+    public function viewHelperOutputsArrayOnIndexedArrayInputAndObjectIfSetSo()
+    {
+        $this->viewHelper
+                ->expects($this->any())
+                ->method('renderChildren')
+                ->will($this->returnValue(array('foo', 'bar', 42)));
 
-	/**
-	 * @test
-	 */
-	public function viewHelperOutputsArrayOnIndexedArrayInputAndObjectIfSetSo() {
-		$this->viewHelper
-				->expects($this->any())
-				->method('renderChildren')
-				->will($this->returnValue(array('foo', 'bar', 42)));
+        $this->assertEquals('["foo","bar",42]', $this->viewHelper->render());
+        $this->assertEquals('{"0":"foo","1":"bar","2":42}', $this->viewHelper->render(null, true));
+    }
 
-		$this->assertEquals('["foo","bar",42]', $this->viewHelper->render());
-		$this->assertEquals('{"0":"foo","1":"bar","2":42}', $this->viewHelper->render(NULL, TRUE));
-	}
-
-	/**
-	 * @test
-	 */
-	public function viewHelperEscapesGreaterThanLowerThanCharacters() {
-		$this->assertEquals('["\u003Cfoo\u003E","bar","elephant \u003E mouse"]', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse')));
-		$this->assertEquals('{"0":"\u003Cfoo\u003E","1":"bar","2":"elephant \u003E mouse"}', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse'), TRUE));
-	}
-
+    /**
+     * @test
+     */
+    public function viewHelperEscapesGreaterThanLowerThanCharacters()
+    {
+        $this->assertEquals('["\u003Cfoo\u003E","bar","elephant \u003E mouse"]', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse')));
+        $this->assertEquals('{"0":"\u003Cfoo\u003E","1":"bar","2":"elephant \u003E mouse"}', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse'), true));
+    }
 }

@@ -19,35 +19,37 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntityA {
+class TestEntityA
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+     * @ORM\OneToOne(inversedBy="relatedEntityA")
+     */
+    protected $relatedEntityB;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
-	 * @ORM\OneToOne(inversedBy="relatedEntityA")
-	 */
-	protected $relatedEntityB;
+    /**
+     * Constructor
+     *
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+     */
+    public function __construct($relatedEntityB)
+    {
+        $this->relatedEntityB = $relatedEntityB;
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
-	 */
-	public function __construct($relatedEntityB) {
-		$this->relatedEntityB = $relatedEntityB;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+     */
+    public function setRelatedEntityB($relatedEntityB)
+    {
+        $this->relatedEntityB = $relatedEntityB;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
-	 */
-	public function setRelatedEntityB($relatedEntityB) {
-		$this->relatedEntityB = $relatedEntityB;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
-	 */
-	public function getRelatedEntityB() {
-		return $this->relatedEntityB;
-	}
-
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+     */
+    public function getRelatedEntityB()
+    {
+        return $this->relatedEntityB;
+    }
 }

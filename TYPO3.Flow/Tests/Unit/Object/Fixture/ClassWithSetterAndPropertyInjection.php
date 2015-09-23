@@ -15,25 +15,25 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  */
-class ClassWithSetterAndPropertyInjection {
+class ClassWithSetterAndPropertyInjection
+{
+    /**
+     * @var \TYPO3\Foo\Bar
+     * @Flow\Inject
+     */
+    protected $firstDependency;
 
-	/**
-	 * @var \TYPO3\Foo\Bar
-	 * @Flow\Inject
-	 */
-	protected $firstDependency;
+    /**
+     * @var \TYPO3\Coffee\Bar
+     * @Flow\Inject
+     */
+    protected $secondDependency;
 
-	/**
-	 * @var \TYPO3\Coffee\Bar
-	 * @Flow\Inject
-	 */
-	protected $secondDependency;
-
-	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface
-	 */
-	public function injectFirstDependency(\TYPO3\Flow\Object\ObjectManagerInterface $firstDependency) {
-		$this->firstDependency = $firstDependency;
-	}
-
+    /**
+     * @param \TYPO3\Flow\Object\ObjectManagerInterface
+     */
+    public function injectFirstDependency(\TYPO3\Flow\Object\ObjectManagerInterface $firstDependency)
+    {
+        $this->firstDependency = $firstDependency;
+    }
 }

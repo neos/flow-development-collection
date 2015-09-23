@@ -15,14 +15,14 @@ namespace TYPO3\Flow\Tests\Functional\Aop;
  * Test suite for poincut expression related features
  *
  */
-class PointcutExpressionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function settingFilterMatchesIfSpecifiedSettingIsEnabled() {
-		$target = new Fixtures\PointcutExpressionTestingTarget();
-		$this->assertSame('pointcutExpressionSettingFilterOptionA on', $target->testSettingFilter());
-	}
-
+class PointcutExpressionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function settingFilterMatchesIfSpecifiedSettingIsEnabled()
+    {
+        $target = new Fixtures\PointcutExpressionTestingTarget();
+        $this->assertSame('pointcutExpressionSettingFilterOptionA on', $target->testSettingFilter());
+    }
 }

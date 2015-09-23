@@ -16,5 +16,6 @@ use TYPO3\Fluid\ViewHelpers\Validation\ResultsViewHelper;
 /**
  * @deprecated since 2.1. This view helper has been moved. Please use the validation.results ViewHelper instead, @see \TYPO3\Fluid\ViewHelpers\Validation\ResultsViewHelper
  */
-class ValidationResultsViewHelper extends ResultsViewHelper {
+class ValidationResultsViewHelper extends ResultsViewHelper
+{
 }

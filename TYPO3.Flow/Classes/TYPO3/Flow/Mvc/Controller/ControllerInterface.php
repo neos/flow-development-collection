@@ -22,17 +22,16 @@ namespace TYPO3\Flow\Mvc\Controller;
  *
  * @api
  */
-interface ControllerInterface {
-
-	/**
-	 * Processes a general request. The result can be returned by altering the given response.
-	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
-	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by the controller
-	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
-	 * @api
-	 */
-	public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response);
-
+interface ControllerInterface
+{
+    /**
+     * Processes a general request. The result can be returned by altering the given response.
+     *
+     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
+     * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by the controller
+     * @return void
+     * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+     * @api
+     */
+    public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response);
 }

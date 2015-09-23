@@ -17,10 +17,10 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * @Flow\Scope("singleton")
  */
-class TestEntityDDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository {
-
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD';
+class TestEntityDDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD';
 }

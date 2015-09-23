@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Cache\Exception;
  *
  * @api
  */
-class NoSuchCacheException extends \TYPO3\Flow\Cache\Exception {
-
+class NoSuchCacheException extends \TYPO3\Flow\Cache\Exception
+{
 }

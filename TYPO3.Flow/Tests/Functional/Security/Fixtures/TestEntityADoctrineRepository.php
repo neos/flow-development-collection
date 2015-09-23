@@ -17,20 +17,20 @@ use TYPO3\Flow\Persistence\Doctrine\Repository;
 /**
  * @Flow\Scope("singleton")
  */
-class TestEntityADoctrineRepository extends Repository {
+class TestEntityADoctrineRepository extends Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA';
 
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA';
-
-	/**
-	 * Returns all TestEntityA objects from persistence
-	 * @return array
-	 */
-	public function findAllWithDql() {
-		$query = $this->createDqlQuery('SELECT n FROM TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA n');
-		return $query->getResult();
-	}
-
+    /**
+     * Returns all TestEntityA objects from persistence
+     * @return array
+     */
+    public function findAllWithDql()
+    {
+        $query = $this->createDqlQuery('SELECT n FROM TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA n');
+        return $query->getResult();
+    }
 }

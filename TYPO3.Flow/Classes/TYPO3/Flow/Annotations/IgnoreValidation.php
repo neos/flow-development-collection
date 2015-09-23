@@ -20,32 +20,32 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
  */
-final class IgnoreValidation {
+final class IgnoreValidation
+{
+    /**
+     * Name of the argument to skip validation for. (Can be given as anonymous argument.)
+     * @var string
+     */
+    public $argumentName;
 
-	/**
-	 * Name of the argument to skip validation for. (Can be given as anonymous argument.)
-	 * @var string
-	 */
-	public $argumentName;
+    /**
+     * Whether to evaluate the validation results of the argument
+     * @var boolean
+     */
+    public $evaluate = false;
 
-	/**
-	 * Whether to evaluate the validation results of the argument
-	 * @var boolean
-	 */
-	public $evaluate = FALSE;
+    /**
+     * @param array $values
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['value']) || isset($values['argumentName'])) {
+            $this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
+        }
 
-	/**
-	 * @param array $values
-	 * @throws \InvalidArgumentException
-	 */
-	public function __construct(array $values) {
-		if (isset($values['value']) || isset($values['argumentName'])) {
-			$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
-		}
-
-		if (isset($values['evaluate'])) {
-			$this->evaluate = (boolean)$values['evaluate'];
-		}
-	}
-
+        if (isset($values['evaluate'])) {
+            $this->evaluate = (boolean)$values['evaluate'];
+        }
+    }
 }

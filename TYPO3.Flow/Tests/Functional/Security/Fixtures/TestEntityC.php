@@ -21,111 +21,122 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class TestEntityC {
+class TestEntityC
+{
+    /**
+     * @var string
+     */
+    protected $simpleStringProperty;
 
-	/**
-	 * @var string
-	 */
-	protected $simpleStringProperty;
+    /**
+     * @var array<string>
+     */
+    protected $simpleArrayProperty;
 
-	/**
-	 * @var array<string>
-	 */
-	protected $simpleArrayProperty;
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     * @ORM\OneToOne(inversedBy="relatedEntityC")
+     */
+    protected $relatedEntityD;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
-	 * @ORM\OneToOne(inversedBy="relatedEntityC")
-	 */
-	protected $relatedEntityD;
+    /**
+     * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @ORM\OneToMany(mappedBy="manyToOneToRelatedEntityC")
+     */
+    protected $oneToManyToRelatedEntityD;
 
-	/**
-	 * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 * @ORM\OneToMany(mappedBy="manyToOneToRelatedEntityC")
-	 */
-	protected $oneToManyToRelatedEntityD;
+    /**
+     * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @ORM\ManyToMany
+     */
+    protected $manyToManyToRelatedEntityD;
 
-	/**
-	 * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 * @ORM\ManyToMany
-	 */
-	protected $manyToManyToRelatedEntityD;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->manyToOneToRelatedEntityD = new ArrayCollection();
+        $this->manyToManyToRelatedEntityD = new ArrayCollection();
+    }
 
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->manyToOneToRelatedEntityD = new ArrayCollection();
-		$this->manyToManyToRelatedEntityD = new ArrayCollection();
-	}
+    /**
+     * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToManyToRelatedEntityD
+     */
+    public function setManyToManyToRelatedEntityD($manyToManyToRelatedEntityD)
+    {
+        $this->manyToManyToRelatedEntityD = $manyToManyToRelatedEntityD;
+    }
 
-	/**
-	 * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToManyToRelatedEntityD
-	 */
-	public function setManyToManyToRelatedEntityD($manyToManyToRelatedEntityD) {
-		$this->manyToManyToRelatedEntityD = $manyToManyToRelatedEntityD;
-	}
+    /**
+     * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     */
+    public function getManyToManyToRelatedEntityD()
+    {
+        return $this->manyToManyToRelatedEntityD;
+    }
 
-	/**
-	 * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 */
-	public function getManyToManyToRelatedEntityD() {
-		return $this->manyToManyToRelatedEntityD;
-	}
+    /**
+     * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToOneToRelatedEntityD
+     */
+    public function setManyToOneToRelatedEntityD($manyToOneToRelatedEntityD)
+    {
+        $this->manyToOneToRelatedEntityD = $manyToOneToRelatedEntityD;
+    }
 
-	/**
-	 * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToOneToRelatedEntityD
-	 */
-	public function setManyToOneToRelatedEntityD($manyToOneToRelatedEntityD) {
-		$this->manyToOneToRelatedEntityD = $manyToOneToRelatedEntityD;
-	}
+    /**
+     * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     */
+    public function getManyToOneToRelatedEntityD()
+    {
+        return $this->manyToOneToRelatedEntityD;
+    }
 
-	/**
-	 * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 */
-	public function getManyToOneToRelatedEntityD() {
-		return $this->manyToOneToRelatedEntityD;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $relatedEntityD
+     */
+    public function setRelatedEntityD($relatedEntityD)
+    {
+        $this->relatedEntityD = $relatedEntityD;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $relatedEntityD
-	 */
-	public function setRelatedEntityD($relatedEntityD) {
-		$this->relatedEntityD = $relatedEntityD;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     */
+    public function getRelatedEntityD()
+    {
+        return $this->relatedEntityD;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
-	 */
-	public function getRelatedEntityD() {
-		return $this->relatedEntityD;
-	}
+    /**
+     * @param array<string> $simpleArrayProperty
+     */
+    public function setSimpleArrayProperty($simpleArrayProperty)
+    {
+        $this->simpleArrayProperty = $simpleArrayProperty;
+    }
 
-	/**
-	 * @param array<string> $simpleArrayProperty
-	 */
-	public function setSimpleArrayProperty($simpleArrayProperty) {
-		$this->simpleArrayProperty = $simpleArrayProperty;
-	}
+    /**
+     * @return array<string>
+     */
+    public function getSimpleArrayProperty()
+    {
+        return $this->simpleArrayProperty;
+    }
 
-	/**
-	 * @return array<string>
-	 */
-	public function getSimpleArrayProperty() {
-		return $this->simpleArrayProperty;
-	}
+    /**
+     * @param string $simpleStringProperty
+     */
+    public function setSimpleStringProperty($simpleStringProperty)
+    {
+        $this->simpleStringProperty = $simpleStringProperty;
+    }
 
-	/**
-	 * @param string $simpleStringProperty
-	 */
-	public function setSimpleStringProperty($simpleStringProperty) {
-		$this->simpleStringProperty = $simpleStringProperty;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSimpleStringProperty() {
-		return $this->simpleStringProperty;
-	}
+    /**
+     * @return string
+     */
+    public function getSimpleStringProperty()
+    {
+        return $this->simpleStringProperty;
+    }
 }

@@ -19,20 +19,21 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * @see \TYPO3\Fluid\ViewHelpers\IfViewHelper
  * @api
  */
-class ThenViewHelper extends AbstractViewHelper {
+class ThenViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
-
-	/**
-	 * Just render everything.
-	 *
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render() {
-		return $this->renderChildren();
-	}
+    /**
+     * Just render everything.
+     *
+     * @return string the rendered string
+     * @api
+     */
+    public function render()
+    {
+        return $this->renderChildren();
+    }
 }

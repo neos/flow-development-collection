@@ -74,60 +74,61 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasRoleViewHelper extends AbstractConditionViewHelper {
+class IfHasRoleViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @Flow\Inject
+     * @var PolicyService
+     */
+    protected $policyService;
 
-	/**
-	 * @Flow\Inject
-	 * @var PolicyService
-	 */
-	protected $policyService;
+    /**
+     * renders <f:then> child if the role could be found in the security context,
+     * otherwise renders <f:else> child.
+     *
+     * @param string $role The role or role identifier
+     * @param string $packageKey PackageKey of the package defining the role
+     * @param Account $account If specified, this subject of this check is the given Account instead of the currently authenticated account
+     * @return string the rendered string
+     * @api
+     */
+    public function render($role, $packageKey = null, Account $account = null)
+    {
+        if (is_string($role)) {
+            $roleIdentifier = $role;
 
-	/**
-	 * renders <f:then> child if the role could be found in the security context,
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $role The role or role identifier
-	 * @param string $packageKey PackageKey of the package defining the role
-	 * @param Account $account If specified, this subject of this check is the given Account instead of the currently authenticated account
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($role, $packageKey = NULL, Account $account = NULL) {
-		if (is_string($role)) {
-			$roleIdentifier = $role;
+            if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
+                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
+            }
 
-			if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
-				 $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
-			}
+            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
+                if ($packageKey === null) {
+                    $request = $this->controllerContext->getRequest();
+                    $roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
+                } else {
+                    $roleIdentifier = $packageKey . ':' . $roleIdentifier;
+                }
+            }
 
-			if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE) {
-				if ($packageKey === NULL) {
-					$request = $this->controllerContext->getRequest();
-					$roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
-				} else {
-					$roleIdentifier = $packageKey . ':' . $roleIdentifier;
-				}
-			}
+            $role = $this->policyService->getRole($roleIdentifier);
+        }
 
-			$role = $this->policyService->getRole($roleIdentifier);
-		}
+        if ($account instanceof Account) {
+            $hasRole = $account->hasRole($role);
+        } else {
+            $hasRole = $this->securityContext->hasRole($role->getIdentifier());
+        }
 
-		if ($account instanceof Account) {
-			$hasRole = $account->hasRole($role);
-		} else {
-			$hasRole = $this->securityContext->hasRole($role->getIdentifier());
-		}
-
-		if ($hasRole) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+        if ($hasRole) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

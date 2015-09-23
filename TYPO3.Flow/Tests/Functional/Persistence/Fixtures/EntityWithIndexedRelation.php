@@ -22,64 +22,69 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @Flow\Entity
  */
-class EntityWithIndexedRelation {
+class EntityWithIndexedRelation
+{
+    /**
+     * @var Collection<AnnotatedIdentitiesEntity>
+     * @ORM\ManyToMany(indexBy="author")
+     */
+    protected $annotatedIdentitiesEntities;
 
-	/**
-	 * @var Collection<AnnotatedIdentitiesEntity>
-	 * @ORM\ManyToMany(indexBy="author")
-	 */
-	protected $annotatedIdentitiesEntities;
+    /**
+     * @var Collection<RelatedIndexEntity>
+     * @ORM\OneToMany(indexBy="sorting", mappedBy="entityWithIndexedRelation")
+     */
+    protected $relatedIndexEntities;
 
-	/**
-	 * @var Collection<RelatedIndexEntity>
-	 * @ORM\OneToMany(indexBy="sorting", mappedBy="entityWithIndexedRelation")
-	 */
-	protected $relatedIndexEntities;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->annotatedIdentitiesEntities = new ArrayCollection();
+        $this->relatedIndexEntities = new ArrayCollection();
+    }
 
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->annotatedIdentitiesEntities = new ArrayCollection();
-		$this->relatedIndexEntities = new ArrayCollection();
-	}
+    /**
+     * @param \Doctrine\Common\Collections\Collection $annotatedIdentitiesEntities
+     */
+    public function setAnnotatedIdentitiesEntities($annotatedIdentitiesEntities)
+    {
+        $this->annotatedIdentitiesEntities = $annotatedIdentitiesEntities;
+    }
 
-	/**
-	 * @param \Doctrine\Common\Collections\Collection $annotatedIdentitiesEntities
-	 */
-	public function setAnnotatedIdentitiesEntities($annotatedIdentitiesEntities) {
-		$this->annotatedIdentitiesEntities = $annotatedIdentitiesEntities;
-	}
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAnnotatedIdentitiesEntities()
+    {
+        return $this->annotatedIdentitiesEntities;
+    }
 
-	/**
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getAnnotatedIdentitiesEntities() {
-		return $this->annotatedIdentitiesEntities;
-	}
+    /**
+     * @param \Doctrine\Common\Collections\Collection $relatedIndexEntities
+     */
+    public function setRelatedIndexEntities($relatedIndexEntities)
+    {
+        $this->relatedIndexEntities = $relatedIndexEntities;
+    }
 
-	/**
-	 * @param \Doctrine\Common\Collections\Collection $relatedIndexEntities
-	 */
-	public function setRelatedIndexEntities($relatedIndexEntities) {
-		$this->relatedIndexEntities = $relatedIndexEntities;
-	}
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelatedIndexEntities()
+    {
+        return $this->relatedIndexEntities;
+    }
 
-	/**
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getRelatedIndexEntities() {
-		return $this->relatedIndexEntities;
-	}
-
-	/**
-	 * @param string $sorting
-	 * @param RelatedIndexEntity $relatedIndexEntity
-	 */
-	public function setRelatedIndexEntity($sorting, RelatedIndexEntity $relatedIndexEntity) {
-		$relatedIndexEntity->setSorting($sorting);
-		$relatedIndexEntity->setEntityWithIndexedRelation($this);
-		$this->relatedIndexEntities->set($sorting, $relatedIndexEntity);
-	}
-
+    /**
+     * @param string $sorting
+     * @param RelatedIndexEntity $relatedIndexEntity
+     */
+    public function setRelatedIndexEntity($sorting, RelatedIndexEntity $relatedIndexEntity)
+    {
+        $relatedIndexEntity->setSorting($sorting);
+        $relatedIndexEntity->setEntityWithIndexedRelation($this);
+        $this->relatedIndexEntities->set($sorting, $relatedIndexEntity);
+    }
 }

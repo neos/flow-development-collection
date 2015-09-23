@@ -23,153 +23,161 @@ use PHPUnit_Framework_Assert as Assert;
  * Note: Make sure to call $this->setupSecurity() in the constructor of your
  * behat context for these steps to work in your tests!
  */
-trait SecurityOperationsTrait {
+trait SecurityOperationsTrait
+{
+    protected $securityInitialized = false;
 
-	protected $securityInitialized = FALSE;
+    protected static $testingPolicyPathAndFilename;
 
-	protected static $testingPolicyPathAndFilename;
+    /**
+     * @Given /^I have the following policies:$/
+     */
+    public function iHaveTheFollowingPolicies($string)
+    {
+        self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
+        file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
-	/**
-	 * @Given /^I have the following policies:$/
-	 */
-	public function iHaveTheFollowingPolicies($string) {
-		self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
-		file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
+        $configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+        $configurations = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($configurationManager, 'configurations', true);
+        unset($configurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
+        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
-		$configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
-		$configurations = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($configurationManager, 'configurations', TRUE);
-		unset($configurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, TRUE);
+        $policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($policyService, 'initialized', false, true);
+    }
 
-		$policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($policyService, 'initialized', FALSE, TRUE);
-	}
+    /**
+     * @AfterFeature
+     * @BeforeFeature
+     */
+    public static function cleanUpSecurity()
+    {
+        if (file_exists(self::$testingPolicyPathAndFilename)) {
+            unlink(self::$testingPolicyPathAndFilename);
+        }
+    }
 
-	/**
-	 * @AfterFeature
-	 * @BeforeFeature
-	 */
-	public static function cleanUpSecurity() {
-		if (file_exists(self::$testingPolicyPathAndFilename)) {
-			unlink(self::$testingPolicyPathAndFilename);
-		}
-	}
+    /**
+     * @Given /^I am not authenticated$/
+     */
+    public function iAmNotAuthenticated()
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            $this->setupSecurity();
+        }
+    }
 
-	/**
-	 * @Given /^I am not authenticated$/
-	 */
-	public function iAmNotAuthenticated() {
-		if ($this->isolated === TRUE) {
-			$this->callStepInSubProcess(__METHOD__);
-		} else {
-			$this->setupSecurity();
-		}
-	}
+    /**
+     * @Given /^I am authenticated with role "([^"]*)"$/
+     */
+    public function iAmAuthenticatedWithRole($roleIdentifier)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($roleIdentifier)));
+        } else {
+            $this->setupSecurity();
+            $this->authenticateRoles(Arrays::trimExplode(',', $roleIdentifier));
+        }
+    }
 
-	/**
-	 * @Given /^I am authenticated with role "([^"]*)"$/
-	 */
-	public function iAmAuthenticatedWithRole($roleIdentifier) {
-		if ($this->isolated === TRUE) {
-			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($roleIdentifier)));
-		} else {
-			$this->setupSecurity();
-			$this->authenticateRoles(Arrays::trimExplode(',', $roleIdentifier));
-		}
-	}
+    /**
+     * @Then /^I can (not )?call the method "([^"]*)" of class "([^"]*)"(?: with arguments "([^"]*)")?$/
+     */
+    public function iCanCallTheMethodOfClassWithArguments($not, $methodName, $className, $arguments = '')
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($methodName), 'string', escapeshellarg($className), 'string', escapeshellarg($arguments)));
+        } else {
+            $this->setupSecurity();
+            $instance = $this->objectManager->get($className);
 
-	/**
-	 * @Then /^I can (not )?call the method "([^"]*)" of class "([^"]*)"(?: with arguments "([^"]*)")?$/
-	 */
-	public function iCanCallTheMethodOfClassWithArguments($not, $methodName, $className, $arguments = '') {
-		if ($this->isolated === TRUE) {
-			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($methodName), 'string', escapeshellarg($className), 'string', escapeshellarg($arguments)));
-		} else {
-			$this->setupSecurity();
-			$instance = $this->objectManager->get($className);
+            try {
+                $result = call_user_func_array(array($instance, $methodName), Arrays::trimExplode(',', $arguments));
+                if ($not === 'not') {
+                    Assert::fail('Method should not be callable');
+                }
+                return $result;
+            } catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+                if ($not !== 'not') {
+                    throw $exception;
+                }
+            }
+        }
+    }
 
-			try {
-				$result = call_user_func_array(array($instance, $methodName), Arrays::trimExplode(',', $arguments));
-				if ($not === 'not') {
-					Assert::fail('Method should not be callable');
-				}
-				return $result;
-			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
-				if ($not !== 'not') {
-					throw $exception;
-				}
-			}
-		}
-	}
+    /**
+     * Sets up security test requirements
+     *
+     * Security is based on action requests so we need a working route for the TestingProvider.
+     *
+     * @return void
+     */
+    protected function setupSecurity()
+    {
+        if ($this->securityInitialized === true) {
+            return;
+        }
+        $this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
+        $this->privilegeManager->setOverrideDecision(null);
 
-	/**
-	 * Sets up security test requirements
-	 *
-	 * Security is based on action requests so we need a working route for the TestingProvider.
-	 *
-	 * @return void
-	 */
-	protected function setupSecurity() {
-		if ($this->securityInitialized === TRUE) {
-			return;
-		}
-		$this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
-		$this->privilegeManager->setOverrideDecision(NULL);
+        $this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
 
-		$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+        $this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
 
-		$this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
+        $this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
+        $this->testingProvider->setName('TestingProvider');
 
-		$this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('TestingProvider');
+        $this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+        $this->securityContext->clearContext();
+        $httpRequest = Request::createFromEnvironment();
+        $this->mockActionRequest = new ActionRequest($httpRequest);
+        $this->mockActionRequest->setControllerObjectName('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController');
+        $this->securityContext->setRequest($this->mockActionRequest);
 
-		$this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
-		$this->securityContext->clearContext();
-		$httpRequest = Request::createFromEnvironment();
-		$this->mockActionRequest = new ActionRequest($httpRequest);
-		$this->mockActionRequest->setControllerObjectName('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController');
-		$this->securityContext->setRequest($this->mockActionRequest);
+        $this->securityInitialized = true;
+    }
 
-		$this->securityInitialized = TRUE;
-	}
+    /**
+     * Creates a new account, assigns it the given roles and authenticates it.
+     * The created account is returned for further modification, for example for attaching a Party object to it.
+     *
+     * @param array $roleNames A list of roles the new account should have
+     * @return Account The created account
+     */
+    protected function authenticateRoles(array $roleNames)
+    {
+        // FIXME this is currently needed in order to correctly import the roles. Otherwise RepositoryInterface::isConnected() returns FALSE and importing is skipped in PolicyService::initializeRolesFromPolicy()
+        $this->objectManager->get('TYPO3\Flow\Security\AccountRepository')->countAll();
 
-	/**
-	 * Creates a new account, assigns it the given roles and authenticates it.
-	 * The created account is returned for further modification, for example for attaching a Party object to it.
-	 *
-	 * @param array $roleNames A list of roles the new account should have
-	 * @return Account The created account
-	 */
-	protected function authenticateRoles(array $roleNames) {
-		// FIXME this is currently needed in order to correctly import the roles. Otherwise RepositoryInterface::isConnected() returns FALSE and importing is skipped in PolicyService::initializeRolesFromPolicy()
-		$this->objectManager->get('TYPO3\Flow\Security\AccountRepository')->countAll();
+        $account = new Account();
+        $account->setAccountIdentifier('TestAccount');
+        $roles = array();
+        foreach ($roleNames as $roleName) {
+            $roles[] = $this->policyService->getRole($roleName);
+        }
+        $account->setRoles($roles);
+        $this->authenticateAccount($account);
 
-		$account = new Account();
-		$account->setAccountIdentifier('TestAccount');
-		$roles = array();
-		foreach ($roleNames as $roleName) {
-			$roles[] = $this->policyService->getRole($roleName);
-		}
-		$account->setRoles($roles);
-		$this->authenticateAccount($account);
+        return $account;
+    }
 
-		return $account;
-	}
+    /**
+     * Prepares the environment for and conducts an account authentication
+     *
+     * @param Account $account
+     * @return void
+     */
+    protected function authenticateAccount(Account $account)
+    {
+        $this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $this->testingProvider->setAccount($account);
 
-	/**
-	 * Prepares the environment for and conducts an account authentication
-	 *
-	 * @param Account $account
-	 * @return void
-	 */
-	protected function authenticateAccount(Account $account) {
-		$this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-		$this->testingProvider->setAccount($account);
+        $this->securityContext->clearContext();
 
-		$this->securityContext->clearContext();
-
-		/** @var RequestHandler $requestHandler */
-		$this->securityContext->setRequest($this->mockActionRequest);
-		$this->authenticationManager->authenticate();
-	}
+        /** @var RequestHandler $requestHandler */
+        $this->securityContext->setRequest($this->mockActionRequest);
+        $this->authenticationManager->authenticate();
+    }
 }

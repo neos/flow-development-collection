@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class RoleExistsException extends \TYPO3\Flow\Security\Exception {
+class RoleExistsException extends \TYPO3\Flow\Security\Exception
+{
 }

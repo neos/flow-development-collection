@@ -18,13 +18,13 @@ use TYPO3\Flow\Monitor\FileMonitor;
  *
  * @api
  */
-interface StrategyWithMarkDeletedInterface {
-
-	/**
-	 * Notify the change strategy that this file was deleted and does not need to be tracked anymore.
-	 *
-	 * @param string $pathAndFilename
-	 * @return void
-	 */
-	public function setFileDeleted($pathAndFilename);
+interface StrategyWithMarkDeletedInterface
+{
+    /**
+     * Notify the change strategy that this file was deleted and does not need to be tracked anymore.
+     *
+     * @param string $pathAndFilename
+     * @return void
+     */
+    public function setFileDeleted($pathAndFilename);
 }

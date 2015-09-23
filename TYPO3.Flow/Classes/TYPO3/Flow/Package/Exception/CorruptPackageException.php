@@ -15,6 +15,6 @@ namespace TYPO3\Flow\Package\Exception;
  * "Corrupt Package" Exception
  *
  */
-class CorruptPackageException extends \TYPO3\Flow\Package\Exception {
-
+class CorruptPackageException extends \TYPO3\Flow\Package\Exception
+{
 }

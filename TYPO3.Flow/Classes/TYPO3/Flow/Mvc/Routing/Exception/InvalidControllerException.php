@@ -15,5 +15,6 @@ namespace TYPO3\Flow\Mvc\Routing\Exception;
  * An Invalid Controller Exception.
  *
  */
-class InvalidControllerException extends \TYPO3\Flow\Mvc\Exception {
+class InvalidControllerException extends \TYPO3\Flow\Mvc\Exception
+{
 }

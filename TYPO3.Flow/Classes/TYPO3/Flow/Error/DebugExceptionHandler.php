@@ -22,72 +22,74 @@ use TYPO3\Flow\Http\Response;
  *
  * @Flow\Scope("singleton")
  */
-class DebugExceptionHandler extends AbstractExceptionHandler {
+class DebugExceptionHandler extends AbstractExceptionHandler
+{
+    /**
+     * Formats and echoes the exception as XHTML.
+     *
+     * @param \Exception $exception The exception object
+     * @return void
+     */
+    protected function echoExceptionWeb(\Exception $exception)
+    {
+        $statusCode = 500;
+        if ($exception instanceof FlowException) {
+            $statusCode = $exception->getStatusCode();
+        }
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        if (!headers_sent()) {
+            header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
+        }
 
-	/**
-	 * Formats and echoes the exception as XHTML.
-	 *
-	 * @param \Exception $exception The exception object
-	 * @return void
-	 */
-	protected function echoExceptionWeb(\Exception $exception) {
-		$statusCode = 500;
-		if ($exception instanceof FlowException) {
-			$statusCode = $exception->getStatusCode();
-		}
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		if (!headers_sent()) {
-			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
-		}
+        if (isset($this->renderingOptions['templatePathAndFilename'])) {
+            echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+        } else {
+            $this->renderStatically($statusCode, $exception);
+        }
+    }
 
-		if (isset($this->renderingOptions['templatePathAndFilename'])) {
-			echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
-		} else {
-			$this->renderStatically($statusCode, $exception);
-		}
-	}
+    /**
+     * Returns the statically rendered exception message
+     *
+     * @param integer $statusCode
+     * @param \Exception $exception
+     * @return void
+     */
+    protected function renderStatically($statusCode, \Exception $exception)
+    {
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $exceptionHeader = '';
+        while (true) {
+            $pathPosition = strpos($exception->getFile(), 'Packages/');
+            $filePathAndName = ($pathPosition !== false) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+            $exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-	/**
-	 * Returns the statically rendered exception message
-	 *
-	 * @param integer $statusCode
-	 * @param \Exception $exception
-	 * @return void
-	 */
-	protected function renderStatically($statusCode, \Exception $exception) {
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		$exceptionHeader = '';
-		while (TRUE) {
-			$pathPosition = strpos($exception->getFile(), 'Packages/');
-			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
-			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
+            $moreInformationLink = ($exceptionCodeNumber != '') ? '<p><a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a></p>' : '';
+            $exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
 
-			$moreInformationLink = ($exceptionCodeNumber != '') ? '<p><a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a></p>' : '';
-			$exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
-
-			$exceptionHeader .= '<h2 class="ExceptionSubject">' . $exceptionCodeNumber . htmlspecialchars($exceptionMessageParts['subject']) . '</h2>';
-			if ($exceptionMessageParts['body'] !== '') {
-				$exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageParts['body'])) . '</p>';
-			}
-			$exceptionHeader .= $moreInformationLink . '
+            $exceptionHeader .= '<h2 class="ExceptionSubject">' . $exceptionCodeNumber . htmlspecialchars($exceptionMessageParts['subject']) . '</h2>';
+            if ($exceptionMessageParts['body'] !== '') {
+                $exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageParts['body'])) . '</p>';
+            }
+            $exceptionHeader .= $moreInformationLink . '
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
-			if ($exception instanceof FlowException) {
-				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
-			}
+            if ($exception instanceof FlowException) {
+                $exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
+            }
 
-			if ($exception->getPrevious() === NULL) {
-				break;
-			}
+            if ($exception->getPrevious() === null) {
+                break;
+            }
 
-			$exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
-			$exception = $exception->getPrevious();
-		}
+            $exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
+            $exception = $exception->getPrevious();
+        }
 
-		$backtraceCode = Debugger::getBacktraceCode($exception->getTrace());
+        $backtraceCode = Debugger::getBacktraceCode($exception->getTrace());
 
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 			<head>
@@ -137,5 +139,5 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				</div>
 			</div>
 		';
-	}
+    }
 }

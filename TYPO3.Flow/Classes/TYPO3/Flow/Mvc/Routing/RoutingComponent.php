@@ -18,38 +18,39 @@ use TYPO3\Flow\Http\Component\ComponentInterface;
 /**
  * A routing HTTP component
  */
-class RoutingComponent implements ComponentInterface {
+class RoutingComponent implements ComponentInterface
+{
+    /**
+     * @Flow\Inject
+     * @var Router
+     */
+    protected $router;
 
-	/**
-	 * @Flow\Inject
-	 * @var Router
-	 */
-	protected $router;
+    /**
+     * @var array
+     */
+    protected $options;
 
-	/**
-	 * @var array
-	 */
-	protected $options;
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = array())
+    {
+        $this->options = $options;
+    }
 
-	/**
-	 * @param array $options
-	 */
-	public function __construct(array $options = array()) {
-		$this->options = $options;
-	}
-
-	/**
-	 * Resolve a route for the request
-	 *
-	 * Stores the resolved route values in the ComponentContext to pass them
-	 * to other components. They can be accessed via ComponentContext::getParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults');
-	 *
-	 * @param ComponentContext $componentContext
-	 * @return void
-	 */
-	public function handle(ComponentContext $componentContext) {
-		$matchResults = $this->router->route($componentContext->getHttpRequest());
-		$componentContext->setParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults', $matchResults);
-	}
-
+    /**
+     * Resolve a route for the request
+     *
+     * Stores the resolved route values in the ComponentContext to pass them
+     * to other components. They can be accessed via ComponentContext::getParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults');
+     *
+     * @param ComponentContext $componentContext
+     * @return void
+     */
+    public function handle(ComponentContext $componentContext)
+    {
+        $matchResults = $this->router->route($componentContext->getHttpRequest());
+        $componentContext->setParameter('TYPO3\Flow\Mvc\Routing\RoutingComponent', 'matchResults', $matchResults);
+    }
 }

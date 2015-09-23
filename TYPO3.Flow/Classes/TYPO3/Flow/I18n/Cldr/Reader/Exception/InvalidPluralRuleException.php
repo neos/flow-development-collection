@@ -19,6 +19,6 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  *
  * @api
  */
-class InvalidPluralRuleException extends \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException {
-
+class InvalidPluralRuleException extends \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException
+{
 }

@@ -23,12 +23,13 @@ namespace TYPO3\Fluid\Core\ViewHelper\Facets;
  *
  * See \TYPO3\Fluid\ViewHelpers\IfViewHelper for an example how it is used.
  */
-interface ChildNodeAccessInterface {
-	/**
-	 * Sets the direct child nodes of the current syntax tree node.
-	 *
-	 * @param array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode> $childNodes
-	 * @return void
-	 */
-	public function setChildNodes(array $childNodes);
+interface ChildNodeAccessInterface
+{
+    /**
+     * Sets the direct child nodes of the current syntax tree node.
+     *
+     * @param array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode> $childNodes
+     * @return void
+     */
+    public function setChildNodes(array $childNodes);
 }

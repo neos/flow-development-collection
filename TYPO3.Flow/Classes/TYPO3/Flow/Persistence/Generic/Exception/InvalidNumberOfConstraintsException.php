@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Generic\Exception;
  *
  * @api
  */
-class InvalidNumberOfConstraintsException extends \TYPO3\Flow\Persistence\Exception {
+class InvalidNumberOfConstraintsException extends \TYPO3\Flow\Persistence\Exception
+{
 }

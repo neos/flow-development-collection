@@ -13,26 +13,27 @@ require_once(__DIR__ . '/SecurityOperationsTrait.php');
 /**
  * Features context
  */
-class FeatureContext extends BehatContext {
+class FeatureContext extends BehatContext
+{
+    use IsolatedBehatStepsTrait;
+    use SecurityOperationsTrait;
 
-	use IsolatedBehatStepsTrait;
-	use SecurityOperationsTrait;
+    /**
+     * @var string
+     */
+    protected $behatTestHelperObjectName = 'TYPO3\Flow\Tests\Functional\Command\BehatTestHelper';
 
-	/**
-	 * @var string
-	 */
-	protected $behatTestHelperObjectName = 'TYPO3\Flow\Tests\Functional\Command\BehatTestHelper';
-
-	/**
-	 * Initializes the context
-	 *
-	 * @param array $parameters Context parameters (configured through behat.yml)
-	 */
-	public function __construct(array $parameters) {
-		$this->useContext('flow', new FlowContext($parameters));
-		$flowContext = $this->getSubcontext('flow');
-		$this->objectManager = $flowContext->getObjectManager();
-		$this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
-		$this->setupSecurity();
-	}
+    /**
+     * Initializes the context
+     *
+     * @param array $parameters Context parameters (configured through behat.yml)
+     */
+    public function __construct(array $parameters)
+    {
+        $this->useContext('flow', new FlowContext($parameters));
+        $flowContext = $this->getSubcontext('flow');
+        $this->objectManager = $flowContext->getObjectManager();
+        $this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+        $this->setupSecurity();
+    }
 }

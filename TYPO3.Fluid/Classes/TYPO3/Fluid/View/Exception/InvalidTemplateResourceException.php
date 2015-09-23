@@ -18,5 +18,6 @@ use TYPO3\Fluid\View;
  *
  * @api
  */
-class InvalidTemplateResourceException extends View\Exception {
+class InvalidTemplateResourceException extends View\Exception
+{
 }

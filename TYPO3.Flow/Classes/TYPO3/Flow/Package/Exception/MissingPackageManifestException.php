@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Package\Exception;
  *
  * @api
  */
-class MissingPackageManifestException extends \TYPO3\Flow\Package\Exception {
-
+class MissingPackageManifestException extends \TYPO3\Flow\Package\Exception
+{
 }

@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Generic\Exception;
  *
  * @api
  */
-class MissingBackendException extends \TYPO3\Flow\Persistence\Exception {
+class MissingBackendException extends \TYPO3\Flow\Persistence\Exception
+{
 }

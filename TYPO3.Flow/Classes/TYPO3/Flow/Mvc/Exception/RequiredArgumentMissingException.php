@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class RequiredArgumentMissingException extends \TYPO3\Flow\Mvc\Exception {
+class RequiredArgumentMissingException extends \TYPO3\Flow\Mvc\Exception
+{
 }

@@ -15,5 +15,6 @@ namespace TYPO3\Flow\Mvc\Controller\Exception;
  * An Inactive Package Exception
  *
  */
-class InactivePackageException extends \TYPO3\Flow\Mvc\Controller\Exception {
+class InactivePackageException extends \TYPO3\Flow\Mvc\Controller\Exception
+{
 }

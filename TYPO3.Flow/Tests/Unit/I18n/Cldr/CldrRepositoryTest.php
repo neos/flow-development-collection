@@ -17,55 +17,58 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the CldrRepository
  *
  */
-class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     */
+    protected $repository;
 
-	/**
-	 * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
-	 */
-	protected $repository;
+    /**
+     * @var \TYPO3\Flow\I18n\Locale
+     */
+    protected $dummyLocale;
 
-	/**
-	 * @var \TYPO3\Flow\I18n\Locale
-	 */
-	protected $dummyLocale;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        vfsStream::setup('Foo');
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		vfsStream::setup('Foo');
+        $this->repository = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrRepository', array('dummy'));
+        $this->repository->_set('cldrBasePath', 'vfs://Foo/');
 
-		$this->repository = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrRepository', array('dummy'));
-		$this->repository->_set('cldrBasePath', 'vfs://Foo/');
+        $this->dummyLocale = new \TYPO3\Flow\I18n\Locale('en');
+    }
 
-		$this->dummyLocale = new \TYPO3\Flow\I18n\Locale('en');
-	}
+    /**
+     * @test
+     */
+    public function modelIsReturnedCorrectlyForSingleFile()
+    {
+        file_put_contents('vfs://Foo/Bar.xml', '');
 
-	/**
-	 * @test
-	 */
-	public function modelIsReturnedCorrectlyForSingleFile() {
-		file_put_contents('vfs://Foo/Bar.xml', '');
+        $result = $this->repository->getModel('Bar');
+        $this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths',  $result);
 
-		$result = $this->repository->getModel('Bar');
-		$this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths',  $result);
+        $result = $this->repository->getModel('NoSuchFile');
+        $this->assertEquals(false, $result);
+    }
 
-		$result = $this->repository->getModel('NoSuchFile');
-		$this->assertEquals(FALSE, $result);
-	}
+    /**
+     * @test
+     */
+    public function modelIsReturnedCorrectlyForGroupOfFiles()
+    {
+        mkdir('vfs://Foo/Directory');
+        file_put_contents('vfs://Foo/Directory/en.xml', '');
 
-	/**
-	 * @test
-	 */
-	public function modelIsReturnedCorrectlyForGroupOfFiles() {
-		mkdir('vfs://Foo/Directory');
-		file_put_contents('vfs://Foo/Directory/en.xml', '');
+        $result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
+        $this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths',  $result);
+        $this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths',  $result);
 
-		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-		$this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths',  $result);
-		$this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths',  $result);
-
-		$result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
-		$this->assertEquals(NULL, $result);
-	}
+        $result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
+        $this->assertEquals(null, $result);
+    }
 }

@@ -15,18 +15,19 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Cldr;
  * Testcase for the CldrParser
  *
  */
-class CldrParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class CldrParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function parsesCldrDataCorrectly()
+    {
+        $sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
+        $sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
-	/**
-	 * @test
-	 */
-	public function parsesCldrDataCorrectly() {
-		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
-		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
+        $parser = new \TYPO3\Flow\I18n\Cldr\CldrParser();
 
-		$parser = new \TYPO3\Flow\I18n\Cldr\CldrParser();
-
-		$result = $parser->getParsedData($sampleFilenamePath);
-		$this->assertEquals($sampleParsedData, $result);
-	}
+        $result = $parser->getParsedData($sampleFilenamePath);
+        $this->assertEquals($sampleParsedData, $result);
+    }
 }

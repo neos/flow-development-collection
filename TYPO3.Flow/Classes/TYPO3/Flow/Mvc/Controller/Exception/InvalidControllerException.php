@@ -15,11 +15,10 @@ namespace TYPO3\Flow\Mvc\Controller\Exception;
  * An Invalid Controller Exception.
  *
  */
-class InvalidControllerException extends \TYPO3\Flow\Mvc\Controller\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 404;
-
+class InvalidControllerException extends \TYPO3\Flow\Mvc\Controller\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 }

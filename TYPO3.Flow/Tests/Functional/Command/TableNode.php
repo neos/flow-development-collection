@@ -15,24 +15,26 @@ namespace TYPO3\Flow\Tests\Functional\Command;
  * A helper class for behat scenario parameters, needed when processing
  * behat scenarios/steps in an isolated process
  */
-class TableNode {
+class TableNode
+{
+    /**
+     * @var string
+     */
+    protected $hash;
 
-	/**
-	 * @var string
-	 */
-	protected $hash;
+    /**
+     * @param string $hash The table source hash string
+     */
+    public function __construct($hash)
+    {
+        $this->hash = $hash;
+    }
 
-	/**
-	 * @param string $hash The table source hash string
-	 */
-	public function __construct($hash) {
-		$this->hash = $hash;
-	}
-
-	/**
-	 * @return string The table source hash string
-	 */
-	public function getHash() {
-		return $this->hash;
-	}
+    /**
+     * @return string The table source hash string
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
 }

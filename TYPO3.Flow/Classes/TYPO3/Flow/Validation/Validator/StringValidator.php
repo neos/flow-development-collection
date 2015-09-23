@@ -19,18 +19,19 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class StringValidator extends AbstractValidator {
-
-	/**
-	 * Checks if the given value is a string.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @api
-	 */
-	protected function isValid($value) {
-		if (!is_string($value)) {
-			$this->addError('A valid string is expected.', 1238108070);
-		}
-	}
+class StringValidator extends AbstractValidator
+{
+    /**
+     * Checks if the given value is a string.
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @api
+     */
+    protected function isValid($value)
+    {
+        if (!is_string($value)) {
+            $this->addError('A valid string is expected.', 1238108070);
+        }
+    }
 }

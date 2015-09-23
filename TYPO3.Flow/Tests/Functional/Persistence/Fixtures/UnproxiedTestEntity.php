@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
 
-
 /**
  * A simple entity for persistence tests that is not proxied (no AOP/DI)
  *
@@ -23,38 +22,40 @@ use TYPO3\Flow\Utility\Algorithms;
  * @Flow\Proxy(false)
  * @ORM\Table(name="persistence_unproxiedtestentity")
  */
-class UnproxiedTestEntity {
+class UnproxiedTestEntity
+{
+    /**
+     * @var string
+     * @ORM\Id
+     * @ORM\Column(length=40)
+     */
+    protected $uuid;
 
-	/**
-	 * @var string
-	 * @ORM\Id
-	 * @ORM\Column(length=40)
-	 */
-	protected $uuid;
+    /**
+     * @var string
+     * @Flow\Validate(type="StringLength", options={"minimum"=3})
+     */
+    protected $name = '';
 
-	/**
-	 * @var string
-	 * @Flow\Validate(type="StringLength", options={"minimum"=3})
-	 */
-	protected $name = '';
+    public function __construct()
+    {
+        $this->uuid = Algorithms::generateUUID();
+    }
 
-	public function __construct() {
-		$this->uuid = Algorithms::generateUUID();
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * @param string $name
-	 * @return void
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 }

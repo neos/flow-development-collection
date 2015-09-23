@@ -19,24 +19,26 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class EventListener {
+class EventListener
+{
+    public $preFlushCalled = false;
 
-	public $preFlushCalled = FALSE;
+    public $onFlushCalled = false;
 
-	public $onFlushCalled = FALSE;
+    public $postFlushCalled = false;
 
-	public $postFlushCalled = FALSE;
+    public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args)
+    {
+        $this->preFlushCalled = true;
+    }
 
-	public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args) {
-		$this->preFlushCalled = TRUE;
-	}
+    public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $args)
+    {
+        $this->onFlushCalled = true;
+    }
 
-	public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $args) {
-		$this->onFlushCalled = TRUE;
-	}
-
-	public function postFlush(\Doctrine\ORM\Event\PostFlushEventArgs $args) {
-		$this->postFlushCalled = TRUE;
-	}
-
+    public function postFlush(\Doctrine\ORM\Event\PostFlushEventArgs $args)
+    {
+        $this->postFlushCalled = true;
+    }
 }

@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Reflection\Exception;
  *
  * @api
  */
-class UnknownClassException extends \TYPO3\Flow\Reflection\Exception {
+class UnknownClassException extends \TYPO3\Flow\Reflection\Exception
+{
 }

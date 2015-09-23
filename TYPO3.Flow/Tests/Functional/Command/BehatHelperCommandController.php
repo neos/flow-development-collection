@@ -28,56 +28,57 @@ use TYPO3\Flow\Security\Context;
  *
  * @Flow\Scope("singleton")
  */
-class BehatHelperCommandController extends CommandController {
+class BehatHelperCommandController extends CommandController
+{
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $objectManager;
+    /**
+     * @var Context
+     * @Flow\Inject
+     */
+    protected $securityContext;
 
-	/**
-	 * @var Context
-	 * @Flow\Inject
-	 */
-	protected $securityContext;
+    /**
+     * @var PropertyMapper
+     * @Flow\Inject
+     */
+    protected $propertyMapper;
 
-	/**
-	 * @var PropertyMapper
-	 * @Flow\Inject
-	 */
-	protected $propertyMapper;
+    /**
+     * Calls a behat step method
+     *
+     * @Flow\Internal
+     * @param string $testHelperObjectName
+     * @param string $methodName
+     * @param boolean $withoutSecurityChecks
+     */
+    public function callBehatStepCommand($testHelperObjectName, $methodName, $withoutSecurityChecks = false)
+    {
+        $testHelper = $this->objectManager->get($testHelperObjectName);
 
-	/**
-	 * Calls a behat step method
-	 *
-	 * @Flow\Internal
-	 * @param string $testHelperObjectName
-	 * @param string $methodName
-	 * @param boolean $withoutSecurityChecks
-	 */
-	public function callBehatStepCommand($testHelperObjectName, $methodName, $withoutSecurityChecks = FALSE) {
-		$testHelper = $this->objectManager->get($testHelperObjectName);
+        $rawMethodArguments = $this->request->getExceedingArguments();
+        $mappedArguments = array();
+        for ($i = 0; $i < count($rawMethodArguments); $i+=2) {
+            $mappedArguments[] = $this->propertyMapper->convert($rawMethodArguments[$i+1], $rawMethodArguments[$i]);
+        }
 
-		$rawMethodArguments = $this->request->getExceedingArguments();
-		$mappedArguments = array();
-		for ($i = 0; $i < count($rawMethodArguments); $i+=2) {
-			$mappedArguments[] = $this->propertyMapper->convert($rawMethodArguments[$i+1], $rawMethodArguments[$i]);
-		}
-
-		$result = NULL;
-		try {
-			if ($withoutSecurityChecks === TRUE) {
-				$this->securityContext->withoutAuthorizationChecks(function() use ($testHelper, $methodName, $mappedArguments, &$result) {
-					$result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
-				});
-			} else {
-				$result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
-			}
-		} catch (\Exception $exception) {
-			$this->outputLine('EXCEPTION: %s %d %s in %s:%s %s', array(get_class($exception), $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString()));
-			return;
-		}
-		$this->output('SUCCESS: %s', array($result));
-	}
+        $result = null;
+        try {
+            if ($withoutSecurityChecks === true) {
+                $this->securityContext->withoutAuthorizationChecks(function () use ($testHelper, $methodName, $mappedArguments, &$result) {
+                    $result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
+                });
+            } else {
+                $result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
+            }
+        } catch (\Exception $exception) {
+            $this->outputLine('EXCEPTION: %s %d %s in %s:%s %s', array(get_class($exception), $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString()));
+            return;
+        }
+        $this->output('SUCCESS: %s', array($result));
+    }
 }
