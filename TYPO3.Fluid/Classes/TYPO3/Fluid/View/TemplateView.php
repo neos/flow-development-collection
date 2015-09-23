@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\View;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
@@ -40,9 +37,6 @@ class TemplateView extends AbstractTemplateView
         'templatePathAndFilename' => array(null, 'Path and filename of the template file. If set,  overrides the templatePathAndFilenamePattern', 'string'),
         'layoutPathAndFilename' => array(null, 'Path and filename of the layout file. If set, overrides the layoutPathAndFilenamePattern', 'string'),
     );
-
-    //PLACEHOLDER
-    // Here, the backporter can insert a constructor method, which is needed for the TYPO3 CMS extension
 
     /**
      * Sets the path and name of of the template file. Effectively overrides the

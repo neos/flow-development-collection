@@ -1,7 +1,7 @@
 #                                                                         #
-# Object Configuration for the TYPO3 Flow Framework                       #
+# Object Configuration for the Flow Framework                             #
 #                                                                         #
-# This file contains the default object configuration for the TYPO3 Flow  #
+# This file contains the default object configuration for the Flow        #
 # Framework. Because it is loaded at a very early stage during ini-       #
 # tialization, this configuration cannot be overridden by other con-      #
 # figuration files.                                                       #

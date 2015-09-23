@@ -2,13 +2,10 @@
 namespace TYPO3\Eel;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /*!* !insert_autogen_warning */
@@ -16,7 +13,7 @@ namespace TYPO3\Eel;
 /**
  * Eel parser
  *
- * This parser can evaluate the expression language for TYPO3 Flow and uses
+ * This parser can evaluate the expression language for Flow and uses
  * the basic types from AbstractParser.
  */
 class EelParser extends \TYPO3\Eel\AbstractParser {
