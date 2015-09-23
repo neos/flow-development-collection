@@ -18,13 +18,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController {
-
-	/**
-	 * @return string
-	 */
-	public function indexAction() {
-		return 'index action';
-	}
-
+class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
+{
+    /**
+     * @return string
+     */
+    public function indexAction()
+    {
+        return 'index action';
+    }
 }

@@ -14,13 +14,13 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * A simple test context that is registered as a global AOP object
  */
-class TestContext {
-
-	/**
-	 * @return string
-	 */
-	public function getNameOfTheWeek() {
-		return 'Robbie';
-	}
-
+class TestContext
+{
+    /**
+     * @return string
+     */
+    public function getNameOfTheWeek()
+    {
+        return 'Robbie';
+    }
 }

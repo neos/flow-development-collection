@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Composer\Exception;
  *
  * @api
  */
-class InvalidConfigurationException extends \TYPO3\Flow\Composer\Exception {
-
+class InvalidConfigurationException extends \TYPO3\Flow\Composer\Exception
+{
 }

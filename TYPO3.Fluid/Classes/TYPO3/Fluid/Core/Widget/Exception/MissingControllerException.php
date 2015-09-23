@@ -16,5 +16,6 @@ use TYPO3\Fluid\Core\Widget;
 /**
  * An exception if the controller is missing.
  */
-class MissingControllerException extends Widget\Exception {
+class MissingControllerException extends Widget\Exception
+{
 }

@@ -57,65 +57,68 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
+class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+{
+    /**
+     * @var \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+     */
+    protected $operand1;
 
-	/**
-	 * @var \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
-	 */
-	protected $operand1;
+    /**
+     * @var integer
+     */
+    protected $operator;
 
-	/**
-	 * @var integer
-	 */
-	protected $operator;
+    /**
+     * @var mixed
+     */
+    protected $operand2;
 
-	/**
-	 * @var mixed
-	 */
-	protected $operand2;
+    /**
+     * Constructs this Comparison instance
+     *
+     * @param \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1
+     * @param integer $operator one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
+     * @param mixed $operand2
+     */
+    public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = null)
+    {
+        $this->operand1 = $operand1;
+        $this->operator = $operator;
+        $this->operand2 = $operand2;
+    }
 
-	/**
-	 * Constructs this Comparison instance
-	 *
-	 * @param \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1
-	 * @param integer $operator one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
-	 * @param mixed $operand2
-	 */
-	public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
-		$this->operand1 = $operand1;
-		$this->operator = $operator;
-		$this->operand2 = $operand2;
-	}
+    /**
+     *
+     * Gets the first operand.
+     *
+     * @return \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand the operand; non-null
+     * @api
+     */
+    public function getOperand1()
+    {
+        return $this->operand1;
+    }
 
-	/**
-	 *
-	 * Gets the first operand.
-	 *
-	 * @return \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand the operand; non-null
-	 * @api
-	 */
-	public function getOperand1() {
-		return $this->operand1;
-	}
+    /**
+     * Gets the operator.
+     *
+     * @return integer one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
+     * @api
+     */
+    public function getOperator()
+    {
+        return $this->operator;
+    }
 
-	/**
-	 * Gets the operator.
-	 *
-	 * @return integer one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
-	 * @api
-	 */
-	public function getOperator() {
-		return $this->operator;
-	}
-
-	/**
-	 * Gets the second operand.
-	 *
-	 * @return mixed
-	 * @api
-	 */
-	public function getOperand2() {
-		return $this->operand2;
-	}
-
+    /**
+     * Gets the second operand.
+     *
+     * @return mixed
+     * @api
+     */
+    public function getOperand2()
+    {
+        return $this->operand2;
+    }
 }

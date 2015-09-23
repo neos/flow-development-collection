@@ -18,25 +18,26 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class SingletonClassA {
+class SingletonClassA
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     */
+    protected $objectB;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
-	 */
-	protected $objectB;
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+     */
+    public function __construct(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB)
+    {
+        $this->objectB = $objectB;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
-	 */
-	public function __construct(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
-		$this->objectB = $objectB;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
-	 */
-	public function getObjectB() {
-		return $this->objectB;
-	}
-
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     */
+    public function getObjectB()
+    {
+        return $this->objectB;
+    }
 }

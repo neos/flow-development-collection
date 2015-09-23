@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidOrMissingRequestHashException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidOrMissingRequestHashException extends \TYPO3\Flow\Mvc\Exception
+{
 }

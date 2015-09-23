@@ -18,35 +18,34 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class HttpsInterceptor implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
+class HttpsInterceptor implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+{
+    /**
+     * @var boolean
+     * @todo this has to be set by configuration
+     */
+    protected $useSSL = false;
 
-	/**
-	 * @var boolean
-	 * @todo this has to be set by configuration
-	 */
-	protected $useSSL = FALSE;
+    /**
+     * Constructor.
+     *
+     * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+     * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+     * @param \TYPO3\Flow\Log\SystemLoggerInterface $logger A logger to log security relevant actions
+     */
+    public function __construct(
+        \TYPO3\Flow\Security\Context $securityContext,
+        \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
+        \TYPO3\Flow\Log\SystemLoggerInterface $logger
+    ) {
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
-	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $logger A logger to log security relevant actions
-	 */
-	public function __construct(
-		\TYPO3\Flow\Security\Context $securityContext,
-		\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
-		\TYPO3\Flow\Log\SystemLoggerInterface $logger
-	) {
-
-	}
-
-	/**
-	 * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
-	 *
-	 * @return boolean TRUE if the security checks was passed
-	 */
-	public function invoke() {
-
-	}
+    /**
+     * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
+     *
+     * @return boolean TRUE if the security checks was passed
+     */
+    public function invoke()
+    {
+    }
 }

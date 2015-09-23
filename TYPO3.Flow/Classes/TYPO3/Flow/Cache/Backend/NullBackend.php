@@ -18,101 +18,111 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface {
+class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface
+{
+    /**
+     * Acts as if it would save data
+     *
+     * @param string $entryIdentifier ignored
+     * @param string $data ignored
+     * @param array $tags ignored
+     * @param integer $lifetime ignored
+     * @return void
+     * @api
+     */
+    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    {
+    }
 
-	/**
-	 * Acts as if it would save data
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @param string $data ignored
-	 * @param array $tags ignored
-	 * @param integer $lifetime ignored
-	 * @return void
-	 * @api
-	 */
-	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-	}
+    /**
+     * Returns False
+     *
+     * @param string $entryIdentifier ignored
+     * @return boolean FALSE
+     * @api
+     */
+    public function get($entryIdentifier)
+    {
+        return false;
+    }
 
-	/**
-	 * Returns False
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
-	 * @api
-	 */
-	public function get($entryIdentifier) {
-		return FALSE;
-	}
+    /**
+     * Returns False
+     *
+     * @param string $entryIdentifier ignored
+     * @return boolean FALSE
+     * @api
+     */
+    public function has($entryIdentifier)
+    {
+        return false;
+    }
 
-	/**
-	 * Returns False
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
-	 * @api
-	 */
-	public function has($entryIdentifier) {
-		return FALSE;
-	}
+    /**
+     * Does nothing
+     *
+     * @param string $entryIdentifier ignored
+     * @return boolean FALSE
+     * @api
+     */
+    public function remove($entryIdentifier)
+    {
+        return false;
+    }
 
-	/**
-	 * Does nothing
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
-	 * @api
-	 */
-	public function remove($entryIdentifier) {
-		return FALSE;
-	}
+    /**
+     * Returns an empty array
+     *
+     * @param string $tag ignored
+     * @return array An empty array
+     * @api
+     */
+    public function findIdentifiersByTag($tag)
+    {
+        return array();
+    }
 
-	/**
-	 * Returns an empty array
-	 *
-	 * @param string $tag ignored
-	 * @return array An empty array
-	 * @api
-	 */
-	public function findIdentifiersByTag($tag) {
-		return array();
-	}
+    /**
+     * Does nothing
+     *
+     * @return void
+     * @api
+     */
+    public function flush()
+    {
+    }
 
-	/**
-	 * Does nothing
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function flush() {
-	}
+    /**
+     * Does nothing
+     *
+     * @param string $tag ignored
+     * @return void
+     * @api
+     */
+    public function flushByTag($tag)
+    {
+    }
 
-	/**
-	 * Does nothing
-	 *
-	 * @param string $tag ignored
-	 * @return void
-	 * @api
-	 */
-	public function flushByTag($tag) {
-	}
+    /**
+     * Does nothing
+     *
+     * @return void
+     * @api
+     */
+    public function collectGarbage()
+    {
+    }
 
-	/**
-	 * Does nothing
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function collectGarbage() {
-	}
-
-	/**
-	 * Does nothing
-	 *
-	 * @param string $identifier An identifier which describes the cache entry to load
-	 * @return void
-	 * @api
-	 */
-	public function requireOnce($identifier) {
-	}
+    /**
+     * Does nothing
+     *
+     * @param string $identifier An identifier which describes the cache entry to load
+     * @return void
+     * @api
+     */
+    public function requireOnce($identifier)
+    {
+    }
 }
 // @codeCoverageIgnoreEnd
+

@@ -47,37 +47,39 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class CropViewHelper extends AbstractViewHelper implements CompilableInterface {
+class CropViewHelper extends AbstractViewHelper implements CompilableInterface
+{
+    /**
+     * Render the cropped text
+     *
+     * @param integer $maxCharacters Place where to truncate the string
+     * @param string $append What to append, if truncation happened
+     * @param string $value The input value which should be cropped. If not set, the evaluated contents of the child nodes will be used
+     * @return string cropped text
+     * @api
+     */
+    public function render($maxCharacters, $append = '...', $value = null)
+    {
+        return self::renderStatic(array('maxCharacters' => $maxCharacters, 'append' => $append, 'value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
 
-	/**
-	 * Render the cropped text
-	 *
-	 * @param integer $maxCharacters Place where to truncate the string
-	 * @param string $append What to append, if truncation happened
-	 * @param string $value The input value which should be cropped. If not set, the evaluated contents of the child nodes will be used
-	 * @return string cropped text
-	 * @api
-	 */
-	public function render($maxCharacters, $append = '...', $value = NULL) {
-		return self::renderStatic(array('maxCharacters' => $maxCharacters, 'append' => $append, 'value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
-	}
+    /**
+     * @param array $arguments
+     * @param callable $renderChildrenClosure
+     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @return string
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        if ($value === null) {
+            $value = $renderChildrenClosure();
+        }
 
-	/**
-	 * @param array $arguments
-	 * @param callable $renderChildrenClosure
-	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
-	 * @return string
-	 */
-	static public function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext) {
-		$value = $arguments['value'];
-		if ($value === NULL) {
-			$value = $renderChildrenClosure();
-		}
-
-		if (UnicodeUtilityFunctions::strlen($value) > $arguments['maxCharacters']) {
-			return UnicodeUtilityFunctions::substr($value, 0, $arguments['maxCharacters']) . $arguments['append'];
-		} else {
-			return $value;
-		}
-	}
+        if (UnicodeUtilityFunctions::strlen($value) > $arguments['maxCharacters']) {
+            return UnicodeUtilityFunctions::substr($value, 0, $arguments['maxCharacters']) . $arguments['append'];
+        } else {
+            return $value;
+        }
+    }
 }

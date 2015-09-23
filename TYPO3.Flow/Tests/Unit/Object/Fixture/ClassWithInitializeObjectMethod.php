@@ -13,17 +13,17 @@ namespace TYPO3\Flow\Tests\Object\Fixture;
 
 /**
  */
-class ClassWithInitializeObjectMethod {
+class ClassWithInitializeObjectMethod
+{
+    public $reason;
 
-	public $reason;
-
-	/**
-	 * Call the object lifecycle method
-	 *
-	 * @param mixed $reason why initializeObject is called.
-	 */
-	public function initializeObject($reason) {
-		$this->reason = $reason;
-	}
-
+    /**
+     * Call the object lifecycle method
+     *
+     * @param mixed $reason why initializeObject is called.
+     */
+    public function initializeObject($reason)
+    {
+        $this->reason = $reason;
+    }
 }

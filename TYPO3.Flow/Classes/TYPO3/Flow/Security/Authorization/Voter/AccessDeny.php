@@ -18,29 +18,29 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class AccessDeny implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface {
+class AccessDeny implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface
+{
+    /**
+     * Votes to deny access, if the given object is one of the supported types
+     *
+     * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
+     * @return integer VOTE_DENY
+     * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
+     */
+    public function voteForJoinPoint(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+    }
 
-	/**
-	 * Votes to deny access, if the given object is one of the supported types
-	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer VOTE_DENY
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
-	 */
-	public function voteForJoinPoint(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-
-	}
-
-	/**
-	 * Votes to deny access, if the resource exists
-	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
-	 * @param string $resource The resource to vote for
-	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
-	 */
-	public function voteForResource(\TYPO3\Flow\Security\Context $securityContext, $resource) {
-
-	}
+    /**
+     * Votes to deny access, if the resource exists
+     *
+     * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+     * @param string $resource The resource to vote for
+     * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
+     * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
+     */
+    public function voteForResource(\TYPO3\Flow\Security\Context $securityContext, $resource)
+    {
+    }
 }

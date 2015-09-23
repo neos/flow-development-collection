@@ -35,19 +35,20 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class ExternalViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param string $uri target URI
-	 * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
-	 * @return string Rendered URI
-	 * @api
-	 */
-	public function render($uri, $defaultScheme = 'http') {
-		$scheme = parse_url($uri, PHP_URL_SCHEME);
-		if ($scheme === NULL && $defaultScheme !== '') {
-			$uri = $defaultScheme . '://' . $uri;
-		}
-		return $uri;
-	}
+class ExternalViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param string $uri target URI
+     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
+     * @return string Rendered URI
+     * @api
+     */
+    public function render($uri, $defaultScheme = 'http')
+    {
+        $scheme = parse_url($uri, PHP_URL_SCHEME);
+        if ($scheme === null && $defaultScheme !== '') {
+            $uri = $defaultScheme . '://' . $uri;
+        }
+        return $uri;
+    }
 }

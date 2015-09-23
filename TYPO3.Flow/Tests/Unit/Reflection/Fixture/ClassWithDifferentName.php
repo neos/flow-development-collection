@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Tests\Unit\Reflection\Fixture;
  *
  * @class
  */
-class ClassWithDifferentNameDifferent {
+class ClassWithDifferentNameDifferent
+{
 }

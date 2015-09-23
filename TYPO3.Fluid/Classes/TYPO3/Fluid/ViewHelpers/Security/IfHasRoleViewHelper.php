@@ -58,37 +58,38 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasRoleViewHelper extends AbstractConditionViewHelper {
+class IfHasRoleViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * renders <f:then> child if the role could be found in the security context,
+     * otherwise renders <f:else> child.
+     *
+     * @param string $role The role
+     * @param string $packageKey PackageKey of the package defining the role
+     * @return string the rendered string
+     * @api
+     */
+    public function render($role, $packageKey = null)
+    {
+        if ($role !== 'Everybody' && $role !== 'Anonymous' && $role !== 'AuthenticatedUser' && strpos($role, '.') === false && strpos($role, ':') === false) {
+            if ($packageKey === null) {
+                $request = $this->controllerContext->getRequest();
+                $role = $request->getControllerPackageKey() . ':' . $role;
+            } else {
+                $role = $packageKey . ':' . $role;
+            }
+        }
 
-	/**
-	 * renders <f:then> child if the role could be found in the security context,
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $role The role
-	 * @param string $packageKey PackageKey of the package defining the role
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($role, $packageKey = NULL) {
-		if ($role !== 'Everybody' && $role !== 'Anonymous' && $role !== 'AuthenticatedUser' && strpos($role, '.') === FALSE && strpos($role, ':') === FALSE) {
-			if ($packageKey === NULL) {
-				$request = $this->controllerContext->getRequest();
-				$role = $request->getControllerPackageKey() . ':' . $role;
-			} else {
-				$role = $packageKey . ':' . $role;
-			}
-		}
-
-		if ($this->securityContext->hasRole($role)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+        if ($this->securityContext->hasRole($role)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

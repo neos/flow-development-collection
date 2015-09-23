@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InfiniteLoopException extends \TYPO3\Flow\Mvc\Exception {
+class InfiniteLoopException extends \TYPO3\Flow\Mvc\Exception
+{
 }

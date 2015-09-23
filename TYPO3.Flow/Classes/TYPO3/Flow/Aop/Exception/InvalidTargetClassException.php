@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Exception;
  *
  * @api
  */
-class InvalidTargetClassException extends \TYPO3\Flow\Aop\Exception {
-
+class InvalidTargetClassException extends \TYPO3\Flow\Aop\Exception
+{
 }

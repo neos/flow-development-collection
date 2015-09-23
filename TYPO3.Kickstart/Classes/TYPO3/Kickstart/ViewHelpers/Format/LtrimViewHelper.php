@@ -27,14 +27,15 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * content of {someVariable} with ltrim applied
  *
  */
-class LtrimViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param string $charlist
-	 * @return string The altered string.
-	 */
-	public function render($charlist = NULL) {
-		$content = $this->renderChildren();
-		return ltrim($content, $charlist);
-	}
+class LtrimViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param string $charlist
+     * @return string The altered string.
+     */
+    public function render($charlist = null)
+    {
+        $content = $this->renderChildren();
+        return ltrim($content, $charlist);
+    }
 }

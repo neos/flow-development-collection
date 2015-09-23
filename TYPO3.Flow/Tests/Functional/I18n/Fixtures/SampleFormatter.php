@@ -16,11 +16,12 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A dummy I18n formatter class
  */
-class SampleFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface {
-
-	/**
-	 */
-	public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array()) {
-		return $value . '+Formatted42';
-	}
+class SampleFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
+{
+    /**
+     */
+    public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array())
+    {
+        return $value . '+Formatted42';
+    }
 }

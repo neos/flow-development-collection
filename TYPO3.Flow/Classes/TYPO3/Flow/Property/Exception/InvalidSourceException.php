@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Property\Exception;
  *
  * @api
  */
-class InvalidSourceException extends \TYPO3\Flow\Property\Exception {
-
+class InvalidSourceException extends \TYPO3\Flow\Property\Exception
+{
 }

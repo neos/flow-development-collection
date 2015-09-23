@@ -16,14 +16,14 @@ use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 /**
  *
  */
-class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase {
-
-	/**
-	 * @test
-	 */
-	public function getClassNameReturnsTheNameOfTheProxiedDependencyClass() {
-		$proxy = new DependencyProxy('SomeClass', function() {});
-		$this->assertSame('SomeClass', $proxy->_getClassName());
-	}
-
+class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function getClassNameReturnsTheNameOfTheProxiedDependencyClass()
+    {
+        $proxy = new DependencyProxy('SomeClass', function () {});
+        $this->assertSame('SomeClass', $proxy->_getClassName());
+    }
 }

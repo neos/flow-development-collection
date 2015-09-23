@@ -16,50 +16,49 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class to serialize and check if all dependencies are reinjected on unserialize.
  */
-class ClassToBeSerialized {
+class ClassToBeSerialized
+{
+    /**
+     * @var string
+     */
+    public $someProperty = 'I am not a coffee machine.';
 
-	/**
-	 * @var string
-	 */
-	public $someProperty = 'I am not a coffee machine.';
+    /**
+     * @var string
+     */
+    protected $protectedProperty = 'I am protected.';
 
-	/**
-	 * @var string
-	 */
-	protected $protectedProperty = 'I am protected.';
+    /**
+     * @var string
+     */
+    private $privateProperty = 'Saving Private Ryan.';
 
-	/**
-	 * @var string
-	 */
-	private $privateProperty = 'Saving Private Ryan.';
+    /**
+     * @var string
+     */
+    protected static $staticProperty = 'I am static';
 
-	/**
-	 * @var string
-	 */
-	static protected $staticProperty = 'I am static';
+    /**
+     * @Flow\Inject(lazy = FALSE)
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+     */
+    public $interfaceDeclaredSingletonButImplementationIsPrototype;
 
-	/**
-	 * @Flow\Inject(lazy = FALSE)
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
-	 */
-	public $interfaceDeclaredSingletonButImplementationIsPrototype;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     */
+    public $lazyB;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
-	 */
-	public $lazyB;
+    /**
+     * @Flow\Inject(lazy = FALSE)
+     * @var SingletonClassC
+     */
+    public $eagerC;
 
-	/**
-	 * @Flow\Inject(lazy = FALSE)
-	 * @var SingletonClassC
-	 */
-	public $eagerC;
-
-	/**
-	 * @Flow\Inject(lazy = FALSE)
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB
-	 */
-	public $prototypeB;
-
+    /**
+     * @Flow\Inject(lazy = FALSE)
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB
+     */
+    public $prototypeB;
 }

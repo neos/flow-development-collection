@@ -18,18 +18,17 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Aspect
  */
-class PropertyIntroductionTestingAspect {
+class PropertyIntroductionTestingAspect
+{
+    /**
+     * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04)")
+     * @var string
+     */
+    protected $introducedProtectedProperty;
 
-	/**
-	 * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04)")
-	 * @var string
-	 */
-	protected $introducedProtectedProperty;
-
-	/**
-	 * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04)")
-	 * @var array
-	 */
-	public $introducedPublicProperty;
-
+    /**
+     * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04)")
+     * @var array
+     */
+    public $introducedPublicProperty;
 }

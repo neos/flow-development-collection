@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Object\Exception;
  *
  * @api
  */
-class CannotBuildObjectException extends \TYPO3\Flow\Object\Exception {
-
+class CannotBuildObjectException extends \TYPO3\Flow\Object\Exception
+{
 }

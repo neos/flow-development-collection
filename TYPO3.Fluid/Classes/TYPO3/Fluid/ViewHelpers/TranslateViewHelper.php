@@ -68,57 +68,58 @@ use TYPO3\Fluid\Core\ViewHelper;
  * </output>
  *
  */
-class TranslateViewHelper extends AbstractViewHelper {
+class TranslateViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
 
-	/**
-	 * @Flow\Inject
-	 * @var Translator
-	 */
-	protected $translator;
+    /**
+     * Renders the translated label.
+     *
+     * Replaces all placeholders with corresponding values if they exist in the
+     * translated label.
+     *
+     * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
+     * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
+     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @param string $source Name of file with translations
+     * @param string $package Target package key. If not set, the current package key will be used
+     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
+     * @param string $locale An identifier of locale to use (NULL for use the default locale)
+     * @return string Translated label or source label / ID key
+     * @throws ViewHelper\Exception
+     */
+    public function render($id = null, $value = null, array $arguments = array(), $source = 'Main', $package = null, $quantity = null, $locale = null)
+    {
+        $localeObject = null;
+        if ($locale !== null) {
+            try {
+                $localeObject = new Locale($locale);
+            } catch (InvalidLocaleIdentifierException $e) {
+                throw new ViewHelper\Exception('"' . $locale . '" is not a valid locale identifier.', 1279815885);
+            }
+        }
+        if ($package === null) {
+            $package = $this->controllerContext->getRequest()->getControllerPackageKey();
+        }
+        $originalLabel = $value === null ? $this->renderChildren() : $value;
 
-	/**
-	 * Renders the translated label.
-	 *
-	 * Replaces all placeholders with corresponding values if they exist in the
-	 * translated label.
-	 *
-	 * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-	 * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
-	 * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-	 * @param string $source Name of file with translations
-	 * @param string $package Target package key. If not set, the current package key will be used
-	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param string $locale An identifier of locale to use (NULL for use the default locale)
-	 * @return string Translated label or source label / ID key
-	 * @throws ViewHelper\Exception
-	 */
-	public function render($id = NULL, $value = NULL, array $arguments = array(), $source = 'Main', $package = NULL, $quantity = NULL, $locale = NULL) {
-		$localeObject = NULL;
-		if ($locale !== NULL) {
-			try {
-				$localeObject = new Locale($locale);
-			} catch (InvalidLocaleIdentifierException $e) {
-				throw new ViewHelper\Exception('"' . $locale . '" is not a valid locale identifier.', 1279815885);
-			}
-		}
-		if ($package === NULL) {
-			$package = $this->controllerContext->getRequest()->getControllerPackageKey();
-		}
-		$originalLabel = $value === NULL ? $this->renderChildren() : $value;
-
-		if ($id === NULL) {
-			return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
-		} else {
-			$translation = $this->translator->translateById($id, $arguments, $quantity, $localeObject, $source, $package);
-			if ($translation === $id) {
-				if ($originalLabel) {
-					return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
-				} else {
-					return $id;
-				}
-			} else {
-				return $translation;
-			}
-		}
-	}
+        if ($id === null) {
+            return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
+        } else {
+            $translation = $this->translator->translateById($id, $arguments, $quantity, $localeObject, $source, $package);
+            if ($translation === $id) {
+                if ($originalLabel) {
+                    return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
+                } else {
+                    return $id;
+                }
+            } else {
+                return $translation;
+            }
+        }
+    }
 }

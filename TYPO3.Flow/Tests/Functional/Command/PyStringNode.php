@@ -15,24 +15,26 @@ namespace TYPO3\Flow\Tests\Functional\Command;
  * A helper class for behat scenario parameters, needed when processing
  * behat scenarios/steps in an isolated process
  */
-class PyStringNode {
+class PyStringNode
+{
+    /**
+     * @var string
+     */
+    protected $rawString;
 
-	/**
-	 * @var string
-	 */
-	protected $rawString;
+    /**
+     * @param string $rawString The raw string as written in the behat feature file
+     */
+    public function __construct($rawString)
+    {
+        $this->rawString = $rawString;
+    }
 
-	/**
-	 * @param string $rawString The raw string as written in the behat feature file
-	 */
-	public function __construct($rawString) {
-		$this->rawString = $rawString;
-	}
-
-	/**
-	 * @return string The raw string as written in the behat feature file
-	 */
-	public function getRaw() {
-		return $this->rawString;
-	}
+    /**
+     * @return string The raw string as written in the behat feature file
+     */
+    public function getRaw()
+    {
+        return $this->rawString;
+    }
 }

@@ -18,15 +18,16 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class AccessDeny implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
-
-	/**
-	 * Invokes nothing, always throws an AccessDenied Exception.
-	 *
-	 * @return boolean Always returns FALSE
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
-	 */
-	public function invoke() {
-		throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
-	}
+class AccessDeny implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+{
+    /**
+     * Invokes nothing, always throws an AccessDenied Exception.
+     *
+     * @return boolean Always returns FALSE
+     * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
+     */
+    public function invoke()
+    {
+        throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
+    }
 }

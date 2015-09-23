@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidTemplateResourceException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidTemplateResourceException extends \TYPO3\Flow\Mvc\Exception
+{
 }

@@ -16,14 +16,14 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * A sub class of the abstract class
  *
  */
-class SubClassOfAbstractClass extends AbstractClass {
-
-	/**
-	 * @param $foo
-	 * @return string
-	 */
-	public function abstractMethod($foo) {
-		return "foo: $foo";
-	}
-
+class SubClassOfAbstractClass extends AbstractClass
+{
+    /**
+     * @param $foo
+     * @return string
+     */
+    public function abstractMethod($foo)
+    {
+        return "foo: $foo";
+    }
 }

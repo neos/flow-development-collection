@@ -14,6 +14,6 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 /**
  * An interface
  */
-interface InterfaceA {
-
+interface InterfaceA
+{
 }

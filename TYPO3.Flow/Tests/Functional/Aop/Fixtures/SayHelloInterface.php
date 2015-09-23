@@ -14,11 +14,10 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * An interface with a sayHello method
  */
-interface SayHelloInterface {
-
-	/**
-	 * @return string
-	 */
-	public function sayHello();
-
+interface SayHelloInterface
+{
+    /**
+     * @return string
+     */
+    public function sayHello();
 }

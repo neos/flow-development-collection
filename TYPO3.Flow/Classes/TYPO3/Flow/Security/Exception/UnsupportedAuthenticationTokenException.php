@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class UnsupportedAuthenticationTokenException extends \TYPO3\Flow\Security\Exception {
-
+class UnsupportedAuthenticationTokenException extends \TYPO3\Flow\Security\Exception
+{
 }

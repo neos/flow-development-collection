@@ -16,16 +16,16 @@ namespace TYPO3\Flow\Persistence\Doctrine\Mapping;
  * the object manager.
  *
  */
-class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
-
-	/**
-	 * Creates a new ClassMetadata instance for the given class name.
-	 *
-	 * @param string $className
-	 * @return \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata
-	 */
-	protected function newClassMetadataInstance($className) {
-		return new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata($className);
-	}
-
+class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory
+{
+    /**
+     * Creates a new ClassMetadata instance for the given class name.
+     *
+     * @param string $className
+     * @return \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata
+     */
+    protected function newClassMetadataInstance($className)
+    {
+        return new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata($className);
+    }
 }

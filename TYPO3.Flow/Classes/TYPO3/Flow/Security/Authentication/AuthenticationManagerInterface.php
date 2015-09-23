@@ -17,51 +17,50 @@ namespace TYPO3\Flow\Security\Authentication;
  * Has to add a \TYPO3\Flow\Security\Authentication\TokenInterface to the security context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  */
-interface AuthenticationManagerInterface {
+interface AuthenticationManagerInterface
+{
+    /**
+     * Returns the tokens this manager is responsible for.
+     * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
+     *
+     * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
+     */
+    public function getTokens();
 
-	/**
-	 * Returns the tokens this manager is responsible for.
-	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
-	 *
-	 * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
-	 */
-	public function getTokens();
+    /**
+     * Sets the security context
+     *
+     * @param \TYPO3\Flow\Security\Context $securityContext The security context of the current request
+     * @return void
+     */
+    public function setSecurityContext(\TYPO3\Flow\Security\Context $securityContext);
 
-	/**
-	 * Sets the security context
-	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The security context of the current request
-	 * @return void
-	 */
-	public function setSecurityContext(\TYPO3\Flow\Security\Context $securityContext);
+    /**
+     * Returns the security context
+     *
+     * @return \TYPO3\Flow\Security\Context $securityContext The security context of the current request
+     */
+    public function getSecurityContext();
 
-	/**
-	 * Returns the security context
-	 *
-	 * @return \TYPO3\Flow\Security\Context $securityContext The security context of the current request
-	 */
-	public function getSecurityContext();
+    /**
+     * Tries to authenticate the tokens in the security context, if needed.
+     * (Have a look at the \TYPO3\Flow\Security\Authentication\TokenManager for an implementation example)
+     *
+     * @return void
+     */
+    public function authenticate();
 
-	/**
-	 * Tries to authenticate the tokens in the security context, if needed.
-	 * (Have a look at the \TYPO3\Flow\Security\Authentication\TokenManager for an implementation example)
-	 *
-	 * @return void
-	 */
-	public function authenticate();
+    /**
+     * Checks if at least one token is authenticated
+     *
+     * @return boolean
+     */
+    public function isAuthenticated();
 
-	/**
-	 * Checks if at least one token is authenticated
-	 *
-	 * @return boolean
-	 */
-	public function isAuthenticated();
-
-	/**
-	 * Logs all active authentication tokens out
-	 *
-	 * @return void
-	 */
-	public function logout();
-
+    /**
+     * Logs all active authentication tokens out
+     *
+     * @return void
+     */
+    public function logout();
 }

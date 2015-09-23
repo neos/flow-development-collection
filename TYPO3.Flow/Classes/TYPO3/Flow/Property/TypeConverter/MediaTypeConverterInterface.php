@@ -27,20 +27,20 @@ use TYPO3\Flow\Utility\MediaTypes;
  *
  * @api
  */
-interface MediaTypeConverterInterface extends TypeConverterInterface {
+interface MediaTypeConverterInterface extends TypeConverterInterface
+{
+    /**
+     * Name of the configuration option that contains the expected media type. This is usually set by the ActionRequest and
+     * corresponds to the browser's Content-Type header
+     *
+     * @var string
+     */
+    const CONFIGURATION_MEDIA_TYPE = 'mediaType';
 
-	/**
-	 * Name of the configuration option that contains the expected media type. This is usually set by the ActionRequest and
-	 * corresponds to the browser's Content-Type header
-	 *
-	 * @var string
-	 */
-	const CONFIGURATION_MEDIA_TYPE = 'mediaType';
-
-	/**
-	 * The default media type that should be used if no explicit media type was configured (see CONFIGURATION_MEDIA_TYPE)
-	 *
-	 * @var string
-	 */
-	const DEFAULT_MEDIA_TYPE = 'application/json';
+    /**
+     * The default media type that should be used if no explicit media type was configured (see CONFIGURATION_MEDIA_TYPE)
+     *
+     * @var string
+     */
+    const DEFAULT_MEDIA_TYPE = 'application/json';
 }

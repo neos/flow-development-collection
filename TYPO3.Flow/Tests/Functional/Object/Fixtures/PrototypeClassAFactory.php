@@ -14,18 +14,18 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 /**
  * A factory which creates PrototypeClassA instances
  */
-class PrototypeClassAFactory {
-
-	/**
-	 * Creates a new instance of PrototypeClassA
-	 *
-	 * @param string $someProperty
-	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA
-	 */
-	public function create($someProperty) {
-		$object = new PrototypeClassA();
-		$object->setSomeProperty($someProperty);
-		return $object;
-	}
-
+class PrototypeClassAFactory
+{
+    /**
+     * Creates a new instance of PrototypeClassA
+     *
+     * @param string $someProperty
+     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA
+     */
+    public function create($someProperty)
+    {
+        $object = new PrototypeClassA();
+        $object->setSomeProperty($someProperty);
+        return $object;
+    }
 }

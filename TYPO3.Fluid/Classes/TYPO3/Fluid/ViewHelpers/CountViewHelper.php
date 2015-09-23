@@ -35,28 +35,29 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class CountViewHelper extends AbstractViewHelper {
+class CountViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
-
-	/**
-	 * Counts the items of a given property.
-	 *
-	 * @param array|\Countable $subject The array or \Countable to be counted
-	 * @return integer The number of elements
-	 * @throws ViewHelper\Exception
-	 * @api
-	 */
-	public function render($subject = NULL) {
-		if ($subject === NULL) {
-			$subject = $this->renderChildren();
-		}
-		if (is_object($subject) && !$subject instanceof \Countable) {
-			throw new ViewHelper\Exception('CountViewHelper only supports arrays and objects implementing \Countable interface. Given: "' . get_class($subject) . '"', 1279808078);
-		}
-		return count($subject);
-	}
+    /**
+     * Counts the items of a given property.
+     *
+     * @param array|\Countable $subject The array or \Countable to be counted
+     * @return integer The number of elements
+     * @throws ViewHelper\Exception
+     * @api
+     */
+    public function render($subject = null)
+    {
+        if ($subject === null) {
+            $subject = $this->renderChildren();
+        }
+        if (is_object($subject) && !$subject instanceof \Countable) {
+            throw new ViewHelper\Exception('CountViewHelper only supports arrays and objects implementing \Countable interface. Given: "' . get_class($subject) . '"', 1279808078);
+        }
+        return count($subject);
+    }
 }

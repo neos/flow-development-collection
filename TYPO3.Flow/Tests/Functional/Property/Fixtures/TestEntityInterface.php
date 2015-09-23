@@ -17,10 +17,10 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A simple interface for PropertyMapper test
  */
-interface TestEntityInterface {
-
-	/**
-	 * @return string
-	 */
-	public function getName();
+interface TestEntityInterface
+{
+    /**
+     * @return string
+     */
+    public function getName();
 }

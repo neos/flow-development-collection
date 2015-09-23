@@ -20,27 +20,28 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\InheritanceType("JOINED")
  */
-class SuperEntity {
+class SuperEntity
+{
+    /**
+     * @var string
+     * @Flow\Validate(type="NotEmpty")
+     */
+    protected $content;
 
-	/**
-	 * @var string
-	 * @Flow\Validate(type="NotEmpty")
-	 */
-	protected $content;
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-
-	/**
-	 * @param string $content
-	 * @return void
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
+    /**
+     * @param string $content
+     * @return void
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
 }

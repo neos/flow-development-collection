@@ -45,77 +45,80 @@ use TYPO3\Flow\Resource\Resource;
  *
  * @api
  */
-class UploadViewHelper extends AbstractFormFieldViewHelper {
+class UploadViewHelper extends AbstractFormFieldViewHelper
+{
+    /**
+     * @var string
+     */
+    protected $tagName = 'input';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'input';
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
-	/**
-	 * @Flow\Inject
-	 * @var PropertyMapper
-	 */
-	protected $propertyMapper;
+    /**
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
+        $this->registerUniversalTagAttributes();
+    }
 
-	/**
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
-		$this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', FALSE, 'f3-form-error');
-		$this->registerUniversalTagAttributes();
-	}
+    /**
+     * Renders the upload field.
+     *
+     * @return string
+     * @api
+     */
+    public function render()
+    {
+        $name = $this->getName();
+        $this->registerFieldNameForFormTokenGeneration($name);
 
-	/**
-	 * Renders the upload field.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function render() {
-		$name = $this->getName();
-		$this->registerFieldNameForFormTokenGeneration($name);
+        $output = '';
+        $resourceObject = $this->getUploadedResource();
+        if ($resourceObject !== null) {
+            $filenameIdAttribute = $resourcePointerIdAttribute = '';
+            if ($this->hasArgument('id')) {
+                $filenameIdAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-filename"';
+                $resourcePointerIdAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-resourcePointer"';
+            }
+            $filenameValue = $resourceObject->getFilename();
+            $resourcePointerValue = $resourceObject->getResourcePointer();
+            $output .= '<input type="hidden" name="' . $this->getName() . '[submittedFile][filename]" value="' . htmlspecialchars($filenameValue) . '"' . $filenameIdAttribute . ' />';
+            $output .= '<input type="hidden" name="' . $this->getName() . '[submittedFile][resourcePointer]" value="' . htmlspecialchars($resourcePointerValue) . '"' . $resourcePointerIdAttribute . ' />';
+        }
 
-		$output = '';
-		$resourceObject = $this->getUploadedResource();
-		if ($resourceObject !== NULL) {
-			$filenameIdAttribute = $resourcePointerIdAttribute = '';
-			if ($this->hasArgument('id')) {
-				$filenameIdAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-filename"';
-				$resourcePointerIdAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-resourcePointer"';
-			}
-			$filenameValue = $resourceObject->getFilename();
-			$resourcePointerValue = $resourceObject->getResourcePointer();
-			$output .= '<input type="hidden" name="' . $this->getName() . '[submittedFile][filename]" value="' . htmlspecialchars($filenameValue) . '"' . $filenameIdAttribute . ' />';
-			$output .= '<input type="hidden" name="' . $this->getName() . '[submittedFile][resourcePointer]" value="' . htmlspecialchars($resourcePointerValue) . '"' . $resourcePointerIdAttribute . ' />';
-		}
+        $this->tag->addAttribute('type', 'file');
+        $this->tag->addAttribute('name', $name);
 
-		$this->tag->addAttribute('type', 'file');
-		$this->tag->addAttribute('name', $name);
+        $this->setErrorClassAttribute();
 
-		$this->setErrorClassAttribute();
+        $output .= $this->tag->render();
+        return $output;
+    }
 
-		$output .= $this->tag->render();
-		return $output;
-	}
-
-	/**
-	 * Returns a previously uploaded resource.
-	 * If errors occurred during property mapping for this property, NULL is returned
-	 *
-	 * @return \TYPO3\Flow\Resource\Resource
-	 */
-	protected function getUploadedResource() {
-		if ($this->getMappingResultsForProperty()->hasErrors()) {
-			return NULL;
-		}
-		$resourceObject = $this->getValue(FALSE);
-		if ($resourceObject instanceof Resource) {
-			return $resourceObject;
-		}
-		return $this->propertyMapper->convert($resourceObject, 'TYPO3\Flow\Resource\Resource');
-	}
+    /**
+     * Returns a previously uploaded resource.
+     * If errors occurred during property mapping for this property, NULL is returned
+     *
+     * @return \TYPO3\Flow\Resource\Resource
+     */
+    protected function getUploadedResource()
+    {
+        if ($this->getMappingResultsForProperty()->hasErrors()) {
+            return null;
+        }
+        $resourceObject = $this->getValue(false);
+        if ($resourceObject instanceof Resource) {
+            return $resourceObject;
+        }
+        return $this->propertyMapper->convert($resourceObject, 'TYPO3\Flow\Resource\Resource');
+    }
 }

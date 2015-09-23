@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Validation\Exception;
  *
  * @api
  */
-class InvalidValidationOptionsException extends \TYPO3\Flow\Validation\Exception {
-
+class InvalidValidationOptionsException extends \TYPO3\Flow\Validation\Exception
+{
 }

@@ -20,6 +20,6 @@ namespace TYPO3\Flow\I18n\TranslationProvider\Exception;
  *
  * @api
  */
-class InvalidPluralFormException extends \TYPO3\Flow\I18n\Exception {
-
+class InvalidPluralFormException extends \TYPO3\Flow\I18n\Exception
+{
 }

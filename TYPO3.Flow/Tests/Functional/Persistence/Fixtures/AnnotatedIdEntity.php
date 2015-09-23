@@ -19,39 +19,41 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class AnnotatedIdEntity {
+class AnnotatedIdEntity
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @var string
+     */
+    protected $id;
 
-	/**
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 * @var string
-	 */
-	protected $id;
+    /**
+     * @var string
+     */
+    protected $title;
 
-	/**
-	 * @var string
-	 */
-	protected $title;
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getId() {
-		return $this->id;
-	}
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
 
-	/**
-	 * @param string $title
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
 }

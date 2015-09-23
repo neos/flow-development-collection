@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidFormatException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidFormatException extends \TYPO3\Flow\Mvc\Exception
+{
 }

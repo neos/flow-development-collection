@@ -15,14 +15,14 @@ namespace TYPO3\Flow\Security\Authorization;
  * Contract for firewall
  *
  */
-interface FirewallInterface {
-
-	/**
-	 * Analyzes a request against the configured firewall rules and blocks
-	 * any illegal request.
-	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $request The request to be analyzed
-	 * @return void
-	 */
-	public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request);
+interface FirewallInterface
+{
+    /**
+     * Analyzes a request against the configured firewall rules and blocks
+     * any illegal request.
+     *
+     * @param \TYPO3\Flow\Mvc\ActionRequest $request The request to be analyzed
+     * @return void
+     */
+    public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request);
 }

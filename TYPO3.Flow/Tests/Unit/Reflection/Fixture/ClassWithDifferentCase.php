@@ -14,5 +14,6 @@ namespace TYPO3\Flow\Tests\Unit\Reflection\Fixture;
 /**
  * Dummy class for the Reflection tests, with a name different than the corresponding filename
  */
-class clAsswithdiFferentcAse {
+class clAsswithdiFferentcAse
+{
 }

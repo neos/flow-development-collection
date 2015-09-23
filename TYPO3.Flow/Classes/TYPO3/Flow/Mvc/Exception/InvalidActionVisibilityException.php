@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidActionVisibilityException extends \TYPO3\Flow\Mvc\Exception {
+class InvalidActionVisibilityException extends \TYPO3\Flow\Mvc\Exception
+{
 }

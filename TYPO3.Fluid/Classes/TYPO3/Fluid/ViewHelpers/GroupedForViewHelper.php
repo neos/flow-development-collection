@@ -76,70 +76,72 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class GroupedForViewHelper extends AbstractViewHelper {
+class GroupedForViewHelper extends AbstractViewHelper
+{
+    /**
+     * Iterates through elements of $each and renders child nodes
+     *
+     * @param array $each The array or \SplObjectStorage to iterated over
+     * @param string $as The name of the iteration variable
+     * @param string $groupBy Group by this property
+     * @param string $groupKey The name of the variable to store the current group
+     * @return string Rendered string
+     * @throws ViewHelper\Exception
+     * @api
+     */
+    public function render($each, $as, $groupBy, $groupKey = 'groupKey')
+    {
+        $output = '';
+        if ($each === null) {
+            return '';
+        }
+        if (is_object($each)) {
+            if (!$each instanceof \Traversable) {
+                throw new ViewHelper\Exception('GroupedForViewHelper only supports arrays and objects implementing \Traversable interface', 1253108907);
+            }
+            $each = iterator_to_array($each);
+        }
 
-	/**
-	 * Iterates through elements of $each and renders child nodes
-	 *
-	 * @param array $each The array or \SplObjectStorage to iterated over
-	 * @param string $as The name of the iteration variable
-	 * @param string $groupBy Group by this property
-	 * @param string $groupKey The name of the variable to store the current group
-	 * @return string Rendered string
-	 * @throws ViewHelper\Exception
-	 * @api
-	 */
-	public function render($each, $as, $groupBy, $groupKey = 'groupKey') {
-		$output = '';
-		if ($each === NULL) {
-			return '';
-		}
-		if (is_object($each)) {
-			if (!$each instanceof \Traversable) {
-				throw new ViewHelper\Exception('GroupedForViewHelper only supports arrays and objects implementing \Traversable interface', 1253108907);
-			}
-			$each = iterator_to_array($each);
-		}
+        $groups = $this->groupElements($each, $groupBy);
 
-		$groups = $this->groupElements($each, $groupBy);
+        foreach ($groups['values'] as $currentGroupIndex => $group) {
+            $this->templateVariableContainer->add($groupKey, $groups['keys'][$currentGroupIndex]);
+            $this->templateVariableContainer->add($as, $group);
+            $output .= $this->renderChildren();
+            $this->templateVariableContainer->remove($groupKey);
+            $this->templateVariableContainer->remove($as);
+        }
+        return $output;
+    }
 
-		foreach ($groups['values'] as $currentGroupIndex => $group) {
-			$this->templateVariableContainer->add($groupKey, $groups['keys'][$currentGroupIndex]);
-			$this->templateVariableContainer->add($as, $group);
-			$output .= $this->renderChildren();
-			$this->templateVariableContainer->remove($groupKey);
-			$this->templateVariableContainer->remove($as);
-		}
-		return $output;
-	}
-
-	/**
-	 * Groups the given array by the specified groupBy property.
-	 *
-	 * @param array $elements The array / traversable object to be grouped
-	 * @param string $groupBy Group by this property
-	 * @return array The grouped array in the form array('keys' => array('key1' => [key1value], 'key2' => [key2value], ...), 'values' => array('key1' => array([key1value] => [element1]), ...), ...)
-	 * @throws ViewHelper\Exception
-	 */
-	protected function groupElements(array $elements, $groupBy) {
-		$groups = array('keys' => array(), 'values' => array());
-		foreach ($elements as $key => $value) {
-			if (is_array($value)) {
-				$currentGroupIndex = isset($value[$groupBy]) ? $value[$groupBy] : NULL;
-			} elseif (is_object($value)) {
-				$currentGroupIndex = ObjectAccess::getPropertyPath($value, $groupBy);
-			} else {
-				throw new ViewHelper\Exception('GroupedForViewHelper only supports multi-dimensional arrays and objects', 1253120365);
-			}
-			$currentGroupKeyValue = $currentGroupIndex;
-			if ($currentGroupIndex instanceof \DateTime) {
-				$currentGroupIndex = $currentGroupIndex->format(\DateTime::RFC850);
-			} elseif (is_object($currentGroupIndex)) {
-				$currentGroupIndex = spl_object_hash($currentGroupIndex);
-			}
-			$groups['keys'][$currentGroupIndex] = $currentGroupKeyValue;
-			$groups['values'][$currentGroupIndex][$key] = $value;
-		}
-		return $groups;
-	}
+    /**
+     * Groups the given array by the specified groupBy property.
+     *
+     * @param array $elements The array / traversable object to be grouped
+     * @param string $groupBy Group by this property
+     * @return array The grouped array in the form array('keys' => array('key1' => [key1value], 'key2' => [key2value], ...), 'values' => array('key1' => array([key1value] => [element1]), ...), ...)
+     * @throws ViewHelper\Exception
+     */
+    protected function groupElements(array $elements, $groupBy)
+    {
+        $groups = array('keys' => array(), 'values' => array());
+        foreach ($elements as $key => $value) {
+            if (is_array($value)) {
+                $currentGroupIndex = isset($value[$groupBy]) ? $value[$groupBy] : null;
+            } elseif (is_object($value)) {
+                $currentGroupIndex = ObjectAccess::getPropertyPath($value, $groupBy);
+            } else {
+                throw new ViewHelper\Exception('GroupedForViewHelper only supports multi-dimensional arrays and objects', 1253120365);
+            }
+            $currentGroupKeyValue = $currentGroupIndex;
+            if ($currentGroupIndex instanceof \DateTime) {
+                $currentGroupIndex = $currentGroupIndex->format(\DateTime::RFC850);
+            } elseif (is_object($currentGroupIndex)) {
+                $currentGroupIndex = spl_object_hash($currentGroupIndex);
+            }
+            $groups['keys'][$currentGroupIndex] = $currentGroupKeyValue;
+            $groups['values'][$currentGroupIndex][$key] = $value;
+        }
+        return $groups;
+    }
 }

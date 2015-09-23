@@ -19,28 +19,28 @@ use TYPO3\Eel\InterpretedEvaluator;
  *
  * @group benchmark
  */
-class InterpretedEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class InterpretedEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function loopedExpressions()
+    {
+        $this->markTestSkipped('Enable for benchmark');
 
-	/**
-	 * @test
-	 */
-	public function loopedExpressions() {
-		$this->markTestSkipped('Enable for benchmark');
-
-		$evaluator = new InterpretedEvaluator();
-		$expression = 'foo.bar=="Test"||foo.baz=="Test"||reverse(foo).bar=="Test"';
-		$context = new Context(array(
-			'foo' => array(
-				'bar' => 'Test1',
-				'baz' => 'Test2'
-			),
-			'reverse' => function($array) {
-				return array_reverse($array, TRUE);
-			}
-		));
-		for ($i = 0; $i < 10000; $i++) {
-			$evaluator->evaluate($expression, $context);
-		}
-	}
-
+        $evaluator = new InterpretedEvaluator();
+        $expression = 'foo.bar=="Test"||foo.baz=="Test"||reverse(foo).bar=="Test"';
+        $context = new Context(array(
+            'foo' => array(
+                'bar' => 'Test1',
+                'baz' => 'Test2'
+            ),
+            'reverse' => function ($array) {
+                return array_reverse($array, true);
+            }
+        ));
+        for ($i = 0; $i < 10000; $i++) {
+            $evaluator->evaluate($expression, $context);
+        }
+    }
 }

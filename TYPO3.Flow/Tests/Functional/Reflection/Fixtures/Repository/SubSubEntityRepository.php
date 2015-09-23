@@ -16,6 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * @Flow\Scope("singleton")
  */
-class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository {
-
+class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
 }

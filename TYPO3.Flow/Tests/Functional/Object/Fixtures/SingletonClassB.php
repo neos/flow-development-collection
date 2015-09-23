@@ -19,6 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
-class SingletonClassB {
-
+class SingletonClassB
+{
 }

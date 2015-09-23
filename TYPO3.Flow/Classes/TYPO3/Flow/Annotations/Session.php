@@ -18,12 +18,11 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class Session {
-
-	/**
-	 * Whether the annotated method triggers the start of a session.
-	 * @var boolean
-	 */
-	public $autoStart = FALSE;
-
+final class Session
+{
+    /**
+     * Whether the annotated method triggers the start of a session.
+     * @var boolean
+     */
+    public $autoStart = false;
 }

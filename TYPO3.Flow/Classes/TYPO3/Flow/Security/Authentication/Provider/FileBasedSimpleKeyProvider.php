@@ -37,64 +37,65 @@ use TYPO3\Flow\Security\Policy\Role;
  *               keyName: AdminKey
  *               authenticateRoles: ['TYPO3.Flow.SomeRole']
  */
-class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
+class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider
+{
+    /**
+     * @var \TYPO3\Flow\Security\Cryptography\HashService
+     * @Flow\Inject
+     */
+    protected $hashService;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
-	 * @Flow\Inject
-	 */
-	protected $hashService;
+    /**
+     * @var \TYPO3\Flow\Security\Cryptography\FileBasedSimpleKeyService
+     * @Flow\Inject
+     */
+    protected $fileBasedSimpleKeyService;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\FileBasedSimpleKeyService
-	 * @Flow\Inject
-	 */
-	protected $fileBasedSimpleKeyService;
+    /**
+     * @var \TYPO3\Flow\Security\Policy\PolicyService
+     * @Flow\Inject
+     */
+    protected $policyService;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Policy\PolicyService
-	 * @Flow\Inject
-	 */
-	protected $policyService;
+    /**
+     * Returns the class names of the tokens this provider can authenticate.
+     *
+     * @return array
+     */
+    public function getTokenClassNames()
+    {
+        return array('TYPO3\Flow\Security\Authentication\Token\PasswordToken');
+    }
 
-	/**
-	 * Returns the class names of the tokens this provider can authenticate.
-	 *
-	 * @return array
-	 */
-	public function getTokenClassNames() {
-		return array('TYPO3\Flow\Security\Authentication\Token\PasswordToken');
-	}
+    /**
+     * Sets isAuthenticated to TRUE for all tokens.
+     *
+     * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+     * @return void
+     * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
+     */
+    public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken)
+    {
+        if (!($authenticationToken instanceof \TYPO3\Flow\Security\Authentication\Token\PasswordToken)) {
+            throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+        }
 
-	/**
-	 * Sets isAuthenticated to TRUE for all tokens.
-	 *
-	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
-	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
-	 */
-	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \TYPO3\Flow\Security\Authentication\Token\PasswordToken)) {
-			throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
-		}
-
-		$credentials = $authenticationToken->getCredentials();
-		if (is_array($credentials) && isset($credentials['password'])) {
-			if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
-				$account = new \TYPO3\Flow\Security\Account();
-				$roles = array();
-				foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
-					$roles[] = new Role($roleIdentifier, Role::SOURCE_SYSTEM);
-				}
-				$account->setRoles($roles);
-				$authenticationToken->setAccount($account);
-			} else {
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
-			}
-		} elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
-			$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-		}
-	}
-
+        $credentials = $authenticationToken->getCredentials();
+        if (is_array($credentials) && isset($credentials['password'])) {
+            if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
+                $authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+                $account = new \TYPO3\Flow\Security\Account();
+                $roles = array();
+                foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
+                    $roles[] = new Role($roleIdentifier, Role::SOURCE_SYSTEM);
+                }
+                $account->setRoles($roles);
+                $authenticationToken->setAccount($account);
+            } else {
+                $authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+            }
+        } elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+            $authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+        }
+    }
 }

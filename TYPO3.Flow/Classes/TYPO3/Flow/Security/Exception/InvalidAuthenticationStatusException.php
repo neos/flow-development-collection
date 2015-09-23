@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidAuthenticationStatusException extends \TYPO3\Flow\Security\Exception {
+class InvalidAuthenticationStatusException extends \TYPO3\Flow\Security\Exception
+{
 }

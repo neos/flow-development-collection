@@ -20,6 +20,6 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @Flow\Entity
  */
-class ClassWithDocComments {
-
+class ClassWithDocComments
+{
 }

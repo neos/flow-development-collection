@@ -14,7 +14,6 @@ namespace TYPO3\Fluid\ViewHelpers\Security;
 use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-
 /**
  * This view helper implements an ifAccess/else condition.
  *
@@ -46,35 +45,37 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfAccessViewHelper extends AbstractConditionViewHelper {
+class IfAccessViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @var AccessDecisionManagerInterface
+     */
+    protected $accessDecisionManager;
 
-	/**
-	 * @var AccessDecisionManagerInterface
-	 */
-	protected $accessDecisionManager;
+    /**
+     * Injects the access decision manager
+     *
+     * @param AccessDecisionManagerInterface $accessDecisionManager The access decision manager
+     * @return void
+     */
+    public function injectAccessDecisionManager(AccessDecisionManagerInterface $accessDecisionManager)
+    {
+        $this->accessDecisionManager = $accessDecisionManager;
+    }
 
-	/**
-	 * Injects the access decision manager
-	 *
-	 * @param AccessDecisionManagerInterface $accessDecisionManager The access decision manager
-	 * @return void
-	 */
-	public function injectAccessDecisionManager(AccessDecisionManagerInterface $accessDecisionManager) {
-		$this->accessDecisionManager = $accessDecisionManager;
-	}
-
-	/**
-	 * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
-	 *
-	 * @param string $resource Policy resource
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($resource) {
-		if ($this->accessDecisionManager->hasAccessToResource($resource)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+    /**
+     * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
+     *
+     * @param string $resource Policy resource
+     * @return string the rendered string
+     * @api
+     */
+    public function render($resource)
+    {
+        if ($this->accessDecisionManager->hasAccessToResource($resource)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

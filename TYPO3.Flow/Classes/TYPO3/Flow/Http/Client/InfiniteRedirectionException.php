@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Http\Client;
  *
  * @api
  */
-class InfiniteRedirectionException extends \TYPO3\Flow\Exception {
-
+class InfiniteRedirectionException extends \TYPO3\Flow\Exception
+{
 }

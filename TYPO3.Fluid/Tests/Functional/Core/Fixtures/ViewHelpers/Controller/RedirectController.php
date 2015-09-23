@@ -16,60 +16,62 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetController;
 /**
  * Controller of the redirect widget
  */
-class RedirectController extends AbstractWidgetController {
+class RedirectController extends AbstractWidgetController
+{
+    /**
+     * Initial action (showing different links)
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+    }
 
-	/**
-	 * Initial action (showing different links)
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-	}
+    /**
+     * The target action for redirects/forwards
+     *
+     * @param string $parameter
+     * @return void
+     */
+    public function targetAction($parameter = null)
+    {
+        $this->view->assign('parameter', $parameter);
+    }
 
-	/**
-	 * The target action for redirects/forwards
-	 *
-	 * @param string $parameter
-	 * @return void
-	 */
-	public function targetAction($parameter = NULL) {
-		$this->view->assign('parameter', $parameter);
-	}
+    /**
+     * @param integer $delay
+     * @param string $parameter
+     * @param boolean $otherController
+     * @return void
+     */
+    public function redirectTestAction($delay = 0, $parameter = null, $otherController = false)
+    {
+        $this->addFlashMessage('Redirection triggered!');
+        $arguments = array();
+        if ($parameter !== null) {
+            $arguments['parameter'] = $parameter . ', via redirect';
+        }
+        $action = $otherController ? 'index' : 'target';
+        $controller = $otherController ? 'Paginate' : null;
+        $package = $otherController ? 'TYPO3.Fluid\ViewHelpers\Widget' : null;
+        $this->redirect($action, $controller, $package, $arguments, $delay);
+    }
 
-	/**
-	 * @param integer $delay
-	 * @param string $parameter
-	 * @param boolean $otherController
-	 * @return void
-	 */
-	public function redirectTestAction($delay = 0, $parameter = NULL, $otherController = FALSE) {
-		$this->addFlashMessage('Redirection triggered!');
-		$arguments = array();
-		if ($parameter !== NULL) {
-			$arguments['parameter'] = $parameter . ', via redirect';
-		}
-		$action = $otherController ? 'index' : 'target';
-		$controller = $otherController ? 'Paginate' : NULL;
-		$package = $otherController ? 'TYPO3.Fluid\ViewHelpers\Widget' : NULL;
-		$this->redirect($action, $controller, $package, $arguments, $delay);
-	}
-
-	/**
-	 * @param string $parameter
-	 * @param boolean $otherController
-	 * @return void
-	 */
-	public function forwardTestAction($parameter = NULL, $otherController = FALSE) {
-		$this->addFlashMessage('Forward triggered!');
-		$arguments = array();
-		if ($parameter !== NULL) {
-			$arguments['parameter'] = $parameter . ', via forward';
-		}
-		$action = $otherController ? 'index' : 'target';
-		$controller = $otherController ? 'Standard' : NULL;
-		$package = $otherController ? 'TYPO3.Flow\Mvc' : NULL;
-		$this->forward($action, $controller, $package, $arguments);
-	}
-
+    /**
+     * @param string $parameter
+     * @param boolean $otherController
+     * @return void
+     */
+    public function forwardTestAction($parameter = null, $otherController = false)
+    {
+        $this->addFlashMessage('Forward triggered!');
+        $arguments = array();
+        if ($parameter !== null) {
+            $arguments['parameter'] = $parameter . ', via forward';
+        }
+        $action = $otherController ? 'index' : 'target';
+        $controller = $otherController ? 'Standard' : null;
+        $package = $otherController ? 'TYPO3.Flow\Mvc' : null;
+        $this->forward($action, $controller, $package, $arguments);
+    }
 }
-?>

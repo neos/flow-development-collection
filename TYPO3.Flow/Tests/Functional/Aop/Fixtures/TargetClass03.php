@@ -16,15 +16,15 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * A target class for testing introductions
  *
  */
-class TargetClass03 {
+class TargetClass03
+{
+    public $originalMethodCalled;
 
-	public $originalMethodCalled;
-
-	/**
-	 * @return void
-	 */
-	public function originalMethod() {
-		$this->originalMethodCalled = TRUE;
-	}
-
+    /**
+     * @return void
+     */
+    public function originalMethod()
+    {
+        $this->originalMethodCalled = true;
+    }
 }

@@ -18,31 +18,32 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class ForwardException extends StopActionException {
+class ForwardException extends StopActionException
+{
+    /**
+     * @var \TYPO3\Flow\Mvc\ActionRequest
+     */
+    protected $nextRequest;
 
-	/**
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
-	 */
-	protected $nextRequest;
+    /**
+     * Sets the next request, containing the information about the next action to
+     * execute.
+     *
+     * @param \TYPO3\Flow\Mvc\ActionRequest $nextRequest
+     * @return void
+     */
+    public function setNextRequest(\TYPO3\Flow\Mvc\ActionRequest $nextRequest)
+    {
+        $this->nextRequest = $nextRequest;
+    }
 
-	/**
-	 * Sets the next request, containing the information about the next action to
-	 * execute.
-	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $nextRequest
-	 * @return void
-	 */
-	public function setNextRequest(\TYPO3\Flow\Mvc\ActionRequest $nextRequest) {
-		$this->nextRequest = $nextRequest;
-	}
-
-	/**
-	 * Returns the next request
-	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
-	 */
-	public function getNextRequest() {
-		return $this->nextRequest;
-	}
-
+    /**
+     * Returns the next request
+     *
+     * @return \TYPO3\Flow\Mvc\ActionRequest
+     */
+    public function getNextRequest()
+    {
+        return $this->nextRequest;
+    }
 }

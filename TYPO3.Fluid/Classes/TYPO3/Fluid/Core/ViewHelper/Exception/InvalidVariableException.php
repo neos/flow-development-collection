@@ -18,5 +18,6 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class InvalidVariableException extends ViewHelper\Exception {
+class InvalidVariableException extends ViewHelper\Exception
+{
 }

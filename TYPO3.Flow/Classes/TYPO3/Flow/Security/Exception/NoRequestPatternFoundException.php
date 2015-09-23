@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class NoRequestPatternFoundException extends \TYPO3\Flow\Security\Exception {
+class NoRequestPatternFoundException extends \TYPO3\Flow\Security\Exception
+{
 }

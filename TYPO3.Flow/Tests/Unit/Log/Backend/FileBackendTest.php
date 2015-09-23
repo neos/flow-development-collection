@@ -18,103 +18,110 @@ use org\bovigo\vfs\vfsStreamWrapper;
  * Testcase for the File Backend
  *
  */
-class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     */
+    public function setUp()
+    {
+        vfsStream::setup('testDirectory');
+    }
 
-	/**
-	 */
-	public function setUp() {
-		vfsStream::setup('testDirectory');
-	}
+    /**
+     * @test
+     */
+    public function theLogFileIsOpenedWithOpen()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+        $backend->open();
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+    }
 
-	/**
-	 * @test
-	 */
-	public function theLogFileIsOpenedWithOpen() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
-		$backend->open();
-		$this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException
+     */
+    public function openDoesNotCreateParentDirectoriesByDefault()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+        $backend->open();
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException
-	 */
-	public function openDoesNotCreateParentDirectoriesByDefault() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
-		$backend->open();
-	}
+    /**
+     * @test
+     */
+    public function openCreatesParentDirectoriesIfTheOptionSaysSo()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => true));
+        $backend->open();
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
+    }
 
-	/**
-	 * @test
-	 */
-	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
-		$backend->open();
-		$this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
-	}
+    /**
+     * @test
+     */
+    public function appendRendersALogEntryAndAppendsItToTheLogfile()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+        $backend->open();
 
-	/**
-	 * @test
-	 */
-	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
-		$backend->open();
+        $backend->append('foo');
 
-		$backend->append('foo');
+        $pidOffset = function_exists('posix_getpid') ? 10 : 0;
+        $this->assertSame(53 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+    }
 
-		$pidOffset = function_exists('posix_getpid') ? 10 : 0;
-		$this->assertSame(53 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
-	}
+    /**
+     * @test
+     */
+    public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+        $backend->setLogIpAddress(true);
+        $backend->open();
 
-	/**
-	 * @test
-	 */
-	public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
-		$backend->setLogIpAddress(TRUE);
-		$backend->open();
+        $backend->append('foo');
 
-		$backend->append('foo');
+        $pidOffset = function_exists('posix_getpid') ? 10 : 0;
+        $this->assertSame(68 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+    }
 
-		$pidOffset = function_exists('posix_getpid') ? 10 : 0;
-		$this->assertSame(68 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
-	}
+    /**
+     * @test
+     */
+    public function appendIgnoresMessagesAboveTheSeverityThreshold()
+    {
+        $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
+        $backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+        $backend->setSeverityThreshold(LOG_EMERG);
+        $backend->open();
 
-	/**
-	 * @test
-	 */
-	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
-		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
-		$backend->setSeverityThreshold(LOG_EMERG);
-		$backend->open();
+        $backend->append('foo', LOG_INFO);
 
-		$backend->append('foo', LOG_INFO);
+        $this->assertSame(0, vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+    }
 
-		$this->assertSame(0, vfsStreamWrapper::getRoot()->getChild('test.log')->size());
-	}
+    /**
+     * @test
+     */
+    public function logFileIsRotatedIfMaximumSizeIsExceeded()
+    {
+        $this->markTestSkipped('vfsStream does not support touch() and rename(), see http://bugs.php.net/38025...');
 
-	/**
-	 * @test
-	 */
-	public function logFileIsRotatedIfMaximumSizeIsExceeded() {
-		$this->markTestSkipped('vfsStream does not support touch() and rename(), see http://bugs.php.net/38025...');
+        $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
+        file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		file_put_contents($logFileUrl, 'twentybytesofcontent');
+        $backend = $this->getAccessibleMock('TYPO3\Flow\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
+        $backend->_set('maximumLogFileSize', 10);
+        $backend->setLogFilesToKeep(1);
+        $backend->open();
 
-		$backend = $this->getAccessibleMock('TYPO3\Flow\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
-		$backend->_set('maximumLogFileSize', 10);
-		$backend->setLogFilesToKeep(1);
-		$backend->open();
-
-		$this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('test.log'));
-		$this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
-	}
-
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
+    }
 }

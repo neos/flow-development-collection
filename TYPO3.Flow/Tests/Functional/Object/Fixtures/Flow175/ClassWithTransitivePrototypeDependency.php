@@ -13,16 +13,16 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175;
 
 use TYPO3\Flow\Annotations as Flow;
 
-class ClassWithTransitivePrototypeDependency {
+class ClassWithTransitivePrototypeDependency
+{
+    /**
+     * @var OuterPrototype
+     * @Flow\Inject
+     */
+    protected $outer;
 
-	/**
-	 * @var OuterPrototype
-	 * @Flow\Inject
-	 */
-	protected $outer;
-
-	public function getTestValue() {
-		return $this->outer->getInner()->greet("World");
-	}
-
+    public function getTestValue()
+    {
+        return $this->outer->getInner()->greet("World");
+    }
 }

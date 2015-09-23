@@ -16,13 +16,13 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-abstract class PrototypeClassG {
+abstract class PrototypeClassG
+{
+    public $realOrCloned = 'real';
 
-	public $realOrCloned = 'real';
 
-
-	public function __clone() {
-		$this->realOrCloned = 'cloned!';
-
-	}
+    public function __clone()
+    {
+        $this->realOrCloned = 'cloned!';
+    }
 }

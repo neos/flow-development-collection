@@ -13,14 +13,15 @@ namespace TYPO3\Eel\Tests\Functional\FlowQuery\Fixtures;
 
 use TYPO3\Flow\Annotations as Flow;
 
-class ExampleFinalOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
+class ExampleFinalOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
+{
+    protected static $shortName = 'exampleFinalOperation';
+    protected static $final = true;
 
-	static protected $shortName = 'exampleFinalOperation';
-	static protected $final = TRUE;
+    protected static $priority = 1;
 
-	static protected $priority = 1;
-
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $query, array $arguments) {
-		return 'Priority 1';
-	}
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $query, array $arguments)
+    {
+        return 'Priority 1';
+    }
 }

@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidPartException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidPartException extends \TYPO3\Flow\Mvc\Exception
+{
 }

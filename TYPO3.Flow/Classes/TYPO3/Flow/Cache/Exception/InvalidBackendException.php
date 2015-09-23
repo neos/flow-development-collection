@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Cache\Exception;
  *
  * @api
  */
-class InvalidBackendException extends \TYPO3\Flow\Cache\Exception {
-
+class InvalidBackendException extends \TYPO3\Flow\Cache\Exception
+{
 }

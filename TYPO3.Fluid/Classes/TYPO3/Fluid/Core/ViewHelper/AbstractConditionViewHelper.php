@@ -38,125 +38,128 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-abstract class AbstractConditionViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface, CompilableInterface {
+abstract class AbstractConditionViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface, CompilableInterface
+{
+    /**
+     * An array containing child nodes
+     *
+     * @var array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode>
+     */
+    private $childNodes = array();
 
-	/**
-	 * An array containing child nodes
-	 *
-	 * @var array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode>
-	 */
-	private $childNodes = array();
+    /**
+     * Setter for ChildNodes - as defined in ChildNodeAccessInterface
+     *
+     * @param array $childNodes Child nodes of this syntax tree node
+     * @return void
+     */
+    public function setChildNodes(array $childNodes)
+    {
+        $this->childNodes = $childNodes;
+    }
 
-	/**
-	 * Setter for ChildNodes - as defined in ChildNodeAccessInterface
-	 *
-	 * @param array $childNodes Child nodes of this syntax tree node
-	 * @return void
-	 */
-	public function setChildNodes(array $childNodes) {
-		$this->childNodes = $childNodes;
-	}
+    /**
+     * Initializes the "then" and "else" arguments
+     */
+    public function __construct()
+    {
+        $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
+        $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
+    }
 
-	/**
-	 * Initializes the "then" and "else" arguments
-	 */
-	public function __construct() {
-		$this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', FALSE);
-		$this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', FALSE);
-	}
+    /**
+     * Returns value of "then" attribute.
+     * If then attribute is not set, iterates through child nodes and renders ThenViewHelper.
+     * If then attribute is not set and no ThenViewHelper and no ElseViewHelper is found, all child nodes are rendered
+     *
+     * @return string rendered ThenViewHelper or contents of <f:if> if no ThenViewHelper was found
+     * @api
+     */
+    protected function renderThenChild()
+    {
+        if ($this->hasArgument('then')) {
+            return $this->arguments['then'];
+        }
+        if ($this->hasArgument('__thenClosure')) {
+            $thenClosure = $this->arguments['__thenClosure'];
+            return $thenClosure();
+        } elseif ($this->hasArgument('__elseClosure') || $this->hasArgument('else')) {
+            return '';
+        }
 
-	/**
-	 * Returns value of "then" attribute.
-	 * If then attribute is not set, iterates through child nodes and renders ThenViewHelper.
-	 * If then attribute is not set and no ThenViewHelper and no ElseViewHelper is found, all child nodes are rendered
-	 *
-	 * @return string rendered ThenViewHelper or contents of <f:if> if no ThenViewHelper was found
-	 * @api
-	 */
-	protected function renderThenChild() {
-		if ($this->hasArgument('then')) {
-			return $this->arguments['then'];
-		}
-		if ($this->hasArgument('__thenClosure')) {
-			$thenClosure = $this->arguments['__thenClosure'];
-			return $thenClosure();
-		} elseif ($this->hasArgument('__elseClosure') || $this->hasArgument('else')) {
-			return '';
-		}
+        $elseViewHelperEncountered = false;
+        foreach ($this->childNodes as $childNode) {
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
+                $data = $childNode->evaluate($this->renderingContext);
+                return $data;
+            }
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                $elseViewHelperEncountered = true;
+            }
+        }
 
-		$elseViewHelperEncountered = FALSE;
-		foreach ($this->childNodes as $childNode) {
-			if ($childNode instanceof ViewHelperNode
-				&& $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
-				$data = $childNode->evaluate($this->renderingContext);
-				return $data;
-			}
-			if ($childNode instanceof ViewHelperNode
-				&& $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
-				$elseViewHelperEncountered = TRUE;
-			}
-		}
+        if ($elseViewHelperEncountered) {
+            return '';
+        } else {
+            return $this->renderChildren();
+        }
+    }
 
-		if ($elseViewHelperEncountered) {
-			return '';
-		} else {
-			return $this->renderChildren();
-		}
-	}
+    /**
+     * Returns value of "else" attribute.
+     * If else attribute is not set, iterates through child nodes and renders ElseViewHelper.
+     * If else attribute is not set and no ElseViewHelper is found, an empty string will be returned.
+     *
+     * @return string rendered ElseViewHelper or an empty string if no ThenViewHelper was found
+     * @api
+     */
+    protected function renderElseChild()
+    {
+        if ($this->hasArgument('else')) {
+            return $this->arguments['else'];
+        }
+        if ($this->hasArgument('__elseClosure')) {
+            $elseClosure = $this->arguments['__elseClosure'];
+            return $elseClosure();
+        }
+        foreach ($this->childNodes as $childNode) {
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                return $childNode->evaluate($this->renderingContext);
+            }
+        }
 
-	/**
-	 * Returns value of "else" attribute.
-	 * If else attribute is not set, iterates through child nodes and renders ElseViewHelper.
-	 * If else attribute is not set and no ElseViewHelper is found, an empty string will be returned.
-	 *
-	 * @return string rendered ElseViewHelper or an empty string if no ThenViewHelper was found
-	 * @api
-	 */
-	protected function renderElseChild() {
-		if ($this->hasArgument('else')) {
-			return $this->arguments['else'];
-		}
-		if ($this->hasArgument('__elseClosure')) {
-			$elseClosure = $this->arguments['__elseClosure'];
-			return $elseClosure();
-		}
-		foreach ($this->childNodes as $childNode) {
-			if ($childNode instanceof ViewHelperNode
-				&& $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
-				return $childNode->evaluate($this->renderingContext);
-			}
-		}
+        return '';
+    }
 
-		return '';
-	}
-
-	/**
-	 * The compiled ViewHelper adds two new ViewHelper arguments: __thenClosure and __elseClosure.
-	 * These contain closures which are be executed to render the then(), respectively else() case.
-	 *
-	 * @param string $argumentsVariableName
-	 * @param string $renderChildrenClosureVariableName
-	 * @param string $initializationPhpCode
-	 * @param AbstractNode $syntaxTreeNode
-	 * @param TemplateCompiler $templateCompiler
-	 * @return string
-	 * @Flow\Internal
-	 */
-	public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler) {
-		foreach ($syntaxTreeNode->getChildNodes() as $childNode) {
-			if ($childNode instanceof ViewHelperNode
-				&& $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
-
-				$childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
-				$initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
-			}
-			if ($childNode instanceof ViewHelperNode
-				&& $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
-
-				$childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
-				$initializationPhpCode .= sprintf('%s[\'__elseClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
-			}
-		}
-		return TemplateCompiler::SHOULD_GENERATE_VIEWHELPER_INVOCATION;
-	}
+    /**
+     * The compiled ViewHelper adds two new ViewHelper arguments: __thenClosure and __elseClosure.
+     * These contain closures which are be executed to render the then(), respectively else() case.
+     *
+     * @param string $argumentsVariableName
+     * @param string $renderChildrenClosureVariableName
+     * @param string $initializationPhpCode
+     * @param AbstractNode $syntaxTreeNode
+     * @param TemplateCompiler $templateCompiler
+     * @return string
+     * @Flow\Internal
+     */
+    public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler)
+    {
+        foreach ($syntaxTreeNode->getChildNodes() as $childNode) {
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
+                $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
+                $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
+            }
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
+                $initializationPhpCode .= sprintf('%s[\'__elseClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
+            }
+        }
+        return TemplateCompiler::SHOULD_GENERATE_VIEWHELPER_INVOCATION;
+    }
 }

@@ -10,14 +10,14 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-$rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : FALSE;
-if ($rootPath === FALSE && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
-	$rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
+$rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : false;
+if ($rootPath === false && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
+    $rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
 }
-if ($rootPath === FALSE) {
-	$rootPath = dirname(__FILE__) . '/../';
+if ($rootPath === false) {
+    $rootPath = dirname(__FILE__) . '/../';
 } elseif (substr($rootPath, -1) !== '/') {
-	$rootPath .= '/';
+    $rootPath .= '/';
 }
 
 require($rootPath . 'Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Core/Bootstrap.php');

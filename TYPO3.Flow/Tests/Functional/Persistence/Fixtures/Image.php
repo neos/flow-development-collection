@@ -19,27 +19,28 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class Image {
+class Image
+{
+    /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     */
+    protected $data;
 
-	/**
-	 * @var string
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $data;
+    /**
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getData() {
-		return $this->data;
-	}
-
-	/**
-	 * @param string $data
-	 * @return void
-	 */
-	public function setData($data) {
-		$this->data = $data;
-	}
-
+    /**
+     * @param string $data
+     * @return void
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
 }

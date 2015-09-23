@@ -14,6 +14,6 @@ namespace TYPO3\Eel;
 /**
  * Some exception that occurred during parsing of an expression
  */
-class ParserException extends \TYPO3\Flow\Exception {
-
+class ParserException extends \TYPO3\Flow\Exception
+{
 }

@@ -17,28 +17,30 @@ use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationControll
 /**
  * A controller for functional testing
  */
-class UsernamePasswordTestController extends AbstractAuthenticationController {
+class UsernamePasswordTestController extends AbstractAuthenticationController
+{
+    /**
+     * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest
+     * @return string
+     */
+    public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = null)
+    {
+        if ($originalRequest !== null) {
+            $this->redirectToRequest($originalRequest);
+        }
+        $result = 'UsernamePasswordTestController success!' . chr(10);
+        foreach ($this->securityContext->getRoles() as $role) {
+            $result .= $role->getIdentifier() . chr(10);
+        }
+        return $result;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest
-	 * @return string
-	 */
-	public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
-		if ($originalRequest !== NULL) {
-			$this->redirectToRequest($originalRequest);
-		}
-		$result = 'UsernamePasswordTestController success!' . chr(10);
-		foreach ($this->securityContext->getRoles() as $role) {
-			$result .= $role->getIdentifier() . chr(10);
-		}
-		return $result;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception
-	 * @throws \TYPO3\Flow\Exception
-	 */
-	public function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = NULL) {
-		throw new \TYPO3\Flow\Exception('UsernamePasswordTestController failure!', 27);
-	}
+    /**
+     * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception
+     * @throws \TYPO3\Flow\Exception
+     */
+    public function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = null)
+    {
+        throw new \TYPO3\Flow\Exception('UsernamePasswordTestController failure!', 27);
+    }
 }

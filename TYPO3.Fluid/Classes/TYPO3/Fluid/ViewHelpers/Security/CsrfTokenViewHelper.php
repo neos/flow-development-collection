@@ -40,19 +40,19 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * });
  * </code>
  */
-class CsrfTokenViewHelper extends AbstractViewHelper {
+class CsrfTokenViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
-
-	/**
-	 * @return string
-	 */
-	public function render() {
-		return $this->securityContext->getCsrfProtectionToken();
-	}
-
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        return $this->securityContext->getCsrfProtectionToken();
+    }
 }

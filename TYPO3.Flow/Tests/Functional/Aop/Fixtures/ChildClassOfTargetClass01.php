@@ -14,27 +14,29 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * A target class for testing the AOP framework
  */
-class ChildClassOfTargetClass01 extends TargetClass01 {
+class ChildClassOfTargetClass01 extends TargetClass01
+{
+    /**
+     * @return string
+     */
+    public function sayHello()
+    {
+        return 'Greetings, I just wanted to say: ' . parent::sayHello();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function sayHello() {
-		return 'Greetings, I just wanted to say: ' . parent::sayHello();
-	}
+    /**
+     * @return string
+     */
+    public function saySomethingSmart()
+    {
+        return parent::saySomethingSmart() . ' That was smart, eh?';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function saySomethingSmart() {
-		return parent::saySomethingSmart() . ' That was smart, eh?';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function sayWhatFlowIs() {
-		return 'Flow is not';
-	}
-
+    /**
+     * @return string
+     */
+    public function sayWhatFlowIs()
+    {
+        return 'Flow is not';
+    }
 }

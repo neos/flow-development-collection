@@ -16,15 +16,14 @@ namespace TYPO3\Flow\Persistence\Generic;
  *
  * @api
  */
-interface QueryFactoryInterface {
-
-	/**
-	 * Creates a query object working on the given class name
-	 *
-	 * @param string $className
-	 * @return \TYPO3\Flow\Persistence\QueryInterface
-	 * @api
-	 */
-	public function create($className);
-
+interface QueryFactoryInterface
+{
+    /**
+     * Creates a query object working on the given class name
+     *
+     * @param string $className
+     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @api
+     */
+    public function create($className);
 }

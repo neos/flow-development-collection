@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class InvalidQueryRewritingConstraintException extends \TYPO3\Flow\Security\Exception {
+class InvalidQueryRewritingConstraintException extends \TYPO3\Flow\Security\Exception
+{
 }

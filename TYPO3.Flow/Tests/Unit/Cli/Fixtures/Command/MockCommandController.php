@@ -14,20 +14,23 @@ namespace TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command;
 /**
  * A mock CLI Command
  */
-class MockACommandController extends \TYPO3\Flow\Cli\Command {
+class MockACommandController extends \TYPO3\Flow\Cli\Command
+{
+    public function fooCommand()
+    {
+    }
 
-	public function fooCommand() {
-	}
-
-	public function barCommand($someArgument) {
-	}
+    public function barCommand($someArgument)
+    {
+    }
 }
 
 /**
  * Another mock CLI Command
  */
-class MockBCommandController extends \TYPO3\Flow\Cli\Command {
-
-	public function bazCommand() {
-	}
+class MockBCommandController extends \TYPO3\Flow\Cli\Command
+{
+    public function bazCommand()
+    {
+    }
 }

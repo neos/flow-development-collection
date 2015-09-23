@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class NoContextAvailableException extends \TYPO3\Flow\Security\Exception {
+class NoContextAvailableException extends \TYPO3\Flow\Security\Exception
+{
 }

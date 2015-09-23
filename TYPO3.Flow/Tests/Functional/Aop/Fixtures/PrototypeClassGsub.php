@@ -17,7 +17,6 @@ use TYPO3\Flow\Annotations as Flow;
  * A class of scope prototype (but without explicit scope annotation)
  * @Flow\Entity
  */
-class PrototypeClassGsub extends PrototypeClassG {
-
-
+class PrototypeClassGsub extends PrototypeClassG
+{
 }

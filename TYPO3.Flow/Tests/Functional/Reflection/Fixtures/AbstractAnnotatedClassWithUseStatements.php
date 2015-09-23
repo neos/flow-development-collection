@@ -16,16 +16,15 @@ use TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity;
 /**
  * An abstract annotated class with use statements
  */
-abstract class AbstractAnnotatedClassWithUseStatements {
+abstract class AbstractAnnotatedClassWithUseStatements
+{
+    /**
+     * @var Model\SubSubEntity
+     */
+    protected $subSubEntity;
 
-	/**
-	 * @var Model\SubSubEntity
-	 */
-	protected $subSubEntity;
-
-	/**
-	 * @var SuperEntity
-	 */
-	protected $superEntity;
-
+    /**
+     * @var SuperEntity
+     */
+    protected $superEntity;
 }

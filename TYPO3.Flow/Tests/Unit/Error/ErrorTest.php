@@ -15,25 +15,27 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  * Testcase for the Error object
  *
  */
-class ErrorTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ErrorTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function theConstructorSetsTheErrorMessageCorrectly()
+    {
+        $errorMessage = 'The message';
+        $error = new \TYPO3\Flow\Error\Error($errorMessage, 0);
 
-	/**
-	 * @test
-	 */
-	public function theConstructorSetsTheErrorMessageCorrectly() {
-		$errorMessage = 'The message';
-		$error = new \TYPO3\Flow\Error\Error($errorMessage, 0);
+        $this->assertEquals($errorMessage, $error->getMessage());
+    }
 
-		$this->assertEquals($errorMessage, $error->getMessage());
-	}
+    /**
+     * @test
+     */
+    public function theConstructorSetsTheErrorCodeCorrectly()
+    {
+        $errorCode = 123456789;
+        $error = new \TYPO3\Flow\Error\Error('', $errorCode);
 
-	/**
-	 * @test
-	 */
-	public function theConstructorSetsTheErrorCodeCorrectly() {
-		$errorCode = 123456789;
-		$error = new \TYPO3\Flow\Error\Error('', $errorCode);
-
-		$this->assertEquals($errorCode, $error->getCode());
-	}
+        $this->assertEquals($errorCode, $error->getCode());
+    }
 }

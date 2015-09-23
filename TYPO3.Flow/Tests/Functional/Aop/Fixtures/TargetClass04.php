@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * A target class for testing introductions
  *
  */
-class TargetClass04 {
-
+class TargetClass04
+{
 }

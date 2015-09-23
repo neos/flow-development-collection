@@ -16,29 +16,30 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * HTTP component that makes sure that the current response is standards-compliant. It is usually the last component in the chain.
  */
-class StandardsComplianceComponent implements ComponentInterface {
+class StandardsComplianceComponent implements ComponentInterface
+{
+    /**
+     * @var array
+     */
+    protected $options;
 
-	/**
-	 * @var array
-	 */
-	protected $options;
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = array())
+    {
+        $this->options = $options;
+    }
 
-	/**
-	 * @param array $options
-	 */
-	public function __construct(array $options = array()) {
-		$this->options = $options;
-	}
-
-	/**
-	 * Just call makeStandardsCompliant on the Response for now
-	 *
-	 * @param ComponentContext $componentContext
-	 * @return void
-	 */
-	public function handle(ComponentContext $componentContext) {
-		$response = $componentContext->getHttpResponse();
-		$response->makeStandardsCompliant($componentContext->getHttpRequest());
-	}
-
+    /**
+     * Just call makeStandardsCompliant on the Response for now
+     *
+     * @param ComponentContext $componentContext
+     * @return void
+     */
+    public function handle(ComponentContext $componentContext)
+    {
+        $response = $componentContext->getHttpResponse();
+        $response->makeStandardsCompliant($componentContext->getHttpRequest());
+    }
 }

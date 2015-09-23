@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-interface GreeterInterface {
-
-	public function greet($who);
+interface GreeterInterface
+{
+    public function greet($who);
 }

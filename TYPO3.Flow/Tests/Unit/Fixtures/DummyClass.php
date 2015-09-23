@@ -10,9 +10,9 @@ namespace TYPO3\Flow\Fixture;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-class DummyClass {
-
-	public function someMethod() {
-
-	}
+class DummyClass
+{
+    public function someMethod()
+    {
+    }
 }

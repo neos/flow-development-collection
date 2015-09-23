@@ -17,26 +17,26 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * FlowQuery Operation Resolver Interface
  */
-interface OperationResolverInterface {
+interface OperationResolverInterface
+{
+    /**
+     * @param string $operationName
+     * @return boolean TRUE if $operationName is final
+     */
+    public function isFinalOperation($operationName);
 
-	/**
-	 * @param string $operationName
-	 * @return boolean TRUE if $operationName is final
-	 */
-	public function isFinalOperation($operationName);
+    /**
+     * Resolve an operation, taking runtime constraints into account.
+     *
+     * @param string      $operationName
+     * @param array|mixed $context
+     * @return OperationInterface the resolved operation
+     */
+    public function resolveOperation($operationName, $context);
 
-	/**
-	 * Resolve an operation, taking runtime constraints into account.
-	 *
-	 * @param string      $operationName
-	 * @param array|mixed $context
-	 * @return OperationInterface the resolved operation
-	 */
-	public function resolveOperation($operationName, $context);
-
-	/**
-	 * @param string $operationName
-	 * @return boolean
-	 */
-	public function hasOperation($operationName);
+    /**
+     * @param string $operationName
+     * @return boolean
+     */
+    public function hasOperation($operationName);
 }

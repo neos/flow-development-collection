@@ -16,6 +16,6 @@ namespace TYPO3\Flow\I18n\Parser\Exception;
  *
  * @api
  */
-class UnsupportedParserModeException extends \TYPO3\Flow\I18n\Exception {
-
+class UnsupportedParserModeException extends \TYPO3\Flow\I18n\Exception
+{
 }

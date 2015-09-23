@@ -23,66 +23,69 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * INTERNAL!!
  */
-abstract class AbstractCompiledTemplate implements ParsedTemplateInterface {
+abstract class AbstractCompiledTemplate implements ParsedTemplateInterface
+{
+    /**
+     * @var array<\SplObjectStorage>
+     */
+    protected $viewHelpersByPositionAndContext = array();
 
-	/**
-	 * @var array<\SplObjectStorage>
-	 */
-	protected $viewHelpersByPositionAndContext = array();
+    // These tokens are replaced by the Backporter for implementing different behavior in TYPO3 v4
+    // TOKEN-1
 
-	// These tokens are replaced by the Backporter for implementing different behavior in TYPO3 v4
-	// TOKEN-1
+    /**
+     * Public such that it is callable from within closures
+     *
+     * @param integer $uniqueCounter
+     * @param RenderingContextInterface $renderingContext
+     * @param string $viewHelperName
+     * @return AbstractViewHelper
+     * @Flow\Internal
+     */
+    public function getViewHelper($uniqueCounter, RenderingContextInterface $renderingContext, $viewHelperName)
+    {
+        if (Bootstrap::$staticObjectManager->getScope($viewHelperName) === Configuration::SCOPE_SINGLETON) {
+            // if ViewHelper is Singleton, do NOT instantiate with NEW, but re-use it.
+            $viewHelper = Bootstrap::$staticObjectManager->get($viewHelperName);
+            $viewHelper->resetState();
+            return $viewHelper;
+        }
+        if (isset($this->viewHelpersByPositionAndContext[$uniqueCounter])) {
+            /** @var $viewHelpers \SplObjectStorage */
+            $viewHelpers = $this->viewHelpersByPositionAndContext[$uniqueCounter];
+            if ($viewHelpers->contains($renderingContext)) {
+                $viewHelper = $viewHelpers->offsetGet($renderingContext);
+                $viewHelper->resetState();
+                return $viewHelper;
+            } else {
+                $viewHelperInstance = new $viewHelperName;
+                $viewHelpers->attach($renderingContext, $viewHelperInstance);
+                return $viewHelperInstance;
+            }
+        } else {
+            $viewHelperInstance = new $viewHelperName;
+            $viewHelpers = new \SplObjectStorage();
+            $viewHelpers->attach($renderingContext, $viewHelperInstance);
+            $this->viewHelpersByPositionAndContext[$uniqueCounter] = $viewHelpers;
+            return $viewHelperInstance;
+        }
+    }
 
-	/**
-	 * Public such that it is callable from within closures
-	 *
-	 * @param integer $uniqueCounter
-	 * @param RenderingContextInterface $renderingContext
-	 * @param string $viewHelperName
-	 * @return AbstractViewHelper
-	 * @Flow\Internal
-	 */
-	public function getViewHelper($uniqueCounter, RenderingContextInterface $renderingContext, $viewHelperName) {
-		if (Bootstrap::$staticObjectManager->getScope($viewHelperName) === Configuration::SCOPE_SINGLETON) {
-			// if ViewHelper is Singleton, do NOT instantiate with NEW, but re-use it.
-			$viewHelper = Bootstrap::$staticObjectManager->get($viewHelperName);
-			$viewHelper->resetState();
-			return $viewHelper;
-		}
-		if (isset($this->viewHelpersByPositionAndContext[$uniqueCounter])) {
-			/** @var $viewHelpers \SplObjectStorage */
-			$viewHelpers = $this->viewHelpersByPositionAndContext[$uniqueCounter];
-			if ($viewHelpers->contains($renderingContext)) {
-				$viewHelper = $viewHelpers->offsetGet($renderingContext);
-				$viewHelper->resetState();
-				return $viewHelper;
-			} else {
-				$viewHelperInstance = new $viewHelperName;
-				$viewHelpers->attach($renderingContext, $viewHelperInstance);
-				return $viewHelperInstance;
-			}
-		} else {
-			$viewHelperInstance = new $viewHelperName;
-			$viewHelpers = new \SplObjectStorage();
-			$viewHelpers->attach($renderingContext, $viewHelperInstance);
-			$this->viewHelpersByPositionAndContext[$uniqueCounter] = $viewHelpers;
-			return $viewHelperInstance;
-		}
-	}
+    /**
+     * @return boolean
+     */
+    public function isCompilable()
+    {
+        return false;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function isCompilable() {
-		return FALSE;
-	}
+    /**
+     * @return boolean
+     */
+    public function isCompiled()
+    {
+        return true;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function isCompiled() {
-		return TRUE;
-	}
-
-	// TOKEN-2
+    // TOKEN-2
 }

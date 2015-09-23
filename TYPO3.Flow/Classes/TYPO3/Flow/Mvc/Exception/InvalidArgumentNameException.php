@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class InvalidArgumentNameException extends \TYPO3\Flow\Mvc\Exception {
-
+class InvalidArgumentNameException extends \TYPO3\Flow\Mvc\Exception
+{
 }

@@ -16,24 +16,25 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * A target class for testing the AOP framework
  *
  */
-class TargetClass02 {
+class TargetClass02
+{
+    public $afterReturningAdviceWasInvoked = false;
 
-	public $afterReturningAdviceWasInvoked = FALSE;
+    /**
+     * @param mixed $foo
+     * @return mixed
+     */
+    public function publicTargetMethod($foo)
+    {
+        return $this->protectedTargetMethod($foo);
+    }
 
-	/**
-	 * @param mixed $foo
-	 * @return mixed
-	 */
-	public function publicTargetMethod($foo) {
-		return $this->protectedTargetMethod($foo);
-	}
-
-	/**
-	 * @param mixed $foo
-	 * @return mixed
-	 */
-	protected function protectedTargetMethod($foo) {
-		return $foo;
-	}
-
+    /**
+     * @param mixed $foo
+     * @return mixed
+     */
+    protected function protectedTargetMethod($foo)
+    {
+        return $foo;
+    }
 }

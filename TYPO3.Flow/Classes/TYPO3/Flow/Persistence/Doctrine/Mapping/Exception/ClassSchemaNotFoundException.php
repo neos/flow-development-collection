@@ -16,5 +16,6 @@ namespace TYPO3\Flow\Persistence\Doctrine\Mapping\Exception;
  *
  * @api
  */
-class ClassSchemaNotFoundException extends \TYPO3\Flow\Persistence\Exception {
+class ClassSchemaNotFoundException extends \TYPO3\Flow\Persistence\Exception
+{
 }

@@ -17,23 +17,23 @@ use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
  * @Annotation
  * @DoctrineAnnotation\Target({"METHOD"})
  */
-final class ValidationGroups {
+final class ValidationGroups
+{
+    /**
+     * The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
+     * @var array
+     */
+    public $validationGroups = array('Default', 'Controller');
 
-	/**
-	 * The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
-	 * @var array
-	 */
-	public $validationGroups = array('Default', 'Controller');
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['validationGroups']) && is_array($values['validationGroups'])) {
-			$this->validationGroups = $values['validationGroups'];
-		} elseif (isset($values['value']) && is_array($values['value'])) {
-			$this->validationGroups = $values['value'];
-		}
-	}
-
+    /**
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['validationGroups']) && is_array($values['validationGroups'])) {
+            $this->validationGroups = $values['validationGroups'];
+        } elseif (isset($values['value']) && is_array($values['value'])) {
+            $this->validationGroups = $values['value'];
+        }
+    }
 }

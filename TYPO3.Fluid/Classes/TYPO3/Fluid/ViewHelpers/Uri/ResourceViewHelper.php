@@ -57,64 +57,65 @@ use TYPO3\Fluid\Core\ViewHelper\Exception\InvalidVariableException;
  *
  * @api
  */
-class ResourceViewHelper extends AbstractViewHelper {
+class ResourceViewHelper extends AbstractViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var ResourcePublisher
+     */
+    protected $resourcePublisher;
 
-	/**
-	 * @Flow\Inject
-	 * @var ResourcePublisher
-	 */
-	protected $resourcePublisher;
+    /**
+     * @Flow\Inject
+     * @var Service
+     */
+    protected $i18nService;
 
-	/**
-	 * @Flow\Inject
-	 * @var Service
-	 */
-	protected $i18nService;
-
-	/**
-	 * Render the URI to the resource. The filename is used from child content.
-	 *
-	 * @param string $path The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
-	 * @param string $package Target package key. If not set, the current package key will be used
-	 * @param Resource $resource If specified, this resource object is used instead of the path and package information
-	 * @param boolean $localize Whether resource localization should be attempted or not
-	 * @return string The absolute URI to the resource
-	 * @throws InvalidVariableException
-	 * @api
-	 */
-	public function render($path = NULL, $package = NULL, Resource $resource = NULL, $localize = TRUE) {
-		if ($resource !== NULL) {
-			$uri = $this->resourcePublisher->getPersistentResourceWebUri($resource);
-			if ($uri === FALSE) {
-				$uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'BrokenResource';
-			}
-		} else {
-			if ($path === NULL) {
-				throw new InvalidVariableException('The ResourceViewHelper did neither contain a valuable "resource" nor "path" argument.', 1353512742);
-			}
-			if ($package === NULL) {
-				$package = $this->controllerContext->getRequest()->getControllerPackageKey();
-			}
-			if (strpos($path, 'resource://') === 0) {
-				$matches = array();
-				if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) === 1) {
-					$package = $matches[1];
-					$path = $matches[2];
-				} else {
-					throw new InvalidVariableException(sprintf('The path "%s" which was given to the ResourceViewHelper must point to a public resource.', $path), 1353512639);
-				}
-			}
-			if ($localize === TRUE) {
-				$resourcePath = 'resource://' . $package . '/Public/' . $path;
-				$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-				$matches = array();
-				if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
-					$package = $matches[1];
-					$path = $matches[2];
-				}
-			}
-			$uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
-		}
-		return $uri;
-	}
+    /**
+     * Render the URI to the resource. The filename is used from child content.
+     *
+     * @param string $path The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
+     * @param string $package Target package key. If not set, the current package key will be used
+     * @param Resource $resource If specified, this resource object is used instead of the path and package information
+     * @param boolean $localize Whether resource localization should be attempted or not
+     * @return string The absolute URI to the resource
+     * @throws InvalidVariableException
+     * @api
+     */
+    public function render($path = null, $package = null, Resource $resource = null, $localize = true)
+    {
+        if ($resource !== null) {
+            $uri = $this->resourcePublisher->getPersistentResourceWebUri($resource);
+            if ($uri === false) {
+                $uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'BrokenResource';
+            }
+        } else {
+            if ($path === null) {
+                throw new InvalidVariableException('The ResourceViewHelper did neither contain a valuable "resource" nor "path" argument.', 1353512742);
+            }
+            if ($package === null) {
+                $package = $this->controllerContext->getRequest()->getControllerPackageKey();
+            }
+            if (strpos($path, 'resource://') === 0) {
+                $matches = array();
+                if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) === 1) {
+                    $package = $matches[1];
+                    $path = $matches[2];
+                } else {
+                    throw new InvalidVariableException(sprintf('The path "%s" which was given to the ResourceViewHelper must point to a public resource.', $path), 1353512639);
+                }
+            }
+            if ($localize === true) {
+                $resourcePath = 'resource://' . $package . '/Public/' . $path;
+                $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
+                $matches = array();
+                if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+                    $package = $matches[1];
+                    $path = $matches[2];
+                }
+            }
+            $uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+        }
+        return $uri;
+    }
 }

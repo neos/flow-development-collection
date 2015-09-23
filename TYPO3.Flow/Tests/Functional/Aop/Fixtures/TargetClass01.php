@@ -16,119 +16,131 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * A target class for testing the AOP framework
  *
  */
-class TargetClass01 implements SayHelloInterface {
+class TargetClass01 implements SayHelloInterface
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name
+     */
+    protected $currentName;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name
-	 */
-	protected $currentName;
+    /**
+     * @var string
+     */
+    public $constructorResult = '';
 
-	/**
-	 * @var string
-	 */
-	public $constructorResult = '';
+    /**
+     * @var integer
+     */
+    public $initializeObjectCallCounter = 0;
 
-	/**
-	 * @var integer
-	 */
-	public $initializeObjectCallCounter = 0;
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->constructorResult .= 'AVRO RJ100';
+    }
 
-	/**
-	 *
-	 */
-	public function __construct() {
-		$this->constructorResult .= 'AVRO RJ100';
-	}
+    /**
+     *
+     */
+    public function initializeObject()
+    {
+        $this->initializeObjectCallCounter ++;
+    }
 
-	/**
-	 *
-	 */
-	public function initializeObject() {
-		$this->initializeObjectCallCounter ++;
-	}
+    /**
+     * @return string
+     */
+    public function sayHello()
+    {
+        return 'Hello';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function sayHello() {
-		return 'Hello';
-	}
+    /**
+     * @return string
+     */
+    public function sayWhatFlowIs()
+    {
+        return 'Flow is';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function sayWhatFlowIs() {
-		return 'Flow is';
-	}
+    /**
+     * @return string
+     */
+    public function saySomethingSmart()
+    {
+        return 'Two plus two makes five!';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function saySomethingSmart() {
-		return 'Two plus two makes five!';
-	}
+    /**
+     * @param boolean $throwException
+     * @return string
+     * @throws \Exception
+     */
+    public function sayHelloAndThrow($throwException)
+    {
+        if ($throwException) {
+            throw new \Exception();
+        }
+        return 'Hello';
+    }
 
-	/**
-	 * @param boolean $throwException
-	 * @return string
-	 * @throws \Exception
-	 */
-	public function sayHelloAndThrow($throwException) {
-		if ($throwException) {
-			throw new \Exception();
-		}
-		return 'Hello';
-	}
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function greet($name)
+    {
+        return 'Hello, ' . $name;
+    }
 
-	/**
-	 * @param string $name
-	 * @return string
-	 */
-	public function greet($name) {
-		return 'Hello, ' . $name;
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
+     * @return string
+     */
+    public function greetObject(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name)
+    {
+        return 'Hello, ' . $name;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
-	 * @return string
-	 */
-	public function greetObject(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name) {
-		return 'Hello, ' . $name;
-	}
+    /**
+     * @param \SplObjectStorage $names
+     * @return string
+     */
+    public function greetMany(\SplObjectStorage $names)
+    {
+        $greet = '';
+        foreach ($names as $name) {
+            $greet .= $name;
+        }
+        return 'Hello, ' . $greet;
+    }
 
-	/**
-	 * @param \SplObjectStorage $names
-	 * @return string
-	 */
-	public function greetMany(\SplObjectStorage $names) {
-		$greet = '';
-		foreach ($names as $name) {
-			$greet .= $name;
-		}
-		return 'Hello, ' . $greet;
-	}
+    /**
+     *
+     * @return string
+     */
+    public function getCurrentName()
+    {
+        return $this->currentName;
+    }
 
-	/**
-	 *
-	 * @return string
-	 */
-	public function getCurrentName() {
-		return $this->currentName;
-	}
+    /**
+     *
+     * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
+     * @return void
+     */
+    public function setCurrentName(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name = null)
+    {
+        $this->currentName = $name;
+    }
 
-	/**
-	 *
-	 * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
-	 * @return void
-	 */
-	public function setCurrentName(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name = NULL) {
-		$this->currentName = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	static public function someStaticMethod() {
-		return 'I won\'t take any advice';
-	}
+    /**
+     * @return string
+     */
+    public static function someStaticMethod()
+    {
+        return 'I won\'t take any advice';
+    }
 }

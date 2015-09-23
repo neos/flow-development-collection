@@ -15,68 +15,81 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * Fixture class with getters and setters
  *
  */
-class DummyClassWithGettersAndSetters {
+class DummyClassWithGettersAndSetters
+{
+    protected $property;
+    protected $anotherProperty;
+    protected $property2;
+    protected $booleanProperty = true;
+    protected $anotherBooleanProperty = false;
 
-	protected $property;
-	protected $anotherProperty;
-	protected $property2;
-	protected $booleanProperty = TRUE;
-	protected $anotherBooleanProperty = FALSE;
+    protected $protectedProperty;
 
-	protected $protectedProperty;
+    protected $unexposedProperty = 'unexposed';
 
-	protected $unexposedProperty = 'unexposed';
+    public $publicProperty;
+    public $publicProperty2 = 42;
 
-	public $publicProperty;
-	public $publicProperty2 = 42;
+    public function setProperty($property)
+    {
+        $this->property = $property;
+    }
 
-	public function setProperty($property) {
-		$this->property = $property;
-	}
+    public function getProperty()
+    {
+        return $this->property;
+    }
 
-	public function getProperty() {
-		return $this->property;
-	}
+    public function setAnotherProperty($anotherProperty)
+    {
+        $this->anotherProperty = $anotherProperty;
+    }
 
-	public function setAnotherProperty($anotherProperty) {
-		$this->anotherProperty = $anotherProperty;
-	}
+    public function getAnotherProperty()
+    {
+        return $this->anotherProperty;
+    }
 
-	public function getAnotherProperty() {
-		return $this->anotherProperty;
-	}
+    public function getProperty2()
+    {
+        return $this->property2;
+    }
+    public function setProperty2($property2)
+    {
+        $this->property2 = $property2;
+    }
 
-	public function getProperty2() {
-		return $this->property2;
-	}
-	public function setProperty2($property2) {
-		$this->property2 = $property2;
-	}
+    protected function getProtectedProperty()
+    {
+        return '42';
+    }
 
-	protected function getProtectedProperty() {
-		return '42';
-	}
+    protected function setProtectedProperty($value)
+    {
+        $this->protectedProperty = $value;
+    }
 
-	protected function setProtectedProperty($value) {
-		$this->protectedProperty = $value;
-	}
+    public function isBooleanProperty()
+    {
+        return 'method called ' . $this->booleanProperty;
+    }
 
-	public function isBooleanProperty() {
-		return 'method called ' . $this->booleanProperty;
-	}
+    public function setAnotherBooleanProperty($anotherBooleanProperty)
+    {
+        $this->anotherBooleanProperty = $anotherBooleanProperty;
+    }
 
-	public function setAnotherBooleanProperty($anotherBooleanProperty) {
-		$this->anotherBooleanProperty = $anotherBooleanProperty;
-	}
+    public function hasAnotherBooleanProperty()
+    {
+        return $this->anotherBooleanProperty;
+    }
 
-	public function hasAnotherBooleanProperty() {
-		return $this->anotherBooleanProperty;
-	}
+    protected function getPrivateProperty()
+    {
+        return '21';
+    }
 
-	protected function getPrivateProperty() {
-		return '21';
-	}
-
-	public function setWriteOnlyMagicProperty($value) {
-	}
+    public function setWriteOnlyMagicProperty($value)
+    {
+    }
 }

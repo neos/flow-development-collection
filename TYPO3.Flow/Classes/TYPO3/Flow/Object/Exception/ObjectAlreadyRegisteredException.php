@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Object\Exception;
  *
  * @api
  */
-class ObjectAlreadyRegisteredException extends \TYPO3\Flow\Object\Exception {
-
+class ObjectAlreadyRegisteredException extends \TYPO3\Flow\Object\Exception
+{
 }

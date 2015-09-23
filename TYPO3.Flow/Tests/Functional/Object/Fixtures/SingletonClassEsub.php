@@ -18,18 +18,18 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class SingletonClassEsub extends SingletonClassE {
+class SingletonClassEsub extends SingletonClassE
+{
+    /**
+     * @var SingletonClassB
+     */
+    protected $objectB;
 
-	/**
-	 * @var SingletonClassB
-	 */
-	protected $objectB;
-
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
-	 */
-	public function injectObjectB(SingletonClassB $objectB) {
-		$this->objectB = $objectB;
-	}
-
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+     */
+    public function injectObjectB(SingletonClassB $objectB)
+    {
+        $this->objectB = $objectB;
+    }
 }

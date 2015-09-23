@@ -11,21 +11,23 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-class OuterPrototype {
+class OuterPrototype
+{
+    /**
+     * @var GreeterInterface
+     */
+    private $inner;
 
-	/**
-	 * @var GreeterInterface
-	 */
-	private $inner;
+    public function __construct(GreeterInterface $inner)
+    {
+        $this->inner = $inner;
+    }
 
-	public function __construct(GreeterInterface $inner) {
-		$this->inner = $inner;
-	}
-
-	/**
-	 * @return Greeter
-	 */
-	public function getInner(){
-		return $this->inner;
-	}
+    /**
+     * @return Greeter
+     */
+    public function getInner()
+    {
+        return $this->inner;
+    }
 }

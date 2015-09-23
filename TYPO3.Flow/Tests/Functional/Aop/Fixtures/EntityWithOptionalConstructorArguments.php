@@ -18,24 +18,24 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class EntityWithOptionalConstructorArguments {
+class EntityWithOptionalConstructorArguments
+{
+    public $argument1;
 
-	public $argument1;
+    public $argument2;
 
-	public $argument2;
-
-	public $argument3;
+    public $argument3;
 
 
-	/**
-	 * @param mixed $argument1
-	 * @param mixed $argument2
-	 * @param mixed $argument3
-	 */
-	public function __construct($argument1, $argument2 = NULL, $argument3 = NULL) {
-		$this->argument1 = $argument1;
-		$this->argument2 = $argument2;
-		$this->argument3 = $argument3;
-	}
-
+    /**
+     * @param mixed $argument1
+     * @param mixed $argument2
+     * @param mixed $argument3
+     */
+    public function __construct($argument1, $argument2 = null, $argument3 = null)
+    {
+        $this->argument1 = $argument1;
+        $this->argument2 = $argument2;
+        $this->argument3 = $argument3;
+    }
 }

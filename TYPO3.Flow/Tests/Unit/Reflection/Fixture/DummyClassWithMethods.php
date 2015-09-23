@@ -15,27 +15,27 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * Dummy class for the Reflection tests
  *
  */
-class DummyClassWithMethods {
+class DummyClassWithMethods
+{
+    /**
+     * Some method
+     *
+     * @firsttag
+     * @secondtag a
+     * @secondtag b
+     * @param string $arg1 Argument 1 documentation
+     * @return void
+     */
+    public function firstMethod($arg1, &$arg2, \stdClass $arg3, $arg4 = 'default')
+    {
+    }
 
-	/**
-	 * Some method
-	 *
-	 * @firsttag
-	 * @secondtag a
-	 * @secondtag b
-	 * @param string $arg1 Argument 1 documentation
-	 * @return void
-	 */
-	public function firstMethod($arg1, &$arg2, \stdClass $arg3, $arg4 = 'default') {
-
-	}
-
-	/**
-	 * Some method
-	 *
-	 * @return void
-	 */
-	protected function secondMethod() {
-
-	}
+    /**
+     * Some method
+     *
+     * @return void
+     */
+    protected function secondMethod()
+    {
+    }
 }

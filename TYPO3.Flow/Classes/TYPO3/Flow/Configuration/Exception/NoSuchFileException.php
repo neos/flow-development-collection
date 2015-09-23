@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Configuration\Exception;
  *
  * @api
  */
-class NoSuchFileException extends \TYPO3\Flow\Configuration\Exception {
-
+class NoSuchFileException extends \TYPO3\Flow\Configuration\Exception
+{
 }

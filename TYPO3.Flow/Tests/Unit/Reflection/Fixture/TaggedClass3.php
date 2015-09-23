@@ -20,6 +20,6 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * @thirdtag one, two
  * @thirdtag three, four
  */
-class TaggedClass3 {
-
+class TaggedClass3
+{
 }

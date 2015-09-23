@@ -16,11 +16,10 @@ namespace TYPO3\Flow\Security\Exception;
  *
  * @api
  */
-class AuthenticationRequiredException extends \TYPO3\Flow\Security\Exception {
-
-	/**
-	 * @var integer
-	 */
-	protected $statusCode = 401;
-
+class AuthenticationRequiredException extends \TYPO3\Flow\Security\Exception
+{
+    /**
+     * @var integer
+     */
+    protected $statusCode = 401;
 }

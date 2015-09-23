@@ -21,68 +21,70 @@ use TYPO3\Flow\Security\Context;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class PolicyEnforcementAspect {
+class PolicyEnforcementAspect
+{
+    /**
+     * The policy enforcement interceptor
+     *
+     * @var \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement
+     */
+    protected $policyEnforcementInterceptor;
 
-	/**
-	 * The policy enforcement interceptor
-	 *
-	 * @var \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement
-	 */
-	protected $policyEnforcementInterceptor;
+    /**
+     * @var \TYPO3\Flow\Security\Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @var \TYPO3\Flow\Security\Context
-	 */
-	protected $securityContext;
+    /**
+     * @param \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
+     * @param \TYPO3\Flow\Security\Context $securityContext
+     */
+    public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext)
+    {
+        $this->policyEnforcementInterceptor = $policyEnforcementInterceptor;
+        $this->securityContext = $securityContext;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
-	 * @param \TYPO3\Flow\Security\Context $securityContext
-	 */
-	public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext) {
-		$this->policyEnforcementInterceptor = $policyEnforcementInterceptor;
-		$this->securityContext = $securityContext;
-	}
+    /**
+     * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
+     * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
+     * before calling the policy enforcement interceptor
+     *
+     * @Flow\Around("setting(TYPO3.Flow.security.enable) && filter(TYPO3\Flow\Security\Policy\PolicyService)")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
+     * @return mixed The result of the target method if it has not been intercepted
+     */
+    public function enforcePolicy(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
+            $this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
+            $this->policyEnforcementInterceptor->invoke();
+        }
 
-	/**
-	 * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
-	 * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
-	 * before calling the policy enforcement interceptor
-	 *
-	 * @Flow\Around("setting(TYPO3.Flow.security.enable) && filter(TYPO3\Flow\Security\Policy\PolicyService)")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
-	 * @return mixed The result of the target method if it has not been intercepted
-	 */
-	public function enforcePolicy(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		if ($this->securityContext->areAuthorizationChecksDisabled() !== TRUE) {
-			$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
-			$this->policyEnforcementInterceptor->invoke();
-		}
+        $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        // @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
+        return $result;
+    }
 
-		// @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
-		return $result;
-	}
+    /**
+     * Makes sure that the AOP proxies are rebuilt if a policy has changed.
+     *
+     * Note: This is not an advice but a method which is used as a slot for a signal
+     *       sent by the system file monitor defined in the bootstrap scripts.
+     *
+     * @param string $fileMonitorIdentifier Identifier of the File Monitor
+     * @param array $changedFiles A list of full paths to changed files
+     * @return void
+     */
+    public function triggerAopProxyRebuildingByChangedFiles($fileMonitorIdentifier, array $changedFiles)
+    {
+        if ($fileMonitorIdentifier !== 'Flow_PolicyFiles') {
+            return;
+        }
+        $this->systemLogger->log('The security policies have changed, thus triggering an AOP proxy class rebuild.', LOG_INFO);
 
-	/**
-	 * Makes sure that the AOP proxies are rebuilt if a policy has changed.
-	 *
-	 * Note: This is not an advice but a method which is used as a slot for a signal
-	 *       sent by the system file monitor defined in the bootstrap scripts.
-	 *
-	 * @param string $fileMonitorIdentifier Identifier of the File Monitor
-	 * @param array $changedFiles A list of full paths to changed files
-	 * @return void
-	 */
-	public function triggerAopProxyRebuildingByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
-		if ($fileMonitorIdentifier !== 'Flow_PolicyFiles') {
-			return;
-		}
-		$this->systemLogger->log('The security policies have changed, thus triggering an AOP proxy class rebuild.', LOG_INFO);
-
-		$this->flushCachesByTag(\TYPO3\Flow\Cache\CacheManager::getClassTag());
-		$this->flushCachesByTag(\TYPO3\Flow\Cache\CacheManager::getClassTag('TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect'));
-	}
-
+        $this->flushCachesByTag(\TYPO3\Flow\Cache\CacheManager::getClassTag());
+        $this->flushCachesByTag(\TYPO3\Flow\Cache\CacheManager::getClassTag('TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect'));
+    }
 }

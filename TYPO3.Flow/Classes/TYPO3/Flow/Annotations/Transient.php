@@ -21,4 +21,6 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target("PROPERTY")
  */
-final class Transient {}
+final class Transient
+{
+}

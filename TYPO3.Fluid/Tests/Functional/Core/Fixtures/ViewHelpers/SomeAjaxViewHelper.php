@@ -17,28 +17,29 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
 /**
  * A view helper for the test AJAX widget
  */
-class SomeAjaxViewHelper extends AbstractWidgetViewHelper {
+class SomeAjaxViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $ajaxWidget = true;
 
-	/**
-	 * @var boolean
-	 */
-	protected $ajaxWidget = TRUE;
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Fluid\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Fluid\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController
-	 */
-	protected $controller;
-
-	/**
-	 * The actual render method does nothing more than initiating the sub request
-	 * which invokes the controller.
-	 *
-	 * @param string $option1 Option for testing if parameters can be passed
-	 * @param string $option2 Option for testing if parameters can be passed
-	 * @return string
-	 */
-	public function render($option1 = '', $option2 = '') {
-		return $this->initiateSubRequest();
-	}
+    /**
+     * The actual render method does nothing more than initiating the sub request
+     * which invokes the controller.
+     *
+     * @param string $option1 Option for testing if parameters can be passed
+     * @param string $option2 Option for testing if parameters can be passed
+     * @return string
+     */
+    public function render($option1 = '', $option2 = '')
+    {
+        return $this->initiateSubRequest();
+    }
 }

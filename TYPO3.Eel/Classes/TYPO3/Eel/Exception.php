@@ -14,6 +14,6 @@ namespace TYPO3\Eel;
 /**
  * A general Eel exception
  */
-class Exception extends \TYPO3\Flow\Exception {
-
+class Exception extends \TYPO3\Flow\Exception
+{
 }

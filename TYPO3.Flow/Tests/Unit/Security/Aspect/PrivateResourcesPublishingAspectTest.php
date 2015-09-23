@@ -18,688 +18,704 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the private resources publishing aspect
  *
  */
-class PrivateResourcesPublishingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
-
-	/**
-	 * @var string
-	 */
-	protected $temporaryDirectoryPath;
-
-	/**
-	 * @var string
-	 */
-	protected $publishPath;
-
-	/**
-	 */
-	public function setUp() {
-		vfsStream::setup('Foo');
-		$temporaryDirectoryBase = realpath(sys_get_temp_dir()) . '/' . str_replace('\\', '_', __CLASS__);
-
-		$this->temporaryDirectoryPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FlowPrivateResourcesPublishingAspectTestTemporaryDirectory'));
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectoryPath);
-		$this->publishPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FlowPrivateResourcesPublishingAspectTestPublishDirectory'));
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->publishPath);
-	}
-
-	public function tearDown() {
-		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectoryPath);
-		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->publishPath);
-	}
-
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
-
-		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
-
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
-
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-
-		$this->assertEquals('resultOfTheOriginalMethod', $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
-	}
-
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
-		$allowedRoles = array (
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
-
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+class PrivateResourcesPublishingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @var string
+     */
+    protected $temporaryDirectoryPath;
+
+    /**
+     * @var string
+     */
+    protected $publishPath;
+
+    /**
+     */
+    public function setUp()
+    {
+        vfsStream::setup('Foo');
+        $temporaryDirectoryBase = realpath(sys_get_temp_dir()) . '/' . str_replace('\\', '_', __CLASS__);
+
+        $this->temporaryDirectoryPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FlowPrivateResourcesPublishingAspectTestTemporaryDirectory'));
+        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectoryPath);
+        $this->publishPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FlowPrivateResourcesPublishingAspectTestPublishDirectory'));
+        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->publishPath);
+    }
+
+    public function tearDown()
+    {
+        \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectoryPath);
+        \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->publishPath);
+    }
+
+    /**
+     * @test
+     */
+    public function rewritePersistentResourceWebUriForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed()
+    {
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', false);
+
+        $mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', false);
+        $mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
+
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+
+        $this->assertEquals('resultOfTheOriginalMethod', $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
+    }
+
+    /**
+     * @test
+     */
+    public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext()
+    {
+        $allowedRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
+
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+
+        $actualRoles = array(
+            new Role('Role5'),
+            new Role('Role6')
+        );
+
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+
+        $this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
+    }
+
+    /**
+     * @test
+     */
+    public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfThePublishingConfigurationContainsNoAllowedRoles()
+    {
+        $allowedRoles = array();
+
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+
+        $actualRoles = array(
+            new Role('Role5'),
+            new Role('Role6')
+        );
 
-		$actualRoles = array(
-			new Role('Role5'),
-			new Role('Role6')
-		);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
-
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 
-		$this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
-	}
-
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfThePublishingConfigurationContainsNoAllowedRoles() {
-		$allowedRoles = array ();
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
+    }
 
-		$actualRoles = array(
-			new Role('Role5'),
-			new Role('Role6')
-		);
+    /**
+     * @test
+     */
+    public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInLinkModeAndHasAFilename()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesBaseUri')->will($this->returnValue('TheBaseURI/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInLinkModeAndHasAFilename() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceFilename.ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesBaseUri')->will($this->returnValue('TheBaseURI/'));
+        $expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/Role2/ResourceHash/ResourceFilename.ResourceFileExtension';
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $result = $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceFilename.ResourceFileExtension'));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInCopyModeAndHasAFilename()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/Role2/ResourceHash/ResourceFilename.ResourceFileExtension';
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$result = $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesBaseUri')->will($this->returnValue('TheBaseURI/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInCopyModeAndHasAFilename() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceTitle.ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesBaseUri')->will($this->returnValue('TheBaseURI/'));
+        $expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/ResourceHash/ResourceTitle.ResourceFileExtension';
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $result = $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceTitle.ResourceFileExtension'));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed()
+    {
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', false);
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', false);
+        $mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/ResourceHash/ResourceTitle.ResourceFileExtension';
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$result = $publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint);
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $this->assertEquals('resultOfTheOriginalMethod', $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint));
+    }
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext()
+    {
+        $allowedRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $actualRoles = array(
+            new Role('Role5'),
+            new Role('Role6')
+        );
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$this->assertEquals('resultOfTheOriginalMethod', $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint));
-	}
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
-		$allowedRoles = array (
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $this->assertFalse($publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint));
+    }
 
-		$actualRoles = array(
-			new Role('Role5'),
-			new Role('Role6')
-		);
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertFalse($publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint));
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
+        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
+        $mockAccessRestrictionPublisher = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('environment', $mockEnvironment);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/';
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+        $result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$mockAccessRestrictionPublisher = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('environment', $mockEnvironment);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/';
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(true));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
+        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('environment', $mockEnvironment);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
+        $expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/ResourceHash.ResourceFileExtension';
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(TRUE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+        $result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('environment', $mockEnvironment);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/ResourceHash.ResourceFileExtension';
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
+        $expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(true));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
+        $result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(TRUE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+        $this->assertEquals($result, $expectedResult);
+    }
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesTheSessionDirectoryIfNeeded()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$this->assertEquals($result, $expectedResult);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('vfs://Foo/Web/_Resources/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesTheSessionDirectoryIfNeeded() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('vfs://Foo/Web/_Resources/'));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
+        $this->assertFileExists('vfs://Foo/Web/_Resources/Persistent/TheCurrentSessionId/');
+    }
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+    /**
+     * @test
+     */
+    public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
+        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
-		$this->assertFileExists('vfs://Foo/Web/_Resources/Persistent/TheCurrentSessionId/');
-	}
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-	/**
-	 * @test
-	 */
-	public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath ));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('environment', $mockEnvironment);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
+        $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
+        $this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role2/');
+        $this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role3/');
+        $this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role2');
+        $this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role3');
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
+        $role2PrivateResourcePath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role2')));
+        $role2SymlinkedPath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role2')));
+        $this->assertEquals($role2PrivateResourcePath, $role2SymlinkedPath);
 
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
+        $role3PrivateResourcePath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role3')));
+        $role3SymlinkedPath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role3')));
+        $this->assertEquals($role3PrivateResourcePath, $role3SymlinkedPath);
+    }
 
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
+    /**
+     * @test
+     */
+    public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCallsTheAccessRestrictionPublisherWithTheCalculatedSessionDirectoryPublishPath()
+    {
+        $settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('environment', $mockEnvironment);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
+        $allowedRoles = array(
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+        $mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', false);
+        $mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
-		$this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role2/');
-		$this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role3/');
-		$this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role2');
-		$this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role3');
+        $actualRoles = array(
+            new Role('Role1'),
+            new Role('Role2'),
+            new Role('Role3')
+        );
 
-		$role2PrivateResourcePath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role2')));
-		$role2SymlinkedPath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role2')));
-		$this->assertEquals($role2PrivateResourcePath, $role2SymlinkedPath);
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', false);
+        $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
-		$role3PrivateResourcePath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role3')));
-		$role3SymlinkedPath = realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role3')));
-		$this->assertEquals($role3PrivateResourcePath, $role3SymlinkedPath);
-	}
+        $mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', false);
+        $mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('vfs://Foo/Web/_Resources/'));
 
-	/**
-	 * @test
-	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCallsTheAccessRestrictionPublisherWithTheCalculatedSessionDirectoryPublishPath() {
-		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
+        $mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', false);
+        $mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
 
-		$allowedRoles = array (
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', false);
+        $mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
+        $mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+        $mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockPublishingConfiguration = $this->getMock('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
-		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
+        $mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
+        $mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
+        $mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(false));
+        $mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
-		$actualRoles = array(
-			new Role('Role1'),
-			new Role('Role2'),
-			new Role('Role3')
-		);
+        $mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', false);
+        $mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
+        $mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', false);
+        $mockAccessRestrictionPublisher->expects($this->once())->method('publishAccessRestrictionsForPath')->with('vfs://Foo/Web/_Resources/Persistent/TheCurrentSessionId/');
 
-		$mockPublishingTargetProxy = $this->getMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('vfs://Foo/Web/_Resources/'));
+        $publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', false);
+        $publishingAspect->_set('securityContext', $mockSecurityContext);
+        $publishingAspect->_set('session', $mockSession);
+        $publishingAspect->_set('settings', $settings);
+        $publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
-		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
-
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
-		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
-		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
-
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
-		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
-
-		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface', array(), array(), '', FALSE);
-		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
-
-		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\Flow\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
-		$mockAccessRestrictionPublisher->expects($this->once())->method('publishAccessRestrictionsForPath')->with('vfs://Foo/Web/_Resources/Persistent/TheCurrentSessionId/');
-
-		$publishingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->_set('securityContext', $mockSecurityContext);
-		$publishingAspect->_set('session', $mockSession);
-		$publishingAspect->_set('settings', $settings);
-		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
-
-		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
-	}
+        $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
+    }
 }

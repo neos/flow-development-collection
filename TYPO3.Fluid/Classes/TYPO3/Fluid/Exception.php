@@ -18,5 +18,6 @@ use TYPO3\Flow;
  *
  * @api
  */
-class Exception extends Flow\Exception {
+class Exception extends Flow\Exception
+{
 }

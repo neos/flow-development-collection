@@ -19,36 +19,37 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class NotEmptyValidator extends AbstractValidator {
+class NotEmptyValidator extends AbstractValidator
+{
+    /**
+     * This validator always needs to be executed even if the given value is empty.
+     * See AbstractValidator::validate()
+     *
+     * @var boolean
+     */
+    protected $acceptsEmptyValues = false;
 
-	/**
-	 * This validator always needs to be executed even if the given value is empty.
-	 * See AbstractValidator::validate()
-	 *
-	 * @var boolean
-	 */
-	protected $acceptsEmptyValues = FALSE;
-
-	/**
-	 * Checks if the given value is not empty (NULL, empty string, empty array
-	 * or empty object that implements the Countable interface).
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @api
-	 */
-	protected function isValid($value) {
-		if ($value === NULL) {
-			$this->addError('This property is required.', 1221560910);
-		}
-		if ($value === '') {
-			$this->addError('This property is required.', 1221560718);
-		}
-		if (is_array($value) && empty($value)) {
-			$this->addError('This property is required', 1354192543);
-		}
-		if (is_object($value) && $value instanceof \Countable && $value->count() === 0) {
-			$this->addError('This property is required.', 1354192552);
-		}
-	}
+    /**
+     * Checks if the given value is not empty (NULL, empty string, empty array
+     * or empty object that implements the Countable interface).
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @api
+     */
+    protected function isValid($value)
+    {
+        if ($value === null) {
+            $this->addError('This property is required.', 1221560910);
+        }
+        if ($value === '') {
+            $this->addError('This property is required.', 1221560718);
+        }
+        if (is_array($value) && empty($value)) {
+            $this->addError('This property is required', 1354192543);
+        }
+        if (is_object($value) && $value instanceof \Countable && $value->count() === 0) {
+            $this->addError('This property is required.', 1354192552);
+        }
+    }
 }

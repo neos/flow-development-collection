@@ -18,38 +18,39 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 /**
  * Configuration helpers for Eel contexts
  */
-class ConfigurationHelper implements ProtectedContextAwareInterface {
+class ConfigurationHelper implements ProtectedContextAwareInterface
+{
+    /**
+     * @Flow\Inject
+     * @var ConfigurationManager
+     */
+    protected $configurationManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var ConfigurationManager
-	 */
-	protected $configurationManager;
+    /**
+     * Return the specified settings
+     *
+     * Examples::
+     *
+     *     Configuration.setting('TYPO3.Flow.core.context') == 'Production'
+     *
+     *     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
+     *
+     * @param string $settingPath
+     * @return mixed
+     */
+    public function setting($settingPath)
+    {
+        return $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPath);
+    }
 
-	/**
-	 * Return the specified settings
-	 *
-	 * Examples::
-	 *
-	 *     Configuration.setting('TYPO3.Flow.core.context') == 'Production'
-	 *
-	 *     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
-	 *
-	 * @param string $settingPath
-	 * @return mixed
-	 */
-	public function setting($settingPath) {
-		return $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPath);
-	}
-
-	/**
-	 * All methods are considered safe
-	 *
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return TRUE;
-	}
-
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
 }

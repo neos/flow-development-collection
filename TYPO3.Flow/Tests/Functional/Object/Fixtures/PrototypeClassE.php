@@ -16,25 +16,26 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassE {
+class PrototypeClassE
+{
+    /**
+     * @var string
+     */
+    protected $nullValue;
 
-	/**
-	 * @var string
-	 */
-	protected $nullValue;
+    /**
+     * @param string $nullValue
+     */
+    public function __construct($nullValue)
+    {
+        $this->nullValue = $nullValue;
+    }
 
-	/**
-	 * @param string $nullValue
-	 */
-	public function __construct($nullValue) {
-		$this->nullValue = $nullValue;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getNullValue() {
-		return $this->nullValue;
-	}
-
+    /**
+     * @return string
+     */
+    public function getNullValue()
+    {
+        return $this->nullValue;
+    }
 }
