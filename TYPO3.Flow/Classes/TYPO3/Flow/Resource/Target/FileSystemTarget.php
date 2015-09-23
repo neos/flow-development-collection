@@ -153,11 +153,11 @@ class FileSystemTarget implements TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\Collection $collection The collection to publish
+     * @param \TYPO3\Flow\Resource\CollectionInterface $collection The collection to publish
      * @return void
      * @throws Exception
      */
-    public function publishCollection(Collection $collection)
+    public function publishCollection(CollectionInterface $collection)
     {
         foreach ($collection->getObjects() as $object) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
