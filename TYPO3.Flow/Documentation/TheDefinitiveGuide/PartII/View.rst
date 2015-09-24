@@ -110,7 +110,7 @@ the following code:
 		</div>
 
 		<footer>
-			<a href="http://flow.typo3.org">
+			<a href="http://www.neos.io">
 				Powered by Flow
 			</a>
 		</footer>

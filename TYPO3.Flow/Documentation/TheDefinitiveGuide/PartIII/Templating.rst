@@ -2,7 +2,7 @@
 Templating
 ==========
 
-.. sectionauthor:: Sebastian Kurfürst <sebastian@typo3.org>
+.. sectionauthor:: Sebastian Kurfürst <sebastian@neos.io>
 
 .. in this template, the default highlighter is XML:
 
@@ -606,7 +606,7 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\\F3\Fluid\Core\AbstractViewHelper {
+	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 
 		public function initializeArguments() {
 			$this->registerUniversalTagAttributes();

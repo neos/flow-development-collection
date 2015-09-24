@@ -516,7 +516,7 @@ Upgrading your Web Server Configuration
 
 If using NGINX or custom Apache configuration, you need to remove a few lines from you Apache / NGINX configuration.
 
-In TYPO3 Flow 2.x, URLs to resources like `_Resources/Persistent/[40-character-hash]/filename.jpg` were redirected
+In Flow 2.x, URLs to resources like `_Resources/Persistent/[40-character-hash]/filename.jpg` were redirected
 to `_Resources/Persistent/[40-character-hash].jpg` by having a rewrite rule in Apache or Nginx which looked as follows:
 
 Example of an Apache Rewrite Rule for Flow 2.x::
@@ -608,5 +608,4 @@ in *Development Context*, padded with some manual checking and adjustments needs
 That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
-with us. The `support page <http://flow.typo3.org/support/>`_ provides more
-information.
+with us. `Discuss <http://discuss.neos.io/>`_ provides more information.
