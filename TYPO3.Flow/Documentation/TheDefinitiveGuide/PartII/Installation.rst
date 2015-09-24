@@ -217,6 +217,15 @@ machine. Add the following line to your */etc/hosts* file
 	# You can specify a default context by activating this option:
 	SetEnv FLOW_CONTEXT Production
 
+Or if you are not using Apache as webserver, you can simply add a ``.env`` file
+to the root directory of your Flow application with the following content:
+
+*.env*:
+
+.. code-block:: none
+
+	FLOW_CONTEXT=Production
+
 Welcome to Flow
 ---------------
 

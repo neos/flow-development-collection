@@ -20,6 +20,14 @@ if ($rootPath === false) {
     $rootPath .= '/';
 }
 
+if (file_exists($rootPath . '.env')) {
+    require($rootPath . 'Packages/Libraries/vlucas/phpdotenv/src/Dotenv.php');
+    require($rootPath . 'Packages/Libraries/vlucas/phpdotenv/src/Loader.php');
+    require($rootPath . 'Packages/Libraries/vlucas/phpdotenv/src/Validator.php');
+    $dotenv = new \Dotenv\Dotenv($rootPath);
+    $dotenv->overload();
+}
+
 require($rootPath . 'Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Core/Bootstrap.php');
 
 $context = \TYPO3\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
