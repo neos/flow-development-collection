@@ -80,5 +80,4 @@ abstract class AbstractCompiledTemplate implements ParsedTemplateInterface
     {
         return true;
     }
-
 }
