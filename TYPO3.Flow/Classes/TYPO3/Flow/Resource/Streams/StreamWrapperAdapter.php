@@ -69,7 +69,9 @@ class StreamWrapperAdapter
         if ($this->streamWrapper === null) {
             $explodedPath = explode(':', $path, 2);
             $scheme = array_shift($explodedPath);
-            $this->streamWrapper = new self::$registeredStreamWrappers[$scheme]();
+            $registeredStreamWrappers = self::$registeredStreamWrappers;
+            $registeredStreamWrapperForScheme = $registeredStreamWrappers[$scheme];
+            $this->streamWrapper = new $registeredStreamWrapperForScheme();
         }
     }
 
