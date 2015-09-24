@@ -28,10 +28,10 @@ Package *TYPO3.FLOW*
 --------------------
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:cache:flush`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:cache:flush`:
 
-``typo3.flow:cache:flush``
-**************************
+``flow:cache:flush``
+********************
 
 **Flush all caches**
 
@@ -58,19 +58,19 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:cache:warmup``
+``flow:cache:warmup``
   Warm up caches
-``typo3.flow:package:freeze``
+``flow:package:freeze``
   Freeze a package
-``typo3.flow:package:refreeze``
+``flow:package:refreeze``
   Refreeze a package
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:cache:flushone`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:cache:flushone`:
 
-``typo3.flow:cache:flushone``
-*****************************
+``flow:cache:flushone``
+***********************
 
 **Flushes a particular cache by its identifier**
 
@@ -95,17 +95,17 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:cache:flush``
+``flow:cache:flush``
   Flush all caches
-``typo3.flow:configuration:show``
+``flow:configuration:show``
   Show the active configuration settings
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:cache:warmup`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:cache:warmup`:
 
-``typo3.flow:cache:warmup``
-***************************
+``flow:cache:warmup``
+*********************
 
 **Warm up caches**
 
@@ -122,15 +122,15 @@ rush.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:cache:flush``
+``flow:cache:flush``
   Flush all caches
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:configuration:generateschema`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:configuration:generateschema`:
 
-``typo3.flow:configuration:generateschema``
-*******************************************
+``flow:configuration:generateschema``
+*************************************
 
 **Generate a schema for the given configuration or YAML file.**
 
@@ -154,10 +154,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:configuration:listtypes`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:configuration:listtypes`:
 
-``typo3.flow:configuration:listtypes``
-**************************************
+``flow:configuration:listtypes``
+********************************
 
 **List registered configuration types**
 
@@ -169,10 +169,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:configuration:show`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:configuration:show`:
 
-``typo3.flow:configuration:show``
-*********************************
+``flow:configuration:show``
+***************************
 
 **Show the active configuration settings**
 
@@ -195,10 +195,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:configuration:validate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:configuration:validate`:
 
-``typo3.flow:configuration:validate``
-*************************************
+``flow:configuration:validate``
+*******************************
 
 **Validate the given configuration**
 
@@ -227,10 +227,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:core:migrate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:core:migrate`:
 
-``typo3.flow:core:migrate``
-***************************
+``flow:core:migrate``
+*********************
 
 **Migrate source files as needed**
 
@@ -268,15 +268,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:core:setfilepermissions`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:core:setfilepermissions`:
 
-``typo3.flow:core:setfilepermissions``
-**************************************
+``flow:core:setfilepermissions``
+********************************
 
 **Adjust file permissions for CLI and web server access**
 
@@ -299,10 +299,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:core:shell`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:core:shell`:
 
-``typo3.flow:core:shell``
-*************************
+``flow:core:shell``
+*******************
 
 **Run the interactive Shell**
 
@@ -316,10 +316,10 @@ additionally supports autocompletion and a user-based command history.
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:database:setcharset`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:database:setcharset`:
 
-``typo3.flow:database:setcharset``
-**********************************
+``flow:database:setcharset``
+****************************
 
 **Convert the database schema to use the given character set and collation (defaults to utf8 and utf8_unicode_ci).**
 
@@ -369,10 +369,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:create`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:create`:
 
-``typo3.flow:doctrine:create``
-******************************
+``flow:doctrine:create``
+************************
 
 **Create the database schema**
 
@@ -394,17 +394,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:update``
+``flow:doctrine:update``
   Update the database schema
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:dql`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:dql`:
 
-``typo3.flow:doctrine:dql``
-***************************
+``flow:doctrine:dql``
+*********************
 
 **Run arbitrary DQL and display results**
 
@@ -430,10 +430,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:entitystatus`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:entitystatus`:
 
-``typo3.flow:doctrine:entitystatus``
-************************************
+``flow:doctrine:entitystatus``
+******************************
 
 **Show the current status of entities and mappings**
 
@@ -455,15 +455,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:validate``
+``flow:doctrine:validate``
   Validate the class/table mappings
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:migrate`:
 
-``typo3.flow:doctrine:migrate``
-*******************************
+``flow:doctrine:migrate``
+*************************
 
 **Migrate the database schema**
 
@@ -489,21 +489,21 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrationstatus``
+``flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow:doctrine:migrationexecute``
+``flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow:doctrine:migrationgenerate``
+``flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow:doctrine:migrationversion``
+``flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationexecute`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:migrationexecute`:
 
-``typo3.flow:doctrine:migrationexecute``
-****************************************
+``flow:doctrine:migrationexecute``
+**********************************
 
 **Execute a single migration**
 
@@ -532,21 +532,21 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow:doctrine:migrationstatus``
+``flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow:doctrine:migrationgenerate``
+``flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow:doctrine:migrationversion``
+``flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationgenerate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:migrationgenerate`:
 
-``typo3.flow:doctrine:migrationgenerate``
-*****************************************
+``flow:doctrine:migrationgenerate``
+***********************************
 
 **Generate a new migration**
 
@@ -568,21 +568,21 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow:doctrine:migrationstatus``
+``flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow:doctrine:migrationexecute``
+``flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow:doctrine:migrationversion``
+``flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationstatus`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:migrationstatus`:
 
-``typo3.flow:doctrine:migrationstatus``
-***************************************
+``flow:doctrine:migrationstatus``
+*********************************
 
 **Show the current migration status**
 
@@ -596,21 +596,21 @@ available, executed and pending migrations.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow:doctrine:migrationexecute``
+``flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow:doctrine:migrationgenerate``
+``flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow:doctrine:migrationversion``
+``flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:migrationversion`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:migrationversion`:
 
-``typo3.flow:doctrine:migrationversion``
-****************************************
+``flow:doctrine:migrationversion``
+**********************************
 
 **Mark/unmark a migration as migrated**
 
@@ -638,21 +638,21 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow:doctrine:migrationstatus``
+``flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow:doctrine:migrationexecute``
+``flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow:doctrine:migrationgenerate``
+``flow:doctrine:migrationgenerate``
   Generate a new migration
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:update`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:update`:
 
-``typo3.flow:doctrine:update``
-******************************
+``flow:doctrine:update``
+************************
 
 **Update the database schema**
 
@@ -675,17 +675,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:create``
+``flow:doctrine:create``
   Create the database schema
-``typo3.flow:doctrine:migrate``
+``flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:doctrine:validate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:doctrine:validate`:
 
-``typo3.flow:doctrine:validate``
-********************************
+``flow:doctrine:validate``
+**************************
 
 **Validate the class/table mappings**
 
@@ -703,15 +703,15 @@ any way.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:doctrine:entitystatus``
+``flow:doctrine:entitystatus``
   Show the current status of entities and mappings
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:help:help`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:help:help`:
 
-``typo3.flow:help:help``
-************************
+``flow:help:help``
+******************
 
 **Display help for a command**
 
@@ -730,10 +730,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:activate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:activate`:
 
-``typo3.flow:package:activate``
-*******************************
+``flow:package:activate``
+*************************
 
 **Activate an available package**
 
@@ -752,15 +752,15 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:deactivate``
+``flow:package:deactivate``
   Deactivate a package
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:create`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:create`:
 
-``typo3.flow:package:create``
-*****************************
+``flow:package:create``
+***********************
 
 **Create a new package**
 
@@ -791,10 +791,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:deactivate`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:deactivate`:
 
-``typo3.flow:package:deactivate``
-*********************************
+``flow:package:deactivate``
+***************************
 
 **Deactivate a package**
 
@@ -813,15 +813,15 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:activate``
+``flow:package:activate``
   Activate an available package
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:delete`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:delete`:
 
-``typo3.flow:package:delete``
-*****************************
+``flow:package:delete``
+***********************
 
 **Delete an existing package**
 
@@ -839,10 +839,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:freeze`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:freeze`:
 
-``typo3.flow:package:freeze``
-*****************************
+``flow:package:freeze``
+***********************
 
 **Freeze a package**
 
@@ -872,17 +872,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:unfreeze``
+``flow:package:unfreeze``
   Unfreeze a package
-``typo3.flow:package:refreeze``
+``flow:package:refreeze``
   Refreeze a package
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:list`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:list`:
 
-``typo3.flow:package:list``
-***************************
+``flow:package:list``
+*********************
 
 **List available packages**
 
@@ -896,17 +896,17 @@ package title and its state – active or inactive.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:activate``
+``flow:package:activate``
   Activate an available package
-``typo3.flow:package:deactivate``
+``flow:package:deactivate``
   Deactivate a package
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:refreeze`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:refreeze`:
 
-``typo3.flow:package:refreeze``
-*******************************
+``flow:package:refreeze``
+*************************
 
 **Refreeze a package**
 
@@ -931,17 +931,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:freeze``
+``flow:package:freeze``
   Freeze a package
-``typo3.flow:cache:flush``
+``flow:cache:flush``
   Flush all caches
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:unfreeze`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:package:unfreeze`:
 
-``typo3.flow:package:unfreeze``
-*******************************
+``flow:package:unfreeze``
+*************************
 
 **Unfreeze a package**
 
@@ -965,17 +965,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:freeze``
+``flow:package:freeze``
   Freeze a package
-``typo3.flow:cache:flush``
+``flow:cache:flush``
   Flush all caches
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:resource:clean`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:resource:clean`:
 
-``typo3.flow:resource:clean``
-*****************************
+``flow:resource:clean``
+***********************
 
 **Clean up resource registry**
 
@@ -994,10 +994,10 @@ This command will ask you interactively what to do before deleting anything.
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:resource:publish`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:resource:publish`:
 
-``typo3.flow:resource:publish``
-*******************************
+``flow:resource:publish``
+*************************
 
 **Publish resources**
 
@@ -1016,10 +1016,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:routing:getpath`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:routing:getpath`:
 
-``typo3.flow:routing:getpath``
-******************************
+``flow:routing:getpath``
+************************
 
 **Generate a route path**
 
@@ -1050,10 +1050,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:routing:list`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:routing:list`:
 
-``typo3.flow:routing:list``
-***************************
+``flow:routing:list``
+*********************
 
 **List the known routes**
 
@@ -1065,10 +1065,10 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:routing:routepath`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:routing:routepath`:
 
-``typo3.flow:routing:routepath``
-********************************
+``flow:routing:routepath``
+**************************
 
 **Route the given route path**
 
@@ -1093,10 +1093,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:routing:show`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:routing:show`:
 
-``typo3.flow:routing:show``
-***************************
+``flow:routing:show``
+*********************
 
 **Show information for a route**
 
@@ -1114,10 +1114,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:importprivatekey`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:security:importprivatekey`:
 
-``typo3.flow:security:importprivatekey``
-****************************************
+``flow:security:importprivatekey``
+**********************************
 
 **Import a private key**
 
@@ -1138,15 +1138,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:security:importpublickey``
+``flow:security:importpublickey``
   Import a public key
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:importpublickey`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:security:importpublickey`:
 
-``typo3.flow:security:importpublickey``
-***************************************
+``flow:security:importpublickey``
+*********************************
 
 **Import a public key**
 
@@ -1160,15 +1160,15 @@ RSAWalletService.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:security:importprivatekey``
+``flow:security:importprivatekey``
   Import a private key
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:showeffectivepolicy`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:security:showeffectivepolicy`:
 
-``typo3.flow:security:showeffectivepolicy``
-*******************************************
+``flow:security:showeffectivepolicy``
+*************************************
 
 **Shows a list of all defined privilege targets and the effective permissions**
 
@@ -1192,10 +1192,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:showmethodsforprivilegetarget`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:security:showmethodsforprivilegetarget`:
 
-``typo3.flow:security:showmethodsforprivilegetarget``
-*****************************************************
+``flow:security:showmethodsforprivilegetarget``
+***********************************************
 
 **Shows the methods represented by the given security privilege target**
 
@@ -1215,10 +1215,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:showunprotectedactions`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:security:showunprotectedactions`:
 
-``typo3.flow:security:showunprotectedactions``
-**********************************************
+``flow:security:showunprotectedactions``
+****************************************
 
 **Lists all public controller actions not covered by the active security policy**
 
@@ -1230,10 +1230,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:server:run`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:server:run`:
 
-``typo3.flow:server:run``
-*************************
+``flow:server:run``
+*******************
 
 **Run a standalone development server**
 
@@ -1257,10 +1257,10 @@ Options
 
 
 
-.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:typeconverter:list`:
+.. _`Flow Command Reference: TYPO3.FLOW flow:typeconverter:list`:
 
-``typo3.flow:typeconverter:list``
-*********************************
+``flow:typeconverter:list``
+***************************
 
 **Lists all currently active and registered type converters**
 
@@ -1496,7 +1496,7 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:create``
+``flow:package:create``
   Create a new package
 
 

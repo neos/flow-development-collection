@@ -2,7 +2,7 @@
 Property Mapping
 ================
 
-.. sectionauthor:: Sebastian Kurfürst <sebastian@typo3.org>
+.. sectionauthor:: Sebastian Kurfürst <sebastian@neos.io>
 
 .. TODOs: extract TypeConverter reference from PHPDoc
 
@@ -440,7 +440,7 @@ instead of implementing ``TypeConverterInterface``.
 Besides, good starting points for own type converters are the ``DateTimeConverter``
 or the ``IntegerConverter``. If you write your own type converter, you should set
 it to a priority greater than 100, to make sure it is used before the standard
-converters by TYPO3 Flow.
+converters by Flow.
 
 TypeConverters should not contain any internal state, as they are re-used by the
 property mapper, even recursively during the same run.

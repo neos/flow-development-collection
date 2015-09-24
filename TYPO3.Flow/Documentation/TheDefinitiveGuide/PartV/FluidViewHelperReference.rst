@@ -65,7 +65,7 @@ f:base
 
 View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
-In TYPO3 Flow, this ViewHelper is no longer required to make the links work.
+In Flow, this ViewHelper is no longer required to make the links work.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\BaseViewHelper
 
@@ -2235,32 +2235,32 @@ Expected result::
 
 **Argument swapping**::
 
-	<f:format.printf arguments="{0: 3, 1: 'Kasper'}">%2$s is great, TYPO%1$d too. Yes, TYPO%1$d is great and so is %2$s!</f:format.printf>
+	<f:format.printf arguments="{0: 'Neos', 1: 'Flow'}">%2$s is great, %1$s too. Yes, %1$s is great and so is %2$s!</f:format.printf>
 
 
 Expected result::
 
-	Kasper is great, TYPO3 too. Yes, TYPO3 is great and so is Kasper!
+	Flow is great, Neos too. Yes, Neos is great and so is Flow!
 
 
 **Single argument**::
 
-	<f:format.printf arguments="{1: 'TYPO3'}">We love %s</f:format.printf>
+	<f:format.printf arguments="{1: 'Neos'}">We love %s</f:format.printf>
 
 
 Expected result::
 
-	We love TYPO3
+	We love Neos
 
 
 **Inline notation**::
 
-	{someText -> f:format.printf(arguments: {1: 'TYPO3'})}
+	{someText -> f:format.printf(arguments: {1: 'Neos'})}
 
 
 Expected result::
 
-	We love TYPO3
+	We love Neos
 
 
 
@@ -2805,12 +2805,12 @@ Examples
 
 **custom default scheme**::
 
-	<f:link.external uri="typo3.org" defaultScheme="ftp">external ftp link</f:link.external>
+	<f:link.external uri="neos.io" defaultScheme="ftp">external ftp link</f:link.external>
 
 
 Expected result::
 
-	<a href="ftp://typo3.org">external ftp link</a>
+	<a href="ftp://neos.io">external ftp link</a>
 
 
 
@@ -3403,12 +3403,12 @@ Examples
 
 **custom default scheme**::
 
-	<f:uri.external uri="typo3.org" defaultScheme="ftp" />
+	<f:uri.external uri="neos.io" defaultScheme="ftp" />
 
 
 Expected result::
 
-	ftp://typo3.org
+	ftp://neos.io
 
 
 

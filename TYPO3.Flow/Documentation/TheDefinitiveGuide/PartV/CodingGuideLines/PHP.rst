@@ -6,7 +6,7 @@ PHP Coding Guidelines & Best Practices
 
 Coding Standards are an important factor for achieving a high code quality. A common
 visual style, naming conventions and other technical settings allow us to produce a
-homogenous code which is easy to read and maintain. However, not all important factors can
+homogeneous code which is easy to read and maintain. However, not all important factors can
 be covered by rules and coding standards. Equally important is the style in which certain
 problems are solved programmatically - it's the personality and experience of the
 individual developer which shines through and ultimately makes the difference between
@@ -14,10 +14,10 @@ technically okay code or a well considered, mature solution.
 
 These guidelines try to cover both, the technical standards as well as giving incentives
 for a common development style. These guidelines must be followed by everyone who creates
-code for the TYPO3 Flow core. Because Neos is based on TYPO3 Flow, it follows the same principles -
-therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Neos.
+code for the Flow core. Because Neos is based on Flow, it follows the same principles -
+therefore, whenever we mention Flow in the following sections, we equally refer to Neos.
 We hope that you feel encouraged to follow these guidelines as well when creating your own
-packages and TYPO3 Flow based applications.
+packages and Flow based applications.
 
 CGL on One Page
 ===============
@@ -37,7 +37,7 @@ Does it get any easier than that?
 Code Formatting and Layout aka "beautiful code"
 ===============================================
 
-The visual style of programming code is very important. In the TYPO3 project we want many
+The visual style of programming code is very important. In the project we want many
 programmers to contribute, but in the same style. This will help us to:
 
 * Easily read/understand each others code and consequently easily spot security problems
@@ -46,14 +46,14 @@ programmers to contribute, but in the same style. This will help us to:
   programmers striving for excellence
 
 Some people may object to the visual guidelines since everyone has his own habits. You
-will have to overcome that in the case of TYPO3 Flow; the visual guidelines must be followed
+will have to overcome that in the case of Flow; the visual guidelines must be followed
 along with coding guidelines for security. We want all contributions to the project to be
 as similar in style and as secure as possible.
 
 General considerations
 ----------------------
 
-* Almost every PHP file in TYPO3 Flow contains exactly one class and does not output anything
+* Almost every PHP file in Flow contains exactly one class and does not output anything
   if it is called directly. Therefore you start your file with a ``<?php`` tag and must not end it
   with the closing ``?>``.
 * Every file must contain a header stating namespace and licensing information
@@ -62,19 +62,19 @@ General considerations
   * The copyright header itself must not start with ``/**``, as this may confuse
     documentation generators!
 
-*The TYPO3 Flow standard file header*::
+*The Flow standard file header*::
 
  <?php
  namespace YourCompany\Package\Stuff\Here;
 
  /*                                                                        *
-  * This script belongs to the TYPO3 Flow package "Vendor.Package".        *
+  * This script belongs to the Flow package "Vendor.Package".        *
   *                                                                        *
   * It is free software; you can redistribute it and/or modify it under    *
   * the terms of the GNU Lesser General Public License, either version 3   *
   * of the License, or (at your option) any later version.                 *
   *                                                                        *
-  * The TYPO3 project - inspiring people to share!                         *
+  * The project - inspiring people to share!                         *
   *                                                                        */
 
 * Code lines are of arbitrary length, no strict limitations to 80 characters or something
@@ -119,7 +119,7 @@ Naming
 
 Naming is a repeatedly undervalued factor in the art of software development. Although
 everybody seems to agree on that nice names are a nice thing to have, most developers
-choose cryptic abbreviations in the end (to save some typing). Beware that we TYPO3 core
+choose cryptic abbreviations in the end (to save some typing). Beware that we core
 developers are very passionate about naming (some people call it fanatic, well ...). In
 our opinion spending 15 minutes (or more ...) just to find a good name for a method is
 well spent time! There are zillions of reasons for using proper names and in the end they
@@ -132,20 +132,20 @@ languages.
 
 When using abbreviations or acronyms remember to make them camel-cased as needed, no
 all-uppercase stuff. Admittedly there are a few places where we violate that rule
-willingly (TYPO3 – will not change) and historically.
+willingly and historically.
 
 
 Vendor namespaces
 -----------------
 
 The base for namespaces as well as package keys is the vendor namespace. Since Flow is
-part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
+part of the Flow project, the core team decided to choose "TYPO3" as our vendor
 namespace. The Object Manager for example is known under the class name
 ``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
 namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
-central package key registry (like the one we have for TYPO3 CMS extensions) and secondly,
+central package key registry (like other projects do) and secondly,
 it allows anyone to seamlessly integrate third-party packages, such as Symfony2 components
 and Zend Framework components or virtually any other PHP 5.3+ based library.
 
@@ -380,7 +380,7 @@ These are the rules for naming files:
   tested, appended with "Test.php".
 * Files are placed in a directory structure representing the namespace structure.
 
-*File naming in TYPO3 Flow*
+*File naming in Flow*
 
 ``TYPO3.TemplateEngine/Classes/TYPO3/TemplateEngine/TemplateEngineInterface.php``
   Contains the interface ``\TYPO3\TemplateEngine\TemplateEngineInterface`` which is part
@@ -522,7 +522,7 @@ The syntax is as follows:
     the fix.
   [SECURITY]
     A security related change. Those must only be committed by active contributors in agreement with the
-    `TYPO3 Security Team`_.
+    `Security Team`_.
   [TASK]
     Anything not covered by the above categories, e.g. coding style cleanup or documentation changes. Usually only used
     if there's no corresponding ticket.
@@ -600,7 +600,6 @@ Examples of good and bad subject lines::
                                                         bug is about (this should be explained in the following lines
                                                         and in the related bug tracker ticket)
 
-.. _`TYPO3 Security Team`: http://typo3.org/teams/security/
 
 Source Code Documentation
 -------------------------
@@ -708,8 +707,8 @@ Defining the Public API
 -----------------------
 
 Not all methods with a public visibility are necessarily part of the intended public API
-of a project. For TYPO3 Flow, only the methods explicitly defined as part of the public API
-will be kept stable and are intended for use by developers using TYPO3 Flow. Also the API
+of a project. For Flow, only the methods explicitly defined as part of the public API
+will be kept stable and are intended for use by developers using Flow. Also the API
 documentation we produce will only cover the public API.
 
 To mark a method as part of the public API, include an ``@api`` annotation for it in the
@@ -736,7 +735,7 @@ docblock.
 Overview of Documentation Annotations
 -------------------------------------
 
-There are not only documentation annotations that can be used. In TYPO3 Flow annotations are
+There are not only documentation annotations that can be used. In Flow annotations are
 also used in the MVC component, for defining aspects and advices for the AOP framework as
 well as for giving instructions to the Persistence framework. See the individual chapters
 for information on their purpose and use.
@@ -825,15 +824,15 @@ the order given here should be kept for the sake of consistency.
 Best Practices
 ==============
 
-TYPO3 Flow
-----------
+Flow
+----
 
-This section gives you an overview of TYPO3 Flow's coding rules and best practices.
+This section gives you an overview of Flow's coding rules and best practices.
 
 Error Handling and Exceptions
 -----------------------------
 
-TYPO3 Flow makes use of a hierarchy for its exception classes. The general rule is to throw
+Flow makes use of a hierarchy for its exception classes. The general rule is to throw
 preferably specific exceptions and usually let them bubble up until a place where more
 general exceptions are caught. Consider the following example:
 
@@ -856,9 +855,6 @@ Throwing an exception
 When throwing an exception, make sure to provide a clear error message and an *error code
 being the unix timestamp of when you write the ``throw`` statement*. That error code must
 be unique, so watch out when doing copy and paste!
-
-For every exception there should be a page on the TYPO3 wiki, as exception messages link
-to that page, identified by the error code (unix timestamp).
 
 Unit Testing
 ------------

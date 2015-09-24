@@ -3,12 +3,12 @@ JavaScript Coding Guidelines
 ============================
 
 Here, you will find an explanation of the JavaScript Coding Guidelines we use.
-Generally, we strive to follow the TYPO3 Flow Coding Guidelines as closely as
+Generally, we strive to follow the Flow Coding Guidelines as closely as
 possible, with exceptions which make sense in the JavaScript context.
 
 This guideline explains mostly how we want JavaScript code to be formatted;
-and it does **not** deal with the TYPO3 Neos User
-Interface structure. If you want to know more about the TYPO3 Neos User
+and it does **not** deal with the Neos User
+Interface structure. If you want to know more about the Neos User
 Interface architecture, have a look into the "Neos User Interface
 Development" book.
 
@@ -16,12 +16,12 @@ Development" book.
 Naming Conventions
 ==================
 
-- one class per file, with the same naming convention as TYPO3 Flow.
+- one class per file, with the same naming convention as Flow.
 - This means all classes are built like this:
   ``<PackageKey>.<SubNamespace>.<ClassName>``, and this class is
   implemented in a JavaScript file located at
   ``<Package>/.../JavaScript/<SubNamespace>/<ClassName>.js``
-- Right now, the base directory for JavaScript in TYPO3 Flow packages
+- Right now, the base directory for JavaScript in Flow packages
   ``Resources/Public/JavaScript``, but this might still change.
 - We suggest that the base directory for JavaScript files is *JavaScript*.
 - Files have to be encoded in UTF-8 without byte order mark (BOM).
@@ -89,233 +89,6 @@ If you want to do multi-line doc comments, you need to format them with ``<br>``
 	 * {@link #methodOne This is an example link to method one}
 	 */
 
-Class Definitions
-=================
-
-Classes can be declared singleton or prototype. A class is **singleton**, if
-only one instance of this class will exist at any given time. An class is of
-type **prototype**, if more than one object can be created from the class at
-run-time. Most classes will be of type **prototype**.
-
-You will find examples for both below.
-
-Prototype Class Definitions
----------------------------
-
-Example of a prototype class definition::
-
-	Ext.ns("TYPO3.TYPO3.Content");
-
-	/*                                                                        *
-	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
-	 *                                                                        *
-	 * It is free software; you can redistribute it and/or modify it under    *
-	 * the terms of the GNU General Public License as published by the Free   *
-	 * Software Foundation, either version 3 of the License, or (at your      *
-	 * option) any later version.                                             *
-	 *                                                                        *
-	 * The TYPO3 project - inspiring people to share!                         *
-	 *                                                                        */
-
-	/**
-	 * @class TYPO3.TYPO3.Content.FrontendEditor
-	 *
-	 * The main frontend editor.
-	 *
-	 * @namespace TYPO3.TYPO3.Content
-	 * @extends Ext.Container
-	 */
-	TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
-		// here comes the class contents
-	});
-	Ext.reg('TYPO3.TYPO3.Content.FrontendEditor', TYPO3.TYPO3.Content.FrontendEditor);
-
-
--	At the very beginning of the file is the namespace declaration of the
-	class, followed by a newline.
--	Then follows the class documentation block, which **must** start with
-	the ``@class`` declaration in the first line.
--	Now comes a description of the class, possibly with examples.
--	Afterwards **must** follow the namespace of the class and the information about
-	object extension
--	Now comes the actual class definition, using ``Ext.extend``.
--	As the last line of the class, it follows the xType registration. We always use
-	the fully qualified class name as xtype
-
-Usually, the constructor of the class receives a hash of parameters. The possible
-configuration options need to be documented inside the class with the ``@cfg``
-annotation::
-
-	TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
-		/**
-		 * An explanation of the configuration option followed
-		 * by a blank line.
-		 *
-		 * @cfg {Number} configTwo
-		 */
-		configTwo: 10
-		...
-	}
-
-Singleton Class Definitions
----------------------------
-
-Now comes a singleton class definition. You will see that it is very similar to a
-prototype class definition, we will only highlight the differences.
-
-*Example of a singleton class definition*::
-
-	Ext.ns("TYPO3.TYPO3.Core");
-
-	/*                                                                        *
-	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
-	 *                                                                        *
-	 * It is free software; you can redistribute it and/or modify it under    *
-	 * the terms of the GNU General Public License as published by the Free   *
-	 * Software Foundation, either version 3 of the License, or (at your      *
-	 * option) any later version.                                             *
-	 *                                                                        *
-	 * The TYPO3 project - inspiring people to share!                         *
-	 *                                                                        */
-
-	/**
-	 * @class TYPO3.TYPO3.Core.Application
-	 *
-	 * The main entry point which controls the lifecycle of the application.
-	 *
-	 * @namespace TYPO3.TYPO3.Core
-	 * @extends Ext.util.Observable
-	 * @singleton
-	 */
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
-		// here comes the class contents
-	});
-
-- You should add a ``@singleton`` annotation to the class doc comment after the
-  ``@namespace`` and ``@extends`` annotation
-- In singleton classes, you use ``Ext.apply``. Note that you need to use ``new`` to
-  instantiate the base class.
-- There is **no xType** registration in singletons, as they are available globally anyhow.
-
-Class Doc Comments
-------------------
-
-Class Doc Comments should always be in the following order:
-
-- ``@class <Name.Of.Class>`` (required)
-- Then follows a description of the class, which can span multiple lines. Before and after
-  this description should be a blank line.
-- ``@namespace <Name.Of.Namespace>`` (required)
-- ``@extends <Name.Of.BaseClass>`` (required)
-- ``@singleton`` (required if the class is a singleton)
-
-If the class has a non-empty constructor, the following doc comments need to be added as
-well, after a blank line:
-
-- ``@constructor``
-- ``@param {<type>} <nameOfParameter> <description of parameter>`` for every parameter of
-  the constructor
-
-*Example of a class doc comment without constructor*::
-
-	/**
-	 * @class Acme.Foo.Bar
-	 *
-	 * Some Description of the class,
-	 * which can possibly span multiple lines
-	 *
-	 * @namespace Acme.Foo
-	 * @extends TYPO3.TYPO3.Core.SomeOtherClass
-	 */
-
-*Example of a class doc comment with constructor*::
-
-	/**
-	 * @class Acme.TYPO3.Foo.ClassWithConstructor
-	 *
-	 * This class has a constructor!
-	 *
-	 * @namespace Acme.TYPO3.Foo
-	 * @extends TYPO3.TYPO3.Core.SomeOtherClass
-	 *
-	 * @constructor
-	 * @param {String} id The ID which to use
-	 */
-
-Method Definitions
-------------------
-
-Methods should be documented the following way, with a blank line between methods.
-
-*Example of a method comment*::
-
-	...
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
-		... property definitions ...
-		/**
-		 * This is a method declaration; and the
-		 * explanatory text is followed by a newline.
-		 *
-		 * @param {String} param1 Parameter name
-		 * @param {String} param2 (Optional) Optional parameter
-		 * @return {Boolean} Return value
-		 */
-		aPublicMethod: function(param1, param2) {
-			return true;
-		},
-
-		/**
-		 * this is a private method of this class,
-		 * the private annotation marks them an prevent that they
-		 * are listed in the api doc. As they are private, they
-		 * have to start with an underscore as well.
-		 *
-		 * @return {void}
-		 * @private
-		 */
-		_sampleMethod: function() {
-		}
-	}
-	...
-
-Contrary to what is defined in the TYPO3 Flow PHP Coding Guidelines, methods which are public
-**automatically belong to the public API**, without an ``@api`` annotation. Contrary,
-methods which do **not belong to the public API** need to begin with an underscore and
-have the ``@private`` annotation.
-
-- All methods need to have JSDoc annotations.
-- Every method needs to have a ``@return`` annotation. In case the method does not return
-  anything, a ``@return {void}`` is needed, otherwise the concrete return value should be
-  described.
-
-Property Definitions
---------------------
-
-All properties of a class need to be properly documented as well, with an ``@type``
-annotation. If a property is private, it should start with an underscore and have the
-``@private`` annotation at the last line of its doc comment::
-
-	...
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
-		/**
-		 * Explanation of the property
-		 * which is followed by a newline
-		 *
-		 * @type {String}
-		 */
-		propertyOne: 'Hello',
-
-		/**
-		 * Now follows a private property
-		 * which starts with an underscore.
-		 *
-		 * @type {Number}
-		 * @private
-		 */
-		_thePrivateProperty: null,
-		...
-	}
-
 Code Style
 ----------
 
@@ -371,7 +144,7 @@ Code Style
 	}
 
 - Whitespace around control structures like ``if``, ``else``, ... should be inserted like
-  in the TYPO3 Flow CGLs::
+  in the Flow CGLs::
 
 	if (myExpression) {
 		// if part
@@ -463,7 +236,7 @@ It is also possible to adjust the validation rules JSLint uses. At the end of fi
 options' value. By default, the options are taken over the book "JavaScript: The Good
 Parts" which is written by the same author of JSlint.
 
-Below are the options we use for TYPO3 v5::
+Below are the options we use for Flow::
 
 	bitwise: true, eqeqeq: true, immed: true,newcap: true, nomen: false,
 	onevar: true, plusplus: false, regexp: true, rhino: true, undef: false,

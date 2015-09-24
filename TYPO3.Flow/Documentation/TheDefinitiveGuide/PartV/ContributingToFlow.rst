@@ -1,8 +1,8 @@
 .. _ch-contributing:
 
-==========================
-Contributing to TYPO3 Flow
-==========================
+====================
+Contributing to Flow
+====================
 
 Got time, a computer and a brain? Here is how you can help:
 
@@ -17,7 +17,7 @@ this rocks big time.
 * *Tasks:* Find bugs, describe them, reproduce them in a unit test
 * *Skills needed:* Attention to detail, knowledge about PHP and PHPUnit is a plus
 
-**Report bugs in the** `TYPO3 Flow JIRA issue tracker <https://jira.typo3.org/browse/FLOW/>`_ **!**
+**Report bugs in the** `Flow JIRA issue tracker <https://jira.neos.io/browse/FLOW/>`_ **!**
 
 Improve Documentation
 =====================
@@ -30,29 +30,20 @@ complexity that documentation should be easy and fun to read. Right?
 
 For a quick start follow these simple steps:
 
-#. Checkout the Package TYPO3.Flow with Git, and set up the git repository so you can contribute:
+#. Fork the `flow-development-collection <https://github.com/neos/flow-development-collection>`_ on GitHub so you can contribute:
 
-   .. code-block:: none
-
-     $ git clone git://git.typo3.org/Packages/TYPO3.Flow.git
-     $ # set up git so you can push to Gerrit
-
-   If you do not know how to set up Git correctly, follow the easy steps of
-   `our git wizard <http://www.wwwision.de/githelper/#Packages/TYPO3.Flow.git>`_.
-   Of course you can also use the package TYPO3.Flow from any TYPO3 Flow distribution you
-   installed already.
+   If you do not know how to fork a GitHub repository, follow the easy steps of the
+   `GitHub Help <https://help.github.com/articles/fork-a-repo/>`_.
 
 #. Read the documentation and adjust it as needed - it is in the *Documentation* directory.
 
-#. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `TYPO3 Flow JIRA issue tracker`_.
+#. Create a `pull request <https://help.github.com/articles/using-pull-requests/>`_, or alternatively upload a patch with the changes to the
+   `Flow JIRA issue tracker <https://jira.neos.io/browse/FLOW/>`_.
 
 If you like to see a rendered HTML result of the documentation a few more steps are necessary:
 
-#. Use any installed TYPO3 Flow distribution. If you don't have TYPO3 Flow installed, install the
+#. Use any installed Flow distribution. If you don't have Flow installed, install the
    Base distribution as described in the *Installation* section of the *Getting Started* chapter.
-
-#. Set up git for use with gerrit (`our git wizard`_ might help with that).
 
 #. Install Sphinx to render the documentation.
 
@@ -66,7 +57,7 @@ If you like to see a rendered HTML result of the documentation a few more steps 
 #. Read the documentation and adjust it as needed.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `TYPO3 Flow JIRA issue tracker`_.
+   `Flow JIRA issue tracker <https://jira.neos.io/browse/FLOW/>`_.
 
 Work on the Code
 ================
