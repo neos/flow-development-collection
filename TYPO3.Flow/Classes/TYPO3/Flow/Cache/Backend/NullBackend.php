@@ -122,4 +122,3 @@ class NullBackend extends AbstractBackend implements PhpCapableBackendInterface,
     }
 }
 // @codeCoverageIgnoreEnd
-

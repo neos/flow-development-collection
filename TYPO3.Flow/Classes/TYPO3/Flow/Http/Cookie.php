@@ -97,7 +97,7 @@ class Cookie
      * @api
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, $value = null, $expires = 0, $maximumAge = null,  $domain = null, $path = '/', $secure = false, $httpOnly = true)
+    public function __construct($name, $value = null, $expires = 0, $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true)
     {
         if (preg_match(self::PATTERN_TOKEN, $name) !== 1) {
             throw new \InvalidArgumentException('The parameter "name" passed to the Cookie constructor must be a valid token as per RFC 2616, Section 2.2.', 1345101977);
