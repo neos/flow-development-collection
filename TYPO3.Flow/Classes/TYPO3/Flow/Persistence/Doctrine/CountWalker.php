@@ -2,16 +2,10 @@
 namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * This source file is subject to the new BSD license that is bundled     *
- * with this package in the file License-BSD.txt.                             *
- *                                                                        *
- * If you did not receive a copy of the license and are unable to         *
- * obtain it through the world-wide-web, please send an email             *
- * to kontakt@beberlei.de so I can send you a copy immediately.           *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * with this package in the file License-BSD.txt.                         *
  *                                                                        */
 
 use Doctrine\ORM\Query\AST\PathExpression;

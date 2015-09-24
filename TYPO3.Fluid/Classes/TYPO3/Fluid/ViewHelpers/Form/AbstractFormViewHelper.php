@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Form;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -69,7 +66,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      *
      * @param object $object Object to create the identity field for
      * @param string $name Name
-     * @return string A hidden field containing the Identity (UUID in TYPO3 Flow, uid in Extbase) of the given object or NULL if the object is unknown to the persistence framework
+     * @return string A hidden field containing the Identity (UUID in Flow) of the given object or NULL if the object is unknown to the persistence framework
      * @see \TYPO3\Flow\Mvc\Controller\Argument::setValue()
      */
     protected function renderHiddenIdentityField($object, $name)
