@@ -1,9 +1,9 @@
 {
     "name": "typo3/flow",
     "type": "typo3-flow-framework",
-    "description": "TYPO3 Flow Application Framework",
+    "description": "Flow Application Framework",
     "homepage": "http://flow.typo3.org",
-    "license": ["LGPL-3.0+"],
+    "license": ["MIT"],
 
     "require": {
         "php": ">=5.5.0",

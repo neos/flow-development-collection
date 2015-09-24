@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\Core\Compiler;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -29,9 +26,6 @@ abstract class AbstractCompiledTemplate implements ParsedTemplateInterface
      * @var array<\SplObjectStorage>
      */
     protected $viewHelpersByPositionAndContext = array();
-
-    // These tokens are replaced by the Backporter for implementing different behavior in TYPO3 v4
-    // TOKEN-1
 
     /**
      * Public such that it is callable from within closures
@@ -87,5 +81,4 @@ abstract class AbstractCompiledTemplate implements ParsedTemplateInterface
         return true;
     }
 
-    // TOKEN-2
 }
