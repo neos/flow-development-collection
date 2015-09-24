@@ -1,10 +1,9 @@
 {namespace k=TYPO3\Kickstart\ViewHelpers}<?php
 namespace {namespace};
 
-/*                                                                        *
-<f:format.padding padLength="74"> * This script belongs to the TYPO3 Flow package "{packageKey}".</f:format.padding>*
- *                                                                        *
- *                                                                        */
+/*
+ * This file is part of the {packageKey} package.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Repository;
@@ -12,8 +11,9 @@ use TYPO3\Flow\Persistence\Repository;
 /**
  * @Flow\Scope("singleton")
  */
-class {repositoryClassName} extends Repository {
+class {repositoryClassName} extends Repository
+{
 
-	// add customized methods here
+    // add customized methods here
 
 }
