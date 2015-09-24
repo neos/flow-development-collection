@@ -7,7 +7,6 @@ namespace TYPO3\Flow\Tests\Unit\I18n;
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the MIT license.                                          *
  *                                                                        */
- */
 
 /**
  * Testcase for the LocaleCollection class
