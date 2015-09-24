@@ -351,7 +351,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param mixed &$propertyReferenceVariable Reference of the variable to inject into once the proxy is activated
      * @return mixed
      */
-    public function getLazyDependencyByHash($hash,  &$propertyReferenceVariable)
+    public function getLazyDependencyByHash($hash, &$propertyReferenceVariable)
     {
         if (!isset($this->dependencyProxies[$hash])) {
             return null;
