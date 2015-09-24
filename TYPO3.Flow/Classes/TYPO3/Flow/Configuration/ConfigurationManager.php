@@ -797,7 +797,7 @@ EOD;
             $errors[] = 'deprecated "acls" options';
         }
         if ($errors !== array()) {
-            throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)),  1415717875);
+            throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)), 1415717875);
         }
     }
 }
