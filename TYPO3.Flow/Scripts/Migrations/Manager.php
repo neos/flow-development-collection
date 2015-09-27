@@ -394,8 +394,7 @@ class Manager
             return;
         }
 
-        $migrationFilenames = Files::readDirectoryRecursively($migrationsDirectory, '.php');
-        foreach ($migrationFilenames as $filenameAndPath) {
+        foreach (Files::getRecursiveDirectoryGenerator($migrationsDirectory, '.php') as $filenameAndPath) {
             /** @noinspection PhpIncludeInspection */
             require_once($filenameAndPath);
             $baseFilename = basename($filenameAndPath, '.php');

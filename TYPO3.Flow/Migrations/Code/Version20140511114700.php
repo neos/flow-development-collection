@@ -34,8 +34,7 @@ class Version20140511114700 extends AbstractMigration
     public function up()
     {
         $affectedFiles = array();
-        $allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], null, true);
-        foreach ($allPathsAndFilenames as $pathAndFilename) {
+        foreach (Files::getRecursiveDirectoryGenerator($this->targetPackageData['path'], null, true) as $pathAndFilename) {
             if (substr($pathAndFilename, -13) !== 'Converter.php') {
                 continue;
             }
