@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Widget;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -28,28 +25,29 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
  *
  * @api
  */
-class AutocompleteViewHelper extends AbstractWidgetViewHelper {
+class AutocompleteViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @var bool
+     */
+    protected $ajaxWidget = true;
 
-	/**
-	 * @var bool
-	 */
-	protected $ajaxWidget = TRUE;
+    /**
+     * @Flow\Inject
+     * @var Controller\AutocompleteController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var Controller\AutocompleteController
-	 */
-	protected $controller;
-
-	/**
-	 *
-	 * @param QueryResultInterface $objects
-	 * @param string $for
-	 * @param string $searchProperty
-	 * @param array $configuration
-	 * @return string
-	 */
-	public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10)) {
-		return $this->initiateSubRequest();
-	}
+    /**
+     *
+     * @param QueryResultInterface $objects
+     * @param string $for
+     * @param string $searchProperty
+     * @param array $configuration
+     * @return string
+     */
+    public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10))
+    {
+        return $this->initiateSubRequest();
+    }
 }

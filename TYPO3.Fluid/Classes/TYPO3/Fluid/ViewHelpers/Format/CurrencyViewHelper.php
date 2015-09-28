@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -63,44 +60,44 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  *
  * @api
  */
-class CurrencyViewHelper extends AbstractLocaleAwareViewHelper {
+class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
 
-	/**
-	 * @Flow\Inject
-	 * @var NumberFormatter
-	 */
-	protected $numberFormatter;
+    /**
+     * @param string $currencySign (optional) The currency sign, eg $ or €.
+     * @param string $decimalSeparator (optional) The separator for the decimal point.
+     * @param string $thousandsSeparator (optional) The thousands separator.
+     *
+     * @throws InvalidVariableException
+     * @return string the formatted amount.
+     * @throws ViewHelperException
+     * @api
+     */
+    public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.')
+    {
+        $stringToFormat = $this->renderChildren();
 
-	/**
-	 * @param string $currencySign (optional) The currency sign, eg $ or €.
-	 * @param string $decimalSeparator (optional) The separator for the decimal point.
-	 * @param string $thousandsSeparator (optional) The thousands separator.
-	 *
-	 * @throws InvalidVariableException
-	 * @return string the formatted amount.
-	 * @throws ViewHelperException
-	 * @api
-	 */
-	public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.') {
-		$stringToFormat = $this->renderChildren();
-
-		$useLocale = $this->getLocale();
-		if ($useLocale !== NULL) {
-			if ($currencySign === '') {
-				throw new InvalidVariableException('Using the Locale requires a currencySign.', 1326378320);
-			}
-			try {
-				$output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign);
-			} catch (I18nException $exception) {
-				throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
-			}
-		} else {
-			$output = number_format((float)$stringToFormat, 2, $decimalSeparator, $thousandsSeparator);
-			if ($currencySign !== '') {
-				$output .= ' ' . $currencySign;
-			}
-		}
-		return $output;
-	}
-
+        $useLocale = $this->getLocale();
+        if ($useLocale !== null) {
+            if ($currencySign === '') {
+                throw new InvalidVariableException('Using the Locale requires a currencySign.', 1326378320);
+            }
+            try {
+                $output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign);
+            } catch (I18nException $exception) {
+                throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
+            }
+        } else {
+            $output = number_format((float)$stringToFormat, 2, $decimalSeparator, $thousandsSeparator);
+            if ($currencySign !== '') {
+                $output .= ' ' . $currencySign;
+            }
+        }
+        return $output;
+    }
 }

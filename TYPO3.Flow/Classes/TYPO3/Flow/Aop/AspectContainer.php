@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Aop;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -34,163 +31,175 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class AspectContainer {
+class AspectContainer
+{
+    /**
+     * @var string
+     */
+    protected $className;
 
-	/**
-	 * @var string
-	 */
-	protected $className;
+    /**
+     * An array of \TYPO3\Flow\Aop\Advisor objects
+     * @var array
+     */
+    protected $advisors = array();
 
-	/**
-	 * An array of \TYPO3\Flow\Aop\Advisor objects
-	 * @var array
-	 */
-	protected $advisors = array();
+    /**
+     * An array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
+     * @var array
+     */
+    protected $interfaceIntroductions = array();
 
-	/**
-	 * An array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
-	 * @var array
-	 */
-	protected $interfaceIntroductions = array();
+    /**
+     * An array of \TYPO3\Flow\Aop\PropertyIntroduction objects
+     * @var array
+     */
+    protected $propertyIntroductions = array();
 
-	/**
-	 * An array of \TYPO3\Flow\Aop\PropertyIntroduction objects
-	 * @var array
-	 */
-	protected $propertyIntroductions = array();
+    /**
+     * An array of explicitly declared \TYPO3\Flow\Pointcut objects
+     * @var array
+     */
+    protected $pointcuts = array();
 
-	/**
-	 * An array of explicitly declared \TYPO3\Flow\Pointcut objects
-	 * @var array
-	 */
-	protected $pointcuts = array();
+    /**
+     * @var \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     */
+    protected $cachedTargetClassNameCandidates;
 
-	/**
-	 * @var \TYPO3\Flow\Aop\Builder\ClassNameIndex
-	 */
-	protected $cachedTargetClassNameCandidates;
+    /**
+     * The constructor
+     *
+     * @param string $className Name of the aspect class
+     */
+    public function __construct($className)
+    {
+        $this->className = $className;
+    }
 
-	/**
-	 * The constructor
-	 *
-	 * @param string $className Name of the aspect class
-	 */
-	public function __construct($className) {
-		$this->className = $className;
-	}
+    /**
+     * Returns the name of the aspect class
+     *
+     * @return string Name of the aspect class
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
 
-	/**
-	 * Returns the name of the aspect class
-	 *
-	 * @return string Name of the aspect class
-	 */
-	public function getClassName() {
-		return $this->className;
-	}
+    /**
+     * Returns the advisors which were defined in the aspect
+     *
+     * @return array Array of \TYPO3\Flow\Aop\Advisor objects
+     */
+    public function getAdvisors()
+    {
+        return $this->advisors;
+    }
 
-	/**
-	 * Returns the advisors which were defined in the aspect
-	 *
-	 * @return array Array of \TYPO3\Flow\Aop\Advisor objects
-	 */
-	public function getAdvisors() {
-		return $this->advisors;
-	}
+    /**
+     * Returns the interface introductions which were defined in the aspect
+     *
+     * @return array Array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
+     */
+    public function getInterfaceIntroductions()
+    {
+        return $this->interfaceIntroductions;
+    }
 
-	/**
-	 * Returns the interface introductions which were defined in the aspect
-	 *
-	 * @return array Array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
-	 */
-	public function getInterfaceIntroductions() {
-		return $this->interfaceIntroductions;
-	}
+    /**
+     * Returns the property introductions which were defined in the aspect
+     *
+     * @return array Array of \TYPO3\Flow\Aop\PropertyIntroduction objects
+     */
+    public function getPropertyIntroductions()
+    {
+        return $this->propertyIntroductions;
+    }
 
-	/**
-	 * Returns the property introductions which were defined in the aspect
-	 *
-	 * @return array Array of \TYPO3\Flow\Aop\PropertyIntroduction objects
-	 */
-	public function getPropertyIntroductions() {
-		return $this->propertyIntroductions;
-	}
+    /**
+     * Returns the pointcuts which were declared in the aspect. This
+     * does not contain the pointcuts which were made out of the pointcut
+     * expressions for the advisors!
+     *
+     * @return array Array of \TYPO3\Flow\Aop\Pointcut\Pointcut objects
+     */
+    public function getPointcuts()
+    {
+        return $this->pointcuts;
+    }
 
-	/**
-	 * Returns the pointcuts which were declared in the aspect. This
-	 * does not contain the pointcuts which were made out of the pointcut
-	 * expressions for the advisors!
-	 *
-	 * @return array Array of \TYPO3\Flow\Aop\Pointcut\Pointcut objects
-	 */
-	public function getPointcuts() {
-		return $this->pointcuts;
-	}
+    /**
+     * Adds an advisor to this aspect container
+     *
+     * @param \TYPO3\Flow\Aop\Advisor $advisor The advisor to add
+     * @return void
+     */
+    public function addAdvisor(\TYPO3\Flow\Aop\Advisor $advisor)
+    {
+        $this->advisors[] = $advisor;
+    }
 
-	/**
-	 * Adds an advisor to this aspect container
-	 *
-	 * @param \TYPO3\Flow\Aop\Advisor $advisor The advisor to add
-	 * @return void
-	 */
-	public function addAdvisor(\TYPO3\Flow\Aop\Advisor $advisor) {
-		$this->advisors[] = $advisor;
-	}
+    /**
+     * Adds an introduction declaration to this aspect container
+     *
+     * @param \TYPO3\Flow\Aop\InterfaceIntroduction $introduction
+     * @return void
+     */
+    public function addInterfaceIntroduction(\TYPO3\Flow\Aop\InterfaceIntroduction $introduction)
+    {
+        $this->interfaceIntroductions[] = $introduction;
+    }
 
-	/**
-	 * Adds an introduction declaration to this aspect container
-	 *
-	 * @param \TYPO3\Flow\Aop\InterfaceIntroduction $introduction
-	 * @return void
-	 */
-	public function addInterfaceIntroduction(\TYPO3\Flow\Aop\InterfaceIntroduction $introduction) {
-		$this->interfaceIntroductions[] = $introduction;
-	}
+    /**
+     * Adds an introduction declaration to this aspect container
+     *
+     * @param \TYPO3\Flow\Aop\PropertyIntroduction $introduction
+     * @return void
+     */
+    public function addPropertyIntroduction(\TYPO3\Flow\Aop\PropertyIntroduction $introduction)
+    {
+        $this->propertyIntroductions[] = $introduction;
+    }
 
-	/**
-	 * Adds an introduction declaration to this aspect container
-	 *
-	 * @param \TYPO3\Flow\Aop\PropertyIntroduction $introduction
-	 * @return void
-	 */
-	public function addPropertyIntroduction(\TYPO3\Flow\Aop\PropertyIntroduction $introduction) {
-		$this->propertyIntroductions[] = $introduction;
-	}
+    /**
+     * Adds a pointcut (from a pointcut declaration) to this aspect container
+     *
+     * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut to add
+     * @return void
+     */
+    public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut)
+    {
+        $this->pointcuts[] = $pointcut;
+    }
 
-	/**
-	 * Adds a pointcut (from a pointcut declaration) to this aspect container
-	 *
-	 * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut to add
-	 * @return void
-	 */
-	public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut) {
-		$this->pointcuts[] = $pointcut;
-	}
+    /**
+     * This method is used to optimize the matching process.
+     *
+     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     */
+    public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex)
+    {
+        $result = new Builder\ClassNameIndex();
+        foreach ($this->advisors as $advisor) {
+            $result->applyUnion($advisor->getPointcut()->reduceTargetClassNames($classNameIndex));
+        }
+        foreach ($this->interfaceIntroductions as $interfaceIntroduction) {
+            $result->applyUnion($interfaceIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+        }
+        foreach ($this->propertyIntroductions as $propertyIntroduction) {
+            $result->applyUnion($propertyIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+        }
+        $this->cachedTargetClassNameCandidates = $result;
+        return $result;
+    }
 
-	/**
-	 * This method is used to optimize the matching process.
-	 *
-	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
-	 */
-	public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex) {
-		$result = new Builder\ClassNameIndex();
-		foreach ($this->advisors as $advisor) {
-			$result->applyUnion($advisor->getPointcut()->reduceTargetClassNames($classNameIndex));
-		}
-		foreach ($this->interfaceIntroductions as $interfaceIntroduction) {
-			$result->applyUnion($interfaceIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
-		}
-		foreach ($this->propertyIntroductions as $propertyIntroduction) {
-			$result->applyUnion($propertyIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
-		}
-		$this->cachedTargetClassNameCandidates = $result;
-		return $result;
-	}
-
-	/**
-	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
-	 */
-	public function getCachedTargetClassNameCandidates() {
-		return $this->cachedTargetClassNameCandidates;
-	}
+    /**
+     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     */
+    public function getCachedTargetClassNameCandidates()
+    {
+        return $this->cachedTargetClassNameCandidates;
+    }
 }

@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -88,61 +85,62 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  *
  * @api
  */
-class DateViewHelper extends AbstractLocaleAwareViewHelper {
+class DateViewHelper extends AbstractLocaleAwareViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
+    /**
+     * @Flow\Inject
+     * @var DatetimeFormatter
+     */
+    protected $datetimeFormatter;
 
-	/**
-	 * @Flow\Inject
-	 * @var DatetimeFormatter
-	 */
-	protected $datetimeFormatter;
+    /**
+     * Render the supplied DateTime object as a formatted date.
+     *
+     * @param mixed $date either a \DateTime object or a string that is accepted by \DateTime constructor
+     * @param string $format Format String which is taken to format the Date/Time if none of the locale options are set.
+     * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
+     * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
+     * @throws ViewHelperException
+     * @return string Formatted date
+     * @api
+     */
+    public function render($date = null, $format = 'Y-m-d', $localeFormatType = null, $localeFormatLength = null, $cldrFormat = null)
+    {
+        if ($date === null) {
+            $date = $this->renderChildren();
+            if ($date === null) {
+                return '';
+            }
+        }
+        if (!$date instanceof \DateTime) {
+            try {
+                $date = new \DateTime($date);
+            } catch (\Exception $exception) {
+                throw new ViewHelperException('"' . $date . '" could not be parsed by \DateTime constructor.', 1241722579, $exception);
+            }
+        }
 
-	/**
-	 * Render the supplied DateTime object as a formatted date.
-	 *
-	 * @param mixed $date either a \DateTime object or a string that is accepted by \DateTime constructor
-	 * @param string $format Format String which is taken to format the Date/Time if none of the locale options are set.
-	 * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
-	 * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
-	 * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
-	 * @throws ViewHelperException
-	 * @return string Formatted date
-	 * @api
-	 */
-	public function render($date = NULL, $format = 'Y-m-d', $localeFormatType = NULL, $localeFormatLength = NULL, $cldrFormat = NULL) {
-		if ($date === NULL) {
-			$date = $this->renderChildren();
-			if ($date === NULL) {
-				return '';
-			}
-		}
-		if (!$date instanceof \DateTime) {
-			try {
-				$date = new \DateTime($date);
-			} catch (\Exception $exception) {
-				throw new ViewHelperException('"' . $date . '" could not be parsed by \DateTime constructor.', 1241722579, $exception);
-			}
-		}
+        $useLocale = $this->getLocale();
+        if ($useLocale !== null) {
+            try {
+                if ($cldrFormat !== null) {
+                    $output = $this->datetimeFormatter->formatDateTimeWithCustomPattern($date, $cldrFormat, $useLocale);
+                } else {
+                    $output = $this->datetimeFormatter->format($date, $useLocale, array($localeFormatType, $localeFormatLength));
+                }
+            } catch (I18nException $exception) {
+                throw new ViewHelperException(sprintf('An error occurred while trying to format the given date/time: "%s"', $exception->getMessage()), 1342610987, $exception);
+            }
+        } else {
+            $output = $date->format($format);
+        }
 
-		$useLocale = $this->getLocale();
-		if ($useLocale !== NULL) {
-			try {
-				if ($cldrFormat !== NULL) {
-					$output = $this->datetimeFormatter->formatDateTimeWithCustomPattern($date, $cldrFormat, $useLocale);
-				} else {
-					$output = $this->datetimeFormatter->format($date, $useLocale, array($localeFormatType, $localeFormatLength));
-				}
-			} catch(I18nException $exception) {
-				throw new ViewHelperException(sprintf('An error occurred while trying to format the given date/time: "%s"', $exception->getMessage()), 1342610987, $exception);
-			}
-		} else {
-			$output = $date->format($format);
-		}
-
-		return $output;
-	}
+        return $output;
+    }
 }

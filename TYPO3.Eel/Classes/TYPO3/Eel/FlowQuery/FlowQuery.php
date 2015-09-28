@@ -2,13 +2,10 @@
 namespace TYPO3\Eel\FlowQuery;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Eel\Exception;
@@ -69,209 +66,220 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * If an operation is final, it should return the resulting value directly.
  */
-class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorAggregate, \Countable {
+class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorAggregate, \Countable
+{
+    /**
+     * the objects this FlowQuery object wraps
+     *
+     * @var array|\Traversable
+     */
+    protected $context;
 
-	/**
-	 * the objects this FlowQuery object wraps
-	 *
-	 * @var array|\Traversable
-	 */
-	protected $context;
+    /**
+     * Ordered list of operations, each operation is internally
+     * represented as array('name' => '...', 'arguments' => array(...))
+     * whereas the name is a string like 'children' and the arguments
+     * are a numerically-indexed array
+     *
+     * @var array
+     */
+    protected $operations = array();
 
-	/**
-	 * Ordered list of operations, each operation is internally
-	 * represented as array('name' => '...', 'arguments' => array(...))
-	 * whereas the name is a string like 'children' and the arguments
-	 * are a numerically-indexed array
-	 *
-	 * @var array
-	 */
-	protected $operations = array();
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Eel\FlowQuery\OperationResolverInterface
+     */
+    protected $operationResolver;
 
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Eel\FlowQuery\OperationResolverInterface
-	 */
-	protected $operationResolver;
+    /**
+     * Construct a new FlowQuery object from $context and $operations.
+     *
+     * Only the $context parameter belongs to the public API!
+     *
+     * If a FlowQuery is given as the $context we unwrap its context to assert q(q(context)) == q(context).
+     *
+     * @param array|\Traversable $context The initial context (wrapped objects) for this FlowQuery
+     * @param array              $operations
+     * @throws Exception
+     * @api
+     */
+    public function __construct($context, array $operations = array())
+    {
+        if (!(is_array($context) || $context instanceof \Traversable)) {
+            throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
+        }
+        if ($context instanceof FlowQuery) {
+            $this->context = $context->getContext();
+        } else {
+            $this->context = $context;
+        }
+        $this->operations = $operations;
+    }
 
-	/**
-	 * Construct a new FlowQuery object from $context and $operations.
-	 *
-	 * Only the $context parameter belongs to the public API!
-	 *
-	 * If a FlowQuery is given as the $context we unwrap its context to assert q(q(context)) == q(context).
-	 *
-	 * @param array|\Traversable $context The initial context (wrapped objects) for this FlowQuery
-	 * @param array              $operations
-	 * @throws Exception
-	 * @api
-	 */
-	public function __construct($context, array $operations = array()) {
-		if (!(is_array($context) || $context instanceof \Traversable)) {
-			throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
-		}
-		if ($context instanceof FlowQuery) {
-			$this->context = $context->getContext();
-		} else {
-			$this->context = $context;
-		}
-		$this->operations = $operations;
-	}
+    /**
+     * Setter for setting the operation resolver from the outside, only needed
+     * to successfully run unit tests (hacky!)
+     *
+     * @param OperationResolverInterface $operationResolver
+     */
+    public function setOperationResolver(OperationResolverInterface $operationResolver)
+    {
+        $this->operationResolver = $operationResolver;
+    }
 
-	/**
-	 * Setter for setting the operation resolver from the outside, only needed
-	 * to successfully run unit tests (hacky!)
-	 *
-	 * @param OperationResolverInterface $operationResolver
-	 */
-	public function setOperationResolver(OperationResolverInterface $operationResolver) {
-		$this->operationResolver = $operationResolver;
-	}
+    /**
+     * Add a new operation to the operation list and return the new FlowQuery
+     * object. If the operation is final, we directly compute the result and
+     * return the value.
+     *
+     * @param string $operationName
+     * @param array $arguments
+     * @return \TYPO3\Eel\FlowQuery\FlowQuery
+     */
+    public function __call($operationName, array $arguments)
+    {
+        $updatedOperations = $this->operations;
+        $updatedOperations[] = array(
+            'name' => $operationName,
+            'arguments' => $arguments
+        );
 
-	/**
-	 * Add a new operation to the operation list and return the new FlowQuery
-	 * object. If the operation is final, we directly compute the result and
-	 * return the value.
-	 *
-	 * @param string $operationName
-	 * @param array $arguments
-	 * @return \TYPO3\Eel\FlowQuery\FlowQuery
-	 */
-	public function __call($operationName, array $arguments) {
-		$updatedOperations = $this->operations;
-		$updatedOperations[] = array(
-			'name' => $operationName,
-			'arguments' => $arguments
-		);
+        if ($this->operationResolver->isFinalOperation($operationName)) {
+            $operationsBackup = $this->operations;
+            $contextBackup = $this->context;
 
-		if ($this->operationResolver->isFinalOperation($operationName)) {
-			$operationsBackup = $this->operations;
-			$contextBackup = $this->context;
+            $this->operations = $updatedOperations;
+            $operationResult = $this->evaluateOperations();
+            $this->operations = $operationsBackup;
+            $this->context = $contextBackup;
 
-			$this->operations = $updatedOperations;
-			$operationResult = $this->evaluateOperations();
-			$this->operations = $operationsBackup;
-			$this->context = $contextBackup;
+            return $operationResult;
+        } else {
+            // non-final operation
+            $flowQuery = new FlowQuery($this->context, $updatedOperations);
+            $flowQuery->setOperationResolver($this->operationResolver); // Only needed for unit tests; hacky!
+            return $flowQuery;
+        }
+    }
 
-			return $operationResult;
-		} else {
-			// non-final operation
-			$flowQuery = new FlowQuery($this->context, $updatedOperations);
-			$flowQuery->setOperationResolver($this->operationResolver); // Only needed for unit tests; hacky!
-			return $flowQuery;
-		}
-	}
+    /**
+     * Implementation of the countable() interface, which is mapped to the "count" operation.
+     *
+     * @return integer
+     */
+    public function count()
+    {
+        return $this->__call('count', array());
+    }
 
-	/**
-	 * Implementation of the countable() interface, which is mapped to the "count" operation.
-	 *
-	 * @return integer
-	 */
-	public function count() {
-		return $this->__call('count', array());
-	}
+    /**
+     * Called when iterating over this FlowQuery object, triggers evaluation.
+     *
+     * Should NEVER be called inside an operation!
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        if (count($this->operations) > 0) {
+            $this->evaluateOperations();
+        }
+        return new \ArrayIterator($this->context);
+    }
 
-	/**
-	 * Called when iterating over this FlowQuery object, triggers evaluation.
-	 *
-	 * Should NEVER be called inside an operation!
-	 *
-	 * @return \ArrayIterator
-	 */
-	public function getIterator() {
-		if (count($this->operations) > 0) {
-			$this->evaluateOperations();
-		}
-		return new \ArrayIterator($this->context);
-	}
+    /**
+     * Evaluate operations
+     *
+     * @return mixed the last operation result if the operation is a final operation, NULL otherwise
+     */
+    protected function evaluateOperations()
+    {
+        while ($op = array_shift($this->operations)) {
+            $operation = $this->operationResolver->resolveOperation($op['name'], $this->context);
+            $lastOperationResult = $operation->evaluate($this, $op['arguments']);
+        }
+        return $lastOperationResult;
+    }
 
-	/**
-	 * Evaluate operations
-	 *
-	 * @return mixed the last operation result if the operation is a final operation, NULL otherwise
-	 */
-	protected function evaluateOperations() {
-		while ($op = array_shift($this->operations)) {
-			$operation = $this->operationResolver->resolveOperation($op['name'], $this->context);
-			$lastOperationResult = $operation->evaluate($this, $op['arguments']);
-		}
-		return $lastOperationResult;
-	}
+    /**
+     * Pop the topmost operation from the stack and return it; i.e. the
+     * operation which should be executed next. The returned array has
+     * the form:
+     * array('name' => '...', 'arguments' => array(...))
+     *
+     * Should only be called inside an operation.
+     *
+     * @return array
+     */
+    public function popOperation()
+    {
+        return array_shift($this->operations);
+    }
 
-	/**
-	 * Pop the topmost operation from the stack and return it; i.e. the
-	 * operation which should be executed next. The returned array has
-	 * the form:
-	 * array('name' => '...', 'arguments' => array(...))
-	 *
-	 * Should only be called inside an operation.
-	 *
-	 * @return array
-	 */
-	public function popOperation() {
-		return array_shift($this->operations);
-	}
+    /**
+     * Push a new operation onto the operations stack.
+     *
+     * The last-pushed operation is executed FIRST! (LIFO)
+     *
+     * Should only be called inside an operation.
+     *
+     * @param string $operationName
+     * @param array $arguments
+     */
+    public function pushOperation($operationName, array $arguments)
+    {
+        array_unshift($this->operations, array(
+            'name' => $operationName,
+            'arguments' => $arguments
+        ));
+    }
 
-	/**
-	 * Push a new operation onto the operations stack.
-	 *
-	 * The last-pushed operation is executed FIRST! (LIFO)
-	 *
-	 * Should only be called inside an operation.
-	 *
-	 * @param string $operationName
-	 * @param array $arguments
-	 */
-	public function pushOperation($operationName, array $arguments) {
-		array_unshift($this->operations, array(
-			'name' => $operationName,
-			'arguments' => $arguments
-		));
-	}
+    /**
+     * Peek onto the next operation name, if any, or NULL otherwise.
+     *
+     * Should only be called inside an operation.
+     *
+     * @return string the next operation name or NULL if no next operation found.
+     */
+    public function peekOperationName()
+    {
+        if (isset($this->operations[0])) {
+            return $this->operations[0]['name'];
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * Peek onto the next operation name, if any, or NULL otherwise.
-	 *
-	 * Should only be called inside an operation.
-	 *
-	 * @return string the next operation name or NULL if no next operation found.
-	 */
-	public function peekOperationName() {
-		if (isset($this->operations[0])) {
-			return $this->operations[0]['name'];
-		} else {
-			return NULL;
-		}
-	}
+    /**
+     * Get the current context.
+     *
+     * Should only be called inside an operation.
+     *
+     * @return array|\Traversable
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
 
-	/**
-	 * Get the current context.
-	 *
-	 * Should only be called inside an operation.
-	 *
-	 * @return array|\Traversable
-	 */
-	public function getContext() {
-		return $this->context;
-	}
+    /**
+     * Set the updated context with the operation result applied.
+     *
+     * Should only be called inside an operation.
+     *
+     * @param array|\Traversable $context
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
 
-	/**
-	 * Set the updated context with the operation result applied.
-	 *
-	 * Should only be called inside an operation.
-	 *
-	 * @param array|\Traversable $context
-	 */
-	public function setContext($context) {
-		$this->context = $context;
-	}
-
-	/**
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return $this->operationResolver->hasOperation($methodName);
-	}
-
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return $this->operationResolver->hasOperation($methodName);
+    }
 }

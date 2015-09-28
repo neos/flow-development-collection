@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Widget;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -44,24 +41,25 @@ use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
  *
  * @api
  */
-class PaginateViewHelper extends AbstractWidgetViewHelper {
+class PaginateViewHelper extends AbstractWidgetViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Controller\PaginateController
+     */
+    protected $controller;
 
-	/**
-	 * @Flow\Inject
-	 * @var Controller\PaginateController
-	 */
-	protected $controller;
-
-	/**
-	 * Render this view helper
-	 *
-	 * @param QueryResultInterface $objects
-	 * @param string $as
-	 * @param array $configuration
-	 * @return string
-	 */
-	public function render(QueryResultInterface $objects, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99)) {
-		$response = $this->initiateSubRequest();
-		return $response->getContent();
-	}
+    /**
+     * Render this view helper
+     *
+     * @param QueryResultInterface $objects
+     * @param string $as
+     * @param array $configuration
+     * @return string
+     */
+    public function render(QueryResultInterface $objects, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99))
+    {
+        $response = $this->initiateSubRequest();
+        return $response->getContent();
+    }
 }

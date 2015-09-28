@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -23,20 +20,21 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Scope("singleton")
  */
-class LabelValidator extends AbstractValidator {
+class LabelValidator extends AbstractValidator
+{
+    const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 
-	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
-
-	/**
-	 * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return void
-	 * @api
-	 */
-	protected function isValid($value) {
-		if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
-			$this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
-		}
-	}
+    /**
+     * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.
+     *
+     * @param mixed $value The value that should be validated
+     * @return void
+     * @api
+     */
+    protected function isValid($value)
+    {
+        if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
+            $this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
+        }
+    }
 }

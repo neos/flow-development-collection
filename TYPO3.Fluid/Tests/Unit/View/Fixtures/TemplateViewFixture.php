@@ -2,25 +2,24 @@
 namespace TYPO3\Fluid\View\Fixture;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
  * Template view fixture
  */
-class TemplateViewFixture extends \TYPO3\Fluid\View\TemplateView {
+class TemplateViewFixture extends \TYPO3\Fluid\View\TemplateView
+{
+    public $syntaxTree;
 
-	public $syntaxTree;
+    protected function resolveTemplateFile()
+    {
+    }
 
-	protected function resolveTemplateFile() {
-	}
-
-	protected function loadTemplateFile($templateFilePath) {
-	}
+    protected function loadTemplateFile($templateFilePath)
+    {
+    }
 }

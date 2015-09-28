@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -45,25 +42,26 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class RawViewHelper extends AbstractViewHelper {
+class RawViewHelper extends AbstractViewHelper
+{
+    /**
+     * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
+     * can decode the text's entities.
+     *
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
-	 * can decode the text's entities.
-	 *
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
-
-	/**
-	 * @param mixed $value The value to output
-	 * @return string
-	 */
-	public function render($value = NULL) {
-		if ($value === NULL) {
-			return $this->renderChildren();
-		} else {
-			return $value;
-		}
-	}
+    /**
+     * @param mixed $value The value to output
+     * @return string
+     */
+    public function render($value = null)
+    {
+        if ($value === null) {
+            return $this->renderChildren();
+        } else {
+            return $value;
+        }
+    }
 }

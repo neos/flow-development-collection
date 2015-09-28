@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Security;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 
@@ -58,37 +55,38 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasRoleViewHelper extends AbstractConditionViewHelper {
+class IfHasRoleViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * renders <f:then> child if the role could be found in the security context,
+     * otherwise renders <f:else> child.
+     *
+     * @param string $role The role
+     * @param string $packageKey PackageKey of the package defining the role
+     * @return string the rendered string
+     * @api
+     */
+    public function render($role, $packageKey = null)
+    {
+        if ($role !== 'Everybody' && $role !== 'Anonymous' && $role !== 'AuthenticatedUser' && strpos($role, '.') === false && strpos($role, ':') === false) {
+            if ($packageKey === null) {
+                $request = $this->controllerContext->getRequest();
+                $role = $request->getControllerPackageKey() . ':' . $role;
+            } else {
+                $role = $packageKey . ':' . $role;
+            }
+        }
 
-	/**
-	 * renders <f:then> child if the role could be found in the security context,
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $role The role
-	 * @param string $packageKey PackageKey of the package defining the role
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($role, $packageKey = NULL) {
-		if ($role !== 'Everybody' && $role !== 'Anonymous' && $role !== 'AuthenticatedUser' && strpos($role, '.') === FALSE && strpos($role, ':') === FALSE) {
-			if ($packageKey === NULL) {
-				$request = $this->controllerContext->getRequest();
-				$role = $request->getControllerPackageKey() . ':' . $role;
-			} else {
-				$role = $packageKey . ':' . $role;
-			}
-		}
-
-		if ($this->securityContext->hasRole($role)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+        if ($this->securityContext->hasRole($role)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

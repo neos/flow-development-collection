@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
@@ -38,45 +35,47 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class StripTagsViewHelper extends AbstractViewHelper implements CompilableInterface {
+class StripTagsViewHelper extends AbstractViewHelper implements CompilableInterface
+{
+    /**
+     * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
+     * can decode the text's entities.
+     *
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
-	 * can decode the text's entities.
-	 *
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
+    /**
+     * Escapes special characters with their escaped counterparts as needed using PHPs strip_tags() function.
+     *
+     * @param string $value string to format
+     * @return mixed
+     * @see http://www.php.net/manual/function.strip-tags.php
+     * @api
+     */
+    public function render($value = null)
+    {
+        return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
 
-	/**
-	 * Escapes special characters with their escaped counterparts as needed using PHPs strip_tags() function.
-	 *
-	 * @param string $value string to format
-	 * @return mixed
-	 * @see http://www.php.net/manual/function.strip-tags.php
-	 * @api
-	 */
-	public function render($value = NULL) {
-		return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
-	}
+    /**
+     * Applies strip_tags() on the specified value.
+     *
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @return string
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        if ($value === null) {
+            $value = $renderChildrenClosure();
+        }
+        if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
+            return strip_tags($value);
+        }
 
-	/**
-	 * Applies strip_tags() on the specified value.
-	 *
-	 * @param array $arguments
-	 * @param \Closure $renderChildrenClosure
-	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
-	 * @return string
-	 */
-	static public function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext) {
-		$value = $arguments['value'];
-		if ($value === NULL) {
-			$value = $renderChildrenClosure();
-		}
-		if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
-			return strip_tags($value);
-		}
-
-		return $value;
-	}
+        return $value;
+    }
 }

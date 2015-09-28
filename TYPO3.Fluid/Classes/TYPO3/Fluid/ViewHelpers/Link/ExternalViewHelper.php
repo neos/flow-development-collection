@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Link;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
@@ -34,42 +31,44 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
  *
  * @api
  */
-class ExternalViewHelper extends AbstractTagBasedViewHelper {
+class ExternalViewHelper extends AbstractTagBasedViewHelper
+{
+    /**
+     * @var string
+     */
+    protected $tagName = 'a';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'a';
+    /**
+     * Initialize arguments
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
+        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
+        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
+        $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+    }
 
-	/**
-	 * Initialize arguments
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-		$this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-		$this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
-		$this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
-	}
+    /**
+     * @param string $uri the URI that will be put in the href attribute of the rendered link tag
+     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
+     * @return string Rendered link
+     * @api
+     */
+    public function render($uri, $defaultScheme = 'http')
+    {
+        $scheme = parse_url($uri, PHP_URL_SCHEME);
+        if ($scheme === null && $defaultScheme !== '') {
+            $uri = $defaultScheme . '://' . $uri;
+        }
+        $this->tag->addAttribute('href', $uri);
+        $this->tag->setContent($this->renderChildren());
+        $this->tag->forceClosingTag(true);
 
-	/**
-	 * @param string $uri the URI that will be put in the href attribute of the rendered link tag
-	 * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
-	 * @return string Rendered link
-	 * @api
-	 */
-	public function render($uri, $defaultScheme = 'http') {
-		$scheme = parse_url($uri, PHP_URL_SCHEME);
-		if ($scheme === NULL && $defaultScheme !== '') {
-			$uri = $defaultScheme . '://' . $uri;
-		}
-		$this->tag->addAttribute('href', $uri);
-		$this->tag->setContent($this->renderChildren());
-		$this->tag->forceClosingTag(TRUE);
-
-		return $this->tag->render();
-	}
+        return $this->tag->render();
+    }
 }

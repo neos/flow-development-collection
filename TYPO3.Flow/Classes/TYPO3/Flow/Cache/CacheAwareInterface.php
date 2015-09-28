@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Cache;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -18,14 +15,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @api
  */
-interface CacheAwareInterface {
-
-	/**
-	 * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
-	 * related to this object.
-	 *
-	 * @return string
-	 */
-	public function getCacheEntryIdentifier();
-
+interface CacheAwareInterface
+{
+    /**
+     * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
+     * related to this object.
+     *
+     * @return string
+     */
+    public function getCacheEntryIdentifier();
 }

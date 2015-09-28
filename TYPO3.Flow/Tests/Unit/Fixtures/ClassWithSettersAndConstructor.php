@@ -2,44 +2,45 @@
 namespace TYPO3\Flow\Fixtures;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
  * A dummy class with setters for testing data mapping
  *
  */
-class ClassWithSettersAndConstructor {
+class ClassWithSettersAndConstructor
+{
+    /**
+     * @var mixed
+     */
+    protected $property1;
 
-	/**
-	 * @var mixed
-	 */
-	protected $property1;
+    /**
+     * @var mixed
+     */
+    protected $property2;
 
-	/**
-	 * @var mixed
-	 */
-	protected $property2;
+    public function __construct($property1)
+    {
+        $this->property1 = $property1;
+    }
 
-	public function __construct($property1) {
-		$this->property1 = $property1;
-	}
+    public function getProperty1()
+    {
+        return $this->property1;
+    }
 
-	public function getProperty1() {
-		return $this->property1;
-	}
+    public function getProperty2()
+    {
+        return $this->property2;
+    }
 
-	public function getProperty2() {
-		return $this->property2;
-	}
-
-	public function setProperty2($property2) {
-		$this->property2 = $property2;
-	}
+    public function setProperty2($property2)
+    {
+        $this->property2 = $property2;
+    }
 }

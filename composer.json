@@ -1,6 +1,7 @@
 {
     "name": "neos/flow-development-collection",
     "description": "Flow packages in a joined repository for pull requests.",
+    "license": ["MIT"],
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.3.2",

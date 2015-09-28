@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\Core\Parser\SyntaxTree;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -29,14 +26,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * It is currently used *internally* and might change without further notice.
  */
-interface TemplateObjectAccessInterface {
-
-	/**
-	 * Post-Processor which is called whenever this object is encountered in a Fluid
-	 * object access.
-	 *
-	 * @return mixed the value which should be returned to the caller, or which should be traversed further.
-	 */
-	public function objectAccess();
-
+interface TemplateObjectAccessInterface
+{
+    /**
+     * Post-Processor which is called whenever this object is encountered in a Fluid
+     * object access.
+     *
+     * @return mixed the value which should be returned to the caller, or which should be traversed further.
+     */
+    public function objectAccess();
 }

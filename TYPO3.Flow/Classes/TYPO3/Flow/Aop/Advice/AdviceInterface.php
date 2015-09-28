@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Aop\Advice;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
@@ -17,27 +14,27 @@ namespace TYPO3\Flow\Aop\Advice;
  *
  * @see \TYPO3\Flow\Aop\InterceptorInterface
  */
-interface AdviceInterface {
+interface AdviceInterface
+{
+    /**
+     * Invokes the advice method
+     *
+     * @param  \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+     * @return mixed Optionally the result of the advice method
+     */
+    public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
 
-	/**
-	 * Invokes the advice method
-	 *
-	 * @param  \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
-	 * @return mixed Optionally the result of the advice method
-	 */
-	public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
+    /**
+     * Returns the aspect's object name which has been passed to the constructor
+     *
+     * @return string The object name of the aspect
+     */
+    public function getAspectObjectName();
 
-	/**
-	 * Returns the aspect's object name which has been passed to the constructor
-	 *
-	 * @return string The object name of the aspect
-	 */
-	public function getAspectObjectName();
-
-	/**
-	 * Returns the advice's method name which has been passed to the constructor
-	 *
-	 * @return string The name of the advice method
-	 */
-	public function getAdviceMethodName();
+    /**
+     * Returns the advice's method name which has been passed to the constructor
+     *
+     * @return string The name of the advice method
+     */
+    public function getAdviceMethodName();
 }

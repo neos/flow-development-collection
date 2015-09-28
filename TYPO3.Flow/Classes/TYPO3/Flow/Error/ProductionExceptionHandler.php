@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
@@ -18,49 +15,51 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class ProductionExceptionHandler extends AbstractExceptionHandler {
+class ProductionExceptionHandler extends AbstractExceptionHandler
+{
+    /**
+     * Echoes an exception for the web.
+     *
+     * @param \Exception $exception The exception
+     * @return void
+     */
+    protected function echoExceptionWeb(\Exception $exception)
+    {
+        $statusCode = 500;
+        if ($exception instanceof \TYPO3\Flow\Exception) {
+            $statusCode = $exception->getStatusCode();
+        }
+        $statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+        $referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : null;
+        if (!headers_sent()) {
+            header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
+        }
 
-	/**
-	 * Echoes an exception for the web.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	protected function echoExceptionWeb(\Exception $exception) {
-		$statusCode = 500;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
-			$statusCode = $exception->getStatusCode();
-		}
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
-		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
-		if (!headers_sent()) {
-			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
-		}
+        try {
+            $renderingOptions = $this->resolveCustomRenderingOptions($exception);
+            if (isset($renderingOptions['templatePathAndFilename'])) {
+                echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
+            } else {
+                echo $this->renderStatically($statusCode, $referenceCode);
+            }
+        } catch (\Exception $innerException) {
+            $this->systemLogger->logException($innerException);
+        }
+    }
 
-		try {
-			$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-			if (isset($renderingOptions['templatePathAndFilename'])) {
-				echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
-			} else {
-				echo $this->renderStatically($statusCode, $referenceCode);
-			}
-		} catch (\Exception $innerException) {
-			$this->systemLogger->logException($innerException);
-		}
-	}
+    /**
+     * Returns the statically rendered exception message
+     *
+     * @param integer $statusCode
+     * @param string $referenceCode
+     * @return string
+     */
+    protected function renderStatically($statusCode, $referenceCode)
+    {
+        $statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+        $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
-	/**
-	 * Returns the statically rendered exception message
-	 *
-	 * @param integer $statusCode
-	 * @param string $referenceCode
-	 * @return string
-	 */
-	protected function renderStatically($statusCode, $referenceCode) {
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
-		$referenceCodeMessage = ($referenceCode !== NULL) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
-
-		return '<!DOCTYPE html>
+        return '<!DOCTYPE html>
 			<html>
 				<head>
 					<meta charset="UTF-8">
@@ -147,39 +146,40 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 					</div>
 				</body>
 			</html>';
-	}
+    }
 
-	/**
-	 * Echoes an exception for the command line.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	protected function echoExceptionCli(\Exception $exception) {
-		$response = new \TYPO3\Flow\Cli\Response();
+    /**
+     * Echoes an exception for the command line.
+     *
+     * @param \Exception $exception The exception
+     * @return void
+     */
+    protected function echoExceptionCli(\Exception $exception)
+    {
+        $response = new \TYPO3\Flow\Cli\Response();
 
-		$backtraceSteps = $exception->getTrace();
-		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+        $backtraceSteps = $exception->getTrace();
+        $pathPosition = strpos($exception->getFile(), 'Packages/');
+        $filePathAndName = ($pathPosition !== false) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
-		$exceptionMessage = PHP_EOL . '<b>Uncaught Exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
-		$exceptionMessage .= '<b>Message</b>' . PHP_EOL;
-		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
-			$exceptionMessage .= '  ' . $messageLine . PHP_EOL;
-		}
+        $exceptionMessage = PHP_EOL . '<b>Uncaught Exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
+        $exceptionMessage .= '<b>Message</b>' . PHP_EOL;
+        foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
+            $exceptionMessage .= '  ' . $messageLine . PHP_EOL;
+        }
 
-		$exceptionMessage .= PHP_EOL . '<b>More Information</b>' . PHP_EOL;
-		if ($exception->getCode()) {
-			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
-		}
-		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
-			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
-		}
-		$exceptionMessage .= PHP_EOL;
+        $exceptionMessage .= PHP_EOL . '<b>More Information</b>' . PHP_EOL;
+        if ($exception->getCode()) {
+            $exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
+        }
+        $exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
+        if ($exception instanceof \TYPO3\Flow\Exception) {
+            $exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
+        }
+        $exceptionMessage .= PHP_EOL;
 
-		$response->setContent($exceptionMessage);
-		$response->send();
-		exit(1);
-	}
+        $response->setContent($exceptionMessage);
+        $response->send();
+        exit(1);
+    }
 }

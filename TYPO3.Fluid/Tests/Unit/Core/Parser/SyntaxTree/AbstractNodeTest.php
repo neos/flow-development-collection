@@ -2,47 +2,47 @@
 namespace TYPO3\Fluid\Tests\Unit\Core\Parser\SyntaxTree;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
  * An AbstractNode Test
  */
-class AbstractNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    protected $renderingContext;
 
-	protected $renderingContext;
+    protected $abstractNode;
 
-	protected $abstractNode;
+    protected $childNode;
 
-	protected $childNode;
+    public function setUp()
+    {
+        $this->renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext', array(), array(), '', false);
 
-	public function setUp() {
-		$this->renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext', array(), array(), '', FALSE);
+        $this->abstractNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode', array('evaluate'));
 
-		$this->abstractNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode', array('evaluate'));
+        $this->childNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode');
+        $this->abstractNode->addChildNode($this->childNode);
+    }
 
-		$this->childNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode');
-		$this->abstractNode->addChildNode($this->childNode);
-	}
+    /**
+     * @test
+     */
+    public function evaluateChildNodesPassesRenderingContextToChildNodes()
+    {
+        $this->childNode->expects($this->once())->method('evaluate')->with($this->renderingContext);
+        $this->abstractNode->evaluateChildNodes($this->renderingContext);
+    }
 
-	/**
-	 * @test
-	 */
-	public function evaluateChildNodesPassesRenderingContextToChildNodes() {
-		$this->childNode->expects($this->once())->method('evaluate')->with($this->renderingContext);
-		$this->abstractNode->evaluateChildNodes($this->renderingContext);
-	}
-
-	/**
-	 * @test
-	 */
-	public function childNodeCanBeReadOutAgain() {
-		$this->assertSame($this->abstractNode->getChildNodes(), array($this->childNode));
-	}
+    /**
+     * @test
+     */
+    public function childNodeCanBeReadOutAgain()
+    {
+        $this->assertSame($this->abstractNode->getChildNodes(), array($this->childNode));
+    }
 }

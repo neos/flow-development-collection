@@ -107,14 +107,10 @@ Example of a prototype class definition::
 	Ext.ns("TYPO3.TYPO3.Content");
 
 	/*                                                                        *
-	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
+	 * This script belongs to the Flow framework.                             *
 	 *                                                                        *
 	 * It is free software; you can redistribute it and/or modify it under    *
-	 * the terms of the GNU General Public License as published by the Free   *
-	 * Software Foundation, either version 3 of the License, or (at your      *
-	 * option) any later version.                                             *
-	 *                                                                        *
-	 * The TYPO3 project - inspiring people to share!                         *
+	 * the terms of the MIT license.                                          *
 	 *                                                                        */
 
 	/**
@@ -168,14 +164,10 @@ prototype class definition, we will only highlight the differences.
 	Ext.ns("TYPO3.TYPO3.Core");
 
 	/*                                                                        *
-	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
+	 * This script belongs to the Flow framework.                             *
 	 *                                                                        *
 	 * It is free software; you can redistribute it and/or modify it under    *
-	 * the terms of the GNU General Public License as published by the Free   *
-	 * Software Foundation, either version 3 of the License, or (at your      *
-	 * option) any later version.                                             *
-	 *                                                                        *
-	 * The TYPO3 project - inspiring people to share!                         *
+	 * the terms of the MIT license.                                          *
 	 *                                                                        */
 
 	/**

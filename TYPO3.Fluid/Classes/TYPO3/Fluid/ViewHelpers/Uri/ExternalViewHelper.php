@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Uri;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -35,19 +32,20 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class ExternalViewHelper extends AbstractViewHelper {
-
-	/**
-	 * @param string $uri target URI
-	 * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
-	 * @return string Rendered URI
-	 * @api
-	 */
-	public function render($uri, $defaultScheme = 'http') {
-		$scheme = parse_url($uri, PHP_URL_SCHEME);
-		if ($scheme === NULL && $defaultScheme !== '') {
-			$uri = $defaultScheme . '://' . $uri;
-		}
-		return $uri;
-	}
+class ExternalViewHelper extends AbstractViewHelper
+{
+    /**
+     * @param string $uri target URI
+     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
+     * @return string Rendered URI
+     * @api
+     */
+    public function render($uri, $defaultScheme = 'http')
+    {
+        $scheme = parse_url($uri, PHP_URL_SCHEME);
+        if ($scheme === null && $defaultScheme !== '') {
+            $uri = $defaultScheme . '://' . $uri;
+        }
+        return $uri;
+    }
 }

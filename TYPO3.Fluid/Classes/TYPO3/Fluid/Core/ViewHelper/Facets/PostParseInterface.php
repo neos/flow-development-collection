@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\Core\ViewHelper\Facets;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
@@ -26,22 +23,21 @@ use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
  *
  * Normally, this facet is not needed, except in really really rare cases.
  */
-interface PostParseInterface {
-
-	/**
-	 * Callback which is called directly after the corresponding syntax tree
-	 * node to this view helper has been built.
-	 * This is a parse-time callback, which does not change the rendering of a
-	 * view helper.
-	 *
-	 * You can store some data inside the variableContainer given here, which
-	 * can be used f.e. inside the TemplateView.
-	 *
-	 * @param ViewHelperNode $syntaxTreeNode The current node in the syntax tree corresponding to this view helper.
-	 * @param array $viewHelperArguments View helper arguments as an array of SyntaxTrees. If you really need an argument, make sure to call $viewHelperArguments[$argName]->render(...)!
-	 * @param TemplateVariableContainer $variableContainer Variable container you can use to pass on some variables to the view.
-	 * @return void
-	 */
-	static public function postParseEvent(ViewHelperNode $syntaxTreeNode, array $viewHelperArguments, TemplateVariableContainer $variableContainer);
-
+interface PostParseInterface
+{
+    /**
+     * Callback which is called directly after the corresponding syntax tree
+     * node to this view helper has been built.
+     * This is a parse-time callback, which does not change the rendering of a
+     * view helper.
+     *
+     * You can store some data inside the variableContainer given here, which
+     * can be used f.e. inside the TemplateView.
+     *
+     * @param ViewHelperNode $syntaxTreeNode The current node in the syntax tree corresponding to this view helper.
+     * @param array $viewHelperArguments View helper arguments as an array of SyntaxTrees. If you really need an argument, make sure to call $viewHelperArguments[$argName]->render(...)!
+     * @param TemplateVariableContainer $variableContainer Variable container you can use to pass on some variables to the view.
+     * @return void
+     */
+    public static function postParseEvent(ViewHelperNode $syntaxTreeNode, array $viewHelperArguments, TemplateVariableContainer $variableContainer);
 }

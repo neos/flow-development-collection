@@ -2,13 +2,10 @@
 namespace TYPO3\Fluid\ViewHelpers\Validation;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 
@@ -39,30 +36,31 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasErrorsViewHelper extends AbstractConditionViewHelper {
+class IfHasErrorsViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * Renders <f:then> child if there are validation errors. The check can be narrowed down to
+     * specific property paths.
+     * If no errors are there, it renders the <f:else>-child.
+     *
+     * @param string $for The argument or property name or path to check for error(s)
+     * @return string
+     * @api
+     */
+    public function render($for = null)
+    {
+        /** @var $request ActionRequest */
+        $request = $this->controllerContext->getRequest();
+        /** @var $validationResults Result */
+        $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
-	/**
-	 * Renders <f:then> child if there are validation errors. The check can be narrowed down to
-	 * specific property paths.
-	 * If no errors are there, it renders the <f:else>-child.
-	 *
-	 * @param string $for The argument or property name or path to check for error(s)
-	 * @return string
-	 * @api
-	 */
-	public function render($for = NULL) {
-		/** @var $request ActionRequest */
-		$request = $this->controllerContext->getRequest();
-		/** @var $validationResults Result */
-		$validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-
-		if ($validationResults !== NULL) {
-				// if $for is not set, ->forProperty will return the initial Result object untouched
-			$validationResults = $validationResults->forProperty($for);
-			if ($validationResults->hasErrors()) {
-				return $this->renderThenChild();
-			}
-		}
-		return $this->renderElseChild();
-	}
+        if ($validationResults !== null) {
+            // if $for is not set, ->forProperty will return the initial Result object untouched
+            $validationResults = $validationResults->forProperty($for);
+            if ($validationResults->hasErrors()) {
+                return $this->renderThenChild();
+            }
+        }
+        return $this->renderElseChild();
+    }
 }

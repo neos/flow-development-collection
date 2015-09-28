@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Tests\Functional\Resource\Publishing;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
@@ -19,14 +16,15 @@ namespace TYPO3\Flow\Tests\Functional\Resource\Publishing;
  * of the normal FileSystemPublishingTarget.
  *
  */
-class TestingFileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget {
-
-	/**
-	 * Always returns a fixed base URI of http://baseuri/_Resources/
-	 *
-	 * @return void
-	 */
-	protected function detectResourcesBaseUri() {
-		$this->resourcesBaseUri = 'http://baseuri/_Resources/';
-	}
+class TestingFileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget
+{
+    /**
+     * Always returns a fixed base URI of http://baseuri/_Resources/
+     *
+     * @return void
+     */
+    protected function detectResourcesBaseUri()
+    {
+        $this->resourcesBaseUri = 'http://baseuri/_Resources/';
+    }
 }

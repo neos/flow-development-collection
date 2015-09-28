@@ -2,13 +2,10 @@
 namespace TYPO3\Flow\Utility;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
@@ -18,38 +15,41 @@ namespace TYPO3\Flow\Utility;
  *
  * @deprecated since 1.1.0
  */
-class FileTypes {
+class FileTypes
+{
+    /**
+     * Returns a mime type based on the filename extension
+     *
+     * @param  string $filename Filename to determine the mime type for
+     * @return string
+     * @deprecated since 1.1.0
+     */
+    public static function getMimeTypeFromFilename($filename)
+    {
+        return MediaTypes::getMediaTypeFromFilename($filename);
+    }
 
-	/**
-	 * Returns a mime type based on the filename extension
-	 *
-	 * @param  string $filename Filename to determine the mime type for
-	 * @return string
-	 * @deprecated since 1.1.0
-	 */
-	static public function getMimeTypeFromFilename($filename) {
-		return MediaTypes::getMediaTypeFromFilename($filename);
-	}
+    /**
+     * Returns a filename extension (aka "format") based on the given mime type.
+     *
+     * @param string $mimeType Mime type
+     * @return string filename extension
+     * @deprecated since 1.1.0
+     */
+    public static function getFilenameExtensionFromMimeType($mimeType)
+    {
+        return MediaTypes::getFilenameExtensionFromMediaType($mimeType);
+    }
 
-	/**
-	 * Returns a filename extension (aka "format") based on the given mime type.
-	 *
-	 * @param string $mimeType Mime type
-	 * @return string filename extension
-	 * @deprecated since 1.1.0
-	 */
-	static public function getFilenameExtensionFromMimeType($mimeType) {
-		return MediaTypes::getFilenameExtensionFromMediaType($mimeType);
-	}
-
-	/**
-	 * Returns a media type based on the filename extension
-	 *
-	 * @param  string $filename Filename to determine the media type for
-	 * @return string
-	 * @deprecated since 1.1.0
-	 */
-	static public function getMediaTypeFromFilename($filename) {
-		return MediaTypes::getMediaTypeFromFilename($filename);
-	}
+    /**
+     * Returns a media type based on the filename extension
+     *
+     * @param  string $filename Filename to determine the media type for
+     * @return string
+     * @deprecated since 1.1.0
+     */
+    public static function getMediaTypeFromFilename($filename)
+    {
+        return MediaTypes::getMediaTypeFromFilename($filename);
+    }
 }

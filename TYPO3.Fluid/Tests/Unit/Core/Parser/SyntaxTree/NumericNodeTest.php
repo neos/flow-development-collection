@@ -2,53 +2,54 @@
 namespace TYPO3\Fluid\Tests\Unit\Core\Parser\SyntaxTree;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
+ * This script belongs to the Flow framework.                             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * the terms of the MIT license.                                          *
  *                                                                        */
 
 /**
  * Testcase for NumericNode
  *
  */
-class NumericNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class NumericNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function renderReturnsProperIntegerGivenInConstructor()
+    {
+        $string = '1';
+        $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode($string);
+        $this->assertEquals($node->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext')), 1, 'The rendered value of a numeric node does not match the string given in the constructor.');
+    }
 
-	/**
-	 * @test
-	 */
-	public function renderReturnsProperIntegerGivenInConstructor() {
-		$string = '1';
-		$node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode($string);
-		$this->assertEquals($node->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext')), 1, 'The rendered value of a numeric node does not match the string given in the constructor.');
-	}
+    /**
+     * @test
+     */
+    public function renderReturnsProperFloatGivenInConstructor()
+    {
+        $string = '1.1';
+        $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode($string);
+        $this->assertEquals($node->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext')), 1.1, 'The rendered value of a numeric node does not match the string given in the constructor.');
+    }
 
-	/**
-	 * @test
-	 */
-	public function renderReturnsProperFloatGivenInConstructor() {
-		$string = '1.1';
-		$node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode($string);
-		$this->assertEquals($node->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext')), 1.1, 'The rendered value of a numeric node does not match the string given in the constructor.');
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\Parser\Exception
+     */
+    public function constructorThrowsExceptionIfNoNumericGiven()
+    {
+        new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode('foo');
+    }
 
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Fluid\Core\Parser\Exception
-	 */
-	public function constructorThrowsExceptionIfNoNumericGiven() {
-		new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode('foo');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Fluid\Core\Parser\Exception
-	 */
-	public function addChildNodeThrowsException() {
-		$node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode('1');
-		$node->addChildNode(clone $node);
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\Parser\Exception
+     */
+    public function addChildNodeThrowsException()
+    {
+        $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\NumericNode('1');
+        $node->addChildNode(clone $node);
+    }
 }
