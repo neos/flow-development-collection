@@ -171,9 +171,9 @@ class ClassLoaderTest extends UnitTestCase
     public function classesWithOnlyUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo1.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-        $this->classLoader->loadClass('Acme_MyApp_Foo');
+        $this->classLoader->loadClass('Acme_MyApp_Foo1');
         $this->assertTrue(self::$testClassWasLoaded);
     }
 
@@ -183,9 +183,9 @@ class ClassLoaderTest extends UnitTestCase
     public function classesWithLeadingBackslashAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo2.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-        $this->classLoader->loadClass('\Acme\MyApp\Foo');
+        $this->classLoader->loadClass('\Acme\MyApp\Foo2');
         $this->assertTrue(self::$testClassWasLoaded);
     }
 
@@ -279,13 +279,13 @@ class ClassLoaderTest extends UnitTestCase
         $packages = array($mockPackage2, $mockPackage1);
         mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, true);
         mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo', 0770, true);
-        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = TRUE; ?>');
-        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
 
         $this->classLoader->setPackages($packages, $packages);
 
 
-        $this->classLoader->loadClass('TestPackage\Foo\Bar');
+        $this->classLoader->loadClass('TestPackage\Foo\Bar3');
         $this->assertTrue(self::$testClassWasOverwritten);
     }
 }
