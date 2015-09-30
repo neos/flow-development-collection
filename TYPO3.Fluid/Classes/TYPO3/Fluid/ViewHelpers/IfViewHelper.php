@@ -76,11 +76,19 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  * </output>
  *
  * <code title="inline notation">
- * {f:if(condition: someCondition, then: 'condition is met', else: 'condition is not met')}
+ * {f:if(condition: someVariable, then: 'condition is met', else: 'condition is not met')}
  * </code>
  * <output>
- * The value of the "then" attribute is displayed if the condition evaluates to TRUE.
+ * The value of the "then" attribute is displayed if the variable evaluates to TRUE.
  * Otherwise, everything the value of the "else"-attribute is displayed.
+ * </output>
+ *
+ * <code title="inline notation with comparison">
+ * {f:if(condition: '{workspace} == {userWorkspace}', then: 'this is a user workspace', else: 'no user workspace')}
+ * </code>
+ * <output>
+ * If the condition is not just a single variable, the whole expression must be enclosed in quotes and variables need
+ * to be enclosed in curly braces.
  * </output>
  *
  * @see \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue()
