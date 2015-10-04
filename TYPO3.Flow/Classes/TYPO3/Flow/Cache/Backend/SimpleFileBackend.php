@@ -430,6 +430,6 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function generateTemporaryPathAndFilename($entryIdentifier)
     {
-        return $this->cacheDirectory . '.' . $entryIdentifier . '.' . microtime(true) . '-' . (getmypid() ?: 0) . '.tmp';
+        return $this->cacheDirectory . '.' . md5($entryIdentifier) . '.' . microtime(true) . '-' . (getmypid() ?: 0) . '.tmp';
     }
 }
