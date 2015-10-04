@@ -1,7 +1,9 @@
 {
     "name": "neos/flow-development-collection",
     "description": "Flow packages in a joined repository for pull requests.",
-    "license": ["MIT"],
+    "license": [
+        "MIT"
+    ],
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
@@ -15,6 +17,7 @@
         "symfony/yaml": "2.5.*",
         "symfony/dom-crawler": "2.5.*",
         "symfony/console": "2.*",
+        "symfony/process": "^2.7",
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {

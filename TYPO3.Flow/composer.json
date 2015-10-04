@@ -23,6 +23,7 @@
         "symfony/yaml": "2.5.*",
         "symfony/dom-crawler": "2.5.*",
         "symfony/console": "2.*",
+        "symfony/process": "^2.7",
 
         "neos/composer-plugin": "^1.0.1"
     },

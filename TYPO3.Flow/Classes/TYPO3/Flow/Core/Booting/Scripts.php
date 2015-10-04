@@ -11,12 +11,15 @@ namespace TYPO3\Flow\Core\Booting;
  * source code.
  */
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -252,6 +255,8 @@ class Scripts
 
         // The compile sub command will only be run if the code cache is completely empty:
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
+            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
             self::executeCommand('typo3.flow:core:compile', $settings);
             if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
                 self::compileDoctrineProxies($bootstrap);
@@ -541,22 +546,25 @@ class Scripts
     public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = array())
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = array();
-        // Output errors in response
-        $command .= ' 2>&1';
-        exec($command, $output, $result);
-        if ($result !== 0) {
-            if (count($output) > 0) {
-                $exceptionMessage = implode(PHP_EOL, $output);
-            } else {
-                $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
+        $environmentVariables = self::buildFlowEnvironmentVariables($settings);
+        $process = new Process($command, FLOW_PATH_ROOT, $environmentVariables);
+        try {
+            $process->mustRun();
+            $output = $process->getOutput();
+        } catch (ProcessFailedException $processException) {
+            $exceptionMessage = $process->getOutput() . PHP_EOL . $process->getErrorOutput();
+            if ($exceptionMessage === PHP_EOL) {
+                $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $process->getExitCode());
             }
+
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
         }
+
         if ($outputResults) {
-            echo implode(PHP_EOL, $output);
+            echo $output;
         }
-        return $result === 0;
+
+        return true;
     }
 
     /**
@@ -599,22 +607,8 @@ class Scripts
      */
     public static function buildPhpCommand(array $settings)
     {
-        $subRequestEnvironmentVariables = array(
-            'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
-            'FLOW_CONTEXT' => $settings['core']['context']
-        );
-        if (isset($settings['core']['subRequestEnvironmentVariables'])) {
-            $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
-        }
-
         $command = '';
-        foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
-            if (DIRECTORY_SEPARATOR === '/') {
-                $command .= sprintf('%s=%s ', $argumentKey, escapeshellarg($argumentValue));
-            } else {
-                $command .= sprintf('SET %s=%s&', $argumentKey, escapeshellarg($argumentValue));
-            }
-        }
+
         if (DIRECTORY_SEPARATOR === '/') {
             $phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
         } else {
@@ -631,5 +625,24 @@ class Scripts
         }
 
         return $command;
+    }
+
+    /**
+     * Generates an array with environment variables for Flow rootpath and context and any additionally configured environment variables from settings.
+     *
+     * @param array $settings
+     * @return array
+     */
+    public static function buildFlowEnvironmentVariables(array $settings)
+    {
+        $subRequestEnvironmentVariables = array(
+            'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
+            'FLOW_CONTEXT' => $settings['core']['context']
+        );
+        if (isset($settings['core']['subRequestEnvironmentVariables'])) {
+            $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
+        }
+
+        return $subRequestEnvironmentVariables;
     }
 }
