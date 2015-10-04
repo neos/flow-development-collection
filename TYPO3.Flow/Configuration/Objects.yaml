@@ -226,6 +226,8 @@ Doctrine\Common\Persistence\ObjectManager:
 
 TYPO3\Flow\Persistence\PersistenceManagerInterface:
   className: TYPO3\Flow\Persistence\Doctrine\PersistenceManager
+  factoryObjectName: TYPO3\Flow\Core\Bootstrap
+  factoryMethodName: initializePersistenceManager
 
 TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger:
   properties:

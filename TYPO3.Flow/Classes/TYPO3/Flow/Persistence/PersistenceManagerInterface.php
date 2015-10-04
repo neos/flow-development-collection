@@ -27,13 +27,12 @@ interface PersistenceManagerInterface
      */
     public function injectSettings(array $settings);
 
-    /**
-     * Initializes the persistence manager, called by Flow.
-     *
-     * @return void
-     * @api
+    /*
+     * The "initialize" method has been deprecated and was already removed from the interface.
+     * It is still called until the next major Flow version, but you should replace it by
+     * using "initializeObject" instead.
+     * TODO: Remove for next major Flow version.
      */
-    public function initialize();
 
     /**
      * Commits new objects and changes to objects in the current persistence session into the backend.
