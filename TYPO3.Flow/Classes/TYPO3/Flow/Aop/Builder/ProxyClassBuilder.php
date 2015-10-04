@@ -436,25 +436,20 @@ class ProxyClassBuilder
             $proxyClass->addProperty($propertyName, var_export($propertyIntroduction->getInitialValue(), true), $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
         }
 
-        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
+        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("        if (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('protected');
 
-        $callBuildMethodsAndAdvicesArrayCode = "\n\t\t\$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $callBuildMethodsAndAdvicesArrayCode = "\n        \$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
-            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
+            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
         }
 
-        // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-        $proxyClass->getMethod('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')->addPreParentCallCode($this->fixMethodsAndAdvicesArrayForDoctrineProxiesCode());
-        // FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-        $proxyClass->getMethod('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies')->addPreParentCallCode($this->fixInjectedPropertiesForDoctrineProxiesCode());
+        $proxyClass->addTraits(['\TYPO3\Flow\Object\Proxy\DoctrineProxyFixingTrait', '\TYPO3\Flow\Aop\AdvicesTrait']);
 
-        $this->buildGetAdviceChainsMethodCode($targetClassName);
-        $this->buildInvokeJoinPointMethodCode($targetClassName);
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
         $proxyClass->addProperty('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'array()');
@@ -512,64 +507,22 @@ class ProxyClassBuilder
             return '';
         }
 
-        $methodsAndAdvicesArrayCode = "\n\t\t\$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
-        $methodsAndAdvicesArrayCode .= "\t\t\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
+        $methodsAndAdvicesArrayCode = "\n        \$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
+        $methodsAndAdvicesArrayCode .= "        \$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
         foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
-            $methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
+            $methodsAndAdvicesArrayCode .= "            '" . $methodName . "' => array(\n";
             foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $adviceConfigurations) {
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
+                $methodsAndAdvicesArrayCode .= "                '" . $adviceType . "' => array(\n";
                 foreach ($adviceConfigurations as $adviceConfiguration) {
                     $advice = $adviceConfiguration['advice'];
-                    $methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
+                    $methodsAndAdvicesArrayCode .= "                    new \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
                 }
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
+                $methodsAndAdvicesArrayCode .= "                ),\n";
             }
-            $methodsAndAdvicesArrayCode .= "\t\t\t),\n";
+            $methodsAndAdvicesArrayCode .= "            ),\n";
         }
-        $methodsAndAdvicesArrayCode .= "\t\t);\n";
+        $methodsAndAdvicesArrayCode .= "        );\n";
         return  $methodsAndAdvicesArrayCode;
-    }
-
-    /**
-     * Creates code that builds the targetMethodsAndGroupedAdvices array if it does not exist. This happens when a Doctrine
-     * lazy loading proxy for an object is created for some specific purpose, but filled afterwards "on the fly" if this object
-     * is part of a wide range "findBy" query.
-     *
-     * @todo Remove once doctrine is fixed
-     * @return string
-     */
-    protected function fixMethodsAndAdvicesArrayForDoctrineProxiesCode()
-    {
-        $code = <<<EOT
-		if (!isset(\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices) || empty(\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices)) {
-			\$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();
-			if (is_callable('parent::Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')) parent::Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies();
-		}
-EOT;
-        return $code;
-    }
-
-    /**
-     * Creates code that reinjects dependencies if they do not exist. This is necessary because in certain circumstances
-     * Doctrine loads a proxy in UnitOfWork->createEntity() without calling __wakeup and thus does not initialize DI.
-     * This happens when a Doctrine lazy loading proxy for an object is created for some specific purpose, but filled
-     * afterwards "on the fly" if this object is part of a wide range "findBy" query.
-     *
-     * @todo Remove once doctrine is fixed
-     * @return string
-     */
-    protected function fixInjectedPropertiesForDoctrineProxiesCode()
-    {
-        $code = <<<EOT
-		if (!\$this instanceof \Doctrine\ORM\Proxy\Proxy || isset(\$this->Flow_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies)) {
-			return;
-		}
-		\$this->Flow_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies = TRUE;
-		if (is_callable(array(\$this, 'Flow_Proxy_injectProperties'))) {
-			\$this->Flow_Proxy_injectProperties();
-		}
-EOT;
-        return $code;
     }
 
     /**
@@ -749,57 +702,6 @@ EOT;
             }
         }
         return $methods;
-    }
-
-    /**
-     * Adds a "getAdviceChains()" method to the current proxy class.
-     *
-     * @param string $targetClassName
-     * @return void
-     */
-    protected function buildGetAdviceChainsMethodCode($targetClassName)
-    {
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('Flow_Aop_Proxy_getAdviceChains');
-        $proxyMethod->setMethodParametersCode('$methodName');
-        $proxyMethod->overrideMethodVisibility('private');
-
-        $code = <<<'EOT'
-		$adviceChains = array();
-		if (isset($this->Flow_Aop_Proxy_groupedAdviceChains[$methodName])) {
-			$adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-		} else {
-			if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
-				$groupedAdvices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
-				if (isset($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice'])) {
-					$this->Flow_Aop_Proxy_groupedAdviceChains[$methodName]['TYPO3\Flow\Aop\Advice\AroundAdvice'] = new \TYPO3\Flow\Aop\Advice\AdviceChain($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice']);
-					$adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-				}
-			}
-		}
-		return $adviceChains;
-
-EOT;
-        $proxyMethod->addPreParentCallCode($code);
-    }
-
-    /**
-     * Adds a "invokeJoinPoint()" method to the current proxy class.
-     *
-     * @param string $targetClassName
-     * @return void
-     */
-    protected function buildInvokeJoinPointMethodCode($targetClassName)
-    {
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('Flow_Aop_Proxy_invokeJoinPoint');
-        $proxyMethod->setMethodParametersCode('\TYPO3\Flow\Aop\JoinPointInterface $joinPoint');
-        $code = <<<'EOT'
-		if (__CLASS__ !== $joinPoint->getClassName()) return parent::Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
-		if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-			return call_user_func_array(array('self', $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
-		}
-
-EOT;
-        $proxyMethod->addPreParentCallCode($code);
     }
 
     /**
