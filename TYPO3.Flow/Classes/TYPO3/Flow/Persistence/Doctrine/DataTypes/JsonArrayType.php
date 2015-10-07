@@ -54,6 +54,23 @@ class JsonArrayType extends DoctrineJsonArrayType
     }
 
     /**
+     * Use jsonb for PostgreSQL, this means we require PostgreSQL 9.4
+     *
+     * @param array $fieldDeclaration The field declaration
+     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform The currently used database platform
+     * @return string
+     */
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    {
+        switch ($platform->getName()) {
+            case 'postgresql':
+                return 'jsonb';
+            default:
+                return $platform->getJsonTypeDeclarationSQL($fieldDeclaration);
+        }
+    }
+
+    /**
      * We map jsonb fields to our datatype by default. Doctrine doesn't use jsonb at all.
      *
      * @param AbstractPlatform $platform
