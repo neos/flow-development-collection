@@ -1,8 +1,20 @@
-.. image:: https://travis-ci.org/neos/flow-development-collection.svg
-    :target: https://travis-ci.org/neos/flow-development-collection
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License|
+
+.. image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
+   :target: https://travis-ci.org/neos/flow-development-collection
+   :alt: Travis
 .. image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/flow-development-collection
    :alt: Code Climate
+.. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat
+   :target: https://styleci.io/repos/40963991
+   :alt: StyleCI
+.. |Latest Stable Version| image:: https://poser.pugx.org/neos/flow-development-collection/v/stable
+   :target: https://packagist.org/packages/neos/flow-development-collection
+   :alt: Latest Stable Version
+.. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
+   :target: https://packagist.org/packages/neos/flow-development-collection
+   :alt: License
 
 ---------------------------
 Flow development collection
