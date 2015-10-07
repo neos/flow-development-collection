@@ -1,9 +1,9 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License|
 
-.. image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
+.. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/flow-development-collection
    :alt: Travis
-.. image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
+.. |Code Climate| image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/flow-development-collection
    :alt: Code Climate
 .. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat
