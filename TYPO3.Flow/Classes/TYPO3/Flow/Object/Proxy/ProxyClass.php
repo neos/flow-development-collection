@@ -50,12 +50,12 @@ class ProxyClass
     /**
      * @var array
      */
-    protected $methods = array();
+    protected $methods = [];
 
     /**
      * @var array
      */
-    protected $constants = array();
+    protected $constants = [];
 
     /**
      * Note: Not using ProxyInterface::class here, since the interface names must have a leading backslash.
@@ -67,7 +67,12 @@ class ProxyClass
     /**
      * @var array
      */
-    protected $properties = array();
+    protected $traits = [];
+
+    /**
+     * @var array
+     */
+    protected $properties = [];
 
     /**
      * @var \TYPO3\Flow\Reflection\ReflectionService
@@ -178,6 +183,20 @@ class ProxyClass
     }
 
     /**
+     * Adds one or more traits to the class definition.
+     *
+     * Note thet the passed trait names must have a leading backslash,
+     * for example "\TYPO3\Flow\Object\Proxy\PropertyInjectionTrait".
+     *
+     * @param array $traitNames
+     * @return void
+     */
+    public function addTraits(array $traitNames)
+    {
+        $this->traits = array_merge($this->traits, $traitNames);
+    }
+
+    /**
      * Renders and returns the PHP code for this ProxyClass.
      *
      * @return string
@@ -191,6 +210,7 @@ class ProxyClass
 
         $constantsCode = $this->renderConstantsCode();
         $propertiesCode = $this->renderPropertiesCode();
+        $traitsCode = $this->renderTraitsCode();
 
         $methodsCode = isset($this->constructor) ? $this->constructor->render() : '';
         foreach ($this->methods as $proxyMethod) {
@@ -206,6 +226,7 @@ class ProxyClass
             "\n" .
             $this->buildClassDocumentation() .
             $abstractKeyword . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
+            $traitsCode .
             $constantsCode .
             $propertiesCode .
             $methodsCode .
@@ -243,7 +264,7 @@ class ProxyClass
     {
         $code = '';
         foreach ($this->constants as $name => $valueCode) {
-            $code .= '	const ' . $name . ' = ' . $valueCode . ";\n\n";
+            $code .= '    const ' . $name . ' = ' . $valueCode . ";\n\n";
         }
         return $code;
     }
@@ -258,10 +279,24 @@ class ProxyClass
         $code = '';
         foreach ($this->properties as $name => $attributes) {
             if (!empty($attributes['docComment'])) {
-                $code .= '	' . $attributes['docComment'] . "\n";
+                $code .= '    ' . $attributes['docComment'] . "\n";
             }
-            $code .= '	' . $attributes['visibility'] . ' $' . $name . ' = ' . $attributes['initialValueCode'] . ";\n\n";
+            $code .= '    ' . $attributes['visibility'] . ' $' . $name . ' = ' . $attributes['initialValueCode'] . ";\n\n";
         }
         return $code;
+    }
+
+    /**
+     * Renders code for added traits
+     *
+     * @return string
+     */
+    protected function renderTraitsCode()
+    {
+        if ($this->traits === []) {
+            return '';
+        }
+
+        return '    use ' . implode(', ', $this->traits) . ";\n\n";
     }
 }
