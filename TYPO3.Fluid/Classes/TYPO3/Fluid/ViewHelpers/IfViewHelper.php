@@ -1,12 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
@@ -71,11 +74,19 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  * </output>
  *
  * <code title="inline notation">
- * {f:if(condition: someCondition, then: 'condition is met', else: 'condition is not met')}
+ * {f:if(condition: someVariable, then: 'condition is met', else: 'condition is not met')}
  * </code>
  * <output>
- * The value of the "then" attribute is displayed if the condition evaluates to TRUE.
+ * The value of the "then" attribute is displayed if the variable evaluates to TRUE.
  * Otherwise, everything the value of the "else"-attribute is displayed.
+ * </output>
+ *
+ * <code title="inline notation with comparison">
+ * {f:if(condition: '{workspace} == {userWorkspace}', then: 'this is a user workspace', else: 'no user workspace')}
+ * </code>
+ * <output>
+ * If the condition is not just a single variable, the whole expression must be enclosed in quotes and variables need
+ * to be enclosed in curly braces.
  * </output>
  *
  * @see \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue()

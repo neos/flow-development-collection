@@ -1,12 +1,15 @@
 <?php
 namespace TYPO3\Flow\Core\Migrations;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Utility\Files;
@@ -349,8 +352,7 @@ abstract class AbstractMigration
      */
     protected function applySearchAndReplaceOperations()
     {
-        $allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], null, true);
-        foreach ($allPathsAndFilenames as $pathAndFilename) {
+        foreach (Files::getRecursiveDirectoryGenerator($this->targetPackageData['path'], null, true) as $pathAndFilename) {
             $pathInfo = pathinfo($pathAndFilename);
             if (!isset($pathInfo['filename'])) {
                 continue;
@@ -380,7 +382,6 @@ abstract class AbstractMigration
      */
     protected function applyFileOperations()
     {
-        $allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], null, true);
         foreach ($this->operations['moveFile'] as $operation) {
             $oldPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0]));
             $newPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[1]));
@@ -396,7 +397,7 @@ abstract class AbstractMigration
                 if (!is_dir($newPath)) {
                     continue;
                 }
-                foreach ($allPathsAndFilenames as $pathAndFilename) {
+                foreach (Files::getRecursiveDirectoryGenerator($this->targetPackageData['path'], null, true) as $pathAndFilename) {
                     if (substr_compare($pathAndFilename, $oldPath, 0, strlen($oldPath)) === 0) {
                         $relativePathAndFilename = substr($pathAndFilename, strlen($oldPath));
                         if (!is_dir(dirname(Files::concatenatePaths(array($newPath, $relativePathAndFilename))))) {

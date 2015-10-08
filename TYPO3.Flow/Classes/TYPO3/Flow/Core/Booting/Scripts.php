@@ -1,12 +1,15 @@
 <?php
 namespace TYPO3\Flow\Core\Booting;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
@@ -14,6 +17,8 @@ use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -512,16 +517,14 @@ class Scripts
     }
 
     /**
-     * Initialize the resource management component, setting up stream wrappers,
-     * publishing the public resources of all found packages, ...
+     * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeResources(Bootstrap $bootstrap)
     {
-        $resourceManager = $bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceManager::class);
-        $resourceManager->initialize();
+        StreamWrapperAdapter::initializeStreamWrapper($bootstrap->getObjectManager());
     }
 
     /**

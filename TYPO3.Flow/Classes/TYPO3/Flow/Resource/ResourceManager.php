@@ -1,12 +1,15 @@
 <?php
 namespace TYPO3\Flow\Resource;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -85,6 +88,11 @@ class ResourceManager
     protected $collections;
 
     /**
+     * @var boolean
+     */
+    protected $initialized = false;
+
+    /**
      * Injects the settings of this package
      *
      * @param array $settings
@@ -101,12 +109,16 @@ class ResourceManager
      *
      * @return void
      */
-    public function initialize()
+    protected function initialize()
     {
-        $this->initializeStreamWrapper();
+        if ($this->initialized === true) {
+            return;
+        }
+
         $this->initializeStorages();
         $this->initializeTargets();
         $this->initializeCollections();
+        $this->initialized = true;
     }
 
     /**
@@ -125,6 +137,7 @@ class ResourceManager
      */
     public function importResource($source, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
+        $this->initialize();
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1375196643);
         }
@@ -173,6 +186,8 @@ class ResourceManager
         if (!is_string($content)) {
             throw new Exception(sprintf('Tried to import content into the resource collection "%s" but the given content was a %s instead of a string.', $collectionName, gettype($content)), 1380878115);
         }
+        $this->initialize();
+
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1380878131);
         }
@@ -210,6 +225,7 @@ class ResourceManager
      */
     public function importUploadedResource(array $uploadInfo, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
     {
+        $this->initialize();
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import an uploaded file into the resource collection "%s" but no such collection exists. Please check your settings and HTML forms.', $collectionName), 1375197544);
         }
@@ -254,6 +270,7 @@ class ResourceManager
      */
     public function getStreamByResource(Resource $resource)
     {
+        $this->initialize();
         $collectionName = $resource->getCollectionName();
         if (!isset($this->collections[$collectionName])) {
             return false;
@@ -293,6 +310,8 @@ class ResourceManager
      */
     public function deleteResource(Resource $resource, $unpublishResource = true)
     {
+        $this->initialize();
+
         $collectionName = $resource->getCollectionName();
 
         $result = $this->resourceRepository->findBySha1($resource->getSha1());
@@ -338,6 +357,8 @@ class ResourceManager
      */
     public function getPublicPersistentResourceUri(Resource $resource)
     {
+        $this->initialize();
+
         if (!isset($this->collections[$resource->getCollectionName()])) {
             return false;
         }
@@ -358,6 +379,8 @@ class ResourceManager
      */
     public function getPublicPersistentResourceUriByHash($resourceHash, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
     {
+        $this->initialize();
+
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Could not determine persistent resource URI for "%s" because the specified collection "%s" does not exist.', $resourceHash, $collectionName), 1375197875);
         }
@@ -381,6 +404,8 @@ class ResourceManager
      */
     public function getPublicPackageResourceUri($packageKey, $relativePathAndFilename)
     {
+        $this->initialize();
+
         /** @var TargetInterface $target */
         $target = $this->collections[self::DEFAULT_STATIC_COLLECTION_NAME]->getTarget();
         return $target->getPublicStaticResourceUri($packageKey . '/' . $relativePathAndFilename);
@@ -394,6 +419,8 @@ class ResourceManager
      */
     public function getStorage($storageName)
     {
+        $this->initialize();
+
         return isset($this->storages[$storageName]) ? $this->storages[$storageName] : null;
     }
 
@@ -406,6 +433,8 @@ class ResourceManager
      */
     public function getCollection($collectionName)
     {
+        $this->initialize();
+
         return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : null;
     }
 
@@ -416,6 +445,8 @@ class ResourceManager
      */
     public function getCollections()
     {
+        $this->initialize();
+
         return $this->collections;
     }
 
@@ -427,6 +458,8 @@ class ResourceManager
      */
     public function getCollectionsByStorage(StorageInterface $storage)
     {
+        $this->initialize();
+
         $collections = array();
         foreach ($this->collections as $collectionName => $collection) {
             /** @var CollectionInterface $collection */
@@ -522,24 +555,6 @@ class ResourceManager
     }
 
     /**
-     * Registers a Stream Wrapper Adapter for the resource:// scheme.
-     *
-     * @return void
-     */
-    protected function initializeStreamWrapper()
-    {
-        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
-        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
-            $scheme = $streamWrapperClassName::getScheme();
-            if (in_array($scheme, stream_get_wrappers())) {
-                stream_wrapper_unregister($scheme);
-            }
-            stream_wrapper_register($scheme, \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::class);
-            StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
-        }
-    }
-
-    /**
      * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
      * move it outside of upload folder if open_basedir is enabled and check the filename.
      *
@@ -574,18 +589,6 @@ class ResourceManager
             'filepath' => $temporaryTargetPathAndFilename,
             'filename' => $pathInfo['basename']
         );
-    }
-
-    /**
-     * Returns all class names implementing the StreamWrapperInterface.
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return array Array of stream wrapper implementations
-     * @Flow\CompileStatic
-     */
-    protected static function getStreamWrapperImplementationClassNames($objectManager)
-    {
-        return $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class)->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Resource\Streams\StreamWrapperInterface::class);
     }
 
     /**

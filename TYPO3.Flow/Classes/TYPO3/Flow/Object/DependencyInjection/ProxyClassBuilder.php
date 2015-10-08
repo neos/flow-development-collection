@@ -1,12 +1,15 @@
 <?php
 namespace TYPO3\Flow\Object\DependencyInjection;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationArgument;
@@ -218,9 +221,9 @@ class ProxyClassBuilder
 			if(\$entityInformation['entityType'] === \\TYPO3\\Flow\\Resource\\ResourcePointer::class) continue;
 			\$entity = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
 			if (isset(\$entityInformation['entityPath'])) {
-				\$this->\$entityInformation['propertyName'] = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->\$entityInformation['propertyName'], \$entityInformation['entityPath'], \$entity);
+				\$this->{\$entityInformation['propertyName']} = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->{\$entityInformation['propertyName']}, \$entityInformation['entityPath'], \$entity);
 			} else {
-				\$this->\$entityInformation['propertyName'] = \$entity;
+				\$this->{\$entityInformation['propertyName']} = \$entity;
 			}
 		}
 		unset(\$this->Flow_Persistence_RelatedEntities);
@@ -240,15 +243,23 @@ class ProxyClassBuilder
         $className = $objectConfiguration->getClassName();
         $code = '';
         if ($this->reflectionService->hasMethod($className, '__sleep') === false) {
+            $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\Transient');
+            $propertyVarTags = [];
+            foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
+                $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
+                $propertyVarTags[$propertyName] = isset($varTagValues[0]) ? $varTagValues[0] : null;
+            }
             $code = "\t\t\$this->Flow_Object_PropertiesToSerialize = array();
-	\$reflectionService = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get(\\TYPO3\\Flow\\Reflection\\ReflectionService::class);
+
+	\$transientProperties = " . var_export($transientProperties, true) . ";
+	\$propertyVarTags = " . var_export($propertyVarTags, true) . ";
 	\$reflectedClass = new \\ReflectionClass('" . $className . "');
 	\$allReflectedProperties = \$reflectedClass->getProperties();
 	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'Flow_Aop_Proxy_groupedAdviceChains', 'Flow_Aop_Proxy_methodIsInAdviceMode'))) continue;
 		if (isset(\$this->Flow_Injected_Properties) && is_array(\$this->Flow_Injected_Properties) && in_array(\$propertyName, \$this->Flow_Injected_Properties)) continue;
-		if (\$reflectionProperty->isStatic() || \$reflectionService->isPropertyAnnotatedWith('" . $className . "', \$propertyName, \\TYPO3\\Flow\\Annotations\\Transient::class)) continue;
+		if (\$reflectionProperty->isStatic() || in_array(\$propertyName, \$transientProperties)) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			if (count(\$this->\$propertyName) > 0) {
 				foreach (\$this->\$propertyName as \$key => \$value) {
@@ -260,9 +271,8 @@ class ProxyClassBuilder
 			if (\$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				\$className = get_parent_class(\$this->\$propertyName);
 			} else {
-				\$varTagValues = \$reflectionService->getPropertyTagValues('" . $className . "', \$propertyName, 'var');
-				if (count(\$varTagValues) > 0) {
-					\$className = trim(\$varTagValues[0], '\\\\');
+				if (isset(\$propertyVarTags[\$propertyName])) {
+					\$className = trim(\$propertyVarTags[\$propertyName], '\\\\');
 				}
 				if (\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->isRegistered(\$className) === FALSE) {
 					\$className = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));

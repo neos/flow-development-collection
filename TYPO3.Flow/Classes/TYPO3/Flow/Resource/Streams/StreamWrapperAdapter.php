@@ -1,12 +1,18 @@
 <?php
 namespace TYPO3\Flow\Resource\Streams;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
@@ -31,9 +37,29 @@ class StreamWrapperAdapter
     public $context;
 
     /**
-     * @var \TYPO3\Flow\Resource\Streams\StreamWrapperInterface
+     * @var StreamWrapperInterface
      */
     protected $streamWrapper;
+
+    /**
+     * Initialize StreamWrappers with this adapter
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public static function initializeStreamWrapper($objectManager)
+    {
+        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($objectManager);
+        /** @var StreamWrapperInterface $streamWrapperClassName */
+        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
+            $scheme = $streamWrapperClassName::getScheme();
+            if (in_array($scheme, stream_get_wrappers())) {
+                stream_wrapper_unregister($scheme);
+            }
+            stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
+            static::registerStreamWrapper($scheme, $streamWrapperClassName);
+        }
+    }
 
     /**
      * Register a stream wrapper. Later registrations for a scheme will override
@@ -69,7 +95,9 @@ class StreamWrapperAdapter
         if ($this->streamWrapper === null) {
             $explodedPath = explode(':', $path, 2);
             $scheme = array_shift($explodedPath);
-            $this->streamWrapper = new self::$registeredStreamWrappers[$scheme]();
+            $registeredStreamWrappers = self::$registeredStreamWrappers;
+            $registeredStreamWrapperForScheme = $registeredStreamWrappers[$scheme];
+            $this->streamWrapper = new $registeredStreamWrapperForScheme();
         }
     }
 
@@ -453,5 +481,17 @@ class StreamWrapperAdapter
     {
         $this->createStreamWrapper($path);
         return $this->streamWrapper->pathStat($path, $flags);
+    }
+
+    /**
+     * Returns all class names implementing the StreamWrapperInterface.
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return array Array of stream wrapper implementations
+     * @Flow\CompileStatic
+     */
+    public static function getStreamWrapperImplementationClassNames(ObjectManagerInterface $objectManager)
+    {
+        return $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
     }
 }

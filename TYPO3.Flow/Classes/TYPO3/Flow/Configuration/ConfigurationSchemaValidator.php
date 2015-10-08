@@ -1,16 +1,20 @@
 <?php
 namespace TYPO3\Flow\Configuration;
 
-/*                                                                        *
- * This script belongs to the Flow framework.                             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the MIT license.                                          *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A validator for all configuration entries using Schema
@@ -96,10 +100,9 @@ class ConfigurationSchemaValidator
         $activePackages = $this->packageManager->getActivePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
-            $packageSchemaPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
+            $packageSchemaPath = Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
             if (is_dir($packageSchemaPath)) {
-                $packageSchemaFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($packageSchemaPath, '.schema.yaml');
-                foreach ($packageSchemaFiles as $schemaFile) {
+                foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
                     $schemaName = substr($schemaFile, strlen($packageSchemaPath) + 1, -strlen('.schema.yaml'));
                     $schemaNameParts = explode('.', str_replace('/', '.', $schemaName), 2);
 
