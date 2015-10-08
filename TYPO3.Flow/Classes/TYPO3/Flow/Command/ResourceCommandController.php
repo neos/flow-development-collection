@@ -93,47 +93,62 @@ class ResourceCommandController extends CommandController
     }
 
     /**
-     * Copy all assets of a collection from one storage to another
+     * Copy resources
      *
      * This command copies all resources from one collection to another storage identified by name.
+     * The target storage must be empty and must not be identical to the current storage of the collection.
      *
-     * The target storage must be empty and should not be identical to the current storage of the collection.
-     * Otherwise this could cause conflicts.
-     *
-     * It does not clone the references to the resources. It's just a dumb copy so you could change the
-     * storage of the collection afterwards.
+     * This command merely copies the binary data from one storage to another, it does not change the related
+     * Resource objects in the database in any way. Since the Resource objects in the database refer to a
+     * collection name, you can use this command for migrating from one storage to another my configuring
+     * the new storage with the name of the old storage collection after the resources have been copied.
      *
      * @param string $sourceCollection The name of the collection you want to copy the assets from
      * @param string $targetCollection The name of the collection you want to copy the assets to
+     * @param boolean $publish If enabled, the target collection will be published after the resources have been copied
      * @return void
      */
-    public function copyCommand($sourceCollection, $targetCollection)
+    public function copyCommand($sourceCollection, $targetCollection, $publish = false)
     {
-        $srcCollection = $this->resourceManager->getCollection($sourceCollection);
-        if ($srcCollection === null) {
-            $this->outputLine('Source collection "%s" does not exist.', array($sourceCollection));
+        $sourceCollectionName = $sourceCollection;
+        $sourceCollection = $this->resourceManager->getCollection($sourceCollectionName);
+        if ($sourceCollection === null) {
+            $this->outputLine('The source collection "%s" does not exist.', array($sourceCollectionName));
             $this->quit(1);
         }
 
-        $dstCollection = $this->resourceManager->getCollection($targetCollection);
-        if ($dstCollection === null) {
-            $this->outputLine('Target collection "%s" does not exist.', array($targetCollection));
+        $targetCollectionName = $targetCollection;
+        $targetCollection = $this->resourceManager->getCollection($targetCollection);
+        if ($targetCollection === null) {
+            $this->outputLine('The target collection "%s" does not exist.', array($targetCollectionName));
             $this->quit(1);
         }
 
-        if (!empty($dstCollection->getObjects())) {
-            $this->outputLine('Target collection "%s" is not empty.', array($targetCollection));
+        if (!empty($targetCollection->getObjects())) {
+            $this->outputLine('The target collection "%s" is not empty.', array($targetCollectionName));
             $this->quit(1);
         }
 
-        foreach ($srcCollection->getObjects() as $resource) {
+        $sourceObjects = $sourceCollection->getObjects();
+        $this->outputLine('Copying resource objects from collection "%s" to collection "%s" ...', [$sourceCollectionName, $targetCollectionName]);
+        $this->outputLine();
+
+        $this->output->progressStart(count($sourceObjects));
+        foreach ($sourceCollection->getObjects() as $resource) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $resource */
-            $dstCollection->importResource($resource->getStream());
+            $this->output->progressAdvance();
+            $targetCollection->importResource($resource->getStream());
         }
-        $this->outputLine('Copied %s resource objects from collection "%s" to collection "%s"', [count($srcCollection->getObjects()), $sourceCollection, $targetCollection]);
-        $dstCollection->getTarget()->publishCollection($srcCollection);
-        $this->outputLine('Published copied resources to target "%s"', [$dstCollection->getTarget()->getName()]);
-        $this->outputLine('Hint: If you want to use the target collection as a replacement for your current one you can now modify your configuration.');
+        $this->output->progressFinish();
+        $this->outputLine();
+
+        if ($publish) {
+            $this->outputLine('Publishing copied resources to the target "%s" ...', [$targetCollection->getTarget()->getName()]);
+            $targetCollection->getTarget()->publishCollection($sourceCollection);
+        }
+
+        $this->outputLine('Done.');
+        $this->outputLine('Hint: If you want to use the target collection as a replacement for your current one, you can now modify your settings accordingly.');
     }
 
     /**
