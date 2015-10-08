@@ -221,9 +221,9 @@ class ProxyClassBuilder
 			if(\$entityInformation['entityType'] === \\TYPO3\\Flow\\Resource\\ResourcePointer::class) continue;
 			\$entity = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
 			if (isset(\$entityInformation['entityPath'])) {
-				\$this->\$entityInformation['propertyName'] = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->\$entityInformation['propertyName'], \$entityInformation['entityPath'], \$entity);
+				\$this->{\$entityInformation['propertyName']} = \\TYPO3\\Flow\\Utility\\Arrays::setValueByPath(\$this->{\$entityInformation['propertyName']}, \$entityInformation['entityPath'], \$entity);
 			} else {
-				\$this->\$entityInformation['propertyName'] = \$entity;
+				\$this->{\$entityInformation['propertyName']} = \$entity;
 			}
 		}
 		unset(\$this->Flow_Persistence_RelatedEntities);
