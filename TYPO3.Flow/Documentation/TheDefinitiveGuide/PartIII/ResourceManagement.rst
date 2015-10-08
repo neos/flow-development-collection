@@ -431,12 +431,16 @@ returns the resource's hash. This hash can also be accessed by using ``$resource
 You are encouraged to use this stream wrapper wherever you need to access a static or
 persistent resource in your PHP code.
 
-Storing your assets locally, but serving them over CDN
-======================================================
+Publishing to a Content Delivery Network (CDN)
+==============================================
 
-First you need to install your desired driver for your CDN and configure it properly (provide correct
-credentials etc).
-Than you add a new publication target that uses that driver and assign it to your collection.
+Flow can publish resources to Content Delivery Networks or other remote services by using specialized connectors.
+
+First you need to install your desired connector (a third-party package which usually can be obtained through
+packagist.org9 configure it according to its documentation (provide correct credentials etc).
+
+Once the connector package is in place, you add a new publishing target which uses that connect and assign this target
+to your collection.
 
 .. code-block:: yaml
 
@@ -454,23 +458,23 @@ Than you add a new publication target that uses that driver and assign it to you
               keyPrefix: '/'
               baseUri: 'https://abc123def456.cloudfront.net/'
 
-As you still have the your assets stored locally you need to publish them to the new target by using
+Since the new publishing target will be empty initially, you need to publish your assets to the new target by using
 the  ``resource:publish`` command:
 
 .. code-block:: none
 
     path$ ./flow resource:publish
 
-That will upload your files to the target and use the calculated remote URL for all your assets from now on.
+This command will upload your files to the target and use the calculated remote URL for all your assets from now on.
 
 
-Exchanging the storage of a collection (move to CDN)
-====================================================
+Switching the storage of a collection (move to CDN)
+===================================================
 
 If you want to migrate from your default local filesystem storage to a remote storage, you need to copy
-all your resources to that new storage and use that storage afterwards by default.
+all your existing persistent resources to that new storage and use that storage afterwards by default.
 
-So you start by adding a new storage with the desired driver that connects the resource management to your CDN.
+You start by adding a new storage with the desired driver that connects the resource management to your CDN.
 As you might want also want to serve your assets by the remote storage system, you also add a target that
 contains your published resources (as with local storage this can't be the same as the storage).
 
@@ -510,13 +514,13 @@ Now you can use the ``resource:copy`` command:
 
 .. code-block:: none
 
-    path$ ./flow resource:copy persistent tmpNewCollection
+    path$ ./flow resource:copy --publish persistent tmpNewCollection
 
 This will copy all your files from your current storage (local filesystem) to the new remote storage.
-Afterwards it publishes all the resources and you have the same state on your current storage and publication
-target as on the new one.
+The ``--publish`` flag means that this command also publishes all the resources to the new target, and you have the
+same state on your current storage and publication target as on the new one.
 
-Now you can overwrite your old collection configuration and kick out the temporary one:
+Now you can overwrite your old collection configuration and remove the temporary one:
 
 .. code-block:: yaml
 
