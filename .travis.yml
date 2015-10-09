@@ -10,6 +10,9 @@ matrix:
 #      env: DB=pgsql
     - php: 5.5
       env: DB=sqlite
+cache:
+  directories:
+    - $HOME/.composer/cache
 before_install:
   - cd ..
   - git clone https://github.com/neos/flow-base-distribution.git -b 2.3
