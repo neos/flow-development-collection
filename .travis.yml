@@ -1,5 +1,6 @@
 language: php
 matrix:
+  fast_finish: true
   include:
     - php: 5.6
       env: DB=sqlite
@@ -9,14 +10,15 @@ matrix:
 #      env: DB=pgsql
     - php: 5.5
       env: DB=sqlite
+cache:
+  directories:
+    - $HOME/.composer/cache
 before_install:
   - cd ..
-  - git clone https://github.com/neos/flow-base-distribution.git -b 2.3
-  - cd flow-base-distribution
+  - git clone https://github.com/neos/flow-development-distribution.git -b 2.3
+  - cd flow-development-distribution
 install:
-  - composer require "neos/flow-development-collection 2.3.x-dev"
-  - mkdir Packages/Application
-  - mv Packages/Framework/TYPO3.Party Packages/Application/
+  - composer install
   - rm -rf Packages/Framework
   - mv ../flow-development-collection Packages/Framework
 before_script:
@@ -25,7 +27,6 @@ before_script:
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
-  - FLOW_CONTEXT=Testing ./flow configuration:show --type Settings --path TYPO3.Flow.persistence.backendOptions
 script:
-  - bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml
-  - bin/phpunit --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"
+  - bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
+  - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"
