@@ -28,5 +28,5 @@ before_script:
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
 script:
-  - bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml
-  - bin/phpunit --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"
+  - bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
+  - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"
