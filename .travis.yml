@@ -15,12 +15,10 @@ cache:
     - $HOME/.composer/cache
 before_install:
   - cd ..
-  - git clone https://github.com/neos/flow-base-distribution.git -b 2.3
-  - cd flow-base-distribution
+  - git clone https://github.com/neos/flow-development-distribution.git -b 2.3
+  - cd flow-development-distribution
 install:
-  - composer require "neos/flow-development-collection 2.3.x-dev"
-  - mkdir Packages/Application
-  - mv Packages/Framework/TYPO3.Party Packages/Application/
+  - composer install
   - rm -rf Packages/Framework
   - mv ../flow-development-collection Packages/Framework
 before_script:
