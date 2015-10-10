@@ -602,8 +602,8 @@ class ConfigurationManager
         $includeCachedConfigurationsCode = <<< "EOD"
 <?php
 if (FLOW_PATH_ROOT !== '$flowRootPath' || !file_exists('$cachePathAndFilename')) {
-	unlink(__FILE__);
-	return array();
+	@unlink(__FILE__);
+	return [];
 }
 return require '$cachePathAndFilename';
 EOD;
