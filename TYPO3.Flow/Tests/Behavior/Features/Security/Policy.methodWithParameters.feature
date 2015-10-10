@@ -82,10 +82,10 @@ Feature: Method policy enforcement
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "publicAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated
-  Scenario: customer action is denied for everybody
-    Given I am not authenticated
-    Then I can not call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
+#  @Isolated
+#  Scenario: customer action is denied for everybody
+#    Given I am not authenticated
+#    Then I can not call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
   Scenario: customer action is granted for customer
@@ -97,10 +97,10 @@ Feature: Method policy enforcement
     Given I am authenticated with role "TYPO3.Flow:Administrator"
     Then I can call the method "customerAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated
-  Scenario: admin action is denied for everybody
-    Given I am not authenticated
-    Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
+#  @Isolated
+#  Scenario: admin action is denied for everybody
+#    Given I am not authenticated
+#    Then I can not call the method "adminAction" of class "TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
   Scenario: admin action is denied for customer (grant permission is overridden, due to a second equivalent privilege definition in the same role)
