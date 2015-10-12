@@ -72,7 +72,7 @@ class RuntimeExpressionEvaluator
      *
      * @return void
      */
-    public function shutdownObject()
+    public function saveRuntimeExpressions()
     {
         if ($this->newExpressions === array()) {
             return;
