@@ -53,7 +53,7 @@ class IntegerConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($source instanceof \DateTime) {
+        if ($source instanceof \DateTimeInterface) {
             return $source->format('U');
         }
 

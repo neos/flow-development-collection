@@ -51,7 +51,7 @@ class DateTimeValidator extends AbstractValidator
      */
     protected function isValid($value)
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof \DateTimeInterface) {
             return;
         }
         if (!isset($this->options['locale'])) {

@@ -582,7 +582,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 
         $values = array();
         foreach ($array as $key => $value) {
-            if ($value instanceof \DateTime) {
+            if ($value instanceof \DateTimeInterface) {
                 $values[] = array(
                     'type' => 'DateTime',
                     'index' => $key,
@@ -717,7 +717,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 
         $values = array();
         foreach ($splObjectStorage as $object) {
-            if ($object instanceof \DateTime) {
+            if ($object instanceof \DateTimeInterface) {
                 $values[] = array(
                     'type' => 'DateTime',
                     'index' => null,
@@ -775,9 +775,9 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
      * @param \DateTime $dateTime
      * @return integer
      */
-    protected function processDateTime(\DateTime $dateTime = null)
+    protected function processDateTime(\DateTimeInterface $dateTime = null)
     {
-        if ($dateTime instanceof \DateTime) {
+        if ($dateTime instanceof \DateTimeInterface) {
             return $dateTime->getTimestamp();
         } else {
             return null;
