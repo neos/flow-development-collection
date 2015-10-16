@@ -108,10 +108,11 @@ class ObjectAccess
         }
 
         $propertyExists = true;
+        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
-            if (property_exists(get_class($subject), $propertyName)) {
-                $propertyReflection = new PropertyReflection(get_class($subject), $propertyName);
+            if (property_exists($className, $propertyName)) {
+                $propertyReflection = new PropertyReflection($className, $propertyName);
                 return $propertyReflection->getValue($subject);
             } elseif (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
@@ -129,8 +130,7 @@ class ObjectAccess
             }
         }
 
-        $class = get_class($subject);
-        $cacheIdentifier = $class . '|' . $propertyName;
+        $cacheIdentifier = $className . '|' . $propertyName;
         self::initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName);
 
         if (isset(self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'])) {
@@ -238,8 +238,9 @@ class ObjectAccess
         }
 
         if ($forceDirectAccess === true) {
-            if (property_exists(get_class($subject), $propertyName)) {
-                $propertyReflection = new PropertyReflection(get_class($subject), $propertyName);
+            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($subject);
+            if (property_exists($className, $propertyName)) {
+                $propertyReflection = new PropertyReflection($className, $propertyName);
                 $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;
@@ -274,14 +275,14 @@ class ObjectAccess
         }
         if ($object instanceof \stdClass) {
             $declaredPropertyNames = array_keys(get_object_vars($object));
-            $class = 'stdClass';
-            unset(self::$gettablePropertyNamesCache[$class]);
+            $className = 'stdClass';
+            unset(self::$gettablePropertyNamesCache[$className]);
         } else {
-            $class = get_class($object);
-            $declaredPropertyNames = array_keys(get_class_vars($class));
+            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+            $declaredPropertyNames = array_keys(get_class_vars($className));
         }
 
-        if (!isset(self::$gettablePropertyNamesCache[$class])) {
+        if (!isset(self::$gettablePropertyNamesCache[$className])) {
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable(array($object, $methodName))) {
                     if (substr($methodName, 0, 2) === 'is') {
@@ -298,9 +299,9 @@ class ObjectAccess
 
             $propertyNames = array_unique($declaredPropertyNames);
             sort($propertyNames);
-            self::$gettablePropertyNamesCache[$class] = $propertyNames;
+            self::$gettablePropertyNamesCache[$className] = $propertyNames;
         }
-        return self::$gettablePropertyNamesCache[$class];
+        return self::$gettablePropertyNamesCache[$className];
     }
 
     /**
@@ -322,7 +323,8 @@ class ObjectAccess
         if ($object instanceof \stdClass) {
             $declaredPropertyNames = array_keys(get_object_vars($object));
         } else {
-            $declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+            $declaredPropertyNames = array_keys(get_class_vars($className));
         }
 
         foreach (get_class_methods($object) as $methodName) {
@@ -349,9 +351,11 @@ class ObjectAccess
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
+
+        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
         if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
             return true;
-        } elseif (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== false) {
+        } elseif (array_search($propertyName, array_keys(get_class_vars($className))) !== false) {
             return true;
         }
         return is_callable(array($object, self::buildSetterMethodName($propertyName)));
@@ -385,7 +389,8 @@ class ObjectAccess
         if (is_callable(array($object, 'has' . $uppercasePropertyName))) {
             return true;
         }
-        return (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== false);
+        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+        return (array_search($propertyName, array_keys(get_class_vars($className))) !== false);
     }
 
     /**
