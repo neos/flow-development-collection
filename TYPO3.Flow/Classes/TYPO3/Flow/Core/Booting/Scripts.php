@@ -492,18 +492,6 @@ class Scripts
     }
 
     /**
-     * Initializes the persistence framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializePersistence(Bootstrap $bootstrap)
-    {
-        $persistenceManager = $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
-        $persistenceManager->initialize();
-    }
-
-    /**
      * Initializes the session framework
      *
      * @param Bootstrap $bootstrap

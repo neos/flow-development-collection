@@ -48,10 +48,12 @@ class Package extends BasePackage
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(\TYPO3\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
-                $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
-            } elseif ($request->getHttpRequest()->isMethodSafe()) {
-                $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll(true);
+            if ($bootstrap->getObjectManager()->hasInstance('TYPO3\Flow\Persistence\PersistenceManagerInterface')) {
+                if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
+                    $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+                } elseif ($request->getHttpRequest()->isMethodSafe()) {
+                    $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll(true);
+                }
             }
         });
         $dispatcher->connect(\TYPO3\Flow\Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', \TYPO3\Flow\Persistence\PersistenceManagerInterface::class, 'persistAll');

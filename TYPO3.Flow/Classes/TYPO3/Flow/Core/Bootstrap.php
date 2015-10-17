@@ -27,6 +27,7 @@ use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -330,8 +331,7 @@ class Bootstrap
         }
 
         $sequence->addStep(new Step('typo3.flow:reflectionservice', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('typo3.flow:persistence', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializePersistence')), 'typo3.flow:reflectionservice');
-        $sequence->addStep(new Step('typo3.flow:resources', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeResources')), 'typo3.flow:persistence');
+        $sequence->addStep(new Step('typo3.flow:resources', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeResources')), 'typo3.flow:reflectionservice');
         $sequence->addStep(new Step('typo3.flow:session', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSession')), 'typo3.flow:resources');
         return $sequence;
     }
@@ -401,6 +401,24 @@ class Bootstrap
             throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
         }
         return $this->earlyInstances[\TYPO3\Flow\Object\ObjectManagerInterface::class];
+    }
+
+    /**
+     * @return PersistenceManagerInterface
+     * @throws FlowException
+     * @internal This method is a workaround for not creating an additional factory until PersistenceManagerInterface::initialize is no longer supported.
+     * TODO: Remove when PersistenceManagerInterface::initialize is not supported anymore.
+     */
+    public function initializePersistenceManager()
+    {
+        $persistenceManagerImplementation = $this->getObjectManager()->getClassNameByObjectName(PersistenceManagerInterface::class);
+        /** @var PersistenceManagerInterface $persistenceManager */
+        $persistenceManager = new $persistenceManagerImplementation();
+        if (is_callable([$persistenceManager, 'initialize'])) {
+            $persistenceManager->initialize();
+        }
+
+        return $persistenceManager;
     }
 
     /**
