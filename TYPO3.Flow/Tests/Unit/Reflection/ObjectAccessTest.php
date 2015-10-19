@@ -15,6 +15,8 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
+require_once('Fixture/Model/Entity.php');
+require_once('Fixture/Model/EntityWithDoctrineProxy.php');
 
 /**
  * Testcase for Object Access
@@ -389,6 +391,17 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
             'property2' => null,
             'publicProperty2' => 42);
         $actualProperties = ObjectAccess::getGettableProperties($stdClassObject);
+        $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
+    }
+
+    /**
+     * @test
+     */
+    public function getGettablePropertiesHandlesDoctrineProxy()
+    {
+        $proxyObject = new \TYPO3\Flow\Tests\Reflection\Fixture\Model\EntityWithDoctrineProxy();
+        $expectedProperties = array();
+        $actualProperties = ObjectAccess::getGettableProperties($proxyObject);
         $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
 
