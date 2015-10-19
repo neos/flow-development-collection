@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |API|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=3.0
    :target: https://travis-ci.org/neos/flow-development-collection
@@ -15,6 +15,9 @@
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: License
+.. |API| image:: https://img.shields.io/badge/API%20docs-2.3-blue.svg
+   :target: http://neos.github.io/api-docs/flow/2.3
+   :alt: API Docs
 
 ---------------------------
 Flow development collection

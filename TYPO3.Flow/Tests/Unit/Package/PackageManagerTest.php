@@ -127,11 +127,19 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $package = $this->packageManager->createPackage('Acme.Foobar');
         $dummyObject = $this->createDummyObjectForPackage($package);
 
-        eval('namespace Doctrine\ORM\Proxy; interface Proxy {}');
         mkdir('vfs://Test/Somewhere/For/DoctrineProxies', 0700, true);
         $dummyProxyClassName = 'Proxy_' . str_replace('\\', '_', get_class($dummyObject));
         $dummyProxyClassPath = 'vfs://Test/Somewhere/For/DoctrineProxies/' . $dummyProxyClassName . '.php';
-        file_put_contents($dummyProxyClassPath, '<?php class ' . $dummyProxyClassName . ' extends ' . get_class($dummyObject) . ' implements \Doctrine\ORM\Proxy\Proxy {} ?>');
+        file_put_contents($dummyProxyClassPath, '<?php class ' . $dummyProxyClassName . ' extends ' . get_class($dummyObject) . ' implements \Doctrine\ORM\Proxy\Proxy {
+            public function __setInitialized($initialized) {}
+            public function __setInitializer(Closure $initializer = null) {}
+            public function __getInitializer() {}
+            public function __setCloner(Closure $cloner = null) {}
+            public function __getCloner() {}
+            public function __getLazyProperties() {}
+            public function __load() {}
+            public function __isInitialized() {}
+        } ?>');
         require $dummyProxyClassPath;
         $dummyProxy = new $dummyProxyClassName();
 
