@@ -41,7 +41,7 @@ class LockManager
      */
     public function __construct()
     {
-        $this->lockPathAndFilename = rtrim(sys_get_temp_dir(), '/') . '/' . md5(FLOW_PATH_ROOT) . '_Flow.lock';
+        $this->lockPathAndFilename = FLOW_PATH_TEMPORARY . md5(FLOW_PATH_ROOT) . '_Flow.lock';
         if (file_exists($this->lockPathAndFilename) && filemtime($this->lockPathAndFilename) < (time() - self::LOCKFILE_MAXIMUM_AGE)) {
             @unlink($this->lockPathAndFilename);
         }

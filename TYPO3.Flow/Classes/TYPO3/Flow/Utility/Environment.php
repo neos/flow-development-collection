@@ -33,17 +33,6 @@ class Environment
     protected $request;
 
     /**
-     * The base path of $temporaryDirectory. This property can (and should) be set from outside.
-     * @var string
-     */
-    protected $temporaryDirectoryBase;
-
-    /**
-     * @var string
-     */
-    protected $temporaryDirectory = null;
-
-    /**
      * Initializes the environment instance.
      *
      * @param \TYPO3\Flow\Core\ApplicationContext $context The Flow context
@@ -58,28 +47,22 @@ class Environment
      *
      * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
      * @return void
+     * @throws Exception
+     * @deprecated since 2.3 - Set the environment variable FLOW_PATH_TEMPORARY_BASE to change the temporary directory base, see Bootstrap::defineConstants()
      */
     public function setTemporaryDirectoryBase($temporaryDirectoryBase)
     {
-        $this->temporaryDirectoryBase = $temporaryDirectoryBase;
-        $this->temporaryDirectory = null;
+        throw new Exception('Changing the temporary directory path during runtime is no longer supported. Set the environment variable FLOW_PATH_TEMPORARY_BASE to change the temporary directory base', 1441355116);
     }
 
     /**
      * Returns the full path to Flow's temporary directory.
      *
-     * @return string Path to PHP's temporary directory
-     * @api
+     * @return string
      */
     public function getPathToTemporaryDirectory()
     {
-        if ($this->temporaryDirectory !== null) {
-            return $this->temporaryDirectory;
-        }
-
-        $this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
-
-        return $this->temporaryDirectory;
+        return FLOW_PATH_TEMPORARY;
     }
 
     /**
@@ -100,41 +83,6 @@ class Environment
     public function isRewriteEnabled()
     {
         return (boolean)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS');
-    }
-
-    /**
-     * Creates Flow's temporary directory - or at least asserts that it exists and is
-     * writable.
-     *
-     * For each Flow Application Context, we create an extra temporary folder,
-     * and for nested contexts, the folders are prefixed with "SubContext" to
-     * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
-     *
-     * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
-     * @return string The full path to the temporary directory
-     * @throws \TYPO3\Flow\Utility\Exception if the temporary directory could not be created or is not writable
-     */
-    protected function createTemporaryDirectory($temporaryDirectoryBase)
-    {
-        $temporaryDirectoryBase = \TYPO3\Flow\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
-        if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
-            $temporaryDirectoryBase .= '/';
-        }
-        $temporaryDirectory = $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$this->context) . '/';
-
-        if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
-            try {
-                \TYPO3\Flow\Utility\Files::createDirectoryRecursively($temporaryDirectory);
-            } catch (\TYPO3\Flow\Error\Exception $exception) {
-                throw new \TYPO3\Flow\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "TYPO3.Flow.utility.environment.temporaryDirectoryBase".', 1335382361);
-            }
-        }
-
-        if (!is_writable($temporaryDirectory)) {
-            throw new \TYPO3\Flow\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" is not writable. Please make this directory writable or define another temporary directory in your Settings.yaml with the path "TYPO3.Flow.utility.environment.temporaryDirectoryBase".', 1216287176);
-        }
-
-        return $temporaryDirectory;
     }
 
     /**
