@@ -18,7 +18,6 @@ use TYPO3\Flow\Core\ApplicationContext;
  */
 class EnvironmentTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
-
     /**
      * @test
      */

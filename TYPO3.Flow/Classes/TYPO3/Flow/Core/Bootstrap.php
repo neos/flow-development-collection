@@ -529,7 +529,7 @@ class Bootstrap
 
         if (!defined('FLOW_PATH_TEMPORARY')) {
             $temporaryDirectoryPath = self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY');
-            if ($temporaryDirectoryPath !== NULL) {
+            if ($temporaryDirectoryPath !== null) {
                 $temporaryDirectoryPath = rtrim($temporaryDirectoryPath, '/') . '/';
             } else {
                 $temporaryDirectoryBasePath = self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary';
