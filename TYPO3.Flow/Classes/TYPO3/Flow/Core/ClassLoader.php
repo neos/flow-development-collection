@@ -436,6 +436,7 @@ class ClassLoader {
 			if ($proxyClasses !== FALSE) {
 				$this->availableProxyClasses = $proxyClasses;
 			}
+		}
 	}
 
 	/**
