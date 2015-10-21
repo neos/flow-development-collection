@@ -97,7 +97,8 @@ class EntityManagerFactory
         $config->setResultCacheImpl($resultCache);
 
         if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $sqlLoggerInstance = new $this->settings['doctrine']['sqlLogger']();
+            $configuredSqlLogger = $this->settings['doctrine']['sqlLogger'];
+            $sqlLoggerInstance = new $configuredSqlLogger();
             if ($sqlLoggerInstance instanceof SQLLogger) {
                 $config->setSQLLogger($sqlLoggerInstance);
             } else {
