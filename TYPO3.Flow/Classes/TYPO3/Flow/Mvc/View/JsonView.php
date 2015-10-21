@@ -269,7 +269,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
      */
     protected function transformObject($object, array $configuration)
     {
-        if ($object instanceof \DateTime) {
+        if ($object instanceof \DateTimeInterface) {
             return $object->format(\DateTime::ISO8601);
         } else {
             $propertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($object);

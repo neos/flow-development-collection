@@ -106,7 +106,7 @@ class Headers
             throw new \InvalidArgumentException('The "Set-Cookie" headers must be set via setCookie().', 1345128153);
         }
 
-        if ($values instanceof \DateTime) {
+        if ($values instanceof \DateTimeInterface) {
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
             $values = array($date->format('D, d M Y H:i:s') . ' GMT');

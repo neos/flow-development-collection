@@ -169,7 +169,7 @@ class JsonArrayType extends DoctrineJsonArrayType
 
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
-            if ($value instanceof \DateTime) {
+            if ($value instanceof \DateTimeInterface) {
                 $value = array(
                     'date' => $value->format('Y-m-d H:i:s.u'),
                     'timezone' => $value->format('e'),
