@@ -250,7 +250,7 @@ meant to be public and which ones need to be kept private. The trigger for publi
 persistent resources is the generation of its public web URI. A very common way to do that
 is displaying a resource in a Fluid template:
 
-.. code-block: html
+.. code-block:: html
 
 	<img src="{f:uri.resource(resource: image.originalResource)}" />
 
