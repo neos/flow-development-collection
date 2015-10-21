@@ -331,4 +331,52 @@ class RoutingTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
         $this->assertEquals($expectedStatus, $response->getStatus());
     }
+
+    /**
+     * @test
+     */
+    public function routerInitializesRoutesIfNotInjectedExplicitly()
+    {
+        $routeValues = array(
+            '@package' => 'TYPO3.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        );
+        $actualResult = $this->router->resolve($routeValues);
+
+        $this->assertSame('typo3/flow/test/http/foo', $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function explicitlySpecifiedRoutesOverruleConfiguredRoutes()
+    {
+        $routeValues = array(
+            '@package' => 'TYPO3.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        );
+        $routesConfiguration = array(
+            array(
+                'uriPattern' => 'custom/uri/pattern',
+                'defaults' => array(
+                    '@package' => 'TYPO3.Flow',
+                    '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                    '@controller' => 'Foo',
+                    '@action' => 'index',
+                    '@format' => 'html'
+                ),
+            )
+        );
+        $this->router->setRoutesConfiguration($routesConfiguration);
+        $this->assertSame('custom/uri/pattern', $this->router->resolve($routeValues));
+
+        // reset router configuration for following tests
+        $this->router->setRoutesConfiguration(null);
+    }
 }

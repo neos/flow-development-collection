@@ -17,7 +17,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use TYPO3\Flow\Mvc\Routing\Route;
-use TYPO3\Flow\Mvc\Routing\RouterInterface;
+use TYPO3\Flow\Mvc\Routing\Router;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
@@ -35,7 +35,7 @@ class RoutingCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var RouterInterface
+     * @var Router
      */
     protected $router;
 
@@ -54,8 +54,6 @@ class RoutingCommandController extends CommandController
      */
     public function listCommand()
     {
-        $this->initializeRouter();
-
         $this->outputLine('Currently registered routes:');
         /** @var Route $route */
         foreach ($this->router->getRoutes() as $index => $route) {
@@ -74,8 +72,6 @@ class RoutingCommandController extends CommandController
      */
     public function showCommand($index)
     {
-        $this->initializeRouter();
-
         $routes = $this->router->getRoutes();
         if (isset($routes[$index - 1])) {
             /** @var Route $route */
@@ -110,8 +106,6 @@ class RoutingCommandController extends CommandController
      */
     public function getPathCommand($package, $controller = 'Standard', $action = 'index', $format = 'html')
     {
-        $this->initializeRouter();
-
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
         $subpackage = isset($packageParts[1]) ? $packageParts[1] : null;
@@ -174,8 +168,6 @@ class RoutingCommandController extends CommandController
      */
     public function routePathCommand($path, $method = 'GET')
     {
-        $this->initializeRouter();
-
         $server = array(
             'REQUEST_URI' => $path,
             'REQUEST_METHOD' => $method
@@ -214,17 +206,6 @@ class RoutingCommandController extends CommandController
         }
         $this->outputLine('No matching Route was found');
         $this->quit(1);
-    }
-
-    /**
-     * Initialize the injected router-object
-     *
-     * @return void
-     */
-    protected function initializeRouter()
-    {
-        $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-        $this->router->setRoutesConfiguration($routesConfiguration);
     }
 
     /**
