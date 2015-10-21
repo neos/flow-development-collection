@@ -421,6 +421,10 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function commonObjectIsPersistedAndIsReconstituted()
     {
+        if ($this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.persistence.backendOptions.driver') === 'pdo_pgsql') {
+            $this->markTestSkipped('Doctrine ORM on PostgreSQL cannot store serialized data, thus storing objects with Type::OBJECT would fail. See http://www.doctrine-project.org/jira/browse/DDC-3241');
+        }
+
         $commonObject = new CommonObject();
         $commonObject->setFoo('foo');
 

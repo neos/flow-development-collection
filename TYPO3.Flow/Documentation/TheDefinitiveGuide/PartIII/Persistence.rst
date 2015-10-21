@@ -1006,6 +1006,15 @@ possibly inconsistent query results.
 	reading queries. However, this might lead to higher load on the master database and should be
 	well observed.
 
+Known issues
+------------
+
+* When using PostgreSQL the use of the ``object``, and ``array`` mapping types is not possible, this is
+  caused by Doctrine using ``serialize()`` to prepare data that is stored in text column (contained
+  zero bytes truncate the string and lead to error during hydration). [#]_
+
+  The Flow mapping types ``flow_json_array`` and ``objectarray`` provide solutions for this.
+
 Generic Persistence
 ===================
 
@@ -1189,3 +1198,4 @@ the array of objects being returned.
 .. [#] See https://github.com/doctrine/doctrine2/pull/265 for one approach in the making.
 .. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/events.html
 .. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/filters.html#filters
+.. [#] http://www.doctrine-project.org/jira/browse/DDC-3241
