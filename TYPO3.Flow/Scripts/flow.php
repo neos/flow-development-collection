@@ -20,6 +20,10 @@ if (PHP_SAPI !== 'cli') {
 }
 
 if (isset($argv[1]) && ($argv[1] === 'typo3.flow:core:setfilepermissions' || $argv[1] === 'flow:core:setfilepermissions' || $argv[1] === 'core:setfilepermissions')) {
+    $perms = decoct(fileperms(__DIR__. '/setfilepermissions.sh') & 0777);
+    if ($perms !== '700'){
+        chmod(__DIR__. '/setfilepermissions.sh', 0700);
+    }
     if (DIRECTORY_SEPARATOR !== '/') {
         exit('The core:setfilepermissions command is only available on UNIX platforms.' . PHP_EOL);
     }
