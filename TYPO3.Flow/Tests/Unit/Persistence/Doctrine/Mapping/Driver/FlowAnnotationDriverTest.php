@@ -39,7 +39,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $driver = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class, array('getMaxIdentifierLength'));
         $driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue(64));
-        $this->assertEquals($tableName, $driver->inferTableNameFromClassName($className));
+        $this->assertEquals($tableName, $driver->_call('inferTableNameFromClassName', $className));
     }
 
     /**
