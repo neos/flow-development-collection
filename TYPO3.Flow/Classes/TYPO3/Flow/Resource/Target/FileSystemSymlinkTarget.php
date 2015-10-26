@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Resource\Target;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\Collection;
+use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Utility\Files;
 
@@ -24,10 +25,11 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\Collection $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
+     * @param callable $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(Collection $collection)
+    public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
@@ -35,7 +37,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
                 $this->publishDirectory($path, $packageKey);
             }
         } else {
-            parent::publishCollection($collection);
+            parent::publishCollection($collection, $callback);
         }
     }
 
