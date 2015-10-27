@@ -25,7 +25,7 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow:core:setfilepermissions' || $ar
     }
     
     $filePermissions = decoct(fileperms(__DIR__ . '/setfilepermissions.sh') & 0777);
-    if ($filePermissions !== '700'){
+    if ($filePermissions !== '700') {
         chmod(__DIR__ . '/setfilepermissions.sh', 0700);
     }
     
