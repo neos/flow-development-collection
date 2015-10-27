@@ -14,6 +14,7 @@ namespace TYPO3\Fluid\Tests\Functional\Core;
 use org\bovigo\vfs\vfsStreamWrapper;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Fluid\Tests\Functional\View\Fixtures\View\StandaloneView;
 use TYPO3\Fluid\View\Exception\InvalidTemplateResourceException;
@@ -93,5 +94,28 @@ class ParserIntegrationTest extends FunctionalTestCase
 
         $this->assertSame($uncompiledResult, $compiledResult, 'The rendered compiled template did not match the rendered uncompiled template.');
         $this->assertSame('foo: Content', $standaloneView->render());
+    }
+
+    /**
+     * @test
+     */
+    public function isHasMethodsCanBeAccessedDirectly()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, uniqid());
+        $post = new Post();
+        $post->setPrivate(true);
+        $standaloneView->assignMultiple(array('post' => $post));
+        $standaloneView->setTemplateSource('<f:if condition="{post.isPrivate}">Private!</f:if>');
+
+        $actual = $standaloneView->render();
+        $this->assertSame('Private!', $actual);
+
+        $standaloneView->setTemplateSource('<f:if condition="{post.isprivate}">Private!</f:if>');
+
+        $actual = $standaloneView->render();
+        $this->assertSame('', $actual);
     }
 }

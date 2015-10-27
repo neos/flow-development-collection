@@ -88,10 +88,22 @@ class ObjectAccessorNode extends AbstractNode
     {
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
+            $isHasDirectAccess = false;
             try {
-                $subject = ObjectAccess::getProperty($subject, $pathSegment);
+                if (preg_match('/^(is|has)([A-Z].*)/', $pathSegment, $matches) > 0) {
+                    $subject = ObjectAccess::getProperty($subject, lcfirst($matches[2]));
+                    $isHasDirectAccess = true;
+                }
             } catch (PropertyNotAccessibleException $exception) {
-                $subject = null;
+                // Don't do anything here for backwards compatiblity
+            }
+
+            if (!$isHasDirectAccess) {
+                try {
+                    $subject = ObjectAccess::getProperty($subject, $pathSegment);
+                } catch (PropertyNotAccessibleException $exception) {
+                    $subject = null;
+                }
             }
 
             if ($subject === null) {

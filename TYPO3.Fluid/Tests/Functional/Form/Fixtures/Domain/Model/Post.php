@@ -101,6 +101,14 @@ class Post
     }
 
     /**
+     * @return boolean
+     */
+    public function isPrivate()
+    {
+        return $this->private;
+    }
+
+    /**
      * @param string $category
      */
     public function setCategory($category)
