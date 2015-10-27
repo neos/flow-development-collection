@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Resource\Target;
 /**
  * Interface for a resource publishing target
  */
-use TYPO3\Flow\Resource\Collection;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Resource;
 
@@ -30,10 +29,10 @@ interface TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param Collection $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
      * @return void
      */
-    public function publishCollection(Collection $collection);
+    public function publishCollection(CollectionInterface $collection);
 
     /**
      * Publishes the given persistent resource from the given storage
