@@ -23,4 +23,9 @@ namespace TYPO3\Flow\Annotations;
  */
 final class ValueObject
 {
+    /**
+     * Whether the value object should be embedded
+     * @var boolean
+     */
+    public $embedded = false;
 }

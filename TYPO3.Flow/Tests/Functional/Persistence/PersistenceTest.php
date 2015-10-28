@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence;
  * source code.
  */
 
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntityRepository;
@@ -245,6 +246,31 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
         $this->assertSame($testEntities[1]->getRelatedValueObject(), $testEntities[2]->getRelatedValueObject());
+    }
+
+    /**
+     * @test
+     */
+    public function embeddedValueObjectsAreActuallyEmbedded()
+    {
+        /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
+        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
+        $schema = $schemaTool->getSchemaFromMetadata(array($entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity')));
+        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'));
+
+        $valueObject = new TestEmbeddedValueObject('someValue');
+        $testEntity = new TestEntity();
+        $testEntity->setEmbeddedValueObject($valueObject);
+
+        $this->testEntityRepository->add($testEntity);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        /* @var $testEntity TestEntity */
+        $testEntity = $this->testEntityRepository->findAll()->getFirst();
+        $this->assertEquals('someValue', $testEntity->getEmbeddedValueObject()->getValue());
     }
 
     /**
