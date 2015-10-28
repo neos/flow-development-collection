@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Utility;
 
 require_once(FLOW_PATH_FLOW . 'Resources/PHP/iSecurity/Security_Randomizer.php');
 
+use Ramsey\Uuid\Uuid;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -26,12 +27,18 @@ class Algorithms
      * Generates a universally unique identifier (UUID) according to RFC 4122.
      * The algorithm used here, might not be completely random.
      *
+     * If php-uuid was installed it will be used instead to speed up the process.
+     *
      * @return string The universally unique id
-     * @todo check for randomness, optionally generate type 1 and type 5 UUIDs, use php5-uuid extension if available
+     * @todo Optionally generate type 1 and type 5 UUIDs.
      */
     public static function generateUUID()
     {
-        return strtolower(\Security_Randomizer::getRandomGUID());
+        if (is_callable('uuid_create')) {
+            return strtolower(uuid_create(UUID_TYPE_RANDOM));
+        }
+
+        return (string)Uuid::uuid4();
     }
 
     /**
