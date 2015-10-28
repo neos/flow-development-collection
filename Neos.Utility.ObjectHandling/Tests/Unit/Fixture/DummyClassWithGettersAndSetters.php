@@ -27,6 +27,8 @@ class DummyClassWithGettersAndSetters
 
     protected $unexposedProperty = 'unexposed';
 
+    protected $arrayProperties = array();
+
     public $publicProperty;
     public $publicProperty2 = 42;
 
@@ -91,5 +93,23 @@ class DummyClassWithGettersAndSetters
 
     public function setWriteOnlyMagicProperty($value)
     {
+    }
+
+    public function addArrayProperty($value)
+    {
+        $this->arrayProperties['added'.$value] = $value;
+    }
+
+    public function removeArrayProperty($value)
+    {
+        $key = array_search($value, $this->arrayProperties);
+        if ($key) {
+            $this->arrayProperties[$key] = 'removed';
+        }
+    }
+
+    public function getArrayProperties()
+    {
+        return $this->arrayProperties;
     }
 }

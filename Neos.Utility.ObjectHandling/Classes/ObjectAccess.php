@@ -12,6 +12,7 @@ namespace Neos\Utility;
  */
 
 use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -255,6 +256,30 @@ abstract class ObjectAccess
             } else {
                 $subject->$propertyName = $propertyValue;
             }
+        } elseif (self::isCollectionTypePropertyValue($propertyValue)
+                  && is_callable(array($subject, $addMethodName = self::buildAdderMethodName($propertyName)))
+                  && is_callable(array($subject, $removeMethodName = self::buildRemoverMethodName($propertyName)))) {
+            $itemsToAdd = is_object($propertyValue)?iterator_to_array($propertyValue):(array)$propertyValue;
+            $itemsToRemove = array();
+            $currentValue = self::getProperty($subject, $propertyName);
+            $currentValue = is_object($currentValue)?iterator_to_array($currentValue):(array)$currentValue;
+            foreach ($currentValue as $currentItem) {
+                foreach ($itemsToAdd as $key => $newItem) {
+                    if ($currentItem === $newItem) {
+                        unset($itemsToAdd[$key]);
+                        // Continue to next $currentItem
+                        continue 2;
+                    }
+                }
+                $itemsToRemove[] = $currentItem;
+            }
+
+            foreach ($itemsToRemove as $item) {
+                $subject->$removeMethodName($item);
+            }
+            foreach ($itemsToAdd as $item) {
+                $subject->$addMethodName($item);
+            }
         } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
@@ -395,6 +420,16 @@ abstract class ObjectAccess
     }
 
     /**
+     * Check if the given $value is any type that can be assigned to a collection type property.
+     *
+     * @return boolean TRUE if $value is either NULL, an array or an instance of \Traversable
+     */
+    public static function isCollectionTypePropertyValue($value)
+    {
+        return ($value === null || is_array($value) || $value instanceof \Traversable);
+    }
+
+    /**
      * Get all properties (names and their current values) of the current
      * $object that are accessible through this class.
      *
@@ -429,6 +464,30 @@ abstract class ObjectAccess
     public static function buildSetterMethodName(string $propertyName): string
     {
         return 'set' . ucfirst($propertyName);
+    }
+
+    /**
+     * Build the remover method name for a given property by singularizing the name
+     * and capitalizing the first letter of the property, then prepending it with "remove".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the remover method name
+     */
+    public static function buildRemoverMethodName($propertyName)
+    {
+        return 'remove' . ucfirst(Inflector::singularize($propertyName));
+    }
+
+    /**
+     * Build the adder method name for a given property by singularizing the name
+     * and capitalizing the first letter of the property, then prepending it with "add".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the adder method name
+     */
+    public static function buildAdderMethodName($propertyName)
+    {
+        return 'add' . ucfirst(Inflector::singularize($propertyName));
     }
 
     /**
