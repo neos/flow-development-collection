@@ -428,17 +428,20 @@ configuration:
             keyName: 'AdminKey'
             authenticateRoles: ['Acme.SomePackage:Administrator']
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            controllerObjectName:
+              'TYPO3\MyApplication\AdministrationArea\.*': TRUE
             ip: '192.168.178.0/24'
         'MyLDAPProvider':
           provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            controllerObjectName:
+              'TYPO3\MyApplication\AdministrationArea\.*': TRUE
         DefaultProvider:
           provider: 'PersistedUsernamePasswordProvider'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\UserArea\.*'
+            controllerObjectName:
+              'TYPO3\MyApplication\UserArea\.*': TRUE
 
 Look at the new configuration option ``requestPatterns``. This enables or disables an
 authentication provider, depending on given patterns. The patterns will look into the
@@ -474,12 +477,12 @@ controllers will be authenticated by the default username/password provider.
 +----------------------+------------------------+------------------------------------------+
 | Request Pattern      | Match criteria         | Configuration options                    |
 +======================+========================+==========================================+
-| controllerObjectName | Matches on the object  | Expects one regular expression, to       |
-|                      | name of the controller | match on the object name.                |
+| controllerObjectName | Matches on the object  | Expects an array of regular expression,  |
+|                      | name of the controller | to match on the object name.             |
 |                      | that has been resolved |                                          |
-|                      | by the MVC dispatcher  | For example.:                            |
-|                      | for the current .      |                                          |
-|                      | request                | ``My\Application\AdministrationArea\.*`` |
+|                      | by the MVC dispatcher  | For example: see above example:          |
+|                      | for the current .      | *Example: Using request patterns*        |
+|                      | request                |                                          |
 +----------------------+------------------------+------------------------------------------+
 | uri                  | Matches on the uri     | Expects one regular expression, to       |
 |                      | of the current request.| match on the request uri.                |

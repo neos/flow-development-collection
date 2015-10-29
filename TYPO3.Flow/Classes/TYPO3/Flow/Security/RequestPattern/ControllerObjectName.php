@@ -37,11 +37,14 @@ class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterfa
     /**
      * Sets an controller object name pattern (preg_match() syntax)
      *
-     * @param string $controllerObjectNamePattern The preg_match() styled controller object name pattern
+     * @param string|array $controllerObjectNamePattern The preg_match() styled controller object name pattern
      * @return void
      */
     public function setPattern($controllerObjectNamePattern)
     {
+        if (is_array($controllerObjectNamePattern)) {
+            $controllerObjectNamePattern = implode('|', array_keys(array_filter($controllerObjectNamePattern)));
+        }
         $this->controllerObjectNamePattern = $controllerObjectNamePattern;
     }
 
