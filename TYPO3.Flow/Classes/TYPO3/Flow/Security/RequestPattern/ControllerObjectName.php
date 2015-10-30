@@ -11,27 +11,30 @@ namespace TYPO3\Flow\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
+use TYPO3\Flow\Security\RequestPatternInterface;
+
 
 /**
  * This class holds an controller object name pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
- *
  */
-class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterface
+class ControllerObjectName implements RequestPatternInterface
 {
-    /**
-     * The preg_match() styled controller object name pattern
-     * @var string
-     */
-    protected $controllerObjectNamePattern = '';
 
     /**
-     * Returns the set pattern
-     *
-     * @return string The set pattern
+     * @var array
      */
-    public function getPattern()
+    protected $options;
+
+    /**
+     * Expects options in the form array('controllerObjectNamePatters' => '<regularExpression>')
+     *
+     * @param array $options
+     */
+    public function __construct(array $options)
     {
-        return $this->controllerObjectNamePattern;
+        $this->options = $options;
     }
 
     /**
@@ -39,20 +42,25 @@ class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterfa
      *
      * @param string $controllerObjectNamePattern The preg_match() styled controller object name pattern
      * @return void
+     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
      */
     public function setPattern($controllerObjectNamePattern)
     {
-        $this->controllerObjectNamePattern = $controllerObjectNamePattern;
+        $this->options['controllerObjectNamePattern'] = $controllerObjectNamePattern;
     }
 
     /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set controller object name pattern rules
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @throws InvalidRequestPatternException
      */
-    public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request)
+    public function matchRequest(RequestInterface $request)
     {
-        return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());
+        if (!isset($this->options['controllerObjectNamePattern'])) {
+            throw new InvalidRequestPatternException('Missing option "controllerObjectNamePattern" in the ControllerObjectName request pattern configuration', 1446224501);
+        }
+        return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->options['controllerObjectNamePattern']) . '$/', $request->getControllerObjectName());
     }
 }

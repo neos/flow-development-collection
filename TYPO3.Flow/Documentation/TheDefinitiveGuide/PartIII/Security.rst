@@ -1315,25 +1315,31 @@ firewall configuration will look like:
           rejectAll: FALSE
 
           filters:
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/.*'
+            'Some.Package:AllowedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/.*'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/blocked.*'
+            'Some.Package:BlockedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/blocked.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Host'
-              patternValue: 'static.mydomain.*'
+            'Some.Package:BlockedHosts':
+              pattern:  'Host'
+              patternOptions:
+                'hostPattern': 'static.mydomain.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Ip'
-              patternValue: '192.168.178.0/24'
+            'Some.Package:AllowedIps':
+              pattern:  'Ip'
+              patternOptions:
+                'cidrPattern': '192.168.178.0/24'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'Acme\MyPackage\Security\MyOwnRequestPattern'
-              patternValue: 'some pattern value'
+            'Some.Package:CustomPattern':
+              pattern:  'Acme\MyPackage\Security\MyOwnRequestPattern'
+              patternOptions:
+                'someOption': 'some value'
+                'someOtherOption': 'some other value'
               interceptor:  'Acme\MyPackage\Security\MyOwnSecurityInterceptor'
 
 As you can see, you can easily use your own implementations for request patterns and

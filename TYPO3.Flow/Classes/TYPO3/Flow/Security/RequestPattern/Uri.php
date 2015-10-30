@@ -10,28 +10,30 @@ namespace TYPO3\Flow\Security\RequestPattern;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
+use TYPO3\Flow\Security\RequestPatternInterface;
 
 
 /**
  * This class holds an URI pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
- *
  */
-class Uri implements \TYPO3\Flow\Security\RequestPatternInterface
+class Uri implements RequestPatternInterface
 {
     /**
-     * The preg_match() styled URI pattern
-     * @var string
+     * @var array
      */
-    protected $uriPattern = '';
+    protected $options;
 
     /**
-     * Returns the set pattern.
+     * Expects options in the form array('uriPattern' => '<URI pattern>')
      *
-     * @return string The set pattern
+     * @param array $options
      */
-    public function getPattern()
+    public function __construct(array $options)
     {
-        return str_replace('\/', '/', $this->uriPattern);
+        $this->options = $options;
     }
 
     /**
@@ -41,22 +43,30 @@ class Uri implements \TYPO3\Flow\Security\RequestPatternInterface
      * thing that is touched by the code: forward slashes are escaped before
      * the pattern is used.
      *
-     * @param string $uriPattern The preg_match() styled URL pattern
+     * @param string $uriPattern The URI pattern
      * @return void
+     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
      */
     public function setPattern($uriPattern)
     {
-        $this->uriPattern = str_replace('/', '\/', $uriPattern);
+        $this->options['uriPattern'] = $uriPattern;
     }
 
     /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set URL pattern rules
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @throws InvalidRequestPatternException
      */
-    public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request)
+    public function matchRequest(RequestInterface $request)
     {
-        return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getHttpRequest()->getUri()->getPath());
+        if (!$request instanceof ActionRequest) {
+            return false;
+        }
+        if (!isset($this->options['uriPattern'])) {
+            throw new InvalidRequestPatternException('Missing option "uriPattern" in the Uri request pattern configuration', 1446224530);
+        }
+        return (boolean)preg_match('/^' . $this->options['uriPattern'] . '$/', $request->getHttpRequest()->getUri()->getPath());
     }
 }

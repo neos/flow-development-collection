@@ -8,13 +8,13 @@ properties:
     properties:
       'rejectAll': { type: boolean, required: TRUE }
       'filters':
-        type: array
+        type: dictionary
         items:
           type: dictionary
           additionalProperties: FALSE
           properties:
-            'patternType': { type: string, required: TRUE }
-            'patternValue': { type: [string, 'null'], required: TRUE }
+            'pattern': { type: string, required: TRUE }
+            'patternOptions': { type: dictionary }
             'interceptor': { type: string, required: TRUE, enum: ['AccessGrant', 'AccessDeny'] }
 
   'authentication':
@@ -35,11 +35,14 @@ properties:
             'providerOptions': { type: dictionary }
             'requestPatterns':
               type: dictionary
-              additionalProperties: TRUE
-              properties:
-                'controllerObjectName': { type: string }
-                'csrfProtection': { type: 'null' }
-                'uri': { type: string }
+              additionalProperties:
+                type: dictionary
+                required: TRUE
+                additionalProperties: FALSE
+                properties:
+                  'pattern': { type: string, required: TRUE }
+                  'patternOptions': { type: dictionary }
+            'token': { type: string }
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
       'authenticationStrategy':

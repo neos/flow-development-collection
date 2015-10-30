@@ -86,7 +86,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
     public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request)
     {
         $filterMatched = false;
-        /** @var $filter \TYPO3\Flow\Security\Authorization\RequestFilter */
+        /** @var $filter RequestFilter */
         foreach ($this->filters as $filter) {
             if ($filter->filterRequest($request)) {
                 $filterMatched = true;
@@ -106,12 +106,18 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
     protected function buildFiltersFromSettings(array $filterSettings)
     {
         foreach ($filterSettings as $singleFilterSettings) {
+            $patternType = isset($singleFilterSettings['pattern']) ? $singleFilterSettings['pattern'] : $singleFilterSettings['patternType'];
+            $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
+
+            $patternOptions = isset($singleFilterSettings['patternOptions']) ? $singleFilterSettings['patternOptions'] : [];
             /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
-            $requestPattern = $this->objectManager->get($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
-            $requestPattern->setPattern($singleFilterSettings['patternValue']);
+            $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
+            if (isset($singleFilterSettings['patternValue']) && is_callable([$requestPattern, 'setPattern'])) {
+                $requestPattern->setPattern($singleFilterSettings['patternValue']);
+            }
             $interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
-            $this->filters[] = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\RequestFilter::class, $requestPattern, $interceptor);
+            $this->filters[] = $this->objectManager->get(RequestFilter::class, $requestPattern, $interceptor);
         }
     }
 }

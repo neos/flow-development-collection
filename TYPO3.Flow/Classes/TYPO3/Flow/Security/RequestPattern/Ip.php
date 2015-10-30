@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\RequestPattern;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
@@ -33,18 +34,18 @@ use TYPO3\Flow\Security\RequestPatternInterface;
 class Ip implements RequestPatternInterface
 {
     /**
-     * The CIDR styled IP pattern
-     *
-     * @var string
+     * @var array
      */
-    protected $ipPattern = '';
+    protected $options;
 
     /**
-     * @return string The set pattern
+     * Expects options in the form array('cidrPattern' => '<CIDR IP Pattern>')
+     *
+     * @param array $options
      */
-    public function getPattern()
+    public function __construct(array $options)
     {
-        return $this->ipPattern;
+        $this->options = $options;
     }
 
     /**
@@ -52,10 +53,11 @@ class Ip implements RequestPatternInterface
      *
      * @param string $ipPattern The CIDR styled IP pattern
      * @return void
+     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
      */
     public function setPattern($ipPattern)
     {
-        $this->ipPattern = $ipPattern;
+        $this->options['cidrPattern'] = $ipPattern;
     }
 
     /**
@@ -108,12 +110,16 @@ class Ip implements RequestPatternInterface
      *
      * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @throws InvalidRequestPatternException
      */
     public function matchRequest(RequestInterface $request)
     {
+        if (!isset($this->options['cidrPattern'])) {
+            throw new InvalidRequestPatternException('Missing option "cidrPattern" in the Ip request pattern configuration', 1446224520);
+        }
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->ipPattern);
+        return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->options['cidrPattern']);
     }
 }
