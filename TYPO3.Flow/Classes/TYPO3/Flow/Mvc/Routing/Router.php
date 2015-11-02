@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -33,6 +34,12 @@ class Router implements RouterInterface
 
     /**
      * @Flow\Inject
+     * @var ConfigurationManager
+     */
+    protected $configurationManager;
+
+    /**
+     * @Flow\Inject
      * @var RouterCachingService
      */
     protected $routerCachingService;
@@ -42,7 +49,7 @@ class Router implements RouterInterface
      *
      * @var array
      */
-    protected $routesConfiguration = array();
+    protected $routesConfiguration = null;
 
     /**
      * Array of routes to match against
@@ -71,10 +78,10 @@ class Router implements RouterInterface
     /**
      * Sets the routes configuration.
      *
-     * @param array $routesConfiguration The routes configuration
+     * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
      * @return void
      */
-    public function setRoutesConfiguration(array $routesConfiguration)
+    public function setRoutesConfiguration(array $routesConfiguration = null)
     {
         $this->routesConfiguration = $routesConfiguration;
         $this->routesCreated = false;
@@ -202,43 +209,57 @@ class Router implements RouterInterface
      */
     protected function createRoutesFromConfiguration()
     {
-        if ($this->routesCreated === false) {
-            $this->routes = array();
-            $routesWithHttpMethodConstraints = array();
-            foreach ($this->routesConfiguration as $routeConfiguration) {
-                $route = new Route();
-                if (isset($routeConfiguration['name'])) {
-                    $route->setName($routeConfiguration['name']);
-                }
-                $uriPattern = $routeConfiguration['uriPattern'];
-                $route->setUriPattern($uriPattern);
-                if (isset($routeConfiguration['defaults'])) {
-                    $route->setDefaults($routeConfiguration['defaults']);
-                }
-                if (isset($routeConfiguration['routeParts'])) {
-                    $route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
-                }
-                if (isset($routeConfiguration['toLowerCase'])) {
-                    $route->setLowerCase($routeConfiguration['toLowerCase']);
-                }
-                if (isset($routeConfiguration['appendExceedingArguments'])) {
-                    $route->setAppendExceedingArguments($routeConfiguration['appendExceedingArguments']);
-                }
-                if (isset($routeConfiguration['httpMethods'])) {
-                    if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === false) {
-                        throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678427);
-                    }
-                    $routesWithHttpMethodConstraints[$uriPattern] = true;
-                    $route->setHttpMethods($routeConfiguration['httpMethods']);
-                } else {
-                    if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === true) {
-                        throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678432);
-                    }
-                    $routesWithHttpMethodConstraints[$uriPattern] = false;
-                }
-                $this->routes[] = $route;
+        if ($this->routesCreated === true) {
+            return;
+        }
+        $this->initializeRoutesConfiguration();
+        $this->routes = array();
+        $routesWithHttpMethodConstraints = array();
+        foreach ($this->routesConfiguration as $routeConfiguration) {
+            $route = new Route();
+            if (isset($routeConfiguration['name'])) {
+                $route->setName($routeConfiguration['name']);
             }
-            $this->routesCreated = true;
+            $uriPattern = $routeConfiguration['uriPattern'];
+            $route->setUriPattern($uriPattern);
+            if (isset($routeConfiguration['defaults'])) {
+                $route->setDefaults($routeConfiguration['defaults']);
+            }
+            if (isset($routeConfiguration['routeParts'])) {
+                $route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
+            }
+            if (isset($routeConfiguration['toLowerCase'])) {
+                $route->setLowerCase($routeConfiguration['toLowerCase']);
+            }
+            if (isset($routeConfiguration['appendExceedingArguments'])) {
+                $route->setAppendExceedingArguments($routeConfiguration['appendExceedingArguments']);
+            }
+            if (isset($routeConfiguration['httpMethods'])) {
+                if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === false) {
+                    throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678427);
+                }
+                $routesWithHttpMethodConstraints[$uriPattern] = true;
+                $route->setHttpMethods($routeConfiguration['httpMethods']);
+            } else {
+                if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === true) {
+                    throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678432);
+                }
+                $routesWithHttpMethodConstraints[$uriPattern] = false;
+            }
+            $this->routes[] = $route;
+        }
+        $this->routesCreated = true;
+    }
+
+    /**
+     * Checks if a routes configuration was set and otherwise loads the configuration from the configuration manager.
+     *
+     * @return void
+     */
+    protected function initializeRoutesConfiguration()
+    {
+        if ($this->routesConfiguration === null) {
+            $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
         }
     }
 }

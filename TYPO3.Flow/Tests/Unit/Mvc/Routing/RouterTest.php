@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\Route;
@@ -406,5 +407,74 @@ class RouterTest extends UnitTestCase
         $router->route($mockHttpRequest);
 
         $this->assertSame($mockRoute2, $router->getLastMatchedRoute());
+    }
+
+    /**
+     * @test
+     */
+    public function routeLoadsRoutesConfigurationFromConfigurationManagerIfNotSetExplicitly()
+    {
+        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
+        $router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
+        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+
+        $routesConfiguration = array(
+            array(
+                'uriPattern' => 'some/uri/pattern',
+            ),
+            array(
+                'uriPattern' => 'some/other/uri/pattern',
+            ),
+        );
+
+        /** @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject $mockConfigurationManager */
+        $mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_ROUTES)->will($this->returnValue($routesConfiguration));
+        $this->inject($router, 'configurationManager', $mockConfigurationManager);
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
+        $router->route($mockHttpRequest);
+
+        $routes = $router->getRoutes();
+        $firstRoute = reset($routes);
+        $this->assertSame('some/uri/pattern', $firstRoute->getUriPattern());
+    }
+
+    /**
+     * @test
+     */
+    public function routeDoesNotLoadRoutesConfigurationFromConfigurationManagerIfItsSetExplicitly()
+    {
+        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
+        $router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
+        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+
+        $routesConfiguration = array(
+            array(
+                'uriPattern' => 'some/uri/pattern',
+            ),
+            array(
+                'uriPattern' => 'some/other/uri/pattern',
+            ),
+        );
+
+        /** @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject $mockConfigurationManager */
+        $mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager->expects($this->never())->method('getConfiguration');
+        $this->inject($router, 'configurationManager', $mockConfigurationManager);
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
+        $router->setRoutesConfiguration($routesConfiguration);
+        $router->route($mockHttpRequest);
+
+        $routes = $router->getRoutes();
+        $firstRoute = reset($routes);
+        $this->assertSame('some/uri/pattern', $firstRoute->getUriPattern());
     }
 }
