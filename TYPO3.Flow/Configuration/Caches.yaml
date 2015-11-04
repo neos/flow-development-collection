@@ -21,7 +21,7 @@ Default:
   persistent: false
 
 ##
-# Definition of caches used by TYPO3 Flow:
+# Definition of caches used by Flow:
 #
 Flow_Cache_ResourceFiles: []
 

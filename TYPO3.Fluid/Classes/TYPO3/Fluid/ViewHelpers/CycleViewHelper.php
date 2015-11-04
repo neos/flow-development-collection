@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper;
@@ -50,72 +50,74 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class CycleViewHelper extends AbstractViewHelper {
+class CycleViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * The values to be iterated through
+     *
+     * @var array|\SplObjectStorage
+     */
+    protected $values = null;
 
-	/**
-	 * The values to be iterated through
-	 *
-	 * @var array|\SplObjectStorage
-	 */
-	protected $values = NULL;
+    /**
+     * Current values index
+     *
+     * @var integer
+     */
+    protected $currentCycleIndex = null;
 
-	/**
-	 * Current values index
-	 *
-	 * @var integer
-	 */
-	protected $currentCycleIndex = NULL;
+    /**
+     * Renders cycle view helper
+     *
+     * @param array $values The array or object implementing \ArrayAccess (for example \SplObjectStorage) to iterated over
+     * @param string $as The name of the iteration variable
+     * @return string Rendered result
+     * @api
+     */
+    public function render($values, $as)
+    {
+        if ($values === null) {
+            return $this->renderChildren();
+        }
+        if ($this->values === null) {
+            $this->initializeValues($values);
+        }
+        if ($this->currentCycleIndex === null || $this->currentCycleIndex >= count($this->values)) {
+            $this->currentCycleIndex = 0;
+        }
 
-	/**
-	 * Renders cycle view helper
-	 *
-	 * @param array $values The array or object implementing \ArrayAccess (for example \SplObjectStorage) to iterated over
-	 * @param string $as The name of the iteration variable
-	 * @return string Rendered result
-	 * @api
-	 */
-	public function render($values, $as) {
-		if ($values === NULL) {
-			return $this->renderChildren();
-		}
-		if ($this->values === NULL) {
-			$this->initializeValues($values);
-		}
-		if ($this->currentCycleIndex === NULL || $this->currentCycleIndex >= count($this->values)) {
-			$this->currentCycleIndex = 0;
-		}
+        $currentValue = isset($this->values[$this->currentCycleIndex]) ? $this->values[$this->currentCycleIndex] : null;
+        $this->templateVariableContainer->add($as, $currentValue);
+        $output = $this->renderChildren();
+        $this->templateVariableContainer->remove($as);
 
-		$currentValue = isset($this->values[$this->currentCycleIndex]) ? $this->values[$this->currentCycleIndex] : NULL;
-		$this->templateVariableContainer->add($as, $currentValue);
-		$output = $this->renderChildren();
-		$this->templateVariableContainer->remove($as);
+        $this->currentCycleIndex++;
 
-		$this->currentCycleIndex++;
+        return $output;
+    }
 
-		return $output;
-	}
-
-	/**
-	 * Sets this->values to the current values argument and resets $this->currentCycleIndex.
-	 *
-	 * @param array|\Traversable $values The array or \SplObjectStorage to be stored in $this->values
-	 * @return void
-	 * @throws ViewHelper\Exception
-	 */
-	protected function initializeValues($values) {
-		if (is_object($values)) {
-			if (!$values instanceof \Traversable) {
-				throw new ViewHelper\Exception('CycleViewHelper only supports arrays and objects implementing \Traversable interface', 1248728393);
-			}
-			$this->values = iterator_to_array($values, FALSE);
-		} else {
-			$this->values = array_values($values);
-		}
-		$this->currentCycleIndex = 0;
-	}
+    /**
+     * Sets this->values to the current values argument and resets $this->currentCycleIndex.
+     *
+     * @param array|\Traversable $values The array or \SplObjectStorage to be stored in $this->values
+     * @return void
+     * @throws ViewHelper\Exception
+     */
+    protected function initializeValues($values)
+    {
+        if (is_object($values)) {
+            if (!$values instanceof \Traversable) {
+                throw new ViewHelper\Exception('CycleViewHelper only supports arrays and objects implementing \Traversable interface', 1248728393);
+            }
+            $this->values = iterator_to_array($values, false);
+        } else {
+            $this->values = array_values($values);
+        }
+        $this->currentCycleIndex = 0;
+    }
 }

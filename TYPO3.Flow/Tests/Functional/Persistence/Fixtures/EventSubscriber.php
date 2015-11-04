@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -20,33 +20,36 @@ use Doctrine\ORM\Events;
  *
  * @Flow\Scope("singleton")
  */
-class EventSubscriber implements \Doctrine\Common\EventSubscriber {
+class EventSubscriber implements \Doctrine\Common\EventSubscriber
+{
+    public $preFlushCalled = false;
 
-	public $preFlushCalled = FALSE;
+    public $onFlushCalled = false;
 
-	public $onFlushCalled = FALSE;
+    public $postFlushCalled = false;
 
-	public $postFlushCalled = FALSE;
+    /**
+     * Returns an array of events this subscriber wants to listen to.
+     *
+     * @return array
+     */
+    public function getSubscribedEvents()
+    {
+        return array(Events::preFlush, Events::onFlush, Events::postFlush);
+    }
 
-	/**
-	 * Returns an array of events this subscriber wants to listen to.
-	 *
-	 * @return array
-	 */
-	public function getSubscribedEvents() {
-		return array(Events::preFlush, Events::onFlush, Events::postFlush);
-	}
+    public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args)
+    {
+        $this->preFlushCalled = true;
+    }
 
-	public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args) {
-		$this->preFlushCalled = TRUE;
-	}
+    public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $args)
+    {
+        $this->onFlushCalled = true;
+    }
 
-	public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $args) {
-		$this->onFlushCalled = TRUE;
-	}
-
-	public function postFlush(\Doctrine\ORM\Event\PostFlushEventArgs $args) {
-		$this->postFlushCalled = TRUE;
-	}
-
+    public function postFlush(\Doctrine\ORM\Event\PostFlushEventArgs $args)
+    {
+        $this->postFlushCalled = true;
+    }
 }

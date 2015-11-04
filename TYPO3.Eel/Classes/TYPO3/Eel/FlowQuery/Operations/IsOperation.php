@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Eel\FlowQuery\Operations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Eel package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -19,35 +19,36 @@ use TYPO3\Flow\Annotations as Flow;
  * Without arguments is evaluates to TRUE if the context is not empty. If arguments
  * are given, they are used to filter the context before evaluation.
  */
-class IsOperation extends AbstractOperation {
+class IsOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'is';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'is';
+    /**
+     * {@inheritdoc}
+     *
+     * @var boolean
+     */
+    protected static $final = true;
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the filter arguments
-	 * @return void|boolean
-	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
-		if (count($arguments) == 0) {
-			return count($flowQuery->getContext()) > 0;
-		} else {
-			$flowQuery->pushOperation('is', array());
-			$flowQuery->pushOperation('filter', $arguments);
-		}
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments the filter arguments
+     * @return void|boolean
+     */
+    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    {
+        if (count($arguments) == 0) {
+            return count($flowQuery->getContext()) > 0;
+        } else {
+            $flowQuery->pushOperation('is', array());
+            $flowQuery->pushOperation('filter', $arguments);
+        }
+    }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Security\Authorization\Interceptor;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
@@ -32,93 +32,97 @@ use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
  *
  * @Flow\Scope("singleton")
  */
-class PolicyEnforcement implements InterceptorInterface {
+class PolicyEnforcement implements InterceptorInterface
+{
+    /**
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
-	/**
-	 * @var AuthenticationManagerInterface
-	 */
-	protected $authenticationManager;
+    /**
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
+    /**
+     * The current joinpoint
+     *
+     * @var JoinPointInterface
+     */
+    protected $joinPoint;
 
-	/**
-	 * The current joinpoint
-	 *
-	 * @var JoinPointInterface
-	 */
-	protected $joinPoint;
+    /**
+     * @param Context $securityContext The current security context
+     * @param AuthenticationManagerInterface $authenticationManager The authentication manager
+     * @param PrivilegeManagerInterface $privilegeManager The access decision manager
+     */
+    public function __construct(Context $securityContext, AuthenticationManagerInterface $authenticationManager, PrivilegeManagerInterface $privilegeManager)
+    {
+        $this->securityContext = $securityContext;
+        $this->authenticationManager = $authenticationManager;
+        $this->privilegeManager = $privilegeManager;
+    }
 
-	/**
-	 * @param Context $securityContext The current security context
-	 * @param AuthenticationManagerInterface $authenticationManager The authentication manager
-	 * @param PrivilegeManagerInterface $privilegeManager The access decision manager
-	 */
-	public function __construct(Context $securityContext, AuthenticationManagerInterface $authenticationManager, PrivilegeManagerInterface $privilegeManager) {
-		$this->securityContext = $securityContext;
-		$this->authenticationManager = $authenticationManager;
-		$this->privilegeManager = $privilegeManager;
-	}
+    /**
+     * Sets the current joinpoint for this interception
+     *
+     * @param JoinPointInterface $joinPoint The current joinpoint
+     * @return void
+     */
+    public function setJoinPoint(JoinPointInterface $joinPoint)
+    {
+        $this->joinPoint = $joinPoint;
+    }
 
-	/**
-	 * Sets the current joinpoint for this interception
-	 *
-	 * @param JoinPointInterface $joinPoint The current joinpoint
-	 * @return void
-	 */
-	public function setJoinPoint(JoinPointInterface $joinPoint) {
-		$this->joinPoint = $joinPoint;
-	}
+    /**
+     * Invokes the security interception
+     *
+     * @return boolean TRUE if the security checks was passed
+     * @throws AccessDeniedException
+     * @throws AuthenticationRequiredException if an entity could not be found (assuming it is bound to the current session), causing a redirect to the authentication entrypoint
+     * @throws NoTokensAuthenticatedException if no tokens could be found and the accessDecisionManager denied access to the privilege target, causing a redirect to the authentication entrypoint
+     */
+    public function invoke()
+    {
+        $reason = '';
 
-	/**
-	 * Invokes the security interception
-	 *
-	 * @return boolean TRUE if the security checks was passed
-	 * @throws AccessDeniedException
-	 * @throws AuthenticationRequiredException if an entity could not be found (assuming it is bound to the current session), causing a redirect to the authentication entrypoint
-	 * @throws NoTokensAuthenticatedException if no tokens could be found and the accessDecisionManager denied access to the privilege target, causing a redirect to the authentication entrypoint
-	 */
-	public function invoke() {
-		$reason = '';
+        $privilegeSubject = new MethodPrivilegeSubject($this->joinPoint);
 
-		$privilegeSubject = new MethodPrivilegeSubject($this->joinPoint);
+        try {
+            $this->authenticationManager->authenticate();
+        } catch (EntityNotFoundException $exception) {
+            throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
+        } catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {
+            // We still need to check if the privilege is available to "TYPO3.Flow:Everybody".
+            if ($this->privilegeManager->isGranted(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class, $privilegeSubject, $reason) === false) {
+                throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $reason, $noTokensAuthenticatedException->getCode());
+            }
+        }
 
-		try {
-			$this->authenticationManager->authenticate();
-		} catch (EntityNotFoundException $exception) {
-			throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
-		} catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {
-			// We still need to check if the privilege is available to "TYPO3.Flow:Everybody".
-			if ($this->privilegeManager->isGranted(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class, $privilegeSubject, $reason) === FALSE) {
-				throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $reason, $noTokensAuthenticatedException->getCode());
-			}
-		}
+        if ($this->privilegeManager->isGranted(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class, $privilegeSubject, $reason) === false) {
+            throw new AccessDeniedException($this->renderDecisionReasonMessage($reason), 1222268609);
+        }
+    }
 
-		if ($this->privilegeManager->isGranted(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class, $privilegeSubject, $reason) === FALSE) {
-			throw new AccessDeniedException($this->renderDecisionReasonMessage($reason), 1222268609);
-		}
-	}
+    /**
+     * Returns a string message, giving insights what happened during privilege evaluation.
+     *
+     * @param string $privilegeReasonMessage
+     * @return string
+     */
+    protected function renderDecisionReasonMessage($privilegeReasonMessage)
+    {
+        if (count($this->securityContext->getRoles()) === 0) {
+            $rolesMessage = 'No authenticated roles';
+        } else {
+            $rolesMessage = 'Authenticated roles: ' . implode(', ', array_keys($this->securityContext->getRoles()));
+        }
 
-	/**
-	 * Returns a string message, giving insights what happened during privilege evaluation.
-	 *
-	 * @param string $privilegeReasonMessage
-	 * @return string
-	 */
-	protected function renderDecisionReasonMessage($privilegeReasonMessage) {
-		if (count($this->securityContext->getRoles()) === 0) {
-			$rolesMessage = 'No authenticated roles';
-		} else {
-			$rolesMessage = 'Authenticated roles: ' . implode(', ', array_keys($this->securityContext->getRoles()));
-		}
-
-		return sprintf('Access denied for method' . chr(10) . 'Method: %s::%s()' . chr(10) . chr(10) . '%s' . chr(10) . chr(10) . '%s', $this->joinPoint->getClassName(), $this->joinPoint->getMethodName(), $privilegeReasonMessage, $rolesMessage);
-	}
+        return sprintf('Access denied for method' . chr(10) . 'Method: %s::%s()' . chr(10) . chr(10) . '%s' . chr(10) . chr(10) . '%s', $this->joinPoint->getClassName(), $this->joinPoint->getMethodName(), $privilegeReasonMessage, $rolesMessage);
+    }
 }

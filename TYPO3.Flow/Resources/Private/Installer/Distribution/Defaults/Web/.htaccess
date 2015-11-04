@@ -1,12 +1,12 @@
 #
-# TYPO3 Flow context setting
+# Flow context setting
 #
 
 # You can specify a default context by activating this option:
 # SetEnv FLOW_CONTEXT Production
 
 # If the root path is not the parent of the Web directory,
-# TYPO3 Flow's root path must be specified manually:
+# Flow's root path must be specified manually:
 # SetEnv FLOW_ROOTPATH /var/www/myapp/
 
 #
@@ -34,7 +34,7 @@
 	RewriteCond %{REQUEST_FILENAME} -d
 	RewriteRule .* - [L]
 
-	# Make sure that not existing resources don't execute TYPO3 Flow
+	# Make sure that not existing resources don't execute Flow
 	RewriteRule ^_Resources/.* - [L]
 
 	# Continue only if the file/symlink/directory does not exist

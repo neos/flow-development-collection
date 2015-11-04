@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Cli;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Object\ObjectManagerInterface;
 
@@ -18,28 +18,27 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
  *
  * @api
  */
-interface DescriptionAwareCommandControllerInterface {
+interface DescriptionAwareCommandControllerInterface
+{
+    /**
+     * Processes the given short description of the specified command.
+     *
+     * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
+     * @param string $shortDescription The short command description so far
+     * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
+     * @return string the possibly modified short command description
+     * @api
+     */
+    public static function processShortDescription($controllerCommandName, $shortDescription, ObjectManagerInterface $objectManager);
 
-	/**
-	 * Processes the given short description of the specified command.
-	 *
-	 * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
-	 * @param string $shortDescription The short command description so far
-	 * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
-	 * @return string the possibly modified short command description
-	 * @api
-	 */
-	static public function processShortDescription($controllerCommandName, $shortDescription, ObjectManagerInterface $objectManager);
-
-	/**
-	 * Processes the given description of the specified command.
-	 *
-	 * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
-	 * @param string $description The command description so far
-	 * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
-	 * @return string the possibly modified command description
-	 * @api
-	 */
-	static public function processDescription($controllerCommandName, $description, ObjectManagerInterface $objectManager);
-
+    /**
+     * Processes the given description of the specified command.
+     *
+     * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
+     * @param string $description The command description so far
+     * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
+     * @return string the possibly modified command description
+     * @api
+     */
+    public static function processDescription($controllerCommandName, $description, ObjectManagerInterface $objectManager);
 }

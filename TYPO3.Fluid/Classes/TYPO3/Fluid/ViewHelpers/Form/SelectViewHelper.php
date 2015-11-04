@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Form;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
@@ -115,278 +115,287 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class SelectViewHelper extends AbstractFormFieldViewHelper {
+class SelectViewHelper extends AbstractFormFieldViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
 
-	/**
-	 * @Flow\Inject
-	 * @var Translator
-	 */
-	protected $translator;
+    /**
+     * @var string
+     */
+    protected $tagName = 'select';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'select';
+    /**
+     * @var mixed
+     */
+    protected $selectedValue = null;
 
-	/**
-	 * @var mixed
-	 */
-	protected $selectedValue = NULL;
+    /**
+     * Initialize arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('multiple', 'string', 'if set, multiple select field');
+        $this->registerTagAttribute('size', 'string', 'Size of input field');
+        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerArgument('options', 'array', 'Associative array with internal IDs as key, and the values are displayed in the select box', true);
+        $this->registerArgument('optionValueField', 'string', 'If specified, will call the appropriate getter on each object to determine the value.');
+        $this->registerArgument('optionLabelField', 'string', 'If specified, will call the appropriate getter on each object to determine the label.');
+        $this->registerArgument('sortByOptionLabel', 'boolean', 'If true, List will be sorted by label.', false, false);
+        $this->registerArgument('selectAllByDefault', 'boolean', 'If specified options are selected if none was set before.', false, false);
+        $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this ViewHelper', false, 'f3-form-error');
+        $this->registerArgument('translate', 'array', 'Configures translation of ViewHelper output.');
+        $this->registerArgument('prependOptionLabel', 'string', 'If specified, will provide an option at first position with the specified label.');
+        $this->registerArgument('prependOptionValue', 'string', 'If specified, will provide an option at first position with the specified value. This argument is only respected if prependOptionLabel is set.');
+    }
 
-	/**
-	 * Initialize arguments.
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('multiple', 'string', 'if set, multiple select field');
-		$this->registerTagAttribute('size', 'string', 'Size of input field');
-		$this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
-		$this->registerArgument('options', 'array', 'Associative array with internal IDs as key, and the values are displayed in the select box', TRUE);
-		$this->registerArgument('optionValueField', 'string', 'If specified, will call the appropriate getter on each object to determine the value.');
-		$this->registerArgument('optionLabelField', 'string', 'If specified, will call the appropriate getter on each object to determine the label.');
-		$this->registerArgument('sortByOptionLabel', 'boolean', 'If true, List will be sorted by label.', FALSE, FALSE);
-		$this->registerArgument('selectAllByDefault', 'boolean', 'If specified options are selected if none was set before.', FALSE, FALSE);
-		$this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this ViewHelper', FALSE, 'f3-form-error');
-		$this->registerArgument('translate', 'array', 'Configures translation of ViewHelper output.');
-		$this->registerArgument('prependOptionLabel', 'string', 'If specified, will provide an option at first position with the specified label.');
-		$this->registerArgument('prependOptionValue', 'string', 'If specified, will provide an option at first position with the specified value. This argument is only respected if prependOptionLabel is set.');
-	}
+    /**
+     * Render the tag.
+     *
+     * @return string rendered tag.
+     * @api
+     */
+    public function render()
+    {
+        $name = $this->getName();
+        if ($this->hasArgument('multiple')) {
+            $name .= '[]';
+        }
 
-	/**
-	 * Render the tag.
-	 *
-	 * @return string rendered tag.
-	 * @api
-	 */
-	public function render() {
-		$name = $this->getName();
-		if ($this->hasArgument('multiple')) {
-			$name .= '[]';
-		}
+        $this->tag->addAttribute('name', $name);
 
-		$this->tag->addAttribute('name', $name);
+        $options = $this->getOptions();
+        $this->tag->setContent($this->renderOptionTags($options));
 
-		$options = $this->getOptions();
-		$this->tag->setContent($this->renderOptionTags($options));
+        $this->addAdditionalIdentityPropertiesIfNeeded();
+        $this->setErrorClassAttribute();
 
-		$this->addAdditionalIdentityPropertiesIfNeeded();
-		$this->setErrorClassAttribute();
+        // register field name for token generation.
+        // in case it is a multi-select, we need to register the field name
+        // as often as there are elements in the box
+        if ($this->hasArgument('multiple') && $this->arguments['multiple'] !== '') {
+            $this->renderHiddenFieldForEmptyValue();
+            for ($i = 0; $i < count($options); $i++) {
+                $this->registerFieldNameForFormTokenGeneration($name);
+            }
+        } else {
+            $this->registerFieldNameForFormTokenGeneration($name);
+        }
 
-		// register field name for token generation.
-		// in case it is a multi-select, we need to register the field name
-		// as often as there are elements in the box
-		if ($this->hasArgument('multiple') && $this->arguments['multiple'] !== '') {
-			$this->renderHiddenFieldForEmptyValue();
-			for ($i = 0; $i < count($options); $i++) {
-				$this->registerFieldNameForFormTokenGeneration($name);
-			}
-		} else {
-			$this->registerFieldNameForFormTokenGeneration($name);
-		}
+        return $this->tag->render();
+    }
 
-		return $this->tag->render();
-	}
+    /**
+     * Render the option tags.
+     *
+     * @param array $options the options for the form.
+     * @return string rendered tags.
+     */
+    protected function renderOptionTags($options)
+    {
+        $output = '';
+        if ($this->hasArgument('prependOptionLabel')) {
+            $value = $this->hasArgument('prependOptionValue') ? $this->arguments['prependOptionValue'] : '';
+            if ($this->hasArgument('translate')) {
+                $label = $this->getTranslatedLabel($value, $this->arguments['prependOptionLabel']);
+            } else {
+                $label = $this->arguments['prependOptionLabel'];
+            }
 
-	/**
-	 * Render the option tags.
-	 *
-	 * @param array $options the options for the form.
-	 * @return string rendered tags.
-	 */
-	protected function renderOptionTags($options) {
-		$output = '';
-		if ($this->hasArgument('prependOptionLabel')) {
-			$value = $this->hasArgument('prependOptionValue') ? $this->arguments['prependOptionValue'] : '';
-			if ($this->hasArgument('translate')) {
-				$label = $this->getTranslatedLabel($value, $this->arguments['prependOptionLabel']);
-			} else {
-				$label = $this->arguments['prependOptionLabel'];
-			}
+            $output .= $this->renderOptionTag($value, $label, false) . chr(10);
+        } elseif (empty($options)) {
+            $options = array('' => '');
+        }
+        foreach ($options as $value => $label) {
+            $output .= $this->renderOptionTag($value, $label) . chr(10);
+        }
+        return $output;
+    }
 
-			$output .= $this->renderOptionTag($value, $label, FALSE) . chr(10);
-		} elseif (empty($options)) {
-			$options = array('' => '');
-		}
-		foreach ($options as $value => $label) {
-			$output .= $this->renderOptionTag($value, $label) . chr(10);
-		}
-		return $output;
-	}
+    /**
+     * Render the option tags.
+     *
+     * @return array an associative array of options, key will be the value of the option tag
+     * @throws ViewHelper\Exception
+     */
+    protected function getOptions()
+    {
+        if (!is_array($this->arguments['options']) && !($this->arguments['options'] instanceof \Traversable)) {
+            return array();
+        }
+        $options = array();
+        foreach ($this->arguments['options'] as $key => $value) {
+            if (is_object($value)) {
+                if ($this->hasArgument('optionValueField')) {
+                    $key = ObjectAccess::getPropertyPath($value, $this->arguments['optionValueField']);
+                    if (is_object($key)) {
+                        if (method_exists($key, '__toString')) {
+                            $key = (string)$key;
+                        } else {
+                            throw new ViewHelper\Exception('Identifying value for object of class "' . get_class($value) . '" was an object.', 1247827428);
+                        }
+                    }
+                } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
+                    $key = $this->persistenceManager->getIdentifierByObject($value);
+                } elseif (method_exists($value, '__toString')) {
+                    $key = (string)$value;
+                } else {
+                    throw new ViewHelper\Exception('No identifying value for object of class "' . get_class($value) . '" found.', 1247826696);
+                }
 
-	/**
-	 * Render the option tags.
-	 *
-	 * @return array an associative array of options, key will be the value of the option tag
-	 * @throws ViewHelper\Exception
-	 */
-	protected function getOptions() {
-		if (!is_array($this->arguments['options']) && !($this->arguments['options'] instanceof \Traversable)) {
-			return array();
-		}
-		$options = array();
-		foreach ($this->arguments['options'] as $key => $value) {
-			if (is_object($value)) {
-				if ($this->hasArgument('optionValueField')) {
-					$key = ObjectAccess::getPropertyPath($value, $this->arguments['optionValueField']);
-					if (is_object($key)) {
-						if (method_exists($key, '__toString')) {
-							$key = (string)$key;
-						} else {
-							throw new ViewHelper\Exception('Identifying value for object of class "' . get_class($value) . '" was an object.', 1247827428);
-						}
-					}
-				} elseif ($this->persistenceManager->getIdentifierByObject($value) !== NULL) {
-					$key = $this->persistenceManager->getIdentifierByObject($value);
-				} elseif (method_exists($value, '__toString')) {
-					$key = (string)$value;
-				} else {
-					throw new ViewHelper\Exception('No identifying value for object of class "' . get_class($value) . '" found.', 1247826696);
-				}
+                if ($this->hasArgument('optionLabelField')) {
+                    $value = ObjectAccess::getPropertyPath($value, $this->arguments['optionLabelField']);
+                    if (is_object($value)) {
+                        if (method_exists($value, '__toString')) {
+                            $value = (string)$value;
+                        } else {
+                            throw new ViewHelper\Exception('Label value for object of class "' . get_class($value) . '" was an object without a __toString() method.', 1247827553);
+                        }
+                    }
+                } elseif (method_exists($value, '__toString')) {
+                    $value = (string)$value;
+                } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
+                    $value = $this->persistenceManager->getIdentifierByObject($value);
+                }
+            }
 
-				if ($this->hasArgument('optionLabelField')) {
-					$value = ObjectAccess::getPropertyPath($value, $this->arguments['optionLabelField']);
-					if (is_object($value)) {
-						if (method_exists($value, '__toString')) {
-							$value = (string)$value;
-						} else {
-							throw new ViewHelper\Exception('Label value for object of class "' . get_class($value) . '" was an object without a __toString() method.', 1247827553);
-						}
-					}
-				} elseif (method_exists($value, '__toString')) {
-					$value = (string)$value;
-				} elseif ($this->persistenceManager->getIdentifierByObject($value) !== NULL) {
-					$value = $this->persistenceManager->getIdentifierByObject($value);
-				}
-			}
+            if ($this->hasArgument('translate')) {
+                $value = $this->getTranslatedLabel($key, $value);
+            }
 
-			if ($this->hasArgument('translate')) {
-				$value = $this->getTranslatedLabel($key, $value);
-			}
+            $options[$key] = $value;
+        }
+        if ($this->arguments['sortByOptionLabel']) {
+            asort($options);
+        }
+        return $options;
+    }
 
-			$options[$key] = $value;
-		}
-		if ($this->arguments['sortByOptionLabel']) {
-			asort($options);
-		}
-		return $options;
-	}
+    /**
+     * Render the option tags.
+     *
+     * @param mixed $value Value to check for
+     * @return boolean TRUE if the value should be marked a s selected; FALSE otherwise
+     */
+    protected function isSelected($value)
+    {
+        $selectedValue = $this->getSelectedValue();
+        if ($value === $selectedValue || (string)$value === $selectedValue) {
+            return true;
+        }
+        if ($this->hasArgument('multiple')) {
+            if ($selectedValue === null && $this->arguments['selectAllByDefault'] === true) {
+                return true;
+            } elseif (is_array($selectedValue) && in_array($value, $selectedValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Render the option tags.
-	 *
-	 * @param mixed $value Value to check for
-	 * @return boolean TRUE if the value should be marked a s selected; FALSE otherwise
-	 */
-	protected function isSelected($value) {
-		$selectedValue = $this->getSelectedValue();
-		if ($value === $selectedValue || (string)$value === $selectedValue) {
-			return TRUE;
-		}
-		if ($this->hasArgument('multiple')) {
-			if ($selectedValue === NULL && $this->arguments['selectAllByDefault'] === TRUE) {
-				return TRUE;
-			} elseif (is_array($selectedValue) && in_array($value, $selectedValue)) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
+    /**
+     * Retrieves the selected value(s)
+     *
+     * @return mixed value string or an array of strings
+     */
+    protected function getSelectedValue()
+    {
+        $value = $this->getValueAttribute();
+        if (!is_array($value) && !($value instanceof \Traversable)) {
+            return $this->getOptionValueScalar($value);
+        }
+        $selectedValues = array();
+        foreach ($value as $selectedValueElement) {
+            $selectedValues[] = $this->getOptionValueScalar($selectedValueElement);
+        }
+        return $selectedValues;
+    }
 
-	/**
-	 * Retrieves the selected value(s)
-	 *
-	 * @return mixed value string or an array of strings
-	 */
-	protected function getSelectedValue() {
-		$value = $this->getValueAttribute();
-		if (!is_array($value) && !($value instanceof \Traversable)) {
-			return $this->getOptionValueScalar($value);
-		}
-		$selectedValues = array();
-		foreach ($value as $selectedValueElement) {
-			$selectedValues[] = $this->getOptionValueScalar($selectedValueElement);
-		}
-		return $selectedValues;
-	}
+    /**
+     * Get the option value for an object
+     *
+     * @param mixed $valueElement
+     * @return string
+     */
+    protected function getOptionValueScalar($valueElement)
+    {
+        if (is_object($valueElement)) {
+            if ($this->hasArgument('optionValueField')) {
+                return ObjectAccess::getPropertyPath($valueElement, $this->arguments['optionValueField']);
+            } elseif ($this->persistenceManager->getIdentifierByObject($valueElement) !== null) {
+                return $this->persistenceManager->getIdentifierByObject($valueElement);
+            } else {
+                return (string)$valueElement;
+            }
+        } else {
+            return $valueElement;
+        }
+    }
 
-	/**
-	 * Get the option value for an object
-	 *
-	 * @param mixed $valueElement
-	 * @return string
-	 */
-	protected function getOptionValueScalar($valueElement) {
-		if (is_object($valueElement)) {
-			if ($this->hasArgument('optionValueField')) {
-				return ObjectAccess::getPropertyPath($valueElement, $this->arguments['optionValueField']);
-			} elseif ($this->persistenceManager->getIdentifierByObject($valueElement) !== NULL) {
-				return $this->persistenceManager->getIdentifierByObject($valueElement);
-			} else {
-				return (string)$valueElement;
-			}
-		} else {
-			return $valueElement;
-		}
-	}
+    /**
+     * Render one option tag
+     *
+     * @param string $value value attribute of the option tag (will be escaped)
+     * @param string $label content of the option tag (will be escaped)
+     * @return string the rendered option tag
+     */
+    protected function renderOptionTag($value, $label)
+    {
+        $output = '<option value="' . htmlspecialchars($value) . '"';
+        if ($this->isSelected($value)) {
+            $output .= ' selected="selected"';
+        }
 
-	/**
-	 * Render one option tag
-	 *
-	 * @param string $value value attribute of the option tag (will be escaped)
-	 * @param string $label content of the option tag (will be escaped)
-	 * @return string the rendered option tag
-	 */
-	protected function renderOptionTag($value, $label) {
-		$output = '<option value="' . htmlspecialchars($value) . '"';
-		if ($this->isSelected($value)) {
-			$output .= ' selected="selected"';
-		}
+        $output .= '>' . htmlspecialchars($label) . '</option>';
 
-		$output .= '>' . htmlspecialchars($label) . '</option>';
+        return $output;
+    }
 
-		return $output;
-	}
+    /**
+     * Returns a translated version of the given label
+     *
+     * @param string $value option tag value
+     * @param string $label option tag label
+     * @return string
+     * @throws ViewHelper\Exception
+     * @throws Fluid\Exception
+     */
+    protected function getTranslatedLabel($value, $label)
+    {
+        $translationConfiguration = $this->arguments['translate'];
 
-	/**
-	 * Returns a translated version of the given label
-	 *
-	 * @param string $value option tag value
-	 * @param string $label option tag label
-	 * @return string
-	 * @throws ViewHelper\Exception
-	 * @throws Fluid\Exception
-	 */
-	protected function getTranslatedLabel($value, $label) {
-		$translationConfiguration = $this->arguments['translate'];
+        $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
+        $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
+        $packageKey = isset($translationConfiguration['package']) ? $translationConfiguration['package'] : $this->controllerContext->getRequest()->getControllerPackageKey();
+        $prefix = isset($translationConfiguration['prefix']) ? $translationConfiguration['prefix'] : '';
 
-		$translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
-		$sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
-		$packageKey = isset($translationConfiguration['package']) ? $translationConfiguration['package'] : $this->controllerContext->getRequest()->getControllerPackageKey();
-		$prefix = isset($translationConfiguration['prefix']) ? $translationConfiguration['prefix'] : '';
+        if (isset($translationConfiguration['locale'])) {
+            try {
+                $localeObject = new Locale($translationConfiguration['locale']);
+            } catch (InvalidLocaleIdentifierException $e) {
+                throw new ViewHelper\Exception('"' . $translationConfiguration['locale'] . '" is not a valid locale identifier.', 1330013193);
+            }
+        } else {
+            $localeObject = null;
+        }
 
-		if (isset($translationConfiguration['locale'])) {
-			try {
-				$localeObject = new Locale($translationConfiguration['locale']);
-			} catch (InvalidLocaleIdentifierException $e) {
-				throw new ViewHelper\Exception('"' . $translationConfiguration['locale'] . '" is not a valid locale identifier.', 1330013193);
-			}
-		} else {
-			$localeObject = NULL;
-		}
-
-		switch ($translateBy) {
-			case 'label':
-				$label =  isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'value' ? $value : $label;
-				return $this->translator->translateByOriginalLabel($label, array(), NULL, $localeObject, $sourceName, $packageKey);
-			case 'id':
-				$id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
-				return $this->translator->translateById($id, array(), NULL, $localeObject, $sourceName, $packageKey);
-			default:
-				throw new Fluid\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
-		}
-	}
+        switch ($translateBy) {
+            case 'label':
+                $label =  isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'value' ? $value : $label;
+                return $this->translator->translateByOriginalLabel($label, array(), null, $localeObject, $sourceName, $packageKey);
+            case 'id':
+                $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
+                return $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+            default:
+                throw new Fluid\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
+        }
+    }
 }

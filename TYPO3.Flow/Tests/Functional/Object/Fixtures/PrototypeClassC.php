@@ -1,38 +1,39 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */
-class PrototypeClassC {
+class PrototypeClassC
+{
+    /**
+     * @var string
+     */
+    public $settingsArgument;
 
-	/**
-	 * @var string
-	 */
-	public $settingsArgument;
+    /**
+     * @param string $settingsArgument
+     */
+    public function __construct($settingsArgument)
+    {
+        $this->settingsArgument = $settingsArgument;
+    }
 
-	/**
-	 * @param string $settingsArgument
-	 */
-	public function __construct($settingsArgument) {
-		$this->settingsArgument = $settingsArgument;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSettingsArgument() {
-		return $this->settingsArgument;
-	}
-
+    /**
+     * @return string
+     */
+    public function getSettingsArgument()
+    {
+        return $this->settingsArgument;
+    }
 }

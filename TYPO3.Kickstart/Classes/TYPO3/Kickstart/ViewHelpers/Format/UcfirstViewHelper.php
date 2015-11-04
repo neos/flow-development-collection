@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Kickstart\ViewHelpers\Format;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Kickstart".       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Kickstart package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -27,15 +27,16 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * TextWithMixedCase
  *
  */
-class UcfirstViewHelper extends AbstractViewHelper {
-
-	/**
-	 * Uppercase first character
-	 *
-	 * @return string The altered string.
-	 */
-	public function render() {
-		$content = $this->renderChildren();
-		return ucfirst($content);
-	}
+class UcfirstViewHelper extends AbstractViewHelper
+{
+    /**
+     * Uppercase first character
+     *
+     * @return string The altered string.
+     */
+    public function render()
+    {
+        $content = $this->renderChildren();
+        return ucfirst($content);
+    }
 }

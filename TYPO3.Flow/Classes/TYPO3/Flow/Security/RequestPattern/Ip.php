@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Security\RequestPattern;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
@@ -30,86 +30,90 @@ use TYPO3\Flow\Security\RequestPatternInterface;
  *          ::7F00:1 will match the address written as 127.0.0.1, ::127.0.0.1 or ::7F00:1
  *          ::1 (IPv6 loopback) will *not* match the address 127.0.0.1
  */
-class Ip implements RequestPatternInterface {
+class Ip implements RequestPatternInterface
+{
+    /**
+     * The CIDR styled IP pattern
+     *
+     * @var string
+     */
+    protected $ipPattern = '';
 
-	/**
-	 * The CIDR styled IP pattern
-	 *
-	 * @var string
-	 */
-	protected $ipPattern = '';
+    /**
+     * @return string The set pattern
+     */
+    public function getPattern()
+    {
+        return $this->ipPattern;
+    }
 
-	/**
-	 * @return string The set pattern
-	 */
-	public function getPattern() {
-		return $this->ipPattern;
-	}
+    /**
+     * Sets an IP pattern (CIDR syntax)
+     *
+     * @param string $ipPattern The CIDR styled IP pattern
+     * @return void
+     */
+    public function setPattern($ipPattern)
+    {
+        $this->ipPattern = $ipPattern;
+    }
 
-	/**
-	 * Sets an IP pattern (CIDR syntax)
-	 *
-	 * @param string $ipPattern The CIDR styled IP pattern
-	 * @return void
-	 */
-	public function setPattern($ipPattern) {
-		$this->ipPattern = $ipPattern;
-	}
+    /**
+     * Matches a CIDR range pattern against an IP
+     *
+     * @param string $ip The IP to match
+     * @param string $range The CIDR range pattern to match against
+     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     */
+    protected function cidrMatch($ip, $range)
+    {
+        if (strpos($range, '/') === false) {
+            $bits = null;
+            $subnet = $range;
+        } else {
+            list($subnet, $bits) = explode('/', $range);
+        }
 
-	/**
-	 * Matches a CIDR range pattern against an IP
-	 *
-	 * @param string $ip The IP to match
-	 * @param string $range The CIDR range pattern to match against
-	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 */
-	protected function cidrMatch($ip, $range) {
-		if (strpos($range, '/') === FALSE) {
-			$bits = NULL;
-			$subnet = $range;
-		} else {
-			list ($subnet, $bits) = explode('/', $range);
-		}
+        $ip = inet_pton($ip);
+        $subnet = inet_pton($subnet);
+        if ($ip === false || $subnet === false) {
+            return false;
+        }
 
-		$ip = inet_pton($ip);
-		$subnet = inet_pton($subnet);
-		if ($ip === FALSE || $subnet === FALSE) {
-			return FALSE;
-		}
+        if (strlen($ip) > strlen($subnet)) {
+            $subnet = str_pad($subnet, strlen($ip), chr(0), STR_PAD_LEFT);
+        } elseif (strlen($subnet) > strlen($ip)) {
+            $ip = str_pad($ip, strlen($subnet), chr(0), STR_PAD_LEFT);
+        }
 
-		if (strlen($ip) > strlen($subnet)) {
-			$subnet = str_pad($subnet, strlen($ip), chr(0), STR_PAD_LEFT);
-		} elseif (strlen($subnet) > strlen($ip)) {
-			$ip = str_pad($ip, strlen($subnet), chr(0), STR_PAD_LEFT);
-		}
+        if ($bits === null) {
+            return ($ip === $subnet);
+        } else {
+            for ($i = 0; $i < strlen($ip); $i++) {
+                $mask = 0;
+                if ($bits > 0) {
+                    $mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
+                    $bits -= 8;
+                }
+                if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-		if ($bits === NULL) {
-			return ($ip === $subnet);
-		} else {
-			for ($i = 0; $i < strlen($ip); $i++) {
-				$mask = 0;
-				if ($bits > 0) {
-					$mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
-					$bits -= 8;
-				}
-				if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
-					return FALSE;
-				}
-			}
-		}
-		return TRUE;
-	}
-
-	/**
-	 * Matches a \TYPO3\Flow\Mvc\RequestInterface against the set IP pattern rules
-	 *
-	 * @param RequestInterface $request The request that should be matched
-	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 */
-	public function matchRequest(RequestInterface $request) {
-		if (!$request instanceof ActionRequest) {
-			return FALSE;
-		}
-		return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->ipPattern);
-	}
+    /**
+     * Matches a \TYPO3\Flow\Mvc\RequestInterface against the set IP pattern rules
+     *
+     * @param RequestInterface $request The request that should be matched
+     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     */
+    public function matchRequest(RequestInterface $request)
+    {
+        if (!$request instanceof ActionRequest) {
+            return false;
+        }
+        return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->ipPattern);
+    }
 }

@@ -1,39 +1,39 @@
 <?php
 namespace TYPO3\Flow\Mvc\Routing;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Http\Request;
 
 /**
  * Contract for a Web Router
  */
-interface RouterInterface {
+interface RouterInterface
+{
+    /**
+     * Iterates through all configured routes and calls matches() on them.
+     * Returns the matchResults of the matching route or NULL if no matching
+     * route could be found.
+     *
+     * @param Request $httpRequest
+     * @return array The results of the matching route or NULL if no route matched
+     */
+    public function route(Request $httpRequest);
 
-	/**
-	 * Iterates through all configured routes and calls matches() on them.
-	 * Returns the matchResults of the matching route or NULL if no matching
-	 * route could be found.
-	 *
-	 * @param Request $httpRequest
-	 * @return array The results of the matching route or NULL if no route matched
-	 */
-	public function route(Request $httpRequest);
-
-	/**
-	 * Walks through all configured routes and calls their respective resolves-method.
-	 * When a matching route is found, the corresponding URI is returned.
-	 *
-	 * @param array $routeValues
-	 * @return string URI
-	 */
-	public function resolve(array $routeValues);
+    /**
+     * Walks through all configured routes and calls their respective resolves-method.
+     * When a matching route is found, the corresponding URI is returned.
+     *
+     * @param array $routeValues
+     * @return string URI
+     */
+    public function resolve(array $routeValues);
 }

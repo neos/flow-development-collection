@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\I18n\EelHelper;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
@@ -24,174 +24,185 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
  *
  * It also translates labels according to the configuration it stores
  */
-class TranslationParameterToken implements ProtectedContextAwareInterface {
+class TranslationParameterToken implements ProtectedContextAwareInterface
+{
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
-	/**
-	 * @var Translator
-	 */
-	protected $translator;
+    /**
+     * Key/Value store to keep the collected parameters
+     *
+     * @var array
+     */
+    protected $parameters = array();
 
-	/**
-	 * Key/Value store to keep the collected parameters
-	 *
-	 * @var array
-	 */
-	protected $parameters = array();
+    /**
+     * @param string $id
+     * @param string $value
+     */
+    public function __construct($id = null, $value = null)
+    {
+        if ($id !== null) {
+            $this->parameters['id'] = $id;
+        }
 
-	/**
-	 * @param string $id
-	 * @param string $value
-	 */
-	public function __construct($id = NULL, $value = NULL) {
-		if ($id !== NULL) {
-			$this->parameters['id'] = $id;
-		}
+        if ($value !== null) {
+            $this->parameters['value'] = $value;
+        }
+    }
 
-		if ($value !== NULL) {
-			$this->parameters['value'] = $value;
-		}
-	}
+    /**
+     * Inject the translator into the token.
+     * Used for testing.
+     *
+     * @param Translator $translator
+     */
+    public function injectTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
 
-	/**
-	 * Inject the translator into the token.
-	 * Used for testing.
-	 *
-	 * @param Translator $translator
-	 */
-	public function injectTranslator(Translator $translator) {
-		$this->translator = $translator;
-	}
+    /**
+     * Set the id.
+     *
+     * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
+     * @return TranslationParameterToken
+     */
+    public function id($id)
+    {
+        $this->parameters['id'] = $id;
+        return $this;
+    }
 
-	/**
-	 * Set the id.
-	 *
-	 * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-	 * @return TranslationParameterToken
-	 */
-	public function id($id) {
-		$this->parameters['id'] = $id;
-		return $this;
-	}
+    /**
+     * Set the original translation value (the untranslated source string).
+     *
+     * @param string $value
+     * @return TranslationParameterToken
+     */
+    public function value($value)
+    {
+        $this->parameters['value'] = $value;
+        return $this;
+    }
 
-	/**
-	 * Set the original translation value (the untranslated source string).
-	 *
-	 * @param string $value
-	 * @return TranslationParameterToken
-	 */
-	public function value($value) {
-		$this->parameters['value'] = $value;
-		return $this;
-	}
+    /**
+     * Set the arguments.
+     *
+     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @return TranslationParameterToken
+     */
+    public function arguments(array $arguments)
+    {
+        $this->parameters['arguments'] = $arguments;
+        return $this;
+    }
 
-	/**
-	 * Set the arguments.
-	 *
-	 * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-	 * @return TranslationParameterToken
-	 */
-	public function arguments(array $arguments) {
-		$this->parameters['arguments'] = $arguments;
-		return $this;
-	}
+    /**
+     * Set the source.
+     *
+     * @param string $source Name of file with translations
+     * @return TranslationParameterToken
+     */
+    public function source($source)
+    {
+        $this->parameters['source'] = $source;
+        return $this;
+    }
 
-	/**
-	 * Set the source.
-	 *
-	 * @param string $source Name of file with translations
-	 * @return TranslationParameterToken
-	 */
-	public function source($source) {
-		$this->parameters['source'] = $source;
-		return $this;
-	}
+    /**
+     * Set the package.
+     *
+     * @param string $package Target package key. If not set, the current package key will be used
+     * @return TranslationParameterToken
+     */
+    public function package($package)
+    {
+        $this->parameters['package'] = $package;
+        return $this;
+    }
 
-	/**
-	 * Set the package.
-	 *
-	 * @param string $package Target package key. If not set, the current package key will be used
-	 * @return TranslationParameterToken
-	 */
-	public function package($package) {
-		$this->parameters['package'] = $package;
-		return $this;
-	}
+    /**
+     * Set the quantity.
+     *
+     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
+     * @return TranslationParameterToken
+     */
+    public function quantity($quantity)
+    {
+        $this->parameters['quantity'] = $quantity;
+        return $this;
+    }
 
-	/**
-	 * Set the quantity.
-	 *
-	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @return TranslationParameterToken
-	 */
-	public function quantity($quantity) {
-		$this->parameters['quantity'] = $quantity;
-		return $this;
-	}
+    /**
+     * Set the locale. The locale Identifier will be converted into
+     * a \TYPO3\Flow\I18n\Locale
+     *
+     * @param string $locale An identifier of locale to use (NULL for use the default locale)
+     * @return TranslationParameterToken
+     * @throws \TYPO3\Flow\Exception
+     */
+    public function locale($locale)
+    {
+        try {
+            $this->parameters['locale'] = new Locale($locale);
+        } catch (InvalidLocaleIdentifierException $e) {
+            throw new Exception(sprintf('"%s" is not a valid locale identifier.', $locale), 1436784806);
+        }
 
-	/**
-	 * Set the locale. The locale Identifier will be converted into
-	 * a \TYPO3\Flow\I18n\Locale
-	 *
-	 * @param string $locale An identifier of locale to use (NULL for use the default locale)
-	 * @return TranslationParameterToken
-	 * @throws \TYPO3\Flow\Exception
-	 */
-	public function locale($locale) {
-		try {
-			$this->parameters['locale'] = new Locale($locale);
-		} catch (InvalidLocaleIdentifierException $e) {
-			throw new Exception(sprintf('"%s" is not a valid locale identifier.', $locale), 1436784806);
-		}
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Translate according to currently collected parameters
+     *
+     * @param array $overrides An associative array to override the collected parameters
+     * @return string
+     */
+    public function translate(array $overrides = array())
+    {
+        array_replace_recursive($this->parameters, $overrides);
 
-	/**
-	 * Translate according to currently collected parameters
-	 *
-	 * @param array $overrides An associative array to override the collected parameters
-	 * @return string
-	 */
-	public function translate(array $overrides = array()) {
-		array_replace_recursive($this->parameters, $overrides);
+        $id = isset($this->parameters['id']) ? $this->parameters['id'] : null;
+        $value = isset($this->parameters['value']) ? $this->parameters['value'] : null;
+        $arguments = isset($this->parameters['arguments']) ? $this->parameters['arguments'] : array();
+        $source = isset($this->parameters['source']) ? $this->parameters['source'] : 'Main';
+        $package = isset($this->parameters['package']) ? $this->parameters['package'] : null;
+        $quantity = isset($this->parameters['quantity']) ? $this->parameters['quantity'] : null;
+        $locale = isset($this->parameters['locale']) ? $this->parameters['locale'] : null;
 
-		$id = isset($this->parameters['id']) ? $this->parameters['id'] : NULL;
-		$value = isset($this->parameters['value']) ? $this->parameters['value'] : NULL;
-		$arguments = isset($this->parameters['arguments']) ? $this->parameters['arguments'] : array();
-		$source = isset($this->parameters['source']) ? $this->parameters['source'] : 'Main';
-		$package = isset($this->parameters['package']) ? $this->parameters['package'] : NULL;
-		$quantity = isset($this->parameters['quantity']) ? $this->parameters['quantity'] : NULL;
-		$locale = isset($this->parameters['locale']) ? $this->parameters['locale'] : NULL;
+        if ($id === null) {
+            return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
+        }
 
-		if ($id === NULL) {
-			return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
-		}
+        $translation = $this->translator->translateById($id, $arguments, $quantity, $locale, $source, $package);
+        if ($translation === $id) {
+            if ($value) {
+                return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
+            }
+        }
 
-		$translation = $this->translator->translateById($id, $arguments, $quantity, $locale, $source, $package);
-		if ($translation === $id) {
-			if ($value) {
-				return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
-			}
-		}
+        return $translation;
+    }
 
-		return $translation;
-	}
+    /**
+     * Runs translate to avoid the need of calling translate as a finishing method
+     */
+    public function __toString()
+    {
+        return $this->translate();
+    }
 
-	/**
-	 * Runs translate to avoid the need of calling translate as a finishing method
-	 */
-	public function __toString() {
-		return $this->translate();
-	}
-
-	/**
-	 * All methods are considered safe
-	 *
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return TRUE;
-	}
-
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
 }

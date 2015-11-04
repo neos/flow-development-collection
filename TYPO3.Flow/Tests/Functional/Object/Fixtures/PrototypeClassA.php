@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -19,47 +19,51 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @Flow\Entity
  */
-class PrototypeClassA implements PrototypeClassAishInterface {
+class PrototypeClassA implements PrototypeClassAishInterface
+{
+    /**
+     * @Flow\Transient
+     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
+     */
+    protected $singletonA;
 
-	/**
-	 * @Flow\Transient
-	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
-	 */
-	protected $singletonA;
+    /**
+     * @var string
+     */
+    protected $someProperty;
 
-	/**
-	 * @var string
-	 */
-	protected $someProperty;
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
+     * @return void
+     */
+    public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA)
+    {
+        $this->singletonA = $singletonA;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
-	 * @return void
-	 */
-	public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
-		$this->singletonA = $singletonA;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
+     */
+    public function getSingletonA()
+    {
+        return $this->singletonA;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
-	 */
-	public function getSingletonA() {
-		return $this->singletonA;
-	}
+    /**
+     * @param string $someProperty The property value
+     * @return void
+     * @Flow\Session(autoStart=true)
+     */
+    public function setSomeProperty($someProperty)
+    {
+        $this->someProperty = $someProperty;
+    }
 
-	/**
-	 * @param string $someProperty The property value
-	 * @return void
-	 * @Flow\Session(autoStart=true)
-	 */
-	public function setSomeProperty($someProperty) {
-		$this->someProperty = $someProperty;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSomeProperty() {
-		return $this->someProperty;
-	}
+    /**
+     * @return string
+     */
+    public function getSomeProperty()
+    {
+        return $this->someProperty;
+    }
 }

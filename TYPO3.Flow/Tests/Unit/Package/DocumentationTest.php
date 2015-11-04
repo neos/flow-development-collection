@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Unit\Package;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use org\bovigo\vfs\vfsStream;
 
@@ -17,44 +17,47 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the package documentation class
  *
  */
-class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * Sets up this test case
+     *
+     */
+    protected function setUp()
+    {
+        vfsStream::setup('testDirectory');
+    }
 
-	/**
-	 * Sets up this test case
-	 *
-	 */
-	protected function setUp() {
-		vfsStream::setup('testDirectory');
-	}
+    /**
+     * @test
+     */
+    public function constructSetsPackageNameAndPathToDocumentation()
+    {
+        $documentationPath = vfsStream::url('testDirectory') . '/';
 
-	/**
-	 * @test
-	 */
-	public function constructSetsPackageNameAndPathToDocumentation() {
-		$documentationPath = vfsStream::url('testDirectory') . '/';
+        $mockPackage = $this->getMock(\TYPO3\Flow\Package\PackageInterface::class);
 
-		$mockPackage = $this->getMock(\TYPO3\Flow\Package\PackageInterface::class);
+        $documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
 
-		$documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+        $this->assertSame($mockPackage, $documentation->getPackage());
+        $this->assertEquals('Manual', $documentation->getDocumentationName());
+        $this->assertEquals($documentationPath, $documentation->getDocumentationPath());
+    }
 
-		$this->assertSame($mockPackage, $documentation->getPackage());
-		$this->assertEquals('Manual', $documentation->getDocumentationName());
-		$this->assertEquals($documentationPath, $documentation->getDocumentationPath());
-	}
+    /**
+     * @test
+     */
+    public function getDocumentationFormatsScansDocumentationDirectoryAndReturnsDocumentationFormatObjectsIndexedByFormatName()
+    {
+        $documentationPath = vfsStream::url('testDirectory') . '/';
 
-	/**
-	 * @test
-	 */
-	public function getDocumentationFormatsScansDocumentationDirectoryAndReturnsDocumentationFormatObjectsIndexedByFormatName() {
-		$documentationPath = vfsStream::url('testDirectory') . '/';
+        $mockPackage = $this->getMock(\TYPO3\Flow\Package\PackageInterface::class);
 
-		$mockPackage = $this->getMock(\TYPO3\Flow\Package\PackageInterface::class);
+        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
 
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
+        $documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+        $documentationFormats = $documentation->getDocumentationFormats();
 
-		$documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
-		$documentationFormats = $documentation->getDocumentationFormats();
-
-		$this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());
-	}
+        $this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());
+    }
 }

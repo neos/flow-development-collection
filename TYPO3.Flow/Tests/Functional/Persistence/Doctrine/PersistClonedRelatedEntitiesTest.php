@@ -1,70 +1,71 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 
 /**
  * Testcase for persisting cloned related entities
  */
-class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
 
-	/**
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+     */
+    protected $testEntityRepository;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
-	 */
-	protected $testEntityRepository;
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+            $this->markTestSkipped('Doctrine persistence is not enabled');
+        }
+        $this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
-			$this->markTestSkipped('Doctrine persistence is not enabled');
-		}
-		$this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
-	}
+    /**
+     * @test
+     */
+    public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy()
+    {
+        $entity = new TestEntity();
+        $entity->setName('Andi');
+        $relatedEntity = new TestEntity();
+        $relatedEntity->setName('Robert');
+        $entity->setRelatedEntity($relatedEntity);
 
-	/**
-	 * @test
-	 */
-	public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy() {
-		$entity = new TestEntity();
-		$entity->setName('Andi');
-		$relatedEntity = new TestEntity();
-		$relatedEntity->setName('Robert');
-		$entity->setRelatedEntity($relatedEntity);
+        $this->testEntityRepository->add($entity);
+        $this->testEntityRepository->add($relatedEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
 
-		$this->testEntityRepository->add($entity);
-		$this->testEntityRepository->add($relatedEntity);
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+        $loadedEntity = $this->testEntityRepository->findByIdentifier($entityIdentifier);
 
-		$entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
-		$loadedEntity = $this->testEntityRepository->findByIdentifier($entityIdentifier);
+        $clonedRelatedEntity = clone $loadedEntity->getRelatedEntity();
+        $this->testEntityRepository->add($clonedRelatedEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
 
-		$clonedRelatedEntity = clone $loadedEntity->getRelatedEntity();
-		$this->testEntityRepository->add($clonedRelatedEntity);
-		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
-
-		$clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
-		$clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
-		$this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $clonedLoadedEntity);
-	}
-
+        $clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
+        $clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $clonedLoadedEntity);
+    }
 }

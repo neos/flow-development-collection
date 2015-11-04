@@ -1,44 +1,48 @@
 <?php
 namespace TYPO3\Flow\Tests\Reflection\Fixture;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * ArrayAccess class for the Reflection tests
  *
  */
-class ArrayAccessClass implements \ArrayAccess {
+class ArrayAccessClass implements \ArrayAccess
+{
+    protected $internalProperty = 'access through forceDirectAccess';
 
-	protected $internalProperty = 'access through forceDirectAccess';
+    protected $array = array();
 
-	protected $array = array();
+    public function __construct(array $array)
+    {
+        $this->array = $array;
+    }
 
-	public function __construct(array $array) {
-		$this->array = $array;
-	}
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->array);
+    }
 
-	public function offsetExists($offset) {
-		return array_key_exists($offset, $this->array);
-	}
+    public function offsetGet($offset)
+    {
+        return $this->array[$offset];
+    }
 
-	public function offsetGet($offset) {
-		return $this->array[$offset];
-	}
+    public function offsetSet($offset, $value)
+    {
+        $this->array[$offset] = $value;
+    }
 
-	public function offsetSet($offset, $value) {
-		$this->array[$offset] = $value;
-	}
-
-	public function offsetUnset($offset) {
-		unset($this->array[$offset]);
-	}
-
+    public function offsetUnset($offset)
+    {
+        unset($this->array[$offset]);
+    }
 }

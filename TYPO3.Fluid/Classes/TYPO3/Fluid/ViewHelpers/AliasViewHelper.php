@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -44,28 +44,29 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class AliasViewHelper extends AbstractViewHelper {
+class AliasViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
-
-	/**
-	 * Renders alias
-	 *
-	 * @param array $map array that specifies which variables should be mapped to which alias
-	 * @return string Rendered string
-	 * @api
-	 */
-	public function render(array $map) {
-		foreach ($map as $aliasName => $value) {
-			$this->templateVariableContainer->add($aliasName, $value);
-		}
-		$output = $this->renderChildren();
-		foreach ($map as $aliasName => $value) {
-			$this->templateVariableContainer->remove($aliasName);
-		}
-		return $output;
-	}
+    /**
+     * Renders alias
+     *
+     * @param array $map array that specifies which variables should be mapped to which alias
+     * @return string Rendered string
+     * @api
+     */
+    public function render(array $map)
+    {
+        foreach ($map as $aliasName => $value) {
+            $this->templateVariableContainer->add($aliasName, $value);
+        }
+        $output = $this->renderChildren();
+        foreach ($map as $aliasName => $value) {
+            $this->templateVariableContainer->remove($aliasName);
+        }
+        return $output;
+    }
 }

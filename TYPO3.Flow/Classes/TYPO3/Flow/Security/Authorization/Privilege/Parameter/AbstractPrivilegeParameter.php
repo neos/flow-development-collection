@@ -1,65 +1,69 @@
 <?php
 namespace TYPO3\Flow\Security\Authorization\Privilege\Parameter;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A privilege parameter
  */
-abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface {
+abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
+{
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var mixed
+     */
+    protected $value;
 
-	/**
-	 * @var mixed
-	 */
-	protected $value;
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __construct($name, $value)
+    {
+        $this->name = $name;
+        $this->value = $value;
+    }
 
-	/**
-	 * @param string $name
-	 * @param mixed $value
-	 */
-	public function __construct($name, $value) {
-		$this->name = $name;
-		$this->value = $value;
-	}
+    /**
+     * Name of this parameter
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * Name of this parameter
-	 *
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * The value of this parameter
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-	/**
-	 * The value of this parameter
-	 *
-	 * @return mixed
-	 */
-	public function getValue() {
-		return $this->value;
-	}
-
-	/**
-	 * Returns the string representation of this parameter
-	 * @return string
-	 */
-	public function __toString() {
-		return (string)$this->getValue();
-	}
+    /**
+     * Returns the string representation of this parameter
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getValue();
+    }
 }

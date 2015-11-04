@@ -1,8 +1,8 @@
 #                                                                        #
-# Security policy for the TYPO3 Flow Framework                           #
+# Security policy for the Flow Framework                                 #
 #                                                                        #
 # This file contains the default security policy configuration for the   #
-# TYPO3 Flow Framework. Don't modify this file but add configuration     #
+# Flow Framework. Don't modify this file but add configuration           #
 # options to the Policy.yaml file in the in global Configuration/        #
 # directory instead.                                                     #
 

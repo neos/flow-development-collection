@@ -1,33 +1,33 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * A repository for SubSubEntity
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository
+{
+    /**
+     * @var string
+     */
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity::class;
 
-	/**
-	 * @var string
-	 */
-	const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity::class;
-
-	public function findAll() {
-		$result = parent::findAll();
-		foreach ($result as $instance) {
-			$instance->setContent($instance->getContent() . ' - touched by SubSubEntityRepository');
-		}
-		return $result;
-	}
-
+    public function findAll()
+    {
+        $result = parent::findAll();
+        foreach ($result as $instance) {
+            $instance->setContent($instance->getContent() . ' - touched by SubSubEntityRepository');
+        }
+        return $result;
+    }
 }

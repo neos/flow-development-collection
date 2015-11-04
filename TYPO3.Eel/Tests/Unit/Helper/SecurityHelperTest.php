@@ -10,68 +10,72 @@ use TYPO3\Eel\Helper\SecurityHelper;
 /**
  * Eel SecurityHelper test
  */
-class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function getAccountReturnsNullIfSecurityContextCannotBeInitialized()
+    {
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
-	/**
-	 * @test
-	 */
-	public function getAccountReturnsNullIfSecurityContextCannotBeInitialized() {
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
-		$mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(FALSE);
+        $helper = new SecurityHelper();
+        $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-		$helper = new SecurityHelper();
-		$this->inject($helper, 'securityContext', $mockSecurityContext);
+        $this->assertNull($helper->getAccount());
+    }
 
-		$this->assertNull($helper->getAccount());
-	}
+    /**
+     * @test
+     */
+    public function getAccountDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
+    {
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
 
-	/**
-	 * @test
-	 */
-	public function getAccountDelegatesToSecurityContextIfSecurityContextCanBeInitialized() {
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
-		$mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(TRUE);
-		$mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
+        $helper = new SecurityHelper();
+        $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-		$helper = new SecurityHelper();
-		$this->inject($helper, 'securityContext', $mockSecurityContext);
+        $this->assertSame('this would be an account instance', $helper->getAccount());
+    }
 
-		$this->assertSame('this would be an account instance', $helper->getAccount());
-	}
+    /**
+     * @test
+     */
+    public function hasRoleReturnsTrueForEverybodyRole()
+    {
+        $helper = new SecurityHelper();
+        $this->assertTrue($helper->hasRole('TYPO3.Flow:Everybody'));
+    }
 
-	/**
-	 * @test
-	 */
-	public function hasRoleReturnsTrueForEverybodyRole() {
-		$helper = new SecurityHelper();
-		$this->assertTrue($helper->hasRole('TYPO3.Flow:Everybody'));
-	}
+    /**
+     * @test
+     */
+    public function hasRoleReturnsFalseIfSecurityContextCannotBeInitialized()
+    {
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
-	/**
-	 * @test
-	 */
-	public function hasRoleReturnsFalseIfSecurityContextCannotBeInitialized() {
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
-		$mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(FALSE);
+        $helper = new SecurityHelper();
+        $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-		$helper = new SecurityHelper();
-		$this->inject($helper, 'securityContext', $mockSecurityContext);
+        $this->assertFalse($helper->hasRole('Acme.Com:DummyRole'));
+    }
 
-		$this->assertFalse($helper->hasRole('Acme.Com:DummyRole'));
-	}
+    /**
+     * @test
+     */
+    public function hasRoleDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
+    {
+        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects($this->atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(true);
 
-	/**
-	 * @test
-	 */
-	public function hasRoleDelegatesToSecurityContextIfSecurityContextCanBeInitialized() {
-		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
-		$mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(TRUE);
-		$mockSecurityContext->expects($this->atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(TRUE);
+        $helper = new SecurityHelper();
+        $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-		$helper = new SecurityHelper();
-		$this->inject($helper, 'securityContext', $mockSecurityContext);
-
-		$this->assertTrue($helper->hasRole('Acme.Com:GrantsAccess'));
-	}
-
+        $this->assertTrue($helper->hasRole('Acme.Com:GrantsAccess'));
+    }
 }

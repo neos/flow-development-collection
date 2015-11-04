@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Property\TypeConverter\TypedArrayConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -18,52 +18,54 @@ use TYPO3\Flow\Tests\UnitTestCase;
  * Testcase for the TypedArrayConverter
  *
  */
-class TypedArrayConverterTest extends UnitTestCase {
+class TypedArrayConverterTest extends UnitTestCase
+{
+    /**
+     * @var TypedArrayConverter
+     */
+    protected $converter;
 
+    public function setUp()
+    {
+        $this->converter = new TypedArrayConverter();
+    }
 
-	/**
-	 * @var TypedArrayConverter
-	 */
-	protected $converter;
+    /**
+     * @test
+     */
+    public function checkMetadata()
+    {
+        $this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(2, $this->converter->getPriority(), 'Priority does not match');
+    }
 
-	public function setUp() {
-		$this->converter = new TypedArrayConverter();
-	}
+    /**
+     * @return array
+     */
+    public function canConvertFromDataProvider()
+    {
+        return array(
+            array('targetType' => 'SomeTargetType', 'expectedResult' => false),
+            array('targetType' => 'array', 'expectedResult' => false),
 
-	/**
-	 * @test
-	 */
-	public function checkMetadata() {
-		$this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-		$this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
-		$this->assertEquals(2, $this->converter->getPriority(), 'Priority does not match');
-	}
+            array('targetType' => 'array<string>', 'expectedResult' => true),
+            array('targetType' => 'array<Some\Element\Type>', 'expectedResult' => true),
+            array('targetType' => '\array<\int>', 'expectedResult' => true),
+        );
+    }
 
-	/**
-	 * @return array
-	 */
-	public function canConvertFromDataProvider() {
-		return array(
-			array('targetType' => 'SomeTargetType', 'expectedResult' => FALSE),
-			array('targetType' => 'array', 'expectedResult' => FALSE),
-
-			array('targetType' => 'array<string>', 'expectedResult' => TRUE),
-			array('targetType' => 'array<Some\Element\Type>', 'expectedResult' => TRUE),
-			array('targetType' => '\array<\int>', 'expectedResult' => TRUE),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider canConvertFromDataProvider
-	 */
-	public function canConvertFromTests($targetType, $expectedResult) {
-		$actualResult = $this->converter->canConvertFrom(array(), $targetType);
-		if ($expectedResult === TRUE) {
-			$this->assertTrue($actualResult);
-		} else {
-			$this->assertFalse($actualResult);
-		}
-	}
-
+    /**
+     * @test
+     * @dataProvider canConvertFromDataProvider
+     */
+    public function canConvertFromTests($targetType, $expectedResult)
+    {
+        $actualResult = $this->converter->canConvertFrom(array(), $targetType);
+        if ($expectedResult === true) {
+            $this->assertTrue($actualResult);
+        } else {
+            $this->assertFalse($actualResult);
+        }
+    }
 }

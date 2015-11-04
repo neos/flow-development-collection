@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Mvc;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 /**
@@ -17,64 +17,69 @@ namespace TYPO3\Flow\Mvc;
  *
  * @api
  */
-class Response implements \TYPO3\Flow\Mvc\ResponseInterface {
+class Response implements \TYPO3\Flow\Mvc\ResponseInterface
+{
+    /**
+     * @var string
+     */
+    protected $content = null;
 
-	/**
-	 * @var string
-	 */
-	protected $content = NULL;
+    /**
+     * Overrides and sets the content of the response
+     *
+     * @param string $content The response content
+     * @return void
+     * @api
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
 
-	/**
-	 * Overrides and sets the content of the response
-	 *
-	 * @param string $content The response content
-	 * @return void
-	 * @api
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
+    /**
+     * Appends content to the already existing content.
+     *
+     * @param string $content More response content
+     * @return void
+     * @api
+     */
+    public function appendContent($content)
+    {
+        $this->content .= $content;
+    }
 
-	/**
-	 * Appends content to the already existing content.
-	 *
-	 * @param string $content More response content
-	 * @return void
-	 * @api
-	 */
-	public function appendContent($content) {
-		$this->content .= $content;
-	}
+    /**
+     * Returns the response content without sending it.
+     *
+     * @return string The response content
+     * @api
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	/**
-	 * Returns the response content without sending it.
-	 *
-	 * @return string The response content
-	 * @api
-	 */
-	public function getContent() {
-		return $this->content;
-	}
+    /**
+     * Sends the response
+     *
+     * @return void
+     * @api
+     */
+    public function send()
+    {
+        if ($this->content !== null) {
+            echo $this->getContent();
+        }
+    }
 
-	/**
-	 * Sends the response
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function send() {
-		if ($this->content !== NULL) {
-			echo $this->getContent();
-		}
-	}
-
-	/**
-	 * Returns the content of the response.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function __toString() {
-		return $this->getContent();
-	}
+    /**
+     * Returns the content of the response.
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        return $this->getContent();
+    }
 }
