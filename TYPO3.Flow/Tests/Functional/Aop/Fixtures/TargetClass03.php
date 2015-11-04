@@ -1,30 +1,30 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 /**
  * A target class for testing introductions
  *
  */
-class TargetClass03 {
+class TargetClass03
+{
+    public $originalMethodCalled;
 
-	public $originalMethodCalled;
-
-	/**
-	 * @return void
-	 */
-	public function originalMethod() {
-		$this->originalMethodCalled = TRUE;
-	}
-
+    /**
+     * @return void
+     */
+    public function originalMethod()
+    {
+        $this->originalMethodCalled = true;
+    }
 }

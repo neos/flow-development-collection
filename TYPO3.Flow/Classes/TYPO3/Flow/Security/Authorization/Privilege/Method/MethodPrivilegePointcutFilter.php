@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Security\Authorization\Privilege\Method;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\Builder\ClassNameIndex;
@@ -26,154 +26,161 @@ use TYPO3\Flow\Security\Policy\PolicyService;
  *
  * @Flow\Scope("singleton")
  */
-class MethodPrivilegePointcutFilter implements PointcutFilterInterface {
+class MethodPrivilegePointcutFilter implements PointcutFilterInterface
+{
+    /**
+     * @var PointcutFilterComposite[]
+     */
+    protected $filters = null;
 
-	/**
-	 * @var PointcutFilterComposite[]
-	 */
-	protected $filters = NULL;
+    /**
+     * @var array
+     */
+    protected $methodPermissions = array();
 
-	/**
-	 * @var array
-	 */
-	protected $methodPermissions = array();
+    /**
+     * @var VariableFrontend
+     */
+    protected $methodPermissionCache;
 
-	/**
-	 * @var VariableFrontend
-	 */
-	protected $methodPermissionCache;
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @var RuntimeExpressionEvaluator
+     */
+    protected $runtimeExpressionEvaluator;
 
-	/**
-	 * @var RuntimeExpressionEvaluator
-	 */
-	protected $runtimeExpressionEvaluator;
+    /**
+     * This object is created very early so we can't rely on AOP for the property injection
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+        /** @var CacheManager $cacheManager */
+        $cacheManager = $this->objectManager->get(CacheManager::class);
+        $this->methodPermissionCache = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method');
+        $this->runtimeExpressionEvaluator = $this->objectManager->get(RuntimeExpressionEvaluator::class);
+    }
 
-	/**
-	 * This object is created very early so we can't rely on AOP for the property injection
-	 *
-	 * @param ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-		/** @var CacheManager $cacheManager */
-		$cacheManager = $this->objectManager->get(CacheManager::class);
-		$this->methodPermissionCache = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method');
-		$this->runtimeExpressionEvaluator = $this->objectManager->get(RuntimeExpressionEvaluator::class);
-	}
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        if ($this->methodPermissionCache->has('methodPermission')) {
+            $this->methodPermissions = $this->methodPermissionCache->get('methodPermission');
+        }
+    }
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		if ($this->methodPermissionCache->has('methodPermission')) {
-			$this->methodPermissions = $this->methodPermissionCache->get('methodPermission');
-		}
-	}
+    /**
+     * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
+     * This method also creates a cache entry for every method, to cache the associated roles and privileges.
+     *
+     * @param string $className Name of the class to check the name of
+     * @param string $methodName Name of the method to check the name of
+     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+     * @return boolean TRUE if the names match, otherwise FALSE
+     */
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    {
+        if ($this->filters === null) {
+            $this->buildPointcutFilters();
+        }
 
-	/**
-	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
-	 * This method also creates a cache entry for every method, to cache the associated roles and privileges.
-	 *
-	 * @param string $className Name of the class to check the name of
-	 * @param string $methodName Name of the method to check the name of
-	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the names match, otherwise FALSE
-	 */
-	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+        $matches = false;
+        /** @var PointcutFilterComposite $filter */
+        foreach ($this->filters as $privilegeIdentifier => $filter) {
+            if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
+                $matches = true;
+                $methodIdentifier = strtolower($className . '->' . $methodName);
 
-		if ($this->filters === NULL) {
-			$this->buildPointcutFilters();
-		}
+                $hasRuntimeEvaluations = false;
+                if ($filter->hasRuntimeEvaluationsDefinition() === true) {
+                    $hasRuntimeEvaluations = true;
+                    $this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
+                }
 
-		$matches = FALSE;
-		/** @var PointcutFilterComposite $filter */
-		foreach ($this->filters as $privilegeIdentifier => $filter) {
-			if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
-				$matches = TRUE;
-				$methodIdentifier = strtolower($className . '->' . $methodName);
+                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = true;
+                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
+            }
+        }
 
-				$hasRuntimeEvaluations = FALSE;
-				if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
-					$hasRuntimeEvaluations = TRUE;
-					$this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
-				}
+        return $matches;
+    }
 
-				$this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = TRUE;
-				$this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
-			}
-		}
+    /**
+     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     *
+     * @return boolean TRUE if this filter has runtime evaluations
+     */
+    public function hasRuntimeEvaluationsDefinition()
+    {
+        return false;
+    }
 
-		return $matches;
-	}
+    /**
+     * Returns runtime evaluations for the pointcut.
+     *
+     * @return array Runtime evaluations
+     */
+    public function getRuntimeEvaluationsDefinition()
+    {
+        return array();
+    }
 
-	/**
-	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
-	 *
-	 * @return boolean TRUE if this filter has runtime evaluations
-	 */
-	public function hasRuntimeEvaluationsDefinition() {
-		return FALSE;
-	}
+    /**
+     * This method is used to optimize the matching process.
+     *
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
+     */
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    {
+        if ($this->filters === null) {
+            $this->buildPointcutFilters();
+        }
 
-	/**
-	 * Returns runtime evaluations for the pointcut.
-	 *
-	 * @return array Runtime evaluations
-	 */
-	public function getRuntimeEvaluationsDefinition() {
-		return array();
-	}
+        $result = new ClassNameIndex();
+        foreach ($this->filters as $filter) {
+            $result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
+        }
+        return $result;
+    }
 
-	/**
-	 * This method is used to optimize the matching process.
-	 *
-	 * @param ClassNameIndex $classNameIndex
-	 * @return ClassNameIndex
-	 */
-	public function reduceTargetClassNames(ClassNameIndex $classNameIndex) {
-		if ($this->filters === NULL) {
-			$this->buildPointcutFilters();
-		}
+    /**
+     * Builds the needed pointcut filters for matching the policy privileges
+     *
+     * @return boolean
+     */
+    protected function buildPointcutFilters()
+    {
+        $this->filters = array();
+        /** @var PolicyService $policyService */
+        $policyService = $this->objectManager->get(PolicyService::class);
+        /** @var MethodPrivilegeInterface[] $methodPrivileges */
+        $methodPrivileges = $policyService->getAllPrivilegesByType(MethodPrivilegeInterface::class);
+        foreach ($methodPrivileges as $privilege) {
+            $this->filters[$privilege->getCacheEntryIdentifier()] = $privilege->getPointcutFilterComposite();
+        }
+    }
 
-		$result = new ClassNameIndex();
-		foreach ($this->filters as $filter) {
-			$result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
-		}
-		return $result;
-	}
-
-	/**
-	 * Builds the needed pointcut filters for matching the policy privileges
-	 *
-	 * @return boolean
-	 */
-	protected function buildPointcutFilters() {
-		$this->filters = array();
-		/** @var PolicyService $policyService */
-		$policyService = $this->objectManager->get(PolicyService::class);
-		/** @var MethodPrivilegeInterface[] $methodPrivileges */
-		$methodPrivileges = $policyService->getAllPrivilegesByType(MethodPrivilegeInterface::class);
-		foreach ($methodPrivileges as $privilege) {
-			$this->filters[$privilege->getCacheEntryIdentifier()] = $privilege->getPointcutFilterComposite();
-		}
-	}
-
-	/**
-	 * Save the found matches to the cache.
-	 *
-	 * @return void
-	 */
-	public function savePolicyCache() {
-		$tags = array('TYPO3_Flow_Aop');
-		if (!$this->methodPermissionCache->has('methodPermission')) {
-			$this->methodPermissionCache->set('methodPermission', $this->methodPermissions, $tags);
-		}
-	}
+    /**
+     * Save the found matches to the cache.
+     *
+     * @return void
+     */
+    public function savePolicyCache()
+    {
+        $tags = array('TYPO3_Flow_Aop');
+        if (!$this->methodPermissionCache->has('methodPermission')) {
+            $this->methodPermissionCache->set('methodPermission', $this->methodPermissions, $tags);
+        }
+    }
 }

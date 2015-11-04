@@ -1,69 +1,71 @@
 <?php
 namespace TYPO3\Flow\Tests\Unit\Aop\Advice;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the Abstract Method Interceptor Builder
  *
  */
-class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     * @return void
+     */
+    public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue()
+    {
+        $mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', false);
 
-	/**
-	 * @test
-	 * @return void
-	 */
-	public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue() {
-		$mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', FALSE);
+        $mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), true)), array('someMethod'));
+        $mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint)->will($this->returnValue('result'));
 
-		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
-		$mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint)->will($this->returnValue('result'));
+        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', false);
+        $mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
-		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
+        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return true;
+            }
+        });
+        $result = $advice->invoke($mockJoinPoint);
 
-		$advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-			if ($joinPoint !== NULL) {
-				return TRUE;
-			}
-		});
-		$result = $advice->invoke($mockJoinPoint);
+        $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
+    }
 
-		$this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
-	}
+    /**
+     * @test
+     * @return void
+     */
+    public function invokeDoesNotInvokeTheAdviceIfTheRuntimeEvaluatorReturnsFalse()
+    {
+        $mockAdviceChain = $this->getMock(\TYPO3\Flow\Aop\Advice\AdviceChain::class, array(), array(), '', false);
+        $mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('result'));
 
-	/**
-	 * @test
-	 * @return void
-	 */
-	public function invokeDoesNotInvokeTheAdviceIfTheRuntimeEvaluatorReturnsFalse() {
-		$mockAdviceChain = $this->getMock(\TYPO3\Flow\Aop\Advice\AdviceChain::class, array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('result'));
+        $mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', false);
+        $mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+        $mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), true)), array('someMethod'));
+        $mockAspect->expects($this->never())->method('someMethod');
 
-		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
-		$mockAspect->expects($this->never())->method('someMethod');
+        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', false);
+        $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
-		$mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
+        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return false;
+            }
+        });
+        $result = $advice->invoke($mockJoinPoint);
 
-		$advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-			if ($joinPoint !== NULL) {
-				return FALSE;
-			}
-		});
-		$result = $advice->invoke($mockJoinPoint);
-
-		$this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
-	}
+        $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
+    }
 }

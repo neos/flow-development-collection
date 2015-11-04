@@ -1,87 +1,93 @@
 <?php
 namespace TYPO3\Eel\Tests\Unit\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Eel package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\ProtectedContextAwareInterface;
 
 /**
  * Test fixture object
  */
-class TestObject implements ProtectedContextAwareInterface {
+class TestObject implements ProtectedContextAwareInterface
+{
+    /**
+     * @var string
+     */
+    protected $property;
 
-	/**
-	 * @var string
-	 */
-	protected $property;
+    /**
+     * @var boolean
+     */
+    protected $booleanProperty;
 
-	/**
-	 * @var boolean
-	 */
-	protected $booleanProperty;
+    /**
+     * @var string
+     */
+    protected $dynamicMethodName;
 
-	/**
-	 * @var string
-	 */
-	protected $dynamicMethodName;
+    /**
+     * @return string
+     */
+    public function getProperty()
+    {
+        return $this->property;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getProperty() {
-		return $this->property;
-	}
+    /**
+     * @param $property
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
+    }
 
-	/**
-	 * @param $property
-	 */
-	public function setProperty($property) {
-		$this->property = $property;
-	}
+    /**
+     * @param boolean $booleanProperty
+     */
+    public function setBooleanProperty($booleanProperty)
+    {
+        $this->booleanProperty = $booleanProperty;
+    }
 
-	/**
-	 * @param boolean $booleanProperty
-	 */
-	public function setBooleanProperty($booleanProperty) {
-		$this->booleanProperty = $booleanProperty;
-	}
+    /**
+     * @return boolean
+     */
+    public function isBooleanProperty()
+    {
+        return $this->booleanProperty;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function isBooleanProperty() {
-		return $this->booleanProperty;
-	}
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function callMe($name)
+    {
+        return 'Hello, ' . $name . '!';
+    }
 
-	/**
-	 * @param string $name
-	 * @return string
-	 */
-	public function callMe($name) {
-		return 'Hello, ' . $name . '!';
-	}
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return $methodName === $this->dynamicMethodName;
+    }
 
-	/**
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function allowsCallOfMethod($methodName) {
-		return $methodName === $this->dynamicMethodName;
-	}
-
-	/**
-	 * @param string $dynamicMethodName
-	 */
-	public function setDynamicMethodName($dynamicMethodName) {
-		$this->dynamicMethodName = $dynamicMethodName;
-	}
-
+    /**
+     * @param string $dynamicMethodName
+     */
+    public function setDynamicMethodName($dynamicMethodName)
+    {
+        $this->dynamicMethodName = $dynamicMethodName;
+    }
 }

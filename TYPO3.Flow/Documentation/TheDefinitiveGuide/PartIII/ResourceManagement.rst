@@ -430,3 +430,106 @@ returns the resource's hash. This hash can also be accessed by using ``$resource
 
 You are encouraged to use this stream wrapper wherever you need to access a static or
 persistent resource in your PHP code.
+
+Publishing to a Content Delivery Network (CDN)
+==============================================
+
+Flow can publish resources to Content Delivery Networks or other remote services by using specialized connectors.
+
+First you need to install your desired connector (a third-party package which usually can be obtained through
+packagist.org9 configure it according to its documentation (provide correct credentials etc).
+
+Once the connector package is in place, you add a new publishing target which uses that connect and assign this target
+to your collection.
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        collections:
+          persistent:
+            target: 'cloudFrontPersistentResourcesTarget'
+        targets:
+          cloudFrontPersistentResourcesTarget:
+            target: 'Flownative\Aws\S3\S3Target'
+            targetOptions:
+              bucket: 'media.example.com'
+              keyPrefix: '/'
+              baseUri: 'https://abc123def456.cloudfront.net/'
+
+Since the new publishing target will be empty initially, you need to publish your assets to the new target by using
+the  ``resource:publish`` command:
+
+.. code-block:: none
+
+    path$ ./flow resource:publish
+
+This command will upload your files to the target and use the calculated remote URL for all your assets from now on.
+
+
+Switching the storage of a collection (move to CDN)
+===================================================
+
+If you want to migrate from your default local filesystem storage to a remote storage, you need to copy
+all your existing persistent resources to that new storage and use that storage afterwards by default.
+
+You start by adding a new storage with the desired driver that connects the resource management to your CDN.
+As you might want also want to serve your assets by the remote storage system, you also add a target that
+contains your published resources (as with local storage this can't be the same as the storage).
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        storages:
+          s3PersistentResourcesStorage:
+            storage: 'Flownative\Aws\S3\S3Storage'
+            storageOptions:
+              bucket: 'storage.example.com'
+              keyPrefix: 'my/assets/'
+        targets:
+          s3PersistentResourcesTarget:
+            target: 'Flownative\Aws\S3\S3Target'
+            targetOptions:
+              bucket: 'media.example.com'
+              keyPrefix: '/'
+              baseUri: 'https://abc123def456.cloudfront.net/'
+
+In order to copy the resources to the new storage we need a temporary collection that uses the storage and the new
+publication target.
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        collections:
+          tmpNewCollection:
+            storage: 's3PersistentResourcesStorage'
+            target: 's3PersistentResourcesTarget'
+
+Now you can use the ``resource:copy`` command:
+
+.. code-block:: none
+
+    path$ ./flow resource:copy --publish persistent tmpNewCollection
+
+This will copy all your files from your current storage (local filesystem) to the new remote storage.
+The ``--publish`` flag means that this command also publishes all the resources to the new target, and you have the
+same state on your current storage and publication target as on the new one.
+
+Now you can overwrite your old collection configuration and remove the temporary one:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        collections:
+          persistent:
+            storage: 's3PersistentResourcesStorage'
+            target: 's3PersistentResourcesTarget'
+
+Clear caches and you're done.

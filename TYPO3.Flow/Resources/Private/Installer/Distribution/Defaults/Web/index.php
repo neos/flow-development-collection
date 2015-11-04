@@ -1,23 +1,23 @@
 <?php
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
-$rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : FALSE;
-if ($rootPath === FALSE && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
-	$rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
+$rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : false;
+if ($rootPath === false && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
+    $rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
 }
-if ($rootPath === FALSE) {
-	$rootPath = dirname(__FILE__) . '/../';
+if ($rootPath === false) {
+    $rootPath = dirname(__FILE__) . '/../';
 } elseif (substr($rootPath, -1) !== '/') {
-	$rootPath .= '/';
+    $rootPath .= '/';
 }
 
 require($rootPath . 'Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Core/Bootstrap.php');

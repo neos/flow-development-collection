@@ -15,17 +15,21 @@ Upgrading your Packages
 Upgrading existing code
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Here comes the easier part. As with earlier changes to TYPO3 Flow that
-required code changes on the user side we provide a code migration tool.
-Given you have a TYPO3 Flow system with your (outdated) package in place
-you should run the following before attempting to fix anything by hand::
+Here comes the easier part. As with earlier changes to Flow that required code changes on the user side we provide a code
+migration tool.
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
 
  ./flow core:migrate --package-key Acme.Demo
 
-The package key is optional, if left out it will work on all packages
-it finds (except for library packages and packages prefixed with
-"TYPO3.*") - for the first run you might want to limit things a little to
-keep the overview, though.
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*") - for the first run you might want to limit things a little to keep the overview, though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
 
 Inside core:migrate
 """""""""""""""""""
@@ -70,8 +74,8 @@ In a nutshell, running::
  ./flow core:migrate
  ./flow doctrine:migrationgenerate
 
-padded with some manual checking and adjustments needs to be done. That
-should result in a working package.
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
 with us. The `support page <http://flow.typo3.org/support/>`_ provides more

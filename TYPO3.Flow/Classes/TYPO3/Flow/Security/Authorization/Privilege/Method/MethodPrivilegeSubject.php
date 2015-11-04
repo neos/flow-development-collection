@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Security\Authorization\Privilege\Method;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -17,25 +17,27 @@ use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 /**
  * A method privilege subject
  */
-class MethodPrivilegeSubject implements PrivilegeSubjectInterface {
+class MethodPrivilegeSubject implements PrivilegeSubjectInterface
+{
+    /**
+     * @var JoinPointInterface
+     */
+    protected $joinPoint;
 
-	/**
-	 * @var JoinPointInterface
-	 */
-	protected $joinPoint;
+    /**
+     * @param JoinPointInterface $joinPoint
+     * @return void
+     */
+    public function __construct(JoinPointInterface $joinPoint)
+    {
+        $this->joinPoint = $joinPoint;
+    }
 
-	/**
-	 * @param JoinPointInterface $joinPoint
-	 * @return void
-	 */
-	public function __construct(JoinPointInterface $joinPoint) {
-		$this->joinPoint = $joinPoint;
-	}
-
-	/**
-	 * @return JoinPointInterface
-	 */
-	public function getJoinPoint() {
-		return $this->joinPoint;
-	}
+    /**
+     * @return JoinPointInterface
+     */
+    public function getJoinPoint()
+    {
+        return $this->joinPoint;
+    }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Core;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 use TYPO3\Flow\Annotations as Flow;
@@ -30,101 +30,107 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-class ApplicationContext {
+class ApplicationContext
+{
+    /**
+     * The (internal) context string; could be something like "Development" or "Development/MyLocalMacBook"
+     *
+     * @var string
+     */
+    protected $contextString;
 
-	/**
-	 * The (internal) context string; could be something like "Development" or "Development/MyLocalMacBook"
-	 *
-	 * @var string
-	 */
-	protected $contextString;
+    /**
+     * The root context; must be one of "Development", "Testing" or "Production"
+     *
+     * @var string
+     */
+    protected $rootContextString;
 
-	/**
-	 * The root context; must be one of "Development", "Testing" or "Production"
-	 *
-	 * @var string
-	 */
-	protected $rootContextString;
+    /**
+     * The parent context, or NULL if there is no parent context
+     *
+     * @var \TYPO3\Flow\Core\ApplicationContext
+     */
+    protected $parentContext;
 
-	/**
-	 * The parent context, or NULL if there is no parent context
-	 *
-	 * @var \TYPO3\Flow\Core\ApplicationContext
-	 */
-	protected $parentContext;
+    /**
+     * Initialize the context object.
+     *
+     * @param string $contextString
+     * @throws \TYPO3\Flow\Exception if the parent context is none of "Development", "Production" or "Testing"
+     */
+    public function __construct($contextString)
+    {
+        if (strstr($contextString, '/') === false) {
+            $this->rootContextString = $contextString;
+            $this->parentContext = null;
+        } else {
+            $contextStringParts = explode('/', $contextString);
+            $this->rootContextString = $contextStringParts[0];
+            array_pop($contextStringParts);
+            $this->parentContext = new ApplicationContext(implode('/', $contextStringParts));
+        }
 
-	/**
-	 * Initialize the context object.
-	 *
-	 * @param string $contextString
-	 * @throws \TYPO3\Flow\Exception if the parent context is none of "Development", "Production" or "Testing"
-	 */
-	public function __construct($contextString) {
-		if (strstr($contextString, '/') === FALSE) {
-			$this->rootContextString = $contextString;
-			$this->parentContext = NULL;
-		} else {
-			$contextStringParts = explode('/', $contextString);
-			$this->rootContextString = $contextStringParts[0];
-			array_pop($contextStringParts);
-			$this->parentContext = new ApplicationContext(implode('/', $contextStringParts));
-		}
+        if (!in_array($this->rootContextString, array('Development', 'Production', 'Testing'))) {
+            throw new \TYPO3\Flow\Exception('The given context "' . $contextString . '" was not valid. Only allowed are Development, Production and Testing, including their sub-contexts', 1335436551);
+        }
 
-		if (!in_array($this->rootContextString, array('Development', 'Production', 'Testing'))) {
-			throw new \TYPO3\Flow\Exception('The given context "' . $contextString . '" was not valid. Only allowed are Development, Production and Testing, including their sub-contexts', 1335436551);
-		}
+        $this->contextString = $contextString;
+    }
 
-		$this->contextString = $contextString;
-	}
+    /**
+     * Returns the full context string, for example "Development", or "Production/LiveSystem"
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        return $this->contextString;
+    }
 
-	/**
-	 * Returns the full context string, for example "Development", or "Production/LiveSystem"
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function __toString() {
-		return $this->contextString;
-	}
+    /**
+     * Returns TRUE if this context is the Development context or a sub-context of it
+     *
+     * @return boolean
+     * @api
+     */
+    public function isDevelopment()
+    {
+        return ($this->rootContextString === 'Development');
+    }
 
-	/**
-	 * Returns TRUE if this context is the Development context or a sub-context of it
-	 *
-	 * @return boolean
-	 * @api
-	 */
-	public function isDevelopment() {
-		return ($this->rootContextString === 'Development');
-	}
+    /**
+     * Returns TRUE if this context is the Production context or a sub-context of it
+     *
+     * @return boolean
+     * @api
+     */
 
-	/**
-	 * Returns TRUE if this context is the Production context or a sub-context of it
-	 *
-	 * @return boolean
-	 * @api
-	 */
+    public function isProduction()
+    {
+        return ($this->rootContextString === 'Production');
+    }
 
-	public function isProduction() {
-		return ($this->rootContextString === 'Production');
-	}
+    /**
+     * Returns TRUE if this context is the Testing context or a sub-context of it
+     *
+     * @return boolean
+     * @api
+     */
+    public function isTesting()
+    {
+        return ($this->rootContextString === 'Testing');
+    }
 
-	/**
-	 * Returns TRUE if this context is the Testing context or a sub-context of it
-	 *
-	 * @return boolean
-	 * @api
-	 */
-	public function isTesting() {
-		return ($this->rootContextString === 'Testing');
-	}
-
-	/**
-	 * Returns the parent context object, if any
-	 *
-	 * @return \TYPO3\Flow\Core\ApplicationContext the parent context or NULL, if there is none
-	 * @api
-	 */
-	public function getParent() {
-		return $this->parentContext;
-	}
+    /**
+     * Returns the parent context object, if any
+     *
+     * @return \TYPO3\Flow\Core\ApplicationContext the parent context or NULL, if there is none
+     * @api
+     */
+    public function getParent()
+    {
+        return $this->parentContext;
+    }
 }

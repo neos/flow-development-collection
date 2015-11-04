@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Persistence\Generic\Qom;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 /**
@@ -25,47 +25,49 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand {
+class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+{
+    /**
+     * @var string
+     */
+    protected $selectorName;
 
-	/**
-	 * @var string
-	 */
-	protected $selectorName;
+    /**
+     * @var string
+     */
+    protected $propertyName;
 
-	/**
-	 * @var string
-	 */
-	protected $propertyName;
+    /**
+     * Constructs this PropertyValue instance
+     *
+     * @param string $propertyName
+     * @param string $selectorName
+     */
+    public function __construct($propertyName, $selectorName = '')
+    {
+        $this->propertyName = $propertyName;
+        $this->selectorName = $selectorName;
+    }
 
-	/**
-	 * Constructs this PropertyValue instance
-	 *
-	 * @param string $propertyName
-	 * @param string $selectorName
-	 */
-	public function __construct($propertyName, $selectorName = '') {
-		$this->propertyName = $propertyName;
-		$this->selectorName = $selectorName;
-	}
+    /**
+     * Gets the name of the selector against which to evaluate this operand.
+     *
+     * @return string the selector name; non-null
+     * @api
+     */
+    public function getSelectorName()
+    {
+        return $this->selectorName;
+    }
 
-	/**
-	 * Gets the name of the selector against which to evaluate this operand.
-	 *
-	 * @return string the selector name; non-null
-	 * @api
-	 */
-	public function getSelectorName() {
-		return $this->selectorName;
-	}
-
-	/**
-	 * Gets the name of the property.
-	 *
-	 * @return string the property name; non-null
-	 * @api
-	 */
-	public function getPropertyName() {
-		return $this->propertyName;
-	}
-
+    /**
+     * Gets the name of the property.
+     *
+     * @return string the property name; non-null
+     * @api
+     */
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
 }

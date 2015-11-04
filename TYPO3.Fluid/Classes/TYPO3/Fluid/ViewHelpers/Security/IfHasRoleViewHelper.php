@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Security;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 use TYPO3\Flow\Annotations as Flow;
@@ -74,60 +74,61 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfHasRoleViewHelper extends AbstractConditionViewHelper {
+class IfHasRoleViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @Flow\Inject
+     * @var PolicyService
+     */
+    protected $policyService;
 
-	/**
-	 * @Flow\Inject
-	 * @var PolicyService
-	 */
-	protected $policyService;
+    /**
+     * renders <f:then> child if the role could be found in the security context,
+     * otherwise renders <f:else> child.
+     *
+     * @param string $role The role or role identifier
+     * @param string $packageKey PackageKey of the package defining the role
+     * @param Account $account If specified, this subject of this check is the given Account instead of the currently authenticated account
+     * @return string the rendered string
+     * @api
+     */
+    public function render($role, $packageKey = null, Account $account = null)
+    {
+        if (is_string($role)) {
+            $roleIdentifier = $role;
 
-	/**
-	 * renders <f:then> child if the role could be found in the security context,
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $role The role or role identifier
-	 * @param string $packageKey PackageKey of the package defining the role
-	 * @param Account $account If specified, this subject of this check is the given Account instead of the currently authenticated account
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($role, $packageKey = NULL, Account $account = NULL) {
-		if (is_string($role)) {
-			$roleIdentifier = $role;
+            if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
+                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
+            }
 
-			if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
-				 $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
-			}
+            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
+                if ($packageKey === null) {
+                    $request = $this->controllerContext->getRequest();
+                    $roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
+                } else {
+                    $roleIdentifier = $packageKey . ':' . $roleIdentifier;
+                }
+            }
 
-			if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE) {
-				if ($packageKey === NULL) {
-					$request = $this->controllerContext->getRequest();
-					$roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
-				} else {
-					$roleIdentifier = $packageKey . ':' . $roleIdentifier;
-				}
-			}
+            $role = $this->policyService->getRole($roleIdentifier);
+        }
 
-			$role = $this->policyService->getRole($roleIdentifier);
-		}
+        if ($account instanceof Account) {
+            $hasRole = $account->hasRole($role);
+        } else {
+            $hasRole = $this->securityContext->hasRole($role->getIdentifier());
+        }
 
-		if ($account instanceof Account) {
-			$hasRole = $account->hasRole($role);
-		} else {
-			$hasRole = $this->securityContext->hasRole($role->getIdentifier());
-		}
-
-		if ($hasRole) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+        if ($hasRole) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }

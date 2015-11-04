@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Annotations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Used to ignore validation on a specific method argument or class property.
@@ -20,32 +20,32 @@ namespace TYPO3\Flow\Annotations;
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
  */
-final class IgnoreValidation {
+final class IgnoreValidation
+{
+    /**
+     * Name of the argument to skip validation for. (Can be given as anonymous argument.)
+     * @var string
+     */
+    public $argumentName;
 
-	/**
-	 * Name of the argument to skip validation for. (Can be given as anonymous argument.)
-	 * @var string
-	 */
-	public $argumentName;
+    /**
+     * Whether to evaluate the validation results of the argument
+     * @var boolean
+     */
+    public $evaluate = false;
 
-	/**
-	 * Whether to evaluate the validation results of the argument
-	 * @var boolean
-	 */
-	public $evaluate = FALSE;
+    /**
+     * @param array $values
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(array $values)
+    {
+        if (isset($values['value']) || isset($values['argumentName'])) {
+            $this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
+        }
 
-	/**
-	 * @param array $values
-	 * @throws \InvalidArgumentException
-	 */
-	public function __construct(array $values) {
-		if (isset($values['value']) || isset($values['argumentName'])) {
-			$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
-		}
-
-		if (isset($values['evaluate'])) {
-			$this->evaluate = (boolean)$values['evaluate'];
-		}
-	}
-
+        if (isset($values['evaluate'])) {
+            $this->evaluate = (boolean)$values['evaluate'];
+        }
+    }
 }

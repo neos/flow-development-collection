@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Cache\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * A contract for a cache backend which is capable of storing, retrieving and
@@ -17,15 +17,14 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-interface PhpCapableBackendInterface extends BackendInterface {
-
-	/**
-	 * Loads PHP code from the cache and require_onces it right away.
-	 *
-	 * @param string $entryIdentifier An identifier which describes the cache entry to load
-	 * @return mixed Potential return value from the include operation
-	 * @api
-	 */
-	public function requireOnce($entryIdentifier);
-
+interface PhpCapableBackendInterface extends BackendInterface
+{
+    /**
+     * Loads PHP code from the cache and require_onces it right away.
+     *
+     * @param string $entryIdentifier An identifier which describes the cache entry to load
+     * @return mixed Potential return value from the include operation
+     * @api
+     */
+    public function requireOnce($entryIdentifier);
 }

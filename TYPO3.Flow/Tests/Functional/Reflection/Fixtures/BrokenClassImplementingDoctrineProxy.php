@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 /**
@@ -17,10 +17,11 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
  *
  * See issue http://forge.typo3.org/issues/29449 for details.
  */
-class BrokenClassImplementingDoctrineProxy {
-	// This class just exists to satisfy the class loader -- else the compilation
-	// run during functional tests will fail, as it expects to find a class named
-	// like the file. It is NOT used for the testcase.
+class BrokenClassImplementingDoctrineProxy
+{
+    // This class just exists to satisfy the class loader -- else the compilation
+    // run during functional tests will fail, as it expects to find a class named
+    // like the file. It is NOT used for the testcase.
 }
 
 
@@ -32,6 +33,6 @@ namespace TYPO3\Flow\Persistence\Doctrine\Proxies;
  * result in an exception.
  *
  */
-abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy {
-
+abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy
+{
 }

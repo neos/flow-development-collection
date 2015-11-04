@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -18,24 +18,24 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  */
-class EntityWithOptionalConstructorArguments {
+class EntityWithOptionalConstructorArguments
+{
+    public $argument1;
 
-	public $argument1;
+    public $argument2;
 
-	public $argument2;
-
-	public $argument3;
+    public $argument3;
 
 
-	/**
-	 * @param mixed $argument1
-	 * @param mixed $argument2
-	 * @param mixed $argument3
-	 */
-	public function __construct($argument1, $argument2 = NULL, $argument3 = NULL) {
-		$this->argument1 = $argument1;
-		$this->argument2 = $argument2;
-		$this->argument3 = $argument3;
-	}
-
+    /**
+     * @param mixed $argument1
+     * @param mixed $argument2
+     * @param mixed $argument3
+     */
+    public function __construct($argument1, $argument2 = null, $argument3 = null)
+    {
+        $this->argument1 = $argument1;
+        $this->argument2 = $argument2;
+        $this->argument3 = $argument3;
+    }
 }

@@ -62,19 +62,16 @@ General considerations
   * The copyright header itself must not start with ``/**``, as this may confuse
     documentation generators!
 
-*The TYPO3 Flow standard file header*::
+*The Flow standard file header*::
 
  <?php
  namespace YourCompany\Package\Stuff\Here;
 
  /*                                                                        *
-  * This script belongs to the TYPO3 Flow package "Vendor.Package".        *
+  * This script belongs to the Flow framework.                             *
   *                                                                        *
   * It is free software; you can redistribute it and/or modify it under    *
-  * the terms of the GNU Lesser General Public License, either version 3   *
-  * of the License, or (at your option) any later version.                 *
-  *                                                                        *
-  * The TYPO3 project - inspiring people to share!                         *
+  * the terms of the MIT license.                                          *
   *                                                                        */
 
 * Code lines are of arbitrary length, no strict limitations to 80 characters or something
@@ -83,10 +80,7 @@ General considerations
 * Lines end with a newline a.k.a ``chr(10)`` - UNIX style
 * Files must be encoded in UTF-8 without byte order mark (BOM)
 
-Make sure you use the correct license and mention the correct package in the header, we
-have some `some boilerplate text`_.
-
-.. _`some boilerplate text`: http://wiki.typo3.org/Flow_Licensing_Boilerplate
+Make sure you use the correct license and mention the correct package in the header
 
 Indentation and line formatting
 _______________________________

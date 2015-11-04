@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -52,34 +52,36 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class PrintfViewHelper extends AbstractViewHelper implements CompilableInterface {
+class PrintfViewHelper extends AbstractViewHelper implements CompilableInterface
+{
+    /**
+     * Format the arguments with the given printf format string.
+     *
+     * @param array $arguments The arguments for vsprintf
+     * @param string $value string to format
+     * @return string The formatted value
+     * @api
+     */
+    public function render(array $arguments, $value = null)
+    {
+        return self::renderStatic(array('arguments' => $arguments, 'value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
 
-	/**
-	 * Format the arguments with the given printf format string.
-	 *
-	 * @param array $arguments The arguments for vsprintf
-	 * @param string $value string to format
-	 * @return string The formatted value
-	 * @api
-	 */
-	public function render(array $arguments, $value = NULL) {
-		return self::renderStatic(array('arguments' => $arguments, 'value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
-	}
+    /**
+     * Applies vsprintf() on the specified value.
+     *
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @return string
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        if ($value === null) {
+            $value = $renderChildrenClosure();
+        }
 
-	/**
-	 * Applies vsprintf() on the specified value.
-	 *
-	 * @param array $arguments
-	 * @param \Closure $renderChildrenClosure
-	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
-	 * @return string
-	 */
-	static public function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext) {
-		$value = $arguments['value'];
-		if ($value === NULL) {
-			$value = $renderChildrenClosure();
-		}
-
-		return vsprintf($value, $arguments['arguments']);
-	}
+        return vsprintf($value, $arguments['arguments']);
+    }
 }

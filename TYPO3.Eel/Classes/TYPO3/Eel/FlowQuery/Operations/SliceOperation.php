@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Eel\FlowQuery\Operations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Eel package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
@@ -20,31 +20,32 @@ use TYPO3\Flow\Annotations as Flow;
  * If no arguments are given, the full context is returned. Otherwise the
  * value contained in the context are sliced with offset and length.
  */
-class SliceOperation extends AbstractOperation {
+class SliceOperation extends AbstractOperation
+{
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'slice';
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @var string
-	 */
-	static protected $shortName = 'slice';
+    /**
+     * {@inheritdoc}
+     *
+     * @param FlowQuery $flowQuery the FlowQuery object
+     * @param array $arguments A mandatory start and optional end index in the context, negative indices indicate an offset from the start or end respectively
+     * @return void
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    {
+        $context = $flowQuery->getContext();
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments A mandatory start and optional end index in the context, negative indices indicate an offset from the start or end respectively
-	 * @return void
-	 */
-	public function evaluate(FlowQuery $flowQuery, array $arguments) {
-		$context = $flowQuery->getContext();
+        if (isset($arguments[0]) && isset($arguments[1])) {
+            $context = array_slice($context, (integer)$arguments[0], (integer)$arguments[1] - (integer)$arguments[0]);
+        } elseif (isset($arguments[0])) {
+            $context = array_slice($context, (integer)$arguments[0]);
+        }
 
-		if (isset($arguments[0]) && isset($arguments[1])) {
-			$context = array_slice($context, (integer)$arguments[0], (integer)$arguments[1] - (integer)$arguments[0]);
-		} elseif (isset($arguments[0])) {
-			$context = array_slice($context, (integer)$arguments[0]);
-		}
-
-		$flowQuery->setContext($context);
-	}
+        $flowQuery->setContext($context);
+    }
 }

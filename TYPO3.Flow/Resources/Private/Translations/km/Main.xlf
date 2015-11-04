@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="km" state="needs-translation">Authentication required</target></trans-unit>
+			<target xml:lang="km" state="translated">ត្រូវការសិទ្ធ</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="km" state="translated">ឈ្មោះ​គណនី</target></trans-unit>
@@ -19,10 +19,10 @@
 			<target xml:lang="km" state="translated">ចុះឈ្មោះចូល</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="km" state="needs-translation">Logout</target></trans-unit>
+			<target xml:lang="km" state="translated">ចាកចេញ</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="km" state="needs-translation">Update</target></trans-unit>
+			<target xml:lang="km" state="translated">ទំនើបកម្ម</target><alt-trans><target xml:lang="km">ធ្វើឲ្យទាន់សម័យ</target></alt-trans></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
 			<target xml:lang="km" state="translated">ដាក់ស្នើ</target></trans-unit>

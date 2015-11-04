@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -26,93 +26,98 @@ use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
  *
  * @Flow\Proxy(false)
  */
-class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterface {
+class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterface
+{
+    /**
+     * @var boolean
+     */
+    protected $isEvaluated = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $isEvaluated = FALSE;
+    /**
+     * @var string
+     */
+    protected $entityType;
 
-	/**
-	 * @var string
-	 */
-	protected $entityType;
+    /**
+     * @var SqlGeneratorInterface
+     */
+    protected $conditionGenerator;
 
-	/**
-	 * @var SqlGeneratorInterface
-	 */
-	protected $conditionGenerator;
+    /**
+     * @param string $entityType
+     * @return boolean
+     * @throws InvalidQueryRewritingConstraintException
+     */
+    public function matchesEntityType($entityType)
+    {
+        $this->evaluateMatcher();
+        if ($this->entityType === null) {
+            throw new InvalidQueryRewritingConstraintException('Entity type could not be determined! This might be due to an missing entity type matcher in your privilege target definition!', 1416399447);
+        }
+        return $this->entityType === $entityType;
+    }
 
-	/**
-	 * @param string $entityType
-	 * @return boolean
-	 * @throws InvalidQueryRewritingConstraintException
-	 */
-	public function matchesEntityType($entityType) {
-		$this->evaluateMatcher();
-		if ($this->entityType === NULL) {
-			throw new InvalidQueryRewritingConstraintException('Entity type could not be determined! This might be due to an missing entity type matcher in your privilege target definition!', 1416399447);
-		}
-		return $this->entityType === $entityType;
-	}
+    /**
+     * Note: The result of this method cannot be cached, as the target table alias might change for different query scenarios
+     *
+     * @param ClassMetadata $targetEntity
+     * @param string $targetTableAlias
+     * @return string
+     */
+    public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    {
+        $this->evaluateMatcher();
 
-	/**
-	 * Note: The result of this method cannot be cached, as the target table alias might change for different query scenarios
-	 *
-	 * @param ClassMetadata $targetEntity
-	 * @param string $targetTableAlias
-	 * @return string
-	 */
-	public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias) {
-		$this->evaluateMatcher();
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $sqlFilter = new SqlFilter($entityManager);
 
-		/** @var EntityManager $entityManager */
-		$entityManager = $this->objectManager->get(ObjectManager::class);
-		$sqlFilter = new SqlFilter($entityManager);
+        if (!$this->matchesEntityType($targetEntity->getName())) {
+            return null;
+        }
 
-		if (!$this->matchesEntityType($targetEntity->getName())) {
-			return NULL;
-		}
+        return $this->conditionGenerator->getSql($sqlFilter, $targetEntity, $targetTableAlias);
+    }
 
-		return $this->conditionGenerator->getSql($sqlFilter, $targetEntity, $targetTableAlias);
-	}
+    /**
+     * parses the matcher of this privilege using Eel and extracts "entityType" and "conditionGenerator"
+     *
+     * @return void
+     */
+    protected function evaluateMatcher()
+    {
+        if ($this->isEvaluated) {
+            return;
+        }
+        $context = new EelContext($this->getConditionGenerator());
 
-	/**
-	 * parses the matcher of this privilege using Eel and extracts "entityType" and "conditionGenerator"
-	 *
-	 * @return void
-	 */
-	protected function evaluateMatcher() {
-		if ($this->isEvaluated) {
-			return;
-		}
-		$context = new EelContext($this->getConditionGenerator());
+        /** @var EntityPrivilegeExpressionEvaluator $evaluator */
+        $evaluator = $this->objectManager->get(EntityPrivilegeExpressionEvaluator::class);
+        $result = $evaluator->evaluate($this->getParsedMatcher(), $context);
+        $this->entityType = $result['entityType'];
+        $this->conditionGenerator = $result['conditionGenerator'] !== null ? $result['conditionGenerator'] : new TrueConditionGenerator();
+        $this->isEvaluated = true;
+    }
 
-		/** @var EntityPrivilegeExpressionEvaluator $evaluator */
-		$evaluator = $this->objectManager->get(EntityPrivilegeExpressionEvaluator::class);
-		$result = $evaluator->evaluate($this->getParsedMatcher(), $context);
-		$this->entityType = $result['entityType'];
-		$this->conditionGenerator = $result['conditionGenerator'] !== NULL ? $result['conditionGenerator'] : new TrueConditionGenerator();
-		$this->isEvaluated = TRUE;
-	}
+    /**
+     * @return ConditionGenerator
+     */
+    protected function getConditionGenerator()
+    {
+        return new ConditionGenerator();
+    }
 
-	/**
-	 * @return ConditionGenerator
-	 */
-	protected function getConditionGenerator() {
-		return new ConditionGenerator();
-	}
-
-	/**
-	 * Returns TRUE, if this privilege covers the given subject. As entity
-	 * privileges are evaluated and enforced "within the database system"
-	 * in SQL and not by the voting process, this method will always
-	 * return FALSE.
-	 *
-	 * @param PrivilegeSubjectInterface $subject
-	 * @return boolean
-	 */
-	public function matchesSubject(PrivilegeSubjectInterface $subject) {
-		return FALSE;
-	}
+    /**
+     * Returns TRUE, if this privilege covers the given subject. As entity
+     * privileges are evaluated and enforced "within the database system"
+     * in SQL and not by the voting process, this method will always
+     * return FALSE.
+     *
+     * @param PrivilegeSubjectInterface $subject
+     * @return boolean
+     */
+    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    {
+        return false;
+    }
 }

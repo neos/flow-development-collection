@@ -1,74 +1,79 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Example domain class which can be used to test different view helpers, e.g. the "select" view helper.
  */
-class UserDomainClass {
+class UserDomainClass
+{
+    protected $id;
 
-	protected $id;
+    protected $firstName;
 
-	protected $firstName;
+    protected $lastName;
 
-	protected $lastName;
+    /**
+     * Constructor.
+     *
+     * @param int $id
+     * @param string $firstName
+     * @param string $lastName
+     */
+    public function __construct($id, $firstName, $lastName)
+    {
+        $this->id = $id;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param int $id
-	 * @param string $firstName
-	 * @param string $lastName
-	 */
-	public function __construct($id, $firstName, $lastName) {
-		$this->id = $id;
-		$this->firstName = $firstName;
-		$this->lastName = $lastName;
-	}
+    /**
+     * Return the ID
+     *
+     * @return int ID
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * Return the ID
-	 *
-	 * @return int ID
-	 */
-	public function getId() {
-		return $this->id;
-	}
+    /**
+     * Return the first name
+     *
+     * @return string first name
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
 
-	/**
-	 * Return the first name
-	 *
-	 * @return string first name
-	 */
-	public function getFirstName() {
-		return $this->firstName;
-	}
+    /**
+     * Return the last name
+     *
+     * @return string lastname
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
 
-	/**
-	 * Return the last name
-	 *
-	 * @return string lastname
-	 */
-	public function getLastName() {
-		return $this->lastName;
-	}
-
-	/**
-	 * @return \ArrayObject
-	 */
-	public function getInterests() {
-		return new \ArrayObject(array(
-			'value1',
-			'value3',
-		));
-	}
+    /**
+     * @return \ArrayObject
+     */
+    public function getInterests()
+    {
+        return new \ArrayObject(array(
+            'value1',
+            'value3',
+        ));
+    }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Form;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Renders an <input type="hidden" ...> tag.
@@ -28,42 +28,43 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
  *
  * @api
  */
-class HiddenViewHelper extends AbstractFormFieldViewHelper {
+class HiddenViewHelper extends AbstractFormFieldViewHelper
+{
+    /**
+     * @var string
+     */
+    protected $tagName = 'input';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'input';
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+    }
 
-	/**
-	 * Initialize the arguments.
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerUniversalTagAttributes();
-	}
+    /**
+     * Renders the hidden field.
+     *
+     * @return string
+     * @api
+     */
+    public function render()
+    {
+        $name = $this->getName();
+        $this->registerFieldNameForFormTokenGeneration($name);
 
-	/**
-	 * Renders the hidden field.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function render() {
-		$name = $this->getName();
-		$this->registerFieldNameForFormTokenGeneration($name);
+        $this->tag->addAttribute('type', 'hidden');
+        $this->tag->addAttribute('name', $name);
+        $this->tag->addAttribute('value', $this->getValueAttribute(true));
 
-		$this->tag->addAttribute('type', 'hidden');
-		$this->tag->addAttribute('name', $name);
-		$this->tag->addAttribute('value', $this->getValueAttribute(TRUE));
+        $this->addAdditionalIdentityPropertiesIfNeeded();
+        $this->setErrorClassAttribute();
 
-		$this->addAdditionalIdentityPropertiesIfNeeded();
-		$this->setErrorClassAttribute();
-
-		return $this->tag->render();
-	}
-
+        return $this->tag->render();
+    }
 }
