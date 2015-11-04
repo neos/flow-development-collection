@@ -26,362 +26,375 @@ use TYPO3\Flow\Utility\TypeHandling;
  * @Flow\Scope("singleton")
  * @api
  */
-class PropertyMapper {
+class PropertyMapper
+{
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @var PropertyMappingConfigurationBuilder
+     */
+    protected $configurationBuilder;
 
-	/**
-	 * @var PropertyMappingConfigurationBuilder
-	 */
-	protected $configurationBuilder;
+    /**
+     * A multi-dimensional array which stores the Type Converters available in the system.
+     *
+     * It has the following structure:
+     *
+     * 1. Dimension: Source Type
+     * 2. Dimension: Target Type
+     * 3. Dimension: Priority
+     * Value: Type Converter instance
+     *
+     * @var array
+     */
+    protected $typeConverters = array();
 
-	/**
-	 * A multi-dimensional array which stores the Type Converters available in the system.
-	 *
-	 * It has the following structure:
-	 *
-	 * 1. Dimension: Source Type
-	 * 2. Dimension: Target Type
-	 * 3. Dimension: Priority
-	 * Value: Type Converter instance
-	 *
-	 * @var array
-	 */
-	protected $typeConverters = array();
+    /**
+     * A list of property mapping messages (errors, warnings) which have occured on last mapping.
+     * @var Result
+     */
+    protected $messages;
 
-	/**
-	 * A list of property mapping messages (errors, warnings) which have occured on last mapping.
-	 * @var Result
-	 */
-	protected $messages;
+    /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * @param ObjectManagerInterface $objectManager
-	 */
-	public function injectObjectManager(ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * @param PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
+     */
+    public function injectPropertyMappingConfigurationBuilder(PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder)
+    {
+        $this->configurationBuilder = $propertyMappingConfigurationBuilder;
+    }
 
-	/**
-	 * @param PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
-	 */
-	public function injectPropertyMappingConfigurationBuilder(PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder) {
-		$this->configurationBuilder = $propertyMappingConfigurationBuilder;
-	}
+    /**
+     * Lifecycle method, called after all dependencies have been injected.
+     * Here, the typeConverter array gets initialized.
+     *
+     * @return void
+     * @throws DuplicateTypeConverterException
+     */
+    public function initializeObject()
+    {
+        $this->typeConverters = static::getTypeConverterImplementationMap($this->objectManager);
+    }
 
-	/**
-	 * Lifecycle method, called after all dependencies have been injected.
-	 * Here, the typeConverter array gets initialized.
-	 *
-	 * @return void
-	 * @throws DuplicateTypeConverterException
-	 */
-	public function initializeObject() {
-		$this->typeConverters = static::getTypeConverterImplementationMap($this->objectManager);
-	}
+    /**
+     * Returns all class names implementing the TypeConverterInterface.
+     *
+     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @return array Array of type converter implementations mapped by source, target and priority
+     * @throws DuplicateTypeConverterException
+     * @Flow\CompileStatic
+     */
+    public static function getTypeConverterImplementationClassNames($objectManager)
+    {
+        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        return $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Property\TypeConverterInterface::class);
+    }
 
-	/**
-	 * Returns all class names implementing the TypeConverterInterface.
-	 *
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return array Array of type converter implementations mapped by source, target and priority
-	 * @throws DuplicateTypeConverterException
-	 * @Flow\CompileStatic
-	 */
-	static public function getTypeConverterImplementationClassNames($objectManager) {
-		$reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
-		return $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Property\TypeConverterInterface::class);
-	}
+    /**
+     * Map $source to $targetType, and return the result.
+     *
+     * If $source is an object and already is of type $targetType, we do return the unmodified object.
+     *
+     * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
+     * @param string $targetType The type of the target; can be either a class name or a simple type.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
+     * @return mixed an instance of $targetType
+     * @throws Exception
+     * @throws \Exception
+     * @throws Exception
+     * @api
+     */
+    public function convert($source, $targetType, PropertyMappingConfigurationInterface $configuration = null)
+    {
+        if ($configuration === null) {
+            $configuration = $this->configurationBuilder->build();
+        }
 
-	/**
-	 * Map $source to $targetType, and return the result.
-	 *
-	 * If $source is an object and already is of type $targetType, we do return the unmodified object.
-	 *
-	 * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
-	 * @param string $targetType The type of the target; can be either a class name or a simple type.
-	 * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
-	 * @return mixed an instance of $targetType
-	 * @throws Exception
-	 * @throws \Exception
-	 * @throws Exception
-	 * @api
-	 */
-	public function convert($source, $targetType, PropertyMappingConfigurationInterface $configuration = NULL) {
-		if ($configuration === NULL) {
-			$configuration = $this->configurationBuilder->build();
-		}
+        $currentPropertyPath = array();
+        $this->messages = new Result();
+        try {
+            $result = $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
+            if ($result instanceof Error) {
+                return null;
+            }
 
-		$currentPropertyPath = array();
-		$this->messages = new Result();
-		try {
-			$result = $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
-			if ($result instanceof Error) {
-				return NULL;
-			}
+            return $result;
+        } catch (SecurityException $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
+            throw new Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
+        }
+    }
 
-			return $result;
-		} catch (SecurityException $exception) {
-			throw $exception;
-		} catch (\Exception $exception) {
-			throw new Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
-		}
-	}
+    /**
+     * Get the messages of the last Property Mapping
+     *
+     * @return Result
+     * @api
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
 
-	/**
-	 * Get the messages of the last Property Mapping
-	 *
-	 * @return Result
-	 * @api
-	 */
-	public function getMessages() {
-		return $this->messages;
-	}
+    /**
+     * Internal function which actually does the property mapping.
+     *
+     * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
+     * @param string $targetType The type of the target; can be either a class name or a simple type.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
+     * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
+     * @return mixed an instance of $targetType
+     * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
+     * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+     */
+    protected function doMapping($source, $targetType, PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
+    {
+        if (is_object($source)) {
+            $targetClass = TypeHandling::truncateElementType($targetType);
+            if ($source instanceof $targetClass) {
+                return $source;
+            }
+        }
 
-	/**
-	 * Internal function which actually does the property mapping.
-	 *
-	 * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
-	 * @param string $targetType The type of the target; can be either a class name or a simple type.
-	 * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
-	 * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
-	 * @return mixed an instance of $targetType
-	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
-	 */
-	protected function doMapping($source, $targetType, PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
-		if (is_object($source)) {
-			$targetClass = TypeHandling::truncateElementType($targetType);
-			if ($source instanceof $targetClass) {
-				return $source;
-			}
-		}
+        if ($source === null) {
+            $source = '';
+        }
 
-		if ($source === NULL) {
-			$source = '';
-		}
+        $typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
+        $targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
 
-		$typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
-		$targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
+        if (!is_object($typeConverter) || !($typeConverter instanceof TypeConverterInterface)) {
+            throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
+        }
 
-		if (!is_object($typeConverter) || !($typeConverter instanceof TypeConverterInterface)) {
-			throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
-		}
+        $convertedChildProperties = array();
+        foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
+            $targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
+            if ($configuration->shouldSkip($targetPropertyName)) {
+                continue;
+            }
 
-		$convertedChildProperties = array();
-		foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
-			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
-			if ($configuration->shouldSkip($targetPropertyName)) {
-				continue;
-			}
+            if (!$configuration->shouldMap($targetPropertyName)) {
+                if ($configuration->shouldSkipUnknownProperties()) {
+                    continue;
+                }
+                throw new Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
+            }
 
-			if (!$configuration->shouldMap($targetPropertyName)) {
-				if ($configuration->shouldSkipUnknownProperties()) {
-					continue;
-				}
-				throw new Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
-			}
+            $targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);
 
-			$targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);
+            $subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
 
-			$subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
+            $currentPropertyPath[] = $targetPropertyName;
+            $targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
+            array_pop($currentPropertyPath);
+            if (!($targetPropertyValue instanceof Error)) {
+                $convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
+            }
+        }
+        $result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
-			$currentPropertyPath[] = $targetPropertyName;
-			$targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
-			array_pop($currentPropertyPath);
-			if (!($targetPropertyValue instanceof Error)) {
-				$convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
-			}
-		}
-		$result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
+        if ($result instanceof Error) {
+            $this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
+        }
 
-		if ($result instanceof Error) {
-			$this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
-		}
+        return $result;
+    }
 
-		return $result;
-	}
+    /**
+     * Determine the type converter to be used. If no converter has been found, an exception is raised.
+     *
+     * @param mixed $source
+     * @param string $targetType
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
+     * @throws Exception\TypeConverterException
+     * @throws Exception\InvalidTargetException
+     */
+    protected function findTypeConverter($source, $targetType, PropertyMappingConfigurationInterface $configuration)
+    {
+        if ($configuration->getTypeConverter() !== null) {
+            return $configuration->getTypeConverter();
+        }
 
-	/**
-	 * Determine the type converter to be used. If no converter has been found, an exception is raised.
-	 *
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
-	 * @throws Exception\TypeConverterException
-	 * @throws Exception\InvalidTargetException
-	 */
-	protected function findTypeConverter($source, $targetType, PropertyMappingConfigurationInterface $configuration) {
-		if ($configuration->getTypeConverter() !== NULL) {
-			return $configuration->getTypeConverter();
-		}
+        if (!is_string($targetType)) {
+            throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
+        }
+        $normalizedTargetType = TypeHandling::normalizeType($targetType);
+        $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
+        $converter = null;
 
-		if (!is_string($targetType)) {
-			throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
-		}
-		$normalizedTargetType = TypeHandling::normalizeType($targetType);
-		$truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
-		$converter = NULL;
+        $sourceTypes = $this->determineSourceTypes($source);
+        foreach ($sourceTypes as $sourceType) {
+            if (TypeHandling::isSimpleType($truncatedTargetType)) {
+                if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
+                    $converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
+                }
+            } else {
+                $converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
+            }
 
-		$sourceTypes = $this->determineSourceTypes($source);
-		foreach ($sourceTypes as $sourceType) {
-			if (TypeHandling::isSimpleType($truncatedTargetType)) {
-				if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
-					$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
-				}
-			} else {
-				$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
-			}
+            if ($converter !== null && $converter instanceof TypeConverterInterface) {
+                return $converter;
+            }
+        }
 
-			if ($converter !== NULL && $converter instanceof TypeConverterInterface) {
-				return $converter;
-			}
-		}
+        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
+    }
 
-		throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
-	}
+    /**
+     * Tries to find a suitable type converter for the given source and target type.
+     *
+     * @param string $source The actual source value
+     * @param string $sourceType Type of the source to convert from
+     * @param string $targetType Name of the target type to find a type converter for
+     * @return mixed Either the matching object converter or NULL
+     * @throws Exception\InvalidTargetException
+     */
+    protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType)
+    {
+        $targetClass = TypeHandling::truncateElementType($targetType);
+        if (!class_exists($targetClass) && !interface_exists($targetClass)) {
+            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
+        }
 
-	/**
-	 * Tries to find a suitable type converter for the given source and target type.
-	 *
-	 * @param string $source The actual source value
-	 * @param string $sourceType Type of the source to convert from
-	 * @param string $targetType Name of the target type to find a type converter for
-	 * @return mixed Either the matching object converter or NULL
-	 * @throws Exception\InvalidTargetException
-	 */
-	protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType) {
-		$targetClass = TypeHandling::truncateElementType($targetType);
-		if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-			throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
-		}
+        if (!isset($this->typeConverters[$sourceType])) {
+            return null;
+        }
 
-		if (!isset($this->typeConverters[$sourceType])) {
-			return NULL;
-		}
+        $convertersForSource = $this->typeConverters[$sourceType];
+        if (isset($convertersForSource[$targetClass])) {
+            $converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetType);
+            if ($converter !== null) {
+                return $converter;
+            }
+        }
 
-		$convertersForSource = $this->typeConverters[$sourceType];
-		if (isset($convertersForSource[$targetClass])) {
-			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetType);
-			if ($converter !== NULL) {
-				return $converter;
-			}
-		}
+        foreach (class_parents($targetClass) as $parentClass) {
+            if (!isset($convertersForSource[$parentClass])) {
+                continue;
+            }
 
-		foreach (class_parents($targetClass) as $parentClass) {
-			if (!isset($convertersForSource[$parentClass])) {
-				continue;
-			}
+            $converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetType);
+            if ($converter !== null) {
+                return $converter;
+            }
+        }
 
-			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetType);
-			if ($converter !== NULL) {
-				return $converter;
-			}
-		}
+        $converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass));
+        $converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetType);
 
-		$converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass));
-		$converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetType);
+        if ($converter !== null) {
+            return $converter;
+        }
+        if (isset($convertersForSource['object'])) {
+            return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetType);
+        } else {
+            return null;
+        }
+    }
 
-		if ($converter !== NULL) {
-			return $converter;
-		}
-		if (isset($convertersForSource['object'])) {
-			return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetType);
-		} else {
-			return NULL;
-		}
-	}
+    /**
+     * @param mixed $converters
+     * @param mixed $source
+     * @param string $targetType
+     * @return mixed Either the matching object converter or NULL
+     */
+    protected function findEligibleConverterWithHighestPriority($converters, $source, $targetType)
+    {
+        if (!is_array($converters)) {
+            return null;
+        }
+        krsort($converters);
+        reset($converters);
+        /** @var TypeConverterInterface $converter */
+        foreach ($converters as $converter) {
+            if (is_string($converter)) {
+                $converter = $this->objectManager->get($converter);
+            }
+            if ($converter->canConvertFrom($source, $targetType)) {
+                return $converter;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * @param mixed $converters
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @return mixed Either the matching object converter or NULL
-	 */
-	protected function findEligibleConverterWithHighestPriority($converters, $source, $targetType) {
-		if (!is_array($converters)) {
-			return NULL;
-		}
-		krsort($converters);
-		reset($converters);
-		/** @var TypeConverterInterface $converter */
-		foreach ($converters as $converter) {
-			if (is_string($converter)) {
-				$converter = $this->objectManager->get($converter);
-			}
-			if ($converter->canConvertFrom($source, $targetType)) {
-				return $converter;
-			}
-		}
-		return NULL;
-	}
+    /**
+     * @param array $convertersForSource
+     * @param array $interfaceNames
+     * @return array
+     * @throws DuplicateTypeConverterException
+     */
+    protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames)
+    {
+        $convertersForInterface = array();
+        foreach ($interfaceNames as $implementedInterface) {
+            if (isset($convertersForSource[$implementedInterface])) {
+                foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
+                    if (isset($convertersForInterface[$priority])) {
+                        throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
+                    }
+                    $convertersForInterface[$priority] = $converter;
+                }
+            }
+        }
+        return $convertersForInterface;
+    }
 
-	/**
-	 * @param array $convertersForSource
-	 * @param array $interfaceNames
-	 * @return array
-	 * @throws DuplicateTypeConverterException
-	 */
-	protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames) {
-		$convertersForInterface = array();
-		foreach ($interfaceNames as $implementedInterface) {
-			if (isset($convertersForSource[$implementedInterface])) {
-				foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
-					if (isset($convertersForInterface[$priority])) {
-						throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
-					}
-					$convertersForInterface[$priority] = $converter;
-				}
-			}
-		}
-		return $convertersForInterface;
-	}
+    /**
+     * Determine the type of the source data, or throw an exception if source was an unsupported format.
+     *
+     * @param mixed $source
+     * @return array Possible source types (single value for simple typed source, multiple values for object source)
+     * @throws Exception\InvalidSourceException
+     */
+    protected function determineSourceTypes($source)
+    {
+        if (is_string($source)) {
+            return array('string');
+        } elseif (is_array($source)) {
+            return array('array');
+        } elseif (is_float($source)) {
+            return array('float');
+        } elseif (is_integer($source)) {
+            return array('integer');
+        } elseif (is_bool($source)) {
+            return array('boolean');
+        } elseif (is_object($source)) {
+            $class = get_class($source);
+            $parentClasses = class_parents($class);
+            $interfaces = class_implements($class);
+            return array_merge(array($class), $parentClasses, $interfaces, array('object'));
+        } else {
+            throw new Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
+        }
+    }
 
-	/**
-	 * Determine the type of the source data, or throw an exception if source was an unsupported format.
-	 *
-	 * @param mixed $source
-	 * @return array Possible source types (single value for simple typed source, multiple values for object source)
-	 * @throws Exception\InvalidSourceException
-	 */
-	protected function determineSourceTypes($source) {
-		if (is_string($source)) {
-			return array('string');
-		} elseif (is_array($source)) {
-			return array('array');
-		} elseif (is_float($source)) {
-			return array('float');
-		} elseif (is_integer($source)) {
-			return array('integer');
-		} elseif (is_bool($source)) {
-			return array('boolean');
-		} elseif (is_object($source)) {
-			$class = get_class($source);
-			$parentClasses = class_parents($class);
-			$interfaces = class_implements($class);
-			return array_merge(array($class), $parentClasses, $interfaces, array('object'));
-		} else {
-			throw new Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
-		}
-	}
-
-	/**
-	 * Returns a multi-dimensional array with the Type Converters available in the system.
-	 *
-	 * It has the following structure:
-	 *
-	 * 1. Dimension: Source Type
-	 * 2. Dimension: Target Type
-	 * 3. Dimension: Priority
-	 * Value: Type Converter instance
-	 *
-	 * @return array
-	 */
-	public function getTypeConverters() {
-		return $this->typeConverters;
-	}
+    /**
+     * Returns a multi-dimensional array with the Type Converters available in the system.
+     *
+     * It has the following structure:
+     *
+     * 1. Dimension: Source Type
+     * 2. Dimension: Target Type
+     * 3. Dimension: Priority
+     * Value: Type Converter instance
+     *
+     * @return array
+     */
+    public function getTypeConverters()
+    {
+        return $this->typeConverters;
+    }
 }
