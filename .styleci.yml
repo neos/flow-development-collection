@@ -1,0 +1,16 @@
+preset: psr2
+
+finder:
+  path:
+    - "TYPO3.Eel/Classes"
+    - "TYPO3.Eel/Tests"
+    - "TYPO3.Fluid/Classes"
+    - "TYPO3.Fluid/Tests"
+    - "TYPO3.Flow/Classes"
+    - "TYPO3.Flow/Tests"
+    - "TYPO3.Kickstart/Classes"
+    - "TYPO3.Kickstart/Tests"
+  not-path:
+    - "TYPO3.Eel/Classes/TYPO3/Eel/FlowQuery/FizzleParser.php"
+    - "TYPO3.Eel/Classes/TYPO3/Eel/EelParser.php"
+    - "TYPO3.Eel/Classes/TYPO3/Eel/AbstractParser.php"

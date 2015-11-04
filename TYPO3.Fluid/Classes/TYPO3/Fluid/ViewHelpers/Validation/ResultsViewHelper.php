@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Validation;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Error\Result;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -61,32 +61,33 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * @api
  */
-class ResultsViewHelper extends AbstractViewHelper {
+class ResultsViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * Iterates through selected errors of the request.
+     *
+     * @param string $for The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
+     * @param string $as The name of the variable to store the current error
+     * @return string Rendered string
+     * @api
+     */
+    public function render($for = '', $as = 'validationResults')
+    {
+        $request = $this->controllerContext->getRequest();
+        /** @var $validationResults Result */
+        $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
+        if ($validationResults !== null && $for !== '') {
+            $validationResults = $validationResults->forProperty($for);
+        }
+        $this->templateVariableContainer->add($as, $validationResults);
+        $output = $this->renderChildren();
+        $this->templateVariableContainer->remove($as);
 
-	/**
-	 * Iterates through selected errors of the request.
-	 *
-	 * @param string $for The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
-	 * @param string $as The name of the variable to store the current error
-	 * @return string Rendered string
-	 * @api
-	 */
-	public function render($for = '', $as = 'validationResults') {
-		$request = $this->controllerContext->getRequest();
-		/** @var $validationResults Result */
-		$validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-		if ($validationResults !== NULL && $for !== '') {
-			$validationResults = $validationResults->forProperty($for);
-		}
-		$this->templateVariableContainer->add($as, $validationResults);
-		$output = $this->renderChildren();
-		$this->templateVariableContainer->remove($as);
-
-		return $output;
-	}
+        return $output;
+    }
 }

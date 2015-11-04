@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Form;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 
 /**
@@ -25,7 +25,7 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
  * </output>
  *
  * <code title="Dummy content for template preview">
- * <f:submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
+ * <f:form.submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:form.submit>
  * </code>
  * <output>
  * <input type="submit" name="mySubmit" value="Send Mail" />
@@ -33,41 +33,42 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
  *
  * @api
  */
-class SubmitViewHelper extends AbstractFormFieldViewHelper {
+class SubmitViewHelper extends AbstractFormFieldViewHelper
+{
+    /**
+     * @var string
+     */
+    protected $tagName = 'input';
 
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'input';
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerUniversalTagAttributes();
+    }
 
-	/**
-	 * Initialize the arguments.
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
-		$this->registerUniversalTagAttributes();
-	}
+    /**
+     * Renders the submit button.
+     *
+     * @return string
+     * @api
+     */
+    public function render()
+    {
+        $name = $this->getName();
+        $this->registerFieldNameForFormTokenGeneration($name);
+        $this->addAdditionalIdentityPropertiesIfNeeded();
 
-	/**
-	 * Renders the submit button.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function render() {
-		$name = $this->getName();
-		$this->registerFieldNameForFormTokenGeneration($name);
-		$this->addAdditionalIdentityPropertiesIfNeeded();
+        $this->tag->addAttribute('type', 'submit');
+        $this->tag->addAttribute('name', $name);
+        $this->tag->addAttribute('value', $this->getValueAttribute(true));
 
-		$this->tag->addAttribute('type', 'submit');
-		$this->tag->addAttribute('name', $name);
-		$this->tag->addAttribute('value', $this->getValueAttribute(TRUE));
-
-		return $this->tag->render();
-	}
-
+        return $this->tag->render();
+    }
 }

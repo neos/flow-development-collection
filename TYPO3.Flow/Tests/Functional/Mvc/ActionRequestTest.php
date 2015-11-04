@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Mvc;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
@@ -19,36 +19,38 @@ use TYPO3\Flow\Tests\FunctionalTestCase;
 /**
  * Functional tests for the ActionRequest
  */
-class ActionRequestTest extends FunctionalTestCase {
+class ActionRequestTest extends FunctionalTestCase
+{
+    /**
+     * @test
+     */
+    public function actionRequestStripsParentHttpRequest()
+    {
+        $httpRequest = Request::create(new Uri('http://typo3.org'));
 
-	/**
-	 * @test
-	 */
-	public function actionRequestStripsParentHttpRequest() {
-		$httpRequest = Request::create(new Uri('http://typo3.org'));
+        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest->setControllerActionName('foo');
+        $serializedActionRequest = serialize($actionRequest);
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setControllerActionName('foo');
-		$serializedActionRequest = serialize($actionRequest);
+        /* @var $unserializedActionRequest ActionRequest */
+        $unserializedActionRequest = unserialize($serializedActionRequest);
+        $this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
+        $this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
+    }
 
-		/* @var $unserializedActionRequest ActionRequest */
-		$unserializedActionRequest = unserialize($serializedActionRequest);
-		$this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
-		$this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
-	}
+    /**
+     * @test
+     */
+    public function actionRequestDoesNotStripParentActionRequest()
+    {
+        $httpRequest = Request::create(new Uri('http://typo3.org'));
 
-	/**
-	 * @test
-	 */
-	public function actionRequestDoesNotStripParentActionRequest() {
-		$httpRequest = Request::create(new Uri('http://typo3.org'));
+        $parentActionRequest = new ActionRequest($httpRequest);
+        $actionRequest = new ActionRequest($parentActionRequest);
+        $serializedActionRequest = serialize($actionRequest);
 
-		$parentActionRequest = new ActionRequest($httpRequest);
-		$actionRequest = new ActionRequest($parentActionRequest);
-		$serializedActionRequest = serialize($actionRequest);
-
-		/* @var $unserializedActionRequest ActionRequest */
-		$unserializedActionRequest = unserialize($serializedActionRequest);
-		$this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
-	}
+        /* @var $unserializedActionRequest ActionRequest */
+        $unserializedActionRequest = unserialize($serializedActionRequest);
+        $this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
+    }
 }

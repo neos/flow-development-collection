@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Mvc\Exception;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * This exception is thrown by a controller to stop the execution of the current
@@ -21,6 +21,6 @@ namespace TYPO3\Flow\Mvc\Exception;
  *
  * @api
  */
-class StopActionException extends \TYPO3\Flow\Mvc\Exception {
-
+class StopActionException extends \TYPO3\Flow\Mvc\Exception
+{
 }

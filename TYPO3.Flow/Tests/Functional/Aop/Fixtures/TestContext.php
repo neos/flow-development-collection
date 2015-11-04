@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -18,51 +18,55 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class TestContext {
+class TestContext
+{
+    /**
+     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     */
+    protected $securityFixturesEntityD;
 
-	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
-	 */
-	protected $securityFixturesEntityD;
+    /**
+     * @var array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     */
+    protected $securityFixturesEntityDCollection = array();
 
-	/**
-	 * @var array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 */
-	protected $securityFixturesEntityDCollection = array();
+    /**
+     * @return string
+     */
+    public function getNameOfTheWeek()
+    {
+        return 'Robbie';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getNameOfTheWeek() {
-		return 'Robbie';
-	}
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $securityFixturesEntityD
+     */
+    public function setSecurityFixturesEntityD($securityFixturesEntityD)
+    {
+        $this->securityFixturesEntityD = $securityFixturesEntityD;
+    }
 
-	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $securityFixturesEntityD
-	 */
-	public function setSecurityFixturesEntityD($securityFixturesEntityD) {
-		$this->securityFixturesEntityD = $securityFixturesEntityD;
-	}
+    /**
+     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     */
+    public function getSecurityFixturesEntityD()
+    {
+        return $this->securityFixturesEntityD;
+    }
 
-	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
-	 */
-	public function getSecurityFixturesEntityD() {
-		return $this->securityFixturesEntityD;
-	}
+    /**
+     * @param array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $securityFixturesEntityDCollection
+     */
+    public function setSecurityFixturesEntityDCollection($securityFixturesEntityDCollection)
+    {
+        $this->securityFixturesEntityDCollection = $securityFixturesEntityDCollection;
+    }
 
-	/**
-	 * @param array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $securityFixturesEntityDCollection
-	 */
-	public function setSecurityFixturesEntityDCollection($securityFixturesEntityDCollection) {
-		$this->securityFixturesEntityDCollection = $securityFixturesEntityDCollection;
-	}
-
-	/**
-	 * @return array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
-	 */
-	public function getSecurityFixturesEntityDCollection() {
-		return $this->securityFixturesEntityDCollection;
-	}
-
+    /**
+     * @return array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     */
+    public function getSecurityFixturesEntityDCollection()
+    {
+        return $this->securityFixturesEntityDCollection;
+    }
 }

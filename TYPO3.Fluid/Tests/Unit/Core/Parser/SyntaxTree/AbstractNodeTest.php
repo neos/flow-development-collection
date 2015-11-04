@@ -1,48 +1,51 @@
 <?php
 namespace TYPO3\Fluid\Tests\Unit\Core\Parser\SyntaxTree;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * An AbstractNode Test
  */
-class AbstractNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    protected $renderingContext;
 
-	protected $renderingContext;
+    protected $abstractNode;
 
-	protected $abstractNode;
+    protected $childNode;
 
-	protected $childNode;
+    public function setUp()
+    {
+        $this->renderingContext = $this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContext::class, array(), array(), '', false);
 
-	public function setUp() {
-		$this->renderingContext = $this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContext::class, array(), array(), '', FALSE);
+        $this->abstractNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class, array('evaluate'));
 
-		$this->abstractNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class, array('evaluate'));
+        $this->childNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
+        $this->abstractNode->addChildNode($this->childNode);
+    }
 
-		$this->childNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
-		$this->abstractNode->addChildNode($this->childNode);
-	}
+    /**
+     * @test
+     */
+    public function evaluateChildNodesPassesRenderingContextToChildNodes()
+    {
+        $this->childNode->expects($this->once())->method('evaluate')->with($this->renderingContext);
+        $this->abstractNode->evaluateChildNodes($this->renderingContext);
+    }
 
-	/**
-	 * @test
-	 */
-	public function evaluateChildNodesPassesRenderingContextToChildNodes() {
-		$this->childNode->expects($this->once())->method('evaluate')->with($this->renderingContext);
-		$this->abstractNode->evaluateChildNodes($this->renderingContext);
-	}
-
-	/**
-	 * @test
-	 */
-	public function childNodeCanBeReadOutAgain() {
-		$this->assertSame($this->abstractNode->getChildNodes(), array($this->childNode));
-	}
+    /**
+     * @test
+     */
+    public function childNodeCanBeReadOutAgain()
+    {
+        $this->assertSame($this->abstractNode->getChildNodes(), array($this->childNode));
+    }
 }

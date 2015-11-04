@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Format;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -45,37 +45,38 @@ use TYPO3\Fluid\Core\ViewHelper;
  *
  * @api
  */
-class IdentifierViewHelper extends AbstractViewHelper {
+class IdentifierViewHelper extends AbstractViewHelper
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeChildren = FALSE;
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
-	 * Outputs the identifier of the specified object
-	 *
-	 * @param object $value the object to render the identifier for, or NULL if VH children should be used
-	 * @return mixed the identifier of $value, usually the UUID
-	 * @throws ViewHelper\Exception if the given value is no object
-	 * @api
-	 */
-	public function render($value = NULL) {
-		if ($value === NULL) {
-			$value = $this->renderChildren();
-		}
-		if ($value === NULL) {
-			return NULL;
-		}
-		if (!is_object($value)) {
-			throw new ViewHelper\Exception('f:format.identifier expects an object, ' . gettype($value) . ' given.', 1337700024);
-		}
-		return $this->persistenceManager->getIdentifierByObject($value);
-	}
+    /**
+     * Outputs the identifier of the specified object
+     *
+     * @param object $value the object to render the identifier for, or NULL if VH children should be used
+     * @return mixed the identifier of $value, usually the UUID
+     * @throws ViewHelper\Exception if the given value is no object
+     * @api
+     */
+    public function render($value = null)
+    {
+        if ($value === null) {
+            $value = $this->renderChildren();
+        }
+        if ($value === null) {
+            return null;
+        }
+        if (!is_object($value)) {
+            throw new ViewHelper\Exception('f:format.identifier expects an object, ' . gettype($value) . ' given.', 1337700024);
+        }
+        return $this->persistenceManager->getIdentifierByObject($value);
+    }
 }

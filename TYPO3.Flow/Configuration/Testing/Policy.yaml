@@ -1,5 +1,11 @@
 #                                                                        #
-# Security policy for the TYPO3 Flow Framework                           #
+# Security policy for the Flow Framework                                 #
+#                                                                        #
+# This file contains additions to the base configuration for the         #
+# Flow Framework when it runs in Testing context.                        #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
 #                                                                        #
 # This file contains the default security policy configuration for the   #
 # TYPO3 Flow Framework. Don't modify this file but add configuration     #

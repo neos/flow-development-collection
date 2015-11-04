@@ -1,46 +1,48 @@
 <?php
 namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class which references other dependencies from the same namespace.
  */
-class ClassWithNonNamespacedDependencies {
+class ClassWithNonNamespacedDependencies
+{
+    /**
+     * @Flow\Inject(lazy=FALSE)
+     * @var SingletonClassB
+     */
+    protected $singletonClassB;
 
-	/**
-	 * @Flow\Inject(lazy=FALSE)
-	 * @var SingletonClassB
-	 */
-	protected $singletonClassB;
+    /**
+     * @Flow\Inject(lazy=FALSE)
+     * @var SubNamespace\AnotherClass
+     */
+    protected $classFromSubNamespace;
 
-	/**
-	 * @Flow\Inject(lazy=FALSE)
-	 * @var SubNamespace\AnotherClass
-	 */
-	protected $classFromSubNamespace;
+    /**
+     * @return SingletonClassB
+     */
+    public function getSingletonClassB()
+    {
+        return $this->singletonClassB;
+    }
 
-	/**
-	 * @return SingletonClassB
-	 */
-	public function getSingletonClassB() {
-		return $this->singletonClassB;
-	}
-
-	/**
-	 * @return SubNamespace\AnotherClass
-	 */
-	public function getClassFromSubNamespace() {
-		return $this->classFromSubNamespace;
-	}
+    /**
+     * @return SubNamespace\AnotherClass
+     */
+    public function getClassFromSubNamespace()
+    {
+        return $this->classFromSubNamespace;
+    }
 }

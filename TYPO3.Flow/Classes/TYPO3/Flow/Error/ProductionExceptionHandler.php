@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Flow\Error;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow framework.                       *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception as FlowException;
@@ -20,48 +20,50 @@ use TYPO3\Flow\Http\Response;
  *
  * @Flow\Scope("singleton")
  */
-class ProductionExceptionHandler extends AbstractExceptionHandler {
+class ProductionExceptionHandler extends AbstractExceptionHandler
+{
+    /**
+     * Echoes an exception for the web.
+     *
+     * @param \Exception $exception The exception
+     * @return void
+     */
+    protected function echoExceptionWeb(\Exception $exception)
+    {
+        $statusCode = 500;
+        if ($exception instanceof FlowException) {
+            $statusCode = $exception->getStatusCode();
+        }
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : null;
+        if (!headers_sent()) {
+            header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
+        }
 
-	/**
-	 * Echoes an exception for the web.
-	 *
-	 * @param \Exception $exception The exception
-	 * @return void
-	 */
-	protected function echoExceptionWeb(\Exception $exception) {
-		$statusCode = 500;
-		if ($exception instanceof FlowException) {
-			$statusCode = $exception->getStatusCode();
-		}
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		$referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : NULL;
-		if (!headers_sent()) {
-			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
-		}
+        try {
+            if (isset($this->renderingOptions['templatePathAndFilename'])) {
+                echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+            } else {
+                echo $this->renderStatically($statusCode, $referenceCode);
+            }
+        } catch (\Exception $innerException) {
+            $this->systemLogger->logException($innerException);
+        }
+    }
 
-		try {
-			if (isset($this->renderingOptions['templatePathAndFilename'])) {
-				echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
-			} else {
-				echo $this->renderStatically($statusCode, $referenceCode);
-			}
-		} catch (\Exception $innerException) {
-			$this->systemLogger->logException($innerException);
-		}
-	}
+    /**
+     * Returns the statically rendered exception message
+     *
+     * @param integer $statusCode
+     * @param string $referenceCode
+     * @return string
+     */
+    protected function renderStatically($statusCode, $referenceCode)
+    {
+        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
-	/**
-	 * Returns the statically rendered exception message
-	 *
-	 * @param integer $statusCode
-	 * @param string $referenceCode
-	 * @return string
-	 */
-	protected function renderStatically($statusCode, $referenceCode) {
-		$statusMessage = Response::getStatusMessageByCode($statusCode);
-		$referenceCodeMessage = ($referenceCode !== NULL) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
-
-		return '<!DOCTYPE html>
+        return '<!DOCTYPE html>
 			<html>
 				<head>
 					<meta charset="UTF-8">
@@ -148,5 +150,5 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 					</div>
 				</body>
 			</html>';
-	}
+    }
 }

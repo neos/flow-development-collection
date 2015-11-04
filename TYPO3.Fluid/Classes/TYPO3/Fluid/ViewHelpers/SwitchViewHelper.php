@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Fluid".                *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- *  of the License, or (at your option) any later version.                *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -42,103 +42,107 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
  *
  * @api
  */
-class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface {
+class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface
+{
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $escapeOutput = FALSE;
+    /**
+     * An array of \TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode
+     * @var array
+     */
+    private $childNodes = array();
 
-	/**
-	 * An array of \TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode
-	 * @var array
-	 */
-	private $childNodes = array();
+    /**
+     * @var mixed
+     */
+    protected $backupSwitchExpression = null;
 
-	/**
-	 * @var mixed
-	 */
-	protected $backupSwitchExpression = NULL;
+    /**
+     * @var boolean
+     */
+    protected $backupBreakState = false;
 
-	/**
-	 * @var boolean
-	 */
-	protected $backupBreakState = FALSE;
+    /**
+     * Setter for ChildNodes - as defined in ChildNodeAccessInterface
+     *
+     * @param array $childNodes Child nodes of this syntax tree node
+     * @return void
+     */
+    public function setChildNodes(array $childNodes)
+    {
+        $this->childNodes = $childNodes;
+    }
 
-	/**
-	 * Setter for ChildNodes - as defined in ChildNodeAccessInterface
-	 *
-	 * @param array $childNodes Child nodes of this syntax tree node
-	 * @return void
-	 */
-	public function setChildNodes(array $childNodes) {
-		$this->childNodes = $childNodes;
-	}
+    /**
+     * @param mixed $expression
+     * @return string the rendered string
+     * @api
+     */
+    public function render($expression)
+    {
+        $content = '';
+        $this->backupSwitchState();
+        $templateVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
 
-	/**
-	 * @param mixed $expression
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($expression) {
-		$content = '';
-		$this->backupSwitchState();
-		$templateVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
+        $templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $expression);
+        $templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', false);
 
-		$templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $expression);
-		$templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', FALSE);
+        $defaultCaseViewHelperNode = null;
+        foreach ($this->childNodes as $childNode) {
+            if ($childNode instanceof ViewHelperNode && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\DefaultCaseViewHelper::class) {
+                $defaultCaseViewHelperNode = $childNode;
+            }
+            if (!$childNode instanceof ViewHelperNode || $childNode->getViewHelperClassName() !== \TYPO3\Fluid\ViewHelpers\CaseViewHelper::class) {
+                continue;
+            }
+            $content = $childNode->evaluate($this->renderingContext);
+            if ($templateVariableContainer->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break') === true) {
+                $defaultCaseViewHelperNode = null;
+                break;
+            }
+        }
 
-		$defaultCaseViewHelperNode = NULL;
-		foreach ($this->childNodes as $childNode) {
-			if ($childNode instanceof ViewHelperNode && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\DefaultCaseViewHelper::class) {
-				$defaultCaseViewHelperNode = $childNode;
-			}
-			if (!$childNode instanceof ViewHelperNode || $childNode->getViewHelperClassName() !== \TYPO3\Fluid\ViewHelpers\CaseViewHelper::class) {
-				continue;
-			}
-			$content = $childNode->evaluate($this->renderingContext);
-			if ($templateVariableContainer->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break') === TRUE) {
-				$defaultCaseViewHelperNode = NULL;
-				break;
-			}
-		}
+        if ($defaultCaseViewHelperNode !== null) {
+            $content = $defaultCaseViewHelperNode->evaluate($this->renderingContext);
+        }
 
-		if ($defaultCaseViewHelperNode !== NULL) {
-			$content = $defaultCaseViewHelperNode->evaluate($this->renderingContext);
-		}
+        $templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
+        $templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
 
-		$templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
-		$templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
+        $this->restoreSwitchState();
+        return $content;
+    }
 
-		$this->restoreSwitchState();
-		return $content;
-	}
+    /**
+     * Backups "switch expression" and "break" state of a possible parent switch ViewHelper to support nesting
+     *
+     * @return void
+     */
+    protected function backupSwitchState()
+    {
+        if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression')) {
+            $this->backupSwitchExpression = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
+        }
+        if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break')) {
+            $this->backupBreakState = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
+        }
+    }
 
-	/**
-	 * Backups "switch expression" and "break" state of a possible parent switch ViewHelper to support nesting
-	 *
-	 * @return void
-	 */
-	protected function backupSwitchState() {
-		if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression')) {
-			$this->backupSwitchExpression = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
-		}
-		if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break')) {
-			$this->backupBreakState = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
-		}
-	}
-
-	/**
-	 * Restores "switch expression" and "break" states that might have been backed up in backupSwitchState() before
-	 *
-	 * @return void
-	 */
-	protected function restoreSwitchState() {
-		if ($this->backupSwitchExpression !== NULL) {
-			$this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $this->backupSwitchExpression);
-		}
-		if ($this->backupBreakState !== FALSE) {
-			$this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', TRUE);
-		}
-	}
+    /**
+     * Restores "switch expression" and "break" states that might have been backed up in backupSwitchState() before
+     *
+     * @return void
+     */
+    protected function restoreSwitchState()
+    {
+        if ($this->backupSwitchExpression !== null) {
+            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $this->backupSwitchExpression);
+        }
+        if ($this->backupBreakState !== false) {
+            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', true);
+        }
+    }
 }

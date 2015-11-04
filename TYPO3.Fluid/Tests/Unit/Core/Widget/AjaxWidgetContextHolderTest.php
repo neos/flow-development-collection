@@ -1,55 +1,58 @@
 <?php
 namespace TYPO3\Fluid\Tests\Unit\Core\Widget;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for AjaxWidgetContextHolder
  *
  */
-class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase
+{
+    /**
+     * @test
+     */
+    public function storeSetsTheAjaxWidgetIdentifierInContextAndIncreasesIt()
+    {
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
+        $ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
 
-	/**
-	 * @test
-	 */
-	public function storeSetsTheAjaxWidgetIdentifierInContextAndIncreasesIt() {
-		$ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
-		$ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
+        $widgetContext = $this->getMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
+        $widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier')->with(123);
 
-		$widgetContext = $this->getMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
-		$widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier')->with(123);
+        $ajaxWidgetContextHolder->store($widgetContext);
+        $this->assertEquals(124, $ajaxWidgetContextHolder->_get('nextFreeAjaxWidgetId'));
+    }
 
-		$ajaxWidgetContextHolder->store($widgetContext);
-		$this->assertEquals(124, $ajaxWidgetContextHolder->_get('nextFreeAjaxWidgetId'));
-	}
+    /**
+     * @test
+     */
+    public function storedWidgetContextCanBeRetrievedAgain()
+    {
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
+        $ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
 
-	/**
-	 * @test
-	 */
-	public function storedWidgetContextCanBeRetrievedAgain() {
-		$ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
-		$ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
+        $widgetContext = $this->getMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
+        $ajaxWidgetContextHolder->store($widgetContext);
 
-		$widgetContext = $this->getMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
-		$ajaxWidgetContextHolder->store($widgetContext);
+        $this->assertSame($widgetContext, $ajaxWidgetContextHolder->get('123'));
+    }
 
-		$this->assertSame($widgetContext, $ajaxWidgetContextHolder->get('123'));
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
-	 */
-	public function getThrowsExceptionIfWidgetContextIsNotFound() {
-		$ajaxWidgetContextHolder = new \TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder();
-		$ajaxWidgetContextHolder->get(42);
-	}
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
+     */
+    public function getThrowsExceptionIfWidgetContextIsNotFound()
+    {
+        $ajaxWidgetContextHolder = new \TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder();
+        $ajaxWidgetContextHolder->get(42);
+    }
 }

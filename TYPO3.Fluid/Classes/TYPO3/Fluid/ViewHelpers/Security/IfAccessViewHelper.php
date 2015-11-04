@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Fluid\ViewHelpers\Security;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Fluid".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -48,27 +48,28 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  *
  * @api
  */
-class IfAccessViewHelper extends AbstractConditionViewHelper {
+class IfAccessViewHelper extends AbstractConditionViewHelper
+{
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
-	/**
-	 * @Flow\Inject
-	 * @var PrivilegeManagerInterface
-	 */
-	protected $privilegeManager;
-
-	/**
-	 * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
-	 *
-	 * @param string $privilegeTarget The Privilege target identifier
-	 * @param array $parameters optional privilege target parameters to be evaluated
-	 * @return string the rendered then/else child nodes depending on the access
-	 * @api
-	 */
-	public function render($privilegeTarget, array $parameters = array()) {
-		if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+    /**
+     * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
+     *
+     * @param string $privilegeTarget The Privilege target identifier
+     * @param array $parameters optional privilege target parameters to be evaluated
+     * @return string the rendered then/else child nodes depending on the access
+     * @api
+     */
+    public function render($privilegeTarget, array $parameters = array())
+    {
+        if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
 }
