@@ -453,6 +453,11 @@ configuration setting ``TYPO3.Flow.persistence.doctrine.filters``.
 See the Doctrine documentation ([#]_) for more information on the Doctrine
 Filter System.
 
+.. note:: If you create a filter and run into fatal errors caused by overriding a final
+  ``__construct()`` method in one of the Doctrine classes, you need to add
+  ``@Flow\Proxy(false)`` to your filter class to prevent Flow from building a proxy,
+  which causes this error.
+
 Custom Doctrine DQL functions
 -----------------------------
 
