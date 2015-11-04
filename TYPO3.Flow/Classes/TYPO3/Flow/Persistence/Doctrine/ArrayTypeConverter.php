@@ -18,6 +18,7 @@ use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 /**
  * Converts Doctrine collections to arrays
  *
+ * @Flow\Scope("singleton")
  */
 class ArrayTypeConverter extends AbstractTypeConverter
 {

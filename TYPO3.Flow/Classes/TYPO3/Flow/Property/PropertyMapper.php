@@ -12,6 +12,11 @@ namespace TYPO3\Flow\Property;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\Exception\DuplicateTypeConverterException;
+use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\Flow\Utility\TypeHandling;
 
 /**
@@ -24,14 +29,12 @@ use TYPO3\Flow\Utility\TypeHandling;
 class PropertyMapper
 {
     /**
-     * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
+     * @var PropertyMappingConfigurationBuilder
      */
     protected $configurationBuilder;
 
@@ -51,36 +54,44 @@ class PropertyMapper
 
     /**
      * A list of property mapping messages (errors, warnings) which have occured on last mapping.
-     * @var \TYPO3\Flow\Error\Result
+     * @var Result
      */
     protected $messages;
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @param PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
+     */
+    public function injectPropertyMappingConfigurationBuilder(PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder)
+    {
+        $this->configurationBuilder = $propertyMappingConfigurationBuilder;
+    }
 
     /**
      * Lifecycle method, called after all dependencies have been injected.
      * Here, the typeConverter array gets initialized.
      *
      * @return void
-     * @throws \TYPO3\Flow\Property\Exception\DuplicateTypeConverterException
+     * @throws DuplicateTypeConverterException
      */
     public function initializeObject()
     {
-        $typeConverterClassNames = static::getTypeConverterImplementationClassNames($this->objectManager);
-        foreach ($typeConverterClassNames as $typeConverterClassName) {
-            $typeConverter = $this->objectManager->get($typeConverterClassName);
-            foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
-                if (isset($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {
-                    throw new \TYPO3\Flow\Property\Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $typeConverter->getSupportedTargetType() . '" with priority "' . $typeConverter->getPriority() . '": ' . get_class($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()]) . ' and ' . get_class($typeConverter), 1297951378);
-                }
-                $this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] = $typeConverter;
-            }
-        }
+        $this->typeConverters = static::getTypeConverterImplementationMap($this->objectManager);
     }
 
     /**
      * Returns all class names implementing the TypeConverterInterface.
      *
      * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-     * @return array Array of type converter implementations
+     * @return array Array of type converter implementations mapped by source, target and priority
+     * @throws DuplicateTypeConverterException
      * @Flow\CompileStatic
      */
     public static function getTypeConverterImplementationClassNames($objectManager)
@@ -96,37 +107,38 @@ class PropertyMapper
      *
      * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
      * @param string $targetType The type of the target; can be either a class name or a simple type.
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
      * @return mixed an instance of $targetType
-     * @throws \TYPO3\Flow\Property\Exception
+     * @throws Exception
+     * @throws \Exception
      * @api
      */
-    public function convert($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convert($source, $targetType, PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             $configuration = $this->configurationBuilder->build();
         }
 
         $currentPropertyPath = array();
-        $this->messages = new \TYPO3\Flow\Error\Result();
+        $this->messages = new Result();
         try {
             $result = $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
-            if ($result instanceof \TYPO3\Flow\Error\Error) {
+            if ($result instanceof Error) {
                 return null;
             }
 
             return $result;
-        } catch (\TYPO3\Flow\Security\Exception $exception) {
+        } catch (SecurityException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
-            throw new \TYPO3\Flow\Property\Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
+            throw new Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
 
     /**
      * Get the messages of the last Property Mapping
      *
-     * @return \TYPO3\Flow\Error\Result
+     * @return Result
      * @api
      */
     public function getMessages()
@@ -139,13 +151,13 @@ class PropertyMapper
      *
      * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
      * @param string $targetType The type of the target; can be either a class name or a simple type.
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
      * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
      * @return mixed an instance of $targetType
      * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
      * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
-    protected function doMapping($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
+    protected function doMapping($source, $targetType, PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
     {
         if (is_object($source)) {
             $targetClass = TypeHandling::truncateElementType($targetType);
@@ -161,7 +173,7 @@ class PropertyMapper
         $typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
         $targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
 
-        if (!is_object($typeConverter) || !($typeConverter instanceof \TYPO3\Flow\Property\TypeConverterInterface)) {
+        if (!is_object($typeConverter) || !($typeConverter instanceof TypeConverterInterface)) {
             throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
         }
 
@@ -186,13 +198,13 @@ class PropertyMapper
             $currentPropertyPath[] = $targetPropertyName;
             $targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
             array_pop($currentPropertyPath);
-            if (!($targetPropertyValue instanceof \TYPO3\Flow\Error\Error)) {
+            if (!($targetPropertyValue instanceof Error)) {
                 $convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
             }
         }
         $result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
-        if ($result instanceof \TYPO3\Flow\Error\Error) {
+        if ($result instanceof Error) {
             $this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
         }
 
@@ -204,19 +216,19 @@ class PropertyMapper
      *
      * @param mixed $source
      * @param string $targetType
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return \TYPO3\Flow\Property\TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
-     * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
+     * @throws Exception\TypeConverterException
+     * @throws Exception\InvalidTargetException
      */
-    protected function findTypeConverter($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration)
+    protected function findTypeConverter($source, $targetType, PropertyMappingConfigurationInterface $configuration)
     {
         if ($configuration->getTypeConverter() !== null) {
             return $configuration->getTypeConverter();
         }
 
         if (!is_string($targetType)) {
-            throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
+            throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
         }
         $normalizedTargetType = TypeHandling::normalizeType($targetType);
         $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
@@ -232,12 +244,12 @@ class PropertyMapper
                 $converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
             }
 
-            if ($converter !== null) {
+            if ($converter !== null && $converter instanceof TypeConverterInterface) {
                 return $converter;
             }
         }
 
-        throw new \TYPO3\Flow\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
+        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
     }
 
     /**
@@ -247,13 +259,13 @@ class PropertyMapper
      * @param string $sourceType Type of the source to convert from
      * @param string $targetType Name of the target type to find a type converter for
      * @return mixed Either the matching object converter or NULL
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
+     * @throws Exception\InvalidTargetException
      */
     protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType)
     {
         $targetClass = TypeHandling::truncateElementType($targetType);
         if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-            throw new \TYPO3\Flow\Property\Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
+            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
         }
 
         if (!isset($this->typeConverters[$sourceType])) {
@@ -307,6 +319,9 @@ class PropertyMapper
         reset($converters);
         /** @var TypeConverterInterface $converter */
         foreach ($converters as $converter) {
+            if (is_string($converter)) {
+                $converter = $this->objectManager->get($converter);
+            }
             if ($converter->canConvertFrom($source, $targetType)) {
                 return $converter;
             }
@@ -318,7 +333,7 @@ class PropertyMapper
      * @param array $convertersForSource
      * @param array $interfaceNames
      * @return array
-     * @throws \TYPO3\Flow\Property\Exception\DuplicateTypeConverterException
+     * @throws DuplicateTypeConverterException
      */
     protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames)
     {
@@ -327,7 +342,7 @@ class PropertyMapper
             if (isset($convertersForSource[$implementedInterface])) {
                 foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
                     if (isset($convertersForInterface[$priority])) {
-                        throw new \TYPO3\Flow\Property\Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
+                        throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
                     }
                     $convertersForInterface[$priority] = $converter;
                 }
@@ -341,7 +356,7 @@ class PropertyMapper
      *
      * @param mixed $source
      * @return array Possible source types (single value for simple typed source, multiple values for object source)
-     * @throws \TYPO3\Flow\Property\Exception\InvalidSourceException
+     * @throws Exception\InvalidSourceException
      */
     protected function determineSourceTypes($source)
     {
@@ -361,7 +376,7 @@ class PropertyMapper
             $interfaces = class_implements($class);
             return array_merge(array($class), $parentClasses, $interfaces, array('object'));
         } else {
-            throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
+            throw new Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
         }
     }
 
