@@ -528,13 +528,8 @@ class Bootstrap
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
         if (!defined('FLOW_PATH_TEMPORARY')) {
-            $temporaryDirectoryPath = self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY');
-            if ($temporaryDirectoryPath !== null) {
-                $temporaryDirectoryPath = rtrim($temporaryDirectoryPath, '/') . '/';
-            } else {
-                $temporaryDirectoryBasePath = self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary';
-                $temporaryDirectoryPath = Files::concatenatePaths(array($temporaryDirectoryBasePath, str_replace('/', '/SubContext', (string)$this->context))) . '/';
-            }
+            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
+            $temporaryDirectoryPath = Files::concatenatePaths(array(FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context))) . '/';
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 

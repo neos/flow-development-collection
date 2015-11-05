@@ -554,7 +554,7 @@ class Scripts
     {
         $subRequestEnvironmentVariables = array(
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
-            'FLOW_PATH_TEMPORARY' => FLOW_PATH_TEMPORARY,
+            'FLOW_PATH_TEMPORARY_BASE' => FLOW_PATH_TEMPORARY_BASE,
             'FLOW_CONTEXT' => $settings['core']['context']
         );
         if (isset($settings['core']['subRequestEnvironmentVariables'])) {
