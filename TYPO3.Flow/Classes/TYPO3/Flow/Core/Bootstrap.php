@@ -603,10 +603,13 @@ class Bootstrap
             }
         }
         if (!is_dir(FLOW_PATH_TEMPORARY) && !is_link(FLOW_PATH_TEMPORARY)) {
+            // We can't use Files::createDirectoryRecursively() because mkdir() without shutup operator will lead to a PHP warning
+            $oldMask = umask(000);
             if (!@mkdir(FLOW_PATH_TEMPORARY, 0777, true)) {
                 echo('Flow could not create the directory "' . FLOW_PATH_TEMPORARY . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1441354578)');
                 exit(1);
             }
+            umask($oldMask);
         }
     }
 
