@@ -12,7 +12,9 @@ namespace TYPO3\Fluid\ViewHelpers\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -51,12 +53,6 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IfAccessViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
      * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
      *
      * @param string $privilegeTarget The Privilege target identifier
@@ -66,10 +62,24 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
      */
     public function render($privilegeTarget, array $parameters = array())
     {
-        if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
-            return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
-        }
+        return $this->renderInternal();
+    }
+
+
+    /**
+     * @param array $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+        $privilegeTarget = $arguments['privilegeTarget'];
+        $parameters = $arguments['parameters'];
+
+        /** @var ObjectManagerInterface $objectManager */
+        $objectManager = $renderingContext->getObjectManager();
+        $privilegeManager = $objectManager->get(PrivilegeManagerInterface::class);
+
+        return $privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters);
     }
 }

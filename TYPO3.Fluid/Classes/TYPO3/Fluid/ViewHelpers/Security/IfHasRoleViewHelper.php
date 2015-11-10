@@ -17,6 +17,7 @@ use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -77,18 +78,6 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IfHasRoleViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var PolicyService
-     */
-    protected $policyService;
-
-    /**
      * renders <f:then> child if the role could be found in the security context,
      * otherwise renders <f:else> child.
      *
@@ -100,6 +89,25 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      */
     public function render($role, $packageKey = null, Account $account = null)
     {
+        return $this->renderInternal();
+    }
+
+    /**
+     * @param array $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return bool
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+        $role = $arguments['role'];
+        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : null;
+        $account = isset($arguments['account']) ? $arguments['account'] : null;
+
+        /** @var ObjectManagerInterface $objectManager */
+        $objectManager = $renderingContext->getObjectManager();
+        $securityContext = $objectManager->get(Context::class);
+        $policyService = $objectManager->get(PolicyService::class);
+
         if (is_string($role)) {
             $roleIdentifier = $role;
 
@@ -109,26 +117,26 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
 
             if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
                 if ($packageKey === null) {
-                    $request = $this->controllerContext->getRequest();
+                    $request = $renderingContext->getControllerContext()->getRequest();
                     $roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
                 } else {
                     $roleIdentifier = $packageKey . ':' . $roleIdentifier;
                 }
             }
 
-            $role = $this->policyService->getRole($roleIdentifier);
+            $role = $policyService->getRole($roleIdentifier);
         }
 
         if ($account instanceof Account) {
             $hasRole = $account->hasRole($role);
         } else {
-            $hasRole = $this->securityContext->hasRole($role->getIdentifier());
+            $hasRole = $securityContext->hasRole($role->getIdentifier());
         }
 
         if ($hasRole) {
-            return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
+            return true;
         }
+
+        return false;
     }
 }

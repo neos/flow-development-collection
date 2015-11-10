@@ -11,8 +11,10 @@ namespace TYPO3\Fluid\ViewHelpers\Security;
  * source code.
  */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -49,36 +51,33 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * Injects the Security Context
+     * renders <f:then> child if an account is authenticated, otherwise renders <f:else> child.
      *
-     * @param Context $securityContext
-     * @return void
-     */
-    public function injectSecurityContext(Context $securityContext)
-    {
-        $this->securityContext = $securityContext;
-    }
-
-    /**
-     * Renders <f:then> child if any account is currently authenticated, otherwise renders <f:else> child.
-     *
-     * @return string the rendered string
+     * @return string the rendered then/else child nodes depending on the access
      * @api
      */
     public function render()
     {
-        $activeTokens = $this->securityContext->getAuthenticationTokens();
+        return $this->renderInternal();
+    }
+
+    /**
+     * @param array $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+        /** @var ObjectManagerInterface $objectManager */
+        $objectManager = $renderingContext->getObjectManager();
+        $securityContext = $objectManager->get(Context::class);
+
         /** @var $token TokenInterface */
-        foreach ($activeTokens as $token) {
+        foreach ($securityContext->getAuthenticationTokens() as $token) {
             if ($token->isAuthenticated()) {
-                return $this->renderThenChild();
+                return true;
             }
         }
-        return $this->renderElseChild();
+        return false;
     }
 }
