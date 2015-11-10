@@ -160,9 +160,8 @@ class ActionController extends AbstractController
         $this->mapRequestArgumentsToControllerArguments();
 
         if ($this->view === null) {
-            $this->view = $this->resolveView();
-        }
-        if ($this->view !== null) {
+            $this->prepareViewProxy();
+        } else {
             $this->view->assign('settings', $this->settings);
             $this->view->setControllerContext($this->controllerContext);
             $this->initializeView($this->view);
@@ -181,13 +180,14 @@ class ActionController extends AbstractController
     protected function resolveActionMethodName()
     {
         $actionMethodName = $this->request->getControllerActionName() . 'Action';
-        if (!is_callable(array($this, $actionMethodName))) {
+        if (!is_callable([$this, $actionMethodName])) {
             throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
         }
         $publicActionMethods = static::getPublicActionMethods($this->objectManager);
         if (!isset($publicActionMethods[$actionMethodName])) {
             throw new InvalidActionVisibilityException(sprintf('The action "%s" in controller "%s" is not public!', $actionMethodName, get_class($this)), 1186669086);
         }
+
         return $actionMethodName;
     }
 
@@ -442,8 +442,13 @@ class ActionController extends AbstractController
             }
         }
 
-        if ($actionResult === null && $this->view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
-            $this->response->appendContent($this->view->render());
+        if ($actionResult === null && $this->view !== null) {
+            if ($this->view instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+                $this->view->_activateDependency();
+            }
+            if ($actionResult === null && $this->view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
+                $this->response->appendContent($this->view->render());
+            }
         } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
             $this->response->appendContent($actionResult);
         } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
@@ -505,6 +510,24 @@ class ActionController extends AbstractController
         }
 
         return $result;
+    }
+
+    /**
+     * Prepares a dependency proxy for the view.
+     */
+    protected function prepareViewProxy()
+    {
+        $this->view = new \TYPO3\Flow\Object\DependencyInjection\DependencyProxy('', function () {
+            $view = $this->resolveView();
+            if ($view !== null) {
+                $view->assign('settings', $this->settings);
+                $view->setControllerContext($this->controllerContext);
+                $this->initializeView($view);
+            }
+
+            return $view;
+        });
+        $this->view->_addPropertyVariable($this->view);
     }
 
     /**
