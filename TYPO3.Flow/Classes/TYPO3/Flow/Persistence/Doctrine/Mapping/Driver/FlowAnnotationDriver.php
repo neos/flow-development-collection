@@ -940,13 +940,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             }
         }
 
-        $proxyAnnotation = $this->reader->getClassAnnotation($class, \TYPO3\Flow\Annotations\Proxy::class);
-        if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
-            // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', Events::postLoad);
-            // FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', Events::postLoad);
-        }
+        $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
     }
 
     /**
