@@ -1,0 +1,3 @@
+AllowOverride None
+SetHandler default-handler
+php_flag engine off
