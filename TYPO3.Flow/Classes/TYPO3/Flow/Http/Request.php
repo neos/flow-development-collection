@@ -95,8 +95,8 @@ class Request extends Message
 
         if ($this->headers->has('X-Forwarded-Port')) {
             $this->uri->setPort($this->headers->get('X-Forwarded-Port'));
-        } elseif ($this->headers->has('X-Forwarded-Proto') && $protocol === 'https') {
-            $this->uri->setPort(443);
+        } elseif ($this->headers->has('X-Forwarded-Proto')) {
+            $this->uri->setPort($protocol === 'https' ? 443 : 80);
         } elseif (isset($server['SERVER_PORT'])) {
             $this->uri->setPort($server['SERVER_PORT']);
         }
