@@ -114,9 +114,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
             throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
         }
 
-        if ($this->has($entryIdentifier)) {
-            $this->remove($entryIdentifier);
-        }
+        $this->remove($entryIdentifier);
 
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
