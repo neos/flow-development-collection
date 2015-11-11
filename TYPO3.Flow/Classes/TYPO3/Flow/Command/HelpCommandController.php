@@ -41,6 +41,12 @@ class HelpCommandController extends CommandController
     protected $bootstrap;
 
     /**
+     * @Flow\InjectConfiguration(path = "core.applicationPackageKey")
+     * @var string
+     */
+    protected $applicationPackageKey;
+
+    /**
      * @Flow\Inject
      * @var CommandManager
      */
@@ -58,8 +64,8 @@ class HelpCommandController extends CommandController
     public function helpStubCommand()
     {
         $context = $this->bootstrap->getContext();
-
-        $this->outputLine('<b>TYPO3 Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion() ?: FLOW_VERSION_BRANCH, $context));
+        $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));
@@ -105,7 +111,8 @@ class HelpCommandController extends CommandController
     {
         $context = $this->bootstrap->getContext();
 
-        $this->outputLine('<b>TYPO3 Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion() ?: FLOW_VERSION_BRANCH, $context));
+        $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('The following commands are currently available:');
