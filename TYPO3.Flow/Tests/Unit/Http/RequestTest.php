@@ -786,7 +786,7 @@ class RequestTest extends UnitTestCase
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com:80',
+                'expectedUri' => 'https://acme.com',
             ),
             array(
                 'forwardedProtocol' => 'https',
@@ -798,7 +798,7 @@ class RequestTest extends UnitTestCase
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => null,
                 'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com:443',
+                'expectedUri' => 'http://acme.com',
             ),
             array(
                 'forwardedProtocol' => 'http',

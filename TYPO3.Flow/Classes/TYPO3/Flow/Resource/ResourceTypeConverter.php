@@ -137,6 +137,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
+        if (empty($source)) {
+            return null;
+        }
+
         if (is_string($source)) {
             $source = array('hash' => $source);
         }
