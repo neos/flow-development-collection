@@ -210,4 +210,19 @@ class TemplateVariableContainer implements \ArrayAccess
     {
         return $this->get($identifier);
     }
+
+    /**
+     * Gets a variable or NULL if it does not exist
+     *
+     * @param string $variableName name of the variable
+     * @return mixed the stored variable or NULL
+     */
+    public function getOrNull($variableName)
+    {
+        if ($variableName === '_all') {
+            return $this->variables;
+        }
+
+        return isset($this->variables[$variableName]) ? $this->variables[$variableName] : null;
+    }
 }
