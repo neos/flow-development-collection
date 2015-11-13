@@ -18,6 +18,7 @@ use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
  * A general purpose configuration manager
@@ -526,6 +527,7 @@ class ConfigurationManager
                 $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
                 // Merge routes with SubRoutes recursively
+                $this->includeSubRoutesFromSettings($this->configurations[$configurationType]);
                 $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
@@ -743,6 +745,34 @@ EOD;
             }
         }
         return $mergedSubRoutesConfigurations;
+    }
+
+    /**
+     * Merges routes from TYPO3.Flow.mvc.routes settings into $routeDefinitions
+     * NOTE: Routes from settings will always be appended to existing route definitions from the main Routes configuration!
+     *
+     * @param array $routeDefinitions
+     * @return void
+     */
+    protected function includeSubRoutesFromSettings(&$routeDefinitions)
+    {
+        $routeSettings = $this->getConfiguration(self::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.mvc.routes');
+        if ($routeSettings === null) {
+            return;
+        }
+        $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
+        foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
+            $subRoutesName = $packageKey . 'SubRoutes';
+            $routeDefinitions[] = [
+                'name' => $packageKey,
+                'uriPattern' => '<' . $subRoutesName . '>',
+                'subRoutes' => [
+                    $subRoutesName => [
+                        'package' => $packageKey,
+                    ]
+                ]
+            ];
+        }
     }
 
     /**
