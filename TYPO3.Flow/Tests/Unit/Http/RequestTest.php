@@ -18,14 +18,23 @@ use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the Http Request class
+ *
+ * In some tests backupGlobals is disabled, this is to avoid risky test warnings caused by changed globals
+ * that are needed to be changed in those tests.
+ *
+ * Additionally those tests backup/restore the SCRIPT_NAME in the $_SERVER superglobal to avoid a warning
+ * with PHPUnit when it tries to access that in phpunit/phpunit/src/Util/Filter.php on line 29
  */
 class RequestTest extends UnitTestCase
 {
     /**
      * @test
+     * @backupGlobals disabled
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
         $_POST = array();
         $_COOKIE = array();
@@ -69,13 +78,18 @@ class RequestTest extends UnitTestCase
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
      * @test
+     * @backupGlobals disabled
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = array();
         $_POST = array();
         $_COOKIE = array();
@@ -85,6 +99,8 @@ class RequestTest extends UnitTestCase
         $request = Request::createFromEnvironment();
 
         $this->assertEquals('http://localhost/', (string)$request->getUri());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
@@ -669,9 +685,12 @@ class RequestTest extends UnitTestCase
     /**
      * RFC 2616 / 14.23 (Host)
      * @test
+     * @backupGlobals disabled
      */
     public function portInProxyHeaderIsAcknowledged()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_SERVER = array(
             'HTTP_HOST' => 'dev.blog.rob',
             'HTTP_X_FORWARDED_PORT' => 2727,
@@ -685,6 +704,8 @@ class RequestTest extends UnitTestCase
 
         $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
         $this->assertSame(2727, $request->getPort());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
@@ -765,7 +786,7 @@ class RequestTest extends UnitTestCase
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com:80',
+                'expectedUri' => 'https://acme.com',
             ),
             array(
                 'forwardedProtocol' => 'https',
@@ -777,7 +798,7 @@ class RequestTest extends UnitTestCase
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => null,
                 'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com:443',
+                'expectedUri' => 'http://acme.com',
             ),
             array(
                 'forwardedProtocol' => 'http',
@@ -1241,5 +1262,8 @@ class RequestTest extends UnitTestCase
             'HTTP_HTTPS' => '1',
         );
         new Request(array(), array(), array(), $server);
+
+        // dummy assertion to avoid PHPUnit warning
+        $this->assertTrue(true);
     }
 }
