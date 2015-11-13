@@ -12,11 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  */
 
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Security\RequestPattern\Host;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the URI request pattern
  */
-class HostTest extends \TYPO3\Flow\Tests\UnitTestCase
+class HostTest extends UnitTestCase
 {
     /**
      * Data provider with URIs and host patterns
@@ -39,10 +42,9 @@ class HostTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requestMatchingBasicallyWorks($uri, $pattern, $expected, $message)
     {
-        $request = Request::create(new \TYPO3\Flow\Http\Uri($uri))->createActionRequest();
+        $request = Request::create(new Uri($uri))->createActionRequest();
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Host();
-        $requestPattern->setPattern($pattern);
+        $requestPattern = new Host(['hostPattern' => $pattern]);
 
         $this->assertEquals($expected, $requestPattern->matchRequest($request), $message);
     }

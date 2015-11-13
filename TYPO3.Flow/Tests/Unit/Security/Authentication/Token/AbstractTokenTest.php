@@ -102,7 +102,7 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->assertFalse($this->token->hasRequestPatterns());
 
-        $uriRequestPattern = new UriRequestPattern('http://mydomain.com/some/path/pattern');
+        $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns(array($uriRequestPattern));
 
         $this->assertTrue($this->token->hasRequestPatterns());
@@ -115,7 +115,7 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setRequestPatternsOnlyAcceptsRequestPatterns()
     {
-        $uriRequestPattern = new UriRequestPattern('http://mydomain.com/some/path/pattern');
+        $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns(array($uriRequestPattern, 'no valid pattern'));
     }
 }
