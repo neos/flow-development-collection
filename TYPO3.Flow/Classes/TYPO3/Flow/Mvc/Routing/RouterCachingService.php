@@ -49,6 +49,23 @@ class RouterCachingService
     protected $systemLogger;
 
     /**
+     * @Flow\InjectConfiguration("mvc.routes")
+     * @var array
+     */
+    protected $routeSettings;
+
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        if ($this->routeCache->get('routingSettings') !== $this->routeSettings) {
+            $this->flushCaches();
+            $this->routeCache->set('routingSettings', $this->routeSettings);
+        }
+    }
+
+    /**
      * Checks the cache for the route path given in the Request and returns the result
      *
      * @param Request $httpRequest
