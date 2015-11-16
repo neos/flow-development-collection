@@ -49,27 +49,7 @@ class PackageFactoryTest extends UnitTestCase
      */
     public function createThrowsExceptionWhenSpecifyingANonExistingPackagePath()
     {
-        $this->packageFactory->create('vfs://Packages/', 'Some/Non/Existing/Path/Some.Package/', 'Some.Package');
-    }
-
-    /**
-     * @test
-     * @expectedException \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
-     */
-    public function createThrowsExceptionWhenSpecifyingAnInvalidPackageKey()
-    {
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/InvalidPackageKey/', 'InvalidPackageKey');
-    }
-
-    /**
-     * @test
-     * @expectedException \TYPO3\Flow\Package\Exception\InvalidPackageManifestException
-     */
-    public function createThrowsExceptionWhenSpecifyingAPathWithMissingComposerManifest()
-    {
-        $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
-        mkdir($packagePath, 0777, true);
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Non/Existing/Path/Some.Package/', 'Some.Package', 'some/package');
     }
 
     /**
@@ -84,7 +64,7 @@ class PackageFactoryTest extends UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
         file_put_contents($packageFilePath, '<?php // no class');
 
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
     }
 
     /**
@@ -101,7 +81,7 @@ class PackageFactoryTest extends UnitTestCase
 
         require($packageFilePath);
 
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
     }
 
     /**
@@ -117,7 +97,7 @@ class PackageFactoryTest extends UnitTestCase
 
         require($packageFilePath);
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
         $this->assertSame('TYPO3\Flow\Fixtures\CustomPackage2', get_class($package));
     }
 
@@ -126,15 +106,17 @@ class PackageFactoryTest extends UnitTestCase
      */
     public function createTakesAutoloaderTypeIntoAccountWhenLoadingCustomPackage()
     {
-        $packagePath = 'vfs://Packages/Some/Path/Some.CustomPackage/';
+        $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         $packageFilePath = $packagePath . 'Classes/Package.php';
         mkdir(dirname($packageFilePath), 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "some/custom-package", "type": "flow-test", "autoload": { "psr-4": { "Foo": "bar" }}}');
+        $rawComposerManifest = '{"name": "some/package", "type": "flow-test", "autoload": { "psr-4": { "Foo": "bar" }}}';
+        $composerManifest = json_decode($rawComposerManifest, true);
+        file_put_contents($packagePath . 'composer.json', $rawComposerManifest);
         file_put_contents($packageFilePath, '<?php namespace TYPO3\\Flow\\Fixtures { class CustomPackage3 extends \\TYPO3\\Flow\\Package\\Package {}}');
 
         require($packageFilePath);
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.CustomPackage/', 'Some.CustomPackage');
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package', $composerManifest['autoload']);
         $this->assertSame('TYPO3\Flow\Fixtures\CustomPackage3', get_class($package));
     }
 
@@ -147,7 +129,7 @@ class PackageFactoryTest extends UnitTestCase
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test"}');
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
         $this->assertSame(\TYPO3\Flow\Package\Package::class, get_class($package));
     }
 }

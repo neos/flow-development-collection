@@ -63,8 +63,8 @@ class HelpCommandController extends CommandController
     public function helpStubCommand()
     {
         $context = $this->bootstrap->getContext();
-        $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
-        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
+        $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($applicationPackage->getComposerManifest('description'), $applicationPackage->getInstalledVersion() ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));
@@ -110,8 +110,8 @@ class HelpCommandController extends CommandController
     {
         $context = $this->bootstrap->getContext();
 
-        $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
-        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
+        $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($applicationPackage->getComposerManifest('description'), $applicationPackage->getInstalledVersion() ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('The following commands are currently available:');

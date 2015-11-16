@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Composer\Utility as ComposerUtility;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\PackageInterface;
@@ -63,21 +64,21 @@ class PackageCommandController extends CommandController
      * @return string
      * @see typo3.kickstart:kickstart:package
      */
-    public function createCommand($packageKey, $packageType = 'typo3-flow-package')
+    public function createCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-            $this->outputLine('The package key "%s" is not valid.', array($packageKey));
+            $this->outputLine('The package key "%s" is not valid.', [$packageKey]);
             $this->quit(1);
         }
         if ($this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" already exists.', array($packageKey));
+            $this->outputLine('The package "%s" already exists.', [$packageKey]);
             $this->quit(1);
         }
-        if (substr($packageType, 0, 11) !== 'typo3-flow-') {
-            $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', array($packageKey));
+        if (ComposerUtility::isFlowPackageType($packageType)) {
+            $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageKey]);
             $this->quit(1);
         }
-        $package = $this->packageManager->createPackage($packageKey, null, null, $packageType);
+        $package = $this->packageManager->createPackage($packageKey, null, null, null, ['type' => $packageType]);
         $this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
     }
 
@@ -93,11 +94,11 @@ class PackageCommandController extends CommandController
     public function deleteCommand($packageKey)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', array($packageKey));
+            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
             $this->quit(1);
         }
         $this->packageManager->deletePackage($packageKey);
-        $this->outputLine('Deleted package "%s".', array($packageKey));
+        $this->outputLine('Deleted package "%s".', [$packageKey]);
         Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, false);
         $this->sendAndExit(0);
     }
@@ -115,17 +116,17 @@ class PackageCommandController extends CommandController
     public function activateCommand($packageKey)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', array($packageKey));
+            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
             $this->quit(1);
         }
 
         if ($this->packageManager->isPackageActive($packageKey)) {
-            $this->outputLine('Package "%s" is already active.', array($packageKey));
+            $this->outputLine('Package "%s" is already active.', [$packageKey]);
             $this->quit(1);
         }
 
         $this->packageManager->activatePackage($packageKey);
-        $this->outputLine('Activated package "%s".', array($packageKey));
+        $this->outputLine('Activated package "%s".', [$packageKey]);
         Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, false);
         $this->sendAndExit(0);
     }
@@ -143,17 +144,17 @@ class PackageCommandController extends CommandController
     public function deactivateCommand($packageKey)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', array($packageKey));
+            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
             $this->quit(1);
         }
 
         if (!$this->packageManager->isPackageActive($packageKey)) {
-            $this->outputLine('Package "%s" was not active.', array($packageKey));
+            $this->outputLine('Package "%s" was not active.', [$packageKey]);
             $this->quit(1);
         }
 
         $this->packageManager->deactivatePackage($packageKey);
-        $this->outputLine('Deactivated package "%s".', array($packageKey));
+        $this->outputLine('Deactivated package "%s".', [$packageKey]);
         Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, false);
         $this->sendAndExit(0);
     }
@@ -170,9 +171,9 @@ class PackageCommandController extends CommandController
      */
     public function listCommand()
     {
-        $activePackages = array();
-        $inactivePackages = array();
-        $frozenPackages = array();
+        $activePackages = [];
+        $inactivePackages = [];
+        $frozenPackages = [];
         $longestPackageKey = 0;
         $freezeSupported = $this->bootstrap->getContext()->isDevelopment();
 
@@ -196,9 +197,8 @@ class PackageCommandController extends CommandController
         $this->outputLine('ACTIVE PACKAGES:');
         /** @var PackageInterface $package */
         foreach ($activePackages as $package) {
-            $packageMetaData = $package->getPackageMetaData();
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15));
+            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
         }
 
         if (count($inactivePackages) > 0) {
@@ -206,8 +206,7 @@ class PackageCommandController extends CommandController
             $this->outputLine('INACTIVE PACKAGES:');
             foreach ($inactivePackages as $package) {
                 $frozenState = (isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-                $packageMetaData = $package->getPackageMetaData();
-                $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15));
+                $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
             }
         }
 
@@ -245,7 +244,7 @@ class PackageCommandController extends CommandController
             $this->quit(3);
         }
 
-        $packagesToFreeze = array();
+        $packagesToFreeze = [];
 
         if ($packageKey === 'all') {
             foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
@@ -253,7 +252,7 @@ class PackageCommandController extends CommandController
                     $packagesToFreeze[] = $packageKey;
                 }
             }
-            if ($packagesToFreeze === array()) {
+            if ($packagesToFreeze === []) {
                 $this->outputLine('Nothing to do, all active packages were already frozen.');
                 $this->quit(0);
             }
@@ -263,25 +262,25 @@ class PackageCommandController extends CommandController
         } else {
             if (!$this->packageManager->isPackageActive($packageKey)) {
                 if ($this->packageManager->isPackageAvailable($packageKey)) {
-                    $this->outputLine('Package "%s" is not active and thus cannot be frozen.', array($packageKey));
+                    $this->outputLine('Package "%s" is not active and thus cannot be frozen.', [$packageKey]);
                     $this->quit(1);
                 } else {
-                    $this->outputLine('Package "%s" is not available.', array($packageKey));
+                    $this->outputLine('Package "%s" is not available.', [$packageKey]);
                     $this->quit(2);
                 }
             }
 
             if ($this->packageManager->isPackageFrozen($packageKey)) {
-                $this->outputLine('Package "%s" was already frozen.', array($packageKey));
+                $this->outputLine('Package "%s" was already frozen.', [$packageKey]);
                 $this->quit(0);
             }
 
-            $packagesToFreeze = array($packageKey);
+            $packagesToFreeze = [$packageKey];
         }
 
         foreach ($packagesToFreeze as $packageKey) {
             $this->packageManager->freezePackage($packageKey);
-            $this->outputLine('Froze package "%s".', array($packageKey));
+            $this->outputLine('Froze package "%s".', [$packageKey]);
         }
     }
 
@@ -307,7 +306,7 @@ class PackageCommandController extends CommandController
             $this->quit(3);
         }
 
-        $packagesToUnfreeze = array();
+        $packagesToUnfreeze = [];
 
         if ($packageKey === 'all') {
             foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
@@ -315,7 +314,7 @@ class PackageCommandController extends CommandController
                     $packagesToUnfreeze[] = $packageKey;
                 }
             }
-            if ($packagesToUnfreeze === array()) {
+            if ($packagesToUnfreeze === []) {
                 $this->outputLine('Nothing to do, no packages were frozen.');
                 $this->quit(0);
             }
@@ -326,19 +325,19 @@ class PackageCommandController extends CommandController
             }
 
             if (!$this->packageManager->isPackageAvailable($packageKey)) {
-                $this->outputLine('Package "%s" is not available.', array($packageKey));
+                $this->outputLine('Package "%s" is not available.', [$packageKey]);
                 $this->quit(2);
             }
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
-                $this->outputLine('Package "%s" was not frozen.', array($packageKey));
+                $this->outputLine('Package "%s" was not frozen.', [$packageKey]);
                 $this->quit(0);
             }
-            $packagesToUnfreeze = array($packageKey);
+            $packagesToUnfreeze = [$packageKey];
         }
 
         foreach ($packagesToUnfreeze as $packageKey) {
             $this->packageManager->unfreezePackage($packageKey);
-            $this->outputLine('Unfroze package "%s".', array($packageKey));
+            $this->outputLine('Unfroze package "%s".', [$packageKey]);
         }
     }
 
@@ -365,7 +364,7 @@ class PackageCommandController extends CommandController
             $this->quit(3);
         }
 
-        $packagesToRefreeze = array();
+        $packagesToRefreeze = [];
 
         if ($packageKey === 'all') {
             foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
@@ -373,7 +372,7 @@ class PackageCommandController extends CommandController
                     $packagesToRefreeze[] = $packageKey;
                 }
             }
-            if ($packagesToRefreeze === array()) {
+            if ($packagesToRefreeze === []) {
                 $this->outputLine('Nothing to do, no packages were frozen.');
                 $this->quit(0);
             }
@@ -384,22 +383,38 @@ class PackageCommandController extends CommandController
             }
 
             if (!$this->packageManager->isPackageAvailable($packageKey)) {
-                $this->outputLine('Package "%s" is not available.', array($packageKey));
+                $this->outputLine('Package "%s" is not available.', [$packageKey]);
                 $this->quit(2);
             }
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
-                $this->outputLine('Package "%s" was not frozen.', array($packageKey));
+                $this->outputLine('Package "%s" was not frozen.', [$packageKey]);
                 $this->quit(0);
             }
-            $packagesToRefreeze = array($packageKey);
+            $packagesToRefreeze = [$packageKey];
         }
 
         foreach ($packagesToRefreeze as $packageKey) {
             $this->packageManager->refreezePackage($packageKey);
-            $this->outputLine('Refroze package "%s".', array($packageKey));
+            $this->outputLine('Refroze package "%s".', [$packageKey]);
         }
 
         Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, false);
         $this->sendAndExit(0);
+    }
+
+    /**
+     * Rescan package availability and recreates the PackageStates configuration.
+     */
+    public function rescanCommand()
+    {
+        $packageStates = $this->packageManager->rescanPackages();
+
+        $this->outputLine('The following packages are registered and will be loaded in this order:');
+        $this->outputLine('');
+        foreach ($packageStates['packages'] as $composerName => $packageState) {
+            $this->outputLine($composerName);
+        }
+        $this->outputLine('');
+        $this->outputLine('Package rescan successful.');
     }
 }
