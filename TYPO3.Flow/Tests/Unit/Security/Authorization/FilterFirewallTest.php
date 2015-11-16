@@ -18,7 +18,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
 class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
-     * __test
+     * @test
      * @return void
      */
     public function configuredFiltersAreCreatedCorrectlyUsingLegacySettingsFormat()
@@ -189,7 +189,7 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
 
 
     /**
-     * __test
+     * @test
      */
     public function allConfiguredFiltersAreCalled()
     {
@@ -209,7 +209,7 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
     }
 
     /**
-     * __test
+     * @test
      * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
      */
     public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown()

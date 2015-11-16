@@ -320,6 +320,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
                 $requestPatterns = array();
                 foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+
+                    // The following check is needed for backwards compatibility:
+                    // Previously the request pattern configuration was just a key/value where the value was passed to the setPattern() method
                     if (is_string($patternConfiguration)) {
                         $patternType = $patternName;
                         $patternOptions = [];
@@ -332,6 +335,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     if (!$requestPattern instanceof RequestPatternInterface) {
                         throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "TYPO3:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
                     }
+
+                    // The following check needed for backwards compatibility:
+                    // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
                     if (is_string($patternConfiguration) && is_callable([$requestPattern, 'setPattern'])) {
                         $requestPattern->setPattern($patternConfiguration);
                     }

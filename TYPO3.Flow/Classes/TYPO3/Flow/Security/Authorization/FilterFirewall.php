@@ -112,6 +112,9 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
             $patternOptions = isset($singleFilterSettings['patternOptions']) ? $singleFilterSettings['patternOptions'] : [];
             /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
             $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
+
+            // The following check needed for backwards compatibility:
+            // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
             if (isset($singleFilterSettings['patternValue']) && is_callable([$requestPattern, 'setPattern'])) {
                 $requestPattern->setPattern($singleFilterSettings['patternValue']);
             }

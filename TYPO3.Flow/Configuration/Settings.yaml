@@ -400,8 +400,6 @@ TYPO3:
         filters:
           'TYPO3.Flow:CsrfProtection':
             pattern: 'CsrfProtection'
-            patternOptions:
-              'foo': 'bar'
             interceptor: AccessDeny
 
       authentication:
