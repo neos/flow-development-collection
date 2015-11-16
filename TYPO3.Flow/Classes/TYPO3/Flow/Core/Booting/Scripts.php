@@ -145,6 +145,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws \TYPO3\Flow\Exception
      */
     public static function initializeConfiguration(Bootstrap $bootstrap)
     {
@@ -159,6 +160,15 @@ class Scripts
         $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         $environment = new \TYPO3\Flow\Utility\Environment($context);
+        if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
+            $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
+            if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
+                throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
+            }
+            $environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
+        } else {
+            $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
+        }
 
         $configurationManager->injectEnvironment($environment);
         $packageManager->injectSettings($settings);

@@ -527,7 +527,7 @@ class Bootstrap
         define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
-        if (!defined('FLOW_PATH_TEMPORARY')) {
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
             define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
             $temporaryDirectoryPath = Files::concatenatePaths(array(FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context))) . '/';
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
