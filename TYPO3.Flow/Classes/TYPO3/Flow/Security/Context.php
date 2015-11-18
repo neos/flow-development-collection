@@ -748,6 +748,18 @@ class Context
     }
 
     /**
+     * Refreshes the currently effective roles. In fact the roles first level cache
+     * is reset and the effective roles get recalculated by calling getRoles().
+     *
+     * @return void
+     */
+    public function refreshRoles()
+    {
+        $this->roles = null;
+        $this->getRoles();
+    }
+
+    /**
      * Shut the object down
      *
      * @return void
