@@ -319,6 +319,22 @@ TYPO3:
 
     resource:
 
+      # A list of filename extensions that must not be uploaded through the resource
+      # management.
+      uploadExtensionBlacklist:
+        'aspx': TRUE
+        'cgi': TRUE
+        'php3': TRUE
+        'php4': TRUE
+        'php5': TRUE
+        'phtml': TRUE
+        'php': TRUE
+        'pl': TRUE
+        'py': TRUE
+        'pyc': TRUE
+        'pyo': TRUE
+        'rb': TRUE
+
       # Definition of resource storages provided by the Flow core.
       # Storages are used for storing and retrieving resources.
       storages:

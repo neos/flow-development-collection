@@ -19,7 +19,6 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
-use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -208,7 +207,7 @@ class ResourceManager
      *
      * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
      * @param string $collectionName Name of the collection this uploaded resource should be added to
-     * @return Resource A resource object representing the imported resource or FALSE if an error occurred.
+     * @return Resource A resource object representing the imported resource
      * @throws Exception
      */
     public function importUploadedResource(array $uploadInfo, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
@@ -558,6 +557,10 @@ class ResourceManager
 
         if (!is_uploaded_file($temporaryTargetPathAndFilename)) {
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
+        }
+
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['resource']['uploadExtensionBlacklist']) && $this->settings['resource']['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
+            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
         if ($openBasedirEnabled === true) {
