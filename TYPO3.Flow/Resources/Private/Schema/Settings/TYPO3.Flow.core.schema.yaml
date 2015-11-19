@@ -2,6 +2,7 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'context': { type: string, required: TRUE }
+  'applicationPackageKey': { type: string, required: TRUE }
   'phpBinaryPathAndFilename': { type: string, required: TRUE }
   'subRequestEnvironmentVariables':
     type: dictionary
