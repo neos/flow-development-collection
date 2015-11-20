@@ -675,8 +675,8 @@ EOD;
         $expectedInclusionCode = <<< "EOD"
 <?php
 if (FLOW_PATH_ROOT !== 'XXX' || !file_exists('vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
-	unlink(__FILE__);
-	return array();
+	@unlink(__FILE__);
+	return [];
 }
 return require 'vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php';
 EOD;
