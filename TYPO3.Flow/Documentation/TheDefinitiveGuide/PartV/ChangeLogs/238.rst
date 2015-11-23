@@ -1,0 +1,8 @@
+`2.3.8 (2015-11-23) <https://github.com/neos/flow-development-collection/releases/tag/2.3.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/2.3.7...2.3.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
