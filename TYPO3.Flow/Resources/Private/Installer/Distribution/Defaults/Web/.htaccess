@@ -56,4 +56,4 @@
 
 </IfModule>
 
-ErrorDocument 500 "<h1>Application Error</h1><p>The TYPO3 Flow application could not be launched.</p>"
+ErrorDocument 500 "<h1>Application Error</h1><p>The Flow application could not be launched.</p>"

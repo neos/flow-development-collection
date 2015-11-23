@@ -173,6 +173,24 @@ with Flow contains this code already
 
 	</IfModule>
 
+Important: Disallow execution of server-side scripts below `Web/_Resources`. If users
+can upload (PHP) scripts they can otherwise be executed on the server. This should almost
+never be allowed, so make sure to disable PHP (or other script handlers) for anything below
+`Web/_Resources`.
+
+The `.htaccess` file placed into the `Web/_Resources` folder does this for Apache when
+`.htaccess` is evaluated. Another way is to use this in the configuration:
+
+.. code-block:: none
+
+	<Directory /var/apache2/htdocs/tutorial/Web/_Resources>
+		AllowOverride None
+		SetHandler default-handler
+		php_flag engine off
+	</Directory>
+
+For nginx and other servers use similar configuration.
+
 Configure a Context
 -------------------
 
