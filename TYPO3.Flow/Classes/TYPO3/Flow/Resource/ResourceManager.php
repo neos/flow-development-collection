@@ -19,6 +19,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
+use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
