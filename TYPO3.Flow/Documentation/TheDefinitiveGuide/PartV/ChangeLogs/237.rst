@@ -4,6 +4,33 @@
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`[TASK] Handling script execution in _Resources <https://github.com/neos/flow-development-collection/commit/00b8c76b5e1673d49ca01cbd06d2bda76dd50a9f>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change adds an .htaccess file to the installer defaults that will
+be copied to Web/_Resources and switch off further .htaccess overrides,
+disable PHP and make everything handled by he default-handler.
+
+In addition the documentation explains the need for disallowing script
+execution below Web/_Resources.
+
+* Related: `FLOW-408 <https://jira.neos.io/browse/FLOW-408>`_
+* Packages: ``Flow``
+
+`[SECURITY] Fix potential XML External Entity Processing <https://github.com/neos/flow-development-collection/commit/bea24142ef25134cb6156568d6c26a58cfc14cb6>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The MediaTypeConverter in Flow is potentially vulnerable to XXE (see
+https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing)
+
+This change fixes that by disabling the external entity loader.
+
+Thanks to Wouter Wolters for reporting this (original Reporter: Wouter
+van Dongen).
+
+* Fixes: `FLOW-403 <https://jira.neos.io/browse/FLOW-403>`_
+* Packages: ``Flow``
+
 `[BUGFIX] Set correct request port if X-Forwarded-Proto is set <https://github.com/neos/flow-development-collection/pull/120>`_
 -------------------------------------------------------------------------------------------------------------------------------
 
