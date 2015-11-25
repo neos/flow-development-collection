@@ -575,14 +575,6 @@ TYPO3:
         domain: NULL
 
     utility:
-      environment:
-
-        # Defines the base directory which Flow may use for storing different kinds
-        # of temporary files.
-        # The directory must be writable and Flow will automatically create a sub
-        # directory (named after the context) which will contain the actual temporary files.
-        temporaryDirectoryBase: '%FLOW_PATH_DATA%Temporary/'
-
       lockStrategyClassName: 'TYPO3\Flow\Utility\Lock\FlockLockStrategy'
 
   # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.

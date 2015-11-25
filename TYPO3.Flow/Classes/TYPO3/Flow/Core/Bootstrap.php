@@ -90,11 +90,11 @@ class Bootstrap
      */
     public function __construct($context)
     {
-        $this->defineConstants();
-        $this->ensureRequiredEnvironment();
-
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
+
+        $this->defineConstants();
+        $this->ensureRequiredEnvironment();
     }
 
     /**
@@ -533,6 +533,12 @@ class Bootstrap
         define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
+            $temporaryDirectoryPath = Files::concatenatePaths(array(FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context))) . '/';
+            define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
+        }
+
         define('FLOW_VERSION_BRANCH', '3.0');
     }
 
@@ -583,6 +589,15 @@ class Bootstrap
                 echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
                 exit(1);
             }
+        }
+        if (!is_dir(FLOW_PATH_TEMPORARY) && !is_link(FLOW_PATH_TEMPORARY)) {
+            // We can't use Files::createDirectoryRecursively() because mkdir() without shutup operator will lead to a PHP warning
+            $oldMask = umask(000);
+            if (!@mkdir(FLOW_PATH_TEMPORARY, 0777, true)) {
+                echo('Flow could not create the directory "' . FLOW_PATH_TEMPORARY . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1441354578)');
+                exit(1);
+            }
+            umask($oldMask);
         }
     }
 
