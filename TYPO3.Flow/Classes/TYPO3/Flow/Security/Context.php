@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Security;
  * source code.
  */
 
+use RandomLib\Generator as RandomGenerator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Mvc\RequestInterface;
@@ -153,6 +154,12 @@ class Context
      * @var Cryptography\HashService
      */
     protected $hashService;
+
+    /**
+     * @Flow\Inject
+     * @var RandomGenerator
+     */
+    protected $randomGenerator;
 
     /**
      * One of the CSRF_* constants to set the csrf protection strategy
@@ -581,7 +588,7 @@ class Context
             reset($this->csrfProtectionTokens);
             return key($this->csrfProtectionTokens);
         }
-        $newToken = Algorithms::generateRandomToken(16);
+        $newToken = $this->randomGenerator->generateString(32, RandomGenerator::CHAR_LOWER_HEX);
         $this->csrfProtectionTokens[$newToken] = true;
 
         return $newToken;

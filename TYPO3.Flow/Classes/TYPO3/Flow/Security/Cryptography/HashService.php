@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
+use RandomLib\Generator as RandomGenerator;
+use RandomLib\Source\Random;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 
@@ -48,6 +50,12 @@ class HashService
      * @Flow\Inject
      */
     protected $cache;
+
+    /**
+     * @Flow\Inject
+     * @var RandomGenerator
+     */
+    protected $randomGenerator;
 
     /**
      * Injects the settings of the package this controller belongs to.
@@ -214,7 +222,7 @@ class HashService
             $this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
         }
         if ($this->encryptionKey === false) {
-            $this->encryptionKey = bin2hex(\TYPO3\Flow\Utility\Algorithms::generateRandomBytes(96));
+            $this->encryptionKey = $this->randomGenerator->generate(96, RandomGenerator::CHAR_LOWER_HEX);
             $this->cache->set('encryptionKey', $this->encryptionKey);
         }
         return $this->encryptionKey;

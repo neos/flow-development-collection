@@ -18,6 +18,7 @@
         "typo3/eel": "*",
 
         "ramsey/uuid": "^3.0.0",
+        "ircmaxell/random-lib": "~1.1",
 
         "doctrine/orm": "2.4.*",
         "doctrine/migrations": "1.0.*",

@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use RandomLib\Generator;
 
 /**
  * Testcase for the BCryptHashingStrategy
@@ -35,6 +36,11 @@ class BCryptHashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function hashPasswordWithMatchingPasswordAndParametersSucceeds()
     {
         $strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
+
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
+        $this->inject($strategy, 'randomGenerator', $mockRandomGenerator);
+
         $derivedKeyWithSalt = $strategy->hashPassword('password');
 
         $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt));
@@ -47,6 +53,11 @@ class BCryptHashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function hashAndValidatePasswordWithNotMatchingPasswordFails()
     {
         $strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
+
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
+        $this->inject($strategy, 'randomGenerator', $mockRandomGenerator);
+
         $derivedKeyWithSalt = $strategy->hashPassword('password');
 
         $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt), 'Different password should not match');
@@ -60,6 +71,11 @@ class BCryptHashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
         $strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
 
         $otherStrategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(6);
+
+        $mockRandomGenerator = $this->getMock(Generator::class, array(), array(), '', false);
+        $mockRandomGenerator->expects($this->any())->method('generateString')->willReturn('00ff00ff00ff00ff00ff00ff00ff00ff');
+        $this->inject($otherStrategy, 'randomGenerator', $mockRandomGenerator);
+
         $derivedKeyWithSalt = $otherStrategy->hashPassword('password');
 
         $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt), 'Hashing strategy should validate password with different cost');

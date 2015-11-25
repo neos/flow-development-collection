@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Session;
  */
 
 use org\bovigo\vfs\vfsStream;
+use RandomLib\Factory;
+use RandomLib\Generator as RandomGenerator;
 use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
@@ -54,6 +56,11 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @var \TYPO3\Flow\Object\ObjectManagerInterface
      */
     protected $mockObjectManager;
+
+    /**
+     * @var RandomGenerator
+     */
+    protected $mockRandomGenerator;
 
     /**
      * @var array
@@ -99,6 +106,13 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', false, false);
         $this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Security\Context::class)->will($this->returnValue($this->mockSecurityContext));
+
+        $this->mockRandomGenerator = $this->getMock(RandomGenerator::class, array(), array(), '', false);
+        $this->mockRandomGenerator->expects($this->any())->method('generateString')->will($this->returnCallback(function () {
+            $factory = new Factory();
+            $generator = $factory->getMediumStrengthGenerator();
+            return $generator->generateString(32, RandomGenerator::CHAR_ALNUM);
+        }));
     }
 
     /**
@@ -164,6 +178,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function canBeResumedReturnsFalseIfTheSessionHasAlreadyBeenStarted()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -184,6 +200,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -218,6 +236,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function isStartedReturnsTrueAfterSessionHasBeenStarted()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -233,6 +253,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function resumeSetsSessionCookieInTheResponse()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -259,6 +281,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function resumeOnAStartedSessionDoesNotDoAnyHarm()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -278,6 +302,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function startPutsACookieIntoTheHttpResponse()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -303,6 +329,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
 
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -318,6 +346,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getIdReturnsTheCurrentSessionIdentifier()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -339,6 +369,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function renewIdSetsANewSessionIdentifier()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -359,6 +391,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function renewIdThrowsExceptionIfCalledOnNonStartedSession()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -392,6 +426,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -408,6 +444,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->httpRequest->setCookie($sessionCookie);
 
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -434,6 +472,9 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
+
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -492,6 +533,9 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function putDataThrowsExceptionIfTryingToPersistAResource()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
+
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -509,6 +553,9 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getDataReturnsDataPreviouslySetWithPutData()
     {
         $session = new Session();
+
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
+
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -542,6 +589,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session1 = new Session();
+
+        $this->inject($session1, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session1, 'bootstrap', $this->mockBootstrap);
         $this->inject($session1, 'settings', $this->settings);
         $this->inject($session1, 'metaDataCache', $metaDataCache);
@@ -550,6 +599,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $session1->start();
 
         $session2 = new Session();
+
+        $this->inject($session2, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session2, 'bootstrap', $this->mockBootstrap);
         $this->inject($session2, 'settings', $this->settings);
         $this->inject($session2, 'metaDataCache', $metaDataCache);
@@ -583,6 +634,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -619,6 +671,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function addTagThrowsExceptionIfTagIsNotValid()
     {
         $taggedSession = new Session();
+        $this->inject($taggedSession, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
         $this->inject($taggedSession, 'settings', $this->settings);
         $this->inject($taggedSession, 'metaDataCache', $this->createCache('Meta'));
@@ -639,6 +692,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $otherSession = new Session();
+        $this->inject($otherSession, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($otherSession, 'bootstrap', $this->mockBootstrap);
         $this->inject($otherSession, 'settings', $this->settings);
         $this->inject($otherSession, 'metaDataCache', $metaDataCache);
@@ -648,6 +702,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $otherSession->start();
 
         $taggedSession = new Session();
+        $this->inject($taggedSession, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
         $this->inject($taggedSession, 'settings', $this->settings);
         $this->inject($taggedSession, 'metaDataCache', $metaDataCache);
@@ -686,6 +741,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $sessionIDs = array();
         for ($i = 0; $i < 5; $i++) {
             $session = new Session();
+            $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
             $this->inject($session, 'bootstrap', $this->mockBootstrap);
             $this->inject($session, 'settings', $this->settings);
             $this->inject($session, 'metaDataCache', $metaDataCache);
@@ -721,6 +777,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -740,6 +797,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->httpRequest->setCookie($sessionCookie);
 
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -778,6 +836,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function removeTagRemovesAPreviouslySetTag()
     {
         $taggedSession = new Session();
+        $this->inject($taggedSession, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
         $this->inject($taggedSession, 'settings', $this->settings);
         $this->inject($taggedSession, 'metaDataCache', $this->createCache('Meta'));
@@ -838,6 +897,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function closeFlagsTheSessionAsClosed()
     {
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -879,6 +939,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function shutdownCreatesSpecialDataEntryForSessionWithAuthenticatedAccounts()
     {
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -916,6 +977,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -972,6 +1034,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $session1 = new Session();
         $session2 = new Session();
 
+        $this->inject($session1, 'randomGenerator', $this->mockRandomGenerator);
+        $this->inject($session2, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session1, 'bootstrap', $this->mockBootstrap);
         $this->inject($session2, 'bootstrap', $this->mockBootstrap);
         $this->inject($session1, 'settings', $this->settings);
@@ -1034,6 +1098,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function autoExpireRemovesAllSessionDataOfTheExpiredSession()
     {
         $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -1083,6 +1148,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         // Create a session which first runs fine and then expires by later modifying
         // the inactivity timeout:
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -1112,6 +1178,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         // Create a second session which should remove the first expired session
         // implicitly by calling autoExpire()
         $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -1150,6 +1217,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $metaDataCache);
@@ -1173,6 +1241,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         $session = new Session();
+        $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $metaDataCache);
@@ -1204,6 +1273,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         for ($i = 0; $i < 9; $i++) {
             $session = new Session();
+            $this->inject($session, 'randomGenerator', $this->mockRandomGenerator);
             $this->inject($session, 'bootstrap', $this->mockBootstrap);
             $this->inject($session, 'objectManager', $this->mockObjectManager);
             $this->inject($session, 'metaDataCache', $metaDataCache);
