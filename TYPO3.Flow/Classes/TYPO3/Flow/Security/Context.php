@@ -789,6 +789,7 @@ class Context
     public function refreshRoles()
     {
         $this->roles = null;
+        $this->contextHash = null;
         $this->getRoles();
     }
 
