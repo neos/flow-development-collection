@@ -449,10 +449,8 @@ Options
 |                  | to the redis server in plain    |           |           |           |
 |                  | text.                           |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-| compressionLevel | Set gzip compression level to a | No        | integer   | -1        |
-|                  | specific value. The default     |           | (-1 to 9) |           |
-|                  | compression level is usually    |           |           |           |
-|                  | sufficient.                     |           |           |           |
+| compressionLevel | Set gzip compression level to a | No        | integer   | 0         |
+|                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
 TYPO3\\Flow\\Cache\\Backend\\MemcachedBackend
