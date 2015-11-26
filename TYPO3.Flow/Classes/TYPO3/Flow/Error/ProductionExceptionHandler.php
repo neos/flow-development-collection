@@ -23,10 +23,10 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Echoes an exception for the web.
      *
-     * @param \Exception $exception The exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionWeb(\Exception $exception)
+    protected function echoExceptionWeb($exception)
     {
         $statusCode = 500;
         if ($exception instanceof \TYPO3\Flow\Exception) {

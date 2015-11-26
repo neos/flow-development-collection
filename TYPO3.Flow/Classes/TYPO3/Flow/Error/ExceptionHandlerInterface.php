@@ -13,17 +13,16 @@ namespace TYPO3\Flow\Error;
 
 /**
  * Contract for an exception handler
- *
  */
 interface ExceptionHandlerInterface
 {
     /**
      * Handles the given exception
      *
-     * @param \Exception $exception The exception object
+     * @param object $exception The exception object - can be \Exception, or some type of \Throwable in PHP 7
      * @return void
      */
-    public function handleException(\Exception $exception);
+    public function handleException($exception);
 
     /**
      * Sets options of this exception handler
