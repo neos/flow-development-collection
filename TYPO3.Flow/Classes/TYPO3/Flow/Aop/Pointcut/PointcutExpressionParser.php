@@ -25,7 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
 class PointcutExpressionParser
 {
     const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-    const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|methodTaggedWith|method|within|filter|setting|evaluate)/';
+    const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|method|within|filter|setting|evaluate)/';
     const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
     const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
@@ -145,7 +145,6 @@ class PointcutExpressionParser
                     case 'classAnnotatedWith':
                     case 'class' :
                     case 'methodAnnotatedWith':
-                    case 'methodTaggedWith' :
                     case 'method' :
                     case 'within' :
                     case 'filter' :

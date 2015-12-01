@@ -64,7 +64,7 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseCallsSpecializedMethodsToParseEachDesignator()
     {
-        $mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations');
+        $mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations');
         $parser = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutExpressionParser', $mockMethods, array(), '', false);
 
         $parser->expects($this->once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz');
@@ -109,7 +109,7 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod()
     {
-        $mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
+        $mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClass', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
         $parser = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutExpressionParser', $mockMethods, array(), '', false);
         $parser->injectObjectManager($this->mockObjectManager);
 
