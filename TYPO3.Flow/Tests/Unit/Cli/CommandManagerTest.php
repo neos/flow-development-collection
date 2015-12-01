@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Cli;
  */
 
 use TYPO3\Flow\Cli\CommandManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 require_once('Fixtures/Command/MockCommandController.php');
 
@@ -50,9 +52,11 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getAvailableCommandsReturnsAllAvailableCommands()
     {
         $commandManager = new CommandManager();
-        $commandManager->injectReflectionService($this->mockReflectionService);
         $mockCommandControllerClassNames = array(\TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController::class, \TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController::class);
         $this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with(\TYPO3\Flow\Cli\CommandController::class)->will($this->returnValue($mockCommandControllerClassNames));
+        $mockObjectManager = $this->getMock(ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $commandManager->injectObjectManager($mockObjectManager);
 
         $commands = $commandManager->getAvailableCommands();
         $this->assertEquals(3, count($commands));
