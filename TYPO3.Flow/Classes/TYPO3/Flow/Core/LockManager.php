@@ -64,7 +64,7 @@ class LockManager
      */
     protected function getLockPath()
     {
-        return rtrim(sys_get_temp_dir(), '/') . '/';
+        return FLOW_PATH_TEMPORARY;
     }
 
     /**
