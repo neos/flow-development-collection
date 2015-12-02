@@ -12,9 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\Streams\ResourceStreamWrapper;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -45,10 +43,10 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->resourceStreamWrapper = new ResourceStreamWrapper();
 
-        $this->mockPackageManager = $this->getMockBuilder(PackageManagerInterface::class)->getMock();
+        $this->mockPackageManager = $this->getMockBuilder('TYPO3\Flow\Package\PackageManagerInterface')->getMock();
         $this->inject($this->resourceStreamWrapper, 'packageManager', $this->mockPackageManager);
 
-        $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockResourceManager = $this->getMockBuilder('TYPO3\Flow\Resource\ResourceManager')->disableOriginalConstructor()->getMock();
         $this->inject($this->resourceStreamWrapper, 'resourceManager', $this->mockResourceManager);
     }
 
@@ -121,7 +119,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage = $this->getMockBuilder('TYPO3\Flow\Package\PackageInterface')->getMock();
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
@@ -140,7 +138,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage = $this->getMockBuilder('TYPO3\Flow\Package\PackageInterface')->getMock();
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 

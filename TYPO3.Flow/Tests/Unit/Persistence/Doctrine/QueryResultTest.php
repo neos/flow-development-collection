@@ -36,7 +36,7 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
+        $this->query = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\Query')->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $this->query->expects($this->any())->method('getResult')->will($this->returnValue(array('First result', 'second result', 'third result')));
         $this->queryResult = new QueryResult($this->query);
     }
