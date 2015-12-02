@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |API|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=3.0
    :target: https://travis-ci.org/neos/flow-development-collection
@@ -15,6 +15,9 @@
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: License
+.. |Docs| image:: https://img.shields.io/badge/documentation-3.0-blue.svg
+   :target: https://flowframework.readthedocs.org/en/3.0/
+   :alt: Documentation
 .. |API| image:: https://img.shields.io/badge/API%20docs-3.0-blue.svg
    :target: http://neos.github.io/flow/3.0/
    :alt: API Docs
