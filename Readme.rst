@@ -15,7 +15,7 @@
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: License
-.. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
+.. |Docs| image:: https://img.shields.io/badge/documentation-2.3-blue.svg
    :target: https://flowframework.readthedocs.org/en/2.3/
    :alt: Documentation
 .. |API| image:: https://img.shields.io/badge/API%20docs-2.3-blue.svg
