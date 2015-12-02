@@ -30,3 +30,12 @@ before_script:
 script:
   - bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"
+notifications:
+  email: false
+  slack:
+    rooms:
+      secure: Ya3VRC3SSmPBDnQEADUimct2SkCEymMZTo3Zmkv7OoadmSl9vWOGd0HIDJjOShUtNbLWPkYeiNxIyOegHXYhFoVL2lX9sp2MLVdv9JK/rKQITHrESl+AulqYkq1bQiPzTfltludljUZmhZUxt1jpqazqp5iCGzWvKYawDjIaretLFvs3jsG6ZGnnFiN88HF4d5K+vImslckzCwh3pcQk227uaug/dXVJySx9/9VsCjhNTq2avcVziz/4vswuR/XSa6iPJ/j+7YBzsvVUOybKPQLtG6tx5THk38JkOjg+P09Mrz+Sz18aAROzrITV/gvjk1D+fA1wy/16mEmkfYmRVogi7DRCUGK5gd9wmQWRuYrTsMubQGJp1eSu/IBe3Z8eStRQUAK65DykwCAAyIhtLfOqH6mNy++dH5icYeSdXnw0TC0eIE0xcuWpNCansQN3ZQ1/wjXgH42LNc9WXs+D+2+Kns8Fm9HCwroVG6ws5tRB9+bbYpReIiL0b5N/p2kpiKeHR9Xn5vkdBzUGaM/O/pZIqvPmAUvIenfLqQ3k+oHvQyRZBzPTexi+93PEOd+jk3kC7vCvi9zsDxzGjbxC190T95zxZ/i6k7rcWImcC7HCAEW6aWqgARa03pJsrKvZD8IRTOVu8B17TSI4SkbjdjZi1Wvs3N68pBPX+2EaQ9M=
+    on_success: change
+    on_failure: change
+    on_start: never
+    on_pull_requests: false
