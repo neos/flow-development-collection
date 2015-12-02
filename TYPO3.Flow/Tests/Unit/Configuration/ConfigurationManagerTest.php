@@ -1059,9 +1059,9 @@ EOD;
     public function loadConfigurationForRoutesIncludesSubRoutesFromSettings()
     {
         $mockConfigurationSource = $this->getMock(YamlSource::class, array('load', 'save'));
-        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageRoutesCallback')));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageRoutesAndSettingsCallback')));
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, array('postProcessConfiguration', 'includeSubRoutesFromSettings'), array(new ApplicationContext('Testing/System1')));
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
 
         $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
@@ -1072,44 +1072,7 @@ EOD;
 
         $actualConfigurations = $configurationManager->_get('configurations');
         $expectedRoutesConfiguration = array(
-            array(
-                'name' => 'GlobalSubContextRoute1',
-                'uriPattern' => 'globalSubContextRoute1'
-            ),
-            array(
-                'name' => 'GlobalSubContextRoute2',
-                'uriPattern' => 'globalSubContextRoute2'
-            ),
-            // BEGIN SUBROUTES
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageSubContextRoute1',
-                'uriPattern' => 'globalContextRoute1/packageSubContextRoute1'
-            ),
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageSubContextRoute2',
-                'uriPattern' => 'globalContextRoute1/packageSubContextRoute2'
-            ),
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageContextRoute1',
-                'uriPattern' => 'globalContextRoute1/packageContextRoute1'
-            ),
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageContextRoute2',
-                'uriPattern' => 'globalContextRoute1/packageContextRoute2'
-            ),
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageRoute1',
-                'uriPattern' => 'globalContextRoute1/packageRoute1'
-            ),
-            array(
-                'name' => 'GlobalContextRoute1 :: PackageRoute2',
-                'uriPattern' => 'globalContextRoute1/packageRoute2'
-            ),
-            // END SUBROUTES
-            array(
-                'name' => 'GlobalContextRoute2',
-                'uriPattern' => 'globalContextRoute2'
-            ),
+            // ROUTES DEFINED IN ROUTES.YAML ALWAYS COME FIRST:
             array(
                 'name' => 'GlobalRoute1',
                 'uriPattern' => 'globalRoute1'
@@ -1117,10 +1080,82 @@ EOD;
             array(
                 'name' => 'GlobalRoute2',
                 'uriPattern' => 'globalRoute2'
-            )
+            ),
+            // MERGED SUBROUTES FROM SETTINGS
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute1',
+                'uriPattern' => 'packageRoute1/some-value'
+            ),
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ),
         );
 
         $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+    }
+
+    /**
+     * Callback for the above test.
+     * @param string $filenameAndPath
+     * @return array
+     * @throws \Exception
+     */
+    public function packageRoutesAndSettingsCallback($filenameAndPath)
+    {
+        $packageRoutes = [
+            [
+                'name' => 'PackageRoute1',
+                'uriPattern' => 'packageRoute1/<variable>'
+            ],
+            [
+                'name' => 'PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ]
+        ];
+
+        $globalRoutes = [
+            [
+                'name' => 'GlobalRoute1',
+                'uriPattern' => 'globalRoute1'
+            ],
+            [
+                'name' => 'GlobalRoute2',
+                'uriPattern' => 'globalRoute2'
+            ]
+        ];
+
+        $globalSettings = [
+            'TYPO3' => [
+                'Flow' => [
+                    'mvc' => [
+                        'routes' => [
+                            'TYPO3.Flow' => [
+                                'position' => 'start',
+                                'suffix' => 'SomeSuffix',
+                                'variables' => [
+                                    'variable' => 'some-value'
+                                 ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        switch ($filenameAndPath) {
+            case 'Flow/Configuration/Routes.SomeSuffix' : return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes.SomeSuffix' : return [];
+            case FLOW_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes' : return [];
+
+            case 'Flow/Configuration/Settings' : return [];
+            case 'Flow/Configuration/Testing/Settings' : return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings' : return [];
+            default:
+                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+        }
     }
 
     /**
@@ -1461,10 +1496,10 @@ EOD;
 
     protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName)
     {
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMock(\TYPO3\Flow\Configuration\Source\YamlSource::class, array('load', 'save'));
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, $configurationSourceCallbackName)));
 
-        $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration', 'includeSubRoutesFromSettings'), array(new ApplicationContext($contextName)));
+        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration', 'includeSubRoutesFromSettings'), array(new ApplicationContext($contextName)));
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
 
         $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
