@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Mvc\Routing;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 
@@ -49,19 +50,26 @@ class RouterCachingService
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
      * @Flow\InjectConfiguration("mvc.routes")
      * @var array
      */
-    protected $routeSettings;
+    protected $routingSettings;
 
     /**
      * @return void
      */
     public function initializeObject()
     {
-        if ($this->routeCache->get('routingSettings') !== $this->routeSettings) {
+        // flush routing caches if in Development context & routing settings changed
+        if ($this->objectManager->getContext()->isDevelopment() && $this->routeCache->get('routingSettings') !== $this->routingSettings) {
             $this->flushCaches();
-            $this->routeCache->set('routingSettings', $this->routeSettings);
+            $this->routeCache->set('routingSettings', $this->routingSettings);
         }
     }
 
