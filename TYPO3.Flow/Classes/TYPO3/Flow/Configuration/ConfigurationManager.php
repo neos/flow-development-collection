@@ -526,7 +526,7 @@ class ConfigurationManager
                 }
                 $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
-                // Merge routes with SubRoutes recursively
+                // load subroutes from Routes.yaml and Settings.yaml and merge them with main routes recursively
                 $this->includeSubRoutesFromSettings($this->configurations[$configurationType]);
                 $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
             break;
@@ -762,6 +762,9 @@ EOD;
         }
         $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
         foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
+            if ($routeFromSettings === false) {
+                continue;
+            }
             $subRoutesName = $packageKey . 'SubRoutes';
             $subRoutesConfiguration = ['package' => $packageKey];
             if (isset($routeFromSettings['variables'])) {
