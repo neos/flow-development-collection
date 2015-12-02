@@ -763,13 +763,18 @@ EOD;
         $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
         foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
             $subRoutesName = $packageKey . 'SubRoutes';
+            $subRoutesConfiguration = ['package' => $packageKey];
+            if (isset($routeFromSettings['variables'])) {
+                $subRoutesConfiguration['variables'] = $routeFromSettings['variables'];
+            }
+            if (isset($routeFromSettings['suffix'])) {
+                $subRoutesConfiguration['suffix'] = $routeFromSettings['suffix'];
+            }
             $routeDefinitions[] = [
                 'name' => $packageKey,
                 'uriPattern' => '<' . $subRoutesName . '>',
                 'subRoutes' => [
-                    $subRoutesName => [
-                        'package' => $packageKey,
-                    ]
+                    $subRoutesName => $subRoutesConfiguration
                 ]
             ];
         }
