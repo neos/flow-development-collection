@@ -439,7 +439,10 @@ class ClassLoader
         }
 
         if ($context !== null) {
-            $this->initializeAvailableProxyClasses($context);
+            $proxyClasses = @include(FLOW_PATH_TEMPORARY . 'AvailableProxyClasses.php');
+            if ($proxyClasses !== false) {
+                $this->availableProxyClasses = $proxyClasses;
+            }
         }
     }
 

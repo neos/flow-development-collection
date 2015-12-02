@@ -88,7 +88,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $account = new Account();
         $account->setAccountIdentifier('admin');
 
-        $securityContext = $this->getMock(\TYPO3\Flow\Security\Context::class, array('getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens'), array(), '', false);
+        $securityContext = $this->getMock(\TYPO3\Flow\Security\Context::class, array('getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens', 'refreshRoles'), array(), '', false);
 
         $token = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
         $token->expects($this->any())->method('getAccount')->will($this->returnValue($account));

@@ -34,6 +34,12 @@ class TestValueObjectWithTransientProperties
     protected $value2;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+     */
+    protected $dependency;
+
+    /**
      * @var int
      */
     protected $calculatedValue;

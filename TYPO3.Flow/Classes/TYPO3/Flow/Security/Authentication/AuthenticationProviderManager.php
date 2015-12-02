@@ -190,6 +190,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                 }
                 if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
                     $this->isAuthenticated = true;
+                    $this->securityContext->refreshRoles();
                     return;
                 }
                 $anyTokenAuthenticated = true;
@@ -205,6 +206,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         }
 
         $this->isAuthenticated = $anyTokenAuthenticated;
+        $this->securityContext->refreshRoles();
     }
 
     /**
