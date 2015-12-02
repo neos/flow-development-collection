@@ -908,10 +908,10 @@ allowed to approve an invoice or not. The respective MethodPrivilege could look 
     'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 100))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 100))'
 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 1000))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 1000))'
 
     roles:
       'Acme.MyPackage:Employee':
@@ -943,7 +943,7 @@ The following Policy expresses the exact same functionality as above:
     'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:InvoiceService.ApproveInvoice':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > {amount}))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > {amount}))'
 
     roles:
       'Acme.MyPackage:Employee':
@@ -1072,7 +1072,7 @@ filter class ``TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFi
 ``ConditionGenerators`` to create the needed SQL. It is registered als Doctrine filter with the name
 ``Flow_Security_Entity_Filter`` in Flow’s Settings.yaml file.
 
-The evaluation of entity restrictions is analog to the MethodPrivilege from above. This means entites matched by a
+The evaluation of entity restrictions is analog to the MethodPrivilege from above. This means entities matched by a
 privilege target are implicitly denied and are therefore hidden from the user. By adding a grant permission for a
 privilege target, this role will be able to retrieve the respective objects from the database. A DENY permission will
 override any GRANT permission, nothing new here. Internally we add SQL where conditions excluding matching entities for

@@ -35,6 +35,10 @@ TYPO3:
       # This setting is automatically set by the configuration manager and can't be set manually.
       context: ''
 
+      # Key of the "main" package of the application. This package's meta data is used for displaying the application
+      # name, version etc. in the ./flow command line help and where else needed.
+      applicationPackageKey: 'TYPO3.Flow'
+
       # Path and filename of the PHP binary
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
       phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
@@ -330,6 +334,22 @@ TYPO3:
 
     resource:
 
+      # A list of filename extensions that must not be uploaded through the resource
+      # management.
+      uploadExtensionBlacklist: &uploadExtensionBlacklist
+        'aspx': TRUE
+        'cgi': TRUE
+        'php3': TRUE
+        'php4': TRUE
+        'php5': TRUE
+        'phtml': TRUE
+        'php': TRUE
+        'pl': TRUE
+        'py': TRUE
+        'pyc': TRUE
+        'pyo': TRUE
+        'rb': TRUE
+
       # Definition of resource storages provided by the Flow core.
       # Storages are used for storing and retrieving resources.
       storages:
@@ -363,12 +383,14 @@ TYPO3:
 
       # Definition of the basic resource publication targets.
       targets:
+
         # Target for publishing static resources to the local web directory
         localWebDirectoryStaticResourcesTarget:
           target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
             baseUri: '_Resources/Static/Packages/'
+            extensionBlacklist: *uploadExtensionBlacklist
 
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
@@ -376,6 +398,7 @@ TYPO3:
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Persistent/'
             baseUri: '_Resources/Persistent/'
+            extensionBlacklist: *uploadExtensionBlacklist
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: false

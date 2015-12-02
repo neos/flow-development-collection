@@ -381,7 +381,7 @@ your resource object::
 
 Again in a Fluid template the resource ViewHelper generates the URI for you:
 
-.. code-block: html
+.. code-block:: html
 
 	<img src="{f:uri.resource(resource: image.originalResource)}" />
 

@@ -16,7 +16,7 @@
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: License
 .. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
-   :target: http://neos.github.io/api-docs/flow/master
+   :target: http://neos.github.io/flow/master/
    :alt: API Docs
 
 ---------------------------

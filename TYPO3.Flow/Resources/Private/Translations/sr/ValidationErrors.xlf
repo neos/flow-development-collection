@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="sr">
     <body>
@@ -118,29 +118,29 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source/>
-          <target xml:lang="sr" state="needs-translation"/>
+          <target xml:lang="sr"/>
         </trans-unit>
       </group>
       <!-- StringValidator -->

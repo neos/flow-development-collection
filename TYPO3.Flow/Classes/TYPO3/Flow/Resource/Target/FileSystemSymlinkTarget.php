@@ -12,9 +12,10 @@ namespace TYPO3\Flow\Resource\Target;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Resource\Collection;
+use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A target which publishes resources by creating symlinks.
@@ -24,10 +25,10 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\Collection $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
      * @return void
      */
-    public function publishCollection(Collection $collection)
+    public function publishCollection(CollectionInterface $collection)
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
@@ -49,6 +50,11 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      */
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
+        $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
+            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447152230);
+        }
+
         $streamMetaData = stream_get_meta_data($sourceStream);
 
         if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO') {

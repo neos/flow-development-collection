@@ -1,6 +1,10 @@
 type: dictionary
 additionalProperties: FALSE
 properties:
+  'uploadExtensionBlacklist':
+    type: dictionary
+    additionalProperties:
+      type: boolean
   'storages':
     type: dictionary
     required: TRUE
