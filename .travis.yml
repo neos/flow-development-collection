@@ -28,7 +28,7 @@ install:
   - rm -rf Packages/Framework
   - mv ../flow-development-collection Packages/Framework
 before_script:
-  - phpenv config-rm xdebug.ini
+  - if ([ "$BEHAT" == "true" ] || [ "$DB" == "sqlite" ]); then phpenv config-rm xdebug.ini; fi
   - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - rm Configuration/Routes.yaml
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
