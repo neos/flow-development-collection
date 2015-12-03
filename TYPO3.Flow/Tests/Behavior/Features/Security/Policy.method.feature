@@ -6,29 +6,29 @@ Feature: Method policy enforcement
   Background:
     Given I have the following policies:
     """
-      resources:
+    resources:
+      methods:
+        TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())'
+        TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
+      entities: []
+
+    roles:
+      'TYPO3.Flow:Everybody': []
+      'TYPO3.Flow:Customer': []
+      'TYPO3.Flow:Administrator': []
+
+    acls:
+
+      Customer:
         methods:
-          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())'
-          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
-        entities: []
+          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: GRANT
+          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction:    DENY
 
-      roles:
-        'TYPO3.Flow:Everybody': []
-        'TYPO3.Flow:Customer': []
-        'TYPO3.Flow:Administrator': []
-
-      acls:
-
-        Customer:
-          methods:
-            TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: GRANT
-            TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction:    DENY
-
-        Administrator:
-          methods:
-            TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: GRANT
-            TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction:    GRANT
-      """
+      Administrator:
+        methods:
+          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: GRANT
+          TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction:    GRANT
+    """
 
   @Isolated
   Scenario: Public action is granted for everybody

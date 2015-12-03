@@ -63,7 +63,7 @@ class FlockLockStrategy implements LockStrategyInterface
             $this->configureTemporaryDirectory();
         }
 
-        $this->lockFileName = Files::concatenatePaths([self::$temporaryDirectory, md5($subject)]);
+        $this->lockFileName = Files::concatenatePaths(array(self::$temporaryDirectory, md5($subject)));
         $aquiredLock = false;
         while ($aquiredLock === false) {
             $aquiredLock = $this->tryToAquireLock($exclusiveLock);
@@ -83,7 +83,7 @@ class FlockLockStrategy implements LockStrategyInterface
             throw new LockNotAcquiredException('Environment object could not be accessed', 1386680952);
         }
         $environment = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Utility\Environment');
-        $temporaryDirectory = Files::concatenatePaths([$environment->getPathToTemporaryDirectory(), 'Lock']);
+        $temporaryDirectory = Files::concatenatePaths(array($environment->getPathToTemporaryDirectory(), 'Lock'));
         Files::createDirectoryRecursively($temporaryDirectory);
         self::$temporaryDirectory = $temporaryDirectory;
     }
