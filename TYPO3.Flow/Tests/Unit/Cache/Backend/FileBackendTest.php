@@ -222,19 +222,18 @@ class FileBackendTest extends UnitTestCase
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
     {
-        $cacheIdentifier = 'UnitTestCache';
-        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', false);
-        $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
+        $cachePath = 'vfs://Foo';
 
         $mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
         $mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(5));
-        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($cachePath));
 
         $entryIdentifier = 'BackendFileTest';
 
-        $backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('setTag'), array(), '', false);
+        $backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('setTag', 'writeCacheFile'), array(), '', false);
+        $backend->expects($this->once())->method('writeCacheFile')->willReturn(false);
         $backend->injectEnvironment($mockEnvironment);
-        $backend->setCache($mockCache);
+        $backend->setCacheDirectory($cachePath);
 
         $backend->set($entryIdentifier, 'cache data');
     }

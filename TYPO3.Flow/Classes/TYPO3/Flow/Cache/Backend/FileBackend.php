@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Utility\Lock\Lock;
 
 /**
@@ -115,7 +116,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      *
      * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The cache frontend
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception
+     * @throws Exception
      */
     public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache)
     {
@@ -145,7 +146,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @throws \RuntimeException
      * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
-     * @throws \TYPO3\Flow\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
+     * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
      * @api
      */
@@ -169,13 +170,14 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
         $metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
 
-        $lock = new Lock($cacheEntryPathAndFilename);
-        $result = file_put_contents($cacheEntryPathAndFilename, $data . $metaData);
-        $lock->release();
+        $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
 
-        if ($result === false) {
-            throw new \TYPO3\Flow\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
+        if ($result !== false) {
+            return;
         }
+
+        $this->throwExceptionIfPathExceedsMaximumLength($cacheEntryPathAndFilename);
+        throw new Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
     }
 
     /**
@@ -379,7 +381,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      *
      * @param string $entryIdentifier The cache entry identifier
      * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
-     * @throws \TYPO3\Flow\Cache\Exception if no frontend has been set
+     * @throws Exception if no frontend has been set
      */
     protected function findCacheFilesByIdentifier($entryIdentifier)
     {
