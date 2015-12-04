@@ -327,6 +327,7 @@ class Configuration
      * method, all (possibly) defined properties are removed from the configuration.
      *
      * @param array $properties Array of \TYPO3\Flow\Object\Configuration\ConfigurationProperty
+     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      * @return void
      */
     public function setProperties(array $properties)
@@ -335,7 +336,11 @@ class Configuration
             $this->properties = array();
         } else {
             foreach ($properties as $value) {
-                $this->setProperty($value);
+                if ($value instanceof ConfigurationProperty) {
+                    $this->setProperty($value);
+                } else {
+                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
+                }
             }
         }
     }
@@ -353,10 +358,10 @@ class Configuration
     /**
      * Setter function for a single injection property
      *
-     * @param \TYPO3\Flow\Object\Configuration\ConfigurationProperty $property
+     * @param ConfigurationProperty $property
      * @return void
      */
-    public function setProperty(\TYPO3\Flow\Object\Configuration\ConfigurationProperty $property)
+    public function setProperty(ConfigurationProperty $property)
     {
         $this->properties[$property->getName()] = $property;
     }
@@ -366,6 +371,7 @@ class Configuration
      * method, all (possibly) defined constructor arguments are removed from the configuration.
      *
      * @param array<TYPO3\Flow\Object\Configuration\ConfigurationArgument> $arguments
+     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      * @return void
      */
     public function setArguments(array $arguments)
@@ -374,8 +380,10 @@ class Configuration
             $this->arguments = array();
         } else {
             foreach ($arguments as $argument) {
-                if ($argument !== null) {
+                if ($argument !== null && $argument instanceof ConfigurationArgument) {
                     $this->setArgument($argument);
+                } else {
+                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
                 }
             }
         }
@@ -384,10 +392,10 @@ class Configuration
     /**
      * Setter function for a single constructor argument
      *
-     * @param \TYPO3\Flow\Object\Configuration\ConfigurationArgument $argument The argument
+     * @param ConfigurationArgument $argument The argument
      * @return void
      */
-    public function setArgument(\TYPO3\Flow\Object\Configuration\ConfigurationArgument $argument)
+    public function setArgument(ConfigurationArgument $argument)
     {
         $this->arguments[$argument->getIndex()] = $argument;
     }
