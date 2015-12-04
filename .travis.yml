@@ -30,11 +30,14 @@ before_install:
   - git clone https://github.com/neos/flow-development-distribution.git -b 3.0
   - cd flow-development-distribution
 install:
+  - phpenv config-rm xdebug.ini
+  - composer self-update -q
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --no-progress --no-interaction
+  - composer update --no-progress --no-interaction
   - rm -rf Packages/Framework
   - mv ../flow-development-collection Packages/Framework
 before_script:
-  - phpenv config-rm xdebug.ini
   - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
