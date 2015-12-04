@@ -97,10 +97,13 @@ class FlockLockStrategy implements LockStrategyInterface
      */
     protected function tryToAquireLock($exclusiveLock)
     {
-        if (($this->filePointer = @fopen($this->lockFileName, 'r')) === false && ($this->filePointer = @fopen($this->lockFileName, 'w')) === false) {
+        $this->filePointer = @fopen($this->lockFileName, 'w');
+        if ($this->filePointer === false) {
             throw new LockNotAcquiredException(sprintf('Lock file "%s" could not be opened', $this->lockFileName), 1386520596);
         }
+
         $this->applyFlock($exclusiveLock);
+
         $fstat = fstat($this->filePointer);
         $stat = stat($this->lockFileName);
         // Make sure that the file did not get unlinked between the fopen and the actual flock
