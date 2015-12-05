@@ -154,10 +154,10 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Echoes an exception for the command line.
      *
-     * @param \Exception $exception The exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionCli(\Exception $exception)
+    protected function echoExceptionCli($exception)
     {
         $response = new \TYPO3\Flow\Cli\Response();
 

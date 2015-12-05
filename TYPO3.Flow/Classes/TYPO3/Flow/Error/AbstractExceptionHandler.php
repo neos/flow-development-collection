@@ -94,10 +94,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Echoes an exception for the command line.
      *
-     * @param \Exception $exception The exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    abstract protected function echoExceptionCli(\Exception $exception);
+    abstract protected function echoExceptionCli($exception);
 
     /**
      * Echoes an exception for the web.
