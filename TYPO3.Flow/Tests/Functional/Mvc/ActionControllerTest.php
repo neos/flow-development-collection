@@ -280,44 +280,44 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function argumentTestsDataProvider()
     {
         $requiredArgumentExceptionText = 'Uncaught Exception in Flow #1298012500: Required argument "argument" is not set.';
-        $data = [
-            'required string            '       => ['requiredString', 'some String', '\'some String\''],
-            'required string - missing value'   => ['requiredString', null, $requiredArgumentExceptionText],
-            'optional string'                   => ['optionalString', '123', '\'123\''],
-            'optional string - default'         => ['optionalString', null, '\'default\''],
-            'required integer'                  => ['requiredInteger', '234', 234],
-            'required integer - missing value'  => ['requiredInteger', null, $requiredArgumentExceptionText],
-            'required integer - mapping error'  => ['requiredInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().'],
-            'required integer - empty value'    => ['requiredInteger', '', 'NULL'],
-            'optional integer'                  => ['optionalInteger', 456, 456],
-            'optional integer - default value'  => ['optionalInteger', null, 123],
-            'optional integer - mapping error'  => ['optionalInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().'],
-            'optional integer - empty value'    => ['optionalInteger', '', 123],
-            'required float'                    => ['requiredFloat', 34.56, 34.56],
-            'required float - integer'          => ['requiredFloat', 485, '485'],
-            'required float - integer2'         => ['requiredFloat', '888', '888'],
-            'required float - missing value'    => ['requiredFloat', null, $requiredArgumentExceptionText],
-            'required float - mapping error'    => ['requiredFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().'],
-            'required float - empty value'      => ['requiredFloat', '', 'NULL'],
-            'optional float'                    => ['optionalFloat', 78.90, 78.9],
-            'optional float - default value'    => ['optionalFloat', null, 112.34],
-            'optional float - mapping error'    => ['optionalFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().'],
-            'optional float - empty value'      => ['optionalFloat', '', 112.34],
-            'required date'                     => ['requiredDate', ['date' => '1980-12-13', 'dateFormat' => 'Y-m-d'], '1980-12-13'],
-            'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
-            'required date - missing value'     => ['requiredDate', null, $requiredArgumentExceptionText],
-            'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'],
-            'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
-            'optional date - default value'     => ['optionalDate', null, 'null'],
-            'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'],
-            'optional date - missing value'     => ['optionalDate', null, 'null'],
-            'optional date - empty value'       => ['optionalDate', '', 'null']
-        ];
+        $data = array(
+            'required string            '       => array('requiredString', 'some String', '\'some String\''),
+            'required string - missing value'   => array('requiredString', null, $requiredArgumentExceptionText),
+            'optional string'                   => array('optionalString', '123', '\'123\''),
+            'optional string - default'         => array('optionalString', null, '\'default\''),
+            'required integer'                  => array('requiredInteger', '234', 234),
+            'required integer - missing value'  => array('requiredInteger', null, $requiredArgumentExceptionText),
+            'required integer - mapping error'  => array('requiredInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().'),
+            'required integer - empty value'    => array('requiredInteger', '', 'NULL'),
+            'optional integer'                  => array('optionalInteger', 456, 456),
+            'optional integer - default value'  => array('optionalInteger', null, 123),
+            'optional integer - mapping error'  => array('optionalInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().'),
+            'optional integer - empty value'    => array('optionalInteger', '', 123),
+            'required float'                    => array('requiredFloat', 34.56, 34.56),
+            'required float - integer'          => array('requiredFloat', 485, '485'),
+            'required float - integer2'         => array('requiredFloat', '888', '888'),
+            'required float - missing value'    => array('requiredFloat', null, $requiredArgumentExceptionText),
+            'required float - mapping error'    => array('requiredFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().'),
+            'required float - empty value'      => array('requiredFloat', '', 'NULL'),
+            'optional float'                    => array('optionalFloat', 78.90, 78.9),
+            'optional float - default value'    => array('optionalFloat', null, 112.34),
+            'optional float - mapping error'    => array('optionalFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().'),
+            'optional float - empty value'      => array('optionalFloat', '', 112.34),
+            'required date'                     => array('requiredDate', array('date' => '1980-12-13', 'dateFormat' => 'Y-m-d'), '1980-12-13'),
+            'required date string'              => array('requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
+            'required date - missing value'     => array('requiredDate', null, $requiredArgumentExceptionText),
+            'required date - mapping error'     => array('requiredDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'),
+            'optional date string'              => array('optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
+            'optional date - default value'     => array('optionalDate', null, 'null'),
+            'optional date - mapping error'     => array('optionalDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'),
+            'optional date - missing value'     => array('optionalDate', null, 'null'),
+            'optional date - empty value'       => array('optionalDate', '', 'null')
+        );
 
         if (version_compare(PHP_VERSION, '6.0.0') >= 0) {
-            $data['required date - empty value'] = ['requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'];
+            $data['required date - empty value'] = array('requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given');
         } else {
-            $data['required date - empty value'] = ['requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'];
+            $data['required date - empty value'] = array('requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given');
         }
 
         return $data;
