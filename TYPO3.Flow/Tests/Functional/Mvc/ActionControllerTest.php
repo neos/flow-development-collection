@@ -280,7 +280,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function argumentTestsDataProvider()
     {
         $requiredArgumentExceptionText = 'Uncaught Exception in Flow #1298012500: Required argument "argument" is not set.';
-        return array(
+        $data = array(
             'required string            '       => array('requiredString', 'some String', '\'some String\''),
             'required string - missing value'   => array('requiredString', null, $requiredArgumentExceptionText),
             'optional string'                   => array('optionalString', '123', '\'123\''),
@@ -307,13 +307,20 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'required date string'              => array('requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
             'required date - missing value'     => array('requiredDate', null, $requiredArgumentExceptionText),
             'required date - mapping error'     => array('requiredDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'),
-            'required date - empty value'       => array('requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'),
             'optional date string'              => array('optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
             'optional date - default value'     => array('optionalDate', null, 'null'),
             'optional date - mapping error'     => array('optionalDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'),
             'optional date - missing value'     => array('optionalDate', null, 'null'),
-            'optional date - empty value'       => array('optionalDate', '', 'null'),
+            'optional date - empty value'       => array('optionalDate', '', 'null')
         );
+
+        if (version_compare(PHP_VERSION, '6.0.0') >= 0) {
+            $data['required date - empty value'] = array('requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given');
+        } else {
+            $data['required date - empty value'] = array('requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given');
+        }
+
+        return $data;
     }
 
     /**

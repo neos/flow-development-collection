@@ -106,12 +106,12 @@ class PackageTest extends UnitTestCase
      */
     public function constructorSetsTheClassesPathAccordingToThePsr0MappingIfItExists()
     {
-        $packagePath = 'vfs://Packages/Vendor.TestPackage/';
+        $packagePath = 'vfs://Packages/Vendor.TestPsr0Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "flow-test", "autoload": { "psr-0": { "Psr0Namespace": "Psr0/Path" }, "psr-4": { "Psr4Namespace": "Psr4/Path" } }}');
 
-        $package = new Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Some/Classes/Path');
-        $this->assertSame('vfs://Packages/Vendor.TestPackage/Psr0/Path/', $package->getClassesPath());
+        $package = new Package($this->mockPackageManager, 'Vendor.TestPsr0Package', $packagePath, 'Some/Classes/Path');
+        $this->assertSame('vfs://Packages/Vendor.TestPsr0Package/Psr0/Path/', $package->getClassesPath());
     }
 
     /**
@@ -119,12 +119,12 @@ class PackageTest extends UnitTestCase
      */
     public function constructorSetsTheClassesPathAccordingToThePsr4MappingIfItExists()
     {
-        $packagePath = 'vfs://Packages/Vendor.TestPackage/';
+        $packagePath = 'vfs://Packages/Vendor.TestPsr4Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "flow-test", "autoload": { "psr-4": { "Psr4Namespace": "Psr4/Path" } }}');
 
-        $package = new Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Some/Classes/Path');
-        $this->assertSame('vfs://Packages/Vendor.TestPackage/Psr4/Path/', $package->getClassesPath());
+        $package = new Package($this->mockPackageManager, 'Vendor.TestPsr4Package', $packagePath, 'Some/Classes/Path');
+        $this->assertSame('vfs://Packages/Vendor.TestPsr4Package/Psr4/Path/', $package->getClassesPath());
     }
 
     /**
@@ -132,12 +132,12 @@ class PackageTest extends UnitTestCase
      */
     public function constructorSetsTheClassesPathToFirstConfiguredPsr0Mapping()
     {
-        $packagePath = 'vfs://Packages/Vendor.TestPackage/';
+        $packagePath = 'vfs://Packages/Vendor.TestMappedPsr0Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "flow-test", "autoload": { "psr-0": { "Psr0Namespace": ["Psr0/Path", "Psr0/Foo"] } }}');
 
-        $package = new Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Some/Classes/Path');
-        $this->assertSame('vfs://Packages/Vendor.TestPackage/Psr0/Path/', $package->getClassesPath());
+        $package = new Package($this->mockPackageManager, 'Vendor.TestMappedPsr0Package', $packagePath, 'Some/Classes/Path');
+        $this->assertSame('vfs://Packages/Vendor.TestMappedPsr0Package/Psr0/Path/', $package->getClassesPath());
     }
 
     /**
@@ -195,10 +195,10 @@ class PackageTest extends UnitTestCase
      */
     public function getNamespaceReturnsThePsr0NamespaceIfAPsr0MappingIsDefined()
     {
-        $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+        $packagePath = 'vfs://Packages/Application/Acme.MyPsr0Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "autoload": { "psr-0": { "Namespace1": "path1" }, "psr-4": { "Namespace2": "path2" } }}');
-        $package = new Package($this->mockPackageManager, 'Acme.MyPackage', $packagePath);
+        $package = new Package($this->mockPackageManager, 'Acme.MyPsr0Package', $packagePath);
         $this->assertEquals('Namespace1', $package->getNamespace());
     }
 
@@ -207,10 +207,10 @@ class PackageTest extends UnitTestCase
      */
     public function getNamespaceReturnsTheFirstPsr0NamespaceIfMultiplePsr0MappingsAreDefined()
     {
-        $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+        $packagePath = 'vfs://Packages/Application/Acme.MyMultiplePsr0Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "autoload": { "psr-0": { "Namespace1": "path2", "Namespace2": "path2" } }}');
-        $package = new Package($this->mockPackageManager, 'Acme.MyPackage', $packagePath);
+        $package = new Package($this->mockPackageManager, 'Acme.MyMultiplePsr0Package', $packagePath);
         $this->assertEquals('Namespace1', $package->getNamespace());
     }
 
@@ -219,10 +219,10 @@ class PackageTest extends UnitTestCase
      */
     public function getNamespaceReturnsPsr4NamespaceIfNoPsr0MappingIsDefined()
     {
-        $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+        $packagePath = 'vfs://Packages/Application/Acme.MyPsr4Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "autoload": { "psr-4": { "Namespace2": "path2" } }}');
-        $package = new Package($this->mockPackageManager, 'Acme.MyPackage', $packagePath);
+        $package = new Package($this->mockPackageManager, 'Acme.MyPsr4Package', $packagePath);
         $this->assertEquals('Namespace2', $package->getNamespace());
     }
 
@@ -231,10 +231,10 @@ class PackageTest extends UnitTestCase
      */
     public function getNamespaceReturnsTheFirstPsr4NamespaceIfMultiplePsr4MappingsAreDefined()
     {
-        $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+        $packagePath = 'vfs://Packages/Application/Acme.MyMultiplePsr4Package/';
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test", "autoload": { "psr-4": { "Namespace2": "path2", "Namespace3": "path3" } }}');
-        $package = new Package($this->mockPackageManager, 'Acme.MyPackage', $packagePath);
+        $package = new Package($this->mockPackageManager, 'Acme.MyMultiplePsr4Package', $packagePath);
         $this->assertEquals('Namespace2', $package->getNamespace());
     }
 

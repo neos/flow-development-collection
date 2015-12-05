@@ -26,10 +26,10 @@ class DebugExceptionHandler extends AbstractExceptionHandler
     /**
      * Formats and echoes the exception as XHTML.
      *
-     * @param \Exception $exception The exception object
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionWeb(\Exception $exception)
+    protected function echoExceptionWeb($exception)
     {
         $statusCode = 500;
         if ($exception instanceof \TYPO3\Flow\Exception) {
@@ -52,7 +52,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler
      * Returns the statically rendered exception message
      *
      * @param integer $statusCode
-     * @param \Exception $exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
     protected function renderStatically($statusCode, $exception)
@@ -144,10 +144,10 @@ class DebugExceptionHandler extends AbstractExceptionHandler
     /**
      * Formats and echoes the exception for the command line
      *
-     * @param \Exception $exception The exception object
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionCli(\Exception $exception)
+    protected function echoExceptionCli($exception)
     {
         $response = new \TYPO3\Flow\Cli\Response();
 
