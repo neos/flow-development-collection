@@ -1,7 +1,9 @@
 {
     "name": "neos/flow-development-collection",
     "description": "Flow packages in a joined repository for pull requests.",
-    "license": ["MIT"],
+    "license": [
+        "MIT"
+    ],
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.3.2",
@@ -10,7 +12,7 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
         "typo3/party": "2.3.*",
-        "doctrine/orm": "2.3.*",
+        "doctrine/orm": "2.4.*",
         "doctrine/migrations": "1.0.0-alpha3",
         "symfony/yaml": "2.5.*",
         "symfony/dom-crawler": "2.5.*",
