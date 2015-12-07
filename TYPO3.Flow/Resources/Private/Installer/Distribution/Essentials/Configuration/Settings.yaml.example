@@ -1,7 +1,7 @@
 #                                                                        #
 # Example Settings                                                       #
 #                                                                        #
-# This file can contain settings for your flow application that overeide #
+# This file can contain settings for your flow application that override #
 # the various defaults defined by the flow packages.                     #
 # Copy this file to Settings.yaml, and adjust as necessary.              #
 #                                                                        #
