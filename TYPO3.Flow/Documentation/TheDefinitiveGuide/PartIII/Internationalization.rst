@@ -260,7 +260,7 @@ of these translations, you have to adjust your templates to make use of the ``Tr
 
   <f:form.validationResults for="{property}">
 	<f:for each="{validationResults.errors}" as="error">
-		{error -> f:translate(key: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}
+		{error -> f:translate(id: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}
 	</f:for>
   </f:form.validationResults>
 
