@@ -252,6 +252,7 @@ class FileBackendTest extends UnitTestCase
     /**
      * @test
      * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedExceptionCode 1248710426
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
     {
