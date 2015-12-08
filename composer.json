@@ -13,11 +13,12 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
         "ramsey/uuid": "^3.0.0",
-        "doctrine/orm": "2.4.*",
-        "doctrine/migrations": "1.0.*",
-        "symfony/yaml": "2.5.*",
-        "symfony/dom-crawler": "2.5.*",
-        "symfony/console": "2.*",
+        "doctrine/orm": "~2.4.0",
+        "doctrine/migrations": "~1.0.0",
+        "doctrine/dbal": "~2.5.0",
+        "symfony/yaml": "~2.5.0",
+        "symfony/dom-crawler": "~2.5.0",
+        "symfony/console": "~2.0",
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
