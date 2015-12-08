@@ -33,6 +33,11 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
     protected $mockAccountRepository;
 
     /**
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $mockPersistenceManager;
+
+    /**
      * @var \TYPO3\Flow\Security\Authentication\Token\UsernamePassword
      */
     protected $mockToken;
@@ -53,9 +58,10 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
         $this->mockHashService = $this->getMock(\TYPO3\Flow\Security\Cryptography\HashService::class);
         $this->mockAccount = $this->getMock(\TYPO3\Flow\Security\Account::class, array(), array(), '', false);
         $this->mockAccountRepository = $this->getMock(\TYPO3\Flow\Security\AccountRepository::class, array(), array(), '', false);
+        $this->mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class, array(), array(), '', false);
         $this->mockToken = $this->getMock(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, array(), array(), '', false);
-
         $this->mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
+
         $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will($this->returnCallback(function ($callback) {
             return $callback->__invoke();
         }));
@@ -63,6 +69,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
         $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), array('myProvider', array()));
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
+        $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
     }
 
