@@ -722,6 +722,8 @@ you to set order depending on other SubRoutes.
 It's not possible to adjust route defaults or the ``UriPattern`` when including SubRoutes via Settings, but there are
 two more options you can use:
 
+.. code-block:: yaml
+
 	TYPO3:
 	  Flow:
 	    mvc:
