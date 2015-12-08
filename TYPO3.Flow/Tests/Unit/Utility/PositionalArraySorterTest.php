@@ -15,7 +15,6 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
- * Tests for the PositionalArraySorter utility class
  */
 class PositionalArraySorterTest extends UnitTestCase
 {
@@ -42,6 +41,7 @@ class PositionalArraySorterTest extends UnitTestCase
             array('subject' => array('foo' => array('position' => 'start123'), 'first' => array())),
             array('subject' => array('foo' => array('position' => 'start 12 34'), 'first' => array())),
             array('subject' => array('foo' => array('position' => 'after 12 34 56'), 'first' => array())),
+            array('subject' => array('foo' => array('position' => 'after foo-bar'), 'first' => array())),
         );
     }
 
@@ -55,7 +55,7 @@ class PositionalArraySorterTest extends UnitTestCase
     public function toArrayThrowsExceptionForInvalidPositions(array $subject)
     {
         $positionalArraySorter = new PositionalArraySorter($subject);
-        $positionalArraySorter->toArray();
+        $sortedArray = $positionalArraySorter->toArray();
     }
 
     /**
@@ -141,13 +141,7 @@ class PositionalArraySorterTest extends UnitTestCase
                 'subject' => array('third' => array('__meta' => array('position' => 'after second')), 'second' => array('__meta' => array('position' => 'after first')), 'first' => array()),
                 'positionPropertyPath' => '__meta.position',
                 'expectedArrayKeys' => array('first', 'second', 'third')
-            ),
-            array(
-                'message' => 'Array keys may contain special characters',
-                'subject' => array('thi:rd' => array('position' => 'end'), 'sec.ond' => array('position' => 'before thi:rd'), 'fir-st' => array('position' => 'before sec.ond')),
-                'positionPropertyPath' => 'position',
-                'expectedArrayKeys' => array('fir-st', 'sec.ond', 'thi:rd')
-            ),
+            )
         );
     }
 

@@ -220,7 +220,7 @@ class PositionalArraySorter
     {
         $this->beforeKeys = array();
         foreach ($arrayKeysWithPosition as $key => $position) {
-            if (preg_match('/^before (\S+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
+            if (preg_match('/^before ([a-zA-Z0-9]+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
                 continue;
             }
             if (isset($matches[2])) {
@@ -247,7 +247,7 @@ class PositionalArraySorter
     {
         $this->afterKeys = array();
         foreach ($arrayKeysWithPosition as $key => $position) {
-            if (preg_match('/^after (\S+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
+            if (preg_match('/^after ([a-zA-Z0-9]+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
                 continue;
             }
             if (isset($matches[2])) {
