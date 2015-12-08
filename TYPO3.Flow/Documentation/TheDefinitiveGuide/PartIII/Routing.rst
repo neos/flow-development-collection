@@ -537,7 +537,8 @@ This will load the SubRoutes from a file ``Routes.Foo.yaml`` in the ``My.Demo`` 
 With that feature you can include multiple Routes with your package (for example providing different URI styles).
 Furthermore you can nest routes in order to minimize duplication in your configuration. You nest SubRoutes by including
 different SubRoutes from within a SubRoute, using the same syntax as before.
-Additionally you can specify a set of ``variables`` that will be replaced in ``name`` and ``uriPattern`` of merged routes:
+Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern`` and ``defaults``
+of merged routes:
 
 Imagine the following setup:
 
