@@ -111,6 +111,8 @@ Let's conclude by taking a look at the BlogRepository code:
 
 *Example: Code of a simple BlogRepository* ::
 
+  use TYPO3\Flow\Annotations as Flow;
+
 	/**
 	 * A BlogRepository
 	 *
