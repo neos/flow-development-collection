@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Configuration;
  */
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Core\ApplicationContext;
 use org\bovigo\vfs\vfsStream;
 
@@ -1054,6 +1055,111 @@ EOD;
 
     /**
      * @test
+     */
+    public function loadConfigurationForRoutesIncludesSubRoutesFromSettings()
+    {
+        $mockConfigurationSource = $this->getMock(YamlSource::class, array('load', 'save'));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageRoutesAndSettingsCallback')));
+
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
+        $configurationManager->_set('configurationSource', $mockConfigurationSource);
+
+        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
+
+        $mockPackages = $this->getMockPackages();
+        $configurationManager->setPackages($mockPackages);
+        $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
+
+        $actualConfigurations = $configurationManager->_get('configurations');
+        $expectedRoutesConfiguration = array(
+            // ROUTES DEFINED IN ROUTES.YAML ALWAYS COME FIRST:
+            array(
+                'name' => 'GlobalRoute1',
+                'uriPattern' => 'globalRoute1'
+            ),
+            array(
+                'name' => 'GlobalRoute2',
+                'uriPattern' => 'globalRoute2'
+            ),
+            // MERGED SUBROUTES FROM SETTINGS
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute1',
+                'uriPattern' => 'packageRoute1/some-value'
+            ),
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ),
+        );
+
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+    }
+
+    /**
+     * Callback for the above test.
+     * @param string $filenameAndPath
+     * @return array
+     * @throws \Exception
+     */
+    public function packageRoutesAndSettingsCallback($filenameAndPath)
+    {
+        $packageRoutes = [
+            [
+                'name' => 'PackageRoute1',
+                'uriPattern' => 'packageRoute1/<variable>'
+            ],
+            [
+                'name' => 'PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ]
+        ];
+
+        $globalRoutes = [
+            [
+                'name' => 'GlobalRoute1',
+                'uriPattern' => 'globalRoute1'
+            ],
+            [
+                'name' => 'GlobalRoute2',
+                'uriPattern' => 'globalRoute2'
+            ]
+        ];
+
+        $globalSettings = [
+            'TYPO3' => [
+                'Flow' => [
+                    'mvc' => [
+                        'routes' => [
+                            'TYPO3.Flow' => [
+                                'position' => 'start',
+                                'suffix' => 'SomeSuffix',
+                                'variables' => [
+                                    'variable' => 'some-value'
+                                 ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        switch ($filenameAndPath) {
+            case 'Flow/Configuration/Routes.SomeSuffix' : return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes.SomeSuffix' : return [];
+            case FLOW_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes' : return [];
+
+            case 'Flow/Configuration/Settings' : return [];
+            case 'Flow/Configuration/Testing/Settings' : return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings' : return [];
+            default:
+                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+        }
+    }
+
+    /**
+     * @test
      * @expectedException \TYPO3\Flow\Configuration\Exception\RecursionException
      */
     public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences()
@@ -1388,20 +1494,15 @@ EOD;
         }
     }
 
-    /**
-     * @param string $configurationSourceCallbackName
-     * @param string $contextName
-     * @return ConfigurationManager
-     */
     protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName)
     {
         $mockConfigurationSource = $this->getMock(\TYPO3\Flow\Configuration\Source\YamlSource::class, array('load', 'save'));
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, $configurationSourceCallbackName)));
 
-        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration'), array(new ApplicationContext($contextName)));
+        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration', 'includeSubRoutesFromSettings'), array(new ApplicationContext($contextName)));
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
 
-        $configurationManager->expects($this->once())->method('postProcessConfiguration');
+        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
 
         return $configurationManager;
     }

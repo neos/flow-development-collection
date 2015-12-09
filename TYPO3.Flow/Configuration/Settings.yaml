@@ -124,6 +124,17 @@ TYPO3:
           '.+Repository$': TRUE
           'PHPUnit_Framework_MockObject_InvocationMocker': TRUE
 
+    mvc:
+      # Defines routes that should be included after existing routes defined in the main Routes.yaml (if any)
+      # Note: This only allows to include existing Routes.yaml files from other packages, you can't adjust the routes via Settings.
+      #
+      # Syntax:
+      # 'Some.Package': TRUE
+      # 'SomeOther.Package':
+      #   position: 'after Some.Package'
+      #
+      routes: []
+
     http:
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
