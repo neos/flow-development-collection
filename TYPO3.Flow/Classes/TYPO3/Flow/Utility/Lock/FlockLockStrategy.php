@@ -105,7 +105,7 @@ class FlockLockStrategy implements LockStrategyInterface
         $this->applyFlock($exclusiveLock);
 
         $fstat = fstat($this->filePointer);
-        $stat = stat($this->lockFileName);
+        $stat = @stat($this->lockFileName);
         // Make sure that the file did not get unlinked between the fopen and the actual flock
         // This will always be TRUE on windows, because 'ino' stat will always be 0, but unlink is not possible on opened files anyway
         if ($stat !== false && $stat['ino'] === $fstat['ino']) {
