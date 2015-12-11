@@ -56,6 +56,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
      * @return void
+     * @throws LockNotAcquiredException
      */
     public function acquire($subject, $exclusiveLock)
     {
@@ -65,8 +66,13 @@ class FlockLockStrategy implements LockStrategyInterface
 
         $this->lockFileName = Files::concatenatePaths(array(self::$temporaryDirectory, md5($subject)));
         $aquiredLock = false;
+        $i = 0;
         while ($aquiredLock === false) {
             $aquiredLock = $this->tryToAquireLock($exclusiveLock);
+            $i++;
+            if ($i > 10000) {
+                throw new LockNotAcquiredException(sprintf('After 10000 attempts a lock could not be aquired for subject "%s".', $subject), 1449829188);
+            }
         }
     }
 
