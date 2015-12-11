@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Persistence;
  *
  * @api
  */
-class EmptyQueryResult implements  QueryResultInterface
+class EmptyQueryResult implements QueryResultInterface
 {
     /**
      * @var \TYPO3\Flow\Persistence\QueryInterface
