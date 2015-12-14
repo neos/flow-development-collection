@@ -17,6 +17,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\Security\Context;
 
 /**
  * Object Manager
@@ -423,6 +424,19 @@ class ObjectManager implements ObjectManagerInterface
      * @return void
      */
     public function shutdown()
+    {
+        $this->get(Context::class)->withoutAuthorizationChecks(function () {
+           $this->shutdownLifecycleObjects();
+        });
+    }
+
+    /**
+     * Executes the shutdown of object instances which were configured to be
+     * shut down by this object container.
+     *
+     * @return void
+     */
+    protected function shutdownLifecycleObjects()
     {
         foreach ($this->shutdownObjects as $object) {
             $methodName = $this->shutdownObjects[$object];

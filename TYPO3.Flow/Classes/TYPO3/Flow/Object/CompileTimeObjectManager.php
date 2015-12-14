@@ -458,4 +458,15 @@ class CompileTimeObjectManager extends ObjectManager
         array_pop($this->objectNameBuildStack);
         return $object;
     }
+
+    /**
+     * Shuts down this Object Container by calling the shutdown methods of all
+     * object instances which were configured to be shut down.
+     *
+     * @return void
+     */
+    public function shutdown()
+    {
+        $this->shutdownLifecycleObjects();
+    }
 }
