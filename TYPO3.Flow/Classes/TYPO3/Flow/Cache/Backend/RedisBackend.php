@@ -78,6 +78,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     protected $database = 0;
 
     /**
+     * @var integer
+     */
+    protected $compressionLevel = 0;
+
+    /**
      * @param \TYPO3\Flow\Core\ApplicationContext $context
      * @param array $options
      * @param \Redis $redis
@@ -119,7 +124,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
         }
 
         $this->redis->multi();
-        $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $data, $setOptions);
+        $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
         if (!$result instanceof \Redis) {
             $this->verifyRedisVersionIsSupported();
         }
@@ -140,7 +145,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
      */
     public function get($entryIdentifier)
     {
-        return $this->redis->get($this->buildKey('entry:' . $entryIdentifier));
+        return $this->uncompress($this->redis->get($this->buildKey('entry:' . $entryIdentifier)));
     }
 
     /**
@@ -366,8 +371,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     /**
      * Sets the default lifetime for this cache backend
      *
-     * @param integer $lifetime
-     * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
+     * @param integer $lifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
      * @return void
      * @api
      */
@@ -379,7 +383,6 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     /**
      * Sets the hostname or the socket of the Redis server
      *
-     * @param string $hostname
      * @param string $hostname Hostname of the Redis server
      * @api
      */
@@ -393,7 +396,6 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
      *
      * Leave this empty if you want to connect to a socket
      *
-     * @param string $port
      * @param string $port Port of the Redis server
      * @api
      */
@@ -405,13 +407,49 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     /**
      * Sets the database that will be used for this backend
      *
-     * @param integer $database
      * @param integer $database Database that will be used
      * @api
      */
     public function setDatabase($database)
     {
         $this->database = $database;
+    }
+
+    /**
+     * @param integer $compressionLevel
+     */
+    public function setCompressionLevel($compressionLevel)
+    {
+        $this->compressionLevel = $compressionLevel;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    private function uncompress($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+        return $this->useCompression() ? gzdecode($value) : $value;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    private function compress($value)
+    {
+        return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function useCompression()
+    {
+        return $this->compressionLevel > 0;
     }
 
     /**
