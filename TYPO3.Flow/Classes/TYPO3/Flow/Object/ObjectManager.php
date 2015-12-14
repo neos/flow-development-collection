@@ -547,5 +547,4 @@ class ObjectManager implements ObjectManagerInterface
             $object->$methodName();
         }
     }
-
 }
