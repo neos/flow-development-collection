@@ -92,6 +92,7 @@ class ObjectManager implements ObjectManagerInterface
     {
         $this->context = $context;
         $this->shutdownObjects = new \SplObjectStorage;
+        $this->internalShutdownObjects = new \SplObjectStorage;
     }
 
     /**
@@ -159,7 +160,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName)
     {
-        if (substr(get_class($object), 0, 1) === 'TYPO3\Flow\\') {
+        if (strpos(get_class($object), 'TYPO3\Flow\\') === 0) {
             $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
         } else {
             $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
