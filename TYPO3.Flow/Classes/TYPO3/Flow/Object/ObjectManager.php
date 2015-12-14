@@ -17,6 +17,8 @@ use TYPO3\Flow\Core\ApplicationContext;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Object Manager
@@ -72,6 +74,14 @@ class ObjectManager implements ObjectManagerInterface
      * @var \SplObjectStorage
      */
     protected $shutdownObjects;
+
+    /**
+     * A SplObjectStorage containing only those shutdown objects which have been registered for Flow.
+     * These shutdown method will be called after all other shutdown methods have been called.
+     *
+     * @var \SplObjectStorage
+     */
+    protected $internalShutdownObjects;
 
     /**
      * Constructor for this Object Container
@@ -149,7 +159,11 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName)
     {
-        $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
+        if (substr(get_class($object), 0, 1) === 'TYPO3\Flow\\') {
+            $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
+        } else {
+            $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
+        }
     }
 
     /**
@@ -424,9 +438,16 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function shutdown()
     {
-        foreach ($this->shutdownObjects as $object) {
-            $methodName = $this->shutdownObjects[$object];
-            $object->$methodName();
+        $this->callShutdownMethods($this->shutdownObjects);
+
+        $securityContext = $this->get(Context::class);
+        /** @var Context $securityContext */
+        if ($securityContext->isInitialized()) {
+            $this->get(Context::class)->withoutAuthorizationChecks(function () {
+                $this->callShutdownMethods($this->internalShutdownObjects);
+            });
+        } else {
+            $this->callShutdownMethods($this->internalShutdownObjects);
         }
     }
 
@@ -438,7 +459,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getSettingsByPath(array $settingsPath)
     {
-        return \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, $settingsPath);
+        return Arrays::getValueByPath($this->allSettings, $settingsPath);
     }
 
     /**
@@ -459,7 +480,7 @@ class ObjectManager implements ObjectManagerInterface
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
                     $settingPath = explode('.', $argumentInformation['v']);
-                    $factoryMethodArguments[$index] = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, $settingPath);
+                    $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
@@ -512,4 +533,19 @@ class ObjectManager implements ObjectManagerInterface
             throw $exception;
         }
     }
+
+    /**
+     * Executes the methods of the provided objects.
+     *
+     * @param \SplObjectStorage $shutdownObjects
+     * @return void
+     */
+    protected function callShutdownMethods(\SplObjectStorage $shutdownObjects)
+    {
+        foreach ($shutdownObjects as $object) {
+            $methodName = $shutdownObjects[$object];
+            $object->$methodName();
+        }
+    }
+
 }
