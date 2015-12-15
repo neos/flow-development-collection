@@ -19,7 +19,7 @@ Backticks make for `inline code` and code blocks can be in various languages lik
     Neos:
       Seo:
         twitterCard:
-          siteHandle: '@typo3neos'
+          siteHandle: '@neoscms'
 
 or PHP:
 
@@ -31,6 +31,6 @@ or PHP:
 
 More information can be found at
 
-* http://neos.io/documentation/contribute
+* https://www.neos.io/join/contribute.html
 * http://sphinx-doc.org/rest.html
 * https://docs.readthedocs.org/en/latest/getting_started.html#in-rst
