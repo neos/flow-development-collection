@@ -42,6 +42,12 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
     protected $securityContext;
 
     /**
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @Flow\Inject
+     */
+    protected $persistenceManager;
+
+    /**
      * Returns the class names of the tokens this provider can authenticate.
      *
      * @return array
@@ -79,11 +85,15 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
 
         if (is_object($account)) {
             if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
+                $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
                 $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
                 $authenticationToken->setAccount($account);
             } else {
+                $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
                 $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             }
+            $this->accountRepository->update($account);
+            $this->persistenceManager->whitelistObject($account);
         } elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }

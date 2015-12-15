@@ -144,7 +144,7 @@ trait ObjectSerializationTrait
                 }
                 $entity = $persistenceManager->getObjectByIdentifier($entityInformation['identifier'], $entityInformation['entityType'], true);
                 if (isset($entityInformation['entityPath'])) {
-                    $this->{$entityInformation['propertyName']} = \TYPO3\Flow\Utility\Arrays::setValueByPath($this->$entityInformation['propertyName'], $entityInformation['entityPath'], $entity);
+                    $this->{$entityInformation['propertyName']} = \TYPO3\Flow\Utility\Arrays::setValueByPath($this->{$entityInformation['propertyName']}, $entityInformation['entityPath'], $entity);
                 } else {
                     $this->{$entityInformation['propertyName']} = $entity;
                 }

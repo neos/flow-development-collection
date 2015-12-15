@@ -23,7 +23,8 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  * @api
+ * TODO: Change to \DateTimeImmutable for next major version after 3.0
  */
-class Now extends \DateTimeImmutable
+class Now extends \DateTime
 {
 }

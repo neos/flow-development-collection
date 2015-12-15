@@ -111,6 +111,8 @@ Let's conclude by taking a look at the BlogRepository code:
 
 *Example: Code of a simple BlogRepository* ::
 
+  use TYPO3\Flow\Annotations as Flow;
+
 	/**
 	 * A BlogRepository
 	 *
@@ -1019,6 +1021,13 @@ Known issues
   zero bytes truncate the string and lead to error during hydration). [#]_
 
   The Flow mapping types ``flow_json_array`` and ``objectarray`` provide solutions for this.
+
+* When using PostgreSQL the use of the ``json_array`` mapping type can lead to issues when queries
+  need comparisons on such columns (e.g. when grouping or doing distinct queries), because the ``json``
+  type used by Doctrine doesn't support comparisons.
+
+  The Flow mapping type ``flow_json_array`` uses the ``jsonb`` type available as of PostgreSQL 9.4,
+  circumventing this restriction.
 
 Generic Persistence
 ===================
