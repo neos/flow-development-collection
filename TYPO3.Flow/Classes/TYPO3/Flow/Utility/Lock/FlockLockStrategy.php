@@ -68,7 +68,7 @@ class FlockLockStrategy implements LockStrategyInterface
         $aquiredLock = false;
         $i = 0;
         while ($aquiredLock === false) {
-            $aquiredLock = $this->tryToAquireLock($exclusiveLock);
+            $aquiredLock = $this->tryToAcquireLock($exclusiveLock);
             $i++;
             if ($i > 10000) {
                 throw new LockNotAcquiredException(sprintf('After 10000 attempts a lock could not be aquired for subject "%s".', $subject), 1449829188);
@@ -101,7 +101,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @return boolean Was a lock aquired?
      * @throws LockNotAcquiredException
      */
-    protected function tryToAquireLock($exclusiveLock)
+    protected function tryToAcquireLock($exclusiveLock)
     {
         $this->filePointer = @fopen($this->lockFileName, 'w');
         if ($this->filePointer === false) {
@@ -150,11 +150,13 @@ class FlockLockStrategy implements LockStrategyInterface
     {
         $success = true;
         if (is_resource($this->filePointer)) {
+            // FIXME: The lockfile should be unlocked at this point but this will again lead to race conditions,
+            // so we need to find out how to do this in a safe way. Keeping the lock files is very inode intensive
+            // and should therefore change ASAP.
             if (flock($this->filePointer, LOCK_UN) === false) {
                 $success = false;
             }
             fclose($this->filePointer);
-            Files::unlink($this->lockFileName);
         }
 
         return $success;
