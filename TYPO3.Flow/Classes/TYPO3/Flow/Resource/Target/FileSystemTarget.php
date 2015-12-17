@@ -122,19 +122,9 @@ class FileSystemTarget implements TargetInterface
     public function initializeObject()
     {
         foreach ($this->options as $key => $value) {
-            switch ($key) {
-                case 'baseUri':
-                case 'path':
-                    $this->$key = $value;
-                    break;
-                case 'subdivideHashPathSegment':
-                    $this->subdivideHashPathSegment = (boolean)$value;
-                    break;
-                case 'extensionBlacklist':
-                    $this->extensionBlacklist = $value;
-                    break;
-                default:
-                    throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
+            $isOptionSet = $this->setOption($key, $value);
+            if (!$isOptionSet) {
+                throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
             }
         }
 
@@ -372,5 +362,30 @@ class FileSystemTarget implements TargetInterface
             }
         }
         return $pathAndFilename;
+    }
+
+    /**
+     * Set an option value and return if it was set.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function setOption($key, $value)
+    {
+        switch ($key) {
+            case 'baseUri':
+            case 'path':
+            case 'extensionBlacklist':
+                $this->$key = $value;
+                break;
+            case 'subdivideHashPathSegment':
+                $this->subdivideHashPathSegment = (boolean)$value;
+                break;
+            default:
+                return false;
+        }
+
+        return true;
     }
 }
