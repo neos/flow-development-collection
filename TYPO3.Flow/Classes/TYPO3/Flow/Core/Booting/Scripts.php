@@ -576,7 +576,8 @@ class Scripts
             if (DIRECTORY_SEPARATOR === '/') {
                 $command .= sprintf('%s=%s ', $argumentKey, escapeshellarg($argumentValue));
             } else {
-                $command .= sprintf('SET %s=%s&', $argumentKey, escapeshellarg($argumentValue));
+                // SET does not parse out quotes, hence we need escapeshellcmd here instead
+                $command .= sprintf('SET %s=%s&', $argumentKey, escapeshellcmd($argumentValue));
             }
         }
         if (DIRECTORY_SEPARATOR === '/') {
