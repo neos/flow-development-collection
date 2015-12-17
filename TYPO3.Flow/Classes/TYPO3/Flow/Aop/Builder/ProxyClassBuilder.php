@@ -12,9 +12,11 @@ namespace TYPO3\Flow\Aop\Builder;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
+use TYPO3\Flow\Aop\TraitIntroduction;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -360,13 +362,21 @@ class ProxyClassBuilder
         }
         $introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, \TYPO3\Flow\Annotations\Introduce::class);
         if ($introduceAnnotation !== null) {
-            if ($introduceAnnotation->interfaceName === null) {
-                throw new \TYPO3\Flow\Aop\Exception('The interface introduction in class "' . $aspectClassName . '" does not contain the required interface name).', 1172694761);
+            if ($introduceAnnotation->interfaceName === null && $introduceAnnotation->traitName === null) {
+                throw new \TYPO3\Flow\Aop\Exception('The introduction in class "' . $aspectClassName . '" does neither contain an interface name nor a trait name, at least one is required.', 1172694761);
             }
             $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, \TYPO3\Flow\Annotations\Introduce::class));
             $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-            $introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
-            $aspectContainer->addInterfaceIntroduction($introduction);
+
+            if ($introduceAnnotation->interfaceName !== null) {
+                $introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
+                $aspectContainer->addInterfaceIntroduction($introduction);
+            }
+
+            if ($introduceAnnotation->traitName !== null) {
+                $introduction = new \TYPO3\Flow\Aop\TraitIntroduction($aspectClassName, $introduceAnnotation->traitName, $pointcut);
+                $aspectContainer->addTraitIntroduction($introduction);
+            }
         }
 
         foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
@@ -381,6 +391,7 @@ class ProxyClassBuilder
         if (count($aspectContainer->getAdvisors()) < 1 &&
             count($aspectContainer->getPointcuts()) < 1 &&
             count($aspectContainer->getInterfaceIntroductions()) < 1 &&
+            count($aspectContainer->getTraitIntroductions()) < 1 &&
             count($aspectContainer->getPropertyIntroductions()) < 1) {
             throw new \TYPO3\Flow\Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
         }
@@ -398,6 +409,7 @@ class ProxyClassBuilder
     {
         $interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
         $introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
+        $introducedTraits = $this->getMatchingTraitNamesFromIntroductions($aspectContainers, $targetClassName);
 
         $propertyIntroductions = $this->getMatchingPropertyIntroductions($aspectContainers, $targetClassName);
 
@@ -418,6 +430,7 @@ class ProxyClassBuilder
         }
 
         $proxyClass->addInterfaces($introducedInterfaces);
+        $proxyClass->addTraits($introducedTraits);
 
         /** @var $propertyIntroduction PropertyIntroduction */
         foreach ($propertyIntroductions as $propertyIntroduction) {
@@ -660,6 +673,34 @@ class ProxyClassBuilder
                 }
             }
         }
+        return $introductions;
+    }
+
+    /**
+     * Traverses all aspect containers and returns an array of trait
+     * introductions which match the target class.
+     *
+     * @param array &$aspectContainers All aspects to take into consideration
+     * @param string $targetClassName Name of the class the pointcut should match with
+     * @return array array of trait names
+     */
+    protected function getMatchingTraitNamesFromIntroductions(array &$aspectContainers, $targetClassName)
+    {
+        $introductions = [];
+        /** @var AspectContainer $aspectContainer */
+        foreach ($aspectContainers as $aspectContainer) {
+            if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
+                continue;
+            }
+            /** @var TraitIntroduction $introduction */
+            foreach ($aspectContainer->getTraitIntroductions() as $introduction) {
+                $pointcut = $introduction->getPointcut();
+                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                    $introductions[] = '\\' . $introduction->getTraitName();
+                }
+            }
+        }
+
         return $introductions;
     }
 

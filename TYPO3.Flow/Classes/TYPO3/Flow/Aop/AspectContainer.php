@@ -60,6 +60,13 @@ class AspectContainer
     protected $propertyIntroductions = array();
 
     /**
+     * An array of \TYPO3\Flow\Aop\TraitIntroduction objects
+     *
+     * @var array
+     */
+    protected $traitIntroductions = array();
+
+    /**
      * An array of explicitly declared \TYPO3\Flow\Pointcut objects
      * @var array
      */
@@ -121,6 +128,16 @@ class AspectContainer
     }
 
     /**
+     * Returns the trait introductions which were defined in the aspect
+     *
+     * @return array Array of \TYPO3\Flow\Aop\TraitIntroduction objects
+     */
+    public function getTraitIntroductions()
+    {
+        return $this->traitIntroductions;
+    }
+
+    /**
      * Returns the pointcuts which were declared in the aspect. This
      * does not contain the pointcuts which were made out of the pointcut
      * expressions for the advisors!
@@ -135,10 +152,10 @@ class AspectContainer
     /**
      * Adds an advisor to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\Advisor $advisor The advisor to add
+     * @param Advisor $advisor The advisor to add
      * @return void
      */
-    public function addAdvisor(\TYPO3\Flow\Aop\Advisor $advisor)
+    public function addAdvisor(Advisor $advisor)
     {
         $this->advisors[] = $advisor;
     }
@@ -146,10 +163,10 @@ class AspectContainer
     /**
      * Adds an introduction declaration to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\InterfaceIntroduction $introduction
+     * @param InterfaceIntroduction $introduction
      * @return void
      */
-    public function addInterfaceIntroduction(\TYPO3\Flow\Aop\InterfaceIntroduction $introduction)
+    public function addInterfaceIntroduction(InterfaceIntroduction $introduction)
     {
         $this->interfaceIntroductions[] = $introduction;
     }
@@ -157,12 +174,23 @@ class AspectContainer
     /**
      * Adds an introduction declaration to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\PropertyIntroduction $introduction
+     * @param PropertyIntroduction $introduction
      * @return void
      */
-    public function addPropertyIntroduction(\TYPO3\Flow\Aop\PropertyIntroduction $introduction)
+    public function addPropertyIntroduction(PropertyIntroduction $introduction)
     {
         $this->propertyIntroductions[] = $introduction;
+    }
+
+    /**
+     * Adds an introduction declaration to this aspect container
+     *
+     * @param TraitIntroduction $introduction
+     * @return void
+     */
+    public function addTraitIntroduction(TraitIntroduction $introduction)
+    {
+        $this->traitIntroductions[] = $introduction;
     }
 
     /**
@@ -193,6 +221,9 @@ class AspectContainer
         }
         foreach ($this->propertyIntroductions as $propertyIntroduction) {
             $result->applyUnion($propertyIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+        }
+        foreach ($this->traitIntroductions as $traitIntroduction) {
+            $result->applyUnion($traitIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
         }
         $this->cachedTargetClassNameCandidates = $result;
         return $result;
