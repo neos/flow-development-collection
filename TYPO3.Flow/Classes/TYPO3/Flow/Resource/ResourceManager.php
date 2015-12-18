@@ -36,6 +36,8 @@ class ResourceManager
     const DEFAULT_STATIC_COLLECTION_NAME = 'static';
     const DEFAULT_PERSISTENT_COLLECTION_NAME = 'persistent';
 
+    const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
+
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface
@@ -408,6 +410,39 @@ class ResourceManager
         /** @var TargetInterface $target */
         $target = $this->collections[self::DEFAULT_STATIC_COLLECTION_NAME]->getTarget();
         return $target->getPublicStaticResourceUri($packageKey . '/' . $relativePathAndFilename);
+    }
+
+    /**
+     * Returns the public URI for a static resource provided by the public package
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return string
+     * @api
+     */
+    public function getPublicPackageResourceUriByPath($path)
+    {
+        $this->initialize();
+        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
+    }
+
+    /**
+     * Return the package key and the relative path and filename from the given resource path
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return array The array contains two value, first the packageKey followed by the relativePathAndFilename
+     * @throws Exception
+     * @api
+     */
+    public function getPackageAndPathByPublicPath($path)
+    {
+        if (preg_match(self::PUBLIC_RESSOURCE_REGEXP, $path, $matches) !== 1) {
+            throw new Exception(sprintf('The path "%s" which was given must point to a public resource.', $path), 1450358448);
+        }
+        return [
+            0 => $matches['packageKey'],
+            1 => $matches['relativePathAndFilename']
+        ];
     }
 
     /**
