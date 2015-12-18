@@ -13,6 +13,7 @@ namespace TYPO3\Fluid\ViewHelpers\Uri;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Service;
+use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -97,7 +98,11 @@ class ResourceViewHelper extends AbstractViewHelper
                 $package = $this->controllerContext->getRequest()->getControllerPackageKey();
             }
             if (strpos($path, 'resource://') === 0) {
-                list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($path);
+                try {
+                    list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($path);
+                } catch (Exception $exception) {
+                    throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
+                }
             }
             if ($localize === true) {
                 $resourcePath = 'resource://' . $package . '/Public/' . $path;
