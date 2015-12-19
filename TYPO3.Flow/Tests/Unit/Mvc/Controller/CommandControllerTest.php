@@ -12,8 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  */
 
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -27,9 +27,9 @@ class CommandControllerTest extends UnitTestCase
     protected $commandController;
 
     /**
-     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     * @var CommandManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $mockReflectionService;
+    protected $mockCommandManager;
 
     /**
      * @var \TYPO3\Flow\Cli\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
@@ -40,9 +40,9 @@ class CommandControllerTest extends UnitTestCase
     {
         $this->commandController = $this->getAccessibleMock(\TYPO3\Flow\Cli\CommandController::class, array('resolveCommandMethodName', 'callCommandMethod'));
 
-        $this->mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
-        $this->inject($this->commandController, 'reflectionService', $this->mockReflectionService);
+        $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue(array()));
+        $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
         $this->mockConsoleOutput = $this->getMockBuilder(\TYPO3\Flow\Cli\ConsoleOutput::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->commandController, 'output', $this->mockConsoleOutput);

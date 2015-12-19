@@ -12,7 +12,12 @@ namespace TYPO3\Flow\Cli;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\CommandException;
+use TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * Builds a CLI request object from the raw command call
@@ -40,24 +45,19 @@ class RequestBuilder
 		/x';
 
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var PackageManagerInterface
      */
     protected $packageManager;
-
-    /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
-     */
-    protected $reflectionService;
 
     /**
      * @var CommandManager
@@ -65,39 +65,30 @@ class RequestBuilder
     protected $commandManager;
 
     /**
-     * @param \TYPO3\Flow\Utility\Environment $environment
+     * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment)
+    public function injectEnvironment(Environment $environment)
     {
         $this->environment = $environment;
     }
 
     /**
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
 
     /**
-     * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
+     * @param PackageManagerInterface $packageManager
      * @return void
      */
-    public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManagerInterface $packageManager)
     {
         $this->packageManager = $packageManager;
-    }
-
-    /**
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-     * @return void
-     */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
-    {
-        $this->reflectionService = $reflectionService;
     }
 
     /**
@@ -117,8 +108,9 @@ class RequestBuilder
      * name (like in $argv) but start with command right away.
      *
      * @param mixed $commandLine The command line, either as a string or as an array
-     * @return \TYPO3\Flow\Cli\Request The CLI request as an object
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
+     * @return Request The CLI request as an object
+     * @throws InvalidArgumentMixingException
+     * @throws InvalidArgumentNameException
      */
     public function build($commandLine)
     {
@@ -129,10 +121,15 @@ class RequestBuilder
             $rawCommandLineArguments = $commandLine;
         } else {
             preg_match_all(self::ARGUMENT_MATCHING_EXPRESSION, $commandLine, $commandLineMatchings, PREG_SET_ORDER);
-            $rawCommandLineArguments = array();
+            $rawCommandLineArguments = [];
             foreach ($commandLineMatchings as $match) {
                 if (isset($match['NoQuotes'])) {
-                    $rawCommandLineArguments[] = str_replace(array('\ ', '\"', "\\'", '\\\\'), array(' ', '"', "'", '\\'), $match['NoQuotes']);
+                    $rawCommandLineArguments[] = str_replace(['\ ', '\"', "\\'", '\\\\'], [
+                        ' ',
+                        '"',
+                        "'",
+                        '\\'
+                    ], $match['NoQuotes']);
                 } elseif (isset($match['DoubleQuotes'])) {
                     $rawCommandLineArguments[] = str_replace('\\"', '"', $match['DoubleQuotes']);
                 } elseif (isset($match['SingleQuotes'])) {
@@ -144,14 +141,16 @@ class RequestBuilder
         }
         if (count($rawCommandLineArguments) === 0) {
             $request->setControllerCommandName('helpStub');
+
             return $request;
         }
         $commandIdentifier = trim(array_shift($rawCommandLineArguments));
         try {
             $command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
-        } catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
+        } catch (CommandException $exception) {
             $request->setArgument('exception', $exception);
             $request->setControllerCommandName('error');
+
             return $request;
         }
         $controllerObjectName = $this->objectManager->getObjectNameByClassName($command->getControllerClassName());
@@ -174,24 +173,30 @@ class RequestBuilder
      * @param string $controllerObjectName Object name of the designated command controller
      * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
      * @return array All and exceeding command line arguments
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException
+     * @throws InvalidArgumentMixingException
      */
     protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName)
     {
-        $commandLineArguments = array();
-        $exceedingArguments = array();
+        $commandLineArguments = [];
+        $exceedingArguments = [];
         $commandMethodName = $controllerCommandName . 'Command';
-        $commandMethodParameters = $this->reflectionService->getMethodParameters($controllerObjectName, $commandMethodName);
+        $commandMethodParameters = $this->commandManager->getCommandMethodParameters($controllerObjectName, $commandMethodName);
 
-        $requiredArguments = array();
-        $optionalArguments = array();
-        $argumentNames = array();
+        $requiredArguments = [];
+        $optionalArguments = [];
+        $argumentNames = [];
         foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
             $argumentNames[] = $parameterName;
             if ($parameterInfo['optional'] === false) {
-                $requiredArguments[strtolower($parameterName)] = array('parameterName' => $parameterName, 'type' => $parameterInfo['type']);
+                $requiredArguments[strtolower($parameterName)] = [
+                    'parameterName' => $parameterName,
+                    'type' => $parameterInfo['type']
+                ];
             } else {
-                $optionalArguments[strtolower($parameterName)] = array('parameterName' => $parameterName, 'type' => $parameterInfo['type']);
+                $optionalArguments[strtolower($parameterName)] = [
+                    'parameterName' => $parameterName,
+                    'type' => $parameterInfo['type']
+                ];
             }
         }
 
@@ -214,7 +219,7 @@ class RequestBuilder
                     $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
                 } elseif (isset($requiredArguments[$argumentName])) {
                     if ($decidedToUseUnnamedArguments) {
-                        throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
+                        throw new InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
                     }
                     $decidedToUseNamedArguments = true;
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
@@ -224,7 +229,7 @@ class RequestBuilder
             } else {
                 if (count($requiredArguments) > 0) {
                     if ($decidedToUseNamedArguments) {
-                        throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
+                        throw new InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
                     }
                     $argument = array_shift($requiredArguments);
                     $commandLineArguments[$argument['parameterName']] = $rawArgument;
@@ -233,10 +238,10 @@ class RequestBuilder
                     $exceedingArguments[] = $rawArgument;
                 }
             }
-            $argumentIndex ++;
+            $argumentIndex++;
         }
 
-        return array($commandLineArguments, $exceedingArguments);
+        return [$commandLineArguments, $exceedingArguments];
     }
 
     /**
@@ -248,6 +253,7 @@ class RequestBuilder
     protected function extractArgumentNameFromCommandLinePart($commandLinePart)
     {
         $nameAndValue = explode('=', $commandLinePart, 2);
+
         return strtolower(str_replace('-', '', $nameAndValue[0]));
     }
 
@@ -271,13 +277,14 @@ class RequestBuilder
                 if ($expectedArgumentType !== 'boolean') {
                     return $possibleValue;
                 }
-                if (array_search($possibleValue, array('on', '1', 'y', 'yes', 'true', 'TRUE')) !== false) {
+                if (array_search($possibleValue, ['on', '1', 'y', 'yes', 'true', 'TRUE']) !== false) {
                     return true;
                 }
-                if (array_search($possibleValue, array('off', '0', 'n', 'no', 'false', 'FALSE')) !== false) {
+                if (array_search($possibleValue, ['off', '0', 'n', 'no', 'false', 'FALSE']) !== false) {
                     return false;
                 }
                 array_unshift($rawCommandLineArguments, $possibleValue);
+
                 return true;
             }
             $currentArgument .= $possibleValue;
@@ -290,6 +297,7 @@ class RequestBuilder
         }
 
         $value = (isset($splitArgument[1])) ? $splitArgument[1] : '';
+
         return $value;
     }
 }
