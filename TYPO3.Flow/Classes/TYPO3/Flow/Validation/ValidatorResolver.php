@@ -275,6 +275,7 @@ class ValidatorResolver
         if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
             // Model based validator
             $objectValidator = new GenericObjectValidator(array());
+            $conjunctionValidator->addValidator($objectValidator);
             foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
                 $classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
@@ -315,8 +316,8 @@ class ValidatorResolver
                     $objectValidator->addPropertyValidator($classPropertyName, $newValidator);
                 }
             }
-            if (count($objectValidator->getPropertyValidators()) > 0) {
-                $conjunctionValidator->addValidator($objectValidator);
+            if (count($objectValidator->getPropertyValidators()) === 0) {
+                $conjunctionValidator->removeValidator($objectValidator);
             }
         }
 
