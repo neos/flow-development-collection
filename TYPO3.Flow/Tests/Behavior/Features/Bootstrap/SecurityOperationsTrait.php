@@ -30,10 +30,18 @@ trait SecurityOperationsTrait
     protected static $testingPolicyPathAndFilename;
 
     /**
+     * WARNING: If using this step definition, IT MUST RUN AS ABSOLUTELY FIRST STEP IN A SCENARIO!
+     *
      * @Given /^I have the following policies:$/
      */
     public function iHaveTheFollowingPolicies($string)
     {
+        if ($this->subProcess !== null) {
+            // This check ensures that this statement is ran *before* a subprocess is opened; as the Policy.yaml
+            // which is set here influences the Proxy Building Process.
+            throw new \Exception('Step "I have the following policies:" must run as FIRST step in a scenario, because otherwise the proxy-classes are already built in the wrong manner!');
+        }
+
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
