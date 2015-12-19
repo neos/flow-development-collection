@@ -259,8 +259,8 @@ class Debugger
                     $dump .= self::renderObjectDump($value, 0, false, $plaintext, $ansiColors);
                 }
             } else {
-                $classReflection = new \ReflectionClass($className);
-                $properties = $classReflection->getProperties();
+                $objectReflection = new \ReflectionObject($object);
+                $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
                     if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
                         continue;
