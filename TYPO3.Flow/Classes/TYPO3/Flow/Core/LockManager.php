@@ -94,9 +94,9 @@ class LockManager
     public function unlockSite()
     {
         if (is_resource($this->lockResource)) {
-            unlink($this->lockPathAndFilename);
             flock($this->lockResource, LOCK_UN);
             fclose($this->lockResource);
+            unlink($this->lockPathAndFilename);
         }
     }
 
