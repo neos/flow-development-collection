@@ -558,7 +558,7 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        define('FLOW_VERSION_BRANCH', 'dev-master');
+        define('FLOW_VERSION_BRANCH', '3.1');
     }
 
     /**
