@@ -14,8 +14,8 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
 
-        "typo3/fluid": "*",
-        "typo3/eel": "*",
+        "typo3/fluid": "~3.1.0",
+        "typo3/eel": "~3.1.0",
 
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
