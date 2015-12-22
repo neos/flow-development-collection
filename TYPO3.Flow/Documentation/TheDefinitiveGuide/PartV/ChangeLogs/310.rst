@@ -1,0 +1,1236 @@
+`3.1.0 (2015-12-22) <https://github.com/neos/flow-development-collection/releases/tag/3.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Update FLOW_VERSION_BRANCH to 3.1 <https://github.com/neos/flow-development-collection/pull/194>`_
+---------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Add release notes for Flow 3.1 <https://github.com/neos/flow-development-collection/pull/193>`_
+------------------------------------------------------------------------------------------------------
+
+NEOS-1713 #comment Release notes for Flow 3.1
+
+* Packages: ``Flow``
+
+`BUGFIX: Unlocking site breaks on Windows <https://github.com/neos/flow-development-collection/pull/191>`_
+----------------------------------------------------------------------------------------------------------
+
+In the method "unlockSite" the order for unlocking a file is wrong. Under Windows you first have to flock/fclose and then unlink (otherwise the lockfile is locked by OS and can not be removed). Then you get in Context Production the Errormessage "Site is currently locked, exiting.". The above reordering will fix this.
+
+* Packages: ``Flow``
+
+`BUGFIX: Skip Neos.* packages by default in core:migrate <https://github.com/neos/flow-development-collection/pull/192>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+FLOW-428 #close
+
+* Packages: ``Flow``
+
+`[TASK] Behat: ensure that "Given I have the following policies" is executed first <https://github.com/neos/flow-development-collection/pull/124>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+If this is violated, very funny error will appear because proxy
+classes have already been built without taking the new Policy.yaml
+into account.
+
+This change has been re-targeted for 3.0 from https://github.com/neos/flow-development-collection/pull/27
+
+* Packages: ``Flow``
+
+`[BUGFIX] Validator chain is built correctly for cyclic relations <https://github.com/neos/flow-development-collection/pull/109>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+For cases where an entity A references entity B and B in turn
+references A (as first property), the validator chain would not
+validate the reference to A inside B, even though those might be
+different instances.
+This is due to the newly created ObjectValidator for B not being added
+to the CollectionValidator inside A - so when B again visits A, the
+returned validator collection is empty and hence not added to the
+validator chain.
+
+This change fixes that, by adding the new ObjectValidator to the chain
+early, and only removing it later on, if it is still empty after all
+properties being checked. This could potentially lead to a deeper
+validator chain than would be necessary (cycle of empty ObjectValidators),
+but should not break anything or degrade performance.
+
+* Fixes: `FLOW-352 <https://jira.neos.io/browse/FLOW-352>`_
+* Packages: ``Flow``
+
+`TASK: Add method to get public URI by path <https://github.com/neos/flow-development-collection/pull/188>`_
+------------------------------------------------------------------------------------------------------------
+
+This change introduces two new methods in the ResourceManager.
+
+The method ``getPackageAndPathByPublicPath`` returns an array with package and
+path. This method is useful to avoid duplication of this logic. The second method ``getPublicPackageResourceUriByPath`` is syntactic sugar.
+
+This change also adapts the ``ResourceViewHelper`` to use the new methods.
+
+* Packages: ``Fluid``
+
+`TASK: Remove typo3.org reference for exception codes <https://github.com/neos/flow-development-collection/pull/190>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The ``DebugExceptionHandler`` renders "more information" links
+pointing to  wiki.typo3.org. This was never really used to document
+exceptions and with the departure from the TYPO3 project this should
+be removed. A possible replacement can be readded later.
+
+FLOW-421 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: Properly escape sub process variables on windows <https://github.com/neos/flow-development-collection/pull/184>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Windows SET command does not parse out quotes of the variable value but rather treats them as part of the value,
+which currently results in an error on windows since the fix for FLOW-381:
+
+  Flow could not create the directory
+  ""C:/workspace/Flow/Data/Temporary"/Development/".
+
+Note the extra quotes around the temporary base path.
+
+This change fixes that by properly escaping the SET command arguments on windows by using escapeshellcmd instead
+of escapeshellarg.
+
+FLOW-425 #comment Fix for 2.3.x
+
+* Packages: ``Flow``
+
+`[BUGFIX] Don't unlink lock file <https://github.com/neos/flow-development-collection/pull/179>`_
+-------------------------------------------------------------------------------------------------
+
+Unlinking the lock file again causes race conditions which the
+locking should prevent in the first place. Until we found out a
+solid way to do this we need to keep those files even though
+this is not optimal due to the high amount of inodes those lock
+files use up.
+
+* Packages: ``Flow``
+
+`TASK: Make Http\\Request easier to use for outbound Requests <https://github.com/neos/flow-development-collection/pull/149>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Currently the ``Http\\Request`` defaults to php://input for
+content. This is good for a request coming in to Flow, but rather
+error prone for outbound requests as it can lead to different behavior
+depending if the Request is created during a GET, POST or even CLI
+call. So sometimes outbound requests might work and other times they
+won't work. This change adjusts the defaul to have the Request an
+empty ``Content`` (body) and sets it to NULL (which will trigger the
+fallback to php://input) just if the Request is created by using
+``Request::createFromEnvironment()``
+
+FLOW-235 #close
+
+* Packages: ``Flow``
+
+`[TASK] Replace Security_Randomizer with PHP7 random functions <https://github.com/neos/flow-development-collection/pull/139>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Replaces the old Security_Randomizer that we shipped with Flow
+by random_bytes and random_int that come with PHP7 and adds a
+polyfill library for lower versions.
+
+* Packages: ``Flow``
+
+`TASK: Generate PSR2 based code and some cleanup <https://github.com/neos/flow-development-collection/pull/175>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This change removes the TYPO3 brand name and updates some invalid links.
+
+* Packages: ``Kickstart``
+
+`BUGFIX: Properly escape sub process variables on windows <https://github.com/neos/flow-development-collection/pull/182>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Windows SET command does not parse out quotes of the variable value but rather treats them as part of the value, which currently results in an error on windows since the fix for FLOW-381:
+
+    Flow could not create the directory
+    ""C:/workspace/Flow/Data/Temporary"/Development/".
+
+Note the extra quotes around the temporary base path.
+
+This change fixes that by properly escaping the SET command arguments on windows by using escapeshellcmd instead of escapeshellarg.
+
+FLOW-425 #close
+FLOW-381 #comment Regression fix for compilation on Windows
+
+* Packages: ``Flow``
+
+`BUGFIX: Security context not available in shutdown lifecycle objects <https://github.com/neos/flow-development-collection/pull/181>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Because the order of shutdown methods being executed by the Object
+Manager is undetermined, it may happen that `shutdownObject()` methods
+relying on an initialized security context will fail because that
+context is not available anymore. Additionally, Flow's own shutdown
+object methods might fail because security checks are still active
+even though the security framework is not available anymore.
+
+This change makes sure that
+
+1. shutdown methods of any other than the Flow package are executed first
+2. Flow's own shutdown methods are called last, and without security checks
+
+Due to the special nature of the CompileTimeObjectManager
+we need to call the shutdown as before, but security will not
+be used during compile time.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix documentation example <https://github.com/neos/flow-development-collection/pull/180>`_
+---------------------------------------------------------------------------------------------------
+
+The documentation example for translating error messages has to use parameter 'id' instead of 'key'.
+
+* Packages: ``Flow``
+
+`[TASK] Add missing compression support in RedisBackend <https://github.com/neos/flow-development-collection/pull/141>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `FLOW-420 <https://jira.neos.io/browse/FLOW-420>`_
+* Packages: ``Flow``
+
+`TASK: Update CGL to match the PSR-2 standard <https://github.com/neos/flow-development-collection/pull/54>`_
+-------------------------------------------------------------------------------------------------------------
+
+`[MERGE] Merge '3.0' into 'master' <https://github.com/neos/flow-development-collection/pull/177>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[MERGE] Merge branch '2.3' into '3.0' <https://github.com/neos/flow-development-collection/pull/176>`_
+-------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Break after 10000 lock attempts <https://github.com/neos/flow-development-collection/pull/174>`_
+--------------------------------------------------------------------------------------------------------
+
+The ``FlockLockStrategy`` should at some point always be able
+to aquire a lock even if it takes a while. But to prevent really
+long running processes that interlock each other a natural
+boundary to the amount of lock attempts is introduced.
+The strategy will throw an exception after 10000 tries to aquire
+the lock file. Depending on the results of random the maximum time
+to reach this upper boundary is about 2 seconds.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Ignore warning on failed stat <https://github.com/neos/flow-development-collection/pull/173>`_
+--------------------------------------------------------------------------------------------------------
+
+We check if the stat call in ``FlockLockStrategy`` returned false anyway and
+can safely suppress the generated warning.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Use instanceof instead of relying on typed parameter <https://github.com/neos/flow-development-collection/pull/169>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+The Configuration class relied on type hints to enforce the validity
+of user-supplied data. This was explicitly tested, so the assumption is,
+this was supposed to be tested properly. An instanceof check is now used
+and a proper exception is thrown (instead of a PHP error).
+
+Along the way this fixes some failing unit tests on PHP 7, since the old
+assertion in the tests no longer holds.
+
+* Packages: ``Flow``
+
+`[TASK] Update \`\`doctrine/orm\`\` to 2.4 for PHP 7 compatibility <https://github.com/neos/flow-development-collection/pull/162>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Prevents segmentation faults caused by Doctrine.
+
+Excludes support for ``EntityListeners`` annotation introduced for 3.0
+
+`[FEATURE] Routes via Settings <https://github.com/neos/flow-development-collection/pull/129>`_
+-----------------------------------------------------------------------------------------------
+
+This change allows routes to be included via `Settings.yaml` like follows::
+
+    TYPO3:
+      Flow:
+        mvc:
+          routes:
+            'Some.Package': TRUE
+
+This would append the main `Routes.yaml` from the package
+``Some.Package`` (including its subroutes, if any) to existing
+route definitions.
+
+It's also possible to specify the order in relation to other packages::
+
+    TYPO3:
+      Flow:
+        mvc:
+          routes:
+            'SomeOther.Package':
+              position: 'before Some.Package'
+
+This will add the ``SomeOther.Package`` routes *before* the routes
+of ``Some.Package`` (if those are included).
+
+*NOTE:* Routes included via main `Configuration/Routes.yaml` will
+*always* be included first, it's not possible to add routes before or
+in between those via the new setting.
+Thus it's recommended to remove the main `Routes.yaml` and include
+routes via `Settings.yaml` instead.
+
+For the Flow Routes this could look like::
+
+    TYPO3:
+      Flow:
+        mvc:
+          routes:
+            'TYPO3.Flow':
+              position: 'start'
+
+* Resolves: `FLOW-411 <https://jira.neos.io/browse/FLOW-411>`_
+* Packages: ``Flow``
+
+`[TASK] Tweak routing documentation <https://github.com/neos/flow-development-collection/pull/170>`_
+----------------------------------------------------------------------------------------------------
+
+Adjust Routing chapter to the placeholder support
+in routing defaults introduced with FLOW-76
+
+* Related: `FLOW-76 <https://jira.neos.io/browse/FLOW-76>`_
+* Packages: ``Flow``
+
+`[BUGFIX] Support for special characters in \`\`PositionalArraySorter\`\` keys <https://github.com/neos/flow-development-collection/pull/171>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+When using the ``PositionalArraySorter`` one can position keys
+relative to other keys with ``before/after <key>``.
+But for the ``<key>`` only ``[a-zA-Z0-9]`` were allowed limiting the
+functionality especially when dealing with package keys that contain
+a dot.
+
+This change adjusts the regular expression to allow any string to be
+referenced.
+
+* Fixes: `FLOW-422 <https://jira.neos.io/browse/FLOW-422>`_
+* Packages: ``Flow``
+
+`[!!!][FEATURE] Monitor successful authentication date and failed authentications <https://github.com/neos/flow-development-collection/pull/127>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+To improve security, it is helpful to show the last successful authentication
+and the failed authentication count since last successful authentication to the
+user.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Now extends DateTime for backwards compatibility <https://github.com/neos/flow-development-collection/pull/167>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This partially reverts ```6b1448d2c540d79e882f527449e05660bc5095e3 <https://github.com/neos/flow-development-collection/commit/6b1448d2c540d79e882f527449e05660bc5095e3>`_``
+which changed ``\\TYPO3\\Flow\\Utility\\Now`` to extend the
+``DateTimeImmutable`` class introduced with PHP 5.5.
+As this is potentially breaking this part of the change is reverted
+and will be reintroduced as breaking change in the next major
+version.
+
+* Packages: ``Flow``
+
+`Add missing namespace import for @Flow\\Scope <https://github.com/neos/flow-development-collection/pull/165>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[BUGFIX] Uniform variable syntax for proxy trait <https://github.com/neos/flow-development-collection/pull/166>`_
+------------------------------------------------------------------------------------------------------------------
+
+Fixes a leftover place which didn't use the uniform variable syntax
+and therefore caused notices with PHP7.
+
+* Packages: ``Flow``
+
+`[TASK] Update merged composer manifest <https://github.com/neos/flow-development-collection/pull/161>`_
+--------------------------------------------------------------------------------------------------------
+
+`[TASK] PHP 7 compatibility <https://github.com/neos/flow-development-collection/pull/160>`_
+--------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Add DBAL minimum version to make JSON type work <https://github.com/neos/flow-development-collection/pull/159>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The Json column type is support in doctrine DBAL only from
+version 2.5.0 onwards. The current dependencies allow
+installing it but it won't happen automatically, this
+change makes sure that dbal is installed in the right
+version.
+
+* Packages: ``Flow``
+
+`[TASK] Add best practice config to travis.yml <https://github.com/neos/flow-development-collection/pull/158>`_
+---------------------------------------------------------------------------------------------------------------
+
+Adds some php configuration settings to the travis configuration
+to reduce the possibility of heap corruption errors.
+
+`[TASK] Adjust check for maximum path length <https://github.com/neos/flow-development-collection/pull/152>`_
+-------------------------------------------------------------------------------------------------------------
+
+The SimpleFileBackend did a check for maximum path length
+on construction but reserved an arbitrary length of 23 for cache
+entry identifiers. Many identifiers are longer though and so even
+if the exception was not triggered cache entries could fail to be
+written.
+This change moves the check to after a failed cache writing attempt
+to check against the actual cache entry path.
+
+* Packages: ``Flow``
+
+`[TASK] Finalize PHP 7 support <https://github.com/neos/flow-development-collection/pull/157>`_
+-----------------------------------------------------------------------------------------------
+
+This fixes a few remaining (test) incompatibilities with PHP 7.
+
+`[TASK] Use wrapper for phpunit to catch segfaults <https://github.com/neos/flow-development-collection/pull/156>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This uses a wrapper around the unit tests to handle an exit code of 139
+as a non-error.
+
+This happens when testing on Travis CI and while those error happen, we
+cannot do much else about it.
+
+`[BUGFIX] Lock files shouldn't be opened twice <https://github.com/neos/flow-development-collection/pull/155>`_
+---------------------------------------------------------------------------------------------------------------
+
+Prevents opening lock files twice, first in read then in
+write mode. Only one open should happen if successful.
+The change fixes that.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Fix PHP 5.3 compatibility issues <https://github.com/neos/flow-development-collection/pull/153>`_
+-----------------------------------------------------------------------------------------------------------
+
+The 2.3 branch should be compatible to PHP 5.3, but since we did not have automated
+testing in place on that version of PHP, some incompatibilties have crept in.
+
+This fixes those issues and enables the unit and functional tests to be run on PHP 5.3
+on Travis CI.
+
+Also the Behat tests for Flow are run with this, since there is no reason they shouldn't.
+
+`[BUGFIX] Use jsonb in JsonArrayType on PostgreSQL <https://github.com/neos/flow-development-collection/pull/80>`_
+------------------------------------------------------------------------------------------------------------------
+
+The `JsonArrayType` in Flow inherits from the same type in Doctrine DBAL.
+
+That type uses the `json` format, which is not comparable in PostgreSQL,
+something that leads to issues if you want to use `DISTINCT` in a query.
+Starting with PostgreSQL 9.4 the `jsonb` type is available, and the DB
+knows how to compare it, making distinct queries possible.
+
+Neos uses that, so the easiest way to fix this is to always use `jsonb`
+for our custom type. The downside: the minimum supported version is
+raised to 9.4.
+
+* Related: `FLOW-396 <https://jira.neos.io/browse/FLOW-396>`_
+* Related: `NEOS-1627 <https://jira.neos.io/browse/NEOS-1627>`_
+
+* Packages: ``Flow``
+
+`Prevent invalid Cookie pairs from raising errors <https://github.com/neos/flow-development-collection/pull/144>`_
+------------------------------------------------------------------------------------------------------------------
+
+Formally a Cookie header should consist of semi-colon separated pairs
+of ``key=value`` but some clients might sent invalid cookie headers
+resulting in a notice raised when there was no equals sign to split a
+pair on.
+
+* Packages: ``Flow``
+
+`[TASK] Remove unused method in SimpleFileBackend <https://github.com/neos/flow-development-collection/pull/151>`_
+------------------------------------------------------------------------------------------------------------------
+
+The ``generateTemporaryPathAndFilename`` is no longer in use
+since the introduction of locking last year, it can therefore
+be removed.
+
+* Packages: ``Flow``
+
+`[BUGFIX] FlockLockStrategy should clean up lock files <https://github.com/neos/flow-development-collection/pull/138>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The FlockLockStrategy creates files to apply the lock on.
+These files reside in the temporary folder but are never cleaned
+on releasing the Lock that means the amount of files in this folder
+will increase over time unless the folder is cleared manually.
+
+Additionally cleans the code a bit and reduces chance of race
+conditions while creating the lock.
+
+* Packages: ``Flow``
+
+`[TASK] Remove typo3.org SSO provider from Flow <https://github.com/neos/flow-development-collection/pull/150>`_
+----------------------------------------------------------------------------------------------------------------
+
+This is no longer used and should have never been part of the framework
+itself, to begin with.
+
+* Packages: ``Flow``
+
+`[TASK] Compile StreamWrapper implementations statically <https://github.com/neos/flow-development-collection/pull/7>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Reduce use of ReflectionService by compiling implementations of
+``TYPO3\\Flow\\Resource\\Streams\\StreamWrapperInterface`` statically into
+the StreamWrapperAdapter. This in itself wil not improve performance
+because it was done in the ``ResourceManager`` before, but makes the
+``ResourceManager`` somewhat cleaner and allows further refactorings
+of that.
+
+* Relates: `NEOS-1294 <https://jira.neos.io/browse/NEOS-1294>`_
+* Packages: ``Flow``
+
+`[DOCS] Fix typo in security code examples <https://github.com/neos/flow-development-collection/pull/140>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[BUGFIX] Refresh first level roles cache on authentication <https://github.com/neos/flow-development-collection/pull/132>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+As soon as an authentication process completes, roles might
+have changed. Therefore we have to reinitialize the roles
+first level cache in the security context.
+
+* Fixes: `FLOW-415 <https://jira.neos.io/browse/FLOW-415>`_
+* Packages: ``Flow``
+
+`[BUGFIX] Remove references to „methodTaggedWith“ pointcut designator <https://github.com/neos/flow-development-collection/pull/147>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+The pointcut designator „methodTaggedWith“ has been deprecated for 2.0 already.
+This removes some leftover reference to this method.
+
+* Fixes: `FLOW-417 <https://jira.neos.io/browse/FLOW-417>`_
+* Packages: ``Flow``
+
+`[TASK] Adjust generated proxy code to PHP 7 uniform variable syntax <https://github.com/neos/flow-development-collection/pull/148>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This change contains a fix in the "related entities" proxy class code
+which makes the generated code PHP 7 compatible.
+
+* Related: `NEOS-1608 <https://jira.neos.io/browse/NEOS-1608>`_
+* Packages: ``Flow``
+
+`[BUGFIX] Ignore race condition on cached Configuration include <https://github.com/neos/flow-development-collection/pull/135>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+It can happen that the cache include file was already removed
+by a subrequest before getting to the unlink. The warning that
+would follow can safely be ignored.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Ignore injected properties for value hash generation <https://github.com/neos/flow-development-collection/pull/107>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+When injecting properties into a value object, an exception was thrown that
+a closure is tried to be serialized. This was due to the hash generation
+in PersistenceMagicAspect only skipping properties that are annotated as
+transient.
+
+This change makes the value hash generation resort to the class schema instead
+of directly iterating all properties, since the class schema is already focused
+on persistence relevant properties and hence contains no injected properties.
+
+* Packages: ``Flow``
+
+`[TASK] Adjust exception handling for compatibility with PHP 7 <https://github.com/neos/flow-development-collection/pull/143>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change adjusts the non-public API of Flow's exception handling to
+fit the new exception types in PHP 7 (`\\Throwable`). It does not yet
+take advantage of the new possibilities, but rather makes the existing
+code compatible with both, PHP 5 and PHP 7.
+
+* Packages: ``Flow`` ``Fluid``
+
+`[BUGFIX] FastCGI compatible resources \`\`.htaccess\`\` file <https://github.com/neos/flow-development-collection/pull/137>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The ``.htaccess`` file in ``Web/_Resources`` contained php_flag,
+which requires the ``mod_php`` module to be installed. Since FastCGI
+setups don't have this module, an invalid command error is thrown.
+
+In this change the flag is wrapped in ``IfModule`` tags to avoid that error,
+and the ``SetHandler`` statement is added a second time in a ``Files`` tag
+to avoid it being overwritten in certain cases.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Roles are refreshed after setting authentication status <https://github.com/neos/flow-development-collection/pull/136>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Otherwise getRoles() might act on the wrong value of the overall
+authentication status stored in the authentication manager.
+
+* Packages: ``Flow``
+
+`[!!!][BUGFIX] Store site lock in Flow temporary base path <https://github.com/neos/flow-development-collection/pull/97>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Storing the site lock files in the system temporary directory
+could lead to endless locks on some file systems.
+This changes the site locks to be stored in the Flow temporary base
+path again.
+
+This is a breaking change because it removes the setting
+``TYPO3.Flow.utility.environment.temporaryDirectoryBase`` in favor of
+a new environment variable ``FLOW_PATH_TEMPORARY_BASE`` that allows for
+changing the path if needed.
+
+Background:
+
+FLOW-348 introduced a new locking mechanism that stored lock files
+in the systems default temporary folder determined via
+``sys_get_temp_dir()``. On some systems files created there by the
+PHP process could not be removed afterwards.
+
+* Related: `FLOW-348 <https://jira.neos.io/browse/FLOW-348>`_
+* Resolves: `FLOW-381 <https://jira.neos.io/browse/FLOW-381>`_
+
+* Packages: ``Flow``
+
+`[TASK] Add \`\`applicationPackageKey\`\` to settings schema <https://github.com/neos/flow-development-collection/pull/134>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This adds the recently added ``applicationPackageKey`` setting to the YAML
+schema for the core settings, to avoid false error reports when using
+``configuration:validate``.
+
+* Packages: ``Flow``
+
+`[FEATURE] Setting for application name <https://github.com/neos/flow-development-collection/pull/128>`_
+--------------------------------------------------------------------------------------------------------
+
+This change introduces a new setting which allows developers to display
+a custom application name and version in the ./flow help commands and
+potentially elsewhere. For example, ./flow will display "Neos" and the
+version number of the Neos package, when the command is run in a Neos
+distribution.
+
+The setting does not refer to the application name directly, but to a
+package key. The specified package's meta data (Composer manifest) is
+used to determine the application name and version. Since it is best
+practice to use the "description" property of the Composer manifest for
+specifying the application name, that field is used as the application
+name in ./flow too (see also comments by Jordi at
+https://github.com/composer/composer/issues/1140).
+
+* Packages: ``Flow``
+
+`[BUGFIX] Set correct request port if X-Forwarded-Proto is set <https://github.com/neos/flow-development-collection/pull/120>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue resulting in wrong rendered URLs if Flow is accepting
+request from a load balancer or proxy which is accessed via https
+externally, sends the X-Forwarded-Proto header to Nginx but does not
+specify the X-Forwarded-Port header.
+
+For example, a load balancer (for example Google HTTP/HTTPS load
+balancer) is accessible via https and terminates SSL. The load balancer
+communicates with Nginx via http on port 80. Google only sends the
+X-Forwarded-Proto header ("https") but not the port. URLs, for example
+in an action URI of a form, are rendered wrongly.
+
+An expected URL would be https://example.com/foo.html, however, the
+rendered URL is https://example.com:80/foo.html
+
+This change changes the behavior in `Request` so that if the
+X-Forwarded-Proto header is set, but the X-Forwarded-Port header isn't,
+the port is set to the standard port of the given protocol (80 / 443).
+
+* Resolves: `FLOW-409 <https://jira.neos.io/browse/FLOW-409>`_
+* Packages: ``Flow``
+
+`[TASK] Fix misleading log message in logException() <https://github.com/neos/flow-development-collection/pull/125>`_
+---------------------------------------------------------------------------------------------------------------------
+
+When logException() is used to log an exception that has been caught,
+the log will still say "Uncaught exception". This is misleading.
+
+* Packages: ``Flow``
+
+`[TASK] Use yaml_parse instead of yaml_parse_file <https://github.com/neos/flow-development-collection/pull/17>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If the PECL yaml extension is used, it was not possible to load YAML
+configuration files from 'resource://some/path' while this worked for
+the Symfony YAML parser.
+
+To align the functionality, the file content is now fetched using
+file_get_contents() (which uses stream wrappers) and then passed to
+yaml_parse().
+
+* Packages: ``Flow``
+
+`[BUGFIX] ResourceTypeConverter should return null for empty source <https://github.com/neos/flow-development-collection/pull/111>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The given source can either be an array or a string and in both cases
+an empty value would signify a value that cannot be converted and
+probably stems from an empty input. In this case the converter
+should return null immediately, otherwise it will go on with processing
+the empty value and eventually ends up in returning a conversion error
+which would be wrong.
+
+* Packages: ``Flow`` ``Fluid``
+
+`[TASK] Add hasRole to SecurityHelper <https://github.com/neos/flow-development-collection/pull/16>`_
+-----------------------------------------------------------------------------------------------------
+
+The SecurityHelper so far only provides getAccount(). This change
+adds hasRole() so checks for role assignments are possible within
+Eel expressions.
+
+* Packages: ``Eel``
+
+`[TASK] Some tweaks to unit tests <https://github.com/neos/flow-development-collection/pull/117>`_
+--------------------------------------------------------------------------------------------------
+
+This fixes some notices about undefined array indexes with PHPUnit,
+removes some (wrong) risky test warnings and brings one skipped and one
+incomplete test back to life.
+
+* Packages: ``Flow``
+
+`[TASK] Document issues with final SQLFilter constructor <https://github.com/neos/flow-development-collection/pull/116>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When implementing a Doctrine filter the proxy building of Flow can cause problems. This change documents this and explains a solution.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Check if migrations exist before trying to register them <https://github.com/neos/flow-development-collection/pull/115>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Backport from 9823ae980e803 (Author: Laurent Cherpit @lcherpit )
+
+Currently the check for the existence of migration files is delegated
+to the doctrine/migration third party library.
+
+The behavior has changed and an exception is thrown if the folder doesn't
+exist. To not let the third party library handle that and to prevent this,
+the check is done upstream in Flow.
+
+* Packages: ``Flow``
+
+`[TASK] Improve readability of ReflectionService <https://github.com/neos/flow-development-collection/pull/83>`_
+----------------------------------------------------------------------------------------------------------------
+
+This is a mild refactoring of the ``ReflectionService`` which
+doesn't change any functionality but reduces method complexity
+and size by splitting and reordering of code.
+
+* Packages: ``Flow``
+
+`[FEATURE] Use more sophisticated UUID generator <https://github.com/neos/flow-development-collection/pull/71>`_
+----------------------------------------------------------------------------------------------------------------
+
+Uses php-uuid extension if available and otherwise the
+https://github.com/ramsey/uuid library which is a complete
+solution for generating and working with UUIDs.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Make sure expired cache entries get deleted in PdoBackend <https://github.com/neos/flow-development-collection/pull/110>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+`$this->has($entryIdentifier)` returns false for expired cache entries
+which leads to duplicate key violations. Remove existing entries,
+including expired ones, before creating new cache entry.
+
+* Fixes: `FLOW-193 <https://jira.neos.io/browse/FLOW-193>`_
+* Packages: ``Flow``
+
+`[BUGFIX] Use CollectionInterface in resource management <https://github.com/neos/flow-development-collection/pull/81>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Currently some methods use the Collection class instead of the
+CollectionInterface.
+
+* Packages: ``Flow`` ``Fluid``
+
+`[TASK] Add use statements to EntityManagerFactory <https://github.com/neos/flow-development-collection/pull/100>`_
+-------------------------------------------------------------------------------------------------------------------
+
+A purely non-functional cleanup change.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Fix lookup path for \`\`AvailableProxyClasses.php\`\` <https://github.com/neos/flow-development-collection/pull/96>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Since `2787b2a3216deb188c4cd1c9b2b823e6e3a10da3 <https://github.com/neos/flow-development-collection/commit/2787b2a3216deb188c4cd1c9b2b823e6e3a10da3>`_ Flow creates a
+map for available proxy classes stored in ``AvailableProxyClasses.php``
+within the temporary directory.
+
+The ``ClassLoader`` failed to include that file though when run in
+a nested Application Context. That is fixed with this change.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Initialize Router lazily <https://github.com/neos/flow-development-collection/pull/98>`_
+--------------------------------------------------------------------------------------------------
+
+The Router should be able to initialize configured routes lazily
+except when explicitly told not to do so.
+This change allows the Router to get the configuration directly
+from the ``ConfigurationManager`` if no other routing configuration
+exists. If some routing configuration was set, this is used.
+
+* Fixes: `FLOW-192 <https://jira.neos.io/browse/FLOW-192>`_
+* Fixes: `FLOW-205 <https://jira.neos.io/browse/FLOW-205>`_
+
+* Packages: ``Flow``
+
+`[TASK] Fixing the most obvious references to TYPO3 <https://github.com/neos/flow-development-collection/pull/103>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This fixes pointers to the forum and chat and some mentions of "TYPO3" in the index.rst of the Flow documentation.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Skip commonObjectIsPersistedAndIsReconstituted() on PgSQL <https://github.com/neos/flow-development-collection/pull/79>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The object we assign in the test is `Persistence\\Fixtures\\CommonObject`,
+containing a protected property. Doctrine stores `object` as
+`serialize()`d PHP data in a text column. Which doesn't work on
+PostgreSQL, since the string is truncated at the first `null` byte,
+used in the serialised data to mark the protected property.
+
+The official fix is to use a custom datatype if you need it, for the
+test I decided to skip it if on PostgreSQL.
+
+* Related: `FLOW-396 <https://jira.neos.io/browse/FLOW-396>`_
+* Packages: ``Flow``
+
+`[TASK] Fix code-block syntax in documentation <https://github.com/neos/flow-development-collection/pull/99>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Remove use of deprecated apigen options <https://github.com/neos/flow-development-collection/pull/94>`_
+---------------------------------------------------------------------------------------------------------------
+
+The todo and deprecated options have been deprecated in favour of the
+annotation-groups feature. This adjusts apigen.yml to comply.
+
+`[TASK] Use DateTimeInterface in Flow <https://github.com/neos/flow-development-collection/pull/91>`_
+-----------------------------------------------------------------------------------------------------
+
+Since Flow requires PHP 5.5 it should use and support the ``\\DateTimeInterface``.
+With support for it the ``Now`` class can extend from ``DateTimeImmutable`` to
+prevent changes to the singleton throughout a request.
+
+* Packages: ``Eel``
+
+`[TASK] Add apigen.yml <https://github.com/neos/flow-development-collection/pull/93>`_
+--------------------------------------------------------------------------------------
+
+This adds an apigen.yml file for use when generating API docs.
+
+`[TASK] Defer initialization of PersistenceManager <https://github.com/neos/flow-development-collection/pull/77>`_
+------------------------------------------------------------------------------------------------------------------
+
+Removes initialization of the PersistenceManager from the bootstrap as
+that can be done lazily. For backwards compatibility the
+``PersistenceManagerInterface::initialize`` method was removed but is
+still called when available. All existing code should work as expected
+but it is advisable to switch to using ``initializeObject`` instead. As
+the ``initialize`` method will no longer be called starting from the next
+major Flow version.
+A separate breaking change will remove the backwards compatibility layer.
+
+Before ``persistAll`` is called after a runtime run finished it is first
+checked if there is a ``PersistenceManagerInterface`` instance registered
+because otherwise  an unnecessary initialization of the PersistenceManager
+would be triggered.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Make ObjectAccess use TypeHandling (FLOW-397) <https://github.com/neos/flow-development-collection/pull/92>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This change adjusts ObjectAccess to use getTypeForValue() instead of
+get_class() so Doctrine proxies are handled correctly.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Bind expression storing closer to privilege data <https://github.com/neos/flow-development-collection/pull/89>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+As the runtime expressions are generated while evaluating the
+method privileges in the ``MethodPrivilegePointcutFilter`` both
+should be saved at the same point in time, so instead of saving
+the expressions via lifecycle methods they are now saved on the
+same signal as the method permission cache entry.
+This can prevent race conditions that might happen between
+writing the permission cache and the expression cache.
+
+* Packages: ``Flow``
+
+`[TASK] Enable Behat tests for Travis <https://github.com/neos/flow-development-collection/pull/86>`_
+-----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Travis improvements <https://github.com/neos/flow-development-collection/pull/85>`_
+-------------------------------------------------------------------------------------------
+
+`[TASK] Move boilerplate code from proxies to traits <https://github.com/neos/flow-development-collection/pull/74>`_
+--------------------------------------------------------------------------------------------------------------------
+
+There is a lot of boilerplate code generated and added to Flow
+proxy classes. This is now centralized to traits that get added to
+the proxies. Making the proxy building easier to understand and proxy
+classes a lot less cluttered.
+
+This slightly improves speed of compilation (because less code as strings
+is carried around).
+
+* Packages: ``Flow``
+
+`[FEATURE] Command for copying resources from one storage to another <https://github.com/neos/flow-development-collection/pull/82>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This change introduces a new command ``resource:copy`` which copies all
+resources contained in the storage of one collection to another.
+
+This can be used to switch the underlying storage and publication target,
+for example from a file system based storage to a cloud storage like AWS S3.
+
+* Related: `FLOW-387 <https://jira.neos.io/browse/FLOW-387>`_
+* Packages: ``Flow``
+
+`[TASK] Use uniform variable syntax of PHP7 <https://github.com/neos/flow-development-collection/pull/63>`_
+-----------------------------------------------------------------------------------------------------------
+
+Comply with https://wiki.php.net/rfc/uniform_variable_syntax
+
+* Resolves: `NEOS-1608 <https://jira.neos.io/browse/NEOS-1608>`_
+* Packages: ``Flow``
+
+`[TASK] Lazily initialize ResourceManager <https://github.com/neos/flow-development-collection/pull/43>`_
+---------------------------------------------------------------------------------------------------------
+
+The ``ResourceManager`` creates a bunch of objects and iterates over
+the whole resource configuration on initialization. In some cases this
+initialisation might not even be necessary so with this change we defer
+it until the information is really needed.
+
+* Packages: ``Flow``
+
+`[BUGFIX] Fix functional test by explicitly naming sequence <https://github.com/neos/flow-development-collection/pull/78>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The auto-generated name of a sequence exceeds the maximum length, is
+truncated and thus duplicates an already existing name in the schema.
+This is solved by manually giving a name to the sequence.
+
+This bug affects only PostgreSQL and is triggered by a functional test
+fixture.
+
+* Packages: ``Flow``
+
+`[MERGE] Merge '3.0' into 'master' <https://github.com/neos/flow-development-collection/pull/73>`_
+--------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``Fluid`` ``Kickstart``
+
+`[MERGE] Merge branch '2.3' into '3.0' <https://github.com/neos/flow-development-collection/pull/72>`_
+------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``Fluid``
+
+`[TASK] Update license headers <https://github.com/neos/flow-development-collection/pull/69>`_
+----------------------------------------------------------------------------------------------
+
+This change updates license headers in all packages contained in the Flow Development Collection according to what has been discussed earlier: https://discuss.neos.io/t/rfc-license-header-file-doc-comment-change/517
+
+
+* Packages: ``Fluid`` ``Kickstart``
+
+`[TASK] Add example for if view helper inline syntax <https://github.com/neos/flow-development-collection/pull/68>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adds another example for the if view helper inline syntax,
+explaining the format for conditions when using comparisons.
+
+
+* Packages: ``Fluid``
+
+`[TASK] Add .editorconfig file <https://github.com/neos/flow-development-collection/pull/49>`_
+----------------------------------------------------------------------------------------------
+
+`[BUGFIX] Class loader includes some files twice <https://github.com/neos/flow-development-collection/pull/38>`_
+----------------------------------------------------------------------------------------------------------------
+
+For some reason, the FLOW class loader includes some files twice.
+
+This especially occurs when a Composer dependency declares an autoload file that contains function definitions (one example for a package like that being `guzzlehttp/promises`).
+
+This commit fixes this issue by replacing `include` with `include_once`.
+
+* Fixes: `FLOW-362 <https://jira.neos.io/browse/FLOW-362>`_
+* Packages: ``Flow``
+
+`[FEATURE] Refactor Files::readDirectoryRecursively <https://github.com/neos/flow-development-collection/pull/9>`_
+------------------------------------------------------------------------------------------------------------------
+
+This implements ``Files::readDirectoryRecursively`` in a way
+that is using a stack instead of recursive calls. This prevents
+``too many files open errors`` as only one directory will be
+opened at a time.
+
+Additionally adds a new method ``getRecursiveDirectoryGenerator()``
+if you don't need an array of files to manipulate but just want to
+iterate the results. This reduces memory consumption.
+
+Usage of ``readDirectoryRecursively`` was changed to
+``getRecursiveDirectoryGenerator`` were possible.
+
+Speed should also slightly improve in both cases.
+
+* Packages: ``Flow``
+
+`[TASK] Compile list of properties information into proxy classes <https://github.com/neos/flow-development-collection/pull/42>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Reduce usage of ``ReflectionService`` during Runtime by compiling a list
+of transient properties and variable type declarations into proxy classes
+to be used during serialisation of objects.
+
+* Relates: `NEOS-1294 <https://jira.neos.io/browse/NEOS-1294>`_
+* Packages: ``Flow``
+
+`[TASK] Add .travis.yml to 3.0 branch <https://github.com/neos/flow-development-collection/pull/66>`_
+-----------------------------------------------------------------------------------------------------
+
+`[TASK] Add .travis.yml to 2.3 branch <https://github.com/neos/flow-development-collection/pull/65>`_
+-----------------------------------------------------------------------------------------------------
+
+`[TASK] Apply some code style fixes <https://github.com/neos/flow-development-collection/pull/61>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Apply some code style fixes <https://github.com/neos/flow-development-collection/pull/60>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``Fluid``
+
+`[BUGFIX] Fix a syntax error caused by a broken file header <https://github.com/neos/flow-development-collection/pull/58>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The MIT change had introduced a stray block comment end marker.
+
+* Packages: ``Flow``
+
+`[TASK] Apply MIT license to the Flow framework <https://github.com/neos/flow-development-collection/pull/52>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change adjusts all file headers to state the code is under the MIT
+license now. It removes the use of the name TYPO3 in comments along the
+way.
+
+Our reasoning for the license change has been explained at
+ https://www.neos.io/news/why-mit-license-for-flow-makes-sense.html
+and the TYPO3 Association has published the decision at
+ http://typo3.org/news/article/the-neos-team-and-the-typo3-association-sign-agreement/
+
+With this change, the need for a CLA is gone.
+
+* Packages: ``Eel`` ``Flow`` ``Fluid`` ``Kickstart``
+
+`[TASK] Update composer manifest from merge script <https://github.com/neos/flow-development-collection/pull/51>`_
+------------------------------------------------------------------------------------------------------------------
+
+Sets the composer.json to a autogenerated state to make further changes
+possible.
+
+`[TASK] Improve exception output for subprocesses failing with fatal error <https://github.com/neos/flow-development-collection/pull/40>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Improves the exception output in development context when a command executed
+in a subprocess fails with fatal error. Previously the actual error could only
+be found by looking in the system log or in some cases by running a CLI command.
+
+* Resolves: `FLOW-382 <https://jira.neos.io/browse/FLOW-382>`_
+* Packages: ``Flow``
+
+`[TASK] Add configuration file for StyleCI <https://github.com/neos/flow-development-collection/pull/48>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``Fluid`` ``Kickstart``
+
+`[TASK] Add Code of Conduct <https://github.com/neos/flow-development-collection/pull/45>`_
+-------------------------------------------------------------------------------------------
+
+This adds a reStructuredText version of the Contributor Covenant
+code of conduct, to make it clear the project is governed by that.
+
+See also http://contributor-covenant.org/version/1/2/0/
+
+`[TASK] Add Readme.rst files for individual packages <https://github.com/neos/flow-development-collection/pull/47>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adds a Readme.rst to each package, so that the read-only subplit
+repositories have a readme file for GitHub to show and for the users
+to read.
+
+* Packages: ``Eel`` ``Flow`` ``Fluid`` ``Kickstart``
+
+`[BUGFIX] Remove neos composer plugin from reflection <https://github.com/neos/flow-development-collection/pull/39>`_
+---------------------------------------------------------------------------------------------------------------------
+
+As Flow 2.3 still uses a blacklist approach for reflection and proxybuilding the neos composer plugin needs to be excluded instead of the composer installers package.
+
+* Packages: ``Flow``
+
+`[BUGFIX] SecurityContext does not inject SessionManagerInterface <https://github.com/neos/flow-development-collection/pull/22>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+In TYPO3/Flow/Security/Context class SessionManagerInterface should be injected
+to follow the Objects configuration. This breaks projects where a custom
+SessionManager is implemented and switched using Objects configuration.
+
+However in the Unit test for security context SessionManagerInterface is mocked.
+
+PS: This issue is already handled in Flow 3.0 so need a HotFix for 2.3
+
+* Fixes: `FLOW-380 <https://jira.neos.io/browse/FLOW-380>`_
+* Packages: ``Flow``
+
+`Merge branch 2.3 into 3.0 <https://github.com/neos/flow-development-collection/pull/37>`_
+------------------------------------------------------------------------------------------
+
+`[TASK] Allow InstallerScripts to work with collection repository <https://github.com/neos/flow-development-collection/pull/36>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The InstallerScripts taking care of copying distribution resources
+after composer operations would assume package paths that are
+incompatible with the joined repositories. This will result in
+missing Neos Routes on installing from the collection repository.
+
+This is a first step after which the joined composer.json can be
+used fully.
+
+This deprecates the ["extras"]["typo3/flow"]["manage-resources"]
+configuration for copying distribution resources. The deprecation
+is in effect from 3.1 onwards and this option will be removed
+three versions later. The new
+["extras"]["neos"]["installer-resource-folders"] configuration
+which is an array of directories containing installer resources
+superseeds it with this changes and takes precedence. A typical
+replacement would be:
+
+  "installer-resource-folders": ["Resources/Private/Installer/"]
+
+
+* Packages: ``Flow``
+
+`[TASK] Exclude auto-generated and 3rd party code from Code Climate <https://github.com/neos/flow-development-collection/pull/35>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+`[TASK] Add composer.json and template <https://github.com/neos/flow-development-collection/pull/31>`_
+------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Add composer.json and template <https://github.com/neos/flow-development-collection/pull/30>`_
+------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`[TASK] Add Code Climate to Readme <https://github.com/neos/flow-development-collection/pull/34>`_
+--------------------------------------------------------------------------------------------------
+
+`[TASK] Run only tests for Flow dev collection packages on Travis CI <https://github.com/neos/flow-development-collection/pull/33>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+`[TASK] Use specific build matrix for less tests <https://github.com/neos/flow-development-collection/pull/32>`_
+----------------------------------------------------------------------------------------------------------------
+
+`[TASK] Add Readme with Travis CI badge <https://github.com/neos/flow-development-collection/pull/29>`_
+-------------------------------------------------------------------------------------------------------
+
+`[TASK] Add .travis.yml <https://github.com/neos/flow-development-collection/pull/28>`_
+---------------------------------------------------------------------------------------
+
+`Merge branch 3.0 into master <https://github.com/neos/flow-development-collection/pull/24>`_
+---------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Merge branch 2.3 into 3.0 <https://github.com/neos/flow-development-collection/pull/23>`_
+------------------------------------------------------------------------------------------
+
+`[TASK] Include Exception class in ExceptionHandler with full path <https://github.com/neos/flow-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The ExceptionHandler includes the Flow Exception class directly by using
+the relative path. This might not work out if at some point we decide to
+combine autoloaded classes as this class is autoloaded and the relative
+path will be wrong then. Using the FLOW_PATH_FLOW constant we can easily
+construct a full path to the file.
+
+* Packages: ``Flow``
+
+`[TASK] Allow InstallerScripts to work with collection repository <https://github.com/neos/flow-development-collection/pull/13>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The InstallerScripts taking care of copying distribution resources
+after composer operations would assume package paths that are
+incompatible with the joined repositories. This will result in
+missing Neos Routes on installing from the collection repository.
+
+This is a first step after which the joined composer.json can be
+used fully.
+
+This deprecates the ["extras"]["typo3/flow"]["manage-resources"]
+configuration for copying distribution resources. The deprecation
+is in effect from 3.1 onwards and this option will be removed
+three versions later. The new
+["extras"]["neos"]["installer-resource-folders"] configuration
+which is an array of directories containing installer resources
+superseeds it with this changes and takes precedence. A typical
+replacement would be:
+
+  "installer-resource-folders": ["Resources/Private/Installer/"]
+
+
+* Packages: ``Flow``
+
+`[TASK] Add composer manifest template <https://github.com/neos/flow-development-collection/pull/14>`_
+------------------------------------------------------------------------------------------------------
+
+Adds the template composer.json used to autogenerate
+the joined composer.json for this joined repository.
+
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.0...3.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
