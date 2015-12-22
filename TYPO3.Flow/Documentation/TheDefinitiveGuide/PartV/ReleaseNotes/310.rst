@@ -122,8 +122,10 @@ Upgrading your Packages
 Upgrading existing code
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Here comes the easier part. As with earlier changes to Flow that required code changes on the user side we provide a code
-migration tool.
+There haven't been API changes in Flow 3.1 which require your code to be adjusted. However, if you are upgrading from Flow
+versions earlier than 3.0, you need to migrate your code. As with earlier changes to Flow that required code changes on
+the user side we provide a code migration tool.
+
 Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
 anything by hand::
 
