@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/flow-development-collection
@@ -21,6 +21,21 @@
 .. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
    :target: http://neos.github.io/flow/master/
    :alt: API Docs
+.. |Slack| image:: http://slack.neos.io/badge.svg
+   :target: http://slack.neos.io
+   :alt: Slack
+.. |Forum| image:: https://img.shields.io/badge/forum-Discourse-39c6ff.svg
+   :target: https://discuss.neos.io/
+   :alt: Discussion Forum
+.. |Issues| image:: https://img.shields.io/badge/issues-Jira-39c6ff.svg
+   :target: https://jira.neos.io/browse/FLOW
+   :alt: Issues
+.. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
+   :target: http://translate.neos.io/
+   :alt: Translation
+.. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
+   :target: https://twitter.com/NeosCMS
+   :alt: Twitter
 
 ---------------------------
 Flow development collection
