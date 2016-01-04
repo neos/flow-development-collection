@@ -101,6 +101,8 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
+        $tags = $this->extractUuids($matchResults);
+        $tags[] = md5(trim($httpRequest->getRelativePath(), '/'));
         $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
     }
 
@@ -128,6 +130,7 @@ class RouterCachingService
      */
     public function storeResolvedUriPath($uriPath, array $routeValues)
     {
+        $uriPath = trim($uriPath, '/');
         $routeValues = $this->convertObjectsToHashes($routeValues);
         if ($routeValues === null) {
             return;
@@ -135,6 +138,8 @@ class RouterCachingService
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
         if ($cacheIdentifier !== null) {
+            $tags = $this->extractUuids($routeValues);
+            $tags[] = md5($uriPath);
             $this->resolveCache->set($cacheIdentifier, $uriPath, $this->extractUuids($routeValues));
         }
     }
@@ -160,6 +165,18 @@ class RouterCachingService
     {
         $this->routeCache->flushByTag($tag);
         $this->resolveCache->flushByTag($tag);
+    }
+
+    /**
+     * Flushes 'findMatchResults' caches that are tagged with the given $uriPath
+     *
+     * @param string $uriPath
+     * @return void
+     */
+    public function flushCachesForUriPath($uriPath)
+    {
+        $uriPathTag = md5(trim($uriPath, '/'));
+        $this->flushCachesByTag($uriPathTag);
     }
 
     /**
@@ -233,7 +250,7 @@ class RouterCachingService
     protected function buildResolveCacheIdentifier(array $routeValues)
     {
         Arrays::sortKeysRecursively($routeValues);
-        return md5(http_build_query($routeValues));
+        return md5(trim(http_build_query($routeValues), '/'));
     }
 
     /**
