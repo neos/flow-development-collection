@@ -57,7 +57,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function modificationsOnRetrievedEntitiesAreNotPersistedAutomatically()
     {
-        $this->postRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository');
+        $this->postRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository::class);
 
         $post = new Post();
         $post->setTitle('Sample');
@@ -75,12 +75,12 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $post = $this->postRepository->findOneByTitle('Modified Sample');
         $this->assertNull($post);
 
-#		The following assertions won't work because findOneByTitle() will get the _modified_ post
-#		because it is still in Doctrine's identity map:
-#
-#		$post = $this->postRepository->findOneByTitle('Sample');
-#		$this->assertNotNull($post);
-#		$this->assertEquals('Sample', $post->getTitle());
+        // The following assertions won't work because findOneByTitle() will get the _modified_ post
+        // because it is still in Doctrine's identity map:
+
+        // $post = $this->postRepository->findOneByTitle('Sample');
+        // $this->assertNotNull($post);
+        // $this->assertEquals('Sample', $post->getTitle());
     }
 
     /**
@@ -88,7 +88,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function modificationsOnRetrievedEntitiesArePersistedIfUpdateHasBeenCalled()
     {
-        $this->postRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository');
+        $this->postRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository::class);
 
         $post = new Post();
         $post->setTitle('Sample');
@@ -112,7 +112,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function instancesOfTheManagedTypeCanBeAddedAndRetrieved()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $superEntity = new SuperEntity();
         $superEntity->setContent('this is the super entity');
@@ -129,7 +129,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function subTypesOfTheManagedTypeCanBeAddedAndRetrieved()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $subEntity = new SubEntity();
         $subEntity->setContent('this is the sub entity');
@@ -146,7 +146,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function subTypesOfTheManagedTypeCanBeRemoved()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $subEntity = new SubEntity();
         $subEntity->setContent('this is the sub entity');
@@ -167,7 +167,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function subTypesOfTheManagedTypeCanBeUpdated()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $subEntity = new SubEntity();
         $subEntity->setContent('this is the sub entity');
@@ -191,7 +191,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function countAllCountsSubTypesOfTheManagedType()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $superEntity = new SuperEntity();
         $superEntity->setContent('this is the super entity');
@@ -211,7 +211,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function findAllReturnsSubTypesOfTheManagedType()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $superEntity = new SuperEntity();
         $superEntity->setContent('this is the super entity');
@@ -231,7 +231,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function findByIdentifierReturnsSubTypesOfTheManagedType()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
 
         $subEntity = new SubEntity();
         $subEntity->setContent('this is the sub entity');
@@ -250,7 +250,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function addingASuperTypeToAMoreSpecificRepositoryThrowsAnException()
     {
-        $this->subSubEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository');
+        $this->subSubEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository::class);
 
         $subEntity = new SubEntity();
         $this->subSubEntityRepository->add($subEntity);
@@ -261,8 +261,8 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function usingASpecificRepositoryForSubTypesWorks()
     {
-        $this->superEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository');
-        $this->subSubEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository');
+        $this->superEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository::class);
+        $this->subSubEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository::class);
 
         $subSubEntity = new SubSubEntity();
         $subSubEntity->setContent('this is the sub sub entity');
@@ -282,10 +282,10 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function findAllReturnsQueryResult()
     {
-        $this->postRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository');
-        $this->assertInstanceOf('TYPO3\Flow\Persistence\Doctrine\Repository', $this->postRepository, 'Repository under test should be a Doctrine Repository');
+        $this->postRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository::class);
+        $this->assertInstanceOf(\TYPO3\Flow\Persistence\Doctrine\Repository::class, $this->postRepository, 'Repository under test should be a Doctrine Repository');
 
         $result = $this->postRepository->findAll();
-        $this->assertInstanceOf('TYPO3\Flow\Persistence\QueryResultInterface', $result, 'findAll should return a QueryResult object');
+        $this->assertInstanceOf(\TYPO3\Flow\Persistence\QueryResultInterface::class, $result, 'findAll should return a QueryResult object');
     }
 }

@@ -28,7 +28,7 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->formatResolver = $this->objectManager->get('TYPO3\Flow\I18n\FormatResolver');
+        $this->formatResolver = $this->objectManager->get(\TYPO3\Flow\I18n\FormatResolver::class);
     }
 
     /**

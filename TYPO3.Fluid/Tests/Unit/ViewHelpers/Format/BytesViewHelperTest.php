@@ -29,7 +29,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\BytesViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\BytesViewHelper::class, array('renderChildren'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

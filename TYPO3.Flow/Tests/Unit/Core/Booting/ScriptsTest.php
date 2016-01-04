@@ -27,7 +27,7 @@ class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->scriptsMock = $this->getAccessibleMock('TYPO3\Flow\Core\Booting\Scripts', array('dummy'));
+        $this->scriptsMock = $this->getAccessibleMock(\TYPO3\Flow\Core\Booting\Scripts::class, array('dummy'));
     }
 
     /**

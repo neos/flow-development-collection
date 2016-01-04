@@ -120,7 +120,7 @@ class Compiler
      */
     public function getProxyClass($fullClassName)
     {
-        if (interface_exists($fullClassName) || in_array('TYPO3\Flow\Tests\BaseTestCase', class_parents($fullClassName))) {
+        if (interface_exists($fullClassName) || in_array(\TYPO3\Flow\Tests\BaseTestCase::class, class_parents($fullClassName))) {
             return false;
         }
 
@@ -133,7 +133,7 @@ class Compiler
             return false;
         }
 
-        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\Flow\Annotations\Proxy');
+        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, \TYPO3\Flow\Annotations\Proxy::class);
         if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
             return false;
         }
@@ -183,7 +183,7 @@ class Compiler
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
                         $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                        $classCount ++;
+                        $classCount++;
                     }
                 } else {
                     if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
@@ -200,12 +200,12 @@ class Compiler
      */
     public function getStoredProxyClassMap()
     {
-        $return = "<?php
+        $return = '<?php
 /**
  * This is a cached list of all proxy classes. Only classes in this array will
  * actually be loaded from the proxy class cache in the ClassLoader.
  */
-return " . var_export($this->storedProxyClasses, true) . ";";
+return ' . var_export($this->storedProxyClasses, true) . ';';
 
         return $return;
     }

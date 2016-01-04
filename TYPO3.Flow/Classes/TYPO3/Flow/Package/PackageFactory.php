@@ -104,8 +104,8 @@ class PackageFactory
              */
         } else {
             $packageKey = str_replace('/', '.', $manifest->name);
-            if (isset($manifest->autoload) && isset($manifest->autoload->{"psr-0"})) {
-                $namespaces = array_keys(get_object_vars($manifest->autoload->{"psr-0"}));
+            if (isset($manifest->autoload) && isset($manifest->autoload->{'psr-0'})) {
+                $namespaces = array_keys(get_object_vars($manifest->autoload->{'psr-0'}));
                 foreach ($namespaces as $namespace) {
                     $namespaceLead = substr($namespace, 0, strlen($manifest->name));
                     $dottedNamespaceLead = str_replace('\\', '.', $namespaceLead);

@@ -18,14 +18,23 @@ use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the Http Request class
+ *
+ * In some tests backupGlobals is disabled, this is to avoid risky test warnings caused by changed globals
+ * that are needed to be changed in those tests.
+ *
+ * Additionally those tests backup/restore the SCRIPT_NAME in the $_SERVER superglobal to avoid a warning
+ * with PHPUnit when it tries to access that in phpunit/phpunit/src/Util/Filter.php on line 29
  */
 class RequestTest extends UnitTestCase
 {
     /**
      * @test
+     * @backupGlobals disabled
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
         $_POST = array();
         $_COOKIE = array();
@@ -69,13 +78,18 @@ class RequestTest extends UnitTestCase
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
      * @test
+     * @backupGlobals disabled
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = array();
         $_POST = array();
         $_COOKIE = array();
@@ -85,6 +99,8 @@ class RequestTest extends UnitTestCase
         $request = Request::createFromEnvironment();
 
         $this->assertEquals('http://localhost/', (string)$request->getUri());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
@@ -236,7 +252,7 @@ class RequestTest extends UnitTestCase
         $request = Request::create($uri);
 
         $subRequest = $request->createActionRequest();
-        $this->assertInstanceOf('TYPO3\Flow\Mvc\ActionRequest', $subRequest);
+        $this->assertInstanceOf(\TYPO3\Flow\Mvc\ActionRequest::class, $subRequest);
         $this->assertSame($request, $subRequest->getParentRequest());
     }
 
@@ -295,6 +311,7 @@ class RequestTest extends UnitTestCase
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
         $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $actualContent = $request->getContent();
@@ -312,6 +329,7 @@ class RequestTest extends UnitTestCase
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
         $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $resource = $request->getContent(true);
@@ -354,7 +372,7 @@ class RequestTest extends UnitTestCase
 
         $expectedHeaders =
             "PUT /?foo=bar HTTP/1.1\r\n" .
-            "User-Agent: Flow/" . FLOW_VERSION_BRANCH . ".x\r\n" .
+            'User-Agent: Flow/' . FLOW_VERSION_BRANCH . ".x\r\n" .
             "Host: dev.blog.rob\r\n" .
             "Content-Type: application/x-www-form-urlencoded\r\n";
 
@@ -378,11 +396,11 @@ class RequestTest extends UnitTestCase
         $request->setContent('putArgument=first value');
         $expectedRawRequest =
             "PUT /?foo=bar HTTP/1.1\r\n" .
-            "User-Agent: Flow/" . FLOW_VERSION_BRANCH . ".x\r\n" .
+            'User-Agent: Flow/' . FLOW_VERSION_BRANCH . ".x\r\n" .
             "Host: dev.blog.rob\r\n" .
             "Content-Type: application/x-www-form-urlencoded\r\n" .
             "\r\n" .
-            "putArgument=first value";
+            'putArgument=first value';
 
         $this->assertEquals($expectedRawRequest, (string)$request);
     }
@@ -669,9 +687,12 @@ class RequestTest extends UnitTestCase
     /**
      * RFC 2616 / 14.23 (Host)
      * @test
+     * @backupGlobals disabled
      */
     public function portInProxyHeaderIsAcknowledged()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_SERVER = array(
             'HTTP_HOST' => 'dev.blog.rob',
             'HTTP_X_FORWARDED_PORT' => 2727,
@@ -685,6 +706,8 @@ class RequestTest extends UnitTestCase
 
         $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
         $this->assertSame(2727, $request->getPort());
+
+        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
@@ -1081,7 +1104,7 @@ class RequestTest extends UnitTestCase
             )
         );
 
-        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1141,7 +1164,7 @@ class RequestTest extends UnitTestCase
             ),
         );
 
-        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1172,7 +1195,7 @@ class RequestTest extends UnitTestCase
      */
     public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues)
     {
-        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
         $actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
         $this->assertSame($expectedValues, $actualValues);
     }
@@ -1241,5 +1264,8 @@ class RequestTest extends UnitTestCase
             'HTTP_HTTPS' => '1',
         );
         new Request(array(), array(), array(), $server);
+
+        // dummy assertion to avoid PHPUnit warning
+        $this->assertTrue(true);
     }
 }

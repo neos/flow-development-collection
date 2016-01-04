@@ -26,7 +26,7 @@ class CountViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\CountViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\CountViewHelper::class, array('renderChildren'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

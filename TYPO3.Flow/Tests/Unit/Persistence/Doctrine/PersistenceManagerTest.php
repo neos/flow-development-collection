@@ -51,19 +51,19 @@ class PersistenceManagerTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->persistenceManager = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\PersistenceManager')->setMethods(array('emitAllObjectsPersisted'))->getMock();
+        $this->persistenceManager = $this->getMockBuilder(\TYPO3\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(array('emitAllObjectsPersisted'))->getMock();
 
-        $this->mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('isOpen')->will($this->returnValue(true));
         $this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
 
-        $this->mockUnitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
+        $this->mockUnitOfWork = $this->getMockBuilder(\Doctrine\ORM\UnitOfWork::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->will($this->returnValue($this->mockUnitOfWork));
 
-        $this->mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
+        $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
 
-        $this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+        $this->mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
         $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
     }
 
@@ -126,7 +126,7 @@ class PersistenceManagerTest extends UnitTestCase
      */
     public function persistAllAbortsIfConnectionIsClosed()
     {
-        $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $mockEntityManager->expects($this->atLeastOnce())->method('isOpen')->will($this->returnValue(false));
         $this->inject($this->persistenceManager, 'entityManager', $mockEntityManager);
 

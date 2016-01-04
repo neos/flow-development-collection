@@ -131,7 +131,7 @@ class RoutingCommandController extends CommandController
             try {
                 $resolves = $route->resolves($routeValues);
                 $controllerObjectName = $this->getControllerObjectName($package, $subpackage, $controller);
-            } catch (InvalidControllerException $e) {
+            } catch (InvalidControllerException $exception) {
                 $resolves = false;
             }
 

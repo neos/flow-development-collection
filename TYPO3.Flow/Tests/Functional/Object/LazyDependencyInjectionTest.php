@@ -22,16 +22,16 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function lazyDependencyIsOnlyInjectedIfMethodOnDependencyIsCalledForTheFirstTime()
     {
-        $this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
+        $this->objectManager->forgetInstance(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
 
-        $object = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies');
-        $this->assertInstanceOf('TYPO3\Flow\Object\DependencyInjection\DependencyProxy', $object->lazyA);
+        $object = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies::class);
+        $this->assertInstanceOf(\TYPO3\Flow\Object\DependencyInjection\DependencyProxy::class, $object->lazyA);
 
         $actualObjectB = $object->lazyA->getObjectB();
-        $this->assertNotInstanceOf('TYPO3\Flow\Object\DependencyInjection\DependencyProxy', $object->lazyA);
+        $this->assertNotInstanceOf(\TYPO3\Flow\Object\DependencyInjection\DependencyProxy::class, $object->lazyA);
 
-        $objectA = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
-        $expectedObjectB = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB');
+        $objectA = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
+        $expectedObjectB = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB::class);
         $this->assertSame($objectA, $object->lazyA);
         $this->assertSame($expectedObjectB, $actualObjectB);
     }
@@ -41,8 +41,8 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function dependencyIsInjectedDirectlyIfLazyIsTurnedOff()
     {
-        $object = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies');
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC', $object->eagerC);
+        $object = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies::class);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class, $object->eagerC);
     }
 
     /**
@@ -50,18 +50,18 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function lazyDependencyIsInjectedIntoAllClassesWhichNeedItIfItIsUsedTheFirstTime()
     {
-        $this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
-        $this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB');
+        $this->objectManager->forgetInstance(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
+        $this->objectManager->forgetInstance(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB::class);
 
-        $object1 = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies');
-        $object2 = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\AnotherClassWithLazyDependencies');
+        $object1 = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies::class);
+        $object2 = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\AnotherClassWithLazyDependencies::class);
 
-        $this->assertInstanceOf('TYPO3\Flow\Object\DependencyInjection\DependencyProxy', $object1->lazyA);
-        $this->assertInstanceOf('TYPO3\Flow\Object\DependencyInjection\DependencyProxy', $object2->lazyA);
+        $this->assertInstanceOf(\TYPO3\Flow\Object\DependencyInjection\DependencyProxy::class, $object1->lazyA);
+        $this->assertInstanceOf(\TYPO3\Flow\Object\DependencyInjection\DependencyProxy::class, $object2->lazyA);
 
         $object2->lazyA->getObjectB();
 
-        $objectA = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
+        $objectA = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
         $this->assertSame($objectA, $object1->lazyA);
         $this->assertSame($objectA, $object2->lazyA);
     }

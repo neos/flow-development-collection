@@ -12,7 +12,7 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
     /**
      * @var string
      */
-    protected $validatorClassName = 'TYPO3\Eel\Validation\ExpressionSyntaxValidator';
+    protected $validatorClassName = \TYPO3\Eel\Validation\ExpressionSyntaxValidator::class;
 
     /**
      * @test

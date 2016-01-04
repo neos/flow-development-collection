@@ -40,10 +40,10 @@ class StandaloneViewTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->standaloneView = $this->getAccessibleMock('TYPO3\Fluid\View\StandaloneView', array('dummy'));
+        $this->standaloneView = $this->getAccessibleMock(\TYPO3\Fluid\View\StandaloneView::class, array('dummy'));
 
-        $this->mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $this->mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockRequest));
         $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
     }

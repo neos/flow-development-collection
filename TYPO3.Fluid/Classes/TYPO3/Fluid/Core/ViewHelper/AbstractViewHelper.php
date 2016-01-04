@@ -452,7 +452,7 @@ abstract class AbstractViewHelper
             return array();
         }
 
-        $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
         return $reflectionService->getMethodParameters($className, 'render');
     }
 
@@ -470,7 +470,7 @@ abstract class AbstractViewHelper
             return array();
         }
 
-        $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
         return $reflectionService->getMethodTagsValues($className, 'render');
     }
 

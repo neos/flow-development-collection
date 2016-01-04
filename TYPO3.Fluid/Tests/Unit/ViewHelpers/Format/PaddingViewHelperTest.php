@@ -28,7 +28,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\PaddingViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\PaddingViewHelper::class, array('renderChildren'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

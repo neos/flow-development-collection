@@ -33,7 +33,7 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Session\Fixtures',
             '@controller' => 'SessionTest',
             '@action' => 'sessionStart',
-            '@format' =>'html'
+            '@format' => 'html'
         ));
         $this->router->addRoute($route);
     }
@@ -43,8 +43,8 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function objectManagerAlwaysReturnsTheSameSessionIfInterfaceIsSpecified()
     {
-        $session1 = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-        $session2 = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+        $session1 = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $session2 = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         $this->assertSame($session1, $session2);
     }
 
@@ -53,8 +53,8 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function objectManagerAlwaysReturnsANewSessionInstanceIfClassNameIsSpecified()
     {
-        $session1 = $this->objectManager->get('TYPO3\Flow\Session\Session');
-        $session2 = $this->objectManager->get('TYPO3\Flow\Session\Session');
+        $session1 = $this->objectManager->get(\TYPO3\Flow\Session\Session::class);
+        $session2 = $this->objectManager->get(\TYPO3\Flow\Session\Session::class);
         $this->assertNotSame($session1, $session2);
     }
 
@@ -66,9 +66,9 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function getCurrentSessionReturnsTheCurrentlyActiveSession()
     {
-        $injectedSession = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-        $sessionManager = $this->objectManager->get('TYPO3\Flow\Session\SessionManagerInterface');
-        $otherInjectedSession = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+        $injectedSession = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $sessionManager = $this->objectManager->get(\TYPO3\Flow\Session\SessionManagerInterface::class);
+        $otherInjectedSession = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
 
         $retrievedSession = $sessionManager->getCurrentSession();
         $this->assertSame($injectedSession, $retrievedSession);
@@ -86,7 +86,7 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aSessionCanBeStartedInAFunctionalTest()
     {
-        $session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+        $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         $session->start();
         // dummy assertion to avoid PHPUnit warning
         $this->assertTrue(true);

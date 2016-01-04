@@ -660,9 +660,9 @@ class ActionRequest implements RequestInterface
     protected function emitRequestDispatched($request)
     {
         if ($this->objectManager !== null) {
-            $dispatcher = $this->objectManager->get('TYPO3\Flow\SignalSlot\Dispatcher');
+            $dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
             if ($dispatcher !== null) {
-                $dispatcher->dispatch('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($request));
+                $dispatcher->dispatch(\TYPO3\Flow\Mvc\ActionRequest::class, 'requestDispatched', array($request));
             }
         }
     }

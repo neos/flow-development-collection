@@ -229,9 +229,9 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === true) {
-            throw new InvalidQueryRewritingConstraintException('Single valued properties from the inverse side are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition .  '"', 1416397754);
+            throw new InvalidQueryRewritingConstraintException('Single valued properties from the inverse side are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397754);
         } elseif ($targetEntity->isCollectionValuedAssociation($targetEntityPropertyName) === true) {
-            throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition .  '"', 1416397655);
+            throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397655);
         }
 
         throw new InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid/supported. Got: ' . $this->operator, 1270483540);
@@ -409,7 +409,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             } elseif ($this->getRawParameterValue($operandDefinition) !== null) {
                 $parameter = $sqlFilter->getParameter($operandDefinition);
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $exception) {
         }
 
         if ($parameter === null || $parameter === '') {
@@ -419,30 +419,22 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         switch ($this->operator) {
             case '==':
                 return ($parameter === null ? $propertyPointer . ' IS NULL' : $propertyPointer . ' = ' . $parameter);
-                break;
             case '!=':
                 return ($parameter === null ? $propertyPointer . ' IS NOT NULL' : $propertyPointer . ' <> ' . $parameter);
-                break;
             case '<':
                 return $propertyPointer . ' < ' . $parameter;
-                break;
             case '>':
                 return $propertyPointer . ' > ' . $parameter;
-                break;
             case '<=':
                 return $propertyPointer . ' <= ' . $parameter;
-                break;
             case '>=':
                 return $propertyPointer . ' >= ' . $parameter;
-                break;
             case 'like':
                 return $propertyPointer . ' LIKE ' . $parameter;
-                break;
             case 'in':
                 $inPart = $parameter !== null && $parameter !== '' ? $propertyPointer . ' IN (' . $parameter . ') ' : '';
                 $nullPart = $addNullExpression ? $propertyPointer . ' IS NULL' : '';
                 return $inPart . ($inPart !== '' && $nullPart !== '' ? ' OR ' : '') . $nullPart;
-                break;
         }
     }
 

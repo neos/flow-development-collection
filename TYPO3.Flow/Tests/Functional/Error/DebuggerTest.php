@@ -31,7 +31,7 @@ class DebuggerTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->configurationManager = $this->objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
+        $this->configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
         Debugger::clearState();
     }
 

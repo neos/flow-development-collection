@@ -56,7 +56,7 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperReturnsEmptyStringIfNULLIsGiven()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
         $viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
         $actualResult = $viewHelper->render();
         $this->assertEquals('', $actualResult);
@@ -78,7 +78,7 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperUsesChildNodesIfDateAttributeIsNotSpecified()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
         $viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(new \DateTime('1980-12-13')));
         $actualResult = $viewHelper->render();
         $this->assertEquals('1980-12-13', $actualResult);
@@ -90,7 +90,7 @@ class DateViewHelperTest extends UnitTestCase
     public function dateArgumentHasPriorityOverChildNodes()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
         $viewHelper->expects($this->never())->method('renderChildren');
         $actualResult = $viewHelper->render('1980-12-12');
         $this->assertEquals('1980-12-12', $actualResult);
@@ -103,7 +103,7 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperThrowsExceptionIfInvalidLocaleIdentifierIsGiven()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
         $viewHelper->setArguments(array('forceLocale' => '123-not-existing-locale'));
         $viewHelper->render(new \DateTime());
     }
@@ -114,13 +114,13 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperCallsDateTimeFormatterWithCorrectlyBuiltConfigurationArguments()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
 
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $formatType = 'date';
 
-        $mockDatetimeFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\DatetimeFormatter', array('format'));
+        $mockDatetimeFormatter = $this->getMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('format'));
         $mockDatetimeFormatter
             ->expects($this->once())
             ->method('format')
@@ -137,15 +137,15 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperFetchesCurrentLocaleViaI18nService()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
 
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMock('TYPO3\Flow\I18n\Service', array('getConfiguration'));
+        $mockLocalizationService = $this->getMock(\TYPO3\Flow\I18n\Service::class, array('getConfiguration'));
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockDatetimeFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\DatetimeFormatter', array('format'));
+        $mockDatetimeFormatter = $this->getMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('format'));
         $mockDatetimeFormatter->expects($this->once())->method('format');
         $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
@@ -160,15 +160,15 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
 
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMock('TYPO3\Flow\I18n\Service', array('getConfiguration'));
+        $mockLocalizationService = $this->getMock(\TYPO3\Flow\I18n\Service::class, array('getConfiguration'));
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockDatetimeFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\DatetimeFormatter', array('format'));
+        $mockDatetimeFormatter = $this->getMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('format'));
         $mockDatetimeFormatter->expects($this->once())->method('format')->will($this->throwException(new I18n\Exception()));
         $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
@@ -182,13 +182,13 @@ class DateViewHelperTest extends UnitTestCase
     public function viewHelperCallsDateTimeFormatterWithCustomFormat()
     {
         /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\DateViewHelper', array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Format\DateViewHelper::class, array('renderChildren'));
 
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $cldrFormatString = 'MM';
 
-        $mockDatetimeFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\DatetimeFormatter', array('formatDateTimeWithCustomPattern'));
+        $mockDatetimeFormatter = $this->getMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('formatDateTimeWithCustomPattern'));
         $mockDatetimeFormatter
             ->expects($this->once())
             ->method('formatDateTimeWithCustomPattern')

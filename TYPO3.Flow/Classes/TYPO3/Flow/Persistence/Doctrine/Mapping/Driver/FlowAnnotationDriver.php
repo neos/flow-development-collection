@@ -196,8 +196,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $metadata->setCustomRepositoryClass($mappedSuperclassAnnotation->repositoryClass);
             }
             $metadata->isMappedSuperclass = true;
-        } elseif (isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
-            $entityAnnotation = isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) ? $classAnnotations['TYPO3\Flow\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
+        } elseif (isset($classAnnotations[\TYPO3\Flow\Annotations\Entity::class]) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
+            $entityAnnotation = isset($classAnnotations[\TYPO3\Flow\Annotations\Entity::class]) ? $classAnnotations[\TYPO3\Flow\Annotations\Entity::class] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
             if ($entityAnnotation->repositoryClass !== null) {
                 $metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
             } elseif ($classSchema->getRepositoryClassName() !== null) {
@@ -697,7 +697,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             break;
                         default:
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
-                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], 'TYPO3\Flow\Annotations\ValueObject')) {
+                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], \TYPO3\Flow\Annotations\ValueObject::class)) {
                                     $mapping['type'] = 'object';
                                 } elseif (class_exists($propertyMetaData['type'])) {
                                     throw MappingException::missingRequiredOption($property->getName(), 'OneToOne', sprintf('The property "%s" in class "%s" has a non standard data type and doesn\'t define the type of the relation. You have to use one of these annotations: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany', $property->getName(), $className));
@@ -934,7 +934,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             }
         }
 
-        $proxyAnnotation = $this->reader->getClassAnnotation($class, 'TYPO3\Flow\Annotations\Proxy');
+        $proxyAnnotation = $this->reader->getClassAnnotation($class, \TYPO3\Flow\Annotations\Proxy::class);
         if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
             // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
             $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', Events::postLoad);
@@ -1016,8 +1016,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     {
         return strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== false ||
             (
-                !$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject') &&
+                !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) &&
+                    !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class) &&
                     !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
                     !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
             );
@@ -1035,8 +1035,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         }
 
         $this->classNames = array_merge(
-            $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\ValueObject'),
-            $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\Entity'),
+            $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\ValueObject::class),
+            $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\Entity::class),
             $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Entity'),
             $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass')
         );

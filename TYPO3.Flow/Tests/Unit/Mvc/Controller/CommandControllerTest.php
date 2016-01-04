@@ -38,13 +38,13 @@ class CommandControllerTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->commandController = $this->getAccessibleMock('TYPO3\Flow\Cli\CommandController', array('resolveCommandMethodName', 'callCommandMethod'));
+        $this->commandController = $this->getAccessibleMock(\TYPO3\Flow\Cli\CommandController::class, array('resolveCommandMethodName', 'callCommandMethod'));
 
-        $this->mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
+        $this->mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
         $this->inject($this->commandController, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockConsoleOutput = $this->getMockBuilder('TYPO3\Flow\Cli\ConsoleOutput')->disableOriginalConstructor()->getMock();
+        $this->mockConsoleOutput = $this->getMockBuilder(\TYPO3\Flow\Cli\ConsoleOutput::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->commandController, 'output', $this->mockConsoleOutput);
     }
 
@@ -55,8 +55,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
-        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\RequestInterface')->getMock();
-        $mockResponse = $this->getMockBuilder('TYPO3\Flow\Mvc\ResponseInterface')->getMock();
+        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\RequestInterface::class)->getMock();
+        $mockResponse = $this->getMockBuilder(\TYPO3\Flow\Mvc\ResponseInterface::class)->getMock();
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -66,8 +66,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestMarksRequestDispatched()
     {
-        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Cli\Request')->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder('TYPO3\Flow\Mvc\ResponseInterface')->getMock();
+        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Cli\Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(\TYPO3\Flow\Mvc\ResponseInterface::class)->getMock();
 
         $mockRequest->expects($this->once())->method('setDispatched')->with(true);
 
@@ -79,8 +79,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestResetsCommandMethodArguments()
     {
-        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Cli\Request')->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder('TYPO3\Flow\Mvc\ResponseInterface')->getMock();
+        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Cli\Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(\TYPO3\Flow\Mvc\ResponseInterface::class)->getMock();
 
         $mockArguments = new Arguments();
         $mockArguments->addNewArgument('foo');

@@ -36,14 +36,14 @@ class CaseViewHelper extends AbstractViewHelper
     public function render($value)
     {
         $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
-        if (!$viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression')) {
+        if (!$viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression')) {
             throw new ViewHelper\Exception('The "case" View helper can only be used within a switch View helper', 1368112037);
         }
-        $switchExpression = $viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression');
+        $switchExpression = $viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
 
         // non-type-safe comparison by intention
         if ($switchExpression == $value) {
-            $viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break', true);
+            $viewHelperVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', true);
             return $this->renderChildren();
         }
         return '';

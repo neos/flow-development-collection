@@ -105,7 +105,7 @@ class InternalRequestEngine implements RequestEngineInterface
         $requestHandler->setHttpResponse($response);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get('TYPO3\Flow\Http\Component\ComponentChain');
+        $baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
         $componentContext = new ComponentContext($httpRequest, $response);
 
         if (version_compare(PHP_VERSION, '6.0.0') >= 0) {
@@ -121,7 +121,7 @@ class InternalRequestEngine implements RequestEngineInterface
                 $this->prepareErrorResponse($exception, $response);
             }
         }
-        $session = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Session\SessionInterface');
+        $session = $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }

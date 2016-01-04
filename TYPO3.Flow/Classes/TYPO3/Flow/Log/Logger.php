@@ -188,7 +188,7 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
         $exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
         $backTrace = $exception->getTrace();
         $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-        return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage();
+        return 'Exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage();
     }
 
     /**
@@ -212,7 +212,7 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
     {
         $output = '';
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+            $bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
             /* @var Bootstrap $bootstrap */
             $requestHandler = $bootstrap->getActiveRequestHandler();
             if ($requestHandler instanceof HttpRequestHandlerInterface) {

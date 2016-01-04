@@ -36,9 +36,9 @@ echo "Checking permissions from here upwards."
 
 unset PARENT_PATH
 PARENT_PATH_PARTS=$(pwd | awk 'BEGIN{FS="/"}{for (i=1; i < NF; i++) print $i}')
-for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
+for PARENT_PATH_PART in ${PARENT_PATH_PARTS} ; do
 	PARENT_PATH="$PARENT_PATH/$PARENT_PATH_PART"
-	sudo -u $WEBSERVER_USER test -x "$PARENT_PATH"
+	sudo -u ${WEBSERVER_USER} test -x "$PARENT_PATH"
 	if [ $? -gt 0 ]; then
 		echo "  $PARENT_PATH seems NOT to be searchable (executable) for user $WEBSERVER_USER!"
 		echo "  Sorry, you need to fix this yourself if it's a problem, I don't know your preferred permissions ..."
@@ -46,8 +46,8 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 done
 
 echo "Making sure Data and Web/_Resources exist."
-sudo -u $COMMANDLINE_USER mkdir -p Data
-sudo -u $COMMANDLINE_USER mkdir -p Web/_Resources
+sudo -u ${COMMANDLINE_USER} mkdir -p Data
+sudo -u ${COMMANDLINE_USER} mkdir -p Web/_Resources
 
 sudo rm -rf Data/Temporary/*
 
@@ -59,8 +59,8 @@ echo "Setting file permissions, trying to set ACLs via chmod ..." \
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo "Setting file permissions, trying to set ACLs via setfacl ..." \
-	&& sudo setfacl -R -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
-	&& sudo setfacl -dR -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
+	&& sudo setfacl -R -m u:${WEBSERVER_USER}:rwx -m u:${COMMANDLINE_USER}:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
+	&& sudo setfacl -dR -m u:${WEBSERVER_USER}:rwx -m u:${COMMANDLINE_USER}:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo
@@ -68,14 +68,14 @@ echo "Note: Access Control Lists seem not to be supported by your system."
 echo
 echo "Setting file permissions per file, this might take a while ..."
 
-sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
+sudo chown -R ${COMMANDLINE_USER}:${WEBSERVER_GROUP} .
 find . -type d -exec sudo chmod 2770 {} \;
 find . -type f \! \( -name commit-msg -or -name '*.sh' \) -exec sudo chmod 660 {} \;
 
 sudo chmod 770 flow
 sudo chmod 700 $0
 
-sudo chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
+sudo chown -R ${WEBSERVER_USER}:${WEBSERVER_GROUP} Web/_Resources
 sudo chmod 770 Web/_Resources
 
 echo "Done."

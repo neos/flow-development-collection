@@ -77,7 +77,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $sampleNumber = 123.456;
 
-        $formatter = $this->getAccessibleMock('TYPO3\Flow\I18n\Formatter\NumberFormatter', array('formatDecimalNumber', 'formatPercentNumber'));
+        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class, array('formatDecimalNumber', 'formatPercentNumber'));
         $formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
         $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
 
@@ -112,7 +112,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsedFormatsAreUsedCorrectly($number, $expectedResult, array $parsedFormat)
     {
-        $formatter = $this->getAccessibleMock('TYPO3\Flow\I18n\Formatter\NumberFormatter', array('dummy'));
+        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class, array('dummy'));
         $result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals($expectedResult, $result);
     }
@@ -149,7 +149,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->getMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
@@ -207,7 +207,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = null)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->getMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 

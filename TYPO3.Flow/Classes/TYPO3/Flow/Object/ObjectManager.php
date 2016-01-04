@@ -104,7 +104,7 @@ class ObjectManager implements ObjectManagerInterface
     public function setObjects(array $objects)
     {
         $this->objects = $objects;
-        $this->objects['TYPO3\Flow\Object\ObjectManagerInterface']['i'] = $this;
+        $this->objects[\TYPO3\Flow\Object\ObjectManagerInterface::class]['i'] = $this;
         $this->objects[get_class($this)]['i'] = $this;
     }
 

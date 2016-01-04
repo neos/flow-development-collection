@@ -25,7 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
  *  $this->arguments['<argumentName>']
  *    ->getPropertyMappingConfiguration()
  *    ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
- *    ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
+ *    ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
  *
  * If the source is of type array, it is possible to override the format in the source::
  *
@@ -136,7 +136,7 @@ class DateTimeConverter extends AbstractTypeConverter
             } else {
                 throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Could not convert the given source into a DateTime object because it was not an array with a valid date as a string', 1308003914);
             }
-            if (isset($source['dateFormat']) && strlen($source['dateFormat']) > 0) {
+            if (isset($source['dateFormat']) && $source['dateFormat'] !== '') {
                 $dateFormat = $source['dateFormat'];
             }
         }
@@ -149,7 +149,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
             try {
                 $timezone = new \DateTimeZone($source['timezone']);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 throw new \TYPO3\Flow\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
             }
             $date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);
@@ -190,7 +190,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($configuration === null) {
             return self::DEFAULT_DATE_FORMAT;
         }
-        $dateFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
+        $dateFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, self::CONFIGURATION_DATE_FORMAT);
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif ($dateFormat !== null && !is_string($dateFormat)) {

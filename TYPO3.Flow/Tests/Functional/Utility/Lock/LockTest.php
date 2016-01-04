@@ -38,9 +38,9 @@ class LockTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function lockCanBeAcquiredAndReleased()
     {
         try {
-            $lock = $this->objectManager->get('\TYPO3\Flow\Utility\Lock\Lock', 'testLock');
+            $lock = $this->objectManager->get(\TYPO3\Flow\Utility\Lock\Lock::class, 'testLock');
             $lock->release();
-            $lock = $this->objectManager->get('\TYPO3\Flow\Utility\Lock\Lock', 'testLock');
+            $lock = $this->objectManager->get(\TYPO3\Flow\Utility\Lock\Lock::class, 'testLock');
         } catch (\TYPO3\Flow\Utility\Exception\LockNotAcquiredException $exception) {
             $this->fail('Lock could not be acquired after it was released');
         }
@@ -53,7 +53,7 @@ class LockTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function writeLockLocksExclusively()
     {
-        $lock = $this->objectManager->get('\TYPO3\Flow\Utility\Lock\Lock', 'testLock');
+        $lock = $this->objectManager->get(\TYPO3\Flow\Utility\Lock\Lock::class, 'testLock');
         $this->assertExclusivelyLocked($lock);
         $this->assertTrue($lock->release());
 

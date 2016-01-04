@@ -85,7 +85,7 @@ class FlockLockStrategy implements LockStrategyInterface
      */
     protected function configureTemporaryDirectory()
     {
-        if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered('TYPO3\Flow\Utility\Environment')) {
+        if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(\TYPO3\Flow\Utility\Environment::class)) {
             throw new LockNotAcquiredException('Environment object could not be accessed', 1386680952);
         }
         $environment = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Utility\Environment');

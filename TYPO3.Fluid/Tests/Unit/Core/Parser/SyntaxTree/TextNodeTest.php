@@ -23,7 +23,7 @@ class TextNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $string = 'I can work quite effectively in a train!';
         $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode($string);
-        $this->assertEquals($node->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContext')), $string, 'The rendered string of a text node is not the same as the string given in the constructor.');
+        $this->assertEquals($node->evaluate($this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContext::class)), $string, 'The rendered string of a text node is not the same as the string given in the constructor.');
     }
 
     /**

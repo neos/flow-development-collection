@@ -219,7 +219,6 @@ class ClassLoader
     {
         foreach ($possiblePaths as $possiblePathData) {
             $pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
-
             $possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
             if (is_file($possibleFilePath)) {
                 $result = include_once($possibleFilePath);
@@ -379,14 +378,14 @@ class ClassLoader
      */
     protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = null)
     {
-        if (file_exists($composerPath . 'autoload_classmap.php')) {
+        if (is_file($composerPath . 'autoload_classmap.php')) {
             $classMap = include($composerPath . 'autoload_classmap.php');
             if ($classMap !== false) {
                 $this->classMap = $classMap;
             }
         }
 
-        if (file_exists($composerPath . 'autoload_namespaces.php')) {
+        if (is_file($composerPath . 'autoload_namespaces.php')) {
             $namespaceMap = include($composerPath . 'autoload_namespaces.php');
             if ($namespaceMap !== false) {
                 foreach ($namespaceMap as $namespace => $paths) {
@@ -404,7 +403,7 @@ class ClassLoader
             }
         }
 
-        if (file_exists($composerPath . 'autoload_psr4.php')) {
+        if (is_file($composerPath . 'autoload_psr4.php')) {
             $psr4Map = include($composerPath . 'autoload_psr4.php');
             if ($psr4Map !== false) {
                 foreach ($psr4Map as $namespace => $possibleClassPaths) {
@@ -422,7 +421,7 @@ class ClassLoader
             }
         }
 
-        if (file_exists($composerPath . 'include_paths.php')) {
+        if (is_file($composerPath . 'include_paths.php')) {
             $includePaths = include($composerPath . 'include_paths.php');
             if ($includePaths !== false) {
                 array_push($includePaths, get_include_path());
@@ -430,7 +429,7 @@ class ClassLoader
             }
         }
 
-        if (file_exists($composerPath . 'autoload_files.php')) {
+        if (is_file($composerPath . 'autoload_files.php')) {
             $includeFiles = include($composerPath . 'autoload_files.php');
             if ($includeFiles !== false) {
                 foreach ($includeFiles as $file) {

@@ -31,7 +31,7 @@ interface ComponentInterface
      * @param array $options The component options
      * @api
      */
-    //public function __construct(array $options = array());
+    // public function __construct(array $options = array());
 
     /**
      * @param ComponentContext $componentContext

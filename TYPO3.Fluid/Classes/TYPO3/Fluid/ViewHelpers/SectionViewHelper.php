@@ -111,8 +111,8 @@ class SectionViewHelper extends AbstractViewHelper implements PostParseInterface
      */
     public function render()
     {
-        if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection')) {
-            $this->viewHelperVariableContainer->remove('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection');
+        if ($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\SectionViewHelper::class, 'isCurrentlyRenderingSection')) {
+            $this->viewHelperVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SectionViewHelper::class, 'isCurrentlyRenderingSection');
             return $this->renderChildren();
         }
         return '';

@@ -35,7 +35,7 @@ class DefaultCaseViewHelper extends AbstractViewHelper
     public function render()
     {
         $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
-        if (!$viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression')) {
+        if (!$viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression')) {
             throw new ViewHelper\Exception('The "default case" View helper can only be used within a switch View helper', 1368112037);
         }
         return $this->renderChildren();

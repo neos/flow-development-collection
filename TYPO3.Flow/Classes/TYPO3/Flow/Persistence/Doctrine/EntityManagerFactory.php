@@ -11,11 +11,19 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\Common\EventManager;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * EntityManager factory for Doctrine integration
@@ -69,27 +77,29 @@ class EntityManagerFactory
     /**
      * Factory method which creates an EntityManager.
      *
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManager
+     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function create()
     {
         $config = new Configuration();
-        $config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
+        $config->setClassMetadataFactoryName(Mapping\ClassMetadataFactory::class);
 
-        $cache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
+        $cache = new CacheAdapter();
         // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine'));
+        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine'));
         $config->setMetadataCacheImpl($cache);
         $config->setQueryCacheImpl($cache);
 
-        $resultCache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
+        $resultCache = new CacheAdapter();
         // must use ObjectManager in compile phase...
-        $resultCache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine_Results'));
+        $resultCache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_Results'));
         $config->setResultCacheImpl($resultCache);
 
         if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $sqlLoggerInstance = new $this->settings['doctrine']['sqlLogger']();
-            if ($sqlLoggerInstance instanceof \Doctrine\DBAL\Logging\SQLLogger) {
+            $configuredSqlLogger = $this->settings['doctrine']['sqlLogger'];
+            $sqlLoggerInstance = new $configuredSqlLogger();
+            if ($sqlLoggerInstance instanceof SQLLogger) {
                 $config->setSQLLogger($sqlLoggerInstance);
             } else {
                 throw new InvalidConfigurationException(sprintf('TYPO3.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
@@ -98,11 +108,11 @@ class EntityManagerFactory
 
         $eventManager = $this->buildEventManager();
 
-        $flowAnnotationDriver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+        $flowAnnotationDriver = $this->objectManager->get(Mapping\Driver\FlowAnnotationDriver::class);
         $config->setMetadataDriverImpl($flowAnnotationDriver);
 
-        $proxyDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
-        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($proxyDirectory);
+        $proxyDirectory = Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
+        Files::createDirectoryRecursively($proxyDirectory);
         $config->setProxyDir($proxyDirectory);
         $config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(false);
@@ -112,16 +122,16 @@ class EntityManagerFactory
         // which is then used to create a new connection. This connection will then return the platform directly, without trying to
         // detect the version it runs on, which fails if no connection can be made. But the platform is used even if no connection can
         // be made, which was no problem with Doctrine DBAL 2.3. And then came version-aware drivers and platforms...
-        $connection = \Doctrine\DBAL\DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
+        $connection = DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
         try {
             $connection->connect();
-        } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+        } catch (ConnectionException $exception) {
             $settings = $this->settings['backendOptions'];
             $settings['platform'] = $connection->getDriver()->getDatabasePlatform();
-            $connection = \Doctrine\DBAL\DriverManager::getConnection($settings, $config, $eventManager);
+            $connection = DriverManager::getConnection($settings, $config, $eventManager);
         }
 
-        $entityManager = \Doctrine\ORM\EntityManager::create($connection, $config, $eventManager);
+        $entityManager = EntityManager::create($connection, $config, $eventManager);
         $flowAnnotationDriver->setEntityManager($entityManager);
 
         if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
@@ -148,16 +158,16 @@ class EntityManagerFactory
     /**
      * Add configured event subscribers and listeners to the event manager
      *
-     * @return \Doctrine\Common\EventManager
+     * @return EventManager
      * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function buildEventManager()
     {
-        $eventManager = new \Doctrine\Common\EventManager();
+        $eventManager = new EventManager();
         if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
             foreach ($this->settings['doctrine']['eventSubscribers'] as $subscriberClassName) {
                 $subscriber = $this->objectManager->get($subscriberClassName);
-                if (!$subscriber instanceof \Doctrine\Common\EventSubscriber) {
+                if (!$subscriber instanceof EventSubscriber) {
                     throw new IllegalObjectTypeException('Doctrine eventSubscribers must extend class \Doctrine\Common\EventSubscriber, ' . $subscriberClassName . ' fails to do so.', 1366018193);
                 }
                 $eventManager->addEventSubscriber($subscriber);

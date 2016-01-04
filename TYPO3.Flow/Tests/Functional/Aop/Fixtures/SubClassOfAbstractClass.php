@@ -24,6 +24,6 @@ class SubClassOfAbstractClass extends AbstractClass
      */
     public function abstractMethod($foo)
     {
-        return "foo: $foo";
+        return 'foo: ' . $foo;
     }
 }

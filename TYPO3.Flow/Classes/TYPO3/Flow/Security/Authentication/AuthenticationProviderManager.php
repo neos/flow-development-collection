@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Security\Authentication;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
-use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -222,7 +221,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->isAuthenticated === null) {
             try {
                 $this->authenticate();
-            } catch (AuthenticationRequiredException $e) {
+            } catch (AuthenticationRequiredException $exception) {
             }
         }
         return $this->isAuthenticated;

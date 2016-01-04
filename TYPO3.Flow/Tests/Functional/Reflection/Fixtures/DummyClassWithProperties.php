@@ -18,7 +18,7 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 class DummyClassWithProperties
 {
     /**
-     * The @var annotation is intentional as "int" to check if the reflection service normalizes variable types.
+     * The var annotation is intentional as "int" to check if the reflection service normalizes variable types.
      *
      * @var int
      */

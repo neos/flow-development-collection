@@ -70,7 +70,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }
@@ -203,7 +203,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
         if (!$this->isObjectAccessorMode()) {
             return;
         }
-        if (!$this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject')) {
+        if (!$this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObject')) {
             return;
         }
         $propertySegments = explode('.', $this->arguments['property']);
@@ -211,8 +211,8 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
         if (count($propertySegments) < 2) {
             return;
         }
-        $formObject = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject');
-        $objectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+        $formObject = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObject');
+        $objectName = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
 
         // If count == 2 -> we need to go through the for-loop exactly once
         for ($i = 1; $i < count($propertySegments); $i++) {
@@ -221,9 +221,9 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
             $hiddenIdentityField = $this->renderHiddenIdentityField($object, $objectName);
 
             // Add the hidden identity field to the ViewHelperVariableContainer
-            $additionalIdentityProperties = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'additionalIdentityProperties');
+            $additionalIdentityProperties = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties');
             $additionalIdentityProperties[$objectName] = $hiddenIdentityField;
-            $this->viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'additionalIdentityProperties', $additionalIdentityProperties);
+            $this->viewHelperVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', $additionalIdentityProperties);
         }
     }
 
@@ -234,10 +234,10 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function getPropertyValue()
     {
-        if (!$this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject')) {
+        if (!$this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObject')) {
             return null;
         }
-        $formObject = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject');
+        $formObject = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObject');
         $propertyNameOrPath = $this->arguments['property'];
         return ObjectAccess::getPropertyPath($formObject, $propertyNameOrPath);
     }
@@ -252,7 +252,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     protected function getPropertyPath()
     {
         if ($this->isObjectAccessorMode()) {
-            $formObjectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
             if (strlen($formObjectName) === 0) {
                 return $this->arguments['property'];
             } else {
@@ -270,7 +270,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     protected function isObjectAccessorMode()
     {
         return $this->hasArgument('property')
-            && $this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+            && $this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
     }
 
     /**
@@ -320,8 +320,8 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     protected function renderHiddenFieldForEmptyValue()
     {
         $emptyHiddenFieldNames = array();
-        if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames')) {
-            $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames');
+        if ($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames')) {
+            $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
         }
 
         $fieldName = $this->getName();
@@ -334,7 +334,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
                 $disabled = $this->tag->getAttribute('disabled');
             }
             $emptyHiddenFieldNames[$fieldName] = $disabled;
-            $this->viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames', $emptyHiddenFieldNames);
+            $this->viewHelperVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', $emptyHiddenFieldNames);
         }
     }
 }

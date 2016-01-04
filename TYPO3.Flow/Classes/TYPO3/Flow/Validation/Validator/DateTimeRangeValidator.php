@@ -70,7 +70,7 @@ class DateTimeRangeValidator extends AbstractValidator
      */
     protected function isValid($dateTime)
     {
-        if (!$dateTime instanceof \DateTime) {
+        if (!$dateTime instanceof \DateTimeInterface) {
             $this->addError('The given value was not a valid date', 1324314378);
             return;
         }

@@ -95,14 +95,14 @@ class CommandRequestHandler implements RequestHandlerInterface
         $this->boot($runLevel);
 
         $commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-        $this->request = $this->objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
+        $this->request = $this->objectManager->get(\TYPO3\Flow\Cli\RequestBuilder::class)->build(array_slice($commandLine, 1));
         $this->response = new Response();
 
         $this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
 
         if ($runLevel === Bootstrap::RUNLEVEL_RUNTIME) {
             /** @var Context $securityContext */
-            $securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+            $securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
             $securityContext->withoutAuthorizationChecks(function () {
                 $this->dispatcher->dispatch($this->request, $this->response);
             });
@@ -158,7 +158,7 @@ class CommandRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $this->objectManager = $this->bootstrap->getObjectManager();
-        $this->dispatcher = $this->objectManager->get('TYPO3\Flow\Mvc\Dispatcher');
+        $this->dispatcher = $this->objectManager->get(\TYPO3\Flow\Mvc\Dispatcher::class);
     }
 
     /**
@@ -171,7 +171,7 @@ class CommandRequestHandler implements RequestHandlerInterface
     {
         $this->bootstrap->shutdown($runlevel);
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
-            $this->objectManager->get('TYPO3\Flow\Core\LockManager')->unlockSite();
+            $this->objectManager->get(\TYPO3\Flow\Core\LockManager::class)->unlockSite();
         }
         exit($this->response->getExitCode());
     }

@@ -29,7 +29,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\UrlencodeViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\UrlencodeViewHelper::class, array('renderChildren'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

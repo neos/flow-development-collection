@@ -35,7 +35,7 @@ class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
     /**
      * Displays the default view
      *
-     * @return string
+     * @return void|string
      */
     public function indexAction()
     {

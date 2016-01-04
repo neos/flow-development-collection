@@ -40,7 +40,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
         $properties = $class->getProperties();
 
         $this->assertTrue(is_array($properties), 'The returned value is no array.');
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\PropertyReflection', array_pop($properties), 'The returned properties are not of type \TYPO3\Flow\Reflection\PropertyReflection.');
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\PropertyReflection::class, array_pop($properties), 'The returned properties are not of type \TYPO3\Flow\Reflection\PropertyReflection.');
     }
 
     /**
@@ -49,7 +49,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
     public function getPropertyReturnsFlowsPropertyReflection()
     {
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\PropertyReflection', $class->getProperty('someProperty'), 'The returned property is not of type \TYPO3\Flow\Reflection\PropertyReflection.');
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\PropertyReflection::class, $class->getProperty('someProperty'), 'The returned property is not of type \TYPO3\Flow\Reflection\PropertyReflection.');
         $this->assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
     }
 
@@ -61,7 +61,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
         $methods = $class->getMethods();
         foreach ($methods as $method) {
-            $this->assertInstanceOf('TYPO3\Flow\Reflection\MethodReflection', $method, 'The returned methods are not of type \TYPO3\Flow\Reflection\MethodReflection.');
+            $this->assertInstanceOf(\TYPO3\Flow\Reflection\MethodReflection::class, $method, 'The returned methods are not of type \TYPO3\Flow\Reflection\MethodReflection.');
         }
     }
 
@@ -84,7 +84,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
     {
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
         $method = $class->getMethod('getMethodReturnsFlowsMethodReflection');
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\MethodReflection', $method, 'The returned method is not of type \TYPO3\Flow\Reflection\MethodReflection.');
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\MethodReflection::class, $method, 'The returned method is not of type \TYPO3\Flow\Reflection\MethodReflection.');
     }
 
     /**
@@ -94,7 +94,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
     {
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
         $constructor = $class->getConstructor();
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\MethodReflection', $constructor, 'The returned method is not of type \TYPO3\Flow\Reflection\MethodReflection.');
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\MethodReflection::class, $constructor, 'The returned method is not of type \TYPO3\Flow\Reflection\MethodReflection.');
     }
 
     /**
@@ -105,7 +105,7 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
         $interfaces = $class->getInterfaces();
         foreach ($interfaces as $interface) {
-            $this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $interface);
+            $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $interface);
         }
     }
 
@@ -116,6 +116,6 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
     {
         $class = new \TYPO3\Flow\Reflection\ClassReflection(__CLASS__);
         $parentClass = $class->getParentClass();
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $parentClass);
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $parentClass);
     }
 }

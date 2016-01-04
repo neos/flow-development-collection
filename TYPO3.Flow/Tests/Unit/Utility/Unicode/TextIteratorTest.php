@@ -25,7 +25,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function canCreateIteratorOfDefaultType()
     {
         $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string');
-        $this->assertInstanceOf('TYPO3\Flow\Utility\Unicode\TextIterator', $iterator);
+        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $iterator);
     }
 
     /**
@@ -36,7 +36,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function instantiatingCharacterIteratorWorks()
     {
         $characterIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
-        $this->assertInstanceOf('TYPO3\Flow\Utility\Unicode\TextIterator', $characterIterator);
+        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $characterIterator);
     }
 
     /**
@@ -47,7 +47,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function instantiatingWordIteratorWorks()
     {
         $wordIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
-        $this->assertInstanceOf('TYPO3\Flow\Utility\Unicode\TextIterator', $wordIterator);
+        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $wordIterator);
     }
 
 
@@ -59,7 +59,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function instantiatingSentenceIteratorWorks()
     {
         $sentenceIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
-        $this->assertInstanceOf('TYPO3\Flow\Utility\Unicode\TextIterator', $sentenceIterator);
+        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $sentenceIterator);
     }
 
     /**
@@ -70,7 +70,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function instantiatingLineIteratorWorks()
     {
         $lineIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::LINE);
-        $this->assertInstanceOf('TYPO3\Flow\Utility\Unicode\TextIterator', $lineIterator);
+        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $lineIterator);
     }
 
 

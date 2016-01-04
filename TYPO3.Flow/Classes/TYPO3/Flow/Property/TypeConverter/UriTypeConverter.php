@@ -30,7 +30,7 @@ class UriTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeCo
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Flow\Http\Uri';
+    protected $targetType = \TYPO3\Flow\Http\Uri::class;
 
     /**
      * @var integer

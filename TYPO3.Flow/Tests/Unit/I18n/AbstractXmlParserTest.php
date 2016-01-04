@@ -24,7 +24,7 @@ class AbstractXmlParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $sampleXmlFilePath = __DIR__ . '/Fixtures/MockCldrData.xml';
 
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\AbstractXmlParser', array('doParsingFromRoot'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\AbstractXmlParser::class, array('doParsingFromRoot'));
         $parser->expects($this->once())->method('doParsingFromRoot');
         $parser->getParsedData($sampleXmlFilePath);
     }
@@ -37,7 +37,7 @@ class AbstractXmlParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockFilenamePath = 'foo';
 
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\AbstractXmlParser', array('doParsingFromRoot'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\AbstractXmlParser::class, array('doParsingFromRoot'));
         $parser->getParsedData($mockFilenamePath);
     }
 }

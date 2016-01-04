@@ -21,7 +21,7 @@ class FeatureContext extends BehatContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = 'TYPO3\Flow\Tests\Functional\Command\BehatTestHelper';
+    protected $behatTestHelperObjectName = \TYPO3\Flow\Tests\Functional\Command\BehatTestHelper::class;
 
     /**
      * Initializes the context
@@ -33,7 +33,7 @@ class FeatureContext extends BehatContext
         $this->useContext('flow', new FlowContext($parameters));
         $flowContext = $this->getSubcontext('flow');
         $this->objectManager = $flowContext->getObjectManager();
-        $this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+        $this->environment = $this->objectManager->get(\TYPO3\Flow\Utility\Environment::class);
         $this->setupSecurity();
     }
 }

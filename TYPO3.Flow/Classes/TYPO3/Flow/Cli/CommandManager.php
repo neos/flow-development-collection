@@ -69,7 +69,7 @@ class CommandManager
         if ($this->availableCommands === null) {
             $this->availableCommands = array();
 
-            $commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Cli\CommandController');
+            $commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass(\TYPO3\Flow\Cli\CommandController::class);
             foreach ($commandControllerClassNames as $className) {
                 if (!class_exists($className)) {
                     continue;

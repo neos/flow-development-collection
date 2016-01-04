@@ -85,8 +85,8 @@ class PropertyMapper
      */
     public static function getTypeConverterImplementationClassNames($objectManager)
     {
-        $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
-        return $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Property\TypeConverterInterface');
+        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        return $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Flow\Property\TypeConverterInterface::class);
     }
 
     /**

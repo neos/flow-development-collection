@@ -159,9 +159,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get('TYPO3\Flow\Http\Component\ComponentChain');
+        $this->baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
 
-        $configurationManager = $objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
     }
 }

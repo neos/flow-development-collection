@@ -99,7 +99,7 @@ class StringConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($source instanceof \DateTime) {
+        if ($source instanceof \DateTimeInterface) {
             $dateFormat = $this->getDateFormat($configuration);
 
             return $source->format($dateFormat);
@@ -134,7 +134,7 @@ class StringConverter extends AbstractTypeConverter
             return self::DEFAULT_DATE_FORMAT;
         }
 
-        $dateFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_DATE_FORMAT);
+        $dateFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_DATE_FORMAT);
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif ($dateFormat !== null && !is_string($dateFormat)) {
@@ -159,7 +159,7 @@ class StringConverter extends AbstractTypeConverter
             return self::DEFAULT_CSV_DELIMITER;
         }
 
-        $csvDelimiter = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_CSV_DELIMITER);
+        $csvDelimiter = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_CSV_DELIMITER);
         if ($csvDelimiter === null) {
             return self::DEFAULT_CSV_DELIMITER;
         } elseif (!is_string($csvDelimiter)) {
@@ -184,7 +184,7 @@ class StringConverter extends AbstractTypeConverter
             return self::DEFAULT_ARRAY_FORMAT;
         }
 
-        $arrayFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\StringConverter', self::CONFIGURATION_ARRAY_FORMAT);
+        $arrayFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\StringConverter::class, self::CONFIGURATION_ARRAY_FORMAT);
         if ($arrayFormat === null) {
             return self::DEFAULT_ARRAY_FORMAT;
         } elseif (!is_string($arrayFormat)) {

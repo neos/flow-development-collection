@@ -121,7 +121,7 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
                 return '';
             }
         }
-        if (!$date instanceof \DateTime) {
+        if (!$date instanceof \DateTimeInterface) {
             try {
                 $date = new \DateTime($date);
             } catch (\Exception $exception) {

@@ -36,14 +36,14 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestA',
             '@action' => 'first',
-            '@format' =>'html'
+            '@format' => 'html'
         ));
 
         $this->registerRoute('testb', 'test/mvc/actioncontrollertestb(/{@action})', array(
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestB',
-            '@format' =>'html'
+            '@format' => 'html'
         ));
 
         $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}', array(
@@ -51,7 +51,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'Entity',
             '@action' => 'show',
-            '@format' =>'html'
+            '@format' => 'html'
         ));
     }
 
@@ -111,7 +111,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function argumentsOfPutRequestArePassedToAction()
     {
         $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
-        $request->setContent("putArgument=first value");
+        $request->setContent('putArgument=first value');
         $request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
         $request->setHeader('Content-Length', 54);
 

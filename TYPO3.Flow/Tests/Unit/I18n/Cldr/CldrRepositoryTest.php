@@ -36,7 +36,7 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->repository = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrRepository', array('dummy'));
+        $this->repository = $this->getAccessibleMock(\TYPO3\Flow\I18n\Cldr\CldrRepository::class, array('dummy'));
         $this->repository->_set('cldrBasePath', 'vfs://Foo/');
 
         $this->dummyLocale = new \TYPO3\Flow\I18n\Locale('en');

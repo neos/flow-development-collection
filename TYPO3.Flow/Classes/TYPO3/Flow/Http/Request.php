@@ -170,7 +170,9 @@ class Request extends AbstractMessage
      */
     public static function createFromEnvironment()
     {
-        return new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request = new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request->setContent(null);
+        return $request;
     }
 
     /**

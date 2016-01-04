@@ -14,8 +14,11 @@
         "ext-mbstring": "*",
         "ext-reflection": "*",
 
-        "typo3/fluid": "~3.0.0",
-        "typo3/eel": "~3.0.0",
+        "typo3/fluid": "~3.1.0",
+        "typo3/eel": "~3.1.0",
+
+        "ramsey/uuid": "^3.0.0",
+        "paragonie/random_compat": "^1.0",
 
         "doctrine/orm": "~2.4.0",
         "doctrine/migrations": "~1.0.0",
@@ -30,7 +33,8 @@
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
-        "typo3/party": "To make use of basic user handling"
+        "typo3/party": "To make use of basic user handling",
+        "php-uuid": "For fast generation of UUIDs used in the persistence."
     },
     "autoload": {
         "psr-0": {

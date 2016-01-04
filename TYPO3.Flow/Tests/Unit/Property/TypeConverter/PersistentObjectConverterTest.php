@@ -53,13 +53,13 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function setUp()
     {
         $this->converter = new PersistentObjectConverter();
-        $this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
@@ -95,10 +95,10 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected)
     {
         if ($isEntity) {
-            $this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\Entity')->will($this->returnValue($isEntity));
+            $this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue($isEntity));
         } else {
-            $this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\Entity')->will($this->returnValue($isEntity));
-            $this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\Flow\Annotations\ValueObject')->will($this->returnValue($isValueObject));
+            $this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue($isEntity));
+            $this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', \TYPO3\Flow\Annotations\ValueObject::class)->will($this->returnValue($isValueObject));
         }
 
         $this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
@@ -126,7 +126,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType()
     {
-        $mockSchema = $this->getMockBuilder('TYPO3\Flow\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
+        $mockSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
         $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will($this->returnValue($mockSchema));
 
         $mockSchema->expects($this->any())->method('hasProperty')->with('thePropertyName')->will($this->returnValue(true));
@@ -146,7 +146,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockReflectionService->expects($this->never())->method('getClassSchema');
 
         $configuration = $this->buildConfiguration(array());
-        $configuration->forProperty('thePropertyName')->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
+        $configuration->forProperty('thePropertyName')->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
         $this->assertEquals('Foo\Bar', $this->converter->getTypeOfChildProperty('foo', 'thePropertyName', $configuration));
     }
 
@@ -155,7 +155,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyShouldConsiderSetters()
     {
-        $mockSchema = $this->getMockBuilder('TYPO3\Flow\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
+        $mockSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
         $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will($this->returnValue($mockSchema));
 
         $mockSchema->expects($this->any())->method('hasProperty')->with('virtualPropertyName')->will($this->returnValue(false));
@@ -176,7 +176,6 @@ class PersistentObjectConverterTest extends UnitTestCase
     {
         $identifier = '550e8400-e29b-11d4-a716-446655440000';
         $object = new \stdClass();
-
 
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
         $this->assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
@@ -253,7 +252,7 @@ class PersistentObjectConverterTest extends UnitTestCase
     protected function buildConfiguration($typeConverterOptions)
     {
         $configuration = new PropertyMappingConfiguration();
-        $configuration->setTypeConverterOptions('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', $typeConverterOptions);
+        $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, $typeConverterOptions);
         return $configuration;
     }
 
@@ -264,15 +263,15 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
     {
-        $mockClassSchema = $this->getMock('TYPO3\Flow\Reflection\ClassSchema', array(), array('Dummy'));
+        $mockClassSchema = $this->getMock(\TYPO3\Flow\Reflection\ClassSchema::class, array(), array('Dummy'));
         $mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
         $this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->will($this->returnValue($mockClassSchema));
 
-        $mockConstraint = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Qom\Comparison')->disableOriginalConstructor()->getMock();
+        $mockConstraint = $this->getMockBuilder(\TYPO3\Flow\Persistence\Generic\Qom\Comparison::class)->disableOriginalConstructor()->getMock();
 
         $mockObject = new \stdClass();
-        $mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
-        $mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
+        $mockQuery = $this->getMock(\TYPO3\Flow\Persistence\QueryInterface::class);
+        $mockQueryResult = $this->getMock(\TYPO3\Flow\Persistence\QueryResultInterface::class);
         $mockQueryResult->expects($this->once())->method('count')->will($this->returnValue($numberOfResults));
         $mockQueryResult->expects($howOftenIsGetFirstCalled)->method('getFirst')->will($this->returnValue($mockObject));
         $mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->will($this->returnValue($mockConstraint));
@@ -309,7 +308,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => array('key1' => 'value1', 'key2' => 'value2')
         );
         $actual = $this->converter->convertFrom($source, 'SomeType');
-        $this->assertInstanceOf('TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError', $actual);
+        $this->assertInstanceOf(\TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError::class, $actual);
     }
 
     /**
@@ -364,10 +363,10 @@ class PersistentObjectConverterTest extends UnitTestCase
         $expectedObject = new ClassWithSetters();
         $expectedObject->property1 = 'bar';
 
-        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Fixtures\ClassWithSetters', '__construct')->will($this->returnValue(false));
-        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with('TYPO3\Flow\Fixtures\ClassWithSetters')->will($this->returnValue('TYPO3\Flow\Fixtures\ClassWithSetters'));
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSetters::class, '__construct')->will($this->returnValue(false));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSetters::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSetters::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSetters', $convertedChildProperties, $configuration);
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSetters::class, $convertedChildProperties, $configuration);
         $this->assertEquals($expectedObject, $result);
     }
 
@@ -385,10 +384,10 @@ class PersistentObjectConverterTest extends UnitTestCase
             'propertyNotExisting' => 'bar'
         );
 
-        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Fixtures\ClassWithSetters', '__construct')->will($this->returnValue(false));
-        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with('TYPO3\Flow\Fixtures\ClassWithSetters')->will($this->returnValue('TYPO3\Flow\Fixtures\ClassWithSetters'));
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSetters::class, '__construct')->will($this->returnValue(false));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSetters::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSetters::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSetters', $convertedChildProperties, $configuration);
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSetters::class, $convertedChildProperties, $configuration);
         $this->assertSame($object, $result);
     }
 
@@ -407,13 +406,13 @@ class PersistentObjectConverterTest extends UnitTestCase
         $expectedObject = new ClassWithSettersAndConstructor('param1');
         $expectedObject->setProperty2('bar');
 
-        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(true));
-        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(array(
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(array(
             'property1' => array('optional' => false)
         )));
-        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor')->will($this->returnValue('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor'));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', $convertedChildProperties, $configuration);
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
         $this->assertEquals($expectedObject, $result);
         $this->assertEquals('bar', $expectedObject->getProperty2());
     }
@@ -428,13 +427,13 @@ class PersistentObjectConverterTest extends UnitTestCase
         );
         $expectedObject = new ClassWithSettersAndConstructor('thisIsTheDefaultValue');
 
-        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(true));
-        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(array(
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(array(
             'property1' => array('optional' => true, 'defaultValue' => 'thisIsTheDefaultValue')
         )));
-        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor')->will($this->returnValue('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor'));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', array(), $configuration);
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, array(), $configuration);
         $this->assertEquals($expectedObject, $result);
     }
 
@@ -452,13 +451,13 @@ class PersistentObjectConverterTest extends UnitTestCase
             'property2' => 'bar'
         );
 
-        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(true));
-        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', '__construct')->will($this->returnValue(array(
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(array(
             'property1' => array('optional' => false)
         )));
-        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor')->will($this->returnValue('TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor'));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor', $convertedChildProperties, $configuration);
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
         $this->assertSame($object, $result);
     }
 
@@ -468,7 +467,7 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function convertFromShouldReturnNullForEmptyString()
     {
         $source = '';
-        $result = $this->converter->convertFrom($source, 'TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor');
+        $result = $this->converter->convertFrom($source, \TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class);
         $this->assertNull($result);
     }
 }

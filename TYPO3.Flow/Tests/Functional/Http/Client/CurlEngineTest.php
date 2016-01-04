@@ -29,7 +29,7 @@ class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $curlEngine = $this->objectManager->get('TYPO3\Flow\Http\Client\CurlEngine');
+        $curlEngine = $this->objectManager->get(\TYPO3\Flow\Http\Client\CurlEngine::class);
         $this->browser->setRequestEngine($curlEngine);
     }
 

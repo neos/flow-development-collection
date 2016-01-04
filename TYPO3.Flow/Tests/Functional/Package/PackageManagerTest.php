@@ -31,7 +31,7 @@ class PackageManagerTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+        $this->packageManager = $this->objectManager->get(\TYPO3\Flow\Package\PackageManagerInterface::class);
     }
 
     /**

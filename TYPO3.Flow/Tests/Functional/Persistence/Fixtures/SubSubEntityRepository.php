@@ -20,7 +20,7 @@ class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity';
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity::class;
 
     public function findAll()
     {

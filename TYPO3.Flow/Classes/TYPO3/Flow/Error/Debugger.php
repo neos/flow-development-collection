@@ -126,9 +126,9 @@ class Debugger
         } elseif (is_numeric($variable)) {
             $dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
         } elseif (is_array($variable)) {
-            $dump = \TYPO3\Flow\Error\Debugger::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
+            $dump = self::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
         } elseif (is_object($variable)) {
-            $dump = \TYPO3\Flow\Error\Debugger::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
+            $dump = self::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
         } elseif (is_bool($variable)) {
             $dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
         } elseif (is_null($variable) || is_resource($variable)) {
@@ -325,7 +325,7 @@ class Debugger
                             if ($plaintext) {
                                 $arguments .= '"' . $argument . '"';
                             } else {
-                                $preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
+                                $preparedArgument = str_replace('…', '<span style="color:white;">…</span>', $preparedArgument);
                                 $preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
                                 $arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
                             }
@@ -482,7 +482,7 @@ class Debugger
         $ignoredClasses = array();
 
         if (self::$objectManager instanceof ObjectManagerInterface) {
-            $configurationManager = self::$objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
+            $configurationManager = self::$objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
             if ($configurationManager instanceof ConfigurationManager) {
                 $ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'TYPO3.Flow.error.debugger.ignoredClasses');
                 if (is_array($ignoredClassesFromSettings)) {

@@ -47,14 +47,14 @@ class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
         $code = '';
-        if (strlen($this->addedPreParentCallCode) + strlen($this->addedPostParentCallCode) > 0) {
-            $argumentsCode = (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) ? '		$arguments = func_get_args();' . "\n" : '';
+        if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '') {
+            $argumentsCode = (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) ? '        $arguments = func_get_args();' . "\n" : '';
             $code = "\n" .
                 $methodDocumentation .
-                "	" . $staticKeyword . "public function __construct() {\n" .
+                '    ' . $staticKeyword . "public function __construct()\n    {\n" .
                 $argumentsCode .
                 $this->addedPreParentCallCode . $callParentMethodCode . $this->addedPostParentCallCode .
-                "	}\n";
+                "    }\n";
         }
         return $code;
     }
@@ -72,9 +72,9 @@ class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod
             return '';
         }
         if (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) {
-            return "\t\tcall_user_func_array('parent::" . $methodName . "', \$arguments);\n";
+            return "        call_user_func_array('parent::" . $methodName . "', \$arguments);\n";
         } else {
-            return "\t\tparent::" . $methodName . "();\n";
+            return "        parent::" . $methodName . "();\n";
         }
     }
 }

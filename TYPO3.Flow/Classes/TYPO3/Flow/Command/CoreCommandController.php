@@ -325,7 +325,7 @@ class CoreCommandController extends CommandController
                     $this->echoSubProcessResponse($pipes);
                 }
 
-                fwrite($pipes[0], "$commandLine\n");
+                fwrite($pipes[0], $commandLine . "\n");
                 fflush($pipes[0]);
                 $this->echoSubProcessResponse($pipes);
 
@@ -428,7 +428,7 @@ class CoreCommandController extends CommandController
         $suggestions = array();
 
         $availableCommands = $this->bootstrap->getObjectManager()
-            ->get('TYPO3\Flow\Cli\CommandManager')
+            ->get(\TYPO3\Flow\Cli\CommandManager::class)
             ->getAvailableCommands();
 
         /** @var $command \TYPO3\Flow\Cli\Command */

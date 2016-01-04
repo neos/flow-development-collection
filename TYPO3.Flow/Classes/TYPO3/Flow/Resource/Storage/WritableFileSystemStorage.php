@@ -58,13 +58,13 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
                 $target = fopen($temporaryTargetPathAndFilename, 'wb');
                 stream_copy_to_stream($source, $target);
                 fclose($target);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
             try {
                 copy($source, $temporaryTargetPathAndFilename);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 throw new Exception(sprintf('Could not copy the file from "%s" to temporary file "%s".', $source, $temporaryTargetPathAndFilename), 1375198876);
             }
         }
@@ -91,7 +91,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1381156098);
         }
 

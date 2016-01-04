@@ -38,7 +38,7 @@ trait IsolatedBehatStepsTrait
     {
         if ($this->subProcess === null) {
             /** @var CacheManager $cacheManager */
-            $cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
+            $cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
             if ($cacheManager->hasCache('Flow_Security_Authorization_Privilege_Method')) {
                 $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             }
@@ -48,7 +48,7 @@ trait IsolatedBehatStepsTrait
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $cacheManager->getCache('Flow_Object_Classes')->flush();
 
-            $configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+            $configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
             $configurationManager->flushConfigurationCache();
 
             $this->subProcess = new SubProcess($this->objectManager->getContext());
@@ -70,7 +70,7 @@ trait IsolatedBehatStepsTrait
 
         $subProcessResponse = $this->getSubProcess()->execute($subProcessCommand);
 
-        Assert::assertStringStartsWith('SUCCESS:', $subProcessResponse, 'We called "' . $subProcessCommand . '" and got: '  . $subProcessResponse);
+        Assert::assertStringStartsWith('SUCCESS:', $subProcessResponse, 'We called "' . $subProcessCommand . '" and got: ' . $subProcessResponse);
     }
 
     /**

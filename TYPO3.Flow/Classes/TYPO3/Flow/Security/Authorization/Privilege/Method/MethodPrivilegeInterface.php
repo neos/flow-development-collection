@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Method;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 

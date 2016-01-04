@@ -33,7 +33,7 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->cldrRepository = $this->objectManager->get('TYPO3\Flow\I18n\Cldr\CldrRepository');
+        $this->cldrRepository = $this->objectManager->get(\TYPO3\Flow\I18n\Cldr\CldrRepository::class);
 
         $this->cldrBasePath = $this->retrieveCldrBasePath();
     }

@@ -116,7 +116,7 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
         file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-        $backend = $this->getAccessibleMock('TYPO3\Flow\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
+        $backend = $this->getAccessibleMock(\TYPO3\Flow\Log\Backend\FileBackend::class, array('dummy'), array(array('logFileUrl' => $logFileUrl)));
         $backend->_set('maximumLogFileSize', 10);
         $backend->setLogFilesToKeep(1);
         $backend->open();

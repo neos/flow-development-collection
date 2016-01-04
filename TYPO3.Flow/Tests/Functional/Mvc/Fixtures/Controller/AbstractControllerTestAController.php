@@ -18,7 +18,7 @@ use TYPO3\Flow\Error\Message;
 /**
  * A controller fixture for testing the AbstractController functionality.
  *
- * Althought the functions we want to test are really implemented in the Abstract
+ * Although the functions we want to test are really implemented in the Abstract
  * Controller, this fixture class is an ActionController as this is the easiest way
  * to provide an implementation of the abstract class.
  */
@@ -60,7 +60,7 @@ class AbstractControllerTestAController extends ActionController
      */
     public function thirdAction($firstArgument, $secondArgument, $third = null, $fourth = 'default')
     {
-        return "thirdAction-$firstArgument-$secondArgument-$third-$fourth";
+        return 'thirdAction-' . $firstArgument . '-' . $secondArgument . '-' . $third . '-' . $fourth;
     }
 
     /**
@@ -72,6 +72,6 @@ class AbstractControllerTestAController extends ActionController
     public function fourthAction($nonObject1 = null, $nonObject2 = null)
     {
         $internalArguments = $this->request->getInternalArguments();
-        return "fourthAction-$nonObject1-$nonObject2-" . (isset($internalArguments['__object1']) ? get_class($internalArguments['__object1']) : 'x');
+        return 'fourthAction-' . $nonObject1 . '-' . $nonObject2 . '-' . (isset($internalArguments['__object1']) ? get_class($internalArguments['__object1']) : 'x');
     }
 }

@@ -27,11 +27,11 @@ class AbstractWidgetControllerTest extends UnitTestCase
      */
     public function processRequestShouldThrowExceptionIfWidgetContextNotFound()
     {
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue(null));
         $response = new Response();
 
-        $abstractWidgetController = $this->getMock('TYPO3\Fluid\Core\Widget\AbstractWidgetController', array('dummy'), array(), '', false);
+        $abstractWidgetController = $this->getMock(\TYPO3\Fluid\Core\Widget\AbstractWidgetController::class, array('dummy'), array(), '', false);
         $abstractWidgetController->processRequest($mockActionRequest, $response);
     }
 
@@ -40,8 +40,8 @@ class AbstractWidgetControllerTest extends UnitTestCase
      */
     public function processRequestShouldSetWidgetConfiguration()
     {
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMock('TYPO3\Flow\Http\Response');
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMock(\TYPO3\Flow\Http\Response::class);
 
         $httpRequest = Request::create(new Uri('http://localhost'));
         $mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
@@ -53,8 +53,8 @@ class AbstractWidgetControllerTest extends UnitTestCase
 
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));
 
-        $abstractWidgetController = $this->getAccessibleMock('TYPO3\Fluid\Core\Widget\AbstractWidgetController', array('resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod'));
-        $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService'));
+        $abstractWidgetController = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AbstractWidgetController::class, array('resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod'));
+        $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->getMock(\TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class));
 
         $abstractWidgetController->processRequest($mockActionRequest, $mockResponse);
 

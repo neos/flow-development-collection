@@ -38,7 +38,7 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $mockCommandManager;
 
     /**
-     * @var \TYPO\Flow\Reflection\ReflectionService
+     * @var \TYPO3\Flow\Reflection\ReflectionService
      */
     protected $mockReflectionService;
 
@@ -48,17 +48,17 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
-        $this->mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', false);
+        $this->mockCommand = $this->getMock(\TYPO3\Flow\Cli\Command::class, array(), array(), '', false);
         $this->mockCommand->expects($this->any())->method('getControllerClassName')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
         $this->mockCommand->expects($this->any())->method('getControllerCommandName')->will($this->returnValue('list'));
 
-        $this->mockCommandManager = $this->getMock('TYPO3\Flow\Cli\CommandManager');
+        $this->mockCommandManager = $this->getMock(\TYPO3\Flow\Cli\CommandManager::class);
         $this->mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('acme.test:default:list')->will($this->returnValue($this->mockCommand));
 
-        $this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
 
         $this->requestBuilder = new \TYPO3\Flow\Cli\RequestBuilder();
         $this->requestBuilder->injectObjectManager($this->mockObjectManager);
@@ -90,12 +90,12 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->mockObjectManager->getObjectNameByClassName('Acme\Test\Command\DefaultCommandController');
         $this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
 
-        $mockCommandManager = $this->getMock('TYPO3\Flow\Cli\CommandManager');
+        $mockCommandManager = $this->getMock(\TYPO3\Flow\Cli\CommandManager::class);
         $mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('test:default:list')->will($this->throwException(new \TYPO3\Flow\Mvc\Exception\NoSuchCommandException()));
         $this->requestBuilder->injectCommandManager($mockCommandManager);
 
         $request = $this->requestBuilder->build('test:default:list');
-        $this->assertSame('TYPO3\Flow\Command\HelpCommandController', $request->getControllerObjectName());
+        $this->assertSame(\TYPO3\Flow\Command\HelpCommandController::class, $request->getControllerObjectName());
     }
 
     /**

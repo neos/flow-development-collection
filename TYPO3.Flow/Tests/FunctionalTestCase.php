@@ -118,7 +118,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
      */
     public static function setUpBeforeClass()
     {
-        self::$bootstrap = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        self::$bootstrap = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
         self::setupSuperGlobals();
     }
 
@@ -135,23 +135,22 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->cleanupPersistentResourcesDirectory();
-        self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceManager')->initialize();
-
-        $session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Resource\ResourceManager::class);
+        $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
 
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
-            if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface'), 'compile'))) {
-                $result = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->compile();
+            if (is_callable(array(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class), 'compile'))) {
+                $result = self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->compile();
                 if ($result === false) {
                     self::markTestSkipped('Test skipped because setting up the persistence failed.');
                 }
             }
-            $this->persistenceManager = $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+            $this->persistenceManager = $this->objectManager->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         } else {
-            $privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+            $privilegeManager = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
         }
 
@@ -159,7 +158,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         // on an HTTP request being available via the request handler:
         $this->setupHttp();
 
-        $session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+        $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
@@ -176,16 +175,16 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
      */
     protected function setupSecurity()
     {
-        $this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+        $this->securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
         if ($this->testableSecurityEnabled) {
-            $this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+            $this->privilegeManager = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $this->privilegeManager->setOverrideDecision(null);
 
-            $this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+            $this->policyService = $this->objectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
 
-            $this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
+            $this->authenticationManager = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-            $this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
+            $this->testingProvider = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\Provider\TestingProvider::class);
             $this->testingProvider->setName('TestingProvider');
 
             $this->registerRoute('functionaltestroute', 'typo3/flow/test', array(
@@ -236,7 +235,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
     {
         $this->tearDownSecurity();
 
-        $persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $persistenceManager = self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
 
         // Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
         // has not been called during a test. This makes sure that for example certain repositories can clear
@@ -251,11 +250,11 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             $persistenceManager->tearDown();
         }
 
-        self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Http\Client\InternalRequestEngine');
-        self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect');
-        $this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceRepository'), 'addedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceRepository'), 'removedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceTypeConverter'), 'convertedResources', array());
+        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Http\Client\InternalRequestEngine::class);
+        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceTypeConverter::class), 'convertedResources', array());
 
         $this->cleanupPersistentResourcesDirectory();
         $this->emitFunctionalTestTearDown();
@@ -433,7 +432,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
      */
     protected function cleanupPersistentResourcesDirectory()
     {
-        $settings = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        $settings = self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
         $resourcesStoragePath = $settings['TYPO3']['Flow']['resource']['storages']['defaultPersistentResourcesStorage']['storageOptions']['path'];
         if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === false) {
             throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, FLOW_PATH_DATA), 1382018388);

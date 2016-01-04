@@ -90,7 +90,7 @@ class ConfigurationBuilder
                     if (!isset($rawObjectConfigurationsByPackages[$packageKey][$interfaceName]) && $implementationClassName === false) {
                         continue;
                     }
-                    if ($this->reflectionService->isClassAnnotatedWith($interfaceName, 'TYPO3\Flow\Annotations\Scope')) {
+                    if ($this->reflectionService->isClassAnnotatedWith($interfaceName, \TYPO3\Flow\Annotations\Scope::class)) {
                         throw new InvalidObjectConfigurationException(sprintf('Scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
                     }
                     $interfaceNames[$interfaceName] = true;
@@ -164,11 +164,11 @@ class ConfigurationBuilder
      */
     protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
     {
-        if ($this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Scope')) {
-            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, 'TYPO3\Flow\Annotations\Scope')->value;
+        if ($this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Scope::class)) {
+            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, \TYPO3\Flow\Annotations\Scope::class)->value;
         }
-        if ($this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Autowiring')) {
-            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, 'TYPO3\Flow\Annotations\Autowiring')->enabled;
+        if ($this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Autowiring::class)) {
+            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, \TYPO3\Flow\Annotations\Autowiring::class)->enabled;
         }
         return $rawObjectConfiguration;
     }
@@ -179,7 +179,7 @@ class ConfigurationBuilder
      * @param string $objectName Name of the object
      * @param array $rawConfigurationOptions The configuration array with options for the object configuration
      * @param string $configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
-     * @param Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
+     * @param Configuration $existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
      * @return Configuration The object configuration object
      * @throws InvalidObjectConfigurationException if errors occurred during parsing
      */
@@ -312,7 +312,7 @@ class ConfigurationBuilder
                     $objectName = $annotations[0];
                 }
             }
-            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName .'"');
+            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName . '"');
             $property = new ConfigurationProperty($propertyName, $objectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
         } else {
             $property = new ConfigurationProperty($propertyName, $objectNameOrConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
@@ -385,7 +385,7 @@ class ConfigurationBuilder
                             $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
                         }
 
-                        $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', 'TYPO3\Flow\Annotations\Autowiring');
+                        $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', \TYPO3\Flow\Annotations\Autowiring::class);
                         if (isset($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF
                                 || $autowiringAnnotation !== null && $autowiringAnnotation->enabled === false)) {
                             $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
@@ -428,10 +428,10 @@ class ConfigurationBuilder
                 }
             }
             foreach ($classMethodNames as $methodName) {
-                if (strlen($methodName) > 6 && substr($methodName, 0, 6) === 'inject' && $methodName[6] === strtoupper($methodName[6])) {
+                if (isset($methodName[6]) && strpos($methodName, 'inject') === 0 && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
-                    $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\Flow\Annotations\Autowiring');
+                    $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, \TYPO3\Flow\Annotations\Autowiring::class);
                     if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                         continue;
                     }
@@ -447,12 +447,12 @@ class ConfigurationBuilder
                         }
                         $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
                         if (count($methodParameters) !== 1) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', "$className::$propertyName", $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
+                            $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
                             continue;
                         }
                         $methodParameter = array_pop($methodParameters);
                         if ($methodParameter['class'] === null) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', "$className::$propertyName", $methodName), LOG_DEBUG);
+                            $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
                             continue;
                         }
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
@@ -460,13 +460,13 @@ class ConfigurationBuilder
                 }
             }
 
-            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\Inject') as $propertyName) {
+            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, \TYPO3\Flow\Annotations\Inject::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new \TYPO3\Flow\Object\Exception(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
-                    $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
+                    $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, \TYPO3\Flow\Annotations\Inject::class);
                     // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0. Injecting settings by annotation should be done using the InjectConfiguration annotation
                     if ($injectAnnotation->setting !== null) {
                         $packageKey = $injectAnnotation->package !== null ? $injectAnnotation->package : $objectConfiguration->getPackageKey();
@@ -480,7 +480,7 @@ class ConfigurationBuilder
                 }
             }
 
-            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\InjectConfiguration') as $propertyName) {
+            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, \TYPO3\Flow\Annotations\InjectConfiguration::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new \TYPO3\Flow\Object\Exception(sprintf('The property "%s" in class "%s" must not be private when annotated for configuration injection.', $propertyName, $className), 1416765599);
                 }
@@ -488,7 +488,7 @@ class ConfigurationBuilder
                     continue;
                 }
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
-                $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\InjectConfiguration');
+                $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, \TYPO3\Flow\Annotations\InjectConfiguration::class);
                 if ($injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
                     $packageKey = $injectConfigurationAnnotation->package !== null ? $injectConfigurationAnnotation->package : $objectConfiguration->getPackageKey();
                     $configurationPath = rtrim($packageKey . '.' . $injectConfigurationAnnotation->path, '.');

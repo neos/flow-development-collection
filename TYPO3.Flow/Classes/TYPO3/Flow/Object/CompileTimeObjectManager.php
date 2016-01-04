@@ -433,7 +433,6 @@ class CompileTimeObjectManager extends ObjectManager
                 break;
                 default:
                     throw new Exception\CannotBuildObjectException('Invalid property type.', 1297090029);
-                break;
             }
 
             if (method_exists($object, $setterMethodName = 'inject' . ucfirst($propertyName))) {

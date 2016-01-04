@@ -38,7 +38,7 @@ class MediaTypeConverterTest extends UnitTestCase
     {
         $this->mediaTypeConverter = new MediaTypeConverter();
 
-        $this->mockPropertyMappingConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfigurationInterface')->getMock();
+        $this->mockPropertyMappingConfiguration = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)->getMock();
     }
 
     /**
@@ -66,7 +66,7 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertReturnsEmptyArrayIfGivenMediaTypeIsInvalid()
     {
-        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue('someInvalidMediaType'));
+        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue('someInvalidMediaType'));
 
         $actualResult = $this->mediaTypeConverter->convertFrom('{"jsonArgument":"jsonValue"}', 'array', array(), $this->mockPropertyMappingConfiguration);
         $expectedResult = array();
@@ -102,7 +102,7 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertTests($mediaType, $requestBody, array $expectedResult)
     {
-        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue($mediaType));
+        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue($mediaType));
 
         $actualResult = $this->mediaTypeConverter->convertFrom($requestBody, 'array', array(), $this->mockPropertyMappingConfiguration);
         $this->assertSame($expectedResult, $actualResult);

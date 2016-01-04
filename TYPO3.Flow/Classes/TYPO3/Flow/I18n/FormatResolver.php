@@ -169,7 +169,7 @@ class FormatResolver
                     throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
                 }
             }
-            if (!$this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\Flow\I18n\Formatter\FormatterInterface')) {
+            if (!$this->reflectionService->isClassImplementationOf($possibleClassName, \TYPO3\Flow\I18n\Formatter\FormatterInterface::class)) {
                 throw new \TYPO3\Flow\I18n\Exception\InvalidFormatterException('The resolved internationalization formatter class name "' . $possibleClassName . '" does not implement "TYPO3\Flow\I18n\Formatter\FormatterInterface" as required.', 1358162557);
             }
             $foundFormatter = $this->objectManager->get($possibleClassName);

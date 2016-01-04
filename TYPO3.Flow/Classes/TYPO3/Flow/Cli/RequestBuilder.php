@@ -118,11 +118,12 @@ class RequestBuilder
      *
      * @param mixed $commandLine The command line, either as a string or as an array
      * @return \TYPO3\Flow\Cli\Request The CLI request as an object
+     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
      */
     public function build($commandLine)
     {
         $request = new Request();
-        $request->setControllerObjectName('TYPO3\Flow\Command\HelpCommandController');
+        $request->setControllerObjectName(\TYPO3\Flow\Command\HelpCommandController::class);
 
         if (is_array($commandLine) === true) {
             $rawCommandLineArguments = $commandLine;

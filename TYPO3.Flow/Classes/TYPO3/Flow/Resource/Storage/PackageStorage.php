@@ -79,7 +79,7 @@ class PackageStorage extends FileSystemStorage
 
         foreach ($directories as $packageKey => $packageDirectories) {
             foreach ($packageDirectories as $directoryPath) {
-                foreach (Files::readDirectoryRecursively($directoryPath) as $resourcePathAndFilename) {
+                foreach (Files::getRecursiveDirectoryGenerator($directoryPath) as $resourcePathAndFilename) {
                     $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
 
                     $object = new Object();

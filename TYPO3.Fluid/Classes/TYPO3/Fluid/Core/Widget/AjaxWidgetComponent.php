@@ -51,7 +51,7 @@ class AjaxWidgetComponent extends DispatchComponent
             return;
         }
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $httpRequest);
+        $actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
         $actionRequest->setArguments($this->mergeArguments($httpRequest, array()));
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
@@ -61,7 +61,7 @@ class AjaxWidgetComponent extends DispatchComponent
 
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
         // stop processing the current component chain
-        $componentContext->setParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', true);
+        $componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', true);
     }
 
     /**

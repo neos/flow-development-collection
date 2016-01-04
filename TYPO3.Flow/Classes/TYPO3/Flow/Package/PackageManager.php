@@ -653,7 +653,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->freezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Reflection\ReflectionService::class)->freezePackageReflection($packageKey);
 
         $this->packageStatesConfiguration['packages'][$packageKey]['frozen'] = true;
         $this->sortAndSavePackageStates();
@@ -686,7 +686,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Reflection\ReflectionService::class)->unfreezePackageReflection($packageKey);
 
         unset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']);
         $this->sortAndSavePackageStates();
@@ -704,7 +704,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Reflection\ReflectionService::class)->unfreezePackageReflection($packageKey);
     }
 
     /**
@@ -720,7 +720,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
         $packageKey = $package->getPackageKey();
         $caseSensitivePackageKey = $this->getCaseSensitivePackageKey($packageKey);
         if ($this->isPackageAvailable($caseSensitivePackageKey)) {
-            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered as "' . $caseSensitivePackageKey .  '".', 1338996122);
+            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered as "' . $caseSensitivePackageKey . '".', 1338996122);
         }
 
         $this->packages[$packageKey] = $package;
@@ -1092,7 +1092,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
         $fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
         $fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
-        $packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, true) . ';';
+        $packageStatesCode = "<?php\n" . $fileDescription . "\nreturn " . var_export($this->packageStatesConfiguration, true) . ';';
         $result = @file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
         if ($result === false) {
             throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);

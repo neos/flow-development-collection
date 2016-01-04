@@ -18,6 +18,7 @@ use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
  * A general purpose configuration manager
@@ -525,7 +526,8 @@ class ConfigurationManager
                 }
                 $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
-                // Merge routes with SubRoutes recursively
+                // load subroutes from Routes.yaml and Settings.yaml and merge them with main routes recursively
+                $this->includeSubRoutesFromSettings($this->configurations[$configurationType]);
                 $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
@@ -557,7 +559,7 @@ class ConfigurationManager
      */
     public function loadConfigurationCache()
     {
-        if (file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+        if (is_file($this->includeCachedConfigurationsPathAndFilename)) {
             $this->configurations = require($this->includeCachedConfigurationsPathAndFilename);
             return true;
         }
@@ -574,7 +576,7 @@ class ConfigurationManager
     {
         $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
         $cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
-        if (file_exists($cachePathAndFilename)) {
+        if (is_file($cachePathAndFilename)) {
             if (unlink($cachePathAndFilename) === false) {
                 throw new Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
             }
@@ -614,7 +616,7 @@ EOD;
             Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
         }
         file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
-        if (!file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+        if (!is_file($this->includeCachedConfigurationsPathAndFilename)) {
             throw new Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
         }
 
@@ -743,6 +745,42 @@ EOD;
             }
         }
         return $mergedSubRoutesConfigurations;
+    }
+
+    /**
+     * Merges routes from TYPO3.Flow.mvc.routes settings into $routeDefinitions
+     * NOTE: Routes from settings will always be appended to existing route definitions from the main Routes configuration!
+     *
+     * @param array $routeDefinitions
+     * @return void
+     */
+    protected function includeSubRoutesFromSettings(&$routeDefinitions)
+    {
+        $routeSettings = $this->getConfiguration(self::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.mvc.routes');
+        if ($routeSettings === null) {
+            return;
+        }
+        $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
+        foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
+            if ($routeFromSettings === false) {
+                continue;
+            }
+            $subRoutesName = $packageKey . 'SubRoutes';
+            $subRoutesConfiguration = ['package' => $packageKey];
+            if (isset($routeFromSettings['variables'])) {
+                $subRoutesConfiguration['variables'] = $routeFromSettings['variables'];
+            }
+            if (isset($routeFromSettings['suffix'])) {
+                $subRoutesConfiguration['suffix'] = $routeFromSettings['suffix'];
+            }
+            $routeDefinitions[] = [
+                'name' => $packageKey,
+                'uriPattern' => '<' . $subRoutesName . '>',
+                'subRoutes' => [
+                    $subRoutesName => $subRoutesConfiguration
+                ]
+            ];
+        }
     }
 
     /**

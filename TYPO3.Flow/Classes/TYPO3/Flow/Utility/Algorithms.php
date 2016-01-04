@@ -11,8 +11,7 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-require_once(FLOW_PATH_FLOW . 'Resources/PHP/iSecurity/Security_Randomizer.php');
-
+use Ramsey\Uuid\Uuid;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -26,12 +25,18 @@ class Algorithms
      * Generates a universally unique identifier (UUID) according to RFC 4122.
      * The algorithm used here, might not be completely random.
      *
+     * If php-uuid was installed it will be used instead to speed up the process.
+     *
      * @return string The universally unique id
-     * @todo check for randomness, optionally generate type 1 and type 5 UUIDs, use php5-uuid extension if available
+     * @todo Optionally generate type 1 and type 5 UUIDs.
      */
     public static function generateUUID()
     {
-        return strtolower(\Security_Randomizer::getRandomGUID());
+        if (is_callable('uuid_create')) {
+            return strtolower(uuid_create(UUID_TYPE_RANDOM));
+        }
+
+        return (string)Uuid::uuid4();
     }
 
     /**
@@ -42,7 +47,7 @@ class Algorithms
      */
     public static function generateRandomBytes($count)
     {
-        return \Security_Randomizer::getRandomBytes($count);
+        return random_bytes($count);
     }
 
     /**
@@ -53,7 +58,7 @@ class Algorithms
      */
     public static function generateRandomToken($count)
     {
-        return \Security_Randomizer::getRandomToken($count);
+        return bin2hex(random_bytes($count));
     }
 
     /**
@@ -65,6 +70,12 @@ class Algorithms
      */
     public static function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     {
-        return \Security_Randomizer::getRandomString($count, $characters);
+        $characterCount = \TYPO3\Flow\Utility\Unicode\Functions::strlen($characters);
+        $string = '';
+        for ($i = 0; $i < $count; $i++) {
+            $string .= \TYPO3\Flow\Utility\Unicode\Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
+        }
+
+        return $string;
     }
 }

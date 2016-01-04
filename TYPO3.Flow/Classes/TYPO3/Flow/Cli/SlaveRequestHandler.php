@@ -73,7 +73,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $systemLogger = $objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface');
+        $systemLogger = $objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 
         $systemLogger->log('Running sub process loop.', LOG_DEBUG);
         echo "\nREADY\n";
@@ -87,12 +87,12 @@ class SlaveRequestHandler implements RequestHandlerInterface
                     break;
                 }
                 /** @var Request $request */
-                $request = $objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build($trimmedCommandLine);
+                $request = $objectManager->get(\TYPO3\Flow\Cli\RequestBuilder::class)->build($trimmedCommandLine);
                 $response = new Response();
                 if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
                     echo "This command must be executed during compiletime.\n";
                 } else {
-                    $objectManager->get('TYPO3\Flow\Mvc\Dispatcher')->dispatch($request, $response);
+                    $objectManager->get(\TYPO3\Flow\Mvc\Dispatcher::class)->dispatch($request, $response);
                     $response->send();
 
                     $this->emitDispatchedCommandLineSlaveRequest();

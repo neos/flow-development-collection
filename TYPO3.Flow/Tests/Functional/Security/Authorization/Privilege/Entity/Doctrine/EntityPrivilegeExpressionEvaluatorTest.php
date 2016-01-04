@@ -70,10 +70,10 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate($expression, $context);
 
-        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+        $entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity', $result['entityType']);
-        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'), 't0'));
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class, $result['entityType']);
+        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class), 't0'));
     }
 }

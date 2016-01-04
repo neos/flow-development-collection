@@ -37,7 +37,7 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'AbstractControllerTestA',
-            '@format' =>'html'
+            '@format' => 'html'
         ));
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);

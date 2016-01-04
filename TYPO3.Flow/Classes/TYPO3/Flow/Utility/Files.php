@@ -66,7 +66,7 @@ class Files
             } else {
                 $path = trim($path, '/');
             }
-            if (strlen($path) > 0) {
+            if ($path !== '') {
                 $resultingPath .= $path . '/';
             }
         }
@@ -81,33 +81,52 @@ class Files
      * @param string $suffix If specified, only filenames with this extension are returned (eg. ".php" or "foo.bar")
      * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
      * @param boolean $returnDotFiles If turned on, also files beginning with a dot will be returned
-     * @param array $filenames Internally used for the recursion - don't specify!
      * @return array Filenames including full path
      * @throws Exception
      * @api
      */
-    public static function readDirectoryRecursively($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false, &$filenames = array())
+    public static function readDirectoryRecursively($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
+    {
+        return iterator_to_array(self::getRecursiveDirectoryGenerator($path, $suffix, $returnRealPath, $returnDotFiles));
+    }
+
+    /**
+     * @param string $path
+     * @param string $suffix
+     * @param boolean $returnRealPath
+     * @param boolean $returnDotFiles
+     * @return \Generator
+     * @throws Exception
+     */
+    public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
     {
         if (!is_dir($path)) {
             throw new Exception('"' . $path . '" is no directory.', 1207253462);
         }
 
-        $directoryIterator = new \DirectoryIterator($path);
-        $suffixLength = strlen($suffix);
+        $directories = array(self::getNormalizedPath($path));
+        while ($directories !== array()) {
+            $currentDirectory = array_pop($directories);
+            if ($handle = opendir($currentDirectory)) {
+                while (false !== ($filename = readdir($handle))) {
+                    if ($filename === '.' || $filename === '..') {
+                        continue;
+                    }
 
-        foreach ($directoryIterator as $fileInfo) {
-            $filename = $fileInfo->getFilename();
-            if ($filename === '.' || $filename === '..' || ($returnDotFiles === false && $filename[0] === '.')) {
-                continue;
-            }
-            if ($fileInfo->isFile() && ($suffix === null || substr($filename, -$suffixLength) === $suffix)) {
-                $filenames[] = self::getUnixStylePath(($returnRealPath === true ? realpath($fileInfo->getPathname()) : $fileInfo->getPathname()));
-            }
-            if ($fileInfo->isDir()) {
-                self::readDirectoryRecursively($fileInfo->getPathname(), $suffix, $returnRealPath, $returnDotFiles, $filenames);
+                    if ($filename[0] === '.' && $returnDotFiles === false) {
+                        continue;
+                    }
+
+                    $pathAndFilename = self::concatenatePaths(array($currentDirectory, $filename));
+                    if (is_dir($pathAndFilename)) {
+                        array_push($directories, self::getNormalizedPath($pathAndFilename));
+                    } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
+                        yield static::getUnixStylePath(($returnRealPath === true) ? realpath($pathAndFilename) : $pathAndFilename);
+                    }
+                }
+                closedir($handle);
             }
         }
-        return $filenames;
     }
 
     /**
@@ -226,7 +245,7 @@ class Files
         if (is_file($path)) {
             throw new Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
         }
-        if (!is_dir($path) && strlen($path) > 0) {
+        if (!is_dir($path) && $path !== '') {
             $oldMask = umask(000);
             mkdir($path, 0777, true);
             umask($oldMask);
@@ -265,8 +284,7 @@ class Files
             throw new Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
         }
 
-        $sourceFilenames = self::readDirectoryRecursively($sourceDirectory, null, false, $copyDotFiles);
-        foreach ($sourceFilenames as $filename) {
+        foreach (self::getRecursiveDirectoryGenerator($sourceDirectory, null, false, $copyDotFiles) as $filename) {
             $relativeFilename = str_replace($sourceDirectory, '', $filename);
             self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
             $targetPathAndFilename = self::concatenatePaths(array($targetDirectory, $relativeFilename));

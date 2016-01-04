@@ -26,7 +26,7 @@ class PyStringNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Flow\Tests\Functional\Command\PyStringNode';
+    protected $targetType = \TYPO3\Flow\Tests\Functional\Command\PyStringNode::class;
 
     /**
      * @var integer

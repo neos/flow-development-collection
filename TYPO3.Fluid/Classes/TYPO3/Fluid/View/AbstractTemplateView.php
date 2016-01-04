@@ -251,7 +251,7 @@ abstract class AbstractTemplateView extends AbstractView
             $renderingTypeOnNextLevel = self::RENDERING_TEMPLATE;
         } else {
             /** @var $variableContainer TemplateVariableContainer **/
-            $variableContainer = $this->objectManager->get('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer', $variables);
+            $variableContainer = $this->objectManager->get(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class, $variables);
             $renderingContext = clone $renderingContext;
             $renderingContext->injectTemplateVariableContainer($variableContainer);
             $renderingTypeOnNextLevel = $this->getCurrentRenderingType();
@@ -280,7 +280,7 @@ abstract class AbstractTemplateView extends AbstractView
             /** @var $section ViewHelperNode */
             $section = $sections[$sectionName];
 
-            $renderingContext->getViewHelperVariableContainer()->add('TYPO3\Fluid\ViewHelpers\SectionViewHelper', 'isCurrentlyRenderingSection', 'TRUE');
+            $renderingContext->getViewHelperVariableContainer()->add(\TYPO3\Fluid\ViewHelpers\SectionViewHelper::class, 'isCurrentlyRenderingSection', 'TRUE');
 
             $this->startRendering($renderingTypeOnNextLevel, $parsedTemplate, $renderingContext);
             $output = $section->evaluate($renderingContext);
@@ -346,7 +346,7 @@ abstract class AbstractTemplateView extends AbstractView
         }
 
         /** @var $variableContainer TemplateVariableContainer **/
-        $variableContainer = $this->objectManager->get('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer', $variables);
+        $variableContainer = $this->objectManager->get(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class, $variables);
         $renderingContext = clone $this->getCurrentRenderingContext();
         $renderingContext->injectTemplateVariableContainer($variableContainer);
 
@@ -429,16 +429,16 @@ abstract class AbstractTemplateView extends AbstractView
     protected function buildParserConfiguration()
     {
         /** @var Configuration $parserConfiguration */
-        $parserConfiguration = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Configuration');
+        $parserConfiguration = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\Configuration::class);
 
         /** @var EscapeInterceptor $escapeInterceptor */
-        $escapeInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Escape');
+        $escapeInterceptor = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\Interceptor\Escape::class);
         $parserConfiguration->addEscapingInterceptor($escapeInterceptor);
 
         $request = $this->controllerContext->getRequest();
         if ($request instanceof ActionRequest && in_array($request->getFormat(), array('html', null))) {
             /** @var ResourceInterceptor $resourceInterceptor */
-            $resourceInterceptor = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Interceptor\Resource');
+            $resourceInterceptor = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\Interceptor\Resource::class);
             $parserConfiguration->addInterceptor($resourceInterceptor);
         }
 

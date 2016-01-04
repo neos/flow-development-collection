@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Algorithms as UtilityAlgorithms;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -68,7 +69,7 @@ class FileBasedSimpleKeyService
         if (strlen($name) === 0) {
             throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215474);
         }
-        $password = \TYPO3\Flow\Utility\Algorithms::generateRandomString($this->passwordGenerationLength);
+        $password = UtilityAlgorithms::generateRandomString($this->passwordGenerationLength);
         $this->persistKey($name, $password);
         return $password;
     }

@@ -144,7 +144,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
         if ($resource instanceof Resource) {
             return $resource;
         }
-        return $this->propertyMapper->convert($resource, 'TYPO3\Flow\Resource\Resource');
+        return $this->propertyMapper->convert($resource, \TYPO3\Flow\Resource\Resource::class);
     }
 
     /**
@@ -159,7 +159,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }

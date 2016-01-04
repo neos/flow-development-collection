@@ -1,5 +1,6 @@
 <?php
 namespace TYPO3\Eel;
+// @codingStandardsIgnoreFile
 
 /*
  * This file is part of the TYPO3.Eel package.

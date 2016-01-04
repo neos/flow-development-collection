@@ -53,7 +53,8 @@ class MvcPropertyMappingConfigurationService
         foreach ($formFieldNames as $formField) {
             $formFieldParts = explode('[', $formField);
             $currentPosition =& $formFieldArray;
-            for ($i=0; $i < count($formFieldParts); $i++) {
+            $formFieldPartsCount = count($formFieldParts);
+            for ($i = 0; $i < $formFieldPartsCount; $i++) {
                 $formFieldPart = $formFieldParts[$i];
                 $formFieldPart = rtrim($formFieldPart, ']');
 
@@ -144,10 +145,10 @@ class MvcPropertyMappingConfigurationService
             return;
         }
         if (isset($propertyConfiguration['__identity'])) {
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
             unset($propertyConfiguration['__identity']);
         } else {
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         }
 
         foreach ($propertyConfiguration as $innerKey => $innerValue) {

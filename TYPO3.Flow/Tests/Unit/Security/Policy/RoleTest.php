@@ -51,12 +51,12 @@ class RoleTest extends UnitTestCase
     public function setParentRolesMakesSureThatParentRolesDontContainDuplicates()
     {
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $role */
-        $role = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Test'));
+        $role = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Test'));
 
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole1 */
-        $parentRole1 = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Parent1'));
+        $parentRole1 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent1'));
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole2 */
-        $parentRole2 = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\Role', array('dummy'), array('Acme.Demo:Parent2'));
+        $parentRole2 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent2'));
 
         $parentRole2->addParentRole($parentRole1);
         $role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));

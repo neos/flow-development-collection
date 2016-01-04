@@ -908,10 +908,10 @@ allowed to approve an invoice or not. The respective MethodPrivilege could look 
     'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 100))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 100))'
 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > 1000))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 1000))'
 
     roles:
       'Acme.MyPackage:Employee':
@@ -943,7 +943,7 @@ The following Policy expresses the exact same functionality as above:
     'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:InvoiceService.ApproveInvoice':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService>approve(invoice.amount > {amount}))'
+        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > {amount}))'
 
     roles:
       'Acme.MyPackage:Employee':

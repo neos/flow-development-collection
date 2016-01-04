@@ -13,8 +13,6 @@ namespace TYPO3\Flow\Security\Authorization;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
-use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * Contract for a privilege manager

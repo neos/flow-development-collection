@@ -67,7 +67,7 @@ class Sequence
             foreach ($steps as $step) {
                 if ($step->getIdentifier() === $stepIdentifier) {
                     unset($this->steps[$previousStepIdentifier][$stepIdentifier]);
-                    $removedOccurrences ++;
+                    $removedOccurrences++;
                 }
             }
         }

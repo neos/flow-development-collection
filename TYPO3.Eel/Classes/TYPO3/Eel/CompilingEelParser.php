@@ -164,7 +164,7 @@ class CompilingEelParser extends EelParser
     {
         $tmpVarName = '$_' . $this->tmpId++;
 
-        $result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) .  ')?' . $tmpVarName . ':' . $this->unwrapExpression($sub['code']) . ')';
+        $result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) . ')?' . $tmpVarName . ':' . $this->unwrapExpression($sub['code']) . ')';
     }
 
     public function Conjunction_lft(&$result, $sub)
@@ -176,7 +176,7 @@ class CompilingEelParser extends EelParser
     {
         $tmpVarName = '$_' . $this->tmpId++;
 
-        $result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) .  ')?(' . $this->unwrapExpression($sub['code']) . '):' . $tmpVarName .')';
+        $result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) . ')?(' . $this->unwrapExpression($sub['code']) . '):' . $tmpVarName . ')';
     }
 
     public function Comparison_lft(&$result, $sub)
@@ -253,7 +253,7 @@ class CompilingEelParser extends EelParser
             $result['code'] = '(is_string(' . $xVarName . '=' . $lval . ')|is_string(' . $yVarName . '=' . $rval . '))?(' . $xVarName . ' . ' . $yVarName . '):(' . $xVarName . '+' . $yVarName . ')';
             break;
         case '-':
-            $result['code'] = $lval . '-' .  $rval;
+            $result['code'] = $lval . '-' . $rval;
             break;
         default:
             throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512602);

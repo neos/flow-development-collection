@@ -22,9 +22,9 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resourcesInCssUrlsAreReplacedCorrectly()
     {
-        $mockDummyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPathNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
+        $mockDummyNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
+        $mockPathNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
+        $mockViewHelper = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class);
 
         $originalText1 = '<style type="text/css">
 			#loginscreen {
@@ -36,20 +36,20 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
 				background-repeat: no-repeat;
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
-        $mockTextNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', array('evaluateChildNodes'), array($originalText));
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
+        $mockTextNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, array('evaluateChildNodes'), array($originalText));
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class)));
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $mockObjectManager->expects($this->at(0))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode')->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(1))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $originalText1)->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(2))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $path)->will($this->returnValue($mockPathNode));
-        $mockObjectManager->expects($this->at(3))->method('get')->with('TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper')->will($this->returnValue($mockViewHelper));
-        $mockObjectManager->expects($this->at(4))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', $mockViewHelper, array('path' => $mockPathNode))->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(5))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $originalText3)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->at(0))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(1))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $originalText1)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(2))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $path)->will($this->returnValue($mockPathNode));
+        $mockObjectManager->expects($this->at(3))->method('get')->with(\TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper::class)->will($this->returnValue($mockViewHelper));
+        $mockObjectManager->expects($this->at(4))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $mockViewHelper, array('path' => $mockPathNode))->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(5))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $originalText3)->will($this->returnValue($mockDummyNode));
 
         $interceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
         $interceptor->injectObjectManager($mockObjectManager);
-        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock('TYPO3\Fluid\Core\Parser\ParsingState'));
+        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock(\TYPO3\Fluid\Core\Parser\ParsingState::class));
     }
 
     /**
@@ -105,27 +105,27 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function supportedUrlsAreDetected($part1, $part2, $part3, $expectedPath, $expectedPackageKey)
     {
-        $mockDummyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPathNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPackageKeyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
+        $mockDummyNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
+        $mockPathNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
+        $mockPackageKeyNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
+        $mockViewHelper = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class);
 
         $originalText = $part1 . $part2 . $part3;
-        $mockTextNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', array('evaluateChildNodes'), array($originalText));
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
+        $mockTextNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, array('evaluateChildNodes'), array($originalText));
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class)));
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $mockObjectManager->expects($this->at(0))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode')->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(1))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $part1)->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(2))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $expectedPath)->will($this->returnValue($mockPathNode));
-        $mockObjectManager->expects($this->at(3))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $expectedPackageKey)->will($this->returnValue($mockPackageKeyNode));
-        $mockObjectManager->expects($this->at(4))->method('get')->with('TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper')->will($this->returnValue($mockViewHelper));
-        $mockObjectManager->expects($this->at(5))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', $mockViewHelper, array('path' => $mockPathNode, 'package' => $mockPackageKeyNode))->will($this->returnValue($mockDummyNode));
-        $mockObjectManager->expects($this->at(6))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $part3)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->at(0))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(1))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $part1)->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(2))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $expectedPath)->will($this->returnValue($mockPathNode));
+        $mockObjectManager->expects($this->at(3))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $expectedPackageKey)->will($this->returnValue($mockPackageKeyNode));
+        $mockObjectManager->expects($this->at(4))->method('get')->with(\TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper::class)->will($this->returnValue($mockViewHelper));
+        $mockObjectManager->expects($this->at(5))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $mockViewHelper, array('path' => $mockPathNode, 'package' => $mockPackageKeyNode))->will($this->returnValue($mockDummyNode));
+        $mockObjectManager->expects($this->at(6))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $part3)->will($this->returnValue($mockDummyNode));
 
         $interceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
         $interceptor->injectObjectManager($mockObjectManager);
         $interceptor->setDefaultPackageKey('Acme.Demo');
-        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock('TYPO3\Fluid\Core\Parser\ParsingState'));
+        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock(\TYPO3\Fluid\Core\Parser\ParsingState::class));
     }
 }

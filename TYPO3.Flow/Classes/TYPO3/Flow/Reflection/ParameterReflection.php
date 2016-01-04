@@ -44,7 +44,7 @@ class ParameterReflection extends \ReflectionParameter
     {
         try {
             $class = parent::getClass();
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return null;
         }
 

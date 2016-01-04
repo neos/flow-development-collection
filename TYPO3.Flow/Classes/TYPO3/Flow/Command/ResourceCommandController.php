@@ -96,6 +96,65 @@ class ResourceCommandController extends CommandController
     }
 
     /**
+     * Copy resources
+     *
+     * This command copies all resources from one collection to another storage identified by name.
+     * The target storage must be empty and must not be identical to the current storage of the collection.
+     *
+     * This command merely copies the binary data from one storage to another, it does not change the related
+     * Resource objects in the database in any way. Since the Resource objects in the database refer to a
+     * collection name, you can use this command for migrating from one storage to another my configuring
+     * the new storage with the name of the old storage collection after the resources have been copied.
+     *
+     * @param string $sourceCollection The name of the collection you want to copy the assets from
+     * @param string $targetCollection The name of the collection you want to copy the assets to
+     * @param boolean $publish If enabled, the target collection will be published after the resources have been copied
+     * @return void
+     */
+    public function copyCommand($sourceCollection, $targetCollection, $publish = false)
+    {
+        $sourceCollectionName = $sourceCollection;
+        $sourceCollection = $this->resourceManager->getCollection($sourceCollectionName);
+        if ($sourceCollection === null) {
+            $this->outputLine('The source collection "%s" does not exist.', array($sourceCollectionName));
+            $this->quit(1);
+        }
+
+        $targetCollectionName = $targetCollection;
+        $targetCollection = $this->resourceManager->getCollection($targetCollection);
+        if ($targetCollection === null) {
+            $this->outputLine('The target collection "%s" does not exist.', array($targetCollectionName));
+            $this->quit(1);
+        }
+
+        if (!empty($targetCollection->getObjects())) {
+            $this->outputLine('The target collection "%s" is not empty.', array($targetCollectionName));
+            $this->quit(1);
+        }
+
+        $sourceObjects = $sourceCollection->getObjects();
+        $this->outputLine('Copying resource objects from collection "%s" to collection "%s" ...', [$sourceCollectionName, $targetCollectionName]);
+        $this->outputLine();
+
+        $this->output->progressStart(count($sourceObjects));
+        foreach ($sourceCollection->getObjects() as $resource) {
+            /** @var \TYPO3\Flow\Resource\Storage\Object $resource */
+            $this->output->progressAdvance();
+            $targetCollection->importResource($resource->getStream());
+        }
+        $this->output->progressFinish();
+        $this->outputLine();
+
+        if ($publish) {
+            $this->outputLine('Publishing copied resources to the target "%s" ...', [$targetCollection->getTarget()->getName()]);
+            $targetCollection->getTarget()->publishCollection($sourceCollection);
+        }
+
+        $this->outputLine('Done.');
+        $this->outputLine('Hint: If you want to use the target collection as a replacement for your current one, you can now modify your settings accordingly.');
+    }
+
+    /**
      * Clean up resource registry
      *
      * This command checks the resource registry (that is the database tables) for orphaned resource objects which don't
@@ -134,7 +193,7 @@ class ResourceCommandController extends CommandController
         $this->outputLine();
 
         if ($mediaPackagePresent && count($brokenResources) > 0) {
-            $assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
+            $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
             /* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
 
             foreach ($brokenResources as $resource) {

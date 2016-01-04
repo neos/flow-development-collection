@@ -80,7 +80,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function createFromRawSetsHeadersAndStatusCodeCorrectly($rawResponse, $expectedHeaders, $expectedStatusCode)
     {
         $response = Response::createFromRaw($rawResponse);
-        $this->assertEquals("HTTP/1.1", $response->getVersion());
+        $this->assertEquals('HTTP/1.1', $response->getVersion());
 
         foreach ($expectedHeaders as $fieldName => $fieldValue) {
             $this->assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));
@@ -104,18 +104,18 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
         $this->assertCount(4, $response->getCookies());
 
-        $this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('tg'));
+        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('tg'));
         $this->assertEquals('426148', $response->getCookie('tg')->getValue());
         $this->assertEquals(1665942816, $response->getCookie('tg')->getExpires());
 
-        $this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('dmvk'));
+        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('dmvk'));
         $this->assertEquals('507d9f20317a5', $response->getCookie('dmvk')->getValue());
         $this->assertEquals('example.org', $response->getCookie('dmvk')->getDomain());
 
-        $this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('ql_n'));
+        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('ql_n'));
         $this->assertEquals('0', $response->getCookie('ql_n')->getValue());
 
-        $this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('masscast'));
+        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('masscast'));
         $this->assertEquals('null', $response->getCookie('masscast')->getValue());
 
         foreach ($response->getCookies() as $cookie) {

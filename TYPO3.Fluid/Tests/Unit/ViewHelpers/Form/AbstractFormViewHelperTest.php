@@ -31,12 +31,12 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
 		}');
         $object = $this->getMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
 
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
         $viewHelper->expects($this->any())->method('prefixFieldName')->with('theName')->will($this->returnValue('prefix[theName]'));
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
@@ -56,12 +56,12 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
 		}');
         $object = $this->getMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
 
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
         $viewHelper->expects($this->any())->method('prefixFieldName')->with('theName')->will($this->returnValue('prefix[theName]'));
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
@@ -81,12 +81,12 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
 		}');
         $object = $this->getMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(null));
 
         $expectedResult = chr(10) . '<!-- Object of type ' . get_class($object) . ' is without identity -->' . chr(10);
 
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, array('prefixFieldName', 'registerFieldNameForFormTokenGeneration'), array(), '', false);
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');
@@ -98,7 +98,7 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
      */
     public function prefixFieldNameReturnsEmptyStringIfGivenFieldNameIsNULL()
     {
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper', array('dummy'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper::class, array('dummy'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
         $this->assertSame('', $viewHelper->_call('prefixFieldName', null));
@@ -109,7 +109,7 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
      */
     public function prefixFieldNameReturnsEmptyStringIfGivenFieldNameIsEmpty()
     {
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper', array('dummy'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper::class, array('dummy'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
         $this->assertSame('', $viewHelper->_call('prefixFieldName', ''));
@@ -120,10 +120,10 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
      */
     public function prefixFieldNameReturnsGivenFieldNameIfFieldNamePrefixIsEmpty()
     {
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper', array('dummy'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper::class, array('dummy'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->viewHelperVariableContainerData = array(
-            'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
+            \TYPO3\Fluid\ViewHelpers\FormViewHelper::class => array(
                 'fieldNamePrefix' => '',
             )
         );
@@ -136,10 +136,10 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
      */
     public function prefixFieldNamePrefixesGivenFieldNameWithFieldNamePrefix()
     {
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper', array('dummy'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper::class, array('dummy'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->viewHelperVariableContainerData = array(
-            'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
+            \TYPO3\Fluid\ViewHelpers\FormViewHelper::class => array(
                 'fieldNamePrefix' => 'somePrefix',
             )
         );
@@ -152,10 +152,10 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
      */
     public function prefixFieldNamePreservesSquareBracketsOfFieldName()
     {
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper', array('dummy'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelper::class, array('dummy'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->viewHelperVariableContainerData = array(
-            'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
+            \TYPO3\Fluid\ViewHelpers\FormViewHelper::class => array(
                 'fieldNamePrefix' => 'somePrefix[foo]',
             )
         );

@@ -40,7 +40,7 @@ class IsOperation extends AbstractOperation
      *
      * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the filter arguments
-     * @return boolean
+     * @return void|boolean
      */
     public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
     {

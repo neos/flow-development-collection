@@ -44,7 +44,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function format($date, $format)
     {
-        if ($date instanceof \DateTime) {
+        if ($date instanceof \DateTimeInterface) {
             return $date->format($format);
         } elseif ($date instanceof \DateInterval) {
             return $date->format($format);
@@ -127,10 +127,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the day of month of a date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The day of month of the given date
      */
-    public function dayOfMonth(\DateTime $dateTime)
+    public function dayOfMonth(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('d');
     }
@@ -138,10 +138,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the month of a date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The month of the given date
      */
-    public function month(\DateTime $dateTime)
+    public function month(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('m');
     }
@@ -149,10 +149,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the year of a date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The year of the given date
      */
-    public function year(\DateTime $dateTime)
+    public function year(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('Y');
     }
@@ -160,10 +160,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the hour of a date (24 hour format)
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The hour of the given date
      */
-    public function hour(\DateTime $dateTime)
+    public function hour(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('H');
     }
@@ -171,10 +171,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the minute of a date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The minute of the given date
      */
-    public function minute(\DateTime $dateTime)
+    public function minute(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('i');
     }
@@ -182,10 +182,10 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the second of a date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      * @return integer The second of the given date
      */
-    public function second(\DateTime $dateTime)
+    public function second(\DateTimeInterface $dateTime)
     {
         return (integer)$dateTime->format('s');
     }

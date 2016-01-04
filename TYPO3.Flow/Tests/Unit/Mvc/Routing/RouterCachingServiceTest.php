@@ -12,10 +12,12 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  */
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 
@@ -51,6 +53,16 @@ class RouterCachingServiceTest extends UnitTestCase
     protected $mockSystemLogger;
 
     /**
+     * @var ApplicationContext|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockApplicationContext;
+
+    /**
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockObjectManager;
+
+    /**
      * @var Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
@@ -65,26 +77,101 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->routerCachingService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\RouterCachingService', array('dummy'));
+        $this->routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('dummy'));
 
-        $this->mockRouteCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\VariableFrontend')->disableOriginalConstructor()->getMock();
+        $this->mockRouteCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->routerCachingService, 'routeCache', $this->mockRouteCache);
 
-        $this->mockResolveCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\StringFrontend')->disableOriginalConstructor()->getMock();
+        $this->mockResolveCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->routerCachingService, 'resolveCache', $this->mockResolveCache);
 
-        $this->mockPersistenceManager  = $this->getMockBuilder('TYPO3\Flow\Persistence\PersistenceManagerInterface')->getMock();
+        $this->mockPersistenceManager  = $this->getMockBuilder(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->getMock();
         $this->inject($this->routerCachingService, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockSystemLogger  = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+        $this->mockSystemLogger  = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
         $this->inject($this->routerCachingService, 'systemLogger', $this->mockSystemLogger);
 
-        $this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager  = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->any())->method('getContext')->will($this->returnValue($this->mockApplicationContext));
+        $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);
+
+        $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);
+
+        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getMethod')->will($this->returnValue('GET'));
         $this->mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue('some/route/path'));
-        $this->mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+        $this->mockUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
         $this->mockUri->expects($this->any())->method('getHost')->will($this->returnValue('subdomain.domain.com'));
         $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockUri));
+    }
+
+    /**
+     * @test
+     */
+    public function initializeObjectDoesNotFlushCachesInProductionContext()
+    {
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(false));
+        $this->mockRouteCache->expects($this->never())->method('get');
+        $this->mockRouteCache->expects($this->never())->method('flush');
+        $this->mockResolveCache->expects($this->never())->method('flush');
+
+        $this->routerCachingService->_call('initializeObject');
+    }
+
+    /**
+     * @test
+     */
+    public function initializeDoesNotFlushCachesInDevelopmentContextIfRoutingSettingsHaveNotChanged()
+    {
+        $cachedRoutingSettings = ['Some.Package' => true, 'Some.OtherPackage' => ['position' => 'start', 'suffix' => 'Foo', 'variables' => ['foo' => 'bar']]];
+
+        $actualRoutingSettings = $cachedRoutingSettings;
+
+        $this->inject($this->routerCachingService, 'routingSettings', $actualRoutingSettings);
+
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
+        $this->mockRouteCache->expects($this->atLeastOnce())->method('get')->with('routingSettings')->will($this->returnValue($cachedRoutingSettings));
+
+        $this->mockRouteCache->expects($this->never())->method('flush');
+        $this->mockResolveCache->expects($this->never())->method('flush');
+
+        $this->routerCachingService->_call('initializeObject');
+    }
+
+    /**
+     * @test
+     */
+    public function initializeFlushesCachesInDevelopmentContextIfRoutingSettingsHaveChanged()
+    {
+        $cachedRoutingSettings = ['Some.Package' => true, 'Some.OtherPackage' => ['position' => 'start', 'suffix' => 'Foo', 'variables' => ['foo' => 'bar']]];
+
+        $actualRoutingSettings = $cachedRoutingSettings;
+        $actualRoutingSettings['Some.OtherPackage']['variables']['foo'] = 'baz';
+
+        $this->inject($this->routerCachingService, 'routingSettings', $actualRoutingSettings);
+
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
+        $this->mockRouteCache->expects($this->atLeastOnce())->method('get')->with('routingSettings')->will($this->returnValue($cachedRoutingSettings));
+
+        $this->mockRouteCache->expects($this->once())->method('flush');
+        $this->mockResolveCache->expects($this->once())->method('flush');
+
+        $this->routerCachingService->_call('initializeObject');
+    }
+
+    /**
+     * @test
+     */
+    public function initializeFlushesCachesInDevelopmentContextIfRoutingSettingsWhereNotStoredPreviously()
+    {
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
+        $this->mockRouteCache->expects($this->atLeastOnce())->method('get')->with('routingSettings')->will($this->returnValue(false));
+
+        $this->mockRouteCache->expects($this->once())->method('flush');
+        $this->mockResolveCache->expects($this->once())->method('flush');
+
+        $this->routerCachingService->_call('initializeObject');
     }
 
     /**
@@ -162,7 +249,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $matchResults = array('some' => array('matchResults' => array('uuid', $uuid1)), 'foo' => $uuid2);
 
         /** @var RouterCachingService|\PHPUnit_Framework_MockObject_MockObject $routerCachingService */
-        $routerCachingService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\RouterCachingService', array('buildRouteCacheIdentifier'));
+        $routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('buildRouteCacheIdentifier'));
         $routerCachingService->expects($this->atLeastOnce())->method('buildRouteCacheIdentifier')->with($this->mockHttpRequest)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'routeCache', $this->mockRouteCache);
 
@@ -213,7 +300,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $uuid2 = '302abe9c-7d07-4200-a868-478586019290';
         $routeValues = array('some' => array('routeValues' => array('uuid', $uuid1)), 'foo' => $uuid2);
 
-        $routerCachingService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\RouterCachingService', array('buildResolveCacheIdentifier'));
+        $routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('buildResolveCacheIdentifier'));
         $routerCachingService->expects($this->atLeastOnce())->method('buildResolveCacheIdentifier')->with($routeValues)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'resolveCache', $this->mockResolveCache);
 
@@ -253,7 +340,7 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function storeResolvedUriPathConvertsObjectsImplementingCacheAwareInterfaceToCacheEntryIdentifier()
     {
-        $mockObject = $this->getMock('TYPO3\Flow\Cache\CacheAwareInterface');
+        $mockObject = $this->getMock(\TYPO3\Flow\Cache\CacheAwareInterface::class);
 
         $mockObject->expects($this->atLeastOnce())->method('getCacheEntryIdentifier')->will($this->returnValue('objectIdentifier'));
 

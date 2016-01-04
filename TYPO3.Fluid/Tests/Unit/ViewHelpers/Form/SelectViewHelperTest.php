@@ -32,7 +32,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         parent::setUp();
         $this->arguments['name'] = '';
         $this->arguments['sortByOptionLabel'] = false;
-        $this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper', array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
+        $this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
     }
 
     /**
@@ -180,7 +180,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $user = new \TYPO3\Fluid\ViewHelpers\Fixtures\UserDomainClass(1, 'Sebastian', 'Düvel');
 
         $this->viewHelperVariableContainerData = array(
-            'TYPO3\Fluid\ViewHelpers\FormViewHelper' => array(
+            \TYPO3\Fluid\ViewHelpers\FormViewHelper::class => array(
                 'formObjectName' => 'someFormObjectName',
                 'formObject' => $user,
             )
@@ -196,7 +196,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['selectAllByDefault'] = null;
 
         /** @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPersistenceManager */
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($user->getInterests())->will($this->returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -217,7 +217,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function selectOnDomainObjectsCreatesExpectedOptions()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(2));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -287,7 +287,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function multipleSelectOnDomainObjectsCreatesExpectedOptionsWithoutOptionValueField()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(
             function ($object) {
                 return $object->getId();
@@ -327,7 +327,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesUuidForValueAndLabel()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -353,7 +353,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesToStringForLabelIfAvailable()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -362,7 +362,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="fakeUUID">toStringResult</option>' . chr(10));
         $this->tagBuilder->expects($this->once())->method('render');
 
-        $user = $this->getMock('TYPO3\Fluid\ViewHelpers\Fixtures\UserDomainClass', array('__toString'), array(1, 'Ingmar', 'Schlecht'));
+        $user = $this->getMock(\TYPO3\Fluid\ViewHelpers\Fixtures\UserDomainClass::class, array('__toString'), array(1, 'Ingmar', 'Schlecht'));
         $user->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('toStringResult'));
 
         $this->arguments['options'] = array(
@@ -381,7 +381,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function selectOnDomainObjectsThrowsExceptionIfNoValueCanBeFound()
     {
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -462,7 +462,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
     {
         $this->arguments['options'] = array('foo' => 'bar');
         $this->arguments['translate'] = array('by' => 'id');
-        $viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper', array('getTranslatedLabel', 'setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
+        $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper::class, array('getTranslatedLabel', 'setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
         $viewHelper->expects($this->once())->method('getTranslatedLabel')->with('foo', 'bar');
@@ -477,7 +477,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['translate'] = array('by' => 'id');
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->once())->method('translateById')->with('value1', array(), null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
@@ -491,7 +491,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['translate'] = array('by' => 'label');
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->with('label1', array(), null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
@@ -505,7 +505,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['translate'] = array('by' => 'label', 'using' => 'value');
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->with('value1', array(), null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
@@ -519,7 +519,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['translate'] = array('by' => 'id', 'using' => 'label');
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->once())->method('translateById')->with('label1', array(), null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
@@ -533,7 +533,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['translate'] = array('by' => 'id', 'using' => 'label', 'locale' => 'dk', 'source' => 'WeirdMessageCatalog', 'package' => 'Foo.Bar', 'prefix' => 'somePrefix.');
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->once())->method('translateById')->with('somePrefix.label1', array(), null, new \TYPO3\Flow\I18n\Locale('dk'), 'WeirdMessageCatalog', 'Foo.Bar');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
@@ -596,7 +596,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
         $this->arguments['prependOptionLabel'] = 'select';
         $this->arguments['translate'] = array('by' => 'id', 'using' => 'label');
 
-        $mockTranslator = $this->getMock('TYPO3\Flow\I18n\Translator');
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         $mockTranslator->expects($this->at(0))->method('translateById')->with('select', array(), null, null, 'Main', '')->will($this->returnValue('translated label'));
         $this->viewHelper->_set('translator', $mockTranslator);
 

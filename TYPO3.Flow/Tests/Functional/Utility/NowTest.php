@@ -21,8 +21,8 @@ class NowTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function nowReturnsAUniqueTimestamp()
     {
-        $now = $this->objectManager->get('TYPO3\Flow\Utility\Now');
-        $alsoNow = $this->objectManager->get('TYPO3\Flow\Utility\Now');
+        $now = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
+        $alsoNow = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
         $this->assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
     }
 }

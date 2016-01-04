@@ -27,7 +27,7 @@ class ObjectPathMappingRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Mvc\Routing\ObjectPathMapping';
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Mvc\Routing\ObjectPathMapping::class;
 
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.

@@ -95,7 +95,7 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces)
     {
-        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         $this->assertSame($expectedPieces, $actualPieces);
     }

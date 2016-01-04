@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class UuidValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
 {
-    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\UuidValidator';
+    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\UuidValidator::class;
 
     /**
      * @test

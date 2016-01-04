@@ -106,7 +106,8 @@ class Context
         if (!is_callable($callback)) {
             throw new EvaluationException('Method "' . $method . '" is not callable', 1344350374);
         }
-        for ($i = 0; $i < count($arguments); $i++) {
+        $argumentsCount = count($arguments);
+        for ($i = 0; $i < $argumentsCount; $i++) {
             if ($arguments[$i] instanceof Context) {
                 $arguments[$i] = $arguments[$i]->unwrap();
             }

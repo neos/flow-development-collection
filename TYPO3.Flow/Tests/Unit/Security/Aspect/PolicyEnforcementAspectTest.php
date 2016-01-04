@@ -46,10 +46,10 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', false);
-        $this->mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', false);
-        $this->mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', false);
-        $this->mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $this->mockJoinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class, array(), array(), '', false);
+        $this->mockAdviceChain = $this->getMock(\TYPO3\Flow\Aop\Advice\AdviceChain::class, array(), array(), '', false);
+        $this->mockPolicyEnforcementInterceptor = $this->getMock(\TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement::class, array(), array(), '', false);
+        $this->mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
         $this->policyEnforcementAspect = new PolicyEnforcementAspect($this->mockPolicyEnforcementInterceptor, $this->mockSecurityContext);
     }
 
@@ -83,7 +83,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
         $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-        //$this->mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($this->mockJoinPoint);
+        // $this->mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($this->mockJoinPoint);
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -99,7 +99,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
         $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-        //$this->mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
+        // $this->mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -112,7 +112,7 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
         $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
-        //$this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
+        // $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -139,9 +139,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
         $this->mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
-        //$this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
+        // $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
-        //
         $this->assertEquals($someResult, $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint));
     }
 

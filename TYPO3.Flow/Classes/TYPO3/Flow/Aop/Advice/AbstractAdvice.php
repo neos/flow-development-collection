@@ -124,9 +124,9 @@ class AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface
     protected function emitAdviceInvoked($aspectObject, $methodName, $joinPoint)
     {
         if ($this->dispatcher === null) {
-            $this->dispatcher = $this->objectManager->get('TYPO3\Flow\SignalSlot\Dispatcher');
+            $this->dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
         }
 
-        $this->dispatcher->dispatch('TYPO3\Flow\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
+        $this->dispatcher->dispatch(\TYPO3\Flow\Aop\Advice\AbstractAdvice::class, 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
     }
 }
