@@ -45,6 +45,13 @@ class RedirectionService
     protected $exit;
 
     /**
+     * Runtime cache to avoid creating multiple time the same redirection
+     *
+     * @var array
+     */
+    protected $runtimeCache = [];
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -147,12 +154,15 @@ class RedirectionService
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = 301)
     {
-        $sourceUriPath = trim($sourceUriPath, '/');
-        $targetUriPath = trim($targetUriPath, '/');
+        $hash = md5($sourceUriPath . $targetUriPath . $statusCode);
+        if (isset($this->runtimeCache[$hash])) {
+            return $this->runtimeCache[$hash];
+        }
         $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode);
         $this->updateDependingRedirects($redirection);
         $this->redirectionRepository->add($redirection);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
+        $this->runtimeCache[$hash] = $redirection;
         return $redirection;
     }
 
