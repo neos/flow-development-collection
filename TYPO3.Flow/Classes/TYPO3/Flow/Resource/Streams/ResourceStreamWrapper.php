@@ -302,6 +302,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
         }
 
         if (is_resource($resourceUriOrStream)) {
+            $this->handle = $resourceUriOrStream;
             return $resourceUriOrStream;
         }
 
