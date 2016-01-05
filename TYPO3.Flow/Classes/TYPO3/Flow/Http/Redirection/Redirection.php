@@ -76,12 +76,4 @@ class Redirection
     {
         return $this->statusCode;
     }
-
-    /**
-     * @return string
-     */
-    public function getStatusLine()
-    {
-        return sprintf('HTTP/1.1 %d %s', $this->statusCode, Response::getStatusMessageByCode($this->statusCode));
-    }
 }

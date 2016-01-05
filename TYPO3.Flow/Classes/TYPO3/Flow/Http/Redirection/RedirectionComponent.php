@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Http\Redirection;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Component\ComponentInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
@@ -35,10 +36,7 @@ class RedirectionComponent implements ComponentInterface
     protected $redirectionService;
 
     /**
-     * Resolve a route for the request
-     *
-     * Stores the resolved route values in the ComponentContext to pass them
-     * to other components. They can be accessed via ComponentContext::getParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults');
+     * Check if the current request need a redirection
      *
      * @param ComponentContext $componentContext
      * @return void
@@ -50,8 +48,10 @@ class RedirectionComponent implements ComponentInterface
         if ($cachedMatchResults !== false) {
             return;
         }
-        if ($this->redirectionService->triggerRedirectIfApplicable($httpRequest)) {
-            $componentContext->setParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', true);
+        $response = $this->redirectionService->buildResponseIfApplicable($httpRequest);
+        if ($response !== null) {
+            $componentContext->replaceHttpResponse($response);
+            $componentContext->setParameter(ComponentChain::class, 'cancel', true);
         }
     }
 }

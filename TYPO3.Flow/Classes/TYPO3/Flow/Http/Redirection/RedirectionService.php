@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http\Redirection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request as Request;
+use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 
 /**
@@ -38,57 +39,43 @@ class RedirectionService
     protected $routerCachingService;
 
     /**
-     * Make exit() a closure so it can be manipulated during tests
-     *
-     * @var \Closure
-     */
-    protected $exit;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->exit = function () { exit; };
-    }
-
-    /**
-     * Searches for an applicable redirection record and sends redirect headers if one was found
+     * Searches for an applicable redirection record and create HTTP response
      *
      * @param Request $httpRequest
-     * @return boolean
+     * @return Response|null
      * @api
      */
-    public function triggerRedirectIfApplicable(Request $httpRequest)
+    public function buildResponseIfApplicable(Request $httpRequest)
     {
         try {
             $redirection = $this->redirectionStorage->getOneBySourceUriPath($httpRequest->getRelativePath());
+            if ($redirection === null) {
+                return null;
+            }
+            return $this->buildResponse($httpRequest, $redirection);
         } catch (\Exception $exception) {
             // skip triggering the redirect if there was an error accessing the database (wrong credentials, ...)
-            return false;
+            return null;
         }
-        if ($redirection === null) {
-            return false;
-        }
-        $this->sendRedirectHeaders($httpRequest, $redirection);
-        $this->exit->__invoke();
-        return true;
     }
 
     /**
      * @param Request $httpRequest
      * @param Redirection $redirection
-     * @return void
+     * @return Response|null
      */
-    protected function sendRedirectHeaders(Request $httpRequest, Redirection $redirection)
+    protected function buildResponse(Request $httpRequest, Redirection $redirection)
     {
         if (headers_sent() === true) {
-            return;
+            return null;
         }
-        if ($redirection->getStatusCode() >= 300 && $redirection->getStatusCode() <= 399) {
-            header('Location: ' . $httpRequest->getBaseUri() . $redirection->getTargetUriPath());
+        $response = new Response();
+        $statusCode = $redirection->getStatusCode();
+        $response->setStatus($statusCode);
+        if ($statusCode >= 300 && $statusCode <= 399) {
+            $response->setHeader('Location', $httpRequest->getBaseUri() . $redirection->getTargetUriPath());
         }
-        header($redirection->getStatusLine());
+        return $response;
     }
 
     /**
