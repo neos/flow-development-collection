@@ -51,5 +51,4 @@ class ResourceTest extends FunctionalTestCase
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
         $this->assertEquals('fixture', file_get_contents('resource://'.$resource->getSha1()));
     }
-
 }
