@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Mvc\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Redirection\RedirectionService;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -44,12 +43,6 @@ class Router implements RouterInterface
      * @var RouterCachingService
      */
     protected $routerCachingService;
-
-    /**
-     * @var RedirectionService
-     * @Flow\Inject
-     */
-    protected $redirectionService;
 
     /**
      * Array containing the configuration for all routes
@@ -108,8 +101,6 @@ class Router implements RouterInterface
         if ($cachedMatchResults !== false) {
             return $cachedMatchResults;
         }
-        // TODO: decouple redirect handling from the router
-        $this->redirectionService->triggerRedirectIfApplicable($httpRequest);
         $this->lastMatchedRoute = null;
         $this->createRoutesFromConfiguration();
 

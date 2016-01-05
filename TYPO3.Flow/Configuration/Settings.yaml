@@ -156,8 +156,10 @@ TYPO3:
 
         'process':
           chain:
-            'routing':
+            'redirection':
               position: 'start'
+              component: 'TYPO3\Flow\Http\Redirection\RedirectionComponent'
+            'routing':
               component: 'TYPO3\Flow\Mvc\Routing\RoutingComponent'
             'dispatching':
               component: 'TYPO3\Flow\Mvc\DispatchComponent'

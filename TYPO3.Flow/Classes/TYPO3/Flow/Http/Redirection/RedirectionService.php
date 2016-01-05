@@ -56,7 +56,7 @@ class RedirectionService
      * Searches for an applicable redirection record and sends redirect headers if one was found
      *
      * @param Request $httpRequest
-     * @return void
+     * @return boolean
      * @api
      */
     public function triggerRedirectIfApplicable(Request $httpRequest)
@@ -65,13 +65,14 @@ class RedirectionService
             $redirection = $this->redirectionStorage->getOneBySourceUriPath($httpRequest->getRelativePath());
         } catch (\Exception $exception) {
             // skip triggering the redirect if there was an error accessing the database (wrong credentials, ...)
-            return;
+            return false;
         }
         if ($redirection === null) {
-            return;
+            return false;
         }
         $this->sendRedirectHeaders($httpRequest, $redirection);
         $this->exit->__invoke();
+        return true;
     }
 
     /**
