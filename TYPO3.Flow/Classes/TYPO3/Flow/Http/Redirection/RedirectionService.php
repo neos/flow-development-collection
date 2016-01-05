@@ -88,4 +88,16 @@ class RedirectionService
         }
         header($redirection->getStatusLine());
     }
+
+    /**
+     * Signals that a redirection has been created.
+     *
+     * @param Redirection $redirection
+     * @return void
+     * @Flow\Signal
+     * @api
+     */
+    public function emitRedirectionCreated(Redirection $redirection)
+    {
+    }
 }

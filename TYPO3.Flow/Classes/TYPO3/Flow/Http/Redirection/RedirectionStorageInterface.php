@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\Flow\Http\Redirection;
 /*
  * This file is part of the TYPO3.Flow package.
  *
@@ -8,7 +9,6 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-namespace TYPO3\Flow\Http\Redirection;
 
 /**
  * Redirection Storage Interface
