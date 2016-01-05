@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Command;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Http\Redirection\Redirection;
-use TYPO3\Flow\Http\Redirection\RedirectionService;
+use TYPO3\Flow\Http\Redirection\RedirectionStorageInterface;
 
 /**
  * Command controller for tasks related to redirects
@@ -25,9 +25,9 @@ class RedirectionCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var RedirectionService
+     * @var RedirectionStorageInterface
      */
-    protected $redirectionService;
+    protected $redirectionStorage;
 
     /**
      * List all redirections
@@ -38,7 +38,7 @@ class RedirectionCommandController extends CommandController
      */
     public function listCommand()
     {
-        $redirections = $this->redirectionService->getAll();
+        $redirections = $this->redirectionStorage->getAll();
 
         $numberOfRedirects = count($redirections);
         if ($numberOfRedirects < 1) {
@@ -66,12 +66,12 @@ class RedirectionCommandController extends CommandController
      */
     public function removeCommand($sourcePath)
     {
-        $redirection = $this->redirectionService->getOneBySourceUriPath($sourcePath);
+        $redirection = $this->redirectionStorage->getOneBySourceUriPath($sourcePath);
         if ($redirection === null) {
             $this->outputLine('There is no redirection with the source URI path "%s"', array($sourcePath));
             $this->quit(1);
         }
-        $this->redirectionService->removeOneBySourceUriPath($sourcePath);
+        $this->redirectionStorage->removeOneBySourceUriPath($sourcePath);
         $this->outputLine('Removed redirection with the source URI path "%s"', array($sourcePath));
     }
 
@@ -84,13 +84,13 @@ class RedirectionCommandController extends CommandController
      */
     public function removeAllCommand()
     {
-        $redirections = $this->redirectionService->getAll();
+        $redirections = $this->redirectionStorage->getAll();
         $numberOfRedirects = count($redirections);
         if ($numberOfRedirects < 1) {
             $this->outputLine('There are no registered redirections');
             $this->quit();
         }
-        $this->redirectionService->removeAll();
+        $this->redirectionStorage->removeAll();
         if ($numberOfRedirects === 1) {
             $this->outputLine('Removed one redirection');
         } else {
@@ -110,7 +110,7 @@ class RedirectionCommandController extends CommandController
      */
     public function addCommand($sourcePath, $targetPath, $statusCode = 301)
     {
-        $this->redirectionService->addRedirection($sourcePath, $targetPath, $statusCode);
+        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode);
         $this->outputLine('New redirection created!');
     }
 }
