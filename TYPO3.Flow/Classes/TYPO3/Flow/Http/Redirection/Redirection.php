@@ -56,8 +56,8 @@ class Redirection
      */
     public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301)
     {
-        $this->sourceUriPath = $sourceUriPath;
-        $this->targetUriPath = $targetUriPath;
+        $this->sourceUriPath = trim($sourceUriPath, '/');
+        $this->targetUriPath = trim($targetUriPath, '/');
         $this->statusCode = $statusCode;
     }
 
