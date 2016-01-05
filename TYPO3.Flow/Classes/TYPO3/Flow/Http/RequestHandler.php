@@ -109,6 +109,7 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $componentContext = new ComponentContext($this->request, $this->response);
         $this->baseComponentChain->handle($componentContext);
+        $this->response = $this->baseComponentChain->getResponse();
 
         $this->response->send();
 
