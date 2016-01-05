@@ -11,8 +11,12 @@ namespace TYPO3\Flow\Http\Redirection\Storage;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
 use TYPO3\Flow\Persistence\Repository;
 
 /**
@@ -23,6 +27,12 @@ use TYPO3\Flow\Persistence\Repository;
  */
 class RedirectionRepository extends Repository
 {
+    /**
+     * @Flow\Inject
+     * @var ObjectManager
+     */
+    protected $entityManager;
+
     /**
      * @var array
      */
@@ -54,5 +64,42 @@ class RedirectionRepository extends Repository
         $query->matching($query->equals('targetUriPathHash', md5(trim($targetUriPath, '/'))));
 
         return $query->execute()->getFirst();
+    }
+
+    /**
+     * Finds all objects and return an IterableResult
+     *
+     * @param callable $callback
+     * @return \Generator<RedirectionDto>
+     */
+    public function findAll(callable $callback = null)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $this->iterate($queryBuilder
+            ->select('Redirection')
+            ->from($this->getEntityClassName(), 'Redirection')
+            ->getQuery()->iterate(), $callback);
+    }
+
+    /**
+     * Iterator over an IterableResult and return a Generator
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator<RedirectionDto>
+     */
+    protected function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            /** @var Redirection $object */
+            $object = current($object);
+            yield new RedirectionDto($object->getSourceUriPath(), $object->getTargetUriPath(), $object->getStatusCode());
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+            ++$iteration;
+        }
     }
 }
