@@ -21,6 +21,11 @@ use TYPO3\Flow\Http\Response;
  * @see RedirectionService
  *
  * @Flow\Entity
+ * @ORM\Table(
+ * 	indexes={
+ * 		@ORM\Index(name="targeturipathhash",columns={"targeturipathhash"})
+ * 	}
+ * )
  */
 class Redirection
 {
@@ -28,10 +33,18 @@ class Redirection
      * Relative URI path for which this redirect should be triggered
      *
      * @var string
-     * @ORM\Column(length=500)
-     * @Flow\Identity
+     * @ORM\Column(length=4000)
      */
     protected $sourceUriPath;
+
+    /**
+     * MD5 hash of the Source Uri Path
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     * @Flow\Identity
+     */
+    protected $sourceUriPathHash;
 
     /**
      * Target URI path to which a redirect should be pointed
@@ -40,6 +53,14 @@ class Redirection
      * @ORM\Column(length=500)
      */
     protected $targetUriPath;
+
+    /**
+     * MD5 hash of the Target Uri Path
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     */
+    protected $targetUriPathHash;
 
     /**
      * Status code to be send with the redirect header
@@ -57,7 +78,8 @@ class Redirection
     public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301)
     {
         $this->sourceUriPath = trim($sourceUriPath, '/');
-        $this->targetUriPath = trim($targetUriPath, '/');
+        $this->sourceUriPathHash = md5($this->sourceUriPath);
+        $this->setTargetUriPath($targetUriPath);
         $this->statusCode = $statusCode;
     }
 
@@ -67,7 +89,7 @@ class Redirection
      */
     public function update($targetUriPath, $statusCode)
     {
-        $this->targetUriPath = $targetUriPath;
+        $this->setTargetUriPath($targetUriPath);
         $this->statusCode = $statusCode;
     }
 
@@ -85,7 +107,8 @@ class Redirection
      */
     public function setTargetUriPath($targetUriPath)
     {
-        $this->targetUriPath = $targetUriPath;
+        $this->targetUriPath = trim($targetUriPath, '/');
+        $this->targetUriPathHash = md5($this->targetUriPath);
     }
 
     /**

@@ -105,7 +105,6 @@ class RedirectionService
      */
     public function getOneBySourceUriPath($sourceUriPath)
     {
-        $sourceUriPath = trim($sourceUriPath, '/');
         return $this->redirectionRepository->findOneBySourceUriPath($sourceUriPath);
     }
 

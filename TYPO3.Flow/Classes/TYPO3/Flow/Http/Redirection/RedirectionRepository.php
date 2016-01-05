@@ -29,4 +29,30 @@ class RedirectionRepository extends Repository
     protected $defaultOrderings = array(
         'sourceUriPath' => QueryInterface::ORDER_ASCENDING,
     );
+
+    /**
+     * @param string $sourceUriPath
+     * @return Redirection
+     */
+    public function findOneBySourceUriPath($sourceUriPath)
+    {
+        $query = $this->createQuery();
+
+        $query->matching($query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))));
+
+        return $query->execute()->getFirst();
+    }
+
+    /**
+     * @param string $targetUriPath
+     * @return Redirection
+     */
+    public function findOneByTargetUriPath($targetUriPath)
+    {
+        $query = $this->createQuery();
+
+        $query->matching($query->equals('targetUriPathHash', md5(trim($targetUriPath, '/'))));
+
+        return $query->execute()->getFirst();
+    }
 }
