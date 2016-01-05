@@ -1,5 +1,6 @@
 <?php
 namespace TYPO3\Flow\Http\Redirection\Aspect;
+
 /*
  * This file is part of the TYPO3.Flow package.
  *
