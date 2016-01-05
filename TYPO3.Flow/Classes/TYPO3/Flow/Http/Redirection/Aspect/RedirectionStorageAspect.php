@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace TYPO3\Flow\Http\Redirection\Aspect;
 /*
  * This file is part of the TYPO3.Flow package.
  *
@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Http\Redirection;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Http\Redirection\RedirectionService;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
@@ -37,7 +38,7 @@ class RedirectionStorageAspect
     protected $systemLogger;
 
     /**
-     * @Flow\AfterReturning("within(TYPO3\Flow\Http\Redirection\RedirectionStorageInterface) && method(.*->addRedirection())")
+     * @Flow\AfterReturning("within(TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface) && method(.*->addRedirection())")
      * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return void
      */

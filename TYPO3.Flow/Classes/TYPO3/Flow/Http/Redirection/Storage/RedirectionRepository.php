@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace TYPO3\Flow\Http\Redirection\Storage;
 
 /*
  * This file is part of the TYPO3.Flow package.

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace TYPO3\Flow\Http\Redirection\Storage;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -16,7 +16,16 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Response;
 
 /**
- * A Redirection DTO
+ * A Redirection model that represents a HTTP redirect
+ *
+ * @see RedirectionService
+ *
+ * @Flow\Entity
+ * @ORM\Table(
+ * 	indexes={
+ * 		@ORM\Index(name="targeturipathhash",columns={"targeturipathhash"})
+ * 	}
+ * )
  */
 class Redirection
 {
@@ -24,20 +33,40 @@ class Redirection
      * Relative URI path for which this redirect should be triggered
      *
      * @var string
+     * @ORM\Column(length=4000)
      */
     protected $sourceUriPath;
+
+    /**
+     * MD5 hash of the Source Uri Path
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     * @Flow\Identity
+     */
+    protected $sourceUriPathHash;
 
     /**
      * Target URI path to which a redirect should be pointed
      *
      * @var string
+     * @ORM\Column(length=500)
      */
     protected $targetUriPath;
+
+    /**
+     * MD5 hash of the Target Uri Path
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     */
+    protected $targetUriPathHash;
 
     /**
      * Status code to be send with the redirect header
      *
      * @var integer
+     * @Flow\Validate(type="NumberRange", options={ "minimum"=100, "maximum"=599 })
      */
     protected $statusCode;
 
@@ -49,7 +78,18 @@ class Redirection
     public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301)
     {
         $this->sourceUriPath = trim($sourceUriPath, '/');
-        $this->targetUriPath = trim($targetUriPath, '/');
+        $this->sourceUriPathHash = md5($this->sourceUriPath);
+        $this->setTargetUriPath($targetUriPath);
+        $this->statusCode = $statusCode;
+    }
+
+    /**
+     * @param string $targetUriPath
+     * @param integer $statusCode
+     */
+    public function update($targetUriPath, $statusCode)
+    {
+        $this->setTargetUriPath($targetUriPath);
         $this->statusCode = $statusCode;
     }
 
@@ -62,6 +102,16 @@ class Redirection
     }
 
     /**
+     * @param string $targetUriPath
+     * @return void
+     */
+    public function setTargetUriPath($targetUriPath)
+    {
+        $this->targetUriPath = trim($targetUriPath, '/');
+        $this->targetUriPathHash = md5($this->targetUriPath);
+    }
+
+    /**
      * @return string
      */
     public function getTargetUriPath()
@@ -70,18 +120,19 @@ class Redirection
     }
 
     /**
+     * @param integer $statusCode
+     * @return void
+     */
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
+    }
+
+    /**
      * @return integer
      */
     public function getStatusCode()
     {
         return $this->statusCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatusLine()
-    {
-        return sprintf('HTTP/1.1 %d %s', $this->statusCode, Response::getStatusMessageByCode($this->statusCode));
     }
 }

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Command;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Http\Redirection\Redirection;
-use TYPO3\Flow\Http\Redirection\RedirectionStorageInterface;
+use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
 
 /**
  * Command controller for tasks related to redirects

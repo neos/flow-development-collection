@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace TYPO3\Flow\Http\Redirection\Storage;
 /*
  * This file is part of the TYPO3.Flow package.
  *
@@ -9,6 +9,7 @@ namespace TYPO3\Flow\Http\Redirection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
 
 /**
  * Redirection Storage Interface
@@ -19,7 +20,7 @@ interface RedirectionStorageInterface
      * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
-     * @return Redirection or NULL if no redirection exists for the given $sourceUriPath
+     * @return RedirectionDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPath($sourceUriPath);
@@ -27,7 +28,7 @@ interface RedirectionStorageInterface
     /**
      * Returns all registered redirection records
      *
-     * @return \Generator<Redirection>
+     * @return \Generator<RedirectionDto>
      * @api
      */
     public function getAll();

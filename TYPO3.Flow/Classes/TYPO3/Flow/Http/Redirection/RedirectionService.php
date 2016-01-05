@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Http\Redirection;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request as Request;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 

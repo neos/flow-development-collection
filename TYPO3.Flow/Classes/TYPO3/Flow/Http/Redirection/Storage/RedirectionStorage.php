@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace TYPO3\Flow\Http\Redirection\Storage;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Http\Redirection;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Redirection\RedirectionException;
+use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 
 /**
@@ -44,18 +46,22 @@ class RedirectionStorage implements RedirectionStorageInterface
      * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
-     * @return Redirection or NULL if no redirection exists for the given $sourceUriPath
+     * @return RedirectionDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPath($sourceUriPath)
     {
-        return $this->redirectionRepository->findOneBySourceUriPath($sourceUriPath);
+        $redirection = $this->redirectionRepository->findOneBySourceUriPath($sourceUriPath);
+        if ($redirection === null) {
+            return null;
+        }
+        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode());
     }
 
     /**
      * Returns all registered redirection records
      *
-     * @return \Generator<Redirection>
+     * @return \Generator<RedirectionDto>
      * @api
      */
     public function getAll()
@@ -110,7 +116,7 @@ class RedirectionStorage implements RedirectionStorageInterface
         $this->redirectionRepository->add($redirection);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
         $this->runtimeCache[$hash] = $redirection;
-        return $redirection;
+        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode());
     }
 
     /**
