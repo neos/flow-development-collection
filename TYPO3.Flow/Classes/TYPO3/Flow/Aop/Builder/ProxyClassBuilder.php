@@ -315,42 +315,42 @@ class ProxyClassBuilder
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
                 $annotationClass = get_class($annotation);
                 switch ($annotationClass) {
-                    case \TYPO3\Flow\Annotations\Around::class :
+                    case \TYPO3\Flow\Annotations\Around::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\Before::class :
+                    case \TYPO3\Flow\Annotations\Before::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\BeforeAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\AfterReturning::class :
+                    case \TYPO3\Flow\Annotations\AfterReturning::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterReturningAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\AfterThrowing::class :
+                    case \TYPO3\Flow\Annotations\AfterThrowing::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterThrowingAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\After::class :
+                    case \TYPO3\Flow\Annotations\After::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\Pointcut::class :
+                    case \TYPO3\Flow\Annotations\Pointcut::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->expression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->expression, $pointcutFilterComposite, $aspectClassName, $methodName);
                         $aspectContainer->addPointcut($pointcut);
