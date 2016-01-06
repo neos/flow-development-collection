@@ -1144,15 +1144,15 @@ EOD;
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Routes.SomeSuffix' : return $packageRoutes;
-            case 'Flow/Configuration/Testing/Routes.SomeSuffix' : return [];
-            case FLOW_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Routes' : return [];
+            case 'Flow/Configuration/Routes.SomeSuffix': return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes.SomeSuffix': return [];
+            case FLOW_PATH_CONFIGURATION . 'Routes': return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return [];
 
-            case 'Flow/Configuration/Settings' : return [];
-            case 'Flow/Configuration/Testing/Settings' : return [];
-            case FLOW_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Settings' : return [];
+            case 'Flow/Configuration/Settings': return [];
+            case 'Flow/Configuration/Testing/Settings': return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
