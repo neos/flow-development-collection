@@ -227,8 +227,8 @@ class ConfigurationBuilder
                     }
                 break;
                 case 'className':
-                case 'factoryObjectName' :
-                case 'factoryMethodName' :
+                case 'factoryObjectName':
+                case 'factoryMethodName':
                 case 'lifecycleInitializationMethodName':
                 case 'lifecycleShutdownMethodName':
                     $methodName = 'set' . ucfirst($optionName);

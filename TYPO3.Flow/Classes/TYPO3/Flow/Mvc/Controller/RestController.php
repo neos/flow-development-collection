@@ -52,19 +52,19 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $actionName = 'index';
             switch ($this->request->getHttpRequest()->getMethod()) {
                 case 'HEAD':
-                case 'GET' :
+                case 'GET':
                     $actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
                 break;
-                case 'POST' :
+                case 'POST':
                     $actionName = 'create';
                 break;
-                case 'PUT' :
+                case 'PUT':
                     if (!$this->request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'update';
                 break;
-                case 'DELETE' :
+                case 'DELETE':
                     if (!$this->request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }

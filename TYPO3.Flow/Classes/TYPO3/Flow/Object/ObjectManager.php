@@ -479,14 +479,14 @@ class ObjectManager implements ObjectManagerInterface
         $factoryMethodArguments = array();
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
                     $settingPath = explode('.', $argumentInformation['v']);
                     $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                     $factoryMethodArguments[$index] = $this->get($argumentInformation['v']);
                 break;
             }
