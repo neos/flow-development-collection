@@ -106,7 +106,7 @@ class Message
     public function setHeader($name, $values, $replaceExistingHeader = true)
     {
         switch ($name) {
-            case 'Content-Type' :
+            case 'Content-Type':
                 if (stripos($values, 'charset') === false && stripos($values, 'text/') === 0) {
                     $values .= '; charset=' . $this->charset;
                 }

@@ -181,13 +181,13 @@ class Debugger
             $objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
             if ($objectName !== false) {
                 switch (self::$objectManager->getScope($objectName)) {
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE:
                         $scope = 'prototype';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON:
                         $scope = 'singleton';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION:
                         $scope = 'session';
                         break;
                 }

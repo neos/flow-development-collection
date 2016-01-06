@@ -64,7 +64,7 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
             $currentRuntimeEvaluationsDefinition = $filter->getRuntimeEvaluationsDefinition();
 
             switch ($operator) {
-                case '&&' :
+                case '&&':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
                             $this->runtimeEvaluationsDefinition[$operator] = array();
@@ -76,7 +76,7 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
                     }
                     $matches = $matches && $currentFilterMatches;
                 break;
-                case '&&!' :
+                case '&&!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
                             $this->runtimeEvaluationsDefinition[$operator] = array();
@@ -89,7 +89,7 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
                     }
                     $matches = $matches && (!$currentFilterMatches);
                 break;
-                case '||' :
+                case '||':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
                             $this->runtimeEvaluationsDefinition[$operator] = array();
@@ -98,7 +98,7 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
                     }
                     $matches = $matches || $currentFilterMatches;
                 break;
-                case '||!' :
+                case '||!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
                             $this->runtimeEvaluationsDefinition[$operator] = array();

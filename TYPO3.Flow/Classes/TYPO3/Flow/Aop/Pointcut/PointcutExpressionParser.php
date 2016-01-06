@@ -143,20 +143,20 @@ class PointcutExpressionParser
                 $signaturePattern = $this->getSubstringBetweenParentheses($expression);
                 switch ($pointcutDesignator) {
                     case 'classAnnotatedWith':
-                    case 'class' :
+                    case 'class':
                     case 'methodAnnotatedWith':
-                    case 'methodTaggedWith' :
-                    case 'method' :
-                    case 'within' :
-                    case 'filter' :
-                    case 'setting' :
+                    case 'methodTaggedWith':
+                    case 'method':
+                    case 'within':
+                    case 'filter':
+                    case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
                     break;
-                    case 'evaluate' :
+                    case 'evaluate':
                         $this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
                     break;
-                    default :
+                    default:
                         throw new \TYPO3\Flow\Aop\Exception('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet), defined in ' . $this->sourceHint, 1168874740);
                 }
             }

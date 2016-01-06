@@ -96,14 +96,14 @@ class LoggingAspect
         $token = $joinPoint->getMethodArgument('authenticationToken');
 
         switch ($token->getAuthenticationStatus()) {
-            case \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL :
+            case \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL:
                 $this->securityLogger->log('Successfully authenticated token: ' . $token, LOG_NOTICE, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
                 $this->alreadyLoggedAuthenticateCall = true;
             break;
-            case \TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS :
+            case \TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS:
                 $this->securityLogger->log('Wrong credentials given for token: ' . $token, LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
             break;
-            case \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN :
+            case \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN:
                 $this->securityLogger->log('No credentials given or no account found for token: ' . $token, LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
             break;
         }

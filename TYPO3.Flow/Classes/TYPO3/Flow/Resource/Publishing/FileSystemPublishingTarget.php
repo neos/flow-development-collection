@@ -249,11 +249,11 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
         }
 
         switch ($this->settings['resource']['publishing']['fileSystem']['mirrorMode']) {
-            case 'copy' :
+            case 'copy':
                 copy($sourcePathAndFilename, $targetPathAndFilename);
                 touch($targetPathAndFilename, filemtime($sourcePathAndFilename));
                 break;
-            case 'link' :
+            case 'link':
                 if (file_exists($targetPathAndFilename)) {
                     if (\TYPO3\Flow\Utility\Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
                         break;
@@ -264,7 +264,7 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
                     symlink($sourcePathAndFilename, $targetPathAndFilename);
                 }
                 break;
-            default :
+            default:
                 throw new \TYPO3\Flow\Resource\Exception('An invalid mirror mode (' . $this->settings['resource']['publishing']['fileSystem']['mirrorMode'] . ') has been configured.', 1256133400);
         }
 

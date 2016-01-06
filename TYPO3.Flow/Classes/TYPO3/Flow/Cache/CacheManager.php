@@ -204,13 +204,13 @@ class CacheManager
     public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles)
     {
         switch ($fileMonitorIdentifier) {
-            case 'Flow_ClassFiles' :
+            case 'Flow_ClassFiles':
                 $this->flushClassCachesByChangedFiles($changedFiles);
                 break;
-            case 'Flow_ConfigurationFiles' :
+            case 'Flow_ConfigurationFiles':
                 $this->flushConfigurationCachesByChangedFiles($changedFiles);
                 break;
-            case 'Flow_TranslationFiles' :
+            case 'Flow_TranslationFiles':
                 $this->flushTranslationCachesByChangedFiles($changedFiles);
                 break;
         }

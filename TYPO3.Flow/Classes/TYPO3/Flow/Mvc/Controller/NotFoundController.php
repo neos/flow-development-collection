@@ -70,11 +70,11 @@ class NotFoundController extends \TYPO3\Flow\Mvc\Controller\AbstractController i
             $this->notFoundView->assign('errorMessage', $this->exception->getMessage());
         }
         switch (get_class($request)) {
-            case 'TYPO3\Flow\Mvc\ActionRequest' :
+            case 'TYPO3\Flow\Mvc\ActionRequest':
                 $response->setStatus(404);
                 $response->setContent($this->notFoundView->render());
                 break;
-            default :
+            default:
                 $response->setContent("\nUnknown command\n\n");
         }
     }
