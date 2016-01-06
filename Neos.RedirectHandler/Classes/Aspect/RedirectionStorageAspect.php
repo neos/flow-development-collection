@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection\Aspect;
+namespace Neos\RedirectHandler\Aspect;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,10 @@ namespace TYPO3\Flow\Http\Redirection\Aspect;
  * source code.
  */
 
+use Neos\RedirectHandler\RedirectionService;
+use Neos\RedirectHandler\Storage\Redirection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Http\Redirection\RedirectionService;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
@@ -28,7 +29,7 @@ class RedirectionStorageAspect
 {
     /**
      * @Flow\Inject
-     * @var RedirectionService
+     * @var \Neos\RedirectHandler\RedirectionService
      */
     protected $redirectionService;
 
@@ -39,7 +40,7 @@ class RedirectionStorageAspect
     protected $systemLogger;
 
     /**
-     * @Flow\AfterReturning("within(TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface) && method(.*->addRedirection())")
+     * @Flow\AfterReturning("within(Neos\RedirectHandler\Storage\RedirectionStorageInterface) && method(.*->addRedirection())")
      * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return void
      */

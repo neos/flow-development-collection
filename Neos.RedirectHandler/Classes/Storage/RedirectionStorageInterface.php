@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection\Storage;
+namespace Neos\RedirectHandler\Storage;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Http\Redirection\Storage;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
+use Neos\RedirectHandler\Redirection as RedirectionDto;
 
 /**
  * Redirection Storage Interface

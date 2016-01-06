@@ -1,0 +1,14 @@
+{
+    "name": "neos/redirecthandler",
+    "type": "typo3-flow-package",
+    "description": "Basic API to handle http redirect with Flow Framework",
+    "license": "GPL-3.0+",
+    "require": {
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\": "Classes"
+        }
+    }
+}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection\Storage;
+namespace Neos\RedirectHandler\Storage;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Http\Redirection\Storage;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Response;
 
 /**
  * A Redirection model that represents a HTTP redirect

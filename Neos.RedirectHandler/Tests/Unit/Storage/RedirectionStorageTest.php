@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Http\Redirection;
+namespace Neos\RedirectHandler\Tests\Unit\Storage;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -11,11 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Http\Redirection;
  * source code.
  */
 
-use TYPO3\Flow\Http\Redirection\RedirectionService;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionRepository;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorage;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
-use TYPO3\Flow\Http\Request;
+use Neos\RedirectHandler\Storage\RedirectionRepository;
+use Neos\RedirectHandler\Storage\RedirectionStorage;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;
 
@@ -48,7 +46,7 @@ class RedirectionStorageTest extends UnitTestCase
         $this->mockRedirectionRepository = $this->getMockBuilder(RedirectionRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')
+        $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)
             ->disableOriginalConstructor()
             ->getMock();
 

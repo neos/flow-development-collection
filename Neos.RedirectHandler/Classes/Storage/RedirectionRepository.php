@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection\Storage;
+namespace Neos\RedirectHandler\Storage;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ namespace TYPO3\Flow\Http\Redirection\Storage;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
+use Neos\RedirectHandler\Redirection as RedirectionDto;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
 use TYPO3\Flow\Persistence\Repository;
 
 /**

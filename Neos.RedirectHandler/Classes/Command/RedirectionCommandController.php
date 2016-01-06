@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Command;
+namespace Neos\RedirectHandler\Command;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -11,10 +11,10 @@ namespace TYPO3\Flow\Command;
  * source code.
  */
 
+use Neos\RedirectHandler\Redirection;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Http\Redirection\Redirection;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
 
 /**
  * Command controller for tasks related to redirects
@@ -49,7 +49,7 @@ class RedirectionCommandController extends CommandController
         $this->outputLine();
         $this->outputLine('Source Path => Target Path                                           Status Code');
         $this->outputLine(str_repeat('-', 80));
-        /** @var $redirection Redirection */
+        /** @var $redirection \Neos\RedirectHandler\Redirection */
         foreach ($redirections as $redirection) {
             $this->outputLine('%s %d', array(str_pad($redirection->getSourceUriPath(), 76), $redirection->getStatusCode()));
             $this->outputLine('  => %s', array($redirection->getTargetUriPath()));

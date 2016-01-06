@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Http\Redirection;
+namespace Neos\RedirectHandler\Tests\Unit;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -11,12 +11,12 @@ namespace TYPO3\Flow\Tests\Unit\Http\Redirection;
  * source code.
  */
 
-use TYPO3\Flow\Http\Redirection\Redirection;
-use TYPO3\Flow\Http\Redirection\RedirectionService;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorage;
-use TYPO3\Flow\Http\Redirection\Storage\RedirectionStorageInterface;
+use Doctrine\DBAL\DBALException;
+use Neos\RedirectHandler\Redirection;
+use Neos\RedirectHandler\RedirectionService;
+use Neos\RedirectHandler\Storage\RedirectionStorage;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -60,7 +60,7 @@ class RedirectionServiceTest extends UnitTestCase
      */
     public function buildResponseIfApplicableReturnsSilentlyIfRedirectionRepositoryThrowsException()
     {
-        $this->mockRedirectionStorage->expects($this->atLeastOnce())->method('getOneBySourceUriPath')->will($this->throwException(new \Doctrine\DBAL\DBALException()));
+        $this->mockRedirectionStorage->expects($this->atLeastOnce())->method('getOneBySourceUriPath')->will($this->throwException(new DBALException()));
 
         $this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest);
     }

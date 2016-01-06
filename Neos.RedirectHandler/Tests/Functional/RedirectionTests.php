@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Http\Redirection;
+namespace Neos\RedirectHandler\Tests\Functional;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Tests\Functional\Http\Redirection;
  * source code.
  */
 
-use TYPO3\Flow\Http\Redirection\RedirectionService;
-use TYPO3\Flow\Http\Redirection\RedirectionRepository;
+use Neos\RedirectHandler\RedirectionService;
+use Neos\RedirectHandler\Storage\RedirectionRepository;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -90,7 +90,7 @@ class RedirectionTests extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Http\Redirection\RedirectionException
+     * @expectedException \Neos\RedirectHandler\Exception
      */
     public function addRedirectThrowsExceptionIfARedirectExistsForTheGivenSourceUriPath()
     {
@@ -103,7 +103,7 @@ class RedirectionTests extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Http\Redirection\RedirectionException
+     * @expectedException \Neos\RedirectHandler\Exception
      */
     public function addRedirectThrowsExceptionIfARedirectExistsForTheGivenTargetUriPath()
     {

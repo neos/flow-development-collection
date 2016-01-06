@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection\Storage;
+namespace Neos\RedirectHandler\Storage;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Http\Redirection\Storage;
  * source code.
  */
 
+use Neos\RedirectHandler\Exception;
+use Neos\RedirectHandler\Redirection as RedirectionDto;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Redirection\RedirectionException;
-use TYPO3\Flow\Http\Redirection\Redirection as RedirectionDto;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 
 /**
@@ -124,7 +124,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      *
      * @param Redirection $newRedirection
      * @return void
-     * @throws RedirectionException if creating the redirect would cause conflicts
+     * @throws Exception if creating the redirect would cause conflicts
      */
     protected function updateDependingRedirects(Redirection $newRedirection)
     {
@@ -137,11 +137,11 @@ class RedirectionStorage implements RedirectionStorageInterface
             if ($existingRedirectionForTargetUriPath->getTargetUriPath() === $newRedirection->getSourceUriPath()) {
                 $this->redirectionRepository->remove($existingRedirectionForTargetUriPath);
             } else {
-                throw new RedirectionException(sprintf('A redirect exists for the target URI path "%s", please remove it first.', $newRedirection->getTargetUriPath()), 1382091526);
+                throw new Exception(sprintf('A redirect exists for the target URI path "%s", please remove it first.', $newRedirection->getTargetUriPath()), 1382091526);
             }
         }
         if ($existingRedirectionForSourceUriPath !== null) {
-            throw new RedirectionException(sprintf('A redirect exists for the source URI path "%s", please remove it first.', $newRedirection->getSourceUriPath()), 1382091456);
+            throw new Exception(sprintf('A redirect exists for the source URI path "%s", please remove it first.', $newRedirection->getSourceUriPath()), 1382091456);
         }
         $obsoleteRedirectionInstances = $this->redirectionRepository->findByTargetUriPath($newRedirection->getSourceUriPath());
         /** @var $obsoleteRedirection Redirection */

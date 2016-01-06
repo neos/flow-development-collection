@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Http\Redirection;
+namespace Neos\RedirectHandler;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.RedirectHandler package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,13 +11,13 @@ namespace TYPO3\Flow\Http\Redirection;
  * source code.
  */
 
-use TYPO3\Flow\Http\Exception;
+use TYPO3\Flow\Http;
 
 /**
  * A generic "redirection" exception
  *
  * @api
  */
-class RedirectionException extends Exception
+class Exception extends Http\Exception
 {
 }
