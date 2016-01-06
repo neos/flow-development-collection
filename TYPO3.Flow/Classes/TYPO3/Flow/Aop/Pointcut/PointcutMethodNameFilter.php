@@ -110,12 +110,12 @@ class PointcutMethodNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilte
         }
 
         switch ($this->methodVisibility) {
-            case 'public' :
+            case 'public':
                 if (!($methodDeclaringClassName !== null && $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName))) {
                     return false;
                 }
                 break;
-            case 'protected' :
+            case 'protected':
                 if (!($methodDeclaringClassName !== null && $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName))) {
                     return false;
                 }

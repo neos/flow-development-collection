@@ -94,10 +94,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
 
         switch (PHP_SAPI) {
-            case 'cli' :
+            case 'cli':
                 $this->echoExceptionCli($exception);
                 break;
-            default :
+            default:
                 $this->echoExceptionWeb($exception);
         }
     }
