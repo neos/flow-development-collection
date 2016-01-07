@@ -12,7 +12,7 @@ namespace Neos\RedirectHandler\Tests\Functional;
  */
 
 use Neos\RedirectHandler\RedirectionService;
-use Neos\RedirectHandler\Storage\RedirectionRepository;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -31,7 +31,7 @@ class RedirectionTests extends FunctionalTestCase
     protected $redirectionService;
 
     /**
-     * @var RedirectionRepository
+     * @var \Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository
      */
     protected $redirectionRepository;
 

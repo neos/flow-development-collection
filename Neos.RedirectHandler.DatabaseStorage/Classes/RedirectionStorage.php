@@ -1,5 +1,5 @@
 <?php
-namespace Neos\RedirectHandler\Storage;
+namespace Neos\RedirectHandler\DatabaseStorage;
 
 /*
  * This file is part of the Neos.RedirectHandler package.
@@ -11,8 +11,11 @@ namespace Neos\RedirectHandler\Storage;
  * source code.
  */
 
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
 use Neos\RedirectHandler\Exception;
 use Neos\RedirectHandler\Redirection as RedirectionDto;
+use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 

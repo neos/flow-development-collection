@@ -10,6 +10,7 @@ namespace Neos\RedirectHandler\Storage;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use Neos\RedirectHandler\Redirection as RedirectionDto;
 
 /**

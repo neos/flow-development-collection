@@ -1,0 +1,16 @@
+{
+    "name": "neos/redirecthandler-databasestorage",
+    "type": "typo3-flow-package",
+    "description": "A plugin for neos/redirecthandler to store redirection in the database",
+    "license": "GPL-3.0+",
+    "require": {
+        "php": ">=5.5.0",
+        "typo3/flow": ">=3.0.0",
+        "neos/redirecthandler": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\DatabaseStorage\\": "Classes"
+        }
+    }
+}

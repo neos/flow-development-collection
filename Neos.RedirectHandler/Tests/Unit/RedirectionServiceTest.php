@@ -14,7 +14,6 @@ namespace Neos\RedirectHandler\Tests\Unit;
 use Doctrine\DBAL\DBALException;
 use Neos\RedirectHandler\Redirection;
 use Neos\RedirectHandler\RedirectionService;
-use Neos\RedirectHandler\Storage\RedirectionStorage;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -46,7 +45,7 @@ class RedirectionServiceTest extends UnitTestCase
     {
         $this->redirectionService = new RedirectionService();
 
-        $this->mockRedirectionStorage = $this->getMockBuilder(RedirectionStorage::class)
+        $this->mockRedirectionStorage = $this->getMockBuilder(RedirectionStorageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

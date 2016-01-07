@@ -1,5 +1,5 @@
 <?php
-namespace Neos\RedirectHandler\Storage;
+namespace Neos\RedirectHandler\DatabaseStorage\Domain\Repository;
 
 /*
  * This file is part of the Neos.RedirectHandler package.
@@ -14,6 +14,7 @@ namespace Neos\RedirectHandler\Storage;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use Neos\RedirectHandler\Redirection as RedirectionDto;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;

@@ -11,8 +11,8 @@ namespace Neos\RedirectHandler\Tests\Unit\Storage;
  * source code.
  */
 
-use Neos\RedirectHandler\Storage\RedirectionRepository;
-use Neos\RedirectHandler\Storage\RedirectionStorage;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
+use Neos\RedirectHandler\DatabaseStorage\RedirectionStorage;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;

@@ -12,7 +12,7 @@ namespace Neos\RedirectHandler\Aspect;
  */
 
 use Neos\RedirectHandler\RedirectionService;
-use Neos\RedirectHandler\Storage\Redirection;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\RedirectHandler\Storage;
+namespace Neos\RedirectHandler\DatabaseStorage\Domain\Model;
 
 /*
  * This file is part of the Neos.RedirectHandler package.
