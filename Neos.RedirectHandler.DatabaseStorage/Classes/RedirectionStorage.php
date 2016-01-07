@@ -49,12 +49,13 @@ class RedirectionStorage implements RedirectionStorageInterface
      * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
+     * @param string $host Full qualified hostname or host pattern
      * @return RedirectionDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
      */
-    public function getOneBySourceUriPath($sourceUriPath)
+    public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
-        $redirection = $this->redirectionRepository->findOneBySourceUriPath($sourceUriPath);
+        $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
         if ($redirection === null) {
             return null;
         }
@@ -64,39 +65,44 @@ class RedirectionStorage implements RedirectionStorageInterface
     /**
      * Returns all registered redirection records
      *
+     * @param string $host Full qualified hostname or host pattern
      * @return \Generator<RedirectionDto>
      * @api
      */
-    public function getAll()
+    public function getAll($host = null)
     {
-        return $this->redirectionRepository->findAll();
+        foreach ($this->redirectionRepository->findAll($host) as $redirection) {
+            yield new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHostPattern());
+        }
     }
 
     /**
      * Removes a redirection for the given $sourceUriPath if it exists
      *
      * @param string $sourceUriPath
+     * @param string $host Full qualified hostname or host pattern
      * @return void
      * @api
      */
-    public function removeOneBySourceUriPath($sourceUriPath)
+    public function removeOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
-        $redirectionToRemove = $this->getOneBySourceUriPath($sourceUriPath);
-        if ($redirectionToRemove === null) {
+        $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
+        if ($redirection === null) {
             return;
         }
-        $this->redirectionRepository->remove($redirectionToRemove);
+        $this->redirectionRepository->remove($redirection);
     }
 
     /**
      * Removes all registered redirection records
      *
+     * @param string $host Full qualified hostname or host pattern
      * @return void
      * @api
      */
-    public function removeAll()
+    public function removeAll($host = null)
     {
-        $this->redirectionRepository->removeAll();
+        $this->redirectionRepository->removeAll($host);
     }
 
     /**
@@ -105,16 +111,40 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
+     * @param array $hostPatterns the list of host patterns
+     * @return array<Redirection> the freshly generated redirections instance
+     * @api
+     */
+    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = 301, array $hostPatterns = [])
+    {
+        $redirections = [];
+        if ($hostPatterns !== []) {
+            array_map(function($hostPattern) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirections) {
+                $redirections[] = $this->addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode, $hostPattern);
+            }, $hostPatterns);
+        } else {
+            $redirections[] = $this->addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode);
+        }
+        return $redirections;
+    }
+
+    /**
+     * Adds a redirection to the repository and updates related redirection instances accordingly
+     *
+     * @param string $sourceUriPath the relative URI path that should trigger a redirect
+     * @param string $targetUriPath the relative URI path the redirect should point to
+     * @param integer $statusCode the status code of the redirect header
+     * @param string $hostPattern the host patterns for the current redirection
      * @return Redirection the freshly generated redirection instance
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = 301)
+    protected function addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode = 301, $hostPattern = null)
     {
-        $hash = md5($sourceUriPath . $targetUriPath . $statusCode);
+        $hash = md5($hostPattern . $sourceUriPath . $targetUriPath . $statusCode);
         if (isset($this->runtimeCache[$hash])) {
             return $this->runtimeCache[$hash];
         }
-        $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode);
+        $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode, $hostPattern);
         $this->updateDependingRedirects($redirection);
         $this->redirectionRepository->add($redirection);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
@@ -132,9 +162,9 @@ class RedirectionStorage implements RedirectionStorageInterface
     protected function updateDependingRedirects(Redirection $newRedirection)
     {
         /** @var $existingRedirectionForSourceUriPath Redirection */
-        $existingRedirectionForSourceUriPath = $this->redirectionRepository->findOneBySourceUriPath($newRedirection->getSourceUriPath());
+        $existingRedirectionForSourceUriPath = $this->redirectionRepository->findOneBySourceUriPathAndHost($newRedirection->getSourceUriPath());
         /** @var $existingRedirectionForTargetUriPath Redirection */
-        $existingRedirectionForTargetUriPath = $this->redirectionRepository->findOneBySourceUriPath($newRedirection->getTargetUriPath());
+        $existingRedirectionForTargetUriPath = $this->redirectionRepository->findOneBySourceUriPathAndHost($newRedirection->getTargetUriPath());
 
         if ($existingRedirectionForTargetUriPath !== null) {
             if ($existingRedirectionForTargetUriPath->getTargetUriPath() === $newRedirection->getSourceUriPath()) {

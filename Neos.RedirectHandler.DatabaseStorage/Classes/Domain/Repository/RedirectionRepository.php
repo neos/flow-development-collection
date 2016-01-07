@@ -13,12 +13,13 @@ namespace Neos\RedirectHandler\DatabaseStorage\Domain\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
-use Neos\RedirectHandler\Redirection as RedirectionDto;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * Repository for redirection instances.
@@ -35,34 +36,54 @@ class RedirectionRepository extends Repository
     protected $entityManager;
 
     /**
+     * @Flow\Inject
+     * @var DomainMatchingStrategy
+     */
+    protected $domainMatchingStrategy;
+
+    /**
      * @var array
      */
     protected $defaultOrderings = array(
-        'sourceUriPath' => QueryInterface::ORDER_ASCENDING,
+        'sourceUriPath' => QueryInterface::ORDER_ASCENDING
     );
 
     /**
      * @param string $sourceUriPath
+     * @param string $host Full qualified hostname or host pattern
      * @return Redirection
      */
-    public function findOneBySourceUriPath($sourceUriPath)
+    public function findOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
+        $hostPattern = $this->hostPatternByHost($host);
         $query = $this->createQuery();
 
-        $query->matching($query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))));
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))),
+                $query->equals('hostPattern', $hostPattern)
+            )
+        );
 
         return $query->execute()->getFirst();
     }
 
     /**
      * @param string $targetUriPath
+     * @param string $host Full qualified hostname or host pattern
      * @return Redirection
      */
-    public function findOneByTargetUriPath($targetUriPath)
+    public function findOneByTargetUriPathAndHost($targetUriPath, $host = null)
     {
+        $hostPattern = $this->hostPatternByHost($host);
         $query = $this->createQuery();
 
-        $query->matching($query->equals('targetUriPathHash', md5(trim($targetUriPath, '/'))));
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('targetUriPathHash', md5(trim($targetUriPath, '/'))),
+                $query->equals('hostPattern', $hostPattern)
+            )
+        );
 
         return $query->execute()->getFirst();
     }
@@ -70,17 +91,28 @@ class RedirectionRepository extends Repository
     /**
      * Finds all objects and return an IterableResult
      *
+     * @param string $host Full qualified hostname or host pattern
      * @param callable $callback
-     * @return \Generator<RedirectionDto>
+     * @return \Generator<Redirection>
      */
-    public function findAll(callable $callback = null)
+    public function findAll($host = null, callable $callback = null)
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
-        return $this->iterate($queryBuilder
-            ->select('Redirection')
-            ->from($this->getEntityClassName(), 'Redirection')
-            ->getQuery()->iterate(), $callback);
+        $query = $queryBuilder
+            ->select('r')
+            ->from($this->getEntityClassName(), 'r');
+
+        if ($host !== null) {
+            $hostPattern = $this->hostPatternByHost($host);
+            $query->andWhere('r.hostPattern = :hostPattern')
+                ->setParameter('hostPattern', $hostPattern);
+        }
+
+        $query->orderBy('r.hostPattern', 'ASC');
+        $query->addOrderBy('r.sourceUriPath', 'ASC');
+
+        return $this->iterate($query->getQuery()->iterate(), $callback);
     }
 
     /**
@@ -96,11 +128,26 @@ class RedirectionRepository extends Repository
         foreach ($iterator as $object) {
             /** @var Redirection $object */
             $object = current($object);
-            yield new RedirectionDto($object->getSourceUriPath(), $object->getTargetUriPath(), $object->getStatusCode());
+            yield $object;
             if ($callback !== null) {
                 call_user_func($callback, $iteration, $object);
             }
             ++$iteration;
         }
+    }
+
+    /**
+     * @param string $host
+     * @return array
+     */
+    protected function hostPatternByHost($host)
+    {
+        /** @var Query $query */
+        $query = $this->entityManager->createQuery('SELECT DISTINCT r.hostPattern FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r');
+        $domains = array_map(function($record) {
+            return $record['hostPattern'];
+        }, $query->getResult());
+        $matches = $this->domainMatchingStrategy->getSortedMatches($host, $domains);
+        return reset($matches);
     }
 }

@@ -60,7 +60,7 @@ class RedirectionStorageTest extends UnitTestCase
     public function getOneBySourceUriPathReturnsNullIfNoMatchingRedirectWasFound()
     {
         $this->mockRedirectionRepository->expects($this->once())->method('findOneBySourceUriPath')->with('some/relative/path')->will($this->returnValue(null));
-        $this->assertNull($this->redirectionStorage->getOneBySourceUriPath('some/relative/path'));
+        $this->assertNull($this->redirectionStorage->getOneBySourceUriPathAndHost('some/relative/path'));
     }
 
     /**
@@ -70,7 +70,7 @@ class RedirectionStorageTest extends UnitTestCase
     {
         $mockRedirect = $this->getMockBuilder('TYPO3\Flow\Http\Redirection\Redirection')->disableOriginalConstructor()->getMock();
         $this->mockRedirectionRepository->expects($this->once())->method('findOneBySourceUriPath')->with('some/relative/path')->will($this->returnValue($mockRedirect));
-        $this->assertSame($mockRedirect, $this->redirectionStorage->getOneBySourceUriPath('some/relative/path'));
+        $this->assertSame($mockRedirect, $this->redirectionStorage->getOneBySourceUriPathAndHost('some/relative/path'));
     }
 
     /**
@@ -93,7 +93,7 @@ class RedirectionStorageTest extends UnitTestCase
 
         $this->mockRedirectionRepository->expects($this->atLeastOnce())->method('findOneBySourceUriPath')->with($sourceUriPath)->will($this->returnValue($mockRedirect));
         $this->mockRedirectionRepository->expects($this->once())->method('remove')->with($mockRedirect);
-        $this->redirectionStorage->removeOneBySourceUriPath($sourceUriPath);
+        $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath);
     }
 
     /**
@@ -105,7 +105,7 @@ class RedirectionStorageTest extends UnitTestCase
 
         $this->mockRedirectionRepository->expects($this->atLeastOnce())->method('findOneBySourceUriPath')->with($sourceUriPath)->will($this->returnValue(null));
         $this->mockRedirectionRepository->expects($this->never())->method('remove');
-        $this->redirectionStorage->removeOneBySourceUriPath($sourceUriPath);
+        $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath);
     }
 
     /**

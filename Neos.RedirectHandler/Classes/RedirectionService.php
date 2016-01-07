@@ -48,7 +48,7 @@ class RedirectionService
     public function buildResponseIfApplicable(Request $httpRequest)
     {
         try {
-            $redirection = $this->redirectionStorage->getOneBySourceUriPath($httpRequest->getRelativePath());
+            $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($httpRequest->getRelativePath(), $httpRequest->getBaseUri()->getHost());
             if ($redirection === null) {
                 return null;
             }

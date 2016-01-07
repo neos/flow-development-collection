@@ -34,26 +34,37 @@ class RedirectionCommandController extends CommandController
      *
      * This command displays a list of all currently registered redirections.
      *
+     * @param string $host Full qualified hostname or host pattern
      * @return void
      */
-    public function listCommand()
+    public function listCommand($host = null)
     {
-        $redirections = $this->redirectionStorage->getAll();
+        $redirections = $this->redirectionStorage->getAll($host);
 
         $numberOfRedirects = count($redirections);
         if ($numberOfRedirects < 1) {
             $this->outputLine('There are no registered redirections');
             $this->quit();
         }
-        $this->outputLine('Currently registered redirections (%d):', array($numberOfRedirects));
+        $this->outputLine('Currently registered redirections (%d):', [$numberOfRedirects]);
         $this->outputLine();
-        $this->outputLine('Source Path => Target Path                                           Status Code');
-        $this->outputLine(str_repeat('-', 80));
+        $data = [];
+        $headers = [
+            'status' => 'Status',
+            'host' => 'Host Pattern',
+            'source' => 'Source URI',
+            'target' => 'Target URI'
+        ];
         /** @var $redirection \Neos\RedirectHandler\Redirection */
         foreach ($redirections as $redirection) {
-            $this->outputLine('%s %d', array(str_pad($redirection->getSourceUriPath(), 76), $redirection->getStatusCode()));
-            $this->outputLine('  => %s', array($redirection->getTargetUriPath()));
+            $data[] = [
+                'status' => $redirection->getStatusCode(),
+                'host' => $redirection->getHostPattern(),
+                'source' => $redirection->getSourceUriPath(),
+                'target' => $redirection->getTargetUriPath()
+            ];
         }
+        $this->output->outputTable($data, $headers);
     }
 
     /**
@@ -62,17 +73,18 @@ class RedirectionCommandController extends CommandController
      * This command deletes a redirection from the RedirectionRepository
      *
      * @param string $sourcePath The source URI path of the redirection to remove, as given by redirect:list
+     * @param string $host Full qualified hostname or host pattern
      * @return void
      */
-    public function removeCommand($sourcePath)
+    public function removeCommand($sourcePath, $host = null)
     {
-        $redirection = $this->redirectionStorage->getOneBySourceUriPath($sourcePath);
+        $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourcePath, $host);
         if ($redirection === null) {
-            $this->outputLine('There is no redirection with the source URI path "%s"', array($sourcePath));
+            $this->outputLine('There is no redirection with the source URI path "%s"', [$sourcePath]);
             $this->quit(1);
         }
-        $this->redirectionStorage->removeOneBySourceUriPath($sourcePath);
-        $this->outputLine('Removed redirection with the source URI path "%s"', array($sourcePath));
+        $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourcePath, $host);
+        $this->outputLine('Removed redirection with the source URI path "%s"', [$sourcePath]);
     }
 
     /**
@@ -80,21 +92,16 @@ class RedirectionCommandController extends CommandController
      *
      * This command deletes all redirections from the RedirectionRepository
      *
+     * @param string $host Full qualified hostname or host pattern
      * @return void
      */
-    public function removeAllCommand()
+    public function removeAllCommand($host = null)
     {
-        $redirections = $this->redirectionStorage->getAll();
-        $numberOfRedirects = count($redirections);
-        if ($numberOfRedirects < 1) {
-            $this->outputLine('There are no registered redirections');
-            $this->quit();
-        }
-        $this->redirectionStorage->removeAll();
-        if ($numberOfRedirects === 1) {
-            $this->outputLine('Removed one redirection');
+        $this->redirectionStorage->removeAll($host);
+        if ($host === null) {
+            $this->outputLine('Removed all redirections');
         } else {
-            $this->outputLine('Removed %d redirections', array($numberOfRedirects));
+            $this->outputLine('Removed all redirections for host "%s"', [$host]);
         }
     }
 
@@ -106,11 +113,12 @@ class RedirectionCommandController extends CommandController
      * @param string $sourcePath The relative URI path that should trigger the redirect
      * @param string $targetPath The relative URI path that should be redirected to
      * @param integer $statusCode The status code of the redirect header
+     * @param string $hostPattern Host pattern to match the redirect
      * @return void
      */
-    public function addCommand($sourcePath, $targetPath, $statusCode = 301)
+    public function addCommand($sourcePath, $targetPath, $statusCode = 301, $hostPattern)
     {
-        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode);
+        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$hostPattern]);
         $this->outputLine('New redirection created!');
     }
 }

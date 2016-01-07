@@ -46,9 +46,11 @@ class RedirectionStorageAspect
      */
     public function emitSignalAfterAddRedirection(JoinPointInterface $joinPoint)
     {
-        /** @var Redirection $redirection */
-        $redirection = $joinPoint->getResult();
-        $this->redirectionService->emitRedirectionCreated($redirection);
+        /** @var array<Redirection> $redirection */
+        $redirections = $joinPoint->getResult();
+        foreach ($redirections as $redirection) {
+            $this->redirectionService->emitRedirectionCreated($redirection);
+        }
         $this->systemLogger->log(sprintf('Redirection from %s -> %s (%d) added', $redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode()), LOG_DEBUG);
     }
 }
