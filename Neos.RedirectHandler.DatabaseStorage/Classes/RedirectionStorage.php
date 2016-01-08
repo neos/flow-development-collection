@@ -15,6 +15,7 @@ use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
 use Neos\RedirectHandler\Exception;
 use Neos\RedirectHandler\Redirection as RedirectionDto;
+use Neos\RedirectHandler\Service\SettingsService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
@@ -26,6 +27,12 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
  */
 class RedirectionStorage implements RedirectionStorageInterface
 {
+    /**
+     * @Flow\Inject
+     * @var SettingsService
+     */
+    protected $settingsService;
+
     /**
      * @Flow\Inject
      * @var RedirectionRepository
@@ -115,8 +122,9 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @return array<Redirection> the freshly generated redirections instance
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = 301, array $hostPatterns = [])
+    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hostPatterns = [])
     {
+        $statusCode = $statusCode ?: $this->settingsService->getRedirectStatusCode();
         $redirections = [];
         if ($hostPatterns !== []) {
             array_map(function($hostPattern) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirections) {

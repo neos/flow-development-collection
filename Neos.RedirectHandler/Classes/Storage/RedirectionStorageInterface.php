@@ -66,5 +66,5 @@ interface RedirectionStorageInterface
      * @return array<Redirection> the freshly generated redirection instance
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = 301, array $hostPatterns = []);
+    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hostPatterns = []);
 }

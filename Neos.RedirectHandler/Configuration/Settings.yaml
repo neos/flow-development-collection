@@ -1,3 +1,9 @@
+Neos:
+ RedirectHandler:
+  statusCode:
+    'redirect': 301
+    'gone': 410
+
 TYPO3:
   Flow:
     http:

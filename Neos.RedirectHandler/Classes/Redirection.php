@@ -12,6 +12,7 @@ namespace Neos\RedirectHandler;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\RedirectHandler\Service\SettingsService;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -19,6 +20,12 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class Redirection
 {
+    /**
+     * @Flow\Inject
+     * @var SettingsService
+     */
+    protected $settingsService;
+
     /**
      * Relative URI path for which this redirect should be triggered
      *
@@ -53,8 +60,9 @@ class Redirection
      * @param integer $statusCode status code to be send with the redirect header
      * @param string $hostPattern host pattern to match the redirect
      */
-    public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $hostPattern = null)
+    public function __construct($sourceUriPath, $targetUriPath, $statusCode = null, $hostPattern = null)
     {
+        $statusCode = $statusCode ?: $this->settingsService->getRedirectStatusCode();
         $this->sourceUriPath = trim($sourceUriPath, '/');
         $this->targetUriPath = trim($targetUriPath, '/');
         $this->statusCode = (integer)$statusCode;
