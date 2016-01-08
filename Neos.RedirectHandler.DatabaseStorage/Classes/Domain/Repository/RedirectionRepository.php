@@ -144,9 +144,9 @@ class RedirectionRepository extends Repository
     {
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT DISTINCT r.hostPattern FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r');
-        $domains = array_map(function($record) {
+        $domains = array_filter(array_map(function($record) {
             return $record['hostPattern'];
-        }, $query->getResult());
+        }, $query->getResult()));
         $matches = $this->domainMatchingStrategy->getSortedMatches($host, $domains);
         return reset($matches);
     }
