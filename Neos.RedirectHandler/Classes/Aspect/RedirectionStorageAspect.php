@@ -11,11 +11,11 @@ namespace Neos\RedirectHandler\Aspect;
  * source code.
  */
 
-use Neos\RedirectHandler\RedirectionService;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use \Neos\RedirectHandler\Redirection as RedirectionDto;
 
 /**
  * Redirection Storage Aspect
@@ -49,8 +49,10 @@ class RedirectionStorageAspect
         /** @var array<Redirection> $redirection */
         $redirections = $joinPoint->getResult();
         foreach ($redirections as $redirection) {
-            $this->redirectionService->emitRedirectionCreated($redirection);
+            /** @var Redirection $redirection */
+            $redirectionDto = new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHostPattern());
+            $this->redirectionService->emitRedirectionCreated($redirectionDto);
+            $this->systemLogger->log(sprintf('Redirection from %s %s -> %s (%d) added', $redirectionDto->getHostPattern(), $redirectionDto->getSourceUriPath(), $redirectionDto->getTargetUriPath(), $redirectionDto->getStatusCode()), LOG_DEBUG);
         }
-        $this->systemLogger->log(sprintf('Redirection from %s -> %s (%d) added', $redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode()), LOG_DEBUG);
     }
 }
