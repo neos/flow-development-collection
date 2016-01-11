@@ -11,6 +11,7 @@ namespace Neos\RedirectHandler\DatabaseStorage;
  * source code.
  */
 
+use Doctrine\ORM\OptimisticLockException;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
 use Neos\RedirectHandler\Exception;
@@ -19,6 +20,7 @@ use Neos\RedirectHandler\Service\SettingsService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 
 /**
  * Database Storage for the Redirections
@@ -38,6 +40,12 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @var RedirectionRepository
      */
     protected $redirectionRepository;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @Flow\Inject
@@ -192,6 +200,31 @@ class RedirectionStorage implements RedirectionStorageInterface
             } else {
                 $obsoleteRedirection->setTargetUriPath($newRedirection->getTargetUriPath());
                 $this->redirectionRepository->update($obsoleteRedirection);
+            }
+        }
+    }
+
+    /**
+     * Increment the hit counter for the given redirection
+     *
+     * @param RedirectionDto $redirection
+     * @return mixed
+     */
+    public function incrementHitCount(RedirectionDto $redirection)
+    {
+        for ($i = 0; $i < 10; $i++) {
+            try {
+                $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($redirection->getSourceUriPath(), $redirection->getHostPattern());
+                if ($redirection === null) {
+                    return;
+                }
+                $redirection->incrementHitCounter();
+                $this->redirectionRepository->update($redirection);
+                $this->persistenceManager->whitelistObject($redirection);
+                $this->persistenceManager->persistAll(true);
+                return;
+            } catch (OptimisticLockException $exception) {
+                usleep($i * 10);
             }
         }
     }

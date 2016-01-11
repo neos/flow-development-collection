@@ -1,5 +1,7 @@
 Neos:
  RedirectHandler:
+  features:
+    hitCounter: true
   statusCode:
     'redirect': 301
     'gone': 410

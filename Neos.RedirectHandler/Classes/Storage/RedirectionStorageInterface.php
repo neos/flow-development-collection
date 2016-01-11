@@ -67,4 +67,12 @@ interface RedirectionStorageInterface
      * @api
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hostPatterns = []);
+
+    /**
+     * Increment the hit counter for the given redirection
+     *
+     * @param RedirectionDto $redirection
+     * @return mixed
+     */
+    public function incrementHitCount(RedirectionDto $redirection);
 }

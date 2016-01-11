@@ -13,6 +13,7 @@ namespace Neos\RedirectHandler\DatabaseStorage\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * A Redirection model that represents a HTTP redirect
@@ -28,6 +29,25 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class Redirection
 {
+    /**
+     * @var \DateTime
+     */
+    protected $creationDateTime;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update", field={"sourceUriPath", "targetUriPath", "statusCode", "hostPattern"})
+     */
+    protected $lastModificationDateTime;
+
+    /**
+     * Auto-incrementing version of this node data, used for optimistic locking
+     *
+     * @ORM\Version
+     * @var integer
+     */
+    protected $version;
+
     /**
      * Relative URI path for which this redirect should be triggered
      *
@@ -79,6 +99,17 @@ class Redirection
     protected $hostPattern;
 
     /**
+     * @var integer
+     */
+    protected $hitCounter;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update", field={"hitCounter"})
+     */
+    protected $lastHitCount;
+
+    /**
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
      * @param string $targetUriPath target URI path to which a redirect should be pointed
      * @param integer $statusCode status code to be send with the redirect header
@@ -86,11 +117,15 @@ class Redirection
      */
     public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $hostPattern = null)
     {
+        $this->creationDateTime = new \DateTime();
+        $this->lastModificationDateTime = new \DateTime();
         $this->sourceUriPath = trim($sourceUriPath, '/');
         $this->sourceUriPathHash = md5($this->sourceUriPath);
         $this->setTargetUriPath($targetUriPath);
         $this->statusCode = (integer)$statusCode;
         $this->hostPattern = $hostPattern ? trim($hostPattern) : null;
+
+        $this->hitCounter = 0;
     }
 
     /**
@@ -101,6 +136,30 @@ class Redirection
     {
         $this->setTargetUriPath($targetUriPath);
         $this->statusCode = $statusCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreationDateTime()
+    {
+        return $this->creationDateTime;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastModificationDateTime()
+    {
+        return $this->lastModificationDateTime;
     }
 
     /**
@@ -152,5 +211,29 @@ class Redirection
     public function getHostPattern()
     {
         return $this->hostPattern;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHitCounter()
+    {
+        return $this->hitCounter;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastHitCount()
+    {
+        return $this->lastHitCount;
+    }
+
+    /**
+     * @return void
+     */
+    public function incrementHitCounter()
+    {
+        $this->hitCounter++;
     }
 }

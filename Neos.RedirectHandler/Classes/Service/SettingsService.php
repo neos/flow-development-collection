@@ -20,6 +20,8 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class SettingsService
 {
+    const FEATURE_HIT_COUNTER = 'hitCounter';
+
     /**
      * @Flow\InjectConfiguration(package="Neos.RedirectHandler")
      * @var array
@@ -40,5 +42,14 @@ class SettingsService
     public function getGoneStatusCode()
     {
         return isset($this->settings['statusCode']['gone']) ? (integer)$this->settings['statusCode']['gone'] : 301;
+    }
+
+    /**
+     * @param string $featureName
+     * @return boolean
+     */
+    public function isFeatureEnabled($featureName)
+    {
+        return (isset($this->settings['features'][$featureName]) && $this->settings['features'][$featureName] === true);
     }
 }
