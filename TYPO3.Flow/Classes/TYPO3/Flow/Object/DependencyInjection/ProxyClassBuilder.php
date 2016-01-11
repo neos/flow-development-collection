@@ -243,35 +243,43 @@ class ProxyClassBuilder
     {
         $assignments = array();
 
-        $argumentConfigurations = $objectConfiguration->getArguments();
+        $configurationArguments = $objectConfiguration->getArguments();
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
         $argumentNumberToOptionalInfo = array();
         foreach ($constructorParameterInfo as $parameterInfo) {
             $argumentNumberToOptionalInfo[($parameterInfo['position'] + 1)] = $parameterInfo['optional'];
         }
 
-        foreach ($argumentConfigurations as $argumentNumber => $argumentConfiguration) {
-            if ($argumentConfiguration === null) {
+        $highestArgumentPositionWithAutowiringEnabled = -1;
+
+        /**  @var ConfigurationArgument $configurationArgument */
+        foreach ($configurationArguments as $argumentNumber => $configurationArgument) {
+            if ($configurationArgument === null) {
                 continue;
             }
-            $argumentValue = $argumentConfiguration->getValue();
-            $assignmentPrologue = 'if (!array_key_exists(' . ($argumentNumber - 1) . ', $arguments)) $arguments[' . ($argumentNumber - 1) . '] = ';
+            $argumentPosition = $argumentNumber - 1;
+            if ($configurationArgument->getAutowiring() === Configuration::AUTOWIRING_MODE_ON) {
+                $highestArgumentPositionWithAutowiringEnabled = $argumentPosition;
+            }
+
+            $argumentValue = $configurationArgument->getValue();
+            $assignmentPrologue = 'if (!array_key_exists(' . $argumentPosition . ', $arguments)) $arguments[' . ($argumentNumber - 1) . '] = ';
             if ($argumentValue === null && isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === true) {
-                $assignments[] = $assignmentPrologue . 'NULL';
+                $assignments[$argumentPosition] = $assignmentPrologue . 'NULL';
             } else {
-                switch ($argumentConfiguration->getType()) {
+                switch ($configurationArgument->getType()) {
                     case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                         if ($argumentValue instanceof Configuration) {
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
                             if ($argumentValueClassName === null) {
                                 $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
-                                $assignments[] = $assignmentPrologue . $preparedArgument;
+                                $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
                             } else {
                                 if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-                                    $assignments[] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
+                                    $assignments[$argumentPosition] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
                                 } else {
-                                    $assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
+                                    $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
                                 }
                             }
                         } else {
@@ -283,21 +291,26 @@ class ProxyClassBuilder
                             if (!isset($this->objectConfigurations[$argumentValue])) {
                                 throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
                             }
-                            $assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
+                            $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
                     break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
-                        $assignments[] = $assignmentPrologue . var_export($argumentValue, true);
+                        $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
                     break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                        $assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
+                        $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
                     break;
                 }
             }
         }
-        $code = count($assignments) > 0 ? "\n        " . implode(";\n        ", $assignments) . ";\n" : '';
+
+        for ($argumentCounter = count($assignments) - 1; $argumentCounter > $highestArgumentPositionWithAutowiringEnabled; $argumentCounter--) {
+            unset($assignments[$argumentCounter]);
+        }
+
+        $code = $argumentCounter >= 0 ? "\n        " . implode(";\n        ", $assignments) . ";\n" : '';
 
         $index = 0;
         foreach ($constructorParameterInfo as $parameterName => $parameterInfo) {
