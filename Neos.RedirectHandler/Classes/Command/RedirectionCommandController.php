@@ -11,10 +11,16 @@ namespace Neos\RedirectHandler\Command;
  * source code.
  */
 
+use League\Csv\Reader;
+use League\Csv\Writer;
+use Neos\RedirectHandler\Exception;
+use Neos\RedirectHandler\Redirection;
 use Neos\RedirectHandler\Service\SettingsService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Command controller for tasks related to redirects
@@ -31,46 +37,74 @@ class RedirectionCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
      * @var SettingsService
      */
     protected $settingsService;
 
     /**
-     * List all redirections
+     * Save all redirectection to a CSV file
      *
-     * This command displays a list of all currently registered redirections.
-     *
-     * @param string $host Full qualified hostname or host pattern
-     * @return void
+     * @param string $filename CSV file path, if null use standard output
+     * @param string $host Optional host pattern
      */
-    public function listCommand($host = null)
+    public function saveCommand($filename = null, $host = null)
     {
+        $writer = Writer::createFromFileObject(new \SplTempFileObject());
         $redirections = $this->redirectionStorage->getAll($host);
-
-        $numberOfRedirects = count($redirections);
-        if ($numberOfRedirects < 1) {
-            $this->outputLine('There are no registered redirections');
-            $this->quit();
-        }
-        $this->outputLine('Currently registered redirections (%d):', [$numberOfRedirects]);
-        $this->outputLine();
-        $data = [];
-        $headers = [
-            'status' => 'Status',
-            'host' => 'Host Pattern',
-            'source' => 'Source URI',
-            'target' => 'Target URI'
-        ];
-        /** @var $redirection \Neos\RedirectHandler\Redirection */
+        /** @var $redirection Redirection */
         foreach ($redirections as $redirection) {
-            $data[] = [
-                'status' => $redirection->getStatusCode(),
-                'host' => $redirection->getHostPattern(),
-                'source' => $redirection->getSourceUriPath(),
-                'target' => $redirection->getTargetUriPath()
-            ];
+            $writer->insertOne([
+                $redirection->getSourceUriPath(),
+                $redirection->getTargetUriPath(),
+                $redirection->getStatusCode(),
+                $redirection->getHostPattern()
+            ]);
         }
-        $this->output->outputTable($data, $headers);
+        if ($filename === null) {
+            $writer->output();
+        } else {
+            file_put_contents($filename, (string)$writer);
+        }
+    }
+
+    /**
+     * Load redirection from a CSV file
+     *
+     * @param string $filename CSV file path
+     */
+    public function loadCommand($filename)
+    {
+        $reader = Reader::createFromPath($filename);
+        $counter = 0;
+        foreach ($reader as $index => $row) {
+            list($sourceUriPath, $targetUriPath, $statusCode, $hostPatterns) = $row;
+            $hostPatterns = Arrays::trimExplode(',', $hostPatterns);
+            foreach ($hostPatterns as $hostPattern) {
+                $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourceUriPath, $hostPattern);
+                if ($redirection !== null && $redirection->getTargetUriPath() !== $targetUriPath && $redirection->getStatusCode() !== $statusCode) {
+                    $this->outputLine('- [%d] %s', [$statusCode, $sourceUriPath]);
+                    $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $hostPattern);
+                    $this->persistenceManager->persistAll();
+                }
+            }
+            try {
+                $this->redirectionStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hostPatterns);
+                $this->outputLine('+ [%d] %s', [$statusCode, $sourceUriPath]);
+            } catch (Exception $exception) {
+                $this->outputLine('~ [%d] %s', [$statusCode, $sourceUriPath]);
+            }
+            $counter++;
+            if ($counter % 50 === 0) {
+                $this->persistenceManager->persistAll();
+                $this->persistenceManager->clearState();
+            }
+        }
     }
 
     /**
