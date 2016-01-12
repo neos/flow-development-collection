@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Functional\Resource;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Tests\FunctionalTestCase;
@@ -49,6 +50,6 @@ class ResourceTest extends FunctionalTestCase
     {
         /** @var \TYPO3\Flow\Resource\Resource $resource */
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
-        $this->assertEquals('fixture', file_get_contents('resource://'.$resource->getSha1()));
+        $this->assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
     }
 }
