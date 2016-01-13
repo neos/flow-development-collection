@@ -159,9 +159,12 @@ class PersistentObjectConverter extends ObjectConverter
     {
         if (is_array($source)) {
             if ($this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class)) {
-                // Unset identity for value objects to use constructor mapping, since the identity is determined from
-                // property values after construction
-                unset($source['__identity']);
+                if (isset($source['__identity']) && (count($source) > 1)) {
+                    // @TODO fix that in the URI building and transfer VOs as values instead as with their identities
+                    // Unset identity for value objects to use constructor mapping, since the identity is determined from
+                    // property values after construction
+                    unset($source['__identity']);
+                }
             }
             $object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
             if ($object instanceof TargetNotFoundError) {
