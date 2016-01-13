@@ -246,6 +246,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
             'search matched' => array('To be, or not to be, that is the question.', 'To be', null, true),
             'search not matched' => array('To be, or not to be, that is the question.', 'not to be', null, false),
             'search with position' => array('To be, or not to be, that is the question.', 'that is', 21, true),
+            'search with duplicate match' => array('to be, or not to be, that is the question.', 'to be', null, true),
             'unicode content can be searched' => array('Öaßaü', 'Öa', null, true)
         );
     }
