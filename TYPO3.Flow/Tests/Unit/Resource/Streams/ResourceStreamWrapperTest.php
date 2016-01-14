@@ -76,7 +76,8 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        $this->assertAttributeSame($tempFile, 'handle', $this->resourceStreamWrapper);
     }
 
     /**
@@ -93,7 +94,8 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertSame($tempFile, $this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        $this->assertAttributeSame($tempFile, 'handle', $this->resourceStreamWrapper);
     }
 
     /**
@@ -125,6 +127,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $openedPathAndFilename = '';
         $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 
     /**
@@ -144,5 +147,6 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $openedPathAndFilename = '';
         $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 }
