@@ -281,7 +281,7 @@ class StringHelper implements ProtectedContextAwareInterface
     public function startsWith($string, $search, $position = null)
     {
         $position = $position !== null ? $position : 0;
-        return mb_strrpos($string, $search, null, 'UTF-8') === $position;
+        return mb_strpos($string, $search, null, 'UTF-8') === $position;
     }
 
     /**
