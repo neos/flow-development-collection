@@ -373,35 +373,33 @@ class ConfigurationBuilder
 
             $arguments = $objectConfiguration->getArguments();
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', 'TYPO3\Flow\Annotations\Autowiring');
-                foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
-                    $debuggingHint = '';
-                    $index = $parameterInformation['position'] + 1;
-                    if (!isset($arguments[$index])) {
-                        if ($parameterInformation['optional'] === true) {
-                            $defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : null;
-                            $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+            foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
+                $debuggingHint = '';
+                $index = $parameterInformation['position'] + 1;
+                if (!isset($arguments[$index])) {
+                    if ($parameterInformation['optional'] === true) {
+                        $defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : null;
+                        $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                        } elseif ($parameterInformation['class'] !== null && isset($objectConfigurations[$parameterInformation['class']])) {
-                            $arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
-                        } elseif ($parameterInformation['allowsNull'] === true) {
-                            $arguments[$index] = new ConfigurationArgument($index, null, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+                    } elseif ($parameterInformation['class'] !== null && isset($objectConfigurations[$parameterInformation['class']])) {
+                        $arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+                    } elseif ($parameterInformation['allowsNull'] === true) {
+                        $arguments[$index] = new ConfigurationArgument($index, null, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                        } elseif (interface_exists($parameterInformation['class'])) {
-                            $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
-                        }
-
-                        if (isset($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF
-                            || $autowiringAnnotation !== null && $autowiringAnnotation->enabled === false)
-                    ) {
-                            $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                            $arguments[$index]->set($index, null);
+                    } elseif (interface_exists($parameterInformation['class'])) {
+                        $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
                     }
-                        }
 
-                        if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
-                            throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
-                        }
+                    if (isset($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF || $autowiringAnnotation !== null && $autowiringAnnotation->enabled === false)) {
+                        $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
+                        $arguments[$index]->set($index, null);
                     }
+                }
+
+                if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
+                    throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
+                }
+            }
 
             $objectConfiguration->setArguments($arguments);
         }
