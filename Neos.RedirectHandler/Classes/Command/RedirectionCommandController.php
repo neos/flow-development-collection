@@ -149,7 +149,7 @@ class RedirectionCommandController extends CommandController
      * @param string $hostPattern Host pattern to match the redirect
      * @return void
      */
-    public function addCommand($sourcePath, $targetPath, $statusCode, $hostPattern)
+    public function addCommand($sourcePath, $targetPath, $statusCode, $hostPattern = null)
     {
         $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$hostPattern]);
         $this->outputLine('New redirection created!');
