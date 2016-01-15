@@ -13,5 +13,5 @@ TYPO3:
         'process':
           chain:
             'redirection':
-              position: 'before routing'
+              position: 'after routing'
               component: 'Neos\RedirectHandler\RedirectionComponent'

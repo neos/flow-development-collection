@@ -17,6 +17,7 @@ use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Component\ComponentInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
+use TYPO3\Flow\Mvc\Routing\RoutingComponent;
 
 /**
  * Redirection HTTP Component
@@ -43,11 +44,11 @@ class RedirectionComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $httpRequest = $componentContext->getHttpRequest();
-        $cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
-        if ($cachedMatchResults !== false) {
+        $routingMatchResults = $componentContext->getParameter(RoutingComponent::class, 'matchResults');
+        if ($routingMatchResults !== NULL) {
             return;
         }
+        $httpRequest = $componentContext->getHttpRequest();
         $response = $this->redirectionService->buildResponseIfApplicable($httpRequest);
         if ($response !== null) {
             $componentContext->replaceHttpResponse($response);
