@@ -131,6 +131,7 @@ class Redirection
     /**
      * @param string $targetUriPath
      * @param integer $statusCode
+     * @return void
      */
     public function update($targetUriPath, $statusCode)
     {
@@ -139,7 +140,7 @@ class Redirection
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getVersion()
     {
