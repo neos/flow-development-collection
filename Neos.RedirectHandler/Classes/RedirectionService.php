@@ -11,7 +11,6 @@ namespace Neos\RedirectHandler;
  * source code.
  */
 
-use Neos\RedirectHandler\Service\SettingsService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request as Request;
@@ -40,10 +39,10 @@ class RedirectionService
     protected $routerCachingService;
 
     /**
-     * @Flow\Inject
-     * @var SettingsService
+     * @Flow\InjectConfiguration(path="features")
+     * @var array
      */
-    protected $settingsService;
+    protected $featureSwitch;
 
     /**
      * Searches for an applicable redirection record and create HTTP response
@@ -59,7 +58,7 @@ class RedirectionService
             if ($redirection === null) {
                 return null;
             }
-            if ($this->settingsService->isFeatureEnabled(SettingsService::FEATURE_HIT_COUNTER)) {
+            if (isset($this->featureSwitch['hitCounter']) && $this->featureSwitch['hitCounter'] === true) {
                 $this->redirectionStorage->incrementHitCount($redirection);
             }
             return $this->buildResponse($httpRequest, $redirection);

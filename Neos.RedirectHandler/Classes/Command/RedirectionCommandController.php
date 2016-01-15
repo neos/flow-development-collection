@@ -15,7 +15,6 @@ use League\Csv\Reader;
 use League\Csv\Writer;
 use Neos\RedirectHandler\Exception;
 use Neos\RedirectHandler\Redirection;
-use Neos\RedirectHandler\Service\SettingsService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
@@ -40,12 +39,6 @@ class RedirectionCommandController extends CommandController
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * @Flow\Inject
-     * @var SettingsService
-     */
-    protected $settingsService;
 
     /**
      * Save all redirectection to a CSV file
@@ -156,9 +149,8 @@ class RedirectionCommandController extends CommandController
      * @param string $hostPattern Host pattern to match the redirect
      * @return void
      */
-    public function addCommand($sourcePath, $targetPath, $statusCode = null, $hostPattern)
+    public function addCommand($sourcePath, $targetPath, $statusCode, $hostPattern)
     {
-        $statusCode = $statusCode ?: $this->settingsService->getRedirectStatusCode();
         $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$hostPattern]);
         $this->outputLine('New redirection created!');
     }
