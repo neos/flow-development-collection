@@ -4,7 +4,6 @@
     "description": "A plugin for neos/redirecthandler to store redirection in the database",
     "license": "GPL-3.0+",
     "require": {
-        "php": ">=5.5.0",
         "typo3/flow": ">=3.0.0",
         "neos/redirecthandler": "*",
         "gedmo/doctrine-extensions": "~2.4.0"
