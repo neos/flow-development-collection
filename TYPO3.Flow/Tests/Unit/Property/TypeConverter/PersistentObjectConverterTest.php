@@ -166,7 +166,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             array('TheTargetType', 'setVirtualPropertyName', array(array('type' => 'TheTypeOfSubObject')))
         )));
 
-        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(TRUE));
+        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(true));
         $this->mockReflectionService
             ->expects($this->exactly(2))
             ->method('getMethodParameters')
@@ -180,10 +180,12 @@ class PersistentObjectConverterTest extends UnitTestCase
         $configuration = $this->buildConfiguration(array());
         $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'virtualPropertyName', $configuration));
     }
+
     /**
      * @test
      */
-    public function getTypeOfChildPropertyShouldConsiderConstructors() {
+    public function getTypeOfChildPropertyShouldConsiderConstructors()
+    {
         $mockSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
         $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will($this->returnValue($mockSchema));
         $this->mockReflectionService
