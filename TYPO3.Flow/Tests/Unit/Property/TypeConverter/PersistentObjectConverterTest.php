@@ -161,8 +161,9 @@ class PersistentObjectConverterTest extends UnitTestCase
         $mockSchema->expects($this->any())->method('hasProperty')->with('virtualPropertyName')->will($this->returnValue(false));
 
         $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(true));
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(array(
-            array('type' => 'TheTypeOfSubObject')
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValueMap(array(
+            array('TheTargetType', '__construct', array()),
+            array('TheTargetType', 'setVirtualPropertyName', array(array('type' => 'TheTypeOfSubObject')))
         )));
 
         $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(TRUE));
