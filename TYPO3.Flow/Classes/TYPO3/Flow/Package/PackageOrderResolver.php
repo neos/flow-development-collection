@@ -121,7 +121,6 @@ class PackageOrderResolver
             unset($unsortedPackages[$packageKey]);
             $sortedPackages[$packageKey] = $packageState;
             return true;
-
         } elseif ($unsortedPackages[$packageKey] > 20) {
             // SECOND case: ERROR case. This happens with MANY cyclic dependencies, in this case we just degrade by arbitarily sorting the package; and continue. Alternative would be throwing an Exception.
             unset($unsortedPackages[$packageKey]);
