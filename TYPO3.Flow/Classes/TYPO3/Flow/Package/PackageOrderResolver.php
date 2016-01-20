@@ -1,8 +1,6 @@
 <?php
 namespace TYPO3\Flow\Package;
 
-use TYPO3\Flow\Composer\ComposerUtility;
-
 /**
  * A simple package dependency order solver. Just sorts by simple dependencies, does no checking or versions.
  */
@@ -118,8 +116,19 @@ class PackageOrderResolver
 
         $unsortedPackages[$packageKey] = $iterationForPackage + 1;
 
-        if ($unresolvedDependencies === 0 || $unsortedPackages[$packageKey] > 20) {
+        if ($unresolvedDependencies === 0) {
+            // we are validly able to sort the package to this position.
             unset($unsortedPackages[$packageKey]);
+            $sortedPackages[$packageKey] = $packageState;
+            return true;
+
+        } elseif ($unsortedPackages[$packageKey] > 20) {
+            // SECOND case: ERROR case. This happens with MANY cyclic dependencies, in this case we just degrade by arbitarily sorting the package; and continue. Alternative would be throwing an Exception.
+            unset($unsortedPackages[$packageKey]);
+
+            // In order to be able to debug this kind of error (if we hit it), we at least try to write to PackageStates.php
+            // so if people send it to us, we have some chance of finding the error.
+            $packageState['error-sorting-limit-reached'] = true;
             $sortedPackages[$packageKey] = $packageState;
             return true;
         }
