@@ -398,6 +398,7 @@ class Package implements PackageInterface
      * Returns the full path to the package's meta data directory
      *
      * @return string Full path to the package's meta data directory
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getMetaPath()
@@ -409,6 +410,7 @@ class Package implements PackageInterface
      * Returns the full path to the package's documentation directory
      *
      * @return string Full path to the package's documentation directory
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getDocumentationPath()
@@ -549,6 +551,7 @@ class Package implements PackageInterface
      * Returns the available documentations for this package
      *
      * @return array Array of \TYPO3\Flow\Package\Documentation
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getPackageDocumentations()

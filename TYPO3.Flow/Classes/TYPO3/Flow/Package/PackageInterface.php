@@ -65,6 +65,7 @@ interface PackageInterface
      * Returns the PHP namespace of classes in this package.
      *
      * @return string
+     * @api
      * @deprecated Use getNamespaces() - To be removed in Flow 4.0
      */
     public function getNamespace();
@@ -105,6 +106,7 @@ interface PackageInterface
      * Returns the full path to this package's Classes directory
      *
      * @return string Path to this package's Classes directory
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getClassesPath();
@@ -114,6 +116,7 @@ interface PackageInterface
      * e.g. "My.Package/ClassesPath/My/Package/"
      *
      * @return string Path to this package's Classes directory
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getClassesNamespaceEntryPath();
@@ -138,6 +141,7 @@ interface PackageInterface
      * Returns the full path to this package's Package.xml file
      *
      * @return string Path to this package's Package.xml file
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getMetaPath();
@@ -146,6 +150,7 @@ interface PackageInterface
      * Returns the full path to the package's documentation directory
      *
      * @return string Full path to the package's documentation directory
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getDocumentationPath();
@@ -154,6 +159,7 @@ interface PackageInterface
      * Returns the available documentations for this package
      *
      * @return array Array of \TYPO3\Flow\Package\Documentation
+     * @api
      * @deprecated To be removed in Flow 4.0
      */
     public function getPackageDocumentations();
