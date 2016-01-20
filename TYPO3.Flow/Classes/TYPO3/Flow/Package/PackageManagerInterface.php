@@ -18,6 +18,10 @@ namespace TYPO3\Flow\Package;
  */
 interface PackageManagerInterface
 {
+    const PACKAGE_STATE_INACTIVE = 'inactive';
+
+    const PACKAGE_STATE_ACTIVE = 'active';
+
     /**
      * Initializes the package manager
      *
@@ -132,6 +136,9 @@ interface PackageManagerInterface
      * @param string $packageType If specified, the package type will be set
      * @return \TYPO3\Flow\Package\Package The newly created package
      * @api
+     * @deprecated This methods signature is deprecated and will change with Flow 4.0
+     *
+     * TODO: Change signature for Flow 4.0 to ($packageKey, $manifest, $packagesPath)
      */
     public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null, $packagesPath = null, $packageType = null);
 
@@ -184,24 +191,6 @@ interface PackageManagerInterface
      * @return void
      */
     public function refreezePackage($packageKey);
-
-    /**
-     * Register a native Flow package
-     *
-     * @param PackageInterface $package The Package to be registered
-     * @param boolean $sortAndSave allows for not saving packagestates when used in loops etc.
-     * @return PackageInterface
-     * @throws Exception\CorruptPackageException
-     */
-    public function registerPackage(PackageInterface $package, $sortAndSave = true);
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @throws Exception\InvalidPackageStateException
-     */
-    public function unregisterPackage(PackageInterface $package);
 
     /**
      * Removes a package from registry and deletes it from filesystem
