@@ -16,7 +16,6 @@ use TYPO3\Flow\Composer\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Composer\Exception\MissingPackageManifestException;
 use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Utility\Files;
