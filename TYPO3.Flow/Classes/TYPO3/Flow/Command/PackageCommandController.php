@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Composer\Utility as ComposerUtility;
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\PackageInterface;

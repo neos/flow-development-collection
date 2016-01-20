@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  * source code.
  */
 
-use TYPO3\Flow\Composer\Utility;
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\PackageInterface;
@@ -297,7 +297,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
-            Utility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
+            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
         }
 
         $packageManager = $this->getAccessibleMock(\TYPO3\Flow\Package\PackageManager::class, array('updateShortcuts', 'emitPackageStatesUpdated'), array(), '', false);
@@ -312,7 +312,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $expectedPackageStatesConfiguration = array();
         foreach ($packageKeys as $packageKey) {
-            $composerName = Utility::getComposerPackageNameFromPackageKey($packageKey);
+            $composerName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
             $expectedPackageStatesConfiguration[$composerName] = array(
                 'state' => 'active',
                 'packagePath' => 'Application/' . $packageKey . '/',

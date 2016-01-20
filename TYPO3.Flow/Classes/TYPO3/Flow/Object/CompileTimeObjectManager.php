@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Object;
  * source code.
  */
 
-use TYPO3\Flow\Composer\Utility as ComposerUtility;
+use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty as Property;
 use Doctrine\ORM\Mapping as ORM;

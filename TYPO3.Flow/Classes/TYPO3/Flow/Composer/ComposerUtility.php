@@ -17,8 +17,10 @@ use TYPO3\Flow\Utility\Files;
 
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.
+ *
+ *
  */
-class Utility
+class ComposerUtility
 {
     /**
      * Runtime cache for composer.json data

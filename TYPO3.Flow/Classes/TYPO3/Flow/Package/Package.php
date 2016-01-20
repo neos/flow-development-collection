@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
-use TYPO3\Flow\Composer\Utility;
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Utility\Files;
@@ -450,7 +450,7 @@ class Package implements PackageInterface
      */
     public function getComposerManifest($key = null)
     {
-        return Utility::getComposerManifest($this->packagePath, $key);
+        return ComposerUtility::getComposerManifest($this->packagePath, $key);
     }
 
     /**

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Package;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Composer\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Composer\Exception\MissingPackageManifestException;
-use TYPO3\Flow\Composer\Utility as ComposerUtility;
+use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\SignalSlot\Dispatcher;

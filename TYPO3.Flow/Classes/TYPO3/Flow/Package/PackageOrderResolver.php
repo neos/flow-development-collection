@@ -1,7 +1,7 @@
 <?php
 namespace TYPO3\Flow\Package;
 
-use TYPO3\Flow\Composer\Utility;
+use TYPO3\Flow\Composer\ComposerUtility;
 
 /**
  * A simple package dependency order solver. Just sorts by simple dependencies, does no checking or versions.
