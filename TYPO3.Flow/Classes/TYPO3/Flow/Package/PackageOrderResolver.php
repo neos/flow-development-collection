@@ -67,19 +67,20 @@ class PackageOrderResolver
      *
      * @param string $packageKey Package key to process
      * @param array $sortedPackages Array to sort packages into
-     * @param array $unsortedPackages Array with state information of still unsorted packages
-     * @return boolean
+     * @param array $unsortedPackages Array with state information of still unsorted packages. The key is a package key, the value is "-1" if it is on stack for cycle detection; otherwise it is the number of times it was attempted to sort it already.
+     * @return boolean true if package was sorted; false otherwise.
      */
     protected function sortPackagesByDependencies($packageKey, array &$sortedPackages, array &$unsortedPackages)
     {
         if (!isset($this->packageStates[$packageKey])) {
+            // Package does not exist; so that means it is just skipped; but that's to the outside as if sorting was successful.
             return true;
         }
 
         /** @var array $packageState */
         $packageState = $this->packageStates[$packageKey];
 
-        // $iteationForPackage will be -1 if the package is already worked on in a stack, in that case we will return instantly.
+        // $iterationForPackage will be -1 if the package is already worked on in a stack, in that case we will return instantly.
         $iterationForPackage = $unsortedPackages[$packageKey];
 
         if ($iterationForPackage === -1) {
@@ -87,12 +88,14 @@ class PackageOrderResolver
         }
 
         if (!isset($unsortedPackages[$packageKey])) {
+            // Safeguard: Package is not unsorted anymore.
             return true;
         }
 
         $unsortedPackages[$packageKey] = -1;
         $packageComposerManifest = $this->manifestData[$packageKey];
         $packageRequirements = isset($packageComposerManifest['require']) ? array_keys($packageComposerManifest['require']) : [];
+        // HINT: at this point, we do not support require-dev dependencies yet (but we could).
         $unresolvedDependencies = 0;
 
         foreach ($packageRequirements as $requiredComposerName) {
@@ -101,6 +104,7 @@ class PackageOrderResolver
             }
 
             if (isset($sortedPackages[$packageKey])) {
+                // "Success" case: a required package is already sorted in front of our current $packageKey.
                 continue;
             }
 

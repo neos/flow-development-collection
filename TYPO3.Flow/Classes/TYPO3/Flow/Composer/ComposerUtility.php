@@ -18,7 +18,7 @@ use TYPO3\Flow\Utility\Files;
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.
  *
- *
+ * Meant to be used only inside the Flow package management code.
  */
 class ComposerUtility
 {

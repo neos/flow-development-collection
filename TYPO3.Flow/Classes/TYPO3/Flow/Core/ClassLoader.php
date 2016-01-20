@@ -214,7 +214,9 @@ class ClassLoader
     }
 
     /**
-     * Tries to load a class from a list of possible paths
+     * Tries to load a class from a list of possible paths. This is needed because packages are not prefix-free; i.e.
+     * there may exist a package "Neos" and a package "Neos.NodeTypes" -- so a class Neos\NodeTypes\Foo must be first
+     * loaded (if it exists) from Neos.NodeTypes, falling back to Neos afterwards.
      *
      * @param array $possiblePaths
      * @param array $namespaceParts
