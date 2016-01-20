@@ -117,6 +117,15 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
+     * @param string $packageStatesPathAndFilename
+     */
+    public function __construct($packageStatesPathAndFilename = '')
+    {
+        $this->packageFactory = new PackageFactory();
+        $this->packageStatesPathAndFilename = $packageStatesPathAndFilename ?: FLOW_PATH_CONFIGURATION . 'PackageStates.php';
+    }
+
+    /**
      * Initializes the package manager
      *
      * @param Bootstrap $bootstrap The current bootstrap
@@ -125,9 +134,6 @@ class PackageManager implements PackageManagerInterface
     public function initialize(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
-        $this->packageStatesPathAndFilename = $this->packageStatesPathAndFilename ?: FLOW_PATH_CONFIGURATION . 'PackageStates.php';
-        $this->packageFactory = new PackageFactory();
-
         $this->packageStatesConfiguration = $this->getCurrentPackageStates();
         $this->activePackages = [];
         $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
@@ -1149,6 +1155,10 @@ class PackageManager implements PackageManagerInterface
      */
     protected function emitPackageStatesUpdated()
     {
+        if ($this->bootstrap === null) {
+            return;
+        }
+
         if ($this->dispatcher === null) {
             $this->dispatcher = $this->bootstrap->getEarlyInstance(Dispatcher::class);
         }
