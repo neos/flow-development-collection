@@ -27,7 +27,6 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 class PackageCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PackageManagerInterface
      */
     protected $packageManager;
@@ -38,7 +37,6 @@ class PackageCommandController extends CommandController
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
     protected $bootstrap;
@@ -50,6 +48,24 @@ class PackageCommandController extends CommandController
     public function injectSettings(array $settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * @param PackageManagerInterface $packageManager
+     * @return void
+     */
+    public function injectPackageManager(PackageManagerInterface $packageManager)
+    {
+        $this->packageManager = $packageManager;
+    }
+
+    /**
+     * @param Bootstrap $bootstrap
+     * @return void
+     */
+    public function injectBootstrap(Bootstrap $bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
     }
 
     /**
