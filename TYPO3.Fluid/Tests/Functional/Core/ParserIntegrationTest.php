@@ -30,6 +30,19 @@ class ParserIntegrationTest extends FunctionalTestCase
     protected $testableHttpEnabled = true;
 
     /**
+     * @var StandaloneView
+     */
+    protected $view;
+
+    public function setUp()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
+
+        $this->view = new StandaloneView($actionRequest, uniqid());
+    }
+
+    /**
      * @return array
      */
     public function exampleTemplates()
@@ -59,14 +72,10 @@ class ParserIntegrationTest extends FunctionalTestCase
      */
     public function templateIsEvaluatedCorrectly($source, $variables, $expected)
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
-        $actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
+        $this->view->assignMultiple($variables);
+        $this->view->setTemplateSource($source);
 
-        $standaloneView = new StandaloneView($actionRequest, uniqid());
-        $standaloneView->assignMultiple($variables);
-        $standaloneView->setTemplateSource($source);
-
-        $actual = $standaloneView->render();
+        $actual = $this->view->render();
         $this->assertSame($expected, $actual);
     }
 
@@ -75,47 +84,61 @@ class ParserIntegrationTest extends FunctionalTestCase
      */
     public function layoutViewHelperCanContainIfCondition()
     {
-        $request = Request::create(new Uri('http://localhost'));
-        $actionRequest = $request->createActionRequest();
-
-        $standaloneView = new StandaloneView($actionRequest, uniqid());
-
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts');
         \file_put_contents('vfs://MyLayouts/foo', 'foo: <f:render section="content" />');
         \file_put_contents('vfs://MyLayouts/bar', 'bar: <f:render section="content" />');
-        $standaloneView->setLayoutRootPath('vfs://MyLayouts');
+        $this->view->setLayoutRootPath('vfs://MyLayouts');
 
         $source = '<f:layout name="{f:if(condition: \'1 == 1\', then: \'foo\', else: \'bar\')}" /><f:section name="content">Content</f:section>';
-        $standaloneView->setTemplateSource($source);
+        $this->view->setTemplateSource($source);
 
-        $uncompiledResult = $standaloneView->render();
-        $compiledResult = $standaloneView->render();
+        $uncompiledResult = $this->view->render();
+        $compiledResult = $this->view->render();
 
         $this->assertSame($uncompiledResult, $compiledResult, 'The rendered compiled template did not match the rendered uncompiled template.');
-        $this->assertSame('foo: Content', $standaloneView->render());
+        $this->assertSame('foo: Content', $this->view->render());
     }
 
     /**
      * @test
      */
-    public function isHasMethodsCanBeAccessedDirectly()
+    public function isMethodCanBeAccessedDirectly()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
-        $actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
-
-        $standaloneView = new StandaloneView($actionRequest, uniqid());
         $post = new Post();
         $post->setPrivate(true);
-        $standaloneView->assignMultiple(array('post' => $post));
-        $standaloneView->setTemplateSource('<f:if condition="{post.isPrivate}">Private!</f:if>');
+        $this->view->assignMultiple(array('post' => $post));
+        $this->view->setTemplateSource('{post.isPrivate}');
 
-        $actual = $standaloneView->render();
+        $actual = $this->view->render();
         $this->assertSame('Private!', $actual);
+    }
 
-        $standaloneView->setTemplateSource('<f:if condition="{post.isprivate}">Private!</f:if>');
+    /**
+     * @test
+     */
+    public function getHasMethodIsStillUsed()
+    {
+        $post = new Post();
+        $post->setCategory('SomeCategory');
+        $this->view->assignMultiple(array('post' => $post));
+        $this->view->setTemplateSource('<f:if condition="{post.hasCategory}">Private!</f:if>');
 
-        $actual = $standaloneView->render();
+        $actual = $this->view->render();
+        $this->assertSame('Private!', $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function propertiesThatStartWithIsAreStillAccessedNormally()
+    {
+        $post = new Post();
+        $post->setPrivate(true);
+        $this->view->assignMultiple(array('post' => $post));
+        $this->view->setTemplateSource('<f:if condition="{post.isprivate}">Private!</f:if>');
+
+        $actual = $this->view->render();
         $this->assertSame('', $actual);
     }
 }

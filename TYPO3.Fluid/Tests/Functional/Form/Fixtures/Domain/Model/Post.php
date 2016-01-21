@@ -105,7 +105,7 @@ class Post
      */
     public function isPrivate()
     {
-        return $this->private;
+        return $this->private ? 'Private!' : 'Public';
     }
 
     /**
@@ -122,6 +122,14 @@ class Post
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHasCategory()
+    {
+        return !empty($this->category);
     }
 
     /**

@@ -76,6 +76,8 @@ class ObjectAccessorNode extends AbstractNode
      *
      * If propertyPath is "bla.blubb", then we first call getProperty($object, 'bla'),
      * and on the resulting object we call getProperty(..., 'blubb').
+     * If propertyPath is "bla.isBlubb" or "bla.hasBlubb", and calling getProperty(..., 'isBlubb'/'hasBlubb')
+     * fails, we directly call $bla->isBlubb()/$bla->hasBlubb().
      *
      * For arrays the keys are checked likewise.
      *
@@ -87,21 +89,17 @@ class ObjectAccessorNode extends AbstractNode
     public static function getPropertyPath($subject, $propertyPath, RenderingContextInterface $renderingContext)
     {
         $propertyPathSegments = explode('.', $propertyPath);
-        foreach ($propertyPathSegments as $pathSegment) {
-            $isHasDirectAccess = false;
+        foreach ($propertyPathSegments as $propertyName) {
             try {
-                if (preg_match('/^(is|has)([A-Z].*)/', $pathSegment, $matches) > 0) {
-                    $subject = ObjectAccess::getProperty($subject, lcfirst($matches[2]));
-                    $isHasDirectAccess = true;
-                }
+                $subject = ObjectAccess::getProperty($subject, $propertyName);
             } catch (PropertyNotAccessibleException $exception) {
-                // Don't do anything here for backwards compatiblity
-            }
-
-            if (!$isHasDirectAccess) {
-                try {
-                    $subject = ObjectAccess::getProperty($subject, $pathSegment);
-                } catch (PropertyNotAccessibleException $exception) {
+                if (is_object($subject) && preg_match('/^(is|has)([A-Z].*)/', $propertyName, $matches) > 0) {
+                    try {
+                        $subject = $subject->$propertyName();
+                    } catch (\Exception $exception) {
+                        $subject = null;
+                    }
+                } else {
                     $subject = null;
                 }
             }
