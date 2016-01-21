@@ -153,6 +153,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         try {
             $this->entityManager->flush();
         } catch (Exception $exception) {
+            $this->systemLogger->logException($exception);
             /** @var Connection $connection */
             $connection = $this->entityManager->getConnection();
             $connection->close();
