@@ -357,7 +357,7 @@ class Package implements PackageInterface
             $pathifiedNamespace = str_replace('\\', '/', $firstAutoload['namespace']);
         }
 
-        return Files::concatenatePaths($basePath . $pathifiedNamespace);
+        return Files::concatenatePaths([$basePath, $pathifiedNamespace]) . '/';
     }
 
     /**
