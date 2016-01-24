@@ -494,7 +494,7 @@ class PackageManager implements PackageManagerInterface
             if (!$constraint instanceof MetaData\PackageConstraint) {
                 continue;
             }
-            $composerName = isset($this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName']) ? $this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName'] : $this->getComposerPackageNameFromPackageKey($constraint->getValue());
+            $composerName = isset($this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName']) ? $this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName'] : ComposerUtility::getComposerPackageNameFromPackageKey($constraint->getValue());
             $composerManifestConstraints[$composerName] = '*';
         }
 
