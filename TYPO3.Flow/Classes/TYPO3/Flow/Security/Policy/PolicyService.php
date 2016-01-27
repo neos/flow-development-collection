@@ -201,6 +201,7 @@ class PolicyService
                 $this->privilegeTargets[$privilegeTargetIdentifier] = $privilegeTarget;
             }
         }
+        $this->emitPrivilegeTargetsInitialized($this->privilegeTargets);
     }
 
     /**
@@ -309,6 +310,20 @@ class PolicyService
      * @Flow\Signal
      */
     protected function emitConfigurationLoaded(array &$policyConfiguration)
+    {
+    }
+    
+    /**
+     * Emits a signal when privilege targets have been initialized
+     *
+     * This signal can be used to register privilege targets during runtime. 
+     * In the slot make sure to receive the $privilegeTargets array by reference so you can alter it.
+     *
+     * @param array<PrivilegeTarget> $privilegeTargets All initialized privilege targets
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitPrivilegeTargetsInitialized(array &$privilegeTargets)
     {
     }
 
