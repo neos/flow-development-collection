@@ -1,0 +1,17 @@
+{
+    "name": "neos/filemonitor",
+    "type": "typo3-flow-framework",
+    "description": "Neos Filemonitoring",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Monitor": "Classes"
+        }
+    }
+}

@@ -23,6 +23,7 @@
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
+        "neos/filemonitor": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -36,6 +37,7 @@
     },
     "autoload": {
         "psr-0": {
+            "TYPO3\\Flow\\Monitor": "Neos.Filemonitor/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
             "TYPO3\\Flow": "TYPO3.Flow/Classes",
             "TYPO3\\Fluid": "TYPO3.Fluid/Classes",
