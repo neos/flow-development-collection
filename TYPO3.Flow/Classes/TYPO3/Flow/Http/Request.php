@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Http;
  * source code.
  */
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
@@ -22,23 +24,8 @@ use TYPO3\Flow\Utility\MediaTypes;
  * @api
  * @Flow\Proxy(false)
  */
-class Request extends AbstractMessage
+class Request extends BaseRequest implements ServerRequestInterface
 {
-    /**
-     * @var string
-     */
-    protected $method = 'GET';
-
-    /**
-     * @var Uri
-     */
-    protected $uri;
-
-    /**
-     * @var Uri
-     */
-    protected $baseUri;
-
     /**
      * @var array
      */
@@ -211,14 +198,14 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Returns the request URI
+     * Returns the port used for this request
      *
-     * @return Uri
+     * @return integer
      * @api
      */
-    public function getUri()
+    public function getPort()
     {
-        return $this->uri;
+        return $this->uri->getPort();
     }
 
     /**
@@ -254,39 +241,6 @@ class Request extends AbstractMessage
         return $this->uri->getScheme() === 'https';
     }
 
-    /**
-     * Sets the request method
-     *
-     * @param string $method The request method, for example "GET".
-     * @return void
-     * @api
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    /**
-     * Returns the request method
-     *
-     * @return string The request method
-     * @api
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * Returns the port used for this request
-     *
-     * @return integer
-     * @api
-     */
-    public function getPort()
-    {
-        return $this->uri->getPort();
-    }
 
     /**
      * Tells if the request method is "safe", that is, it is expected to not take any
@@ -337,61 +291,6 @@ class Request extends AbstractMessage
     public function getArgument($name)
     {
         return (isset($this->arguments[$name]) ? $this->arguments[$name] : null);
-    }
-
-    /**
-     * Explicitly sets the content of the request body
-     *
-     * In most cases, content is just a string representation of the request body.
-     * In order to reduce memory consumption for uploads and other big data, it is
-     * also possible to pass a stream resource. The easies way to convert a local file
-     * into a stream resource is probably: $resource = fopen('file://path/to/file', 'rb');
-     *
-     * @param string|resource $content The body content, for example arguments of a PUT request, or a stream resource
-     * @return void
-     * @api
-     */
-    public function setContent($content)
-    {
-        if (is_resource($content) && get_resource_type($content) === 'stream' && stream_is_local($content)) {
-            $streamMetaData = stream_get_meta_data($content);
-            $this->headers->set('Content-Length', filesize($streamMetaData['uri']));
-            $this->headers->set('Content-Type', MediaTypes::getMediaTypeFromFilename($streamMetaData['uri']));
-        }
-
-        parent::setContent($content);
-    }
-
-    /**
-     * Returns the content of the request body
-     *
-     * If the request body has not been set with setContent() previously, this method
-     * will try to retrieve it from the input stream. If $asResource was set to TRUE,
-     * the stream resource will be returned instead of a string.
-     *
-     * If the content which has been set by setContent() originally was a stream
-     * resource, that resource will be returned, no matter if $asResource is set.
-     *
-     *
-     * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
-     * @return string|resource
-     * @api
-     * @throws Exception
-     */
-    public function getContent($asResource = false)
-    {
-        if ($asResource === true) {
-            if ($this->content !== null) {
-                throw new Exception('Cannot return request content as resource because it has already been retrieved.', 1332942478);
-            }
-            $this->content = '';
-            return fopen($this->inputStreamUri, 'rb');
-        }
-
-        if ($this->content === null) {
-            $this->content = file_get_contents($this->inputStreamUri);
-        }
-        return $this->content;
     }
 
     /**
@@ -877,5 +776,45 @@ class Request extends AbstractMessage
     public static function trimMediaType($rawMediaType)
     {
         return MediaTypes::trimMediaType($rawMediaType);
+    }
+
+    public function getCookieParams()
+    {
+        // TODO: Implement getCookieParams() method.
+    }
+
+    public function withCookieParams(array $cookies)
+    {
+        // TODO: Implement withCookieParams() method.
+    }
+
+    public function getQueryParams()
+    {
+        // TODO: Implement getQueryParams() method.
+    }
+
+    public function withQueryParams(array $query)
+    {
+        // TODO: Implement withQueryParams() method.
+    }
+
+    public function getUploadedFiles()
+    {
+        // TODO: Implement getUploadedFiles() method.
+    }
+
+    public function withUploadedFiles(array $uploadedFiles)
+    {
+        // TODO: Implement withUploadedFiles() method.
+    }
+
+    public function getParsedBody()
+    {
+        // TODO: Implement getParsedBody() method.
+    }
+
+    public function withParsedBody($data)
+    {
+        // TODO: Implement withParsedBody() method.
     }
 }

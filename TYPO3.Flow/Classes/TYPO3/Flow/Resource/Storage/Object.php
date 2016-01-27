@@ -217,7 +217,7 @@ class Object implements ResourceMetaDataInterface
     public function setStream($stream)
     {
         if (!is_resource($stream) && !$stream instanceof \Closure) {
-            throw new \InvalidArgumentException(sprintf('setStream() expects a stream or Closure, %s given.', gettype($stream)), 1416311979);
+            throw new \InvalidArgumentException(sprintf('openStream() expects a stream or Closure, %s given.', gettype($stream)), 1416311979);
         }
         $this->stream = $stream;
     }

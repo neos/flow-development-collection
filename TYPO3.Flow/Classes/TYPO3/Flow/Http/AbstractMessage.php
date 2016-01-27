@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Http;
  * source code.
  */
 
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\StreamInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -19,7 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-abstract class AbstractMessage
+abstract class AbstractMessage implements MessageInterface
 {
     /**
      * The HTTP version value of this message, for example "HTTP/1.1"
@@ -302,4 +304,182 @@ abstract class AbstractMessage
      * @api
      */
     abstract public function getStartLine();
+
+    /**
+     * Retrieves the HTTP protocol version as a string.
+     *
+     * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
+     *
+     * PSR-7 MessageInterface
+     *
+     * @return string HTTP protocol version.
+     */
+    public function getProtocolVersion()
+    {
+        return explode('/', $this->version)[1];
+    }
+
+    /**
+     * Return an instance with the specified HTTP protocol version.
+     *
+     * The version string MUST contain only the HTTP version number (e.g.,
+     * "1.1", "1.0").
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new protocol version.
+     *
+     * PSR-7 MessageInterface
+     *
+     * @param string $version HTTP protocol version
+     * @return self
+     */
+    public function withProtocolVersion($version)
+    {
+        $newMessage = clone $this;
+        $newMessage->setVersion('HTTP/' . $version);
+
+        return $newMessage;
+    }
+
+    /**
+     * Retrieves a comma-separated string of the values for a single header.
+     *
+     * This method returns all of the header values of the given
+     * case-insensitive header name as a string concatenated together using
+     * a comma.
+     *
+     * NOTE: Not all header values may be appropriately represented using
+     * comma concatenation. For such headers, use getHeader() instead
+     * and supply your own delimiter when concatenating.
+     *
+     * If the header does not appear in the message, this method MUST return
+     * an empty string.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @return string A string of values as provided for the given header
+     *    concatenated together using a comma. If the header does not appear in
+     *    the message, this method MUST return an empty string.
+     */
+    public function getHeaderLine($name)
+    {
+        $headerLine = $this->headers->get($name);
+        if ($headerLine === null) {
+            $headerLine = '';
+        }
+
+        if (is_array($headerLine)) {
+            $headerLine = explode(', ', $headerLine);
+        }
+
+        return $headerLine;
+    }
+
+    /**
+     * Return an instance with the provided value replacing the specified header.
+     *
+     * While header names are case-insensitive, the casing of the header will
+     * be preserved by this function, and returned from getHeaders().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new and/or updated header and value.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @param string|string[] $value Header value(s).
+     * @return self
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withHeader($name, $value)
+    {
+        $newMessage = clone $this;
+        $newMessage->setHeader($name,  $value, true);
+        return $newMessage;
+    }
+
+    /**
+     * Return an instance with the specified header appended with the given value.
+     *
+     * Existing values for the specified header will be maintained. The new
+     * value(s) will be appended to the existing list. If the header did not
+     * exist previously, it will be added.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new header and/or value.
+     *
+     * @param string $name Case-insensitive header field name to add.
+     * @param string|string[] $value Header value(s).
+     * @return self
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withAddedHeader($name, $value)
+    {
+        $newMessage = clone $this;
+        $newMessage->setHeader($name, $value);
+
+        return $newMessage;
+    }
+
+    /**
+     * Return an instance without the specified header.
+     *
+     * Header resolution MUST be done without case-sensitivity.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that removes
+     * the named header.
+     *
+     * @param string $name Case-insensitive header field name to remove.
+     * @return self
+     */
+    public function withoutHeader($name)
+    {
+        $newMessage = clone $this;
+        $newMessage->getHeaders()->remove($name);
+
+        return $newMessage;
+    }
+
+    /**
+     * Gets the body of the message.
+     *
+     * @return StreamInterface Returns the body as a stream.
+     */
+    public function getBody()
+    {
+        $streamResource = fopen('php://temp', 'w+');
+        fwrite($streamResource, $this->content);
+
+        return new ContentStream($streamResource);
+    }
+
+    /**
+     * Return an instance with the specified message body.
+     *
+     * The body MUST be a StreamInterface object.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return a new instance that has the
+     * new body stream.
+     *
+     * @param StreamInterface $body Body.
+     * @return self
+     * @throws \InvalidArgumentException When the body is not valid.
+     */
+    public function withBody(StreamInterface $body)
+    {
+        $newMessage = clone $this;
+        $newMessage->setContent($body->getContents());
+
+        return $newMessage;
+    }
+
+    /**
+     * Headers should also be cloned when the message is cloned.
+     */
+    public function __clone()
+    {
+        $this->headers = clone $this->headers;
+    }
 }

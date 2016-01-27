@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Http;
  * source code.
  */
 
+use Psr\Http\Message\UriInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error as FlowError;
 use TYPO3\Flow\Utility\Unicode;
@@ -21,7 +22,7 @@ use TYPO3\Flow\Utility\Unicode;
  * @api
  * @Flow\Proxy(false)
  */
-class Uri
+class Uri implements UriInterface
 {
     const PATTERN_MATCH_SCHEME = '/^[a-zA-Z][a-zA-Z0-9\+\-\.]*$/';
     const PATTERN_MATCH_USERNAME = '/^(?:[a-zA-Z0-9_~!&\',;=\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';
@@ -379,22 +380,265 @@ class Uri
                 $uriString .= $this->username . '@';
             }
         }
-        $uriString .= $this->host;
-        if ($this->port !== null) {
-            switch ($this->scheme) {
-                case 'http':
-                    $uriString .= ($this->port !== 80 ? ':' . $this->port : '');
-                    break;
-                case 'https':
-                    $uriString .= ($this->port !== 443 ? ':' . $this->port : '');
-                    break;
-                default:
-                    $uriString .= (isset($this->port) ? ':' . $this->port : '');
-            }
-        }
+        $uriString .= $this->getHostAndOptionalPort();
         $uriString .= isset($this->path) ? $this->path : '';
         $uriString .= isset($this->query) ? '?' . $this->query : '';
         $uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
         return $uriString;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getHostAndOptionalPort()
+    {
+        $hostAndPort = (string)$this->host;
+        if ($this->port === null) {
+            return $hostAndPort;
+        }
+
+        switch ($this->scheme) {
+            case 'http':
+                $hostAndPort .= ($this->port !== 80 ? ':' . $this->port : '');
+                break;
+            case 'https':
+                $hostAndPort .= ($this->port !== 443 ? ':' . $this->port : '');
+                break;
+            default:
+                $hostAndPort .= (isset($this->port) ? ':' . $this->port : '');
+        }
+
+        return $hostAndPort;
+    }
+
+    /**
+     * Retrieve the authority component of the URI.
+     *
+     * If no authority information is present, this method MUST return an empty
+     * string.
+     *
+     * The authority syntax of the URI is:
+     *
+     * <pre>
+     * [user-info@]host[:port]
+     * </pre>
+     *
+     * If the port component is not set or is the standard port for the current
+     * scheme, it SHOULD NOT be included.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2
+     * @return string The URI authority, in "[user-info@]host[:port]" format.
+     */
+    public function getAuthority()
+    {
+        $result = '';
+
+        $host = $this->getHostAndOptionalPort();
+        if (empty($host)) {
+            return $result;
+        }
+        $result = $host;
+
+        $userInfo = $this->getUserInfo();
+        if (empty($userInfo)) {
+            return $result;
+        }
+        $result = $userInfo . '@' . $result;
+
+        return $result;
+    }
+
+    /**
+     * Retrieve the user information component of the URI.
+     *
+     * If no user information is present, this method MUST return an empty
+     * string.
+     *
+     * If a user is present in the URI, this will return that value;
+     * additionally, if the password is also present, it will be appended to the
+     * user value, with a colon (":") separating the values.
+     *
+     * The trailing "@" character is not part of the user information and MUST
+     * NOT be added.
+     *
+     * @return string The URI user information, in "username[:password]" format.
+     */
+    public function getUserInfo()
+    {
+        $result = '';
+        $username = $this->getUsername();
+
+        if (empty($username)) {
+            return $result;
+        }
+
+        $result .= $username;
+
+        $password = $this->getPassword();
+        if (empty($password)) {
+            return $result;
+        }
+
+        $result .= ':' . $password;
+        return $result;
+    }
+
+    /**
+     * Return an instance with the specified scheme.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified scheme.
+     *
+     * Implementations MUST support the schemes "http" and "https" case
+     * insensitively, and MAY accommodate other schemes if required.
+     *
+     * An empty scheme is equivalent to removing the scheme.
+     *
+     * @param string $scheme The scheme to use with the new instance.
+     * @return self A new instance with the specified scheme.
+     * @throws \InvalidArgumentException for invalid or unsupported schemes.
+     */
+    public function withScheme($scheme)
+    {
+        $newUri = clone $this;
+        $newUri->setScheme($scheme);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified user information.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified user information.
+     *
+     * Password is optional, but the user information MUST include the
+     * user; an empty string for the user is equivalent to removing user
+     * information.
+     *
+     * @param string $user The user name to use for authority.
+     * @param null|string $password The password associated with $user.
+     * @return self A new instance with the specified user information.
+     */
+    public function withUserInfo($user, $password = null)
+    {
+        $newUri = clone $this;
+        $newUri->setUsername($user);
+        $newUri->setPassword($password);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified host.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified host.
+     *
+     * An empty host value is equivalent to removing the host.
+     *
+     * @param string $host The hostname to use with the new instance.
+     * @return self A new instance with the specified host.
+     * @throws \InvalidArgumentException for invalid hostnames.
+     */
+    public function withHost($host)
+    {
+        $newUri = clone $this;
+        $newUri->setHost($host);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified port.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified port.
+     *
+     * Implementations MUST raise an exception for ports outside the
+     * established TCP and UDP port ranges.
+     *
+     * A null value provided for the port is equivalent to removing the port
+     * information.
+     *
+     * @param null|int $port The port to use with the new instance; a null value
+     *     removes the port information.
+     * @return self A new instance with the specified port.
+     * @throws \InvalidArgumentException for invalid ports.
+     */
+    public function withPort($port)
+    {
+        $newUri = clone $this;
+        $newUri->setPort($port);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified path.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified path.
+     *
+     * The path can either be empty or absolute (starting with a slash) or
+     * rootless (not starting with a slash). Implementations MUST support all
+     * three syntaxes.
+     *
+     * If the path is intended to be domain-relative rather than path relative then
+     * it must begin with a slash ("/"). Paths not starting with a slash ("/")
+     * are assumed to be relative to some base path known to the application or
+     * consumer.
+     *
+     * Users can provide both encoded and decoded path characters.
+     * Implementations ensure the correct encoding as outlined in getPath().
+     *
+     * @param string $path The path to use with the new instance.
+     * @return self A new instance with the specified path.
+     * @throws \InvalidArgumentException for invalid paths.
+     */
+    public function withPath($path)
+    {
+        $newUri = clone $this;
+        $newUri->setPath($path);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified query string.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified query string.
+     *
+     * Users can provide both encoded and decoded query characters.
+     * Implementations ensure the correct encoding as outlined in getQuery().
+     *
+     * An empty query string value is equivalent to removing the query string.
+     *
+     * @param string $query The query string to use with the new instance.
+     * @return self A new instance with the specified query string.
+     * @throws \InvalidArgumentException for invalid query strings.
+     */
+    public function withQuery($query)
+    {
+        $newUri = clone $this;
+        $newUri->setQuery($query);
+        return $newUri;
+    }
+
+    /**
+     * Return an instance with the specified URI fragment.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified URI fragment.
+     *
+     * Users can provide both encoded and decoded fragment characters.
+     * Implementations ensure the correct encoding as outlined in getFragment().
+     *
+     * An empty fragment value is equivalent to removing the fragment.
+     *
+     * @param string $fragment The fragment to use with the new instance.
+     * @return self A new instance with the specified fragment.
+     */
+    public function withFragment($fragment)
+    {
+        $newUri = clone $this;
+        $newUri->setFragment($fragment);
+        return $newUri;
     }
 }
