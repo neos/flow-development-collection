@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Unicode;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Unicode package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,12 +11,9 @@ namespace TYPO3\Flow\Utility\Unicode;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * A PHP-based port of PHP6's built in TextIterator
  *
- * @Flow\Scope("singleton")
  */
 class TextIteratorElement
 {

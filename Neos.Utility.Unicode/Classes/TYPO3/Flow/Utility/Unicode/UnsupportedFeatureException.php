@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Unicode;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Unicode package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,12 +11,9 @@ namespace TYPO3\Flow\Utility\Unicode;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * Exception thrown if a feature is not supported by the PHP6 backport code.
  *
- * @Flow\Scope("singleton")
  * @api
  */
 class UnsupportedFeatureException extends \Exception

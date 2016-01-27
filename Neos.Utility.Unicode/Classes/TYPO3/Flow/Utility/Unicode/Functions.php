@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Unicode;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Unicode package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,29 +11,28 @@ namespace TYPO3\Flow\Utility\Unicode;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class with UTF-8 string functions, some inspired by what might be in some
  * future PHP version...
  *
- * @Flow\Scope("singleton")
  * @api
  */
-class Functions
+abstract class Functions
 {
+
     /**
      * Converts the first character of each word to uppercase and all remaining characters
      * to lowercase.
      *
-     * @param  string $str The string to convert
+     * @param  string $string The string to convert
      * @return string The converted string
      * @api
      */
-    public static function strtotitle($str)
+    public static function strtotitle($string)
     {
         $result = '';
-        $splitIntoLowerCaseWords = preg_split("/([\n\r\t ])/", self::strtolower($str), -1, PREG_SPLIT_DELIM_CAPTURE);
+        $splitIntoLowerCaseWords = preg_split("/([\n\r\t ])/", self::strtolower($string), -1, PREG_SPLIT_DELIM_CAPTURE);
         foreach ($splitIntoLowerCaseWords as $delimiterOrValue) {
             $result .= self::strtoupper(self::substr($delimiterOrValue, 0, 1)) . self::substr($delimiterOrValue, 1);
         }
@@ -41,7 +40,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of substr()
+     * Unicode variant of substr()
      *
      * @param string $string The string to crop
      * @param integer $start Position of the left boundary
@@ -71,7 +70,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of strtoupper()
+     * Unicode variant of strtoupper()
      *
      * @param  string $string The string to uppercase
      * @return string The processed string
@@ -83,7 +82,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of strtolower()
+     * Unicode variant of strtolower()
      *
      * @param  string $string The string to lowercase
      * @return string The processed string
@@ -95,7 +94,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of strlen() - assumes that the string is a Unicode string, not binary
+     * Uniocde variant of strlen() - assumes that the string is a Unicode string, not binary
      *
      * @param  string $string The string to count the characters of
      * @return integer The number of characters
@@ -107,7 +106,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of ucfirst() - assumes that the string is a Unicode string, not binary
+     * Unicode variant of ucfirst() - assumes that the string is a Unicode string, not binary
      *
      * @param  string $string The string whose first letter should be uppercased
      * @return string The same string, first character uppercased
@@ -119,7 +118,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of lcfirst() - assumes that the string is a Unicode string, not binary
+     * Unicode variant of lcfirst() - assumes that the string is a Unicode string, not binary
      *
      * @param  string $string The string whose first letter should be lowercased
      * @return string The same string, first character lowercased
@@ -131,7 +130,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of strpos() - assumes that the string is a Unicode string, not binary
+     * Unicode variant of strpos() - assumes that the string is a Unicode string, not binary
      *
      * @param string $haystack UTF-8 string to search in
      * @param string $needle UTF-8 string to search for
@@ -145,7 +144,7 @@ class Functions
     }
 
     /**
-     * PHP6 variant of pathinfo()
+     * Unicode variant of pathinfo()
      * pathinfo() function is not unicode-friendly
      * if setlocale is not set. It's sufficient to set it
      * to any UTF-8 locale to correctly handle unicode strings.

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility\Unicode;
+namespace Neos\Utitlity\Unicode\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Unicode package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -245,9 +245,9 @@ class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function pathinfoWorksWithCertainSpecialChars()
     {
         $testString = 'кириллическийПуть/кириллическоеИмя.расширение';
-        $this->assertEquals('кириллическийПуть', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
-        $this->assertEquals('кириллическоеИмя.расширение', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
-        $this->assertEquals('расширение', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
-        $this->assertEquals('кириллическоеИмя', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
+        $this->assertEquals('кириллическийПуть', Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
+        $this->assertEquals('кириллическоеИмя.расширение', Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
+        $this->assertEquals('расширение', Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
+        $this->assertEquals('кириллическоеИмя', Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
     }
 }
