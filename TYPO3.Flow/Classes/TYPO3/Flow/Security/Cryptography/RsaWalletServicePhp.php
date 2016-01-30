@@ -388,6 +388,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * "ssh-rsa" key format. The fingerprint is obtained by applying an MD5
      * hash on the raw public key bytes.
      *
+     * If you have a PEM encoded private key, you can generate the same fingerprint
+     * using this:
+     *
+     *  ssh-keygen -yf my-key.pem > my-key.pub
+     *  ssh-keygen -lf my-key.pub
+     *
      * @param string $publicKeyString RSA public key, PKCS1 encoded
      * @return string The public key fingerprint
      */
