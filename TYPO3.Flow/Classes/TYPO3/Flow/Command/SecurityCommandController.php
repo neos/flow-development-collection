@@ -90,9 +90,9 @@ class SecurityCommandController extends CommandController
         }
         fclose($fp);
 
-        $uuid = $this->rsaWalletService->registerPublicKeyFromString($keyData);
+        $fingerprint = $this->rsaWalletService->registerPublicKeyFromString($keyData);
 
-        $this->outputLine('The public key has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
+        $this->outputLine('The public key has been successfully imported. Use the following fingerprint to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $fingerprint . PHP_EOL);
     }
 
     /**
@@ -116,9 +116,9 @@ class SecurityCommandController extends CommandController
         }
         fclose($fp);
 
-        $uuid = $this->rsaWalletService->registerKeyPairFromPrivateKeyString($keyData, $usedForPasswords);
+        $fingerprint = $this->rsaWalletService->registerKeyPairFromPrivateKeyString($keyData, $usedForPasswords);
 
-        $this->outputLine('The keypair has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
+        $this->outputLine('The keypair has been successfully imported. Use the following fingerprint to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $fingerprint . PHP_EOL);
     }
 
     /**
