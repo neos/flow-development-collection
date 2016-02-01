@@ -1,0 +1,21 @@
+{
+    "name": "neos/cache",
+    "type": "neos-framework",
+    "description": "Flow Cache Framework",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+
+        "ext-zlib": "*",
+        "ext-SPL": "*",
+        "ext-json": ">=1.2.0",
+        "ext-reflection": "*",
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Cache": "Classes"
+        }
+    }
+}

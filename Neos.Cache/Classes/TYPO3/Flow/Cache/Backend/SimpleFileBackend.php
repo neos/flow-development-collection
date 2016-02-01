@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
@@ -26,7 +26,7 @@ use TYPO3\Flow\Utility\OpcodeCacheHelper;
  * @api
  * @Flow\Proxy(false)
  */
-class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
+class SimpleFileBackend extends AbstractBackendBase implements PhpCapableBackendInterface, IterableBackendInterface
 {
     const SEPARATOR = '^';
 
@@ -73,27 +73,21 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     protected $cacheFilesIterator;
 
     /**
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
-     * Initializes this cache frontend
+     * Overrides the base directory for this cache,
+     * the effective directory will be a subdirectory of this.
+     * If not given this will be determined by the EnvironmentConfiguration
      *
-     * @return void
+     * @var string
      */
-    public function initializeObject()
-    {
-        $this->useIgBinary = extension_loaded('igbinary');
-    }
+    protected $baseDirectory;
 
     /**
-     * @param CacheManager $cacheManager
-     * @return void
+     * {@inheritdoc}
      */
-    public function injectCacheManager(CacheManager $cacheManager)
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
-        $this->cacheManager = $cacheManager;
+        parent::__construct($environmentConfiguration, $options);
+        $this->useIgBinary = extension_loaded('igbinary');
     }
 
     /**
@@ -107,29 +101,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     public function setCache(FrontendInterface $cache)
     {
         parent::setCache($cache);
-
-        $cacheDirectory = $this->cacheDirectory;
-        if ($cacheDirectory == '') {
-            $codeOrData = ($cache instanceof PhpFrontend) ? 'Code' : 'Data';
-            $baseDirectory = ($this->cacheManager->isCachePersistent($cache->getIdentifier()) ? FLOW_PATH_DATA . 'Persistent/' : $this->environment->getPathToTemporaryDirectory());
-            $cacheDirectory = $baseDirectory . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
-        }
-        if (!is_writable($cacheDirectory)) {
-            try {
-                \TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);
-            } catch (\TYPO3\Flow\Utility\Exception $exception) {
-                throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
-            }
-        }
-        if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-        }
-        if (!is_writable($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
-        }
-
-        $this->cacheDirectory = $cacheDirectory;
         $this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';
+        $this->configureCacheDirectory($cache);
     }
 
     /**
@@ -427,8 +400,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function throwExceptionIfPathExceedsMaximumLength($cacheEntryPathAndFilename)
     {
-        if (strlen($cacheEntryPathAndFilename) > $this->environment->getMaximumPathLength()) {
-            throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
+        if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration->getMaximumPathLength()) {
+            throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
         }
     }
 
@@ -446,5 +419,50 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $lock->release();
 
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDirectory()
+    {
+        return $this->baseDirectory;
+    }
+
+    /**
+     * @param string $baseDirectory
+     */
+    public function setBaseDirectory($baseDirectory)
+    {
+        $this->baseDirectory = $baseDirectory;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function configureCacheDirectory()
+    {
+        $cacheDirectory = $this->cacheDirectory;
+        if ($cacheDirectory == '') {
+            $codeOrData = ($this->cache instanceof PhpFrontend) ? 'Code' : 'Data';
+            $baseDirectory = ($this->baseDirectory ?: $this->environmentConfiguration->getFileCacheBasePath());
+            $cacheDirectory = $baseDirectory . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
+        }
+
+        if (!is_writable($cacheDirectory)) {
+            try {
+                \TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);
+            } catch (\TYPO3\Flow\Utility\Exception $exception) {
+                throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
+            }
+        }
+        if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) {
+            throw new Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+        }
+        if (!is_writable($cacheDirectory)) {
+            throw new Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+        }
+
+        $this->cacheDirectory = $cacheDirectory;
     }
 }

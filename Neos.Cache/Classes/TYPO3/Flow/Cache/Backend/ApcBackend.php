@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 
 /**
  * A caching backend which stores cache entries by using APC.
@@ -41,7 +41,7 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class ApcBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class ApcBackend extends AbstractBackendBase implements TaggableBackendInterface, IterableBackendInterface
 {
     /**
      * A prefix to seperate stored data from other data possible stored in the APC
@@ -55,18 +55,14 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
     protected $cacheEntriesIterator;
 
     /**
-     * Constructs this backend
-     *
-     * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
-     * @param array $options Configuration options - unused here
-     * @throws \TYPO3\Flow\Cache\Exception
+     * {@inheritdoc}
      */
-    public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array())
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
         if (!extension_loaded('apc')) {
             throw new \TYPO3\Flow\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
         }
-        parent::__construct($context, $options);
+        parent::__construct($environmentConfiguration, $options);
     }
 
     /**
@@ -79,7 +75,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
     {
         parent::setCache($cache);
 
-        $pathHash = substr(md5(FLOW_PATH_ROOT . $this->context . $cache->getIdentifier()), 0, 12);
+        $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $this->environmentConfiguration->getApplicationContext() . $cache->getIdentifier()), 0, 12);
         $this->identifierPrefix = 'Flow_' . $pathHash . '_';
     }
 

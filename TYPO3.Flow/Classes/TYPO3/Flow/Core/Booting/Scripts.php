@@ -15,6 +15,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\FlowCacheEnvironmentConfiguration;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Core\Bootstrap;
@@ -283,16 +284,32 @@ class Scripts
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
+        /** @var ConfigurationManager $configurationManager */
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
+
+        $cacheEnvironmentConfiguration = new FlowCacheEnvironmentConfiguration(
+            FLOW_PATH_ROOT,
+            (string)$environment->getContext(),
+            $environment->getPathToTemporaryDirectory(),
+            PHP_MAXPATHLEN,
+            FLOW_PATH_DATA . 'Persistent/'
+        );
+
+        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'TYPO3\Flow\Cache\CacheFactoryInterface');
+        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : \TYPO3\Flow\Cache\CacheFactory::class;
+
+        $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment);
+        $cacheFactory->injectEnvironmentConfiguration($cacheEnvironmentConfiguration);
 
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
         $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $cacheManager->injectEnvironment($environment);
+        $cacheManager->injectCacheFactory($cacheFactory);
 
-        $cacheFactory = new CacheFactory($bootstrap->getContext(), $cacheManager, $environment);
+        $cacheFactory->injectCacheManager($cacheManager);
 
         $bootstrap->setEarlyInstance(CacheManager::class, $cacheManager);
         $bootstrap->setEarlyInstance(CacheFactory::class, $cacheFactory);

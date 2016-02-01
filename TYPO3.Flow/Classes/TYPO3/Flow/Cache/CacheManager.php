@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
@@ -134,8 +135,9 @@ class CacheManager
      * Registers a cache so it can be retrieved at a later point.
      *
      * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
+     * @param bool $persistent
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
+     * @throws Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
     public function registerCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache, $persistent = false)
@@ -453,6 +455,7 @@ class CacheManager
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
         $backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
         $persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
-        $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
+        $cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
+        $this->registerCache($cache, $persistent);
     }
 }

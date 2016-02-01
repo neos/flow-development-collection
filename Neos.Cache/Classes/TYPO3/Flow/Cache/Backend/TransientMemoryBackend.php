@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class TransientMemoryBackend extends AbstractBackend implements TaggableBackendInterface
+class TransientMemoryBackend extends AbstractBackendBase implements TaggableBackendInterface
 {
     /**
      * @var array

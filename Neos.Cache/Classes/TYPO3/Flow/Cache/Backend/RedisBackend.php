@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception as CacheException;
 
 /**
@@ -43,7 +44,7 @@ use TYPO3\Flow\Cache\Exception as CacheException;
  *
  * @api
  */
-class RedisBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
+class RedisBackend extends AbstractBackendBase implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
 {
     const MIN_REDIS_VERSION = '2.6.0';
 
@@ -83,14 +84,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     protected $compressionLevel = 0;
 
     /**
-     * @param \TYPO3\Flow\Core\ApplicationContext $context
-     * @param array $options
-     * @param \Redis $redis
-     * @throws CacheException
+     * {@inheritdoc}
      */
-    public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array(), \Redis $redis = null)
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options, \Redis $redis = null)
     {
-        parent::__construct($context, $options);
+        parent::__construct($environmentConfiguration, $options);
         if (null === $redis) {
             $redis = $this->getRedisClient();
         }

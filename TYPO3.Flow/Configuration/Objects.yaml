@@ -15,6 +15,9 @@ DateTime:
 # Cache                                                                    #
 #                                                                          #
 
+TYPO3\Flow\Cache\CacheFactoryInterface:
+  className: TYPO3\Flow\Cache\CacheFactory
+
 TYPO3\Flow\Cache\CacheFactory:
   arguments:
     1:

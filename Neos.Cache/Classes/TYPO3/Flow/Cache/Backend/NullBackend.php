@@ -18,7 +18,7 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface
+class NullBackend extends AbstractBackendBase implements PhpCapableBackendInterface, TaggableBackendInterface
 {
     /**
      * Acts as if it would save data
