@@ -38,6 +38,13 @@ interface RedirectionStorageInterface
     public function getAll($host = null);
 
     /**
+     * Return a list of all host patterns
+     *
+     * @return array
+     */
+    public function getDistinctHosts();
+
+    /**
      * Removes a redirection for the given $sourceUriPath if it exists
      *
      * @param string $sourceUriPath
@@ -62,11 +69,11 @@ interface RedirectionStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param array $hostPatterns the list of host patterns
+     * @param array $hosts the list of host patterns
      * @return array<Redirection> the freshly generated redirection instance
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hostPatterns = []);
+    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = []);
 
     /**
      * Increment the hit counter for the given redirection

@@ -56,7 +56,7 @@ class RedirectionCommandController extends CommandController
                 $redirection->getSourceUriPath(),
                 $redirection->getTargetUriPath(),
                 $redirection->getStatusCode(),
-                $redirection->getHostPattern()
+                $redirection->getHost()
             ]);
         }
         if ($filename === null) {
@@ -76,18 +76,18 @@ class RedirectionCommandController extends CommandController
         $reader = Reader::createFromPath($filename);
         $counter = 0;
         foreach ($reader as $index => $row) {
-            list($sourceUriPath, $targetUriPath, $statusCode, $hostPatterns) = $row;
-            $hostPatterns = Arrays::trimExplode(',', $hostPatterns);
-            foreach ($hostPatterns as $hostPattern) {
-                $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourceUriPath, $hostPattern);
+            list($sourceUriPath, $targetUriPath, $statusCode, $hosts) = $row;
+            $hosts = Arrays::trimExplode(',', $hosts);
+            foreach ($hosts as $host) {
+                $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
                 if ($redirection !== null && $redirection->getTargetUriPath() !== $targetUriPath && $redirection->getStatusCode() !== $statusCode) {
                     $this->outputLine('- [%d] %s', [$statusCode, $sourceUriPath]);
-                    $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $hostPattern);
+                    $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
                     $this->persistenceManager->persistAll();
                 }
             }
             try {
-                $this->redirectionStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hostPatterns);
+                $this->redirectionStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
                 $this->outputLine('+ [%d] %s', [$statusCode, $sourceUriPath]);
             } catch (Exception $exception) {
                 $this->outputLine('~ [%d] %s', [$statusCode, $sourceUriPath]);
@@ -146,12 +146,12 @@ class RedirectionCommandController extends CommandController
      * @param string $sourcePath The relative URI path that should trigger the redirect
      * @param string $targetPath The relative URI path that should be redirected to
      * @param integer $statusCode The status code of the redirect header
-     * @param string $hostPattern Host pattern to match the redirect
+     * @param string $host Host or host pattern to match the redirect
      * @return void
      */
-    public function addCommand($sourcePath, $targetPath, $statusCode, $hostPattern = null)
+    public function addCommand($sourcePath, $targetPath, $statusCode, $host = null)
     {
-        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$hostPattern]);
+        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$host]);
         $this->outputLine('New redirection created!');
     }
 }

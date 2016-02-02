@@ -50,9 +50,9 @@ class RedirectionStorageAspect
         $redirections = $joinPoint->getResult();
         foreach ($redirections as $redirection) {
             /** @var Redirection $redirection */
-            $redirectionDto = new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHostPattern());
+            $redirectionDto = new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
             $this->redirectionService->emitRedirectionCreated($redirectionDto);
-            $this->systemLogger->log(sprintf('Redirection from %s %s -> %s (%d) added', $redirectionDto->getHostPattern(), $redirectionDto->getSourceUriPath(), $redirectionDto->getTargetUriPath(), $redirectionDto->getStatusCode()), LOG_DEBUG);
+            $this->systemLogger->log(sprintf('Redirection from %s %s -> %s (%d) added', $redirectionDto->getHost(), $redirectionDto->getSourceUriPath(), $redirectionDto->getTargetUriPath(), $redirectionDto->getStatusCode()), LOG_DEBUG);
         }
     }
 }

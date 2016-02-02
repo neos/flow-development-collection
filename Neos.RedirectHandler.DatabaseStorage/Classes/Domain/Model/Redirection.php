@@ -36,7 +36,7 @@ class Redirection
 
     /**
      * @var \DateTime
-     * @Gedmo\Timestampable(on="update", field={"sourceUriPath", "targetUriPath", "statusCode", "hostPattern"})
+     * @Gedmo\Timestampable(on="update", field={"sourceUriPath", "targetUriPath", "statusCode", "host"})
      */
     protected $lastModificationDateTime;
 
@@ -96,7 +96,7 @@ class Redirection
      * @ORM\Column(nullable=true)
      * @Flow\Identity
      */
-    protected $hostPattern;
+    protected $host;
 
     /**
      * @var integer
@@ -113,9 +113,9 @@ class Redirection
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
      * @param string $targetUriPath target URI path to which a redirect should be pointed
      * @param integer $statusCode status code to be send with the redirect header
-     * @param string $hostPattern host pattern to match the redirect
+     * @param string $host Host or host pattern
      */
-    public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $hostPattern = null)
+    public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $host = null)
     {
         $this->creationDateTime = new \DateTime();
         $this->lastModificationDateTime = new \DateTime();
@@ -123,7 +123,7 @@ class Redirection
         $this->sourceUriPathHash = md5($this->sourceUriPath);
         $this->setTargetUriPath($targetUriPath);
         $this->statusCode = (integer)$statusCode;
-        $this->hostPattern = $hostPattern ? trim($hostPattern) : null;
+        $this->host = $host ? trim($host) : null;
 
         $this->hitCounter = 0;
     }
@@ -209,9 +209,9 @@ class Redirection
     /**
      * @return string
      */
-    public function getHostPattern()
+    public function getHost()
     {
-        return $this->hostPattern;
+        return $this->host;
     }
 
     /**

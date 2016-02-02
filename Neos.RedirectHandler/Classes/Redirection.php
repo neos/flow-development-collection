@@ -45,20 +45,20 @@ class Redirection
      *
      * @var string
      */
-    protected $hostPattern;
+    protected $host;
 
     /**
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
      * @param string $targetUriPath target URI path to which a redirect should be pointed
      * @param integer $statusCode status code to be send with the redirect header
-     * @param string $hostPattern host pattern to match the redirect
+     * @param string $host host or host pattern to match the redirect
      */
-    public function __construct($sourceUriPath, $targetUriPath, $statusCode, $hostPattern = null)
+    public function __construct($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {
         $this->sourceUriPath = trim($sourceUriPath, '/');
         $this->targetUriPath = trim($targetUriPath, '/');
         $this->statusCode = (integer)$statusCode;
-        $this->hostPattern = trim($hostPattern);
+        $this->host = trim($host);
     }
 
     /**
@@ -88,8 +88,8 @@ class Redirection
     /**
      * @return string
      */
-    public function getHostPattern()
+    public function getHost()
     {
-        return $this->hostPattern;
+        return $this->host;
     }
 }

@@ -19,7 +19,6 @@ use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
-use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * Repository for redirection instances.
@@ -36,32 +35,29 @@ class RedirectionRepository extends Repository
     protected $entityManager;
 
     /**
-     * @Flow\Inject
-     * @var DomainMatchingStrategy
-     */
-    protected $domainMatchingStrategy;
-
-    /**
      * @var array
      */
     protected $defaultOrderings = array(
-        'sourceUriPath' => QueryInterface::ORDER_ASCENDING
+        'sourceUriPath' => QueryInterface::ORDER_ASCENDING,
+        'host' => QueryInterface::ORDER_ASCENDING
     );
 
     /**
      * @param string $sourceUriPath
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Host or host pattern
      * @return Redirection
      */
     public function findOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
-        $hostPattern = $this->hostPatternByHost($host);
         $query = $this->createQuery();
 
         $query->matching(
             $query->logicalAnd(
                 $query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))),
-                $query->equals('hostPattern', $hostPattern)
+                $query->logicalOr(
+                    $query->equals('host', $host),
+                    $query->equals('host', null)
+                )
             )
         );
 
@@ -70,18 +66,20 @@ class RedirectionRepository extends Repository
 
     /**
      * @param string $targetUriPath
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Host or host pattern
      * @return Redirection
      */
     public function findOneByTargetUriPathAndHost($targetUriPath, $host = null)
     {
-        $hostPattern = $this->hostPatternByHost($host);
         $query = $this->createQuery();
 
         $query->matching(
             $query->logicalAnd(
                 $query->equals('targetUriPathHash', md5(trim($targetUriPath, '/'))),
-                $query->equals('hostPattern', $hostPattern)
+                $query->logicalOr(
+                    $query->equals('host', $host),
+                    $query->equals('host', null)
+                )
             )
         );
 
@@ -104,15 +102,28 @@ class RedirectionRepository extends Repository
             ->from($this->getEntityClassName(), 'r');
 
         if ($host !== null) {
-            $hostPattern = $this->hostPatternByHost($host);
-            $query->andWhere('r.hostPattern = :hostPattern')
-                ->setParameter('hostPattern', $hostPattern);
+            $query->andWhere('r.host = :host')
+                ->setParameter('host', $host);
         }
 
-        $query->orderBy('r.hostPattern', 'ASC');
+        $query->orderBy('r.host', 'ASC');
         $query->addOrderBy('r.sourceUriPath', 'ASC');
 
         return $this->iterate($query->getQuery()->iterate(), $callback);
+    }
+
+    /**
+     * Return a list of all host patterns
+     *
+     * @return array
+     */
+    public function findDistinctHosts()
+    {
+        /** @var Query $query */
+        $query = $this->entityManager->createQuery('SELECT DISTINCT r.host FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r');
+        return array_filter(array_map(function($record) {
+            return $record['host'];
+        }, $query->getResult()));
     }
 
     /**
@@ -134,20 +145,5 @@ class RedirectionRepository extends Repository
             }
             ++$iteration;
         }
-    }
-
-    /**
-     * @param string $host
-     * @return array
-     */
-    protected function hostPatternByHost($host)
-    {
-        /** @var Query $query */
-        $query = $this->entityManager->createQuery('SELECT DISTINCT r.hostPattern FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r');
-        $domains = array_filter(array_map(function($record) {
-            return $record['hostPattern'];
-        }, $query->getResult()));
-        $matches = $this->domainMatchingStrategy->getSortedMatches($host, $domains);
-        return reset($matches);
     }
 }

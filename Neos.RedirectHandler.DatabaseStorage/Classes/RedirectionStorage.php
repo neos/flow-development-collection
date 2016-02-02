@@ -86,8 +86,18 @@ class RedirectionStorage implements RedirectionStorageInterface
     public function getAll($host = null)
     {
         foreach ($this->redirectionRepository->findAll($host) as $redirection) {
-            yield new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHostPattern());
+            yield new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
         }
+    }
+
+    /**
+     * Return a list of all host patterns
+     *
+     * @return array
+     */
+    public function getDistinctHosts()
+    {
+        return $this->redirectionRepository->findDistinctHosts();
     }
 
     /**
@@ -125,20 +135,20 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param array $hostPatterns the list of host patterns
+     * @param array $hosts the list of host patterns
      * @return array<Redirection> the freshly generated redirections instance
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hostPatterns = [])
+    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
     {
         $statusCode = $statusCode ?: $this->defaultStatusCode['redirect'];
         $redirections = [];
-        if ($hostPatterns !== []) {
-            array_map(function($hostPattern) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirections) {
-                $redirections[] = $this->addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode, $hostPattern);
-            }, $hostPatterns);
+        if ($hosts !== []) {
+            array_map(function($host) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirections) {
+                $redirections[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host);
+            }, $hosts);
         } else {
-            $redirections[] = $this->addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode);
+            $redirections[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode);
         }
         return $redirections;
     }
@@ -149,17 +159,17 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param string $hostPattern the host patterns for the current redirection
+     * @param string $host the host patterns for the current redirection
      * @return Redirection the freshly generated redirection instance
      * @api
      */
-    protected function addRedirectionByHostPattern($sourceUriPath, $targetUriPath, $statusCode = 301, $hostPattern = null)
+    protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode = 301, $host = null)
     {
-        $hash = md5($hostPattern . $sourceUriPath . $targetUriPath . $statusCode);
+        $hash = md5($host . $sourceUriPath . $targetUriPath . $statusCode);
         if (isset($this->runtimeCache[$hash])) {
             return $this->runtimeCache[$hash];
         }
-        $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode, $hostPattern);
+        $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode, $host);
         $this->updateDependingRedirects($redirection);
         $this->redirectionRepository->add($redirection);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
@@ -213,7 +223,7 @@ class RedirectionStorage implements RedirectionStorageInterface
     {
         for ($i = 0; $i < 10; $i++) {
             try {
-                $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($redirection->getSourceUriPath(), $redirection->getHostPattern());
+                $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($redirection->getSourceUriPath(), $redirection->getHost());
                 if ($redirection === null) {
                     return;
                 }
