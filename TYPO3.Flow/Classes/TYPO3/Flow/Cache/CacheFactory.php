@@ -48,7 +48,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     protected $environment;
 
     /**
-     * @var FlowCacheEnvironmentConfiguration
+     * @var EnvironmentConfiguration
      */
     protected $environmentConfiguration;
 
@@ -62,10 +62,10 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     }
 
     /**
-     * @param FlowCacheEnvironmentConfiguration $environmentConfiguration
+     * @param EnvironmentConfiguration $environmentConfiguration
      * @Flow\Autowiring(enabled=false)
      */
-    public function injectEnvironmentConfiguration(FlowCacheEnvironmentConfiguration $environmentConfiguration)
+    public function injectEnvironmentConfiguration(EnvironmentConfiguration $environmentConfiguration)
     {
         $this->environmentConfiguration = $environmentConfiguration;
     }
@@ -129,7 +129,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
             (!isset($backendOptions['cacheDirectory']) || $backendOptions['cacheDirectory'] === '') &&
             (!isset($backendOptions['baseDirectory']) || $backendOptions['baseDirectory'] === '')
         ) {
-            $backendOptions['baseDirectory'] = $this->environmentConfiguration->getPersistentCacheBasePath();
+            $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
         }
 
         if (is_a($backendObjectName, AbstractBackend::class, true)) {

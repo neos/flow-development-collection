@@ -84,7 +84,7 @@ class SimpleFileBackend extends AbstractBackendBase implements PhpCapableBackend
     /**
      * {@inheritdoc}
      */
-    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
         parent::__construct($environmentConfiguration, $options);
         $this->useIgBinary = extension_loaded('igbinary');
@@ -102,7 +102,7 @@ class SimpleFileBackend extends AbstractBackendBase implements PhpCapableBackend
     {
         parent::setCache($cache);
         $this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';
-        $this->configureCacheDirectory($cache);
+        $this->configureCacheDirectory();
     }
 
     /**

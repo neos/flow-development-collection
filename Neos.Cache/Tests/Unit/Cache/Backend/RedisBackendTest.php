@@ -53,7 +53,14 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
             ->method('getIdentifier')
             ->will($this->returnValue('Foo_Cache'));
 
-        $this->backend = new RedisBackend(new ApplicationContext('Development'), array(), $this->redis);
+        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
+            __DIR__,
+            'Testing',
+            'vfs://Foo/',
+            255
+        ], '');
+
+        $this->backend = new RedisBackend($mockEnvironmentConfiguration, array(), $this->redis);
         $this->backend->setCache($this->cache);
     }
 

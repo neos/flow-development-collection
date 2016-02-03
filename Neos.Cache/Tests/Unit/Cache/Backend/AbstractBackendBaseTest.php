@@ -11,13 +11,14 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractBackendBaseTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
@@ -31,7 +32,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
-			class ' . $className . ' extends \TYPO3\Flow\Cache\Backend\AbstractBackend {
+			class ' . $className . ' extends \TYPO3\Flow\Cache\Backend\AbstractBackendBase {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}
@@ -48,7 +49,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 				}
 			}
 		');
-        $this->backend = new $className(new ApplicationContext('Testing'));
+        $this->backend = new $className(new EnvironmentConfiguration('Ultraman Neos', 'Testing', '/some/path', PHP_MAXPATHLEN));
     }
 
     /**
@@ -57,7 +58,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = get_class($this->backend);
-        $backend = new $className(new ApplicationContext('Testing'), array('someOption' => 'someValue'));
+        $backend = new $className(new EnvironmentConfiguration('Ultraman Neos', 'Testing', '/some/path', PHP_MAXPATHLEN), array('someOption' => 'someValue'));
         $this->assertSame('someValue', $backend->getSomeOption());
     }
 }

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  */
 
 use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Security\Cryptography\HashService;
@@ -39,7 +40,7 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new ApplicationContext('Testing')));
+        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash', 'Testing', '/some/path', PHP_MAXPATHLEN)));
         $this->cache->initializeObject();
 
         $this->hashService = new HashService();

@@ -289,7 +289,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
      * Connect to the database
      *
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception if the connection cannot be established
+     * @throws \TYPO3\Flow\Cache\Exception if the connection cannot be established
      */
     protected function connect()
     {
@@ -315,7 +315,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
                 $this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
             }
         } catch (\PDOException $exception) {
-            throw new \TYPO3\Flow\Persistence\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
+            throw new \TYPO3\Flow\Cache\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
         }
     }
 
@@ -323,7 +323,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
      * Creates the tables needed for the cache backend.
      *
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception if something goes wrong
+     * @throws \TYPO3\Flow\Cache\Exception if something goes wrong
      */
     protected function createCacheTables()
     {
@@ -331,7 +331,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
         try {
             \TYPO3\Flow\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
         } catch (\PDOException $exception) {
-            throw new \TYPO3\Flow\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
+            throw new \TYPO3\Flow\Cache\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }
     }
 

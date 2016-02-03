@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Core\Booting;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
+use TYPO3\Flow\Cache\EnvironmentConfiguration as CacheEnvironmentConfiguration;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\FlowCacheEnvironmentConfiguration;
 use TYPO3\Flow\Configuration\ConfigurationManager;
@@ -288,12 +289,11 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheEnvironmentConfiguration = new FlowCacheEnvironmentConfiguration(
+        $cacheEnvironmentConfiguration = new CacheEnvironmentConfiguration(
             FLOW_PATH_ROOT,
             (string)$environment->getContext(),
             $environment->getPathToTemporaryDirectory(),
-            PHP_MAXPATHLEN,
-            FLOW_PATH_DATA . 'Persistent/'
+            PHP_MAXPATHLEN
         );
 
         $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'TYPO3\Flow\Cache\CacheFactoryInterface');

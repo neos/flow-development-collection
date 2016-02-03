@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 
 /**
  * Testcase for the PDO cache backend
@@ -41,8 +41,7 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
-        $backend->injectEnvironment($this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false));
+        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new EnvironmentConfiguration('SomeApplication', 'Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
@@ -223,13 +222,18 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend()
     {
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
 
-        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, [], [], '', false);
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
-        $backend->injectEnvironment($mockEnvironment);
+        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
+            __DIR__,
+            'Testing',
+            'vfs://Foo/',
+            255
+        ], '');
+
+        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend($mockEnvironmentConfiguration);
         $backend->setCache($mockCache);
         $backend->setDataSourceName('sqlite::memory:');
         $backend->initializeObject();

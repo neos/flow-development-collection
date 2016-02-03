@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Session;
 
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
@@ -1233,18 +1234,10 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function createCache($name)
     {
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
-        $mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
-        $mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
-
-        $mockCacheManager = $this->getMock(\TYPO3\Flow\Cache\CacheManager::class, array(), array(), '', false);
-        $mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
-
-        $backend = new FileBackend(new ApplicationContext('Testing'));
-        $backend->injectCacheManager($mockCacheManager);
-        $backend->injectEnvironment($mockEnvironment);
+        $backend = new FileBackend(new EnvironmentConfiguration('Session', 'Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new VariableFrontend($name, $backend);
         $cache->initializeObject();
+        $backend->setCache($cache);
         $cache->flush();
         return $cache;
     }
