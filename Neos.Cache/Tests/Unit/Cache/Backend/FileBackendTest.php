@@ -14,12 +14,13 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the cache to file backend
  */
-class FileBackendTest extends UnitTestCase
+class FileBackendTest extends BaseTestCase
 {
     /**
      */

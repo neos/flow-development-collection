@@ -106,13 +106,11 @@
             ]
         }
     },
-    "require-dev": {
-        "phpunit/phpunit": "~4.8 || ~5.2.0",
-        "mikey179/vfsstream": "~1.6",
-        "doctrine/orm": "~2.4.0"
-    },
     "autoload-dev": {
         "psr-4": {
+            "TYPO3\\Flow\\Cache\\Tests\\": [
+                "Neos.Cache/Tests"
+            ],
             "Neos\\Error\\Messages\\Tests\\": [
                 "Neos.Error.Messages/Tests"
             ],
@@ -138,5 +136,10 @@
                 "Neos.Utility.Unicode/Tests"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8 || ~5.2.0",
+        "mikey179/vfsstream": "~1.6",
+        "doctrine/orm": "~2.4.0"
     }
 }

@@ -18,6 +18,11 @@
             "TYPO3\\Flow\\Cache": "Classes"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Cache\\Tests\\": "Tests"
+        }
+    },
     "extra": {
         "neos": {
             "package-key": "Neos.Cache"

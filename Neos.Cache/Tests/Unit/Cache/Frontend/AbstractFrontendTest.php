@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Frontend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the abstract cache frontend
  *
  */
-class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractFrontendTest extends BaseTestCase
 {
     /**
      * @test

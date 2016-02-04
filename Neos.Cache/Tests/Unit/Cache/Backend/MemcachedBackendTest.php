@@ -12,14 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the cache to memcached backend
  *
  * @requires extension memcached
  */
-class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class MemcachedBackendTest extends BaseTestCase
 {
     /**
      * @var \TYPO3\Flow\Utility\Environment

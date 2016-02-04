@@ -12,13 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendBaseTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractBackendBaseTest extends BaseTestCase
 {
     /**
      * @var \TYPO3\Flow\Cache\Backend\AbstractBackend

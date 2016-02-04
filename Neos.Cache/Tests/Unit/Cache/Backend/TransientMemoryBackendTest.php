@@ -12,13 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the Transient Memory Backend
  *
  */
-class TransientMemoryBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class TransientMemoryBackendTest extends BaseTestCase
 {
     /**
      * @expectedException \TYPO3\Flow\Cache\Exception

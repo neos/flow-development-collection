@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Frontend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the PHP source code cache frontend
  *
  */
-class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PhpFrontendTest extends BaseTestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -39,8 +40,8 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class, array(), array(), '', false);
         $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
 
-        $cache = $this->getAccessibleMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);
-        $cache->_set('backend', $mockBackend);
+        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);
+        $this->inject($cache, 'backend', $mockBackend);
         $cache->set('Foo-Bar', $originalSourceCode, array('tags'), 1234);
     }
 
@@ -62,8 +63,8 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class, array(), array(), '', false);
         $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
-        $cache = $this->getAccessibleMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);
-        $cache->_set('backend', $mockBackend);
+        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);
+        $this->inject($cache, 'backend', $mockBackend);
 
         $result = $cache->requireOnce('Foo-Bar');
         $this->assertSame('hello world!', $result);

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  * source code.
  */
 use TYPO3\Flow\Cache\Backend\RedisBackend;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the redis cache backend
@@ -19,7 +19,7 @@ use TYPO3\Flow\Core\ApplicationContext;
  * These unit tests rely on a mocked redis client.
  * @requires extension redis
  */
-class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class RedisBackendTest extends BaseTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject

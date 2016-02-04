@@ -12,20 +12,16 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\Backend\ApcBackend;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the APC cache backend
  *
  * @requires extension apc
  */
-class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ApcBackendTest extends BaseTestCase
 {
-    /**
-     * @var \TYPO3\Flow\Utility\Environment
-     */
-    protected $mockEnvironment;
-
     /**
      * Sets up this testcase
      *
@@ -40,7 +36,6 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         if (ini_get('apc.slam_defense') == 1) {
             $this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
         }
-        $this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
     }
 
     /**
@@ -49,8 +44,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backend = new ApcBackend(new ApplicationContext('Testing'));
-        $backend->injectEnvironment($this->mockEnvironment);
+        $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
@@ -212,14 +206,12 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-        $thisBackend = new ApcBackend(new ApplicationContext('Testing'));
-        $thisBackend->injectEnvironment($this->mockEnvironment);
+        $thisBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-        $thatBackend = new ApcBackend(new ApplicationContext('Testing'));
-        $thatBackend->injectEnvironment($this->mockEnvironment);
+        $thatBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
 
         $thisBackend->set('thisEntry', 'Hello');
@@ -285,9 +277,21 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setUpBackend()
     {
         $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
-        $backend = new ApcBackend(new ApplicationContext('Testing'));
-        $backend->injectEnvironment($this->mockEnvironment);
+        $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         return $backend;
+    }
+
+    /**
+     * @return EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     */
+    public function getEnvironmentConfiguration()
+    {
+        return new EnvironmentConfiguration(
+            __DIR__,
+            'Testing',
+            'vfs://Foo/',
+            255
+        );
     }
 }

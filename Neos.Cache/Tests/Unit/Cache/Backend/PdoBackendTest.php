@@ -12,19 +12,15 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the PDO cache backend
  *
  * @requires extension pdo_sqlite
  */
-class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PdoBackendTest extends BaseTestCase
 {
-    /**
-     * @var \TYPO3\Flow\Utility\Environment
-     */
-    protected $environment;
-
     /**
      * @var string
      */

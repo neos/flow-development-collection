@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * A caching backend which forgets everything immediately
@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Used in \TYPO3\Flow\Cache\FactoryTest
  *
  */
-class MockBackend extends \TYPO3\Flow\Cache\Backend\NullBackend
+class MockBackend extends BaseTestCase
 {
     /**
      * @var mixed
