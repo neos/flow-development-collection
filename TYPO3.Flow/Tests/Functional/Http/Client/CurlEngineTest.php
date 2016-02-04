@@ -34,13 +34,13 @@ class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
-     * Check if the Curl Engine can send a GET request to typo3.org
+     * Check if the Curl Engine can send a GET request to neos.io
      *
      * @test
      */
     public function getRequestReturnsResponse()
     {
-        $response = $this->browser->request('http://typo3.org');
-        $this->assertContains('This website is powered by TYPO3', $response->getContent());
+        $response = $this->browser->request('https://www.neos.io');
+        $this->assertContains('This website is powered by Neos', $response->getContent());
     }
 }
