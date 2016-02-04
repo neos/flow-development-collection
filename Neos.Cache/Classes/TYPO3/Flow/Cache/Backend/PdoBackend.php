@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,13 +10,15 @@ namespace TYPO3\Flow\Cache\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Cache\Backend\AbstractBackend;
+use TYPO3\Flow\Cache\Exception;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * A PDO database cache backend
  *
  * @api
- * @Flow\Proxy(false)
  */
 class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface, IterableBackendInterface
 {
@@ -103,20 +105,20 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
+     * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if $data is not a string
+     * @throws InvalidDataException if $data is not a string
      * @api
      */
     public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
     {
         $this->connect();
 
-        if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
-            throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
+        if (!$this->cache instanceof FrontendInterface) {
+            throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
         }
 
         $this->remove($entryIdentifier);
@@ -132,14 +134,14 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
         $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
         $result = $statementHandle->execute(array($entryIdentifier, $this->environmentConfiguration->getApplicationContext(), $this->cacheIdentifier, time(), $lifetime, $data));
         if ($result === false) {
-            throw new \TYPO3\Flow\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
+            throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
         }
 
         $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
         foreach ($tags as $tag) {
             $result = $statementHandle->execute(array($entryIdentifier, $this->environmentConfiguration->getApplicationContext(), $this->cacheIdentifier, $tag));
             if ($result === false) {
-                throw new \TYPO3\Flow\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
             }
         }
     }
@@ -289,7 +291,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
      * Connect to the database
      *
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception if the connection cannot be established
+     * @throws Exception if the connection cannot be established
      */
     protected function connect()
     {
@@ -315,7 +317,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
                 $this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
             }
         } catch (\PDOException $exception) {
-            throw new \TYPO3\Flow\Cache\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
+            throw new Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
         }
     }
 
@@ -323,7 +325,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
      * Creates the tables needed for the cache backend.
      *
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception if something goes wrong
+     * @throws Exception if something goes wrong
      */
     protected function createCacheTables()
     {
@@ -331,7 +333,7 @@ class PdoBackend extends AbstractBackendBase implements TaggableBackendInterface
         try {
             \TYPO3\Flow\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
         } catch (\PDOException $exception) {
-            throw new \TYPO3\Flow\Cache\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
+            throw new Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }
     }
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
+namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@ use TYPO3\Flow\Cache\Tests\BaseTestCase;
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendBaseTest extends BaseTestCase
+class AbstractBackendTest extends BaseTestCase
 {
     /**
      * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
@@ -30,9 +30,10 @@ class AbstractBackendBaseTest extends BaseTestCase
      */
     public function setUp()
     {
+        class_exists(\Neos\Cache\Backend\AbstractBackend::class);
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
-			class ' . $className . ' extends \TYPO3\Flow\Cache\Backend\AbstractBackendBase {
+			class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

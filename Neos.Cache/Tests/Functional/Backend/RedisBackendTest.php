@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Cache\Backend;
+namespace TYPO3\Flow\Cache\Tests\Functional\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,8 @@ namespace TYPO3\Flow\Tests\Functional\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\Backend\RedisBackend;
-use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the redis cache backend
@@ -24,7 +25,7 @@ use TYPO3\Flow\Core\ApplicationContext;
  * Tests require Redis listening on 127.0.0.1:6379.
  * @requires extension redis
  */
-class RedisBackendTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class RedisBackendTest extends BaseTestCase
 {
     /**
      * @var RedisBackend
@@ -54,7 +55,7 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             $this->markTestSkipped('redis server not reachable');
         }
         $this->backend = new RedisBackend(
-            new ApplicationContext('Testing'), array('hostname' => '127.0.0.1', 'database' => 0)
+            new EnvironmentConfiguration('Redis a wonderful color', 'Testing', '/some/path', PHP_MAXPATHLEN), array('hostname' => '127.0.0.1', 'database' => 0)
         );
         $this->cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));

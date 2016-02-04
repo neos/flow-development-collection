@@ -16,6 +16,9 @@
     "autoload": {
         "psr-0": {
             "TYPO3\\Flow\\Cache": "Classes"
+        },
+        "psr-4": {
+            "Neos\\Cache\\": "Classes"
         }
     },
     "autoload-dev": {

@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,13 +11,17 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Backend\AbstractBackend;
+use TYPO3\Flow\Cache\Exception;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * A caching backend which stores cache entries during one script run.
  *
  * @api
  */
-class TransientMemoryBackend extends AbstractBackendBase implements TaggableBackendInterface
+class TransientMemoryBackend extends AbstractBackend implements TaggableBackendInterface
 {
     /**
      * @var array
@@ -37,17 +41,17 @@ class TransientMemoryBackend extends AbstractBackendBase implements TaggableBack
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
-     * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
+     * @throws InvalidDataException
+     * @throws Exception if no cache frontend has been set.
      * @api
      */
     public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
     {
-        if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
-            throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
+        if (!$this->cache instanceof FrontendInterface) {
+            throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
         }
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
         }
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {

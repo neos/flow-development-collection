@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Cache\Backend;
+namespace Neos\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 
 /**
@@ -17,7 +18,7 @@ use TYPO3\Flow\Cache\EnvironmentConfiguration;
  *
  * @api
  */
-abstract class AbstractBackendBase implements \TYPO3\Flow\Cache\Backend\BackendInterface
+abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInterface
 {
     const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
     const UNLIMITED_LIFETIME = 0;

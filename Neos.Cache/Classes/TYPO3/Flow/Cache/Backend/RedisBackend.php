@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Backend\AbstractBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception as CacheException;
 
@@ -44,7 +45,7 @@ use TYPO3\Flow\Cache\Exception as CacheException;
  *
  * @api
  */
-class RedisBackend extends AbstractBackendBase implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
+class RedisBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
 {
     const MIN_REDIS_VERSION = '2.6.0';
 

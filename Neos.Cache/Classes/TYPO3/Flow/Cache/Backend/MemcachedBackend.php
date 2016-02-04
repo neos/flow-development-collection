@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Backend\AbstractBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -91,7 +92,7 @@ class MemcachedBackend extends AbstractBackendBase implements TaggableBackendInt
         parent::__construct($environmentConfiguration, $options);
 
         if (!count($this->servers)) {
-            throw new \TYPO3\Flow\Cache\Exception('No servers were given to Memcache', 1213115903);
+            throw new Exception('No servers were given to Memcache', 1213115903);
         }
     }
 
@@ -107,7 +108,6 @@ class MemcachedBackend extends AbstractBackendBase implements TaggableBackendInt
     protected function setServers(array $servers)
     {
         $this->servers = $servers;
-
         if (!count($this->servers)) {
             throw new Exception('No servers were given to Memcache', 1213115903);
         }

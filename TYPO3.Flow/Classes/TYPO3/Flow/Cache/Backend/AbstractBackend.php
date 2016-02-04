@@ -17,10 +17,10 @@ use TYPO3\Flow\Cache\EnvironmentConfiguration;
  * An abstract caching backend
  *
  * @api
- * @deprecated This is replaced by AbstractBackendBase which has a different constructor, you need to adapt any custom cache backend to that.
+ * @deprecated This is replaced by AbstractBackend which has a different constructor, you need to adapt any custom cache backend to that.
  * @see AbstractBackendBase
  */
-abstract class AbstractBackend extends AbstractBackendBase implements BackendInterface
+abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend implements BackendInterface
 {
     const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
     const UNLIMITED_LIFETIME = 0;
@@ -64,7 +64,7 @@ abstract class AbstractBackend extends AbstractBackendBase implements BackendInt
      * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
      * @param array $options Configuration options - depends on the actual backend
      * @param EnvironmentConfiguration $environmentConfiguration
-     * @deprecated Use AbstractBackendBase instead
+     * @deprecated Use AbstractBackend instead
      * @api
      */
     public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array(), EnvironmentConfiguration $environmentConfiguration = null)

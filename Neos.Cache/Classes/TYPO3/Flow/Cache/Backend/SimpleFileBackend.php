@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,11 +11,12 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Backend\AbstractBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
@@ -24,9 +25,8 @@ use TYPO3\Flow\Utility\OpcodeCacheHelper;
  * care about expiry times and tags.
  *
  * @api
- * @Flow\Proxy(false)
  */
-class SimpleFileBackend extends AbstractBackendBase implements PhpCapableBackendInterface, IterableBackendInterface
+class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
 {
     const SEPARATOR = '^';
 
@@ -137,14 +137,14 @@ class SimpleFileBackend extends AbstractBackendBase implements PhpCapableBackend
      * @param integer $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @api
      */
     public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
     {
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
         }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);

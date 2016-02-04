@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Cache\Backend;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,12 +13,14 @@ namespace TYPO3\Flow\Cache\Backend;
 
 // @codeCoverageIgnoreStart
 
+use Neos\Cache\Backend\AbstractBackend;
+
 /**
  * A caching backend which forgets everything immediately
  *
  * @api
  */
-class NullBackend extends AbstractBackendBase implements PhpCapableBackendInterface, TaggableBackendInterface
+class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface
 {
     /**
      * Acts as if it would save data
