@@ -114,8 +114,15 @@ abstract class AbstractMessage
     {
         switch ($name) {
             case 'Content-Type':
+                $typeOfValues = gettype($values);
+                if ($typeOfValues == 'array') {
+                    $values = implode(" ", $values);
+                }
                 if (stripos($values, 'charset') === false && stripos($values, 'text/') === 0) {
                     $values .= '; charset=' . $this->charset;
+                }
+                if ($typeOfValues == 'array') {
+                    $values = (array) $values;
                 }
             break;
         }
