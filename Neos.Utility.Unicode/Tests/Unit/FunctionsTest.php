@@ -17,7 +17,7 @@ use TYPO3\Flow\Utility\Unicode\Functions;
  * Testcase for the PHP6 Functions backport
  *
  */
-class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FunctionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Checks if strtotitle() at least works with latin characters.

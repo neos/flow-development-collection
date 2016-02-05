@@ -17,7 +17,7 @@ use TYPO3\Flow\Utility\Unicode\TextIterator;
  * Testcase for the TextIterator port
  *
  */
-class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class TextIteratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Checks if a new instance with the default iterator type can be created

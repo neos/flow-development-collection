@@ -14,10 +14,3 @@ Contribute
 If you want to contribute to the Flow framework, please have a look at
 https://github.com/neos/flow-development-collection - it is the repository
 used for development and all pull requests should go into it.
-
-
-Dependencies
-------------
-Strictly this package currently depends on the "typo3/flow" package due to
-the usage of BaseTestCase in the unit tests. That is the only dependency though and
-therefore this package is generally usable without flow.
