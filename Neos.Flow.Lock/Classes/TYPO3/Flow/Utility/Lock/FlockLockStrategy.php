@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Lock;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Lock package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,6 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Utility\Exception\LockNotAcquiredException;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -21,7 +18,6 @@ use TYPO3\Flow\Utility\Files;
  *
  * This lock strategy is based on Flock.
  *
- * @Flow\Scope("prototype")
  */
 class FlockLockStrategy implements LockStrategyInterface
 {
@@ -29,7 +25,7 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * @var string
      */
-    protected static $temporaryDirectory;
+    protected $temporaryDirectory;
 
     /**
      * Identifier used for this lock
@@ -53,6 +49,19 @@ class FlockLockStrategy implements LockStrategyInterface
     protected $filePointer;
 
     /**
+     * FlockLockStrategy constructor.
+     *
+     * @param array $options
+     */
+    public function __construct(array $options = [])
+    {
+        if (!isset($options['lockDirectory'])) {
+            throw new \InvalidArgumentException('The FlockLockStrategy needs the "lockDirectory" options set and it was not.', 1454695086);
+        }
+        $this->configureLockDirectory($options['lockDirectory']);
+    }
+
+    /**
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
      * @return void
@@ -60,11 +69,7 @@ class FlockLockStrategy implements LockStrategyInterface
      */
     public function acquire($subject, $exclusiveLock)
     {
-        if (self::$temporaryDirectory === null) {
-            $this->configureTemporaryDirectory();
-        }
-
-        $this->lockFileName = Files::concatenatePaths([self::$temporaryDirectory, md5($subject)]);
+        $this->lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $aquiredLock = false;
         $i = 0;
         while ($aquiredLock === false) {
@@ -79,19 +84,15 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * Sets the temporaryDirectory as static variable for the lock class.
      *
+     * @param string $lockDirectory
      * @throws LockNotAcquiredException
      * @throws \TYPO3\Flow\Utility\Exception
-     * return void;
+     * return void
      */
-    protected function configureTemporaryDirectory()
+    protected function configureLockDirectory($lockDirectory)
     {
-        if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(\TYPO3\Flow\Utility\Environment::class)) {
-            throw new LockNotAcquiredException('Environment object could not be accessed', 1386680952);
-        }
-        $environment = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Utility\Environment');
-        $temporaryDirectory = Files::concatenatePaths([$environment->getPathToTemporaryDirectory(), 'Lock']);
-        Files::createDirectoryRecursively($temporaryDirectory);
-        self::$temporaryDirectory = $temporaryDirectory;
+        Files::createDirectoryRecursively($lockDirectory);
+        $this->temporaryDirectory = $lockDirectory;
     }
 
     /**
