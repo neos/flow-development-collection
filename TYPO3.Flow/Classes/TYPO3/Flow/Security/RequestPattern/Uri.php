@@ -10,11 +10,11 @@ namespace TYPO3\Flow\Security\RequestPattern;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
-
 
 /**
  * This class holds an URI pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern

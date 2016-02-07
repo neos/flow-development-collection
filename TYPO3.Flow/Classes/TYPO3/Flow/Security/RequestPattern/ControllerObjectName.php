@@ -15,13 +15,11 @@ use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
 
-
 /**
  * This class holds an controller object name pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
  */
 class ControllerObjectName implements RequestPatternInterface
 {
-
     /**
      * @var array
      */
