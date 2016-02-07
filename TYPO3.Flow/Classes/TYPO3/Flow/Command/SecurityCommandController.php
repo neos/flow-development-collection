@@ -97,6 +97,20 @@ class SecurityCommandController extends CommandController
     }
 
     /**
+     * Generate a public/private key pair and add it to the RSAWalletService
+     *
+     * @param boolean $usedForPasswords If the private key should be used for passwords
+     * @return void
+     * @see typo3.flow:security:importprivatekey
+     */
+    public function generateKeyPairCommand($usedForPasswords = false)
+    {
+        $fingerprint = $this->rsaWalletService->generateNewKeypair($usedForPasswords);
+
+        $this->outputLine('The key pair has been successfully generated. Use the following fingerprint to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $fingerprint . PHP_EOL);
+    }
+
+    /**
      * Import a private key
      *
      * Read a PEM formatted private key from stdin and import it into the
@@ -106,6 +120,7 @@ class SecurityCommandController extends CommandController
      * @param boolean $usedForPasswords If the private key should be used for passwords
      * @return void
      * @see typo3.flow:security:importpublickey
+     * @see typo3.flow:security:generatekeypair
      */
     public function importPrivateKeyCommand($usedForPasswords = false)
     {
