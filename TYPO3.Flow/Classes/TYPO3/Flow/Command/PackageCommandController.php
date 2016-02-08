@@ -90,7 +90,8 @@ class PackageCommandController extends CommandController
             $this->outputLine('The package "%s" already exists.', [$packageKey]);
             $this->quit(1);
         }
-        if (ComposerUtility::isFlowPackageType($packageType)) {
+
+        if (!ComposerUtility::isFlowPackageType($packageType)) {
             $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageKey]);
             $this->quit(1);
         }
