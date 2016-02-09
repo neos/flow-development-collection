@@ -457,7 +457,9 @@ class PackageManager implements PackageManagerInterface
             return $manifest;
         }
 
-        $manifest['type'] = $packageMetaData->getPackageType();
+        if ($packageMetaData->getPackageType() !== null) {
+            $manifest['type'] = $packageMetaData->getPackageType();
+        }
         $manifest['description'] = $packageMetaData->getDescription() ?: $manifest['description'];
         if ($packageMetaData->getVersion()) {
             $manifest['version'] = $packageMetaData->getVersion();
