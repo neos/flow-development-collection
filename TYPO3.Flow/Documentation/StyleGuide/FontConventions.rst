@@ -1,7 +1,7 @@
 Font conventions
 ================
 
-The following font conventions are used in TYPO3 Flow's documentation:
+The following font conventions are used in Flow's documentation:
 
 	*Italic*
 

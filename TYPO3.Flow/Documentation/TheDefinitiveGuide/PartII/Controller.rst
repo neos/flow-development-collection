@@ -2,7 +2,7 @@
 Controller
 ==========
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 Now that we have the first models and repositories in place we can almost move forward to
 creating our first controller.
@@ -97,14 +97,14 @@ repositories from?
 
 The property declarations for ``$blogRepository`` (and ``$postRepository``) is marked with
 an ``Inject`` annotation. This signals to the object framework: I need the blog
-repository here, please make sure it's stored in this member variable. In effect TYPO3 Flow
+repository here, please make sure it's stored in this member variable. In effect Flow
 will inject the blog repository into the ``$blogRepository`` property right after your
 controller has been instantiated. And because the blog repository's scope is *singleton*
 [#]_, the framework will always inject the same instance of the repository.
 
 There's a lot more to discover about **Dependency Injection** and we recommend
 that you read the whole chapter about objects in the
-`TYPO3 Flow guide <http://flow.typo3.org/documentation/guide>`_ once you start with
+`Flow documentation <http://flowframework.readthedocs.org/en/stable/>`_ once you start with
 your own coding.
 
 To create the required database tables we now use the command line support to generate the
@@ -232,7 +232,7 @@ http://dev.tutorial.local/typo3.blog/post/create:
 
 	Create action called without argument
 
-TYPO3 Flow analyzed the new method signature and automatically registered ``$post``
+Flow analyzed the new method signature and automatically registered ``$post``
 as a required argument for ``createAction``. Because no such argument was
 passed to the action, the controller exits with an error.
 
