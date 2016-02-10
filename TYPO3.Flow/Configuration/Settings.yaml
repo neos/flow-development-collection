@@ -546,8 +546,6 @@ TYPO3:
       # A specific name for the session, used in the session cookie.
       # The session name must be alphanumerical and must contain at least one
       # character – not only numbers.
-      #
-      # If left empty, the session name will be determined from the base URL.
       name: 'TYPO3_Flow_Session'
 
       # Configuration for handling of expired sessions
