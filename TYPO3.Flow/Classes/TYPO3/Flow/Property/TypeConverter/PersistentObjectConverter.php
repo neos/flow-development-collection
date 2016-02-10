@@ -129,7 +129,11 @@ class PersistentObjectConverter extends ObjectConverter
 
         $schema = $this->reflectionService->getClassSchema($targetType);
         $setterMethodName = ObjectAccess::buildSetterMethodName($propertyName);
-        if ($schema->hasProperty($propertyName)) {
+        $constructorParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
+
+        if (isset($constructorParameters[$propertyName]) && isset($constructorParameters[$propertyName]['type'])) {
+            return $constructorParameters[$propertyName]['type'];
+        } elseif ($schema->hasProperty($propertyName)) {
             $propertyInformation = $schema->getProperty($propertyName);
             return $propertyInformation['type'] . ($propertyInformation['elementType'] !== null ? '<' . $propertyInformation['elementType'] . '>' : '');
         } elseif ($this->reflectionService->hasMethod($targetType, $setterMethodName)) {
