@@ -85,7 +85,7 @@ referenced.
 * Packages: ``Flow``
 
 `Add missing namespace import for @Flow\\Scope <https://github.com/neos/flow-development-collection/pull/165>`_
---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 
 * Packages: ``Flow``
 

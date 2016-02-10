@@ -84,10 +84,9 @@ Make sure you use the correct license and mention the correct package in the hea
 PSR-2
 -----
 
-We follow the PSR-2 standard which is defined by PHP FIG. You can read the full standard
-on `psr-2 standard`_.
+We follow the PSR-2 standard which is defined by PHP FIG. You should read the full `PSR-2 standard`_.
 
-.. _`_psr-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+.. _`PSR-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
 Indentation and line formatting
 _______________________________
