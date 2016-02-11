@@ -372,17 +372,25 @@ class DoctrineCommandController extends CommandController
      *
      * If $diffAgainstCurrent is TRUE (the default), it generates a migration file
      * with the diff between current DB structure and the found mapping metadata.
-     *
      * Otherwise an empty migration skeleton is generated.
      *
+     * Only includes tables/sequences matching the $filterExpression regexp when
+     * diffing models and existing schema. Include delimiters in the expression!
+     * The use of
+     *
+     *  --filter-expression '/^acme_com/'
+     *
+     * would only create a migration touching tables starting with "acme_com".
+     *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
+     * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
      * @return void
      * @see typo3.flow:doctrine:migrate
      * @see typo3.flow:doctrine:migrationstatus
      * @see typo3.flow:doctrine:migrationexecute
      * @see typo3.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand($diffAgainstCurrent = true)
+    public function migrationGenerateCommand($diffAgainstCurrent = true, $filterExpression = null)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no host is set, skip this step, assuming no DB is needed
@@ -391,37 +399,42 @@ class DoctrineCommandController extends CommandController
             $this->quit(1);
         }
 
-        $migrationClassPathAndFilename = $this->doctrineService->generateMigration($diffAgainstCurrent);
+        list($status, $migrationClassPathAndFilename) = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression);
 
-        $choices = array('Don\'t Move');
-        $packages = array(null);
+        $this->outputLine('<info>%s</info>', [$status]);
+        $this->outputLine();
+        if ($migrationClassPathAndFilename) {
 
-        /** @var Package $package */
-        foreach ($this->packageManager->getAvailablePackages() as $package) {
-            $manifest = $package->getComposerManifest();
-            if (!isset($manifest->type) || strpos($manifest->type, 'typo3-') !== 0) {
-                continue;
+            $choices = ['Don\'t Move'];
+            $packages = [null];
+
+            /** @var Package $package */
+            foreach ($this->packageManager->getAvailablePackages() as $package) {
+                $type = $package->getComposerManifest('type');
+                if ($type === null || (strpos($type, 'typo3-') !== 0 && strpos($type, 'neos-') !== 0)) {
+                    continue;
+                }
+                $choices[] = $package->getPackageKey();
+                $packages[] = $package;
             }
-            $choices[] = $package->getPackageKey();
-            $packages[] = $package;
-        }
-        $selectedPackageIndex = (integer)$this->output->select('Do you want to move the migration to one of these Packages?', $choices, 0);
+            $selectedPackageIndex = (integer)$this->output->select('Do you want to move the migration to one of these packages?', $choices, 0);
+            $this->outputLine();
 
-        $this->outputLine('<info>Generated new migration class!</info>');
-        $this->outputLine('');
-        if ($selectedPackageIndex !== 0) {
-            /** @var Package $selectedPackage */
-            $selectedPackage = $packages[$selectedPackageIndex];
-            $targetPathAndFilename = Files::concatenatePaths(array($selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)));
-            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
-            rename($migrationClassPathAndFilename, $targetPathAndFilename);
-            $this->outputLine('The migration was moved to %s.', array(substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))));
-            $this->outputLine('Next Steps:');
-        } else {
-            $this->outputLine('Next Steps:');
-            $this->outputLine(sprintf('- Move <comment>%s</comment> to YourPackage/<comment>Migrations/%s/</comment>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
+            if ($selectedPackageIndex !== 0) {
+                /** @var Package $selectedPackage */
+                $selectedPackage = $packages[$selectedPackageIndex];
+                $targetPathAndFilename = Files::concatenatePaths(array($selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)));
+                Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+                rename($migrationClassPathAndFilename, $targetPathAndFilename);
+                $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);
+                $this->outputLine();
+                $this->outputLine('Next Steps:');
+            } else {
+                $this->outputLine('Next Steps:');
+                $this->outputLine(sprintf('- Move <comment>%s</comment> to YourPackage/<comment>Migrations/%s/</comment>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
+            }
+            $this->outputLine('- Review and adjust the generated migration.');
+            $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', [$this->getFlowInvocationString()]);
         }
-        $this->outputLine('- Review and adjust the generated migration.');
-        $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', array($this->getFlowInvocationString()));
     }
 }

@@ -412,45 +412,89 @@ class Service
             }
         }
     }
+
     /**
      * Generates a new migration file and returns the path to it.
      *
      * If $diffAgainstCurrent is TRUE, it generates a migration file with the
      * diff between current DB structure and the found mapping metadata.
      *
+     * Only include tables/sequences matching the $filterExpression regexp when
+     * diffing models and existing schema.
+     *
      * Otherwise an empty migration skeleton is generated.
      *
      * @param boolean $diffAgainstCurrent
+     * @param string $filterExpression
      * @return string Path to the new file
      */
-    public function generateMigration($diffAgainstCurrent = true)
+    public function generateMigration($diffAgainstCurrent = true, $filterExpression = null)
     {
         $configuration = $this->getMigrationConfiguration();
         $up = null;
         $down = null;
 
         if ($diffAgainstCurrent === true) {
+            /** @var \Doctrine\DBAL\Connection $connection */
             $connection = $this->entityManager->getConnection();
-            $platform = $connection->getDatabasePlatform();
+
+            if ($filterExpression) {
+                $connection->getConfiguration()->setFilterSchemaAssetsExpression($filterExpression);
+            }
+
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
 
             if (empty($metadata)) {
-                return 'No mapping information to process.';
+                return ['No mapping information to process.', null];
             }
 
             $tool = new SchemaTool($this->entityManager);
 
             $fromSchema = $connection->getSchemaManager()->createSchema();
             $toSchema = $tool->getSchemaFromMetadata($metadata);
+
+            if ($filterExpression) {
+                foreach ($toSchema->getTables() as $table) {
+                    $tableName = $table->getName();
+                    if (!preg_match($filterExpression, $this->resolveTableName($tableName))) {
+                        $toSchema->dropTable($tableName);
+                    }
+                }
+
+                foreach ($toSchema->getSequences() as $sequence) {
+                    $sequenceName = $sequence->getName();
+                    if (!preg_match($filterExpression, $this->resolveTableName($sequenceName))) {
+                        $toSchema->dropSequence($sequenceName);
+                    }
+                }
+            }
+
+            $platform = $connection->getDatabasePlatform();
             $up = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateToSql($toSchema, $platform));
             $down = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateFromSql($toSchema, $platform));
 
             if (!$up && !$down) {
-                return 'No changes detected in your mapping information.';
+                return ['No changes detected in your mapping information.', null];
             }
         }
 
-        return $this->writeMigrationClassToFile($configuration, $up, $down);
+        return ['Generated new migration class!', $this->writeMigrationClassToFile($configuration, $up, $down)];
+    }
+
+    /**
+     * Resolve a table name from its fully qualified name. The `$name` argument
+     * comes from Doctrine\DBAL\Schema\Table#getName which can sometimes return
+     * a namespaced name with the form `{namespace}.{tableName}`. This extracts
+     * the table name from that.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function resolveTableName($name)
+    {
+        $pos = strpos($name, '.');
+
+        return false === $pos ? $name : substr($name, $pos + 1);
     }
 
     /**
@@ -488,6 +532,7 @@ class $className extends AbstractMigration
 {
     /**
      * @param Schema \$schema
+     * @return void
      */
     public function up(Schema \$schema)
     {
@@ -496,6 +541,7 @@ class $className extends AbstractMigration
 
     /**
      * @param Schema \$schema
+     * @return void
      */
     public function down(Schema \$schema)
     {
@@ -519,16 +565,27 @@ EOT;
     protected function buildCodeFromSql(Configuration $configuration, array $sql)
     {
         $currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
-        $code = array(
-            '$this->abortIf($this->connection->getDatabasePlatform()->getName() != "' . $currentPlatform . '");', '',
-        );
+        $code = [];
         foreach ($sql as $query) {
-            if (strpos($query, $configuration->getMigrationsTableName()) !== false) {
+            if (stripos($query, $configuration->getMigrationsTableName()) !== false) {
                 continue;
             }
-            $code[] = '$this->addSql("' . $query . '");';
+            $code[] = sprintf('$this->addSql(%s);', var_export($query, true));
         }
-        return implode("\n", $code);
+
+        if (!empty($code)) {
+            array_unshift(
+                $code,
+                sprintf(
+                    '$this->abortIf($this->connection->getDatabasePlatform()->getName() != %s, %s);',
+                    var_export($currentPlatform, true),
+                    var_export(sprintf('Migration can only be executed safely on "%s".', $currentPlatform), true)
+                ),
+                ''
+            );
+        }
+
+        return implode(chr(10), $code);
     }
 
     /**
