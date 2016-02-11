@@ -417,7 +417,7 @@ class Service
             }
             return $output;
         } else {
-            return strip_tags(implode(PHP_EOL, $this->output));
+            return implode(PHP_EOL, $this->output);
         }
     }
 
@@ -476,12 +476,12 @@ class Service
 
             if ($markAsMigrated === true) {
                 if ($configuration->hasVersionMigrated($version) === true) {
-                    throw new MigrationException(sprintf('The version "%s" already exists in the version table.', $version));
+                    throw new MigrationException(sprintf('The version "%s" is already marked as executed.', $version));
                 }
                 $version->markMigrated();
             } else {
                 if ($configuration->hasVersionMigrated($version) === false) {
-                    throw new MigrationException(sprintf('The version "%s" does not exist in the version table.', $version));
+                    throw new MigrationException(sprintf('The version "%s" is already marked as not executed.', $version));
                 }
                 $version->markNotMigrated();
             }
