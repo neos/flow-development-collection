@@ -1,11 +1,11 @@
 {
     "name": "neos/filemonitor",
-    "type": "typo3-flow-framework",
+    "type": "neos-framework",
     "description": "Neos Filemonitoring",
-    "homepage": "http://flow.typo3.org",
-    "license": ["MIT"],
+    "homepage": "http://www.flowframework.io",
+    "license": "MIT",
     "require": {
-        "php": ">=5.5.0",
+        "php": "~5.5||~7.0",
 
         "typo3/flow": "*"
     },

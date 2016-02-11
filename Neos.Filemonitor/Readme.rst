@@ -3,7 +3,7 @@ Neos Filemonitor
 ----------------
 
 .. note:: This repository is a **read-only subsplit** of a package that is part of the
-          Flow framework (learn more on `flow.typo3.org <http://flow.typo3.org/>`_).
+          Flow framework (learn more on `www.flowframework.io <http://www.flowframework.io/>`_).
 
 If you want to use the Flow framework, please have a look at the `Flow documentation
 <http://flowframework.readthedocs.org/en/stable/>`_
