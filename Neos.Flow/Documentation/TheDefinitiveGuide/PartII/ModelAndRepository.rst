@@ -277,6 +277,18 @@ be associated with many ``Post`` instances, but those in turn may only belong to
 ``Blog``. Furthermore the ``mappedBy`` attribute says the association is bidirectional and
 refers to the property ``$blog`` in the ``Post`` class.
 
+.. note::
+
+	In Doctrine 2 the *many* side of a OneToMany relation is always considered the
+	``owning side`` of the relation, meaning that for any changes to the relation,
+	this side has to be passed to the persistence for update.
+	This in turn means that for adding or removing an item from a OneToMany relation,
+	you need to change the ``mappedBy`` property on the item and pass that to a repository.
+	This is especially problematic if your many side is not an Aggregate root, in
+	which case it is recommended to map the relation as a ManyToMany with a unique
+	constraint instead, where you can define the ``owning side`` freely.
+	See the Doctrine Documentation ([#]_) for more information.
+
 The ``OrderBy`` annotation is regular Doctrine 2 functionality and makes sure the
 posts are always ordered by their date property when the collection is loaded.
 
@@ -787,6 +799,7 @@ have this tag.
 .. [#]	We love to call them POPOs, similar to POJOs
 		http://en.wikipedia.org/wiki/Plain_Old_Java_Object
 .. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#collections
+.. [#]	http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/unitofwork-associations.html#bidirectional-associations
 .. [#]	``findBy*`` and ``findOneBy*`` are magic methods provided by the base
 		repository which allow you to find objects by properties. The
 		``BlogRepository`` for example would allow you to call magic methods
