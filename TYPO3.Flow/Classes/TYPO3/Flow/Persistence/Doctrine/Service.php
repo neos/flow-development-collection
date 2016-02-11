@@ -11,10 +11,21 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\DBAL\Migrations\Configuration\Configuration;
+use Doctrine\DBAL\Migrations\Migration;
+use Doctrine\DBAL\Migrations\MigrationException;
+use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Migrations\Version;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Tools\SchemaValidator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Exception;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -24,6 +35,7 @@ use TYPO3\Flow\Utility\Files;
  */
 class Service
 {
+
     const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
 
     /**
@@ -63,7 +75,7 @@ class Service
     public function validateMapping()
     {
         try {
-            $validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
+            $validator = new SchemaValidator($this->entityManager);
             return $validator->validateMapping();
         } catch (\Exception $exception) {
             return array(array($exception->getMessage()));
@@ -79,11 +91,13 @@ class Service
      */
     public function createSchema($outputPathAndFilename = null)
     {
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+        $schemaTool = new SchemaTool($this->entityManager);
+        $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
         if ($outputPathAndFilename === null) {
-            $schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+            $schemaTool->createSchema($allMetaData);
         } else {
-            file_put_contents($outputPathAndFilename, implode(PHP_EOL, $schemaTool->getCreateSchemaSql($this->entityManager->getMetadataFactory()->getAllMetadata())));
+            $createSchemaSqlStatements = $schemaTool->getCreateSchemaSql($allMetaData);
+            file_put_contents($outputPathAndFilename, implode(PHP_EOL, $createSchemaSqlStatements));
         }
     }
 
@@ -97,11 +111,13 @@ class Service
      */
     public function updateSchema($safeMode = true, $outputPathAndFilename = null)
     {
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+        $schemaTool = new SchemaTool($this->entityManager);
+        $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
         if ($outputPathAndFilename === null) {
-            $schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata(), $safeMode);
+            $schemaTool->updateSchema($allMetaData, $safeMode);
         } else {
-            file_put_contents($outputPathAndFilename, implode(PHP_EOL, $schemaTool->getUpdateSchemaSql($this->entityManager->getMetadataFactory()->getAllMetadata(), $safeMode)));
+            $updateSchemaSqlStatements = $schemaTool->getUpdateSchemaSql($allMetaData, $safeMode);
+            file_put_contents($outputPathAndFilename, implode(PHP_EOL, $updateSchemaSqlStatements));
         }
     }
 
@@ -113,6 +129,7 @@ class Service
     public function compileProxies()
     {
         Files::emptyDirectoryRecursively(Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies')));
+        /** @var \Doctrine\ORM\Proxy\ProxyFactory $proxyFactory */
         $proxyFactory = $this->entityManager->getProxyFactory();
         $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
     }
@@ -125,12 +142,12 @@ class Service
      */
     public function getEntityStatus()
     {
-        $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         $info = array();
+        $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         foreach ($entityClassNames as $entityClassName) {
             try {
                 $info[$entityClassName] = $this->entityManager->getClassMetadata($entityClassName);
-            } catch (\Doctrine\ORM\Mapping\MappingException $e) {
+            } catch (MappingException $e) {
                 $info[$entityClassName] = $e->getMessage();
             }
         }
@@ -149,6 +166,7 @@ class Service
      */
     public function runDql($dql, $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, $firstResult = null, $maxResult = null)
     {
+        /** @var \Doctrine\ORM\Query $query */
         $query = $this->entityManager->createQuery($dql);
         if ($firstResult !== null) {
             $query->setFirstResult($firstResult);
@@ -163,34 +181,36 @@ class Service
     /**
      * Return the configuration needed for Migrations.
      *
-     * @return \Doctrine\DBAL\Migrations\Configuration\Configuration
+     * @return Configuration
      */
     protected function getMigrationConfiguration()
     {
         $this->output = array();
         $that = $this;
-        $outputWriter = new \Doctrine\DBAL\Migrations\OutputWriter(
+        $outputWriter = new OutputWriter(
             function ($message) use ($that) {
                 $that->output[] = $message;
             }
         );
 
+        /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->entityManager->getConnection();
         $schemaManager = $connection->getSchemaManager();
         if ($schemaManager->tablesExist(array('flow3_doctrine_migrationstatus')) === true) {
             $schemaManager->renameTable('flow3_doctrine_migrationstatus', self::DOCTRINE_MIGRATIONSTABLENAME);
         }
 
-        $configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($connection, $outputWriter);
+        $configuration = new Configuration($connection, $outputWriter);
         $configuration->setMigrationsNamespace('TYPO3\Flow\Persistence\Doctrine\Migrations');
-        $configuration->setMigrationsDirectory(\TYPO3\Flow\Utility\Files::concatenatePaths(array(FLOW_PATH_DATA, 'DoctrineMigrations')));
+        $configuration->setMigrationsDirectory(Files::concatenatePaths(array(FLOW_PATH_DATA, 'DoctrineMigrations')));
         $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
 
         $configuration->createMigrationTable();
 
         $databasePlatformName = $this->getDatabasePlatformName();
+        /** @var PackageInterface $package */
         foreach ($this->packageManager->getActivePackages() as $package) {
-            $path = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
+            $path = Files::concatenatePaths(array(
                 $package->getPackagePath(),
                 'Migrations',
                 $databasePlatformName
@@ -304,7 +324,7 @@ class Service
     public function executeMigrations($version = null, $outputPathAndFilename = null, $dryRun = false, $quiet = false)
     {
         $configuration = $this->getMigrationConfiguration();
-        $migration = new \Doctrine\DBAL\Migrations\Migration($configuration);
+        $migration = new Migration($configuration);
 
         if ($outputPathAndFilename !== null) {
             $migration->writeSqlFile($outputPathAndFilename, $version);
@@ -357,7 +377,7 @@ class Service
      * @param string $version The version to add or remove
      * @param boolean $markAsMigrated
      * @return void
-     * @throws \Doctrine\DBAL\Migrations\MigrationException
+     * @throws MigrationException
      * @throws \LogicException
      */
     public function markAsMigrated($version, $markAsMigrated)
@@ -374,19 +394,19 @@ class Service
             }
         } else {
             if ($configuration->hasVersion($version) === false) {
-                throw \Doctrine\DBAL\Migrations\MigrationException::unknownMigrationVersion($version);
+                throw MigrationException::unknownMigrationVersion($version);
             }
 
             $version = $configuration->getVersion($version);
 
             if ($markAsMigrated === true) {
                 if ($configuration->hasVersionMigrated($version) === true) {
-                    throw new \Doctrine\DBAL\Migrations\MigrationException(sprintf('The version "%s" already exists in the version table.', $version));
+                    throw new MigrationException(sprintf('The version "%s" already exists in the version table.', $version));
                 }
                 $version->markMigrated();
             } else {
                 if ($configuration->hasVersionMigrated($version) === false) {
-                    throw new \Doctrine\DBAL\Migrations\MigrationException(sprintf('The version "%s" does not exist in the version table.', $version));
+                    throw new MigrationException(sprintf('The version "%s" does not exist in the version table.', $version));
                 }
                 $version->markNotMigrated();
             }
@@ -418,7 +438,7 @@ class Service
                 return 'No mapping information to process.';
             }
 
-            $tool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+            $tool = new SchemaTool($this->entityManager);
 
             $fromSchema = $connection->getSchemaManager()->createSchema();
             $toSchema = $tool->getSchemaFromMetadata($metadata);
@@ -434,29 +454,28 @@ class Service
     }
 
     /**
-     * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
+     * @param Configuration $configuration
      * @param string $up
      * @param string $down
      * @return string
      * @throws \RuntimeException
      */
-    protected function writeMigrationClassToFile(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, $up, $down)
+    protected function writeMigrationClassToFile(Configuration $configuration, $up, $down)
     {
         $namespace = $configuration->getMigrationsNamespace();
         $className = 'Version' . date('YmdHis');
         $up = $up === null ? '' : "\n        " . implode("\n        ", explode("\n", $up));
         $down = $down === null ? '' : "\n        " . implode("\n        ", explode("\n", $down));
 
-        $path = \TYPO3\Flow\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
+        $path = Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
         try {
-            \TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($path));
-        } catch (\TYPO3\Flow\Utility\Exception $exception) {
+            Files::createDirectoryRecursively(dirname($path));
+        } catch (Exception $exception) {
             throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
         }
 
         $code = <<<EOT
 <?php
-
 namespace $namespace;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
@@ -493,11 +512,11 @@ EOT;
      * Returns PHP code for a migration file that "executes" the given
      * array of SQL statements.
      *
-     * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
+     * @param Configuration $configuration
      * @param array $sql
      * @return string
      */
-    protected function buildCodeFromSql(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, array $sql)
+    protected function buildCodeFromSql(Configuration $configuration, array $sql)
     {
         $currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
         $code = array(
@@ -551,14 +570,14 @@ EOT;
      *     $this->addSql($sql);
      * }
      *
-     * @param \Doctrine\DBAL\Schema\Schema $schema
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+     * @param Schema $schema
+     * @param AbstractPlatform $platform
      * @param array $tableNames
      * @param string $search
      * @param string $replace
      * @return array
      */
-    public static function getForeignKeyHandlingSql(\Doctrine\DBAL\Schema\Schema $schema, \Doctrine\DBAL\Platforms\AbstractPlatform $platform, $tableNames, $search, $replace)
+    public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, $tableNames, $search, $replace)
     {
         $foreignKeyHandlingSql = array('drop' => array(), 'add' => array());
         $tables = $schema->getTables();
@@ -600,8 +619,8 @@ EOT;
                     $foreignColumns = array_map($identifierConstructorCallback, $foreignColumns);
 
                     $newForeignKey = clone $foreignKey;
-                    \TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_localColumnNames', $localColumns, true);
-                    \TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_foreignColumnNames', $foreignColumns, true);
+                    ObjectAccess::setProperty($newForeignKey, '_localColumnNames', $localColumns, true);
+                    ObjectAccess::setProperty($newForeignKey, '_foreignColumnNames', $foreignColumns, true);
                     $foreignKeyHandlingSql['drop'][] = $platform->getDropForeignKeySQL($foreignKey, $table);
                     $foreignKeyHandlingSql['add'][] = $platform->getCreateForeignKeySQL($newForeignKey, $table);
                 }

@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Command;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
+use Doctrine\DBAL\Migrations\MigrationException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Error\Debugger;
@@ -331,7 +332,7 @@ class DoctrineCommandController extends CommandController
     }
 
     /**
-     * Mark/unmark a migration as migrated
+     * Mark/unmark migrations as migrated
      *
      * If <u>all</u> is given as version, all available migrations are marked
      * as requested.
@@ -349,14 +350,14 @@ class DoctrineCommandController extends CommandController
     public function migrationVersionCommand($version, $add = false, $delete = false)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
+        // additionally, when no host is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
             if ($add === false && $delete === false) {
                 throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
             }
             try {
                 $this->doctrineService->markAsMigrated($version, $add ?: false);
-            } catch (\Doctrine\DBAL\Migrations\MigrationException $exception) {
+            } catch (MigrationException $exception) {
                 $this->outputLine($exception->getMessage());
                 $this->quit(1);
             }
@@ -384,7 +385,7 @@ class DoctrineCommandController extends CommandController
     public function migrationGenerateCommand($diffAgainstCurrent = true)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
+        // additionally, when no host is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] === null || $this->settings['backendOptions']['host'] === null) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
