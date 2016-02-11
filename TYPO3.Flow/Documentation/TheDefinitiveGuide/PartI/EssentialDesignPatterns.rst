@@ -34,7 +34,7 @@ boundaries of classes and even packages. One example for such a cross-cutting
 concern is security: Although the main purpose of a Forum package is to display
 and manage posts of a forum, it has to implement some kind of security to assert
 that only moderators can approve or delete posts. And many more packages need a
-similar functionality for protect the creation, deletion and update of records. .
+similar functionality for protect the creation, deletion and update of records.
 AOP enables you to move the security (or any other) aspect into its own package
 and leave the other objects with clear responsibilities, probably not
 implementing any security themselves.
