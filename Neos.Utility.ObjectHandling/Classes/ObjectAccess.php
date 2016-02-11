@@ -288,7 +288,9 @@ abstract class ObjectAccess
             $propertyType = TypeHandling::getTypeForValue($propertyValue);
             $isCollectionType = TypeHandling::isCollectionType($propertyType);
         }
-        if (!$isCollectionType) return false;
+        if (!$isCollectionType) {
+            return false;
+        }
 
         $addRemoveMethods['add'] = self::buildAdderMethodName($propertyName);
         $addRemoveMethods['remove'] = self::buildRemoverMethodName($propertyName);
