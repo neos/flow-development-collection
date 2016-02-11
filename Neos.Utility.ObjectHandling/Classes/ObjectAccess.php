@@ -305,7 +305,7 @@ abstract class ObjectAccess
      * @param string $removeMethodName The name of the method to use for removing items from the subject's collection property
      * @return void
      */
-    protected function updateCollectionWithAddRemoveCalls($subject, $propertyName, $propertyValue, $addMethodName, $removeMethodName)
+    protected static function updateCollectionWithAddRemoveCalls($subject, $propertyName, $propertyValue, $addMethodName, $removeMethodName)
     {
         $itemsToAdd = ($propertyValue instanceof \Traversable) ? iterator_to_array($propertyValue) : (array)$propertyValue;
         $itemsToRemove = array();
