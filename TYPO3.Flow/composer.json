@@ -18,7 +18,7 @@
         "typo3/eel": "~3.0.0",
 
         "doctrine/orm": "~2.4.0",
-        "doctrine/migrations": "~1.0.0",
+        "doctrine/migrations": "~1.3.0",
         "doctrine/dbal": "~2.5.0",
 
         "symfony/yaml": "~2.5.0",
