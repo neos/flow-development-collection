@@ -24,6 +24,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Reflection\DocCommentParser;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Exception;
 use TYPO3\Flow\Utility\Files;
@@ -226,56 +227,83 @@ class Service
     /**
      * Returns the current migration status formatted as plain text.
      *
+     * @param boolean $showMigrations
+     * @param boolean $showDescriptions
      * @return string
      */
-    public function getMigrationStatus()
+    public function getMigrationStatus($showMigrations = false, $showDescriptions = false)
     {
         $configuration = $this->getMigrationConfiguration();
 
-        $currentVersion = $configuration->getCurrentVersion();
-        if ($currentVersion) {
-            $currentVersionFormatted = $configuration->formatVersion($currentVersion) . ' (' . $currentVersion . ')';
-        } else {
-            $currentVersionFormatted = 0;
-        }
-        $latestVersion = $configuration->getLatestVersion();
-        if ($latestVersion) {
-            $latestVersionFormatted = $configuration->formatVersion($latestVersion) . ' (' . $latestVersion . ')';
-        } else {
-            $latestVersionFormatted = 0;
-        }
-        $executedMigrations = $configuration->getNumberOfExecutedMigrations();
-        $availableMigrations = $configuration->getNumberOfAvailableMigrations();
-        $newMigrations = $availableMigrations - $executedMigrations;
+        $executedMigrations = $configuration->getMigratedVersions();
+        $availableMigrations = $configuration->getAvailableVersions();
+        $executedUnavailableMigrations = array_diff($executedMigrations, $availableMigrations);
 
-        $output = "\n == Configuration\n";
+        $numExecutedUnavailableMigrations = count($executedUnavailableMigrations);
+        $numNewMigrations = count(array_diff($availableMigrations, $executedMigrations));
 
-        $info = array(
-            'Name'                  => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
-            'Database Driver'       => $configuration->getConnection()->getDriver()->getName(),
-            'Database Name'         => $configuration->getConnection()->getDatabase(),
-            'Configuration Source'  => $configuration instanceof \Doctrine\DBAL\Migrations\Configuration\AbstractFileConfiguration ? $configuration->getFile() : 'manually configured',
-            'Version Table Name'    => $configuration->getMigrationsTableName(),
-            'Migrations Namespace'  => $configuration->getMigrationsNamespace(),
-            'Migrations Target Directory'  => $configuration->getMigrationsDirectory(),
-            'Current Version'       => $currentVersionFormatted,
-            'Latest Version'        => $latestVersionFormatted,
-            'Executed Migrations'   => $executedMigrations,
-            'Available Migrations'  => $availableMigrations,
-            'New Migrations'        => $newMigrations
-        );
-        foreach ($info as $name => $value) {
-            $output .= '    >> ' . $name . ': ' . str_repeat(' ', 50 - strlen($name)) . $value . PHP_EOL;
+        $statusInformation = [
+            'Name' => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
+            'Database Driver' => $configuration->getConnection()->getDriver()->getName(),
+            'Database Name' => $configuration->getConnection()->getDatabase(),
+            'Configuration Source' => 'manually configured',
+            'Version Table Name' => $configuration->getMigrationsTableName(),
+            'Version Column Name' => $configuration->getMigrationsColumnName(),
+            'Migrations Namespace' => $configuration->getMigrationsNamespace(),
+            'Migrations Target Directory' => $configuration->getMigrationsDirectory(),
+            'Previous Version' => $this->getFormattedVersionAlias('prev', $configuration),
+            'Current Version' => $this->getFormattedVersionAlias('current', $configuration),
+            'Next Version' => $this->getFormattedVersionAlias('next', $configuration),
+            'Latest Version' => $this->getFormattedVersionAlias('latest', $configuration),
+            'Executed Migrations' => count($executedMigrations),
+            'Executed Unavailable Migrations' => $numExecutedUnavailableMigrations,
+            'Available Migrations' => count($availableMigrations),
+            'New Migrations' => $numNewMigrations,
+        ];
+
+        $output = PHP_EOL . '<info>==</info> Configuration' . PHP_EOL;
+
+        foreach ($statusInformation as $name => $value) {
+            if ($name == 'New Migrations') {
+                $value = $value > 0 ? '<question>' . $value . '</question>' : 0;
+            }
+            if ($name == 'Executed Unavailable Migrations') {
+                $value = $value > 0 ? '<error>' . $value . '</error>' : 0;
+            }
+            $output .= '   <comment>></comment> ' . $name . ': ' . str_repeat(' ', 35 - strlen($name)) . $value . PHP_EOL;
         }
 
-        if ($migrations = $configuration->getMigrations()) {
-            $output .= "\n == Migration Versions\n";
-            foreach ($migrations as $version) {
-                $packageKey = $this->getPackageKeyFromMigrationVersion($version);
-                $croppedPackageKey = strlen($packageKey) < 24 ? $packageKey : substr($packageKey, 0, 23) . '~';
-                $packageKeyColumn = ' ' . str_pad($croppedPackageKey, 24, ' ');
-                $status = $version->isMigrated() ? 'migrated' : 'not migrated';
-                $output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . $packageKeyColumn . str_repeat(' ', 4) . $status . PHP_EOL;
+        if ($showMigrations) {
+            if ($migrations = $configuration->getMigrations()) {
+                $docCommentParser = new DocCommentParser();
+
+                $output .= PHP_EOL . ' <info>==</info> Available Migration Versions' . PHP_EOL;
+
+                /** @var Version $version */
+                foreach ($migrations as $version) {
+                    $packageKey = $this->getPackageKeyFromMigrationVersion($version);
+                    $croppedPackageKey = strlen($packageKey) < 30 ? $packageKey : substr($packageKey, 0, 29) . '~';
+                    $packageKeyColumn = ' ' . str_pad($croppedPackageKey, 30, ' ');
+                    $isMigrated = in_array($version->getVersion(), $executedMigrations);
+                    $status = $isMigrated ? '<info>migrated</info>' : '<error>not migrated</error>';
+                    $migrationDescription = '';
+                    if ($showDescriptions) {
+                        $migrationDescription = str_repeat(' ', 2) . $this->getMigrationDescription($version, $docCommentParser);
+                    }
+                    $formattedVersion = $configuration->getDateTime($version->getVersion());
+
+                    $output .= '    <comment>></comment> ' . $formattedVersion .
+                        ' (<comment>' . $version->getVersion() . '</comment>)' . $packageKeyColumn .
+                        str_repeat(' ', 2) . $status . $migrationDescription . PHP_EOL;
+                }
+            }
+
+            if (count($executedUnavailableMigrations)) {
+                $output .= PHP_EOL . ' <info>==</info> Previously Executed Unavailable Migration Versions' . PHP_EOL;
+                foreach ($executedUnavailableMigrations as $executedUnavailableMigration) {
+                    $output .= '    <comment>></comment> ' . $configuration->getDateTime($executedUnavailableMigration) .
+                        ' (<comment>' . $executedUnavailableMigration . '</comment>)' . PHP_EOL;
+                }
             }
         }
 
@@ -308,6 +336,53 @@ class Service
         }
 
         return '';
+    }
+
+    /**
+     * Returns a formatted version string for the alias.
+     *
+     * @param string $alias
+     * @param Configuration $configuration
+     * @return string
+     */
+    protected function getFormattedVersionAlias($alias, Configuration $configuration)
+    {
+        $version = $configuration->resolveVersionAlias($alias);
+
+        if ($version === null) {
+            if ($alias == 'next') {
+                return 'Already at latest version';
+            } elseif ($alias == 'prev') {
+                return 'Already at first version';
+            }
+        }
+
+        if ($version === '0') {
+            return '<comment>0</comment>';
+        }
+
+        return $configuration->getDateTime($version) . ' (<comment>' . $version . '</comment>)';
+    }
+
+    /**
+     * Returns the description of a migration.
+     *
+     * If available it is fetched from the getDescription() method, if that returns an empty value
+     * the class docblock is used instead.
+     *
+     * @param Version $version
+     * @param DocCommentParser $parser
+     * @return string
+     */
+    protected function getMigrationDescription(Version $version, DocCommentParser $parser)
+    {
+        if ($version->getMigration()->getDescription()) {
+            return $version->getMigration()->getDescription();
+        } else {
+            $reflectedClass = new \ReflectionClass($version->getMigration());
+            $parser->parseDocComment($reflectedClass->getDocComment());
+            return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
+        }
     }
 
     /**
@@ -526,10 +601,18 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Auto-generated Migration: Please modify to your need!
+ * Auto-generated Migration: Please modify to your needs! This block will be used as the migration description if getDescription() is not used.
  */
 class $className extends AbstractMigration
 {
+
+    /**
+     * @return string
+     */
+    public function getDescription() {
+        return '';
+    }
+
     /**
      * @param Schema \$schema
      * @return void

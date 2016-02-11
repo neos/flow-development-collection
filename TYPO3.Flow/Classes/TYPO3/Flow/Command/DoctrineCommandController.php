@@ -237,18 +237,23 @@ class DoctrineCommandController extends CommandController
      * Displays the migration configuration as well as the number of
      * available, executed and pending migrations.
      *
+     * @param boolean $showMigrations Output a list of all migrations and their status
+     * @param boolean $showDescriptions Show descriptions for the migrations (enables versions display)
      * @return void
      * @see typo3.flow:doctrine:migrate
      * @see typo3.flow:doctrine:migrationexecute
      * @see typo3.flow:doctrine:migrationgenerate
      * @see typo3.flow:doctrine:migrationversion
      */
-    public function migrationStatusCommand()
+    public function migrationStatusCommand($showMigrations = false, $showDescriptions = false)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $this->outputLine($this->doctrineService->getMigrationStatus());
+            if ($showDescriptions) {
+                $showMigrations = true;
+            }
+            $this->outputLine($this->doctrineService->getMigrationStatus($showMigrations, $showDescriptions));
         } else {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
