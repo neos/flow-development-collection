@@ -65,7 +65,7 @@ f:base
 
 View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
-In TYPO3 Flow, this ViewHelper is no longer required to make the links work.
+In Flow, this ViewHelper is no longer required to make the links work.
 
 :Implementation: TYPO3\\Fluid\\ViewHelpers\\BaseViewHelper
 

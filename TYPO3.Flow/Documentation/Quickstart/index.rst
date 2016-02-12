@@ -308,7 +308,7 @@ work in a truly object-oriented fashion. While you develop a Flow application, y
 hardly note that content is actually stored in a database. Your code won't contain any
 SQL query and you don't have to deal with setting up table structures.
 
-But before you can store anything, you still need to set up a database and tell TYPO3 Flow how
+But before you can store anything, you still need to set up a database and tell Flow how
 to access it. The credentials and driver options need to be specified in the global
 Flow settings.
 
@@ -714,7 +714,7 @@ is an already existing (that is, already *persisted*) coffee bean object with th
 modifications submitted by the user already applied.
 
 Any modifications to the ``CoffeBean`` object will be lost at the end of the request
-unless you tell TYPO3 Flow explicitly to apply the changes::
+unless you tell Flow explicitly to apply the changes::
 
 	$this->coffeeBeanRepository->update($coffeeBean);
 
@@ -749,7 +749,7 @@ and restructuring. Still, it already may be a valuable source for further
 information and I recommend reading it.
 
 Get in touch with the growing Flow community and make sure to share your ideas
-about how we can improve TYPO3 Flow and its documentation:
+about how we can improve Flow and its documentation:
 
 * `Slack channel`_
 * `Discuss forum`_

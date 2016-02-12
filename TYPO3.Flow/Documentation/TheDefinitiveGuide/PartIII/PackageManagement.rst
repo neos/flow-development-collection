@@ -2,7 +2,7 @@
 Package Management
 ==================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 
 Flow is a package-based system. In fact, Flow itself is just a package as well - but

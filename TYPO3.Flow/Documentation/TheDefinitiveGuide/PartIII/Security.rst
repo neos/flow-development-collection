@@ -801,7 +801,7 @@ called.
 In the section about authentication roles have been introduced. Roles are
 attached to a user's security context by the authentication system, to determine which privileges should be granted to
 her. I.e. the access rights of a user are decoupled from the user object itself, making it
-a lot more flexible, if you want to change them. In TYPO3 Flow roles are defined in the
+a lot more flexible, if you want to change them. In Flow roles are defined in the
 ``Policy.yaml`` files, and are unique within your package namespace. The full identifier
 for a role would be ``<PackageKey>:<RoleName>``.
 
@@ -985,9 +985,9 @@ which protects the invocation of certain methods. By controlling, which
 methods are allowed to be called and which not, it can be globally
 ensured, that no unprivileged action will be executed at any time. This
 is what you would usually do, by adding an access check at the beginning
-of your privileged method. In TYPO3 Flow, there is the opportunity to enforce
+of your privileged method. In Flow, there is the opportunity to enforce
 these checks without touching the actual method at all. Obviously
-TYPO3 Flow's AOP features are used to realize this completely new perspective
+Flow's AOP features are used to realize this completely new perspective
 on authorization. If you want to learn more about AOP, please refer to
 the corresponding chapter in this reference.
 
@@ -995,17 +995,17 @@ First, let's have a look at the following sequence diagram to get an overview of
 happening when an authorization decision is formed and enforced:
 
 .. figure:: Images/Security_BasicAuthorizationProcess.png
-  :alt: How an authorization decision is formed and enforced in TYPO3 Flow
+  :alt: How an authorization decision is formed and enforced in Flow
   :class: screenshot-fullsize
 
-  How an authorization decision is formed and enforced in TYPO3 Flow
+  How an authorization decision is formed and enforced in Flow
 
 As already said, the whole authorization starts with an intercepted method, or in other
 words with a method that should be protected and only be callable by privileged users. In
 the chapter about AOP you've already read, that every method interception is implemented
 in a so called advice, which resides in an aspect class. Here we are: the
 ``TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect``. Inside this aspect there is the
-``enforcePolicy()`` advice, which hands over to TYPO3 Flow's authorization components.
+``enforcePolicy()`` advice, which hands over to Flow's authorization components.
 
 The next thing to be called is a security interceptor. This interceptor calls the
 authentication manager before it continues with the authorization process, to make sure
@@ -1021,7 +1021,7 @@ permissions according to the privilege evaluation strategy explained in the prev
 Content security (EntityPrivilege)
 ==================================
 
-To restrict the retrieval of Doctrine entities stored in the database, TYPO3 Flow ships the generic EntityPrivilege.
+To restrict the retrieval of Doctrine entities stored in the database, Flow ships the generic EntityPrivilege.
 This privilege type enables you to hide certain entities from certain users. By rewriting the queries issued by the
 Doctrine ORM, persisted entities a users is not granted to read, are simply not returned from the database. For the
 respective user it looks like these entities are not existing at all.
@@ -1269,10 +1269,10 @@ level of security right at the beginning of the whole framework run, which means
 that a minimal amount of potentially insecure code will be executed before that.
 
 .. figure:: Images/Security_FilterFirewall.png
-  :alt: Blocking request with TYPO3 Flow's filter firewall
+  :alt: Blocking request with Flow's filter firewall
   :class: screenshot-fullsize
 
-  Blocking request with TYPO3 Flow's filter firewall
+  Blocking request with Flow's filter firewall
 
 Blocking requests with the firewall is not a big thing at all, basically a request filter object is
 called, which consists of a request pattern and a security interceptor. The simple rule
@@ -1280,14 +1280,14 @@ is: if the pattern matches on the request, the interceptor is invoked.
 :ref:`Request Patterns` are also used by the authentication components and are explained
 in detail there. Talking about security interceptors: you already know the policy
 enforcement interceptor, which triggers the authorization process. Here is a table of
-available interceptors, shipped with TYPO3 Flow:
+available interceptors, shipped with Flow:
 
 .. note::
 
   Of course you can implement your own interceptor. Just make sure to implement the
   interface: ``TYPO3\Flow\Security\Authorization\InterceptorInterface``.
 
-:title:`TYPO3 Flow's built-in security interceptors`
+:title:`Flow's built-in security interceptors`
 
 +-----------------------+---------------------------------------+
 | Security interceptor  | Invocation action                     |
@@ -1373,7 +1373,7 @@ general you can retrieve the token by callding ``getCsrfProtectionToken`` on the
 Channel security
 ================
 
-Currently channel security is not a specific feature of TYPO3 Flow. Instead you have to make sure to transfer sensitive
+Currently channel security is not a specific feature of Flow. Instead you have to make sure to transfer sensitive
 data, like passwords, over a secure channel. This is e.g. to use an SSL connection.
 
 .. _Cryptography:
@@ -1385,7 +1385,7 @@ Hash service
 ------------
 
 Creating cryptographically secure hashes is a crucial part to many security related tasks. To make sure the hashes are
-built correctly TYPO3 Flow provides a central hash service ``TYPO3\Flow\Security\Cryptography\HashService``, which
+built correctly Flow provides a central hash service ``TYPO3\Flow\Security\Cryptography\HashService``, which
 brings well tested hashing algorithms to the developer. We highly recommend to use this service to make sure hashes are
 securely created.
 
@@ -1395,7 +1395,7 @@ methods for hashing passwords with different hashing strategies.
 RSA wallet service
 ------------------
 
-TYPO3 Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
+Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
 service is to store private keys securely within the application by only exposing the public key via API. The default
 implementation shipped with Flow is based on the openssl functions shipped with PHP:
 ``TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp``.

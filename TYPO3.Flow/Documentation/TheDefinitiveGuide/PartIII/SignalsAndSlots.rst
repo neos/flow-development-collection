@@ -71,7 +71,7 @@ non-slot method.
 	public function sendNewCommentNotification(Comment $comment) {
 		$mail = new \TYPO3\SwiftMailer\Message();
 		$mail->setFrom(array('john@doe.org ' => 'John Doe'))
-			->setTo(array('karsten@typo3.org ' => 'Karsten Dambekalns'))
+			->setTo(array('karsten@neos.io ' => 'Karsten Dambekalns'))
 			->setSubject('New comment')
 			->setBody($comment->getContent())
 			->send();

@@ -2,7 +2,7 @@
 Resource Management
 ===================
 
-.. sectionauthor:: Christian Müller <christian.mueller@typo3.org>
+.. sectionauthor:: Christian Müller <christian.mueller@neos.io>
 
 
 Traditionally a PHP application deals directly with all kinds of files. Realizing a file
@@ -102,7 +102,7 @@ Flow comes preconfigured with two default collections:
 Package Resources
 =================
 
-TYPO3 Flow packages may provide any amount of static resources. They might be images,
+Flow packages may provide any amount of static resources. They might be images,
 stylesheets, javascripts, templates or any other file which is used within the application
 or published to the web. Static resources may either be public or private:
 

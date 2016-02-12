@@ -2,7 +2,7 @@
 Persistence
 ===========
 
-.. sectionauthor:: Karsten Dambekalns <karsten@typo3.org>
+.. sectionauthor:: Karsten Dambekalns <karsten@dambekalns.de>
 
 This chapter explains how to use object persistence in Flow. To do this, it focuses on
 the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
