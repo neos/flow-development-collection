@@ -4,9 +4,9 @@
 Cache Framework
 ===============
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
-TYPO3 Flow offers a caching framework to cache data. The system offers a wide variety of
+Flow offers a caching framework to cache data. The system offers a wide variety of
 options and storage solutions for different caching needs. Each cache can be configured
 individually and can implement its own specific storage strategy.
 
@@ -118,7 +118,7 @@ Thus you deal mainly with the API defined in the ``FrontendInterface``.
 Configuration
 =============
 
-The cache framework is configured in the usual TYPO3 Flow way through YAML files. The most
+The cache framework is configured in the usual Flow way through YAML files. The most
 important is *Caches.yaml*, although you may of course use *Objects.yaml* to further
 configure the way your caches are used. Caches are given a (unique) name and have three
 keys in their configuration:
@@ -316,7 +316,7 @@ A disadvantage is that the performance of ``flushByTag()`` is bad and scales jus
 This basically means that with twice the number of entries the file backend needs double
 time to flush entries which are tagged with a given tag.
 This practically renders the file backend unusable for content caches. The reason for this
-design decision in TYPO3 Flow is that the file backend is mainly used as AOP cache, where
+design decision in Flow is that the file backend is mainly used as AOP cache, where
 ``flushByTag()`` is only used if a PHP file changes. This happens very seldom on
 production systems, so get and set performance is much more important in this scenario.
 
@@ -416,7 +416,7 @@ system. It is recommended to build this from the git repository. Currently redis
 
 	The redis implementation is pretty young and should be considered as experimental. The
 	redis project itself has a very high development speed and it might happen that the
-	TYPO3 Flow implementation changes to adapt to new versions.
+	Flow implementation changes to adapt to new versions.
 
 Options
 ~~~~~~~
@@ -487,7 +487,7 @@ Furthermore memcache has no sort of namespacing. To distinguish entries of multi
 from each other, every entry is prefixed with the cache name. This can lead to very long
 runtimes if a big cache needs to be flushed, because every entry has to be handled
 separately and it is not possible to just truncate the whole cache with one call as this
-would clear the whole memcached data which might even hold non TYPO3 Flow related entries.
+would clear the whole memcached data which might even hold non Flow related entries.
 
 Because of the mentioned drawbacks, the memcached backend should be used with care or in
 situations where cache integrity is not important or if a cache has no need to use tags at
@@ -496,7 +496,7 @@ all.
 .. note::
 
 	The current native debian squeeze package (probably other distributions are affected,
-	too) suffers from `PHP memcache bug #16927`_.
+	too) suffers from `PHP memcache bug 16927`_.
 
 .. note::
 
@@ -557,7 +557,7 @@ from the same problems if APC runs out of memory.
 The garbage collection is currently not implemented. In its latest version, APC will fail
 to store data with a `PHP warning`_ if it runs out of memory. This may change in the
 future. Even without using the cache backend, it is advisable to increase the memory
-cache size of APC to at least 64MB when working with TYPO3 Flow, simply due to the large number
+cache size of APC to at least 64MB when working with Flow, simply due to the large number
 of PHP files to be cached. A minimum of 128MB is recommended when using the additional
 content cache. Cache TTL for file and user data should be set to zero (disabled) to avoid
 heavy memory fragmentation.
@@ -676,6 +676,6 @@ convenience) for a cache::
 .. _Redis:                       http://redis.io/
 .. _phpredis:                    https://github.com/owlient/phpredis
 .. _Memcached:                   http://memcached.org/
-.. _PHP memcache bug #16927:     https://bugs.php.net/bug.php?id=58943
+.. _PHP memcache bug 16927:      https://bugs.php.net/bug.php?id=58943
 .. _APC:                         http://pecl.php.net/package/APC
 .. _PHP warning:                 https://bugs.php.net/bug.php?id=58982

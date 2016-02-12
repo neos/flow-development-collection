@@ -9,6 +9,8 @@ Overview of merged pull requests
 
 Prevents segmentation faults caused by Doctrine.
 
+Prevents segmentation faults caused by Doctrine.
+
 Excludes support for ``EntityListeners`` annotation introduced for 3.0
 
 `[TASK] Tweak routing documentation <https://github.com/neos/flow-development-collection/pull/170>`_
@@ -32,11 +34,20 @@ a dot.
 This change adjusts the regular expression to allow any string to be
 referenced.
 
+When using the ``PositionalArraySorter`` one can position keys
+relative to other keys with ``before/after <key>``.
+But for the ``<key>`` only ``[a-zA-Z0-9]`` were allowed limiting the
+functionality especially when dealing with package keys that contain
+a dot.
+
+This change adjusts the regular expression to allow any string to be
+referenced.
+
 * Fixes: `FLOW-422 <https://jira.neos.io/browse/FLOW-422>`_
 * Packages: ``Flow``
 
 `Add missing namespace import for @Flow\\Scope <https://github.com/neos/flow-development-collection/pull/165>`_
---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 
 * Packages: ``Flow``
 

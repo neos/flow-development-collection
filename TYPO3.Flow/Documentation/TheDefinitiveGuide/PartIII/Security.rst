@@ -9,10 +9,10 @@ Security
 Security Framework
 ==================
 
-All tasks related to security of a TYPO3 Flow application are handled centrally by the security
+All tasks related to security of a Flow application are handled centrally by the security
 framework. Besides other functionality, this includes especially features like
 authentication, authorization, channel security and a powerful policy component. This
-chapter describes how you can use TYPO3 Flow's security features and how they work internally.
+chapter describes how you can use Flow's security features and how they work internally.
 
 Security context
 ----------------
@@ -26,7 +26,7 @@ Authentication
 ==============
 
 One of the main things people associate with security is authentication. That means to
-identify your communication partner - the one sending a request to TYPO3 Flow. Therefore the
+identify your communication partner - the one sending a request to Flow. Therefore the
 framework provides an infrastructure to easily use different mechanisms for such a
 plausibility proof. The most important achievement of the provided infrastructure is its
 flexible extensibility. You can easily write your own authentication mechanisms and
@@ -38,7 +38,7 @@ details are explained in the section  :ref:`Implementing your own authentication
 Using the authentication controller
 -----------------------------------
 
-First, let's see how you can use TYPO3 Flow's authentication features. There is a base
+First, let's see how you can use Flow's authentication features. There is a base
 controller in the security package: the
 :abbr:`AbstractAuthenticationController (\\TYPO3\\Flow\\Security\\Authentication\\Controller\\AbstractAuthenticationController)`,
 which already contains almost everything you need to authenticate an account. This controller has
@@ -212,7 +212,7 @@ Authentication manager and provider
 
 After the tokens have been initialized the original request will be processed by the
 resolved controller. Usually this is done by your authentication controller inheriting the
-AbstractAuthenticationController of TYPO3 Flow, which will call the authentication manager to authenticate the tokens.
+AbstractAuthenticationController of Flow, which will call the authentication manager to authenticate the tokens.
 In turn the authentication manager calls all authentication providers in the configured order. A
 provider implements a specific authentication mechanism and is therefore responsible for
 a specific token type. E.g. the already mentioned ``PersistedUsernamePasswordProvider``
@@ -236,15 +236,15 @@ Policy section for details).
 Account management
 ------------------
 
-In the previous section you have seen, how accounts can be authenticated in TYPO3 Flow. What
+In the previous section you have seen, how accounts can be authenticated in Flow. What
 was concealed so far is, how these accounts are created or what is exactly meant by the
-word "account". First of all let's define what accounts are in TYPO3 Flow and how they are used
+word "account". First of all let's define what accounts are in Flow and how they are used
 for authentication. Following the OASIS CIQ V3.0 [#]_ specification, an account used for
 authentication is separated from a user or more
 general a party. The advantage of this separation is the possibility of one user having
 more than one account. E.g. a user could have an account for the ``UsernamePassword``
 provider and one account connected to an LDAP authentication provider. Another scenario
-would be to have different accounts for different parts of your TYPO3 Flow application. Read
+would be to have different accounts for different parts of your Flow application. Read
 the next section :ref:`Advanced authentication configuration` to see how this can be
 accomplished.
 
@@ -273,7 +273,7 @@ the authentication status of this token.
 .. note::
 
   The ``DefaultProvider`` authentication provider used in the examples is not shipped
-  with TYPO3 Flow, you have to configure all available authentication providers in your application.
+  with Flow, you have to configure all available authentication providers in your application.
 
 Creating accounts
 ~~~~~~~~~~~~~~~~~
@@ -298,7 +298,7 @@ The ``PersistedUsernamePasswordProvider`` uses the
 example above, the given plaintext password will be securely hashed by the ``HashService``.
 The hashing is the main magic happening in the ``AccountFactory`` and the reason why we don't
 create  the account object directly. If you want to learn more about secure password hashing
-in TYPO3 Flow, you should read the section about :ref:`Cryptography` below. You can also see, that there
+in Flow, you should read the section about :ref:`Cryptography` below. You can also see, that there
 is an array of roles added to the account. This is used by the policy system and will be
 explained in the according section below.
 
@@ -529,7 +529,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
 .. note::
 
-  Prior to TYPO3 Flow version 1.2 the option ``routeValues`` was not supported by the WebRedirect
+  Prior to Flow version 1.2 the option ``routeValues`` was not supported by the WebRedirect
   entry point. Instead you could provide the option ``uri`` containing a relative or absolute
   URI to redirect to. This is still possible, but we recommend to use ``routeValues`` in
   order to make your configuration more independent from the routing configuration.
@@ -544,7 +544,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
   If a request has been intercepted by an ``AuthenticationRequired`` exception, this
   request will be stored in the security context. By this, the authentication process
-  can resume this request afterwards. Have a look at the TYPO3 Flow authentication controller
+  can resume this request afterwards. Have a look at the Flow authentication controller
   if you want to see this feature in action.
 
 :title:`Available authentication entry points`
@@ -573,12 +573,12 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 |              | form.                     |                                             |
 +--------------+---------------------------+---------------------------------------------+
 
-.. _Authentication mechanisms shipped with TYPO3 Flow:
+.. _Authentication mechanisms shipped with Flow:
 
-Authentication mechanisms shipped with TYPO3 Flow
--------------------------------------------------
+Authentication mechanisms shipped with Flow
+-------------------------------------------
 
-This section explains the details of each authentication mechanism shipped with TYPO3 Flow.
+This section explains the details of each authentication mechanism shipped with Flow.
 Mainly the configuration options and usage will be exposed, if you want to know more about
 the entire authentication process and how the components will work together, please have a
 look in the previous sections.
@@ -604,11 +604,11 @@ the username value as account identifier and fetch the credentials source.
 
 .. tip::
 
-  You should always use the TYPO3 Flow hash service to generate hashes! This will make sure
+  You should always use the Flow hash service to generate hashes! This will make sure
   that you really have secure hashes.
 
 The provider will try to authenticate the
-token by asking the TYPO3 Flow hash service to verify the hashed password against the given
+token by asking the Flow hash service to verify the hashed password against the given
 plaintext password from the token.
 If you want to know more about accounts and how you can create them, look in the
 corresponding section above.
@@ -713,7 +713,7 @@ that implements the interface
 Authorization
 =============
 
-This section covers the authorization features of TYPO3 Flow and how those can be leveraged in
+This section covers the authorization features of Flow and how those can be leveraged in
 order to configure fine grained access rights.
 
 .. note::
@@ -743,7 +743,7 @@ Defining Privileges (Policies)
 ========================================
 
 This section will introduce the recommended and default way of connecting authentication
-with authorization. In TYPO3 Flow policies are defined in a declarative way. This is very powerful and gives
+with authorization. In Flow policies are defined in a declarative way. This is very powerful and gives
 you the possibility to change the security policy of your application without touching any PHP code.
 The policy system deals with two major objects, which are explained below: ``Roles`` and ``Privilege Targets``.
 All policy definitions are configured in the ``Policy.yaml`` files.
@@ -831,7 +831,7 @@ The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
 ``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
 ``Acme.MyPackage:Customer`` role.
 
-TYPO3 Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
+Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
 configure yourself. This role will also be present, if no account is authenticated.
 
 Likewise, the magic role ``TYPO3.Flow:Anonymous`` is added to the security context if no user
@@ -1412,7 +1412,7 @@ To use existing keys the following commands can be used to import keys to be sto
 -----
 
 .. [#] The details about the ``PersistedUsernamePasswordProvider`` provider are explained
-  below, in the section about :ref:`Authentication mechanisms shipped with TYPO3 Flow`.
+  below, in the section about :ref:`Authentication mechanisms shipped with Flow`.
 
 .. [#] If you don't know any credentials, you'll have to read the section about
   :ref:`Account management`
@@ -1422,7 +1422,7 @@ To use existing keys the following commands can be used to import keys to be sto
 
 .. [#] The specification can be downloaded from
   `http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq`_. The implementation of
-  this specification resides in the "Party" package, which is part of the official TYPO3 Flow
+  this specification resides in the "Party" package, which is part of the official Flow
   distribution.
 
 .. [#] The ``AccountRepository`` provides a convenient find method called
