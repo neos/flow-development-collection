@@ -101,9 +101,8 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $tags = $this->extractUuids($matchResults);
-        $tags[] = md5(trim($httpRequest->getRelativePath(), '/'));
-        $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
+        $tags = $this->generateRouteTags($httpRequest->getRelativePath(), $matchResults);
+        $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $tags);
     }
 
     /**
@@ -138,10 +137,29 @@ class RouterCachingService
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
         if ($cacheIdentifier !== null) {
-            $tags = $this->extractUuids($routeValues);
-            $tags[] = md5($uriPath);
-            $this->resolveCache->set($cacheIdentifier, $uriPath, $this->extractUuids($routeValues));
+            $tags = $this->generateRouteTags($uriPath, $routeValues);
+            $this->resolveCache->set($cacheIdentifier, $uriPath, $tags);
         }
+    }
+
+    /**
+     * @param string $uriPath
+     * @param array $routeValues
+     * @return array
+     */
+    protected function generateRouteTags($uriPath, $routeValues)
+    {
+        $uriPath = trim($uriPath, '/');
+        $tags = $this->extractUuids($routeValues);
+        $path = '';
+        $uriPath = explode('/', $uriPath);
+        foreach ($uriPath as $uriPathSegment) {
+            $path .= '/' . $uriPathSegment;
+            $path = trim($path, '/');
+            $tags[] = md5($path);
+        }
+
+        return $tags;
     }
 
     /**

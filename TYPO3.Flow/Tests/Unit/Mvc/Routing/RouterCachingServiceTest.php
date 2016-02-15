@@ -253,7 +253,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $routerCachingService->expects($this->atLeastOnce())->method('buildRouteCacheIdentifier')->with($this->mockHttpRequest)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'routeCache', $this->mockRouteCache);
 
-        $this->mockRouteCache->expects($this->once())->method('set')->with('cacheIdentifier', $matchResults, array($uuid1, $uuid2, md5('some/route/path')));
+        $this->mockRouteCache->expects($this->once())->method('set')->with('cacheIdentifier', $matchResults, array($uuid1, $uuid2, md5('some'), md5('some/route'), md5('some/route/path')));
 
         $routerCachingService->storeMatchResults($this->mockHttpRequest, $matchResults);
     }
@@ -305,7 +305,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $routerCachingService->expects($this->atLeastOnce())->method('buildResolveCacheIdentifier')->with($routeValues)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'resolveCache', $this->mockResolveCache);
 
-        $this->mockResolveCache->expects($this->once())->method('set')->with('cacheIdentifier', $trimmedResolvedUriPath, array($uuid1, $uuid2, md5($trimmedResolvedUriPath)));
+        $this->mockResolveCache->expects($this->once())->method('set')->with('cacheIdentifier', $trimmedResolvedUriPath, array($uuid1, $uuid2, md5('some'), md5('some/request'), md5('some/request/path')));
 
         $routerCachingService->storeResolvedUriPath($resolvedUriPath, $routeValues);
     }
