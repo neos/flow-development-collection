@@ -5,8 +5,7 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": ">=3.0.0",
-        "neos/redirecthandler": "*",
-        "gedmo/doctrine-extensions": "~2.4.0"
+        "neos/redirecthandler": "*"
     },
     "autoload": {
         "psr-4": {

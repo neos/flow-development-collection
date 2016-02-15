@@ -13,7 +13,7 @@ namespace Neos\RedirectHandler\DatabaseStorage\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use Gedmo\Mapping\Annotation as Gedmo;
+use TYPO3\Flow\Utility\Now;
 
 /**
  * A Redirection model that represents a HTTP redirect
@@ -36,7 +36,6 @@ class Redirection
 
     /**
      * @var \DateTime
-     * @Gedmo\Timestampable(on="update", field={"sourceUriPath", "targetUriPath", "statusCode", "host"})
      */
     protected $lastModificationDateTime;
 
@@ -105,7 +104,6 @@ class Redirection
 
     /**
      * @var \DateTime
-     * @Gedmo\Timestampable(on="update", field={"hitCounter"})
      */
     protected $lastHitCount;
 
@@ -117,8 +115,6 @@ class Redirection
      */
     public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $host = null)
     {
-        $this->creationDateTime = new \DateTime();
-        $this->lastModificationDateTime = new \DateTime();
         $this->sourceUriPath = trim($sourceUriPath, '/');
         $this->sourceUriPathHash = md5($this->sourceUriPath);
         $this->setTargetUriPath($targetUriPath);
@@ -126,6 +122,9 @@ class Redirection
         $this->host = $host ? trim($host) : null;
 
         $this->hitCounter = 0;
+
+        $this->creationDateTime = new Now();
+        $this->lastModificationDateTime = new Now();
     }
 
     /**
@@ -137,6 +136,8 @@ class Redirection
     {
         $this->setTargetUriPath($targetUriPath);
         $this->statusCode = $statusCode;
+
+        $this->lastModificationDateTime = new Now();
     }
 
     /**
@@ -179,6 +180,8 @@ class Redirection
     {
         $this->targetUriPath = trim($targetUriPath, '/');
         $this->targetUriPathHash = md5($this->targetUriPath);
+
+        $this->lastModificationDateTime = new Now();
     }
 
     /**
@@ -196,6 +199,8 @@ class Redirection
     public function setStatusCode($statusCode)
     {
         $this->statusCode = $statusCode;
+
+        $this->lastModificationDateTime = new Now();
     }
 
     /**
@@ -236,5 +241,7 @@ class Redirection
     public function incrementHitCounter()
     {
         $this->hitCounter++;
+
+        $this->lastHitCount = new Now();
     }
 }
