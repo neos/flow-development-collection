@@ -81,7 +81,7 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 		if (substr($packageType, 0, 11) !== 'typo3-flow-') {
-			$this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', array($packageKey));
+			$this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', array($packageType));
 			$this->quit(1);
 		}
 		$package = $this->packageManager->createPackage($packageKey, NULL, NULL, $packageType);
