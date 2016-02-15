@@ -156,7 +156,7 @@ Upgrade Instructions
 This section contains instructions for upgrading your Flow 2.3 based applications to Flow 3.0.
 
 What has changed
-----------------
+================
 
 Flow 3.0 comes with numerous fixes and improvements. Here's a list of changes that might need special attention when
 upgrading.
@@ -172,7 +172,7 @@ In general make sure to run the commands::
 when upgrading (see below).
 
 Minimum PHP version requirement: 5.5
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 
 With Flow 3.0 the minimum PHP version requirement has been increased
 from `5.3.2` to `5.5.0`.
@@ -183,7 +183,7 @@ error.
 See `FLOW-217 <https://jira.neos.io/browse/FLOW-217>`_
 
 Decoupling of TYPO3.Party package
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------
 
 With version 3.0 the Party package is no longer part of the Flow base
 distribution.
@@ -212,7 +212,7 @@ PartyService).
 See `FLOW-5 <https://jira.neos.io/browse/FLOW-5>`_
 
 Reworked Security Framework
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 The Security Framework has been revised and now introduces the concept of
 ``privileges``. It also includes a restructuring of the privilege voting process.
@@ -229,7 +229,7 @@ See `FLOW-11 <https://jira.neos.io/browse/FLOW-11>`_
 
 
 Multi-Storage / Multi-Target Resource Management
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------------
 
 Flow 3.0 comes with a completely revised Resource Management which allows for storage
 and publication of persistent or static resources (assets) in the local file system
@@ -252,7 +252,7 @@ This is only important during upgrading and deployment. At runtime new resources
 See `FLOW-108 <https://jira.neos.io/browse/FLOW-108>`_
 
 Charset and collation in all MySQL migrations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------------------
 
 All MySQL migrations now explicitly specify charset and collation as suggested by
 `Doctrine <https://github.com/doctrine/dbal/blob/master/UPGRADE.md#creating-mysql-tables-now-defaults-to-utf-8>`_.
@@ -266,10 +266,10 @@ This can be done using the command::
 See `NEOS-800 <https://jira.neos.io/browse/NEOS-800>`_
 
 Exclude Non-Flow packages from object management by default
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------------
 
 All "non-flow-packages" (Packages for which the composer type does not
-start with "typo3-flow-*") are now excluded from object management by default.
+start with "typo3-flow-\*") are now excluded from object management by default.
 
 Previously they had to be excluded explicitly with the
 ``TYPO3.Flow.object.excludeClasses`` setting.
@@ -309,7 +309,7 @@ command.
 See `FLOW-103 <https://jira.neos.io/browse/FLOW-103>`_
 
 Adjusted "ignoreTags" configuration syntax
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------
 
 The ``TYPO3.Flow.reflection.ignoreTags`` setting syntax has been adjusted to allow for
 adding and changing tag ignore behavior from 3rd party packages.
@@ -345,7 +345,7 @@ explicitly now::
 See `FLOW-199 <https://jira.neos.io/browse/FLOW-199>`_
 
 Remove obsolete "security.enable" Setting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------
 
 The ``TYPO3.Flow.security.enable`` and all mentions and usages of it have been
 removed.
@@ -359,7 +359,7 @@ Besides the flag was never evaluated consistently.
 See `FLOW-181 <https://jira.neos.io/browse/FLOW-181>`_
 
 New annotation "InjectConfiguration"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 
 A new annotation that allows for injection of arbitrary configuration.
 
@@ -394,7 +394,7 @@ you should consider using the new annotation instead.
 See `FLOW-148 <https://jira.neos.io/browse/FLOW-148>`_
 
 Fluid: Consistent escaping behavior
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Fluid 3.0 comes with a major rework of the interceptors that are currently
 mostly used to automatically apply ``htmlspecialchars()`` to dynamic strings
@@ -451,7 +451,7 @@ through each affected ViewHelper to verify if that flag is really needed.
 See `FLOW-26 <https://jira.neos.io/browse/FLOW-26>`_
 
 Fluid: Submitted form data has precedence over value argument
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------------------------
 
 The behavior of all Form ViewHelpers has been adjusted so that any submitted
 value is redisplayed even if a "value" argument has been specified.
@@ -479,7 +479,7 @@ explicitly if the ViewHelper might be bound to (sub)entities.
 See `FLOW-213 <https://jira.neos.io/browse/FLOW-213>`_
 
 Fluid: Throw exception for unresolved namespaces
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------------
 
 With this change the Fluid parser now throws an exception when it comes
 across an unknown ViewHelper namespace.
@@ -501,7 +501,7 @@ Specific namespaces can be ignored like this::
 See `FLOW-150 <https://jira.neos.io/browse/FLOW-150>`_
 
 Further breaking changes
-------------------------
+========================
 
 * [BUGFIX] Generate Value Object hash from property values (see `#55953 <https://forge.typo3.org/issues/55953>`_)
 * [TASK] Do not use LoggerFactory in a static context(see `c4a9350 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c4a935054d840a49394559a128296b2812dbfca2>`_)
@@ -512,7 +512,7 @@ Further breaking changes
 * [TASK] Remove usage of ReflectionService in ViewHelpers (see `3adb3c3 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/3adb3c3ded8ff90bbce1a0386a6a120fe0dde322>`_)
 
 Upgrading your Web Server Configuration
----------------------------------------
+=======================================
 
 If using NGINX or custom Apache configuration, you need to remove a few lines from you Apache / NGINX configuration.
 
@@ -521,29 +521,29 @@ to `_Resources/Persistent/[40-character-hash].jpg` by having a rewrite rule in A
 
 Example of an Apache Rewrite Rule for Flow 2.x::
 
-	# Perform rewriting of persistent private resources
-	RewriteRule ^(_Resources/Persistent/[a-zA-Z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
+    # Perform rewriting of persistent private resources
+    RewriteRule ^(_Resources/Persistent/[a-zA-Z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
 
-	# Perform rewriting of persistent resource files
-	RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
+    # Perform rewriting of persistent resource files
+    RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
 
 
 Example of an Nginx Rewrite Rule for Flow 2.x::
 
-	location ~ "^/_Resources/Persistent/" {
-		rewrite "(.{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
-		rewrite "([a-z0-9]+/(.+/)?[a-f0-9]{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
-	}
+    location ~ "^/_Resources/Persistent/" {
+        rewrite "(.{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+        rewrite "([a-z0-9]+/(.+/)?[a-f0-9]{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+    }
 
 Flow 3.0 does not need these configuration blocks anymore, so they should be deleted.
 
 **In order to upgrade, please delete these rules from your Apache / Nginx Configuration in case you inserted them.**
 
 Upgrading your Packages
------------------------
+=======================
 
 Upgrading existing code
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
 Here comes the easier part. As with earlier changes to Flow that required code changes on the user side we provide a code
 migration tool.
@@ -562,7 +562,7 @@ Make sure to run::
 to see all the other helpful options this command provides.
 
 Inside core:migrate
-"""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 
 The tool roughly works like this:
 
@@ -597,7 +597,7 @@ to update your database with any changes to the framework-supplied
 schema.
 
 Famous last words
------------------
+=================
 
 In a nutshell, running::
 
