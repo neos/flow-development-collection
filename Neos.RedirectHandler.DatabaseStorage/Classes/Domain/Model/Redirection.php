@@ -2,7 +2,7 @@
 namespace Neos\RedirectHandler\DatabaseStorage\Domain\Model;
 
 /*
- * This file is part of the Neos.RedirectHandler package.
+ * This file is part of the Neos.RedirectHandler.DatabaseStorage package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -23,7 +23,8 @@ use TYPO3\Flow\Utility\Now;
  * @Flow\Entity
  * @ORM\Table(
  * 	indexes={
- * 		@ORM\Index(name="targeturipathhash",columns={"targeturipathhash","hostpattern"})
+ * 		@ORM\Index(name="sourceuripathhash",columns={"targeturipathhash","host"}),
+ * 		@ORM\Index(name="targeturipathhash",columns={"targeturipathhash","host"})
  * 	}
  * )
  */
@@ -104,6 +105,7 @@ class Redirection
 
     /**
      * @var \DateTime
+     * @ORM\Column(nullable=true)
      */
     protected $lastHitCount;
 
