@@ -409,7 +409,6 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('<info>%s</info>', [$status]);
         $this->outputLine();
         if ($migrationClassPathAndFilename) {
-
             $choices = ['Don\'t Move'];
             $packages = [null];
 
