@@ -46,8 +46,12 @@ class RedirectionCommandController extends CommandController
      * @param string $filename CSV file path, if null use standard output
      * @param string $host Optional host pattern
      */
-    public function saveCommand($filename = null, $host = null)
+    public function exportCommand($filename = null, $host = null)
     {
+        if (!class_exists(Writer::class)) {
+            $this->outputLine('Please run: composer require league/csv to use the export command');
+            $this->sendAndExit(1);
+        }
         $writer = Writer::createFromFileObject(new \SplTempFileObject());
         $redirections = $this->redirectionStorage->getAll($host);
         /** @var $redirection Redirection */
@@ -71,8 +75,12 @@ class RedirectionCommandController extends CommandController
      *
      * @param string $filename CSV file path
      */
-    public function loadCommand($filename)
+    public function importCommand($filename)
     {
+        if (!class_exists(Reader::class)) {
+            $this->outputLine('Please run: composer require league/csv to use the export command');
+            $this->sendAndExit(1);
+        }
         $reader = Reader::createFromPath($filename);
         $counter = 0;
         foreach ($reader as $index => $row) {

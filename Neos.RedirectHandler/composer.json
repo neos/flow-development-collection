@@ -4,8 +4,10 @@
     "description": "Basic API to handle http redirect with Flow Framework",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": ">=3.0.0",
-        "league/csv": "~8.0.0"
+        "typo3/flow": ">=3.0.0"
+    },
+    "suggest": {
+        "league/csv": "Allows import/export based on CSV files"
     },
     "autoload": {
         "psr-4": {
