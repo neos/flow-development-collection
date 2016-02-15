@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Error;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Error.Messages package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,16 +12,16 @@ namespace TYPO3\Flow\Error;
  */
 
 /**
- * An object representation of a generic warning. Subclass this to create
- * more specific warnings if necessary.
+ * An object representation of a generic error. Subclass this to create
+ * more specific errors if necessary.
  *
  * @api
  */
-class Warning extends Message
+class Error extends Message
 {
     /**
-     * The severity of this message ('Warning').
+     * The severity of this message ('Error').
      * @var string
      */
-    protected $severity = self::SEVERITY_WARNING;
+    protected $severity = self::SEVERITY_ERROR;
 }
