@@ -143,14 +143,6 @@ class Redirection
     }
 
     /**
-     * @return integer
-     */
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreationDateTime()
@@ -175,6 +167,14 @@ class Redirection
     }
 
     /**
+     * @return string
+     */
+    public function getSourceUriPathHash()
+    {
+        return $this->sourceUriPathHash;
+    }
+
+    /**
      * @param string $targetUriPath
      * @return void
      */
@@ -192,6 +192,14 @@ class Redirection
     public function getTargetUriPath()
     {
         return $this->targetUriPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetUriPathHash()
+    {
+        return $this->targetUriPathHash;
     }
 
     /**

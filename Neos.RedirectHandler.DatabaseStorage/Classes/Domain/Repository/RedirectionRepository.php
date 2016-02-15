@@ -2,7 +2,7 @@
 namespace Neos\RedirectHandler\DatabaseStorage\Domain\Repository;
 
 /*
- * This file is part of the Neos.RedirectHandler package.
+ * This file is part of the Neos.RedirectHandler.DatabaseStorage package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

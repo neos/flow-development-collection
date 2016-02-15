@@ -2,7 +2,7 @@
 namespace Neos\RedirectHandler\DatabaseStorage;
 
 /*
- * This file is part of the Neos.RedirectHandler package.
+ * This file is part of the Neos.RedirectHandler.DatabaseStorage package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -73,7 +73,7 @@ class RedirectionStorage implements RedirectionStorageInterface
         if ($redirection === null) {
             return null;
         }
-        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode());
+        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
     }
 
     /**
@@ -174,7 +174,7 @@ class RedirectionStorage implements RedirectionStorageInterface
         $this->redirectionRepository->add($redirection);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
         $this->runtimeCache[$hash] = $redirection;
-        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode());
+        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
     }
 
     /**
@@ -201,7 +201,7 @@ class RedirectionStorage implements RedirectionStorageInterface
         if ($existingRedirectionForSourceUriPath !== null) {
             throw new Exception(sprintf('A redirect exists for the source URI path "%s", please remove it first.', $newRedirection->getSourceUriPath()), 1382091456);
         }
-        $obsoleteRedirectionInstances = $this->redirectionRepository->findByTargetUriPath($newRedirection->getSourceUriPath());
+        $obsoleteRedirectionInstances = $this->redirectionRepository->findByTargetUriPathAndHost($newRedirection->getSourceUriPath(), $newRedirection->getHost());
         /** @var $obsoleteRedirection Redirection */
         foreach ($obsoleteRedirectionInstances as $obsoleteRedirection) {
             if ($obsoleteRedirection->getSourceUriPath() === $newRedirection->getTargetUriPath()) {
