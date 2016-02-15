@@ -76,10 +76,10 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     }
 
     /**
-     * Generates a new keypair and returns a UUID to refer to it
+     * Generates a new keypair and returns a fingerprint to refer to it
      *
      * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-     * @return string The RSA public key fingerprint as UUID for reference
+     * @return string The RSA public key fingerprint for reference
      * @throws \TYPO3\Flow\Security\Exception
      */
     public function generateNewKeypair($usedForPasswords = false)
@@ -101,11 +101,11 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     }
 
     /**
-     * Adds the specified keypair to the local store and returns a UUID to refer to it.
+     * Adds the specified keypair to the local store and returns a fingerprint to refer to it.
      *
      * @param string $privateKeyString The private key in its string representation
      * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-     * @return string The RSA public key fingerprint as UUID for reference
+     * @return string The RSA public key fingerprint for reference
      */
     public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = false)
     {
@@ -121,12 +121,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     }
 
     /**
-     * Adds the specified public key to the wallet and returns a UUID to refer to it.
+     * Adds the specified public key to the wallet and returns a fingerprint to refer to it.
      * This is helpful if you have not private key and want to use this key only to
      * verify incoming data.
      *
      * @param string $publicKeyString The public key in its string representation
-     * @return string The RSA public key fingerprint as UUID for reference
+     * @return string The RSA public key fingerprint for reference
      */
     public function registerPublicKeyFromString($publicKeyString)
     {
@@ -139,54 +139,54 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     }
 
     /**
-     * Returns the public key for the given UUID
+     * Returns the public key for the given fingerprint
      *
-     * @param string $uuid The UUID of the stored key
+     * @param string $fingerprint The fingerprint of the stored key
      * @return \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey The public key
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function getPublicKey($uuid)
+    public function getPublicKey($fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438860);
         }
 
-        return $this->keys[$uuid]['publicKey'];
+        return $this->keys[$fingerprint]['publicKey'];
     }
 
     /**
-     * Encrypts the given plaintext with the public key identified by the given UUID
+     * Encrypts the given plaintext with the public key identified by the given fingerprint
      *
      * @param string $plaintext The plaintext to encrypt
-     * @param string $uuid The UUID to identify to correct public key
+     * @param string $fingerprint The fingerprint to identify to correct public key
      * @return string The ciphertext
      */
-    public function encryptWithPublicKey($plaintext, $uuid)
+    public function encryptWithPublicKey($plaintext, $fingerprint)
     {
         $cipher = '';
-        openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($uuid)->getKeyString());
+        openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($fingerprint)->getKeyString());
 
         return $cipher;
     }
 
     /**
-     * Decrypts the given cipher with the private key identified by the given UUID
+     * Decrypts the given cipher with the private key identified by the given fingerprint
      * Note: You should never decrypt a password with this function. Use checkRSAEncryptedPassword()
      * to check passwords!
      *
      * @param string $cipher cipher text to decrypt
-     * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
+     * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return string The decrypted text
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-     * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      */
-    public function decrypt($cipher, $uuid)
+    public function decrypt($cipher, $fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438861);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438861);
         }
 
-        $keyPair = $this->keys[$uuid];
+        $keyPair = $this->keys[$fingerprint];
 
         if ($keyPair['usedForPasswords']) {
             throw new \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
@@ -196,42 +196,42 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     }
 
     /**
-     * Signs the given plaintext with the private key identified by the given UUID
+     * Signs the given plaintext with the private key identified by the given fingerprint
      *
      * @param string $plaintext The plaintext to sign
-     * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
+     * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return string The signature of the given plaintext
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
-    public function sign($plaintext, $uuid)
+    public function sign($plaintext, $fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1299095799);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1299095799);
         }
 
         $signature = '';
-        openssl_sign($plaintext, $signature, $this->keys[$uuid]['privateKey']->getKeyString());
+        openssl_sign($plaintext, $signature, $this->keys[$fingerprint]['privateKey']->getKeyString());
 
         return $signature;
     }
 
     /**
      * Checks whether the given signature is valid for the given plaintext
-     * with the public key identified by the given UUID
+     * with the public key identified by the given fingerprint
      *
      * @param string $plaintext The plaintext to sign
      * @param string $signature The signature that should be verified
-     * @param string $uuid The UUID to identify the public key (RSA public key fingerprint)
+     * @param string $fingerprint The fingerprint to identify the public key (RSA public key fingerprint)
      * @return boolean TRUE if the signature is correct for the given plaintext and public key
      * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException
      */
-    public function verifySignature($plaintext, $signature, $uuid)
+    public function verifySignature($plaintext, $signature, $fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1304959763);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1304959763);
         }
 
-        $verifyResult = openssl_verify($plaintext, $signature, $this->getPublicKey($uuid)->getKeyString());
+        $verifyResult = openssl_verify($plaintext, $signature, $this->getPublicKey($fingerprint)->getKeyString());
 
         return $verifyResult === 1;
     }
@@ -243,35 +243,35 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * @param string $encryptedPassword The received, RSA encrypted password to check
      * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
      * @param string $salt The salt used in the md5 password hash
-     * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
+     * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return boolean TRUE if the password is correct
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
-    public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid)
+    public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1233655216);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1233655216);
         }
 
-        $decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keys[$uuid]['privateKey']);
+        $decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keys[$fingerprint]['privateKey']);
 
         return ($passwordHash === md5(md5($decryptedPassword) . $salt));
     }
 
     /**
-     * Destroys the keypair identified by the given UUID
+     * Destroys the keypair identified by the given fingerprint
      *
-     * @param string $uuid The UUID
+     * @param string $fingerprint The fingerprint
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function destroyKeypair($uuid)
+    public function destroyKeypair($fingerprint)
     {
-        if ($uuid === null || !isset($this->keys[$uuid])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438863);
+        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438863);
         }
 
-        unset($this->keys[$uuid]);
+        unset($this->keys[$fingerprint]);
         $this->saveKeysOnShutdown = true;
     }
 
@@ -387,6 +387,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * See <http://tools.ietf.org/html/rfc4253#page-15> for reference of OpenSSH
      * "ssh-rsa" key format. The fingerprint is obtained by applying an MD5
      * hash on the raw public key bytes.
+     *
+     * If you have a PEM encoded private key, you can generate the same fingerprint
+     * using this:
+     *
+     *  ssh-keygen -yf my-key.pem > my-key.pub
+     *  ssh-keygen -lf my-key.pub
      *
      * @param string $publicKeyString RSA public key, PKCS1 encoded
      * @return string The public key fingerprint

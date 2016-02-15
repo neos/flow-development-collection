@@ -61,10 +61,12 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
+        $this->browser->addAutomaticRequestHeader('Content-Type', 'text/plain');
         $this->browser->request('http://localhost/foo');
 
         $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
         $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
+        $this->assertContains('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
     }
 
     /**
