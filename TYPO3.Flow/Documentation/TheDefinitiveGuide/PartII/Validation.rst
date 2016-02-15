@@ -45,7 +45,7 @@ three types:
 
 .. note::
 	Base model and supplemental rules are not covered by this tutorial.
-	Detailed information is available in :doc:`Part III - Validation <../PartIII/Validation`.
+    Detailed information is available in :doc:`Part III - Validation <../PartIII/Validation>`.
 
 Rules for the base properties are defined directly in the model in form
 of annotations:
