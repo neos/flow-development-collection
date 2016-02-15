@@ -194,6 +194,8 @@ TYPO3:
         'symfony.*': ['.*']
         'phpunit.*': ['.*']
         'mikey179.vfsStream': ['.*']
+        'zendframework.*': ['.*']
+        'ocramius.proxymanager': ['.*']
         # workaround, should rather be deactivated
         'neos.composerplugin': ['.*']
         'Composer.Installers': ['.*']
