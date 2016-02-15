@@ -51,7 +51,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
      */
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
-        $this->validator->_set('options', array('elementValidator' => 'EmailAddress'));
+        $this->validator->_set('options', array('elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []));
         $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\EmailAddressValidator()));
 
         $arrayOfEmailAddresses = array(
@@ -87,7 +87,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
 
         // Create validators
         $aValidator = new \TYPO3\Flow\Validation\Validator\GenericObjectValidator(array());
-        $this->validator->_set('options', array('elementValidator' => 'Integer'));
+        $this->validator->_set('options', array('elementValidator' => 'Integer', 'elementValidatorOptions' => []));
         $integerValidator = new \TYPO3\Flow\Validation\Validator\IntegerValidator(array());
 
         // Add validators to properties
