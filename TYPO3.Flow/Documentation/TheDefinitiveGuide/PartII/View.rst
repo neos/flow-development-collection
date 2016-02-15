@@ -49,7 +49,7 @@ the next hit.
 .. tip::
 	There are more possible directories in a package and we do have some
 	conventions for naming certain sub directories. All that is explained in
-	fine detail in :doc:`Part III <../Part-III/index>`.
+    fine detail in :doc:`Part III <../PartIII/index>`.
 
 .. important::
 	For the blog example in this tutorial we created some style sheet to make it more appealing.

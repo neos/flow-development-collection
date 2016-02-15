@@ -17,7 +17,5 @@ In general, follow the style and usage rules in:
 * `Merriam-Webster's Collegiate Dictionary`_ (or other editions by Merriam-Webster)
 * `The Chicago Manual of Style`_
 
-
 .. _Merriam-Webster's Collegiate Dictionary:           http://www.merriam-webster.com/
 .. _The Chicago Manual of Style:                       http://www.chicagomanualofstyle.org/
-
