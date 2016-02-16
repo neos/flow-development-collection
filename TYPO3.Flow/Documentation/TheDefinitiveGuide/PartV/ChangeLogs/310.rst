@@ -117,7 +117,7 @@ files use up.
 * Packages: ``Flow``
 
 `TASK: Make Http\\Request easier to use for outbound Requests <https://github.com/neos/flow-development-collection/pull/149>`_
------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
 
 Currently the ``Http\\Request`` defaults to php://input for
 content. This is good for a request coming in to Flow, but rather
@@ -345,7 +345,7 @@ version.
 * Packages: ``Flow``
 
 `Add missing namespace import for @Flow\\Scope <https://github.com/neos/flow-development-collection/pull/165>`_
---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 
 * Packages: ``Flow``
 
