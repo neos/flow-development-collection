@@ -35,22 +35,22 @@ resolves the template HTML file, and renders the template afterwards.
 Below, you'll find a snippet of a real-world template displaying a list of blog
 postings. Use it to check whether you find the template language intuitive::
 
-	{namespace f=TYPO3\Fluid\ViewHelpers}
-	<html>
-	<head><title>Blog</title></head>
-	<body>
-	<h1>Blog Postings</h1>
-	<f:for each="{postings}" as="posting">
-	  <h2>{posting.title}</h2>
-	  <div class="author">{posting.author.name} {posting.author.email}</div>
-	  <p>
-	    <f:link.action action="details" arguments="{id : posting.id}">
-	      {posting.teaser}
-	    </f:link.action>
-	  </p>
-	</f:for>
-	</body>
-	</html>
+    {namespace f=TYPO3\Fluid\ViewHelpers}
+    <html>
+    <head><title>Blog</title></head>
+    <body>
+    <h1>Blog Postings</h1>
+    <f:for each="{postings}" as="posting">
+      <h2>{posting.title}</h2>
+      <div class="author">{posting.author.name} {posting.author.email}</div>
+      <p>
+        <f:link.action action="details" arguments="{id : posting.id}">
+          {posting.teaser}
+        </f:link.action>
+      </p>
+    </f:for>
+    </body>
+    </html>
 
 * The *Namespace Import* makes the ``\TYPO3\Fluid\ViewHelper`` namespace available
   under the shorthand f.
@@ -107,10 +107,10 @@ URI to PHP namespace mapping. The YAML syntax for that is:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Fluid:
-	    namespaces:
-	      'http://some/unique/namespace': 'My\Php\Namespace'
+    TYPO3:
+      Fluid:
+        namespaces:
+          'http://some/unique/namespace': 'My\Php\Namespace'
 
 Variables and Object Accessors
 ------------------------------
@@ -123,35 +123,35 @@ snippet into your controller:
 
 .. code-block:: php
 
-	$this->view->assign('blogTitle', $blog->getTitle());
+    $this->view->assign('blogTitle', $blog->getTitle());
 
 Then, you could output the blog title in your template with the following snippet::
 
-	<h1>This blog is called {blogTitle}</h1>
+    <h1>This blog is called {blogTitle}</h1>
 
 Now, you might want to extend the output by the blog author as well. To do this,
 you could repeat the above steps, but that would be quite inconvenient and hard to read.
 
 .. Note::
 
-	The semantics between the controller and the view should be the following:
-	The controller instructs the view to "render the blog object given to it",
-	and not to "render the Blog title, and the blog posting 1, ...".
+    The semantics between the controller and the view should be the following:
+    The controller instructs the view to "render the blog object given to it",
+    and not to "render the Blog title, and the blog posting 1, ...".
 
-	Passing objects to the view instead of simple values is highly encouraged!
+    Passing objects to the view instead of simple values is highly encouraged!
 
 That is why the template language has a special syntax for object access. A nicer
 way of expressing the above is the following:
 
 .. code-block:: php
 
-	// This should go into the controller:
-	$this->view->assign('blog', $blog);
+    // This should go into the controller:
+    $this->view->assign('blog', $blog);
 
 .. code-block:: xml
 
-	<!-- This should go into the template: -->
-	<h1>This blog is called {blog.title}, written by {blog.author}</h1>
+    <!-- This should go into the template: -->
+    <h1>This blog is called {blog.title}, written by {blog.author}</h1>
 
 Instead of passing strings to the template, we are passing whole objects around
 now - which is much nicer to use both from the controller and the view side. To
@@ -162,9 +162,9 @@ and public properties.
 
 .. Tip::
 
-	Deep nesting is supported: If you want to output the email address of the blog
-	author, then you can use ``{blog.author.email}``, which is roughly equivalent
-	to ``$blog->getAuthor()->getEmail()``.
+    Deep nesting is supported: If you want to output the email address of the blog
+    author, then you can use ``{blog.author.email}``, which is roughly equivalent
+    to ``$blog->getAuthor()->getEmail()``.
 
 View Helpers
 ------------
@@ -176,8 +176,8 @@ as PHP classes (more on that later).
 
 This concept is best understood with an example::
 
-	{namespace f=TYPO3\Fluid\ViewHelpers}
-	<f:link.action controller="Administration">Administration</f:link.action>
+    {namespace f=TYPO3\Fluid\ViewHelpers}
+    <f:link.action controller="Administration">Administration</f:link.action>
 
 The example consists of two parts:
 
@@ -193,12 +193,12 @@ The ``<f:link.action />`` tag is implemented in the class ``\TYPO3\Fluid\ViewHel
 
 .. note::
 
-	The class name of such a view helper is constructed for a given tag as follows:
+    The class name of such a view helper is constructed for a given tag as follows:
 
-	#. The first part of the class name is the namespace which was imported (the namespace
-	   prefix ``f`` was expanded to its full namespace ``TYPO3\Fluid\ViewHelpers``)
-	#. The unqualified name of the tag, without the prefix, is capitalized (``Link``),
-	   and the postfix ViewHelper is appended.
+    #. The first part of the class name is the namespace which was imported (the namespace
+       prefix ``f`` was expanded to its full namespace ``TYPO3\Fluid\ViewHelpers``)
+    #. The unqualified name of the tag, without the prefix, is capitalized (``Link``),
+       and the postfix ViewHelper is appended.
 
 The tag and view helper concept is the core concept of Fluid. All output logic is
 implemented through such ViewHelpers / tags! Things like ``if/else``, ``for``, … are
@@ -206,12 +206,12 @@ all implemented using custom tags - a main difference to other templating langua
 
 .. note::
 
-	Some benefits of the class-based approach approach are:
+    Some benefits of the class-based approach approach are:
 
-	* You cannot override already existing view helpers by accident.
-	* It is very easy to write custom view helpers, which live next to the standard view helpers
-	* All user documentation for a view helper can be automatically generated from the
-	  annotations and code documentation.
+    * You cannot override already existing view helpers by accident.
+    * It is very easy to write custom view helpers, which live next to the standard view helpers
+    * All user documentation for a view helper can be automatically generated from the
+      annotations and code documentation.
 
 Most view helpers have some parameters. These can be plain strings, just like in
 ``<f:link.action controller="Administration">...</f:link.action>``, but as well
@@ -220,26 +220,26 @@ as the rest of the template, thus you can pass arrays or objects as parameters.
 
 This is often used when adding arguments to links::
 
-	<f:link.action controller="Blog" action="show" arguments="{singleBlog: blogObject}">
-	  ... read more
-	</f:link.action>
+    <f:link.action controller="Blog" action="show" arguments="{singleBlog: blogObject}">
+      ... read more
+    </f:link.action>
 
 Here, the view helper will get a parameter called ``arguments`` which is of type ``array``.
 
 .. warning::
 
-	Make sure you do not put a space before or after the opening or closing
-	brackets of an array. If you type ``arguments=" {singleBlog : blogObject}"``
-	(notice the space before the opening curly bracket), the array is automatically
-	casted to a string (as a string concatenation takes place).
+    Make sure you do not put a space before or after the opening or closing
+    brackets of an array. If you type ``arguments=" {singleBlog : blogObject}"``
+    (notice the space before the opening curly bracket), the array is automatically
+    casted to a string (as a string concatenation takes place).
 
-	This also applies when using object accessors: ``<f:do.something with="{object}" />``
-	and ``<f:do.something with=" {object}" />`` are substantially different: In
-	the first case, the view helper will receive an object as argument, while in
-	the second case, it will receive a string as argument.
+    This also applies when using object accessors: ``<f:do.something with="{object}" />``
+    and ``<f:do.something with=" {object}" />`` are substantially different: In
+    the first case, the view helper will receive an object as argument, while in
+    the second case, it will receive a string as argument.
 
-	This might first seem like a bug, but actually it is just consistent that it
-	works that way.
+    This might first seem like a bug, but actually it is just consistent that it
+    works that way.
 
 Boolean Expressions
 -------------------
@@ -250,9 +250,9 @@ postings and want to display some additional information for the currently selec
 blog posting. We assume that the currently selected blog is available in ``{currentBlogPosting}``.
 Now, let's have a look how this works::
 
-	<f:for each="{blogPosts}" as="post">
-	  <f:if condition="{post} == {currentBlogPosting}">... some special output here ...</f:if>
-	</f:for>
+    <f:for each="{blogPosts}" as="post">
+      <f:if condition="{post} == {currentBlogPosting}">... some special output here ...</f:if>
+    </f:for>
 
 In the above example, there is a bit of new syntax involved: ``{post} == {currentBlogPosting}``.
 Intuitively, this says "if the post I''m currently iterating over is the same as
@@ -284,14 +284,14 @@ ViewHelper, which is used to reference static files inside the *Public/* folder 
 a package. That's why it is often used inside ``<style>`` or ``<script>``-tags,
 leading to the following code::
 
-	<link rel="stylesheet" href="<f:uri.resource path='myCssFile.css' />" />
+    <link rel="stylesheet" href="<f:uri.resource path='myCssFile.css' />" />
 
 You will notice that this is really difficult to read, as two tags are nested into
 each other. That's where the inline notation comes into play: It allows the usage
 of ``{f:uri.resource()}`` instead of ``<f:uri.resource />``. The above example can
 be written like the following::
 
-	<link rel="stylesheet" href="{f:uri.resource(path:'myCssFile.css')}" />
+    <link rel="stylesheet" href="{f:uri.resource(path:'myCssFile.css')}" />
 
 This is readable much better, and explains the intent of the ViewHelper in a much
 better way: It is used like a helper function.
@@ -300,27 +300,27 @@ The syntax is still more flexible: In real-world templates, you will often find
 code like the following, formatting a ``DateTime`` object (stored in ``{post.date}``
 in the example below)::
 
-	<f:format.date format="d-m-Y">{post.date}</f:format.date>
+    <f:format.date format="d-m-Y">{post.date}</f:format.date>
 
 This can also be re-written using the inline notation::
 
-	{post.date -> f:format.date(format:'d-m-Y')}
+    {post.date -> f:format.date(format:'d-m-Y')}
 
 This is also a lot better readable than the above syntax.
 
 .. tip::
 
-	This can also be chained indefinitely often, so one can write::
+    This can also be chained indefinitely often, so one can write::
 
-		{post.date -> foo:myHelper() -> bar:bla()}
+        {post.date -> foo:myHelper() -> bar:bla()}
 
-	Sometimes you'll still need to further nest ViewHelpers, that is when the design
-	of the ViewHelper does not allow that chaining or provides further arguments. Have
-	in mind that each argument itself is evaluated as Fluid code, so the following
-	constructs are also possible::
+    Sometimes you'll still need to further nest ViewHelpers, that is when the design
+    of the ViewHelper does not allow that chaining or provides further arguments. Have
+    in mind that each argument itself is evaluated as Fluid code, so the following
+    constructs are also possible::
 
-		{foo: bar, baz: '{planet.manufacturer -> f:someother.helper(test: \'stuff\')}'}
-		{some: '{f:format.stuff(arg: \'foo'\)}'}
+        {foo: bar, baz: '{planet.manufacturer -> f:someother.helper(test: \'stuff\')}'}
+        {some: '{f:format.stuff(arg: \'foo'\)}'}
 
 To wrap it up: Internally, both syntax variants are handled equally, and every
 ViewHelper can be called in both ways. However, if the ViewHelper "feels" like a
@@ -334,7 +334,7 @@ Some view helpers, like the ``SelectViewHelper`` (which renders an HTML select
 dropdown box), need to get associative arrays as arguments (mapping from internal
 to displayed name). See the following example for how this works::
 
-	<f:form.select options="{edit: 'Edit item', delete: 'Delete item'}" />
+    <f:form.select options="{edit: 'Edit item', delete: 'Delete item'}" />
 
 The array syntax used here is very similar to the JSON object syntax. Thus, the
 left side of the associative array is used as key without any parsing, and the
@@ -342,46 +342,46 @@ right side can be either:
 
 * a number::
 
-	{a : 1,
-	 b : 2
-	}
+    {a : 1,
+     b : 2
+    }
 
 * a string; Needs to be in either single- or double quotes. In a double-quoted
   string, you need to escape the ``"`` with a ``\`` in front (and vice versa for single
   quoted strings). A string is again handled as Fluid Syntax, this is what you
   see in example ``c``::
 
-	{a : 'Hallo',
-	 b : "Second string with escaped \" (double quotes) but not escaped ' (single quotes)"
-	 c : "{firstName} {lastName}"
-	}
+    {a : 'Hallo',
+     b : "Second string with escaped \" (double quotes) but not escaped ' (single quotes)"
+     c : "{firstName} {lastName}"
+    }
 
 * a boolean, best represented with their integer equivalents::
 
-	{a : 'foo',
-	 notifySomebody: 1
-	 useLogging: 0
-	}
+    {a : 'foo',
+     notifySomebody: 1
+     useLogging: 0
+    }
 
 * a nested array::
 
-	{a : {
-		a1 : "bla1",
-		a2 : "bla2"
-	  },
-	 b : "hallo"
-	}
+    {a : {
+        a1 : "bla1",
+        a2 : "bla2"
+      },
+     b : "hallo"
+    }
 
 * a variable reference (=an object accessor)::
 
-	{blogTitle : blog.title,
-	 blogObject: blog
-	}
+    {blogTitle : blog.title,
+     blogObject: blog
+    }
 
 .. Note::
 
-	All these array examples will result into an associative array. If you have to supply
-	a non-associative, i.e. numerically-indexed array, you'll write ``{0: 'foo', 1: 'bar', 2: 'baz'}``.
+    All these array examples will result into an associative array. If you have to supply
+    a non-associative, i.e. numerically-indexed array, you'll write ``{0: 'foo', 1: 'bar', 2: 'baz'}``.
 
 
 Passing Data to the View
@@ -409,15 +409,15 @@ file ending of the current format (by default *.html*). A layout is a normal Flu
 template file, except there are some parts where the actual content of the target
 page should be inserted::
 
-	<html>
-	<head><title>My fancy web application</title></head>
-	<body>
-	<div id="menu">... menu goes here ...</div>
-	<div id="content">
-	  <f:render section="content" />
-	</div>
-	</body>
-	</html>
+    <html>
+    <head><title>My fancy web application</title></head>
+    <body>
+    <div id="menu">... menu goes here ...</div>
+    <div id="content">
+      <f:render section="content" />
+    </div>
+    </body>
+    </html>
 
 With this tag, a section from the target template is rendered.
 
@@ -434,11 +434,11 @@ Using a layout involves two steps:
 
 For the above layout, a minimal template would look like the following::
 
-	<f:layout name="example.html" />
+    <f:layout name="example.html" />
 
-	<f:section name="content">
-	  This HTML here will be outputted to inside the layout
-	</f:section>
+    <f:section name="content">
+      This HTML here will be outputted to inside the layout
+    </f:section>
 
 Writing Your Own ViewHelper
 ===========================
@@ -454,7 +454,7 @@ only one method to write a view helper:
 
 .. code-block:: php
 
-	public function render()
+    public function render()
 
 Rendering the View Helper
 -------------------------
@@ -478,12 +478,12 @@ You have the following possibilities to access the environment when rendering yo
 
 .. Note::
 
-	If you add variables to the ``TemplateVariableContainer``, make sure to remove
-	every variable which you added again. This is a security measure against side-effects.
+    If you add variables to the ``TemplateVariableContainer``, make sure to remove
+    every variable which you added again. This is a security measure against side-effects.
 
-	It is also not possible to add a variable to the TemplateVariableContainer if
-	a variable of the same name already exists - again to prevent side effects and
-	scope problems.
+    It is also not possible to add a variable to the TemplateVariableContainer if
+    a variable of the same name already exists - again to prevent side effects and
+    scope problems.
 
 Implementing a ``for`` ViewHelper
 ---------------------------------
@@ -493,9 +493,9 @@ functionality of PHP.
 
 A loop could be called within the template in the following way::
 
-	<f:for each="{blogPosts}" as="blogPost">
-	  <h2>{blogPost.title}</h2>
-	</f:for>
+    <f:for each="{blogPosts}" as="blogPost">
+      <h2>{blogPost.title}</h2>
+    </f:for>
 
 So, in words, what should the loop do?
 
@@ -508,33 +508,33 @@ It then should do the following (in pseudo code):
 
 .. code-block:: php
 
-	foreach ($each as $$as) {
-	  // render everything between opening and closing tag
-	}
+    foreach ($each as $$as) {
+      // render everything between opening and closing tag
+    }
 
 Implementing this is fairly straightforward, as you will see right now:
 
 .. code-block:: php
 
-	class ForViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+    class ForViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
-	  /**
-	   * Renders a loop
-	   *
-	   * @param array $each Array to iterate over
-	   * @param string $as Iteration variable
-	   */
-	  public function render(array $each, $as) {
-		$out = '';
-		foreach ($each as $singleElement) {
-		  $this->variableContainer->add($as, $singleElement);
-		  $out .= $this->renderChildren();
-		  $this->variableContainer->remove($as);
-		}
-		return $out;
-	  }
+      /**
+       * Renders a loop
+       *
+       * @param array $each Array to iterate over
+       * @param string $as Iteration variable
+       */
+      public function render(array $each, $as) {
+        $out = '';
+        foreach ($each as $singleElement) {
+          $this->variableContainer->add($as, $singleElement);
+          $out .= $this->renderChildren();
+          $this->variableContainer->remove($as);
+        }
+        return $out;
+      }
 
-	}
+    }
 
 * The PHPDoc is part of the code! Fluid extracts the argument data types from the PHPDoc.
 * You can simply register arguments to the view helper by adding them as method
@@ -568,28 +568,28 @@ have without the ``AbstractTagBasedViewHelper``):
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
+    class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 
-	  public function initializeArguments() {
-		$this->registerArgument('class', 'string', 'CSS class to add to the link');
-		$this->registerArgument('target', 'string', 'Target for the link');
-		... and more ...
-	  }
+      public function initializeArguments() {
+        $this->registerArgument('class', 'string', 'CSS class to add to the link');
+        $this->registerArgument('target', 'string', 'Target for the link');
+        ... and more ...
+      }
 
-	  public function render() {
-		$output = '<a href="..."';
-		if ($this->arguments['class']) {
-		  $output .= ' class="' . $this->arguments['class'] . '"';
-		}
-		if ($this->arguments['target']) {
-		  $output .= ' target="' . $this->arguments['target'] . '"';
-		}
-		$output .= '>';
-		... and more ...
-		return $output;
-	  }
+      public function render() {
+        $output = '<a href="..."';
+        if ($this->arguments['class']) {
+          $output .= ' class="' . $this->arguments['class'] . '"';
+        }
+        if ($this->arguments['target']) {
+          $output .= ' target="' . $this->arguments['target'] . '"';
+        }
+        $output .= '>';
+        ... and more ...
+        return $output;
+      }
 
-	}
+    }
 
 Now, the ``AbstractTagBasedViewHelper`` introduces two more methods you can use
 inside ``initializeArguments()``:
@@ -606,43 +606,43 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\\F3\Fluid\Core\AbstractViewHelper {
+    class ActionViewHelper extends \TYPO3\\F3\Fluid\Core\AbstractViewHelper {
 
-		public function initializeArguments() {
-			$this->registerUniversalTagAttributes();
-		}
+        public function initializeArguments() {
+            $this->registerUniversalTagAttributes();
+        }
 
-		/**
-		 * Render the link.
-		 *
-		 * @param string $action Target action
-		 * @param array $arguments Arguments
-		 * @param string $controller Target controller. If NULL current controllerName is used
-		 * @param string $package Target package. if NULL current package is used
-		 * @param string $subpackage Target subpackage. if NULL current subpackage is used
-		 * @param string $section The anchor to be added to the URI
-		 * @return string The rendered link
-		 */
-		public function render($action = NULL, array $arguments = array(),
-		                       $controller = NULL, $package = NULL, $subpackage = NULL,
-			                   $section = '') {
-			$uriBuilder = $this->controllerContext->getURIBuilder();
-			$uri = $uriBuilder->uriFor($action, $arguments, $controller, $package, $subpackage, $section);
-			$this->tag->addAttribute('href', $uri);
-			$this->tag->setContent($this->renderChildren());
+        /**
+         * Render the link.
+         *
+         * @param string $action Target action
+         * @param array $arguments Arguments
+         * @param string $controller Target controller. If NULL current controllerName is used
+         * @param string $package Target package. if NULL current package is used
+         * @param string $subpackage Target subpackage. if NULL current subpackage is used
+         * @param string $section The anchor to be added to the URI
+         * @return string The rendered link
+         */
+        public function render($action = NULL, array $arguments = array(),
+                               $controller = NULL, $package = NULL, $subpackage = NULL,
+                               $section = '') {
+            $uriBuilder = $this->controllerContext->getURIBuilder();
+            $uri = $uriBuilder->uriFor($action, $arguments, $controller, $package, $subpackage, $section);
+            $this->tag->addAttribute('href', $uri);
+            $this->tag->setContent($this->renderChildren());
 
-			return $this->tag->render();
-		}
+            return $this->tag->render();
+        }
 
-	}
+    }
 
 Additionally, we now already have support for all universal HTML attributes.
 
 .. tip::
 
-	The ``TagBuilder`` also makes sure that all attributes are escaped properly,
-	so to decrease the risk of Cross-Site Scripting attacks, make sure to use it
-	when building tags.
+    The ``TagBuilder`` also makes sure that all attributes are escaped properly,
+    so to decrease the risk of Cross-Site Scripting attacks, make sure to use it
+    when building tags.
 
 additionalAttributes
 ~~~~~~~~~~~~~~~~~~~~
@@ -664,9 +664,9 @@ is not part of HTML, you could do that as follows:
 
 .. code-block:: xml
 
-	<f:link.action ... additionalAttributes="{fadeDuration : 800}">
-		Link with fadeDuration set
-	</f:link.action>
+    <f:link.action additionalAttributes="{fadeDuration : 800}">
+        Link with fadeDuration set
+    </f:link.action>
 
 This attribute is available in all tags that inherit from ``TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper``.
 
@@ -680,23 +680,23 @@ for a usage example, which should be quite self-explanatory:
 
 .. code-block:: php
 
-	class IfViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+    class IfViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
 
-		/**
-		 * renders <f:then> child if $condition is true, otherwise renders <f:else> child.
-		 *
-		 * @param boolean $condition View helper condition
-		 * @return string the rendered string
-		 */
-		public function render($condition) {
-			if ($condition) {
-				return $this->renderThenChild();
-			} else {
-				return $this->renderElseChild();
-			}
-		}
+        /**
+         * renders <f:then> child if $condition is true, otherwise renders <f:else> child.
+         *
+         * @param boolean $condition View helper condition
+         * @return string the rendered string
+         */
+        public function render($condition) {
+            if ($condition) {
+                return $this->renderThenChild();
+            } else {
+                return $this->renderElseChild();
+            }
+        }
 
-	}
+    }
 
 By basing your condition ViewHelper on the ``AbstractConditionViewHelper``,
 you will get the following features:
@@ -727,10 +727,10 @@ Using widgets inside your templates is really simple: Just use them like standar
 ViewHelpers, and consult their documentation for usage examples. An example for
 the ``<f:widget.paginate>`` follows below::
 
-	<f:widget.paginate objects="{blogs}" as="paginatedBlogs" configuration="{itemsPerPage: 10}">
-	  // use {paginatedBlogs} as you used {blogs} before, most certainly inside
-	  // a <f:for> loop.
-	</f:widget.paginate>
+    <f:widget.paginate objects="{blogs}" as="paginatedBlogs" configuration="{itemsPerPage: 10}">
+      // use {paginatedBlogs} as you used {blogs} before, most certainly inside
+      // a <f:for> loop.
+    </f:widget.paginate>
 
 In the above example, it looks like ``{blogs}`` contains all ``Blog`` objects, thus
 you might wonder if all objects were fetched from the database. However, the blogs
@@ -805,7 +805,7 @@ To make a widget AJAX-aware, you need to do the following:
   triggers the AJAX functionality. There, you will need a URI which returns the
   AJAX response. For that, use the following ViewHelper inside the template::
 
-	<f:uri.widget ajax="TRUE" action="..." arguments="..." />
+    <f:uri.widget ajax="TRUE" action="..." arguments="..." />
 
 * Inside the template of the AJAX request, ``<f:renderChildren>`` is not available,
   because the child nodes of the Widget ViewHelper are not accessible there.
@@ -817,8 +817,8 @@ A XSD schema file for your ViewHelpers can be created by executing
 
 .. code-block:: text
 
-	./flow documenation:generatexsd <Your>\\<Package>\\ViewHelpers
-		--target-file /some/directory/your.package.xsd
+    ./flow documenation:generatexsd <Your>\\<Package>\\ViewHelpers
+        --target-file /some/directory/your.package.xsd
 
 Then import the XSD file in your favorite IDE and map it to the namespace
 ``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
@@ -827,19 +827,19 @@ Fluid template by adding the ``xmlns`` attribute to the root tag (usually
 
 .. note::
 
-	You are able to use a different XML namespace pattern by specifying the
-	``-–xsd-namespace argument`` in the generatexsd command.
+    You are able to use a different XML namespace pattern by specifying the
+    ``-–xsd-namespace argument`` in the generatexsd command.
 
 If you want to use this inside partials, you can use the “section” argument of
 the render ViewHelper in order to only render the content of the partial.
 
 Partial::
 
-	<html xmlns:x=”http://typo3.org/ns/Your/Package/ViewHelpers”>
-	<f:section name=”content”>
-		<x:yourViewHelper />
-	</f:section>
+    <html xmlns:x=”http://typo3.org/ns/Your/Package/ViewHelpers”>
+    <f:section name=”content”>
+        <x:yourViewHelper />
+    </f:section>
 
 Template::
 
-	<f:render partial=”PartialName” section=”content” />
+    <f:render partial=”PartialName” section=”content” />
