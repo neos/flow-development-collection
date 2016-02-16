@@ -1,12 +1,15 @@
-#                                                                        #
-# Example Settings                                                       #
-#                                                                        #
-# This file contains settings for various parts of the application.      #
-# Copy this file to Settings.yaml, and adjust as necessary.              #
-#                                                                        #
-# Please refer to the default settings file(s) or the manuals for        #
-# possible configuration options.                                        #
-#                                                                        #
+#
+# Example Settings
+#
+# This file can contain settings for your Flow application that override
+# the various defaults defined by other packages.
+#
+# Copy this file to Settings.yaml, and adjust as necessary.
+#
+# For possible configuration options you may refer to the packages'
+# default settings file(s) in the corresponding package directories (for
+# example, Packages/Application/TYPO3.Neos/Configuration/Settings.yaml)
+# or read the fine manuals.
 
 TYPO3:
   Flow:

@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Core\Booting;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
@@ -37,7 +38,24 @@ class Scripts
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
         require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Core/ClassLoader.php');
-        $classLoader = new \TYPO3\Flow\Core\ClassLoader($bootstrap->getContext());
+
+        $initialClassLoaderMappings = [
+            [
+                'namespace' => 'TYPO3\\Flow',
+                'classPath' => FLOW_PATH_FLOW . 'Classes/',
+                'mappingType' => ClassLoader::MAPPING_TYPE_PSR0
+            ]
+        ];
+
+        if ($bootstrap->getContext()->isTesting()) {
+            $initialClassLoaderMappings[] = [
+                'namespace' => 'TYPO3\\Flow\\Tests\\',
+                'classPath' => FLOW_PATH_FLOW . 'Tests/',
+                'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
+            ];
+        }
+
+        $classLoader = new \TYPO3\Flow\Core\ClassLoader($bootstrap->getContext(), $initialClassLoaderMappings);
         spl_autoload_register(array($classLoader, 'loadClass'), true, true);
         $bootstrap->setEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
@@ -141,8 +159,8 @@ class Scripts
     {
         $packageManager = new \TYPO3\Flow\Package\PackageManager();
         $bootstrap->setEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class, $packageManager);
-        $packageManager->injectClassLoader($bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class));
         $packageManager->initialize($bootstrap);
+        $bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class)->setPackages($packageManager->getActivePackages());
     }
 
     /**
@@ -202,8 +220,6 @@ class Scripts
         $bootstrap->setEarlyInstance(\TYPO3\Flow\Log\LoggerFactory::class, $loggerFactory);
         $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
         $bootstrap->setEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class, $systemLogger);
-        $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
-        $packageManager->injectSystemLogger($systemLogger);
     }
 
     /**
@@ -438,7 +454,11 @@ class Scripts
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getClassesPath(), '\.php$');
+
+            foreach ($package->getAutoloadPaths() as $autoloadPath) {
+                self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
+            }
+
             self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
             self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
             if ($context->isTesting() && $package instanceof Package) {
@@ -446,7 +466,6 @@ class Scripts
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
             }
         }
-
         self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
 
         foreach ($fileMonitors as $fileMonitor) {

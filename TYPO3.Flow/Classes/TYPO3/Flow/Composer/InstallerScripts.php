@@ -15,6 +15,7 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Script\CommandEvent;
 use Composer\Script\PackageEvent;
+use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -31,11 +32,25 @@ class InstallerScripts
      */
     public static function postUpdateAndInstall(CommandEvent $event)
     {
+        if (!defined('FLOW_PATH_ROOT')) {
+            define('FLOW_PATH_ROOT', getcwd() . '/');
+        }
+
+        if (!defined('FLOW_PATH_PACKAGES')) {
+            define('FLOW_PATH_PACKAGES', getcwd() . '/Packages/');
+        }
+
+        if (!defined('FLOW_PATH_CONFIGURATION')) {
+            define('FLOW_PATH_CONFIGURATION', getcwd() . '/Configuration/');
+        }
+
         Files::createDirectoryRecursively('Configuration');
         Files::createDirectoryRecursively('Data');
 
         Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Essentials', './', false, true);
         Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Defaults', './', true, true);
+        $packageManager = new PackageManager();
+        $packageManager->rescanPackages();
 
         chmod('flow', 0755);
     }

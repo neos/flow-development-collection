@@ -464,7 +464,11 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             $objectAccess = explode('.', $expression, 3);
             $globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
             $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
-            return $this->getObjectValueByPath($globalObject, $objectAccess[2]);
+            $this->securityContext->withoutAuthorizationChecks(function () use ($globalObject, $objectAccess, &$globalObjectValue) {
+                $globalObjectValue = $this->getObjectValueByPath($globalObject, $objectAccess[2]);
+            });
+
+            return $globalObjectValue;
         } else {
             return trim($expression, '"\'');
         }

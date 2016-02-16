@@ -11,7 +11,9 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -22,77 +24,60 @@ use TYPO3\Flow\Utility\Files;
 class Package implements PackageInterface
 {
     /**
-     * @var string
-     */
-    const AUTOLOADER_TYPE_PSR0 = 'psr-0';
-
-    /**
-     * @var string
-     */
-    const AUTOLOADER_TYPE_PSR4 = 'psr-4';
-
-    /**
-     * @var string
-     */
-    const AUTOLOADER_TYPE_CLASSMAP = 'classmap';
-
-    /**
-     * @var string
-     */
-    const AUTOLOADER_TYPE_FILES = 'files';
-
-    /**
      * Unique key of this package. Example for the Flow package: "TYPO3.Flow"
+     *
      * @var string
      */
     protected $packageKey;
 
     /**
+     * composer name for this package
+     *
      * @var string
      */
-    protected $manifestPath;
+    protected $composerName;
 
     /**
      * Full path to this package's main directory
+     *
      * @var string
      */
     protected $packagePath;
 
     /**
-     * Full path to this package's PSR-0 class loader entry point
-     * @var string
-     */
-    protected $classesPath;
-
-    /**
      * If this package is protected and therefore cannot be deactivated or deleted
+     *
      * @var boolean
      * @api
      */
     protected $protected = false;
 
     /**
-     * @var \stdClass
-     */
-    protected $composerManifest;
-
-    /**
      * Meta information about this package
+     *
      * @var \TYPO3\Flow\Package\MetaData
+     * TODO: Remove after deprecation period (Flow 4.0)
      */
     protected $packageMetaData;
 
     /**
-     * Names and relative paths (to this package directory) of files containing classes
-     * @var array
-     */
-    protected $classFiles;
-
-    /**
      * The namespace of the classes contained in this package
+     *
      * @var string
      */
     protected $namespace;
+
+    /**
+     * Array of all declared autoload namespaces contained in this package
+     *
+     * @var string[]
+     */
+    protected $namespaces;
+
+    /**
+     * @var string[]
+     */
+    protected $autoloadTypes;
 
     /**
      * If enabled, the files in the Classes directory are registered and Reflection, Dependency Injection, AOP etc. are supported.
@@ -104,55 +89,30 @@ class Package implements PackageInterface
     protected $objectManagementEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Package\PackageManager
+     * @var array
      */
-    protected $packageManager;
+    protected $autoloadConfiguration;
+
+    /**
+     * @var array
+     */
+    protected $flattenedAutoloadConfiguration;
 
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Package\PackageManager $packageManager the package manager which knows this package
      * @param string $packageKey Key of this package
+     * @param string $composerName
      * @param string $packagePath Absolute path to the location of the package's composer manifest
-     * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, PSR-0/PSR-4 mappings of the composer manifest overrule this argument, if present
-     * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackagePathException if an invalid package path was passed
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException if no composer manifest file could be found
+     * @param array $autoloadConfiguration
+     * @throws Exception\InvalidPackageKeyException
      */
-    public function __construct(PackageManager $packageManager, $packageKey, $packagePath, $classesPath = null, $manifestPath = '')
+    public function __construct($packageKey, $composerName, $packagePath, array $autoloadConfiguration = [])
     {
-        if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
-            throw new Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
-        }
-        if (!(is_dir($packagePath) || (Files::is_link($packagePath) && is_dir(Files::getNormalizedPath($packagePath))))) {
-            throw new Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey, $packagePath), 1166631889);
-        }
-        if (substr($packagePath, -1, 1) !== '/') {
-            throw new Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
-        }
-        if (substr($classesPath, 0, 1) === '/') {
-            throw new Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
-        }
-        if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
-            throw new Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $packagePath . $manifestPath), 1349776393);
-        }
-
-        $this->packageManager = $packageManager;
-        $this->manifestPath = $manifestPath;
-        $this->packageKey = $packageKey;
+        $this->autoloadConfiguration = $autoloadConfiguration;
         $this->packagePath = Files::getNormalizedPath($packagePath);
-        $autoloadType = $this->getAutoloadType();
-
-        if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
-            $autoloadPath = $this->getComposerManifest('autoload')->{$autoloadType}->{$this->getNamespace()};
-            if (is_array($autoloadPath)) {
-                $autoloadPath = $autoloadPath[0];
-            }
-            $this->classesPath = Files::getNormalizedPath($this->packagePath . $autoloadPath);
-        } else {
-            $this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
-        }
+        $this->packageKey = $packageKey;
+        $this->composerName = $composerName;
     }
 
     /**
@@ -167,8 +127,11 @@ class Package implements PackageInterface
 
     /**
      * Returns the package meta data object of this package.
+     * Note that since Flow 3.1 the MetaData won't contain any constraints,
+     * please use the composer manifest directly if you need this information.
      *
      * @return \TYPO3\Flow\Package\MetaData
+     * @deprecated To be removed in Flow 4.0
      */
     public function getPackageMetaData()
     {
@@ -177,48 +140,27 @@ class Package implements PackageInterface
             $this->packageMetaData->setDescription($this->getComposerManifest('description'));
             $this->packageMetaData->setVersion($this->getComposerManifest('version'));
             $this->packageMetaData->setPackageType($this->getComposerManifest('type'));
-            $requirements = $this->getComposerManifest('require');
-            if ($requirements !== null) {
-                foreach ($requirements as $requirement => $version) {
-                    if ($this->packageRequirementIsComposerPackage($requirement) === false) {
-                        // Skip non-package requirements
-                        continue;
-                    }
-                    try {
-                        $packageKey = $this->packageManager->getPackageKeyFromComposerName($requirement);
-                    } catch (Exception\InvalidPackageStateException $exception) {
-                        continue;
-                    }
-                    $constraint = new MetaData\PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, $packageKey);
-                    $this->packageMetaData->addConstraint($constraint);
-                }
-            }
         }
-        return $this->packageMetaData;
-    }
 
-    /**
-     * Check whether the given package requirement (like "typo3/flow" or "php") is a composer package or not
-     *
-     * @param string $requirement the composer requirement string
-     * @return boolean TRUE if $requirement is a composer package (contains a slash), FALSE otherwise
-     */
-    protected function packageRequirementIsComposerPackage($requirement)
-    {
-        return (strpos($requirement, '/') !== false);
+        return $this->packageMetaData;
     }
 
     /**
      * Returns the array of filenames of the class files
      *
-     * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+     * @return \Generator A Generator for class names (key) and their filename, including the absolute path.
      */
     public function getClassFiles()
     {
-        if (!is_array($this->classFiles)) {
-            $this->classFiles = $this->buildArrayOfClassFiles($this->classesPath);
+        foreach ($this->getFlattenedAutoloadConfiguration() as $configuration) {
+            $normalizedAutoloadPath = $this->normalizeAutoloadPath($configuration['mappingType'], $configuration['namespace'], $configuration['classPath']);
+            if (!is_dir($normalizedAutoloadPath)) {
+                continue;
+            }
+            foreach ($this->getClassesInNormalizedAutoloadPath($normalizedAutoloadPath, $configuration['namespace']) as $className => $classPath) {
+                yield $className => $classPath;
+            }
         }
-        return $this->classFiles;
     }
 
     /**
@@ -228,8 +170,16 @@ class Package implements PackageInterface
      */
     public function getFunctionalTestsClassFiles()
     {
-        $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths((array((($this->getAutoloadType() === self::AUTOLOADER_TYPE_PSR0) ? $this->getNamespace() : ''), '\\Tests\\Functional\\'))));
-        return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix);
+        if (is_dir($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL)) {
+            // TODO REFACTOR replace with usage of "autoload-dev"
+            $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths([
+                $this->getNamespace(),
+                '\\Tests\\Functional\\'
+            ]));
+            foreach ($this->getClassesInNormalizedAutoloadPath($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix) as $className => $classPath) {
+                yield $className => $classPath;
+            }
+        }
     }
 
     /**
@@ -244,51 +194,74 @@ class Package implements PackageInterface
     }
 
     /**
+     * Returns the packages composer name
+     *
+     * @return string
+     * TODO: Should be added to the interface in the next major Flow version (4.0)
+     */
+    public function getComposerName()
+    {
+        return $this->composerName;
+    }
+
+    /**
+     * Returns array of all declared autoload namespaces contained in this package
+     *
+     * @return array
+     * @api
+     * TODO: Should be added to the interface in the next major Flow version (4.0)
+     */
+    public function getNamespaces()
+    {
+        if ($this->namespaces === null) {
+            $this->explodeAutoloadConfiguration();
+        }
+
+        return $this->namespaces;
+    }
+
+    /**
      * Returns the PHP namespace of classes in this package.
      *
      * @return string
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageStateException
      * @api
+     * @deprecated see getNamespaces()
      */
     public function getNamespace()
     {
-        if (!$this->namespace) {
-            $autoloadConfiguration = $this->getComposerManifest('autoload');
-            $autoloadType = $this->getAutoloadType();
-            if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
-                $namespaces = (array)$autoloadConfiguration->{$autoloadType};
-                $namespace = key($namespaces);
-            } else {
-                $namespace = str_replace('.', '\\', $this->getPackageKey());
-            }
-            $this->namespace = $namespace;
+        $allNamespaces = $this->getNamespaces();
+
+        return reset($allNamespaces);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAutoloadTypes()
+    {
+        if ($this->autoloadTypes === null) {
+            $this->explodeAutoloadConfiguration();
         }
-        return $this->namespace;
+
+        return $this->autoloadTypes;
     }
 
     /**
      * PSR autoloading type
      *
      * @return string see self::AUTOLOADER_TYPE_* - NULL in case it is not defined or unknown
-     * @api
+     * @deprecated see getAutoloadTypes()
      */
     public function getAutoloadType()
     {
-        $autoloadConfiguration = $this->getComposerManifest('autoload');
-        if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_PSR0})) {
-            return self::AUTOLOADER_TYPE_PSR0;
-        }
-        if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_PSR4})) {
-            return self::AUTOLOADER_TYPE_PSR4;
-        }
-        if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_CLASSMAP})) {
-            return self::AUTOLOADER_TYPE_CLASSMAP;
-        }
-        if (isset($autoloadConfiguration->{self::AUTOLOADER_TYPE_FILES})) {
-            return self::AUTOLOADER_TYPE_FILES;
+        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
+        $firstAutoload = reset($autoloadConfigurations);
+
+        if ($firstAutoload === false) {
+            return null;
         }
 
-        return null;
+        return $firstAutoload['mappingType'];
     }
 
     /**
@@ -336,37 +309,55 @@ class Package implements PackageInterface
     }
 
     /**
-     * Returns the full path to the packages Composer manifest
-     *
-     * @return string
-     */
-    public function getManifestPath()
-    {
-        return $this->packagePath . $this->manifestPath;
-    }
-
-    /**
      * Returns the full path to this package's Classes directory
      *
      * @return string Path to this package's Classes directory
      * @api
+     * @deprecated
      */
     public function getClassesPath()
     {
-        return $this->classesPath;
+        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
+        $firstAutoload = reset($autoloadConfigurations);
+
+        if ($firstAutoload === false) {
+            return null;
+        }
+
+        return $firstAutoload['classPath'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAutoloadPaths()
+    {
+        return array_map(function ($configuration) {
+            return $configuration['classPath'];
+        }, $this->getFlattenedAutoloadConfiguration());
     }
 
     /**
      * Returns the full path to the package's classes namespace entry path,
      * e.g. "My.Package/ClassesPath/My/Package/"
      *
-     * @return string Path to this package's Classes directory
+     * @return string Path to this package's autoload directory
      * @api
+     * @deprecated
      */
     public function getClassesNamespaceEntryPath()
     {
-        $pathifiedNamespace = str_replace('\\', '/', $this->getNamespace());
-        return Files::getNormalizedPath($this->classesPath . trim($pathifiedNamespace, '/'));
+        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
+        $firstAutoload = reset($autoloadConfigurations);
+
+        $basePath = $firstAutoload['classPath'];
+
+        $pathifiedNamespace = '';
+        if ($firstAutoload['mappingType'] === ClassLoader::MAPPING_TYPE_PSR0) {
+            $pathifiedNamespace = str_replace('\\', '/', $firstAutoload['namespace']);
+        }
+
+        return Files::concatenatePaths([$basePath, $pathifiedNamespace]) . '/';
     }
 
     /**
@@ -374,6 +365,7 @@ class Package implements PackageInterface
      *
      * @return string Path to this package's functional tests directory
      * @api
+     * TODO: Should be replaced by using autoload-dev
      */
     public function getFunctionalTestsPath()
     {
@@ -407,6 +399,7 @@ class Package implements PackageInterface
      *
      * @return string Full path to the package's meta data directory
      * @api
+     * @deprecated To be removed in Flow 4.0
      */
     public function getMetaPath()
     {
@@ -418,6 +411,7 @@ class Package implements PackageInterface
      *
      * @return string Full path to the package's documentation directory
      * @api
+     * @deprecated To be removed in Flow 4.0
      */
     public function getDocumentationPath()
     {
@@ -425,14 +419,144 @@ class Package implements PackageInterface
     }
 
     /**
+     * Get the autoload configuration for this package. Any valid composer "autoload" configuration.
+     *
+     * @return array
+     */
+    public function getAutoloadConfiguration()
+    {
+        return $this->autoloadConfiguration;
+    }
+
+    /**
+     * Get a flattened array of autoload configurations that have a predictable pattern (PSR-0, PSR-4)
+     *
+     * @return array Keys: "namespace", "classPath", "mappingType"
+     */
+    public function getFlattenedAutoloadConfiguration()
+    {
+        if ($this->flattenedAutoloadConfiguration === null) {
+            $this->explodeAutoloadConfiguration();
+        }
+
+        return $this->flattenedAutoloadConfiguration;
+    }
+
+    /**
+     * Returns contents of Composer manifest - or part there of.
+     *
+     * @param string $key Optional. Only return the part of the manifest indexed by 'key'
+     * @return array|mixed
+     * @api
+     * TODO: Should be added to the interface in the next major Flow version (4.0)
+     */
+    public function getComposerManifest($key = null)
+    {
+        return ComposerUtility::getComposerManifest($this->packagePath, $key);
+    }
+
+    /**
+     * Get the installed package version (from composer)
+     *
+     * @return string
+     * @api
+     * TODO: Should be added to the interface in the next major Flow version (4.0)
+     */
+    public function getInstalledVersion()
+    {
+        return PackageManager::getPackageVersion($this->composerName);
+    }
+
+    /**
+     * @param string $autoloadType
+     * @param string $autoloadNamespace
+     * @param string $autoloadPath
+     * @return string
+     */
+    protected function normalizeAutoloadPath($autoloadType, $autoloadNamespace, $autoloadPath)
+    {
+        $normalizedAutoloadPath = $autoloadPath;
+        if ($autoloadType === ClassLoader::MAPPING_TYPE_PSR0) {
+            $normalizedAutoloadPath = Files::concatenatePaths([
+                    $autoloadPath,
+                    str_replace('\\', '/', $autoloadNamespace)
+                ]) . '/';
+        }
+
+        return $normalizedAutoloadPath;
+    }
+
+    /**
+     * @param string $baseAutoloadPath
+     * @param string $autoloadNamespace
+     * @return \Generator
+     */
+    protected function getClassesInNormalizedAutoloadPath($baseAutoloadPath, $autoloadNamespace)
+    {
+        $autoloadNamespace = trim($autoloadNamespace, '\\') . '\\';
+        $directories = [''];
+        while ($directories !== []) {
+            $currentRelativeDirectory = array_pop($directories);
+            $currentAbsoluteDirectory = $baseAutoloadPath . $currentRelativeDirectory;
+            if ($handle = opendir($currentAbsoluteDirectory)) {
+                while (false !== ($filename = readdir($handle))) {
+                    if ($filename[0] === '.') {
+                        continue;
+                    }
+                    $pathAndFilename = $currentAbsoluteDirectory . $filename;
+                    if (is_dir($pathAndFilename)) {
+                        $directories[] = $currentRelativeDirectory . $filename . '/';
+                        continue;
+                    }
+                    if (strpos(strrev($filename), 'php.') === 0) {
+                        $potentialClassNamespace = $autoloadNamespace . str_replace('/', '\\', $currentRelativeDirectory) . basename($filename, '.php');
+                        yield $potentialClassNamespace => $pathAndFilename;
+                    }
+                }
+                closedir($handle);
+            }
+        }
+    }
+
+    /**
+     * Brings the composer autoload configuration into an easy to use format for various parts of Flow.
+     *
+     * @return void
+     */
+    protected function explodeAutoloadConfiguration()
+    {
+        $this->namespaces = [];
+        $this->autoloadTypes = [];
+        $this->flattenedAutoloadConfiguration = [];
+        $allAutoloadConfiguration = $this->autoloadConfiguration;
+        foreach ($allAutoloadConfiguration as $autoloadType => $autoloadConfiguration) {
+            $this->autoloadTypes[] = $autoloadType;
+            if (ClassLoader::isAutoloadTypeWithPredictableClassPath($autoloadType)) {
+                $this->namespaces = array_merge($this->namespaces, array_keys($autoloadConfiguration));
+                foreach ($autoloadConfiguration as $namespace => $paths) {
+                    $paths = (array)$paths;
+                    foreach ($paths as $path) {
+                        $this->flattenedAutoloadConfiguration[] = [
+                            'namespace' => $namespace,
+                            'classPath' => $this->packagePath . $path,
+                            'mappingType' => $autoloadType
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Returns the available documentations for this package
      *
      * @return array Array of \TYPO3\Flow\Package\Documentation
      * @api
+     * @deprecated To be removed in Flow 4.0
      */
     public function getPackageDocumentations()
     {
-        $documentations = array();
+        $documentations = [];
         $documentationPath = $this->getDocumentationPath();
         if (is_dir($documentationPath)) {
             $documentationsDirectoryIterator = new \DirectoryIterator($documentationPath);
@@ -444,78 +568,11 @@ class Package implements PackageInterface
                     $documentation = new Documentation($this, $filename, $documentationPath . $filename . '/');
                     $documentations[$filename] = $documentation;
                 }
+
                 $documentationsDirectoryIterator->next();
             }
         }
+
         return $documentations;
-    }
-
-    /**
-     * Returns contents of Composer manifest - or part there of.
-     *
-     * @param string $key Optional. Only return the part of the manifest indexed by 'key'
-     * @return mixed|NULL
-     * @see json_decode for return values
-     */
-    public function getComposerManifest($key = null)
-    {
-        if (!isset($this->composerManifest)) {
-            $this->composerManifest = PackageManager::getComposerManifest($this->getManifestPath());
-        }
-
-        return PackageManager::getComposerManifest($this->getManifestPath(), $key, $this->composerManifest);
-    }
-
-    /**
-     * Builds and returns an array of class names => file names of all
-     * *.php files in the package's Classes directory and its sub-
-     * directories.
-     *
-     * @param string $classesPath Base path acting as the parent directory for potential class files
-     * @param string $extraNamespaceSegment A PHP class namespace segment which should be inserted like so: \TYPO3\PackageKey\{namespacePrefix\}PathSegment\PathSegment\Filename
-     * @param string $subDirectory Used internally
-     * @param integer $recursionLevel Used internally
-     * @return array
-     * @throws \TYPO3\Flow\Package\Exception if recursion into directories was too deep or another error occurred
-     */
-    protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0)
-    {
-        $classFiles = array();
-        $currentPath = $classesPath . $subDirectory;
-        $currentRelativePath = substr($currentPath, strlen($this->packagePath));
-        $namespacePrefix = '';
-
-        if ($this->getAutoloadType() === self::AUTOLOADER_TYPE_PSR4) {
-            $namespacePrefix = $this->getNamespace();
-        }
-
-        if (!is_dir($currentPath)) {
-            return array();
-        }
-        if ($recursionLevel > 100) {
-            throw new Exception('Recursion too deep while collecting class files.', 1166635495);
-        }
-
-        try {
-            $classesDirectoryIterator = new \DirectoryIterator($currentPath);
-            while ($classesDirectoryIterator->valid()) {
-                $filename = $classesDirectoryIterator->getFilename();
-                if ($filename[0] != '.') {
-                    if (is_dir($currentPath . $filename)) {
-                        $classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel + 1)));
-                    } else {
-                        if (substr($filename, -4, 4) === '.php') {
-                            $className = Files::concatenatePaths(array($namespacePrefix, $extraNamespaceSegment, substr($currentPath, strlen($classesPath)), substr($filename, 0, -4)));
-                            $className = str_replace('/', '\\', $className);
-                            $classFiles[$className] = $currentRelativePath . $filename;
-                        }
-                    }
-                }
-                $classesDirectoryIterator->next();
-            }
-        } catch (\Exception $exception) {
-            throw new Exception($exception->getMessage(), 1166633720);
-        }
-        return $classFiles;
     }
 }

@@ -55,7 +55,7 @@ class Bootstrap
     /**
      * @var array
      */
-    protected $requestHandlers;
+    protected $requestHandlers = array();
 
     /**
      * @var string

@@ -565,6 +565,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             // Field can only be annotated with one of:
             // @OneToOne, @OneToMany, @ManyToOne, @ManyToMany, @Column (optional)
             if ($oneToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToOne')) {
+                if ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Id') !== null) {
+                    $mapping['id'] = true;
+                }
                 if ($oneToOneAnnotation->targetEntity) {
                     $mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
                 }
@@ -617,6 +620,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 $metadata->mapOneToMany($mapping);
             } elseif ($manyToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToOne')) {
+                if ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Id') !== null) {
+                    $mapping['id'] = true;
+                }
                 if ($manyToOneAnnotation->targetEntity) {
                     $mapping['targetEntity'] = $manyToOneAnnotation->targetEntity;
                 }
