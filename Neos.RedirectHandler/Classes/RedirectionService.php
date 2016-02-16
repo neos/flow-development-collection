@@ -13,6 +13,7 @@ namespace Neos\RedirectHandler;
 
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Request as Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
@@ -82,7 +83,11 @@ class RedirectionService
         $statusCode = $redirection->getStatusCode();
         $response->setStatus($statusCode);
         if ($statusCode >= 300 && $statusCode <= 399) {
-            $response->setHeader('Location', $httpRequest->getBaseUri() . $redirection->getTargetUriPath());
+            $response->setHeaders(new Headers([
+                'Location' => $httpRequest->getBaseUri() . $redirection->getTargetUriPath(),
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+                'Expires' => 'Sat, 26 Jul 1997 05:00:00 GMT'
+            ]));
         }
         return $response;
     }

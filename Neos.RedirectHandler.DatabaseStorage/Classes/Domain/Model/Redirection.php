@@ -115,7 +115,7 @@ class Redirection
      * @param integer $statusCode status code to be send with the redirect header
      * @param string $host Host or host pattern
      */
-    public function __construct($sourceUriPath, $targetUriPath, $statusCode = 301, $host = null)
+    public function __construct($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {
         $this->sourceUriPath = trim($sourceUriPath, '/');
         $this->sourceUriPathHash = md5($this->sourceUriPath);

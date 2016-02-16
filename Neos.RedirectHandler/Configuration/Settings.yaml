@@ -3,7 +3,7 @@ Neos:
   features:
     hitCounter: true
   statusCode:
-    'redirect': 301
+    'redirect': 307
     'gone': 410
 
 TYPO3:

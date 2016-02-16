@@ -163,7 +163,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @return Redirection the freshly generated redirection instance
      * @api
      */
-    protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode = 301, $host = null)
+    protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {
         $hash = md5($host . $sourceUriPath . $targetUriPath . $statusCode);
         if (isset($this->runtimeCache[$hash])) {
