@@ -33,18 +33,18 @@ When we're talking about validation, we usually refer to validating **models**.
 The rules defining how a model should be validated can be classified into
 three types:
 
--	**Base Properties** – a set of rules defining the minimum requirements
-	on the properties of a model which must be met before a model may
-	be persisted.
--	**Base Model** – a set of rules or custom validator enforcing the
-	minimum requirements on the combination of properties of a model which
-	must be met before a model may be persisted.
--	**Supplemental** – a set of rules defining additional requirements on
-	a model for a specific situation, for example for a certain
-	action method.
+-   **Base Properties** – a set of rules defining the minimum requirements
+    on the properties of a model which must be met before a model may
+    be persisted.
+-   **Base Model** – a set of rules or custom validator enforcing the
+    minimum requirements on the combination of properties of a model which
+    must be met before a model may be persisted.
+-   **Supplemental** – a set of rules defining additional requirements on
+    a model for a specific situation, for example for a certain
+    action method.
 
 .. note::
-	Base model and supplemental rules are not covered by this tutorial.
+    Base model and supplemental rules are not covered by this tutorial.
     Detailed information is available in :doc:`Part III - Validation <../PartIII/Validation>`.
 
 Rules for the base properties are defined directly in the model in form
@@ -54,53 +54,53 @@ of annotations:
 
 .. code-block:: php
 
-	/**
-	 * @Flow\Validate(type="NotEmpty")
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=3, "maximum"=50 })
-	 * @var string
-	 */
-	protected $subject;
+    /**
+     * @Flow\Validate(type="NotEmpty")
+     * @Flow\Validate(type="StringLength", options={ "minimum"=3, "maximum"=50 })
+     * @var string
+     */
+    protected $subject;
 
-	/**
-	 * @Flow\Validate(type="NotEmpty")
-	 * @var string
-	 */
-	protected $author;
+    /**
+     * @Flow\Validate(type="NotEmpty")
+     * @var string
+     */
+    protected $author;
 
-	/**
-	 * @Flow\Validate(type="NotEmpty")
-	 * @ORM\ManyToOne(inversedBy="posts")
-	 * @var Blog
-	 */
-	protected $blog;
+    /**
+     * @Flow\Validate(type="NotEmpty")
+     * @ORM\ManyToOne(inversedBy="posts")
+     * @var Blog
+     */
+    protected $blog;
 
 The ``Validate`` annotations define one or more validation rules which should apply to a
 property. Multiple rules can be defined in dedicated lines by further ``Validate``
 annotations.
 
 .. note::
-	Per convention, every validator allows (passes) empty values, i.e. empty strings or
-	NULL values. This is for achieving fields which are not mandatory, but if filled in,
-	must satisfy a given validation. Consider an email address field for example which
-	is not mandatory, but has to match an email pattern as soon as filled in.
+    Per convention, every validator allows (passes) empty values, i.e. empty strings or
+    NULL values. This is for achieving fields which are not mandatory, but if filled in,
+    must satisfy a given validation. Consider an email address field for example which
+    is not mandatory, but has to match an email pattern as soon as filled in.
 
-	If you want to make a field mandatory at all, use the ``NotEmpty`` validator in addition,
-	like in the example above.
+    If you want to make a field mandatory at all, use the ``NotEmpty`` validator in addition,
+    like in the example above.
 
-	The technical background is the ``acceptsEmptyValues`` property of the AbstractValidator,
-	being ``TRUE`` per default. When writing customized validators, it's basically possible
-	to set this field to ``FALSE``, however this is not generally recommended due to the convention
-	that every validator could principally be empty.
+    The technical background is the ``acceptsEmptyValues`` property of the AbstractValidator,
+    being ``TRUE`` per default. When writing customized validators, it's basically possible
+    to set this field to ``FALSE``, however this is not generally recommended due to the convention
+    that every validator could principally be empty.
 
 .. tip::
-	Flow provides a range of built-in validators which can be found in the
-	``Flow\Validation\Validator`` sub package. The names used in the
-	``type`` attributes are just the unqualified class names of these validators.
+    Flow provides a range of built-in validators which can be found in the
+    ``Flow\Validation\Validator`` sub package. The names used in the
+    ``type`` attributes are just the unqualified class names of these validators.
 
-	It is possible and very simple to program custom validators by implementing
-	the ``TYPO3\Flow\Validation\Validator\ValidatorInterface``.
-	Such validators must, however, be referred to by their fully qualified
-	class name (i.e. including the namespace).
+    It is possible and very simple to program custom validators by implementing
+    the ``TYPO3\Flow\Validation\Validator\ValidatorInterface``.
+    Such validators must, however, be referred to by their fully qualified
+    class name (i.e. including the namespace).
 
 Make sure the above validation rules are set in your ``Post`` model, click on the
 ``Create a new post`` link below the list of posts and submit the *empty* form. If all went fine,
@@ -108,10 +108,10 @@ you should end up again in the **new post** form, with the tiny difference
 that the text boxes for title and author are now framed in red:
 
 .. figure:: Images/CreateNewPostValidationError1.png
-	:alt: Validation errors shown in form
-	:class: screenshot-detail
+    :alt: Validation errors shown in form
+    :class: screenshot-detail
 
-	Validation errors shown in form
+    Validation errors shown in form
 
 Displaying Validation Errors
 ============================
@@ -129,20 +129,20 @@ View Helper in a new partial ``FormErrors``::
 
 .. code-block:: html
 
-	<f:form.validationResults for="{for}">
-		<f:if condition="{validationResults.flattenedErrors}">
-			<dl class="errors">
-				<f:for each="{validationResults.flattenedErrors}" key="propertyName" as="errors">
-					<dt>
-						{propertyName}:
-					</dt>
-					<dd>
-						<f:for each="{errors}" as="error">{error}</f:for>
-					</dd>
-				</f:for>
-			</dl>
-		</f:if>
-	</f:form.validationResults>
+    <f:form.validationResults for="{for}">
+        <f:if condition="{validationResults.flattenedErrors}">
+            <dl class="errors">
+                <f:for each="{validationResults.flattenedErrors}" key="propertyName" as="errors">
+                    <dt>
+                        {propertyName}:
+                    </dt>
+                    <dd>
+                        <f:for each="{errors}" as="error">{error}</f:for>
+                    </dd>
+                </f:for>
+            </dl>
+        </f:if>
+    </f:form.validationResults>
 
 And include that partial to both, the ``New.html`` and the ``Edit.html`` templates just above the
 form::
@@ -151,9 +151,9 @@ form::
 
 .. code-block:: html
 
-	<f:render partial="FormErrors" arguments="{for: 'newPost'}" />
-	<f:form action="create" objectName="newPost">
-	...
+    <f:render partial="FormErrors" arguments="{for: 'newPost'}" />
+    <f:form action="create" objectName="newPost">
+    ...
 
 and::
 
@@ -161,9 +161,9 @@ and::
 
 .. code-block:: html
 
-	<f:render partial="FormErrors" arguments="{for: 'post'}" />
-	<f:form action="update" object="{post}" objectName="post">
-	...
+    <f:render partial="FormErrors" arguments="{for: 'post'}" />
+    <f:form action="update" object="{post}" objectName="post">
+    ...
 
 Similar to the ``<f:for>`` view helper ``<f:form.validationResults>`` defines a loop
 iterating over validation errors. The attribute ``as`` is optional and if it's
@@ -178,10 +178,10 @@ After saving the modified template and submitting the empty form again you
 should see some more verbose error messages:
 
 .. figure:: Images/CreateNewPostValidationError2.png
-	:alt: More verbose validation errors shown in form
-	:class: screenshot-detail
+    :alt: More verbose validation errors shown in form
+    :class: screenshot-detail
 
-	More verbose validation errors shown in form
+    More verbose validation errors shown in form
 
 Validating Existing Data
 ========================
@@ -194,7 +194,7 @@ afterwards?
 Doing so would prevent you from invoking any of the actions for that particular post.
 All you will see is an error message::
 
-	Validation failed while trying to call Acme\Blog\Controller\PostController->showAction().
+    Validation failed while trying to call Acme\Blog\Controller\PostController->showAction().
 
 
 So the problem is that Flow tries to validate the ``$post`` argument for the
@@ -209,20 +209,20 @@ additional annotation the whole mechanism works as expected:
 
 .. code-block:: php
 
-	/**
-	 * Displays a single post
-	 *
-	 * @Flow\IgnoreValidation("$post")
-	 * @param Post $post
-	 * @return void
-	 */
-	public function showAction(Post $post) {
-		$this->view->assignMultiple([
-			'post' => $post,
-			'nextPost' => $this->postRepository->findNext($post),
-			'previousPost' => $this->postRepository->findPrevious($post),
-		]);
-	}
+    /**
+     * Displays a single post
+     *
+     * @Flow\IgnoreValidation("$post")
+     * @param Post $post
+     * @return void
+     */
+    public function showAction(Post $post) {
+        $this->view->assignMultiple([
+            'post' => $post,
+            'nextPost' => $this->postRepository->findNext($post),
+            'previousPost' => $this->postRepository->findPrevious($post),
+        ]);
+    }
 
 
 Now the ``showAction`` can be called even though ``$post`` is not valid.
@@ -231,5 +231,5 @@ invalid posts can be fixed or removed.
 
 -----
 
-.. [#]	See also: `Separation of Concerns (Wikipedia)
-		<http://en.wikipedia.org/wiki/Separation_of_concerns>`_
+.. [#]  See also: `Separation of Concerns (Wikipedia)
+        <http://en.wikipedia.org/wiki/Separation_of_concerns>`_
