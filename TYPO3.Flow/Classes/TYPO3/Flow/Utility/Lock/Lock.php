@@ -41,11 +41,11 @@ class Lock
     /**
      * @var boolean
      */
-    protected $exclusiveLock = true;
+    protected $exclusiveLock;
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
      */
     public function __construct($subject, $exclusiveLock = true)
     {
@@ -58,6 +58,10 @@ class Lock
             self::$lockStrategyClassName = $settings['utility']['lockStrategyClassName'];
         }
         $this->lockStrategy = new self::$lockStrategyClassName();
+
+        $this->subject = $subject;
+        $this->exclusiveLock = $exclusiveLock;
+
         $this->lockStrategy->acquire($subject, $exclusiveLock);
     }
 
@@ -67,6 +71,18 @@ class Lock
     public function getLockStrategy()
     {
         return $this->lockStrategy;
+    }
+
+    /**
+     * Releases the lock
+     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
+     * @return void
+     */
+    public function acquire($exclusiveLock)
+    {
+        if ($this->lockStrategy instanceof LockStrategyInterface) {
+            $this->lockStrategy->acquire($this->subject, $exclusiveLock);
+        }
     }
 
     /**

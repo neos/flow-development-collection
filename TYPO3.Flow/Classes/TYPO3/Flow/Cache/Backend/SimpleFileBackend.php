@@ -16,6 +16,7 @@ use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Lock\Factory;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
@@ -214,7 +215,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $lock = new Lock($pathAndFilename, false);
+        $lock = Factory::create($pathAndFilename, false);
         $result = file_get_contents($pathAndFilename);
         $lock->release();
 
@@ -258,7 +259,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            $lock = new Lock($pathAndFilename);
+            $lock = Factory::create($pathAndFilename);
             unlink($pathAndFilename);
             $lock->release();
         } catch (\Exception $exception) {
@@ -351,7 +352,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $lock = new Lock($pathAndFilename, false);
+        $lock = Factory::create($pathAndFilename, false);
         $result = file_get_contents($pathAndFilename);
         $lock->release();
         return $result;
@@ -441,7 +442,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        $lock = new Lock($cacheEntryPathAndFilename);
+        $lock = Factory::create($cacheEntryPathAndFilename);
         $result = file_put_contents($cacheEntryPathAndFilename, $data);
         $lock->release();
 
