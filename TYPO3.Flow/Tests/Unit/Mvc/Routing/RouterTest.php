@@ -395,7 +395,7 @@ class RouterTest extends UnitTestCase
      */
     public function routeLoadsRoutesConfigurationFromConfigurationManagerIfNotSetExplicitly()
     {
-        $router = $this->getAccessibleRouterMock(['createRoutesFromConfiguration']);
+        $router = $this->getAccessibleRouterMock(['dummy']);
 
         $routesConfiguration = [
             [

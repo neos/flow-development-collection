@@ -16,6 +16,8 @@ use Neos\RedirectHandler\Redirection;
 use Neos\RedirectHandler\RedirectionService;
 use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -51,7 +53,18 @@ class RedirectionServiceTest extends UnitTestCase
 
         $this->inject($this->redirectionService, 'redirectionStorage', $this->mockRedirectionStorage);
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockUri = $this->getMockBuilder(Uri::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mockHttpRequest
+            ->expects($this->any())
+            ->method('getBaseUri')
+            ->willReturn($mockUri);
     }
 
     /**
@@ -59,7 +72,10 @@ class RedirectionServiceTest extends UnitTestCase
      */
     public function buildResponseIfApplicableReturnsSilentlyIfRedirectionRepositoryThrowsException()
     {
-        $this->mockRedirectionStorage->expects($this->atLeastOnce())->method('getOneBySourceUriPath')->will($this->throwException(new DBALException()));
+        $this->mockRedirectionStorage
+            ->expects($this->atLeastOnce())
+            ->method('getOneBySourceUriPathAndHost')
+            ->will($this->throwException(new DBALException()));
 
         $this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest);
     }
@@ -69,8 +85,16 @@ class RedirectionServiceTest extends UnitTestCase
      */
     public function buildResponseIfApplicableReturnsNullIfNoApplicableRedirectIsFound()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getRelativePath')->will($this->returnValue('some/relative/path'));
-        $this->mockRedirectionStorage->expects($this->once())->method('getOneBySourceUriPath')->with('some/relative/path')->will($this->returnValue(null));
+        $this->mockHttpRequest
+            ->expects($this->atLeastOnce())
+            ->method('getRelativePath')
+            ->will($this->returnValue('some/relative/path'));
+
+        $this->mockRedirectionStorage
+            ->expects($this->once())
+            ->method('getOneBySourceUriPathAndHost')
+            ->with('some/relative/path')
+            ->will($this->returnValue(null));
 
         $this->assertNull($this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest));
     }
@@ -80,13 +104,29 @@ class RedirectionServiceTest extends UnitTestCase
      */
     public function buildResponseIfApplicableRetunsHttpRequestIfApplicableRedirectIsFound()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getRelativePath')->will($this->returnValue('some/relative/path'));
+        $this->mockHttpRequest
+            ->expects($this->atLeastOnce())
+            ->method('getRelativePath')
+            ->willReturn('some/relative/path');
 
-        $mockRedirection = $this->getMockBuilder(Redirection::class)->disableOriginalConstructor()->getMock();
-        $this->mockRedirectionStorage->expects($this->once())->method('getOneBySourceUriPath')->with('some/relative/path')->will($this->returnValue($mockRedirection));
+        $mockRedirection = $this->getMockBuilder(Redirection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockRedirection
+            ->expects($this->atLeastOnce())
+            ->method('getStatusCode')
+            ->willReturn(301);
+
+        $this->mockRedirectionStorage
+            ->expects($this->once())
+            ->method('getOneBySourceUriPathAndHost')
+            ->with('some/relative/path')
+            ->willReturn($mockRedirection);
+
         $this->inject($this->redirectionService, 'redirectionStorage', $this->mockRedirectionStorage);
 
         $request = $this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest);
-        $this->assertInstanceOf(Request::class, $request);
+
+        $this->assertInstanceOf(Response::class, $request);
     }
 }

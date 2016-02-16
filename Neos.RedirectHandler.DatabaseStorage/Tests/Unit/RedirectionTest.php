@@ -29,7 +29,7 @@ class RedirectionTest extends UnitTestCase
      */
     public function constructorSetSourceAndTargetUriPath()
     {
-        $redirection = new Redirection('source/path', 'target/path');
+        $redirection = new Redirection('source/path', 'target/path', 301);
         $this->assertSame('source/path', $redirection->getSourceUriPath());
         $this->assertSame('target/path', $redirection->getTargetUriPath());
         $this->assertSame(301, $redirection->getStatusCode());
@@ -43,7 +43,7 @@ class RedirectionTest extends UnitTestCase
      */
     public function constructorTrimSlashInSourceAndTargetUriPath()
     {
-        $redirection = new Redirection('/source/path/', '/target/path/');
+        $redirection = new Redirection('/source/path/', '/target/path/', 301);
         $this->assertSame('source/path', $redirection->getSourceUriPath());
         $this->assertSame('target/path', $redirection->getTargetUriPath());
         $this->assertSame(301, $redirection->getStatusCode());
@@ -71,7 +71,7 @@ class RedirectionTest extends UnitTestCase
      */
     public function constructorSetSourceAndTargetUriPathHash()
     {
-        $redirection = new Redirection('source/path', 'target/path');
+        $redirection = new Redirection('source/path', 'target/path', 301);
         $this->assertSame(md5('source/path'), $redirection->getSourceUriPathHash());
         $this->assertSame(md5('target/path'), $redirection->getTargetUriPathHash());
     }

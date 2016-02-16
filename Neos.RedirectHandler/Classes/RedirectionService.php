@@ -76,7 +76,7 @@ class RedirectionService
      */
     protected function buildResponse(Request $httpRequest, Redirection $redirection)
     {
-        if (headers_sent() === true) {
+        if (headers_sent() === true && FLOW_SAPITYPE !== 'CLI') {
             return null;
         }
         $response = new Response();

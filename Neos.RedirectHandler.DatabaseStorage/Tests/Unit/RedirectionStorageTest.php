@@ -50,6 +50,7 @@ class RedirectionStorageTest extends UnitTestCase
         $this->mockRedirectionRepository = $this->getMockBuilder(RedirectionRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -80,9 +81,18 @@ class RedirectionStorageTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockRedirection->expects($this->once())->method('getSourceUriPath')->willReturn('some/relative/path');
-        $mockRedirection->expects($this->once())->method('getTargetUriPath')->willReturn('some/relative/path/target');
-        $mockRedirection->expects($this->once())->method('getStatusCode')->willReturn(301);
+        $mockRedirection
+            ->expects($this->once())
+            ->method('getSourceUriPath')
+            ->willReturn('some/relative/path');
+        $mockRedirection
+            ->expects($this->once())
+            ->method('getTargetUriPath')
+            ->willReturn('some/relative/path/target');
+        $mockRedirection
+            ->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(301);
 
         $this->mockRedirectionRepository
             ->expects($this->once())
@@ -104,10 +114,20 @@ class RedirectionStorageTest extends UnitTestCase
     public function removeOneBySourceUriPathExitsIfNoMatchingRedirectWasFound()
     {
         $sourceUriPath = '/some/relative/path/';
-        $mockRedirect = $this->getMockBuilder('TYPO3\Flow\Http\Redirection\Redirection')->disableOriginalConstructor()->getMock();
+        $mockRedirection = $this->getMockBuilder(Redirection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->mockRedirectionRepository->expects($this->atLeastOnce())->method('findOneBySourceUriPathAndHost')->with($sourceUriPath)->will($this->returnValue($mockRedirect));
-        $this->mockRedirectionRepository->expects($this->once())->method('remove')->with($mockRedirect);
+        $this->mockRedirectionRepository
+            ->expects($this->atLeastOnce())
+            ->method('findOneBySourceUriPathAndHost')
+            ->with($sourceUriPath)
+            ->willReturn($mockRedirection);
+        $this->mockRedirectionRepository
+            ->expects($this->once())
+            ->method('remove')
+            ->with($mockRedirection);
+
         $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath);
     }
 
@@ -118,7 +138,10 @@ class RedirectionStorageTest extends UnitTestCase
     {
         $sourceUriPath = '/some/relative/path/';
 
-        $this->mockRedirectionRepository->expects($this->atLeastOnce())->method('findOneBySourceUriPathAndHost')->with($sourceUriPath)->will($this->returnValue(null));
+        $this->mockRedirectionRepository
+            ->expects($this->atLeastOnce())
+            ->method('findOneBySourceUriPathAndHost')
+            ->with($sourceUriPath)->will($this->returnValue(null));
         $this->mockRedirectionRepository->expects($this->never())->method('remove');
         $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath);
     }
@@ -137,14 +160,15 @@ class RedirectionStorageTest extends UnitTestCase
      */
     public function addRedirectFlushesRouterCacheForAffectedUri()
     {
-        $mockQueryResult = $this->getMockBuilder('TYPO3\Flow\Persistence\QueryResultInterface')->disableOriginalConstructor()->getMock();
         $this->mockRedirectionRepository
-            ->expects($this->once())->method('findByTargetUriPathAndHost')->willReturn($mockQueryResult);
+            ->expects($this->atLeastOnce())
+            ->method('findByTargetUriPathAndHost')
+            ->willReturn([]);
 
-        $this->mockRouterCachingService->expects($this->once())->method('flushCachesForUriPath')->with('some/relative/path');
-
-        $this->inject($this->redirectionStorage, 'redirectionRepository', $this->mockRedirectionRepository);
-        $this->inject($this->redirectionStorage, 'routerCachingService', $this->mockRouterCachingService);
+        $this->mockRouterCachingService
+            ->expects($this->once())
+            ->method('flushCachesForUriPath')
+            ->with('some/relative/path');
 
         $this->redirectionStorage->addRedirection('some/relative/path', 'target');
     }
