@@ -87,6 +87,21 @@ class RedirectionRepository extends Repository
     }
 
     /**
+     * @param string $targetUriPath
+     * @param string $host Host or host pattern
+     * @return QueryInterface
+     */
+    public function findByTargetUriPathAndHost($targetUriPath, $host = null)
+    {
+        /** @var Query $query */
+        $query = $this->entityManager->createQuery('SELECT r FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r WHERE r.targetUriPathHash = :targetUriPathHash AND (r.host = :host OR r.host IS NULL)');
+        $query->setParameter('targetUriPathHash', md5(trim($targetUriPath, '/')));
+        $query->setParameter('host', $host);
+
+        return $this->iterate($query->iterate());
+    }
+
+    /**
      * Finds all objects and return an IterableResult
      *
      * @param string $host Full qualified hostname or host pattern
