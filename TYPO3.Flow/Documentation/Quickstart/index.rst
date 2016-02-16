@@ -30,8 +30,8 @@ a lot of universal development techniques you can learn.
 
 .. tip::
 
-	This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
-	already, with a few shots of Espresso ...
+    This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
+    already, with a few shots of Espresso ...
 
 Installing TYPO3 Flow
 ---------------------
@@ -49,14 +49,14 @@ which boils down to this in the simplest case::
  curl -s https://getcomposer.org/installer | php
 
 .. note::
-	Feel free to install the composer command to a global location, by moving
-	the phar archive to e.g. */usr/local/bin/composer* and making it executable.
-	The following documentation assumes ``composer`` is installed globally.
+    Feel free to install the composer command to a global location, by moving
+    the phar archive to e.g. */usr/local/bin/composer* and making it executable.
+    The following documentation assumes ``composer`` is installed globally.
 
 .. tip::
-	Running ``composer selfupdate`` from time to time keeps it up to date
-	and can prevent errors caused by composer not understanding e.g. new
-	syntax in manifest files.
+    Running ``composer selfupdate`` from time to time keeps it up to date
+    and can prevent errors caused by composer not understanding e.g. new
+    syntax in manifest files.
 
 Then use Composer in a directory which will be accessible by your web server to download
 and install all packages of the TYPO3 Flow Base Distribution. The following command will
@@ -94,7 +94,7 @@ accordingly. But don't worry, this is simply done by changing to the TYPO3 Flow 
 
 *command line*::
 
-	./flow core:setfilepermissions john www-data www-data
+    ./flow core:setfilepermissions john www-data www-data
 
 Please replace *john* by your own username. The second argument is supposed to be the
 username of your web server and the last one specifies the web server's group. For most
@@ -106,22 +106,22 @@ group. On a Linux machine this can be done by typing:
 
 *command line*::
 
-	sudo usermod -a -G _www john
+    sudo usermod -a -G _www john
 
 On a Mac you can add a user to the web group with the following command:
 
 *command line*::
 
-	sudo dscl . -append /Groups/_www GroupMembership johndoe
+    sudo dscl . -append /Groups/_www GroupMembership johndoe
 
 You will have to exit your shell / terminal window and open it again for the
 new group membership to take effect.
 
 .. note::
 
-	Setting file permissions is not necessary and not possible on Windows machines.
-	For Apache to be able to create symlinks, you need to use Windows Vista (or
-	newer) and Apache needs to be started with Administrator privileges.
+    Setting file permissions is not necessary and not possible on Windows machines.
+    For Apache to be able to create symlinks, you need to use Windows Vista (or
+    newer) and Apache needs to be started with Administrator privileges.
 
 Setting up a virtual host
 -------------------------
@@ -142,24 +142,24 @@ Testing the Installation
 ------------------------
 
 .. figure:: Images/Welcome.png
-	:alt: The TYPO3 Flow Welcome Screen
-	:class: screenshot-fullsize
+    :alt: The TYPO3 Flow Welcome Screen
+    :class: screenshot-fullsize
 
-	The TYPO3 Flow Welcome Screen
+    The TYPO3 Flow Welcome Screen
 
 If your system is configured correctly you should now be able to access the Welcome
 screen:
 
 .. code-block:: text
 
-	http://quickstart/
+    http://quickstart/
 
 If you did not follow our advice to create a virtual host, point your browser to the
 ``Web`` directory of your TYPO3 Flow installation throughout this tutorial, for example:
 
 .. code-block:: text
 
-	http://localhost/Quickstart/Web/
+    http://localhost/Quickstart/Web/
 
 The result should look similar to the screen you see in the screenshot. If something went
 wrong, it usually can be blamed on a misconfigured web server or insufficient file
@@ -167,19 +167,19 @@ permissions.
 
 .. note::
 
-	If all you get is a 404, you might need to edit the ``.htaccess`` file in the
-	``Web`` folder to adjust the ``RewriteBase`` directive as needed.
+    If all you get is a 404, you might need to edit the ``.htaccess`` file in the
+    ``Web`` folder to adjust the ``RewriteBase`` directive as needed.
 
 .. note::
 
-	Depending on your environment (especially on Windows systems) you might need to set the
-	path to the PHP binary in ``Configuration/Settings.yaml``. If you copied the provided
-	example Settings you only need to uncomment the corresponding lines and adjust the path.
+    Depending on your environment (especially on Windows systems) you might need to set the
+    path to the PHP binary in ``Configuration/Settings.yaml``. If you copied the provided
+    example Settings you only need to uncomment the corresponding lines and adjust the path.
 
 .. tip::
 
-	There are some friendly ghosts in our `IRC channel`_ and in the `users mailing list`_
-	– they will gladly help you out if you describe your problem as precisely as possible.
+    There are some friendly ghosts in our `IRC channel`_ and in the `users mailing list`_
+    – they will gladly help you out if you describe your problem as precisely as possible.
 
 .. rubric:: Some Note About Speed
 
@@ -202,44 +202,44 @@ Let's create a *Demo* package for our fictive company *Acme*:
 
 .. code-block:: none
 
-	$ ./flow kickstart:package Acme.Demo
-	Created .../Acme.Demo/Classes/Acme/Demo/Controller/StandardController.php
-	Created .../Acme.Demo/Resources/Private/Layouts/Default.html
-	Created .../Acme.Demo/Resources/Private/Templates/Standard/Index.html
+    $ ./flow kickstart:package Acme.Demo
+    Created .../Acme.Demo/Classes/Acme/Demo/Controller/StandardController.php
+    Created .../Acme.Demo/Resources/Private/Layouts/Default.html
+    Created .../Acme.Demo/Resources/Private/Templates/Standard/Index.html
 
 The Kickstarter will create a new package directory in *Packages/Application/* resulting
 in the following structure:
 
 .. code-block:: text
 
-	Packages/
-	  Application/
-	    Acme.Demo/
-	      Classes/Acme/Demo/
-	      Configuration/
-	      Documentation/
-	      Meta/
-	      Resources/
-	      Tests/
+    Packages/
+      Application/
+        Acme.Demo/
+          Classes/Acme/Demo/
+          Configuration/
+          Documentation/
+          Meta/
+          Resources/
+          Tests/
 
 The :command:`kickstart:package` command also generates a sample controller which displays
 some content. You should be able to access it through the following URL:
 
 .. code-block:: text
 
-	http://quickstart/Acme.Demo
+    http://quickstart/Acme.Demo
 
 .. tip::
 
-	In case your web server lacks mod_rewrite, it could be that you need to call this to access
-	the controller:
+    In case your web server lacks mod_rewrite, it could be that you need to call this to access
+    the controller:
 
-	.. code-block:: text
+    .. code-block:: text
 
-		http://quickstart/index.php/Acme.Demo
+        http://quickstart/index.php/Acme.Demo
 
-	If this the case, keep in mind to add ``index.php`` to the following URLs in this
-	Quickstart tutorial.
+    If this the case, keep in mind to add ``index.php`` to the following URLs in this
+    Quickstart tutorial.
 
 Hello World
 -----------
@@ -249,45 +249,45 @@ class file in *Packages/Application/Acme.Demo/Classes/Acme/Demo/Controller/* you
 method *indexAction()* which is responsible for the output you've just seen in your web
 browser::
 
-	/**
-	 * @return void
-	 */
-	public function indexAction() {
-		$this->view->assign('foos', array(
-			'bar', 'baz'
-		));
-	}
+    /**
+     * @return void
+     */
+    public function indexAction() {
+        $this->view->assign('foos', array(
+            'bar', 'baz'
+        ));
+    }
 
 Accepting some kind of user input is essential for most applications and TYPO3 Flow does a
 great deal of processing and sanitizing any incoming data. Try it out – create a new
 action method like this one::
 
-	/**
-	 * This action outputs a custom greeting
-	 *
-	 * @param string $name your name
-	 * @return string custom greeting
-	 */
-	public function helloAction($name) {
-		return 'Hello ' . $name . '!';
-	}
+    /**
+     * This action outputs a custom greeting
+     *
+     * @param string $name your name
+     * @return string custom greeting
+     */
+    public function helloAction($name) {
+        return 'Hello ' . $name . '!';
+    }
 
 .. important::
 
-	For the sake of simplicity the above example does not contain any input/output sanitation.
-	If your controller action directly returns something, make sure to filter the data!
+    For the sake of simplicity the above example does not contain any input/output sanitation.
+    If your controller action directly returns something, make sure to filter the data!
 
 .. tip::
 
-	You should always properly document all your functions and class properties. This
-	will not only help other developers to understand your code, but is also essential for
-	TYPO3 Flow to work properly.
+    You should always properly document all your functions and class properties. This
+    will not only help other developers to understand your code, but is also essential for
+    TYPO3 Flow to work properly.
 
 Now test the new action by passing it a name like in the following URL:
 
 .. code-block:: text
 
-	http://quickstart/Acme.Demo/Standard/hello?name=Robert
+    http://quickstart/Acme.Demo/Standard/hello?name=Robert
 
 The path segments of this URL tell TYPO3 Flow to which controller and action the web request
 should be dispatched to. In our example the parts are:
@@ -319,38 +319,38 @@ setup, it would look similar to this:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Flow:
-	    persistence:
-	      backendOptions:
-	        driver: 'pdo_mysql'
-	        dbname: 'quickstart' # adjust to your database name
-	        user: 'root'         # adjust to your database user
-	        password: 'password' # adjust to your database password
-	        host: '127.0.0.1'    # adjust to your database host
+    TYPO3:
+      Flow:
+        persistence:
+          backendOptions:
+            driver: 'pdo_mysql'
+            dbname: 'quickstart' # adjust to your database name
+            user: 'root'         # adjust to your database user
+            password: 'password' # adjust to your database password
+            host: '127.0.0.1'    # adjust to your database host
 
 .. note::
 
-	If you are not familiar with the `YAML` format yet, there are two things you should
-	know at least:
+    If you are not familiar with the `YAML` format yet, there are two things you should
+    know at least:
 
-	* Indentation has a meaning: by different levels of indentation, a structure is
-	  defined.
-	* Spaces, not tabs: you must indent with exactly 2 spaces per level, don't use tabs.
+    * Indentation has a meaning: by different levels of indentation, a structure is
+      defined.
+    * Spaces, not tabs: you must indent with exactly 2 spaces per level, don't use tabs.
 
 If you configured everything correctly, the following command will create the initial
 table structure needed by TYPO3 Flow:
 
 .. code-block:: bash
 
-	$ ./flow doctrine:migrate
-	Migrating up to 2011xxxxx00 from 0
+    $ ./flow doctrine:migrate
+    Migrating up to 2011xxxxx00 from 0
 
-	++ migrating 2011xxxxx00
-		-> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY
-		-> CREATE TABLE flow_resource_resource (persistence_object_identifier VARCHAR(40)
-	...
-	++ finished in 0.76
+    ++ migrating 2011xxxxx00
+        -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY
+        -> CREATE TABLE flow_resource_resource (persistence_object_identifier VARCHAR(40)
+    ...
+    ++ finished in 0.76
 
 
 Storing Objects
@@ -361,17 +361,17 @@ just generate some example with the kickstarter:
 
 .. code-block:: bash
 
-	$ ./flow kickstart:actioncontroller --generate-actions --generate-related Acme.Demo CoffeeBean
-	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Model/CoffeeBean.php
-	Created .../Acme.Demo/Tests/Unit/Domain/Model/CoffeeBeanTest.php
-	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Repository/CoffeeBeanRepository.php
-	Created .../Acme.Demo/Classes/Acme/Demo/Controller/CoffeeBeanController.php
-	Omitted .../Acme.Demo/Resources/Private/Layouts/Default.html
-	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Index.html
-	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/New.html
-	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Edit.html
-	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
-	As new models were generated, don't forget to update the database schema with the respective doctrine:* commands.
+    $ ./flow kickstart:actioncontroller --generate-actions --generate-related Acme.Demo CoffeeBean
+    Created .../Acme.Demo/Classes/Acme/Demo/Domain/Model/CoffeeBean.php
+    Created .../Acme.Demo/Tests/Unit/Domain/Model/CoffeeBeanTest.php
+    Created .../Acme.Demo/Classes/Acme/Demo/Domain/Repository/CoffeeBeanRepository.php
+    Created .../Acme.Demo/Classes/Acme/Demo/Controller/CoffeeBeanController.php
+    Omitted .../Acme.Demo/Resources/Private/Layouts/Default.html
+    Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Index.html
+    Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/New.html
+    Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Edit.html
+    Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
+    As new models were generated, do not forget to update the database schema with the respective doctrine:* commands.
 
 Whenever a model is created or modified, the database structure needs to be adjusted to
 fit the new PHP code. This is something you should do consciously because existing data
@@ -382,14 +382,14 @@ structure to the database, just run the :command:`doctrine:update` command:
 
 .. code-block:: bash
 
-	$ ./flow doctrine:update
-	Executed a database schema update.
+    $ ./flow doctrine:update
+    Executed a database schema update.
 
 .. tip::
 
-	In a real project you should avoid the :command:`doctrine:update` command and instead
-	work with migrations. See the "Persistence" section of the
-	:doc:`The Definitive Guide <../TheDefinitiveGuide/index>` for more details
+    In a real project you should avoid the :command:`doctrine:update` command and instead
+    work with migrations. See the "Persistence" section of the
+    :doc:`The Definitive Guide <../TheDefinitiveGuide/index>` for more details
 
 A quick glance at the table structure (using your preferred database management tool) will
 reveal that a new table for coffee beans has been created.
@@ -399,16 +399,16 @@ creating, editing and deleting coffee beans. Try it out by accessing this URL:
 
 .. code-block:: text
 
-	http://quickstart/Acme.Demo/CoffeeBean
+    http://quickstart/Acme.Demo/CoffeeBean
 
 Create a few coffee beans, edit and delete them and take a look at the database tables
 if you can't resist ...
 
 .. figure:: Images/CoffeeBeanController.png
-	:alt: List and create coffee beans
-	:class: screenshot-fullsize
+    :alt: List and create coffee beans
+    :class: screenshot-fullsize
 
-	List and create coffee beans
+    List and create coffee beans
 
 A Closer Look at the Example
 ----------------------------
@@ -423,74 +423,74 @@ With this background, the following complete code listing powering the previous 
 may seem a bit odd, if not magical to you. Take a close look at each of the methods –
 can you imagine what they do? ::
 
-	class CoffeeBeanController extends ActionController {
+    class CoffeeBeanController extends ActionController {
 
-		/**
-		 * @Flow\Inject
-		 * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
-		 */
-		protected $coffeeBeanRepository;
+        /**
+         * @Flow\Inject
+         * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
+         */
+        protected $coffeeBeanRepository;
 
-		/**
-		 * @return void
-		 */
-		public function indexAction() {
-			$this->view->assign('coffeeBeans', $this->coffeeBeanRepository->findAll());
-		}
+        /**
+         * @return void
+         */
+        public function indexAction() {
+            $this->view->assign('coffeeBeans', $this->coffeeBeanRepository->findAll());
+        }
 
-		/**
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-		 * @return void
-		 */
-		public function showAction(CoffeeBean $coffeeBean) {
-			$this->view->assign('coffeeBean', $coffeeBean);
-		}
+        /**
+         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @return void
+         */
+        public function showAction(CoffeeBean $coffeeBean) {
+            $this->view->assign('coffeeBean', $coffeeBean);
+        }
 
-		/**
-		 * @return void
-		 */
-		public function newAction() {
-		}
+        /**
+         * @return void
+         */
+        public function newAction() {
+        }
 
-		/**
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
-		 * @return void
-		 */
-		public function createAction(CoffeeBean $newCoffeeBean) {
-			$this->coffeeBeanRepository->add($newCoffeeBean);
-			$this->addFlashMessage('Created a new coffee bean.');
-			$this->redirect('index');
-		}
+        /**
+         * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
+         * @return void
+         */
+        public function createAction(CoffeeBean $newCoffeeBean) {
+            $this->coffeeBeanRepository->add($newCoffeeBean);
+            $this->addFlashMessage('Created a new coffee bean.');
+            $this->redirect('index');
+        }
 
-		/**
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-		 * @return void
-		 */
-		public function editAction(CoffeeBean $coffeeBean) {
-			$this->view->assign('coffeeBean', $coffeeBean);
-		}
+        /**
+         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @return void
+         */
+        public function editAction(CoffeeBean $coffeeBean) {
+            $this->view->assign('coffeeBean', $coffeeBean);
+        }
 
-		/**
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-		 * @return void
-		 */
-		public function updateAction(CoffeeBean $coffeeBean) {
-			$this->coffeeBeanRepository->update($coffeeBean);
-			$this->addFlashMessage('Updated the coffee bean.');
-			$this->redirect('index');
-		}
+        /**
+         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @return void
+         */
+        public function updateAction(CoffeeBean $coffeeBean) {
+            $this->coffeeBeanRepository->update($coffeeBean);
+            $this->addFlashMessage('Updated the coffee bean.');
+            $this->redirect('index');
+        }
 
-		/**
-		 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-		 * @return void
-		 */
-		public function deleteAction(CoffeeBean $coffeeBean) {
-			$this->coffeeBeanRepository->remove($coffeeBean);
-			$this->addFlashMessage('Deleted a coffee bean.');
-			$this->redirect('index');
-		}
+        /**
+         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @return void
+         */
+        public function deleteAction(CoffeeBean $coffeeBean) {
+            $this->coffeeBeanRepository->remove($coffeeBean);
+            $this->addFlashMessage('Deleted a coffee bean.');
+            $this->redirect('index');
+        }
 
-	}
+    }
 
 You will learn all the nitty-gritty details of persistence (that is storing and
 retrieving objects in a database), Model-View Controller and validation in
@@ -517,10 +517,10 @@ objects – and which one would you then ask for retrieving a specific coffee be
 the database? The ``CoffeeBeanRepository`` is therefore tagged with an *annotation*
 stating that only a single instance may exist at a time::
 
-	/**
-	 * @Flow\Scope("singleton")
-	 */
-	class CoffeeBeanRepository extends Repository {
+    /**
+     * @Flow\Scope("singleton")
+     */
+    class CoffeeBeanRepository extends Repository {
 
 Because PHP doesn't support the concept of annotations natively, we are using doc
 comments which are parsed by an annotation parser in TYPO3 Flow.
@@ -529,21 +529,21 @@ TYPO3 Flow's object management detects the ``Scope`` annotation and takes care o
 all the details. All you need to do in order to get the right ``CoffeeBeanRepository``
 instance is telling TYPO3 Flow to *inject* it into a class property you defined::
 
-	/**
-	 * @Flow\Inject
-	 * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
-	 */
-	protected $coffeeBeanRepository;
+    /**
+     * @Flow\Inject
+     * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
+     */
+    protected $coffeeBeanRepository;
 
 The ``Inject`` annotation tells TYPO3 Flow to set the ``$coffeeBeanRepository`` right
 after the ``CoffeeBeanController`` class has been instantiated.
 
 .. tip::
 
-	This feature is called *Dependency Injection* and is an important feature of TYPO3 Flow.
-	Although it is blindingly easy to use, you'll want to read some more about it later
-	in the :doc:`related section <../TheDefinitiveGuide/PartIII/ObjectManagement>` of
-	the main manual.
+    This feature is called *Dependency Injection* and is an important feature of TYPO3 Flow.
+    Although it is blindingly easy to use, you'll want to read some more about it later
+    in the :doc:`related section <../TheDefinitiveGuide/PartIII/ObjectManagement>` of
+    the main manual.
 
 TYPO3 Flow adheres to the Model-View-Controller pattern – that's why the actual output is not
 generated by the action method itself. This task is delegated to the *view*, and that is,
@@ -565,37 +565,37 @@ beans:
 
 .. code-block:: html
 
-	<ul>
-		<f:for each="{coffeeBeans}" as="coffeeBean">
-			<li>
-				{coffeeBean.name}
-			</li>
-		</f:for>
-	</ul>
+    <ul>
+        <f:for each="{coffeeBeans}" as="coffeeBean">
+            <li>
+                {coffeeBean.name}
+            </li>
+        </f:for>
+    </ul>
 
 showAction
 ~~~~~~~~~~
 
 The ``showAction`` displays a single coffee bean::
 
-	/**
-	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to show
-	 * @return void
-	 */
-	public function showAction(CoffeeBean $coffeeBean) {
-		$this->view->assign('coffeeBean', $coffeeBean);
-	}
+    /**
+     * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to show
+     * @return void
+     */
+    public function showAction(CoffeeBean $coffeeBean) {
+        $this->view->assign('coffeeBean', $coffeeBean);
+    }
 
 The corresponding template for this action is stored in this file:
 
 .. code-block:: text
 
-	Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
+    Acme.Demo/Resources/Private/Templates/CoffeeBean/Show.html
 
 This template produces a simple representation of the ``coffeeBean`` object.
 Similar to the ``indexAction`` the coffee bean object is assigned to a Fluid variable::
 
-	$this->view->assign('coffeeBean', $coffeeBean);
+    $this->view->assign('coffeeBean', $coffeeBean);
 
 The ``showAction`` method requires a ``CoffeeBean`` object as its method argument.
 But we need to look into the template of the ``indexAction`` again to understand how
@@ -607,7 +607,7 @@ Fluid template :file:`Index.html`:
 
 .. code-block:: html
 
-	<f:link.action action="show" arguments="{coffeeBean: coffeeBean}">…</f:link.action>
+    <f:link.action action="show" arguments="{coffeeBean: coffeeBean}">…</f:link.action>
 
 The interesting part is the ``{coffeeBean: coffeeBean}`` argument assignment:
 It makes sure that the ``CoffeeBean`` object, stored in the ``coffeeBean``
@@ -618,23 +618,23 @@ the view helper will render an address like the following:
 
 .. code-block:: text
 
-	http://quickstart/acme.demo/coffeebean/show?
-		coffeeBean%5B__identity%5D=910c2440-ea61-49a2-a68c-ee108a6ee429
+    http://quickstart/acme.demo/coffeebean/show?
+        coffeeBean%5B__identity%5D=910c2440-ea61-49a2-a68c-ee108a6ee429
 
 Instead of the real PHP object, its *Universally Unique Identifier* (UUID) was included as
 a GET parameter.
 
 .. note::
 
-	That certainly is not a beautiful URL for a coffee bean – but you'll learn how to
-	create nice ones in the main manual.
+    That certainly is not a beautiful URL for a coffee bean – but you'll learn how to
+    create nice ones in the main manual.
 
 Before the ``showAction`` method is actually called, TYPO3 Flow will analyze the GET and POST
 parameters of the incoming HTTP request and convert identifiers into real objects
 again. By its UUID the coffee bean is retrieved from the ``CoffeeBeanRepository`` and
 eventually passed to the action method::
 
-	public function showAction(CoffeeBean $coffeeBean) {
+    public function showAction(CoffeeBean $coffeeBean) {
 
 newAction
 ~~~~~~~~~
@@ -648,15 +648,15 @@ createAction
 The ``createAction`` is called when a form displayed by the ``newAction`` is submitted.
 Like the ``showAction`` it expects a ``CoffeeBean`` as its argument::
 
-	/**
-	 * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
-	 * @return void
-	 */
-	public function createAction(CoffeeBean $newCoffeeBean) {
-		$this->coffeeBeanRepository->add($newCoffeeBean);
-		$this->addFlashMessage('Created a new coffee bean.');
-		$this->redirect('index');
-	}
+    /**
+     * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
+     * @return void
+     */
+    public function createAction(CoffeeBean $newCoffeeBean) {
+        $this->coffeeBeanRepository->add($newCoffeeBean);
+        $this->addFlashMessage('Created a new coffee bean.');
+        $this->redirect('index');
+    }
 
 This time the argument contains not an existing coffee bean but a new one. TYPO3 Flow knows
 that the expected type is ``CoffeeBean`` (by the type hint in the method and the param annotation)
@@ -675,9 +675,9 @@ for the edit form is the form object assignment:
 
 .. code-block:: html
 
-	<f:form action="update" object="{coffeeBean}" objectName="coffeeBean">
-		...
-	</f:form>
+    <f:form action="update" object="{coffeeBean}" objectName="coffeeBean">
+        ...
+    </f:form>
 
 The ``object="{coffeeBean}"`` attribute assignment tells the view helper to use the
 ``coffeeBean`` template variable as its subject. The individual form elements, such
@@ -685,7 +685,7 @@ as the text box, can now refer to the coffee bean object properties:
 
 .. code-block:: html
 
-	<f:form.textfield property="name" id="name" />
+    <f:form.textfield property="name" id="name" />
 
 On submitting the form, the user will be redirected to the ``updateAction``.
 
@@ -695,15 +695,15 @@ updateAction
 The ``updateAction`` receives the modified coffee bean through its ``$coffeeBean``
 argument::
 
-	/**
-	 * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-	 * @return void
-	 */
-	public function updateAction(CoffeeBean $coffeeBean) {
-		$this->coffeeBeanRepository->update($coffeeBean);
-		$this->addFlashMessage('Updated the coffee bean.');
-		$this->redirect('index');
-	}
+    /**
+     * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+     * @return void
+     */
+    public function updateAction(CoffeeBean $coffeeBean) {
+        $this->coffeeBeanRepository->update($coffeeBean);
+        $this->addFlashMessage('Updated the coffee bean.');
+        $this->redirect('index');
+    }
 
 Although this method looks quite similar to the ``showAction``, there is an important
 difference you should be aware of: The parameter passed to the ``showAction``
@@ -713,7 +713,7 @@ modifications submitted by the user already applied.
 Any modifications to the ``CoffeBean`` object will be lost at the end of the request
 unless you tell TYPO3 Flow explicitly to apply the changes::
 
-	$this->coffeeBeanRepository->update($coffeeBean);
+    $this->coffeeBeanRepository->update($coffeeBean);
 
 This allows for a very efficient dirty checking and is a safety measure - as it leaves
 control over the changes in your hands.

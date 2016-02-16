@@ -18,22 +18,22 @@ provided by TYPO3 Flow. Each exception should be identified by a unique error co
 is, by convention, the unix timestamp of the point in time when the developer
 implemented the code throwing the exception::
 
-	if ($somethingWentReallyWrong) {
-		throw new SomethingWentWrongException('An exception message', 1347145643);
-	}
+    if ($somethingWentReallyWrong) {
+        throw new SomethingWentWrongException('An exception message', 1347145643);
+    }
 
 Exceptions can contain an HTTP status code which is sent as a corresponding response
 header. The status code is simply set by defining a property with the respective
 value assigned::
 
-	class SomethingWasNotFoundException extends \TYPO3\Flow\Exception {
+    class SomethingWasNotFoundException extends \TYPO3\Flow\Exception {
 
-		/**
-   	 * @var integer
-   	 */
-   	protected $statusCode = 404;
+        /**
+     * @var integer
+     */
+    protected $statusCode = 404;
 
-	}
+    }
 
 Exception Handlers
 ------------------
@@ -56,13 +56,13 @@ The exception handler to be used can be configured through an entry in Settings.
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Flow:
-	    error:
-	      exceptionHandler:
-	        # Defines the global, last-resort exception handler.
-	        # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
-	        className: 'TYPO3\Flow\Error\ProductionExceptionHandler'
+    TYPO3:
+      Flow:
+        error:
+          exceptionHandler:
+            # Defines the global, last-resort exception handler.
+            # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
+            className: 'TYPO3\Flow\Error\ProductionExceptionHandler'
 
 Reference Code
 --------------
@@ -80,10 +80,10 @@ some rare cases though, when TYPO3 Flow is not even able to write the respective
 file, no details about the exception can be provided.
 
 .. figure:: Images/Error_ReferenceCode.png
-	:alt: Exception screen with reference code
-	:class: screenshot-fullsize
+    :alt: Exception screen with reference code
+    :class: screenshot-fullsize
 
-	Exception screen with reference code
+    Exception screen with reference code
 
 Error Handler
 -------------
@@ -97,14 +97,14 @@ should be converted into exceptions. All other errors are silently ignored:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Flow:
-	    error:
-	      errorHandler:
-	        # Defines which errors should result in an exception thrown - all other error
-	        # levels will be silently ignored. Only errors that can be handled in an
-	        # user-defined error handler are affected, of course.
-	        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
+    TYPO3:
+      Flow:
+        error:
+          errorHandler:
+            # Defines which errors should result in an exception thrown - all other error
+            # levels will be silently ignored. Only errors that can be handled in an
+            # user-defined error handler are affected, of course.
+            exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%']
 
 Custom Error Views
 ------------------
@@ -119,84 +119,84 @@ An example configuration could look like in the following Settings.yaml excerpt:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Flow:
-	    error:
-	      exceptionHandler:
-	        defaultRenderingOptions: []
+    TYPO3:
+      Flow:
+        error:
+          exceptionHandler:
+            defaultRenderingOptions: []
 
-	        renderingGroups:
+            renderingGroups:
 
-	          notFoundExceptions:
-	            matchingStatusCodes: [404]
-	            options:
-	              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
-	              variables:
-	                errorDescription: 'Sorry, the page you requested was not found.'
+              notFoundExceptions:
+                matchingStatusCodes: [404]
+                options:
+                  templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+                  variables:
+                    errorDescription: 'Sorry, the page you requested was not found.'
 
-	          databaseConnectionExceptions:
-	            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
-	            options:
-	              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
-	              variables:
-	                errorDescription: 'Sorry, the database connection couldn''t be established.'
+              databaseConnectionExceptions:
+                matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
+                options:
+                  templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+                  variables:
+                    errorDescription: 'Sorry, the database connection couldn''t be established.'
 
 ``defaultRenderingOptions``:
-	this carries default options which can be overridden by the ``options`` key of a particular
-	rendering group; see below.
+    this carries default options which can be overridden by the ``options`` key of a particular
+    rendering group; see below.
 
 ``notFoundExceptions`` and ``databaseConnectionExceptions`` are freely chosen, descriptive
 key names, their actual naming has no further implications.
 
 ``matchingStatusCodes``:
-	an array of integer values what HTTP status codes the rendering group is for
+    an array of integer values what HTTP status codes the rendering group is for
 
 ``matchingExceptionClassNames``:
-	an array of string values what Exception types the rendering group is for. Keep in mind that, as always
-	the class name must not contain a leading slash, but must be fully qualified, of course.
+    an array of string values what Exception types the rendering group is for. Keep in mind that, as always
+    the class name must not contain a leading slash, but must be fully qualified, of course.
 
 ``options``:
 
-	``logException``:
-		a boolean telling Flow to log the exception and write a backtrace file. This is
-		on by default but switched off for exceptions with a 404 status code
+    ``logException``:
+        a boolean telling Flow to log the exception and write a backtrace file. This is
+        on by default but switched off for exceptions with a 404 status code
 
-	``renderTechnicalDetails``:
-		a boolean passed to the error template during rendering and used in the default error
-		template to include more details on the error at hand. Defaults to FALSE but is set to TRUE
-		for development context.
+    ``renderTechnicalDetails``:
+        a boolean passed to the error template during rendering and used in the default error
+        template to include more details on the error at hand. Defaults to FALSE but is set to TRUE
+        for development context.
 
-	``templatePathAndFilename``:
-		a resource string to the (Fluid) filename to use
+    ``templatePathAndFilename``:
+        a resource string to the (Fluid) filename to use
 
-	``layoutRootPath``:
-		a resource string to the layout root path
+    ``layoutRootPath``:
+        a resource string to the layout root path
 
-	``partialRootPath``:
-		a resource string to the partial root path
+    ``partialRootPath``:
+        a resource string to the partial root path
 
-	``format``:
-		the format to use, for example ``html`` or ``json``, if appropriate
+    ``format``:
+        the format to use, for example ``html`` or ``json``, if appropriate
 
-	``variables``
-		an array of additional, arbitrary variables which can be accessed in the template
+    ``variables``
+        an array of additional, arbitrary variables which can be accessed in the template
 
 The following variables will be assigned to the template an can be used there:
 
 ``exception``:
-	the Exception object which was thrown
+    the Exception object which was thrown
 
 ``renderingOptions``:
-	the complete rendering options array, as defined in the settings. This is a merge
-	of ``TYPO3.Flow.error.exceptionHandler.defaultRenderingOptions`` and the ``options``
-	array of the particular rendering group
+    the complete rendering options array, as defined in the settings. This is a merge
+    of ``TYPO3.Flow.error.exceptionHandler.defaultRenderingOptions`` and the ``options``
+    array of the particular rendering group
 
 ``statusCode``:
-	the integer value of the HTTP status code which has been thrown (``404``, ``503`` etc.)
+    the integer value of the HTTP status code which has been thrown (``404``, ``503`` etc.)
 
 ``statusMessage``:
-	the HTTP status message equivalent,  for example ``Not Found``, ``Service Unavailable`` etc.
-	If no matching status message could be found, this value is ``Unknown Status``.
+    the HTTP status message equivalent,  for example ``Not Found``, ``Service Unavailable`` etc.
+    If no matching status message could be found, this value is ``Unknown Status``.
 
 ``referenceCode``:
-	the reference code of the exception, if applicable.
+    the reference code of the exception, if applicable.
