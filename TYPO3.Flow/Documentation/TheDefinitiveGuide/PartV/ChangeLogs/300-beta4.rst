@@ -178,7 +178,7 @@ Fixes: FLOW-324
 [BUGFIX] Failing unit test in ``XliffModelTest``
 -----------------------------------------------------------------------------------------
 
-Regression of ``I3b5f7e06eca6a2e7e7aa31148c1d031295964c92`
+Regression of `I3b5f7e06eca6a2e7e7aa31148c1d031295964c92`
 which didn't adjust the test accordingly.
 
 * Commit: `b83f1a2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b83f1a270271a31c224deb2a8f118926d4b47fb6>`_
@@ -357,7 +357,7 @@ confusing the renderer over at RDT itself.
 [BUGFIX] Relax YAML schema to work with PECL parser
 -----------------------------------------------------------------------------------------
 
-This adjusts the ``Objects.yaml` schema so that::
+This adjusts the `Objects.yaml` schema so that::
 
   ./flow configuration:validate
 
