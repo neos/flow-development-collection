@@ -168,10 +168,11 @@ class DoctrineCommandController extends CommandController
      * To run a full validation, use the validate command.
      *
      * @param boolean $dumpMappingData If set, the mapping data will be output
+     * @param string $entityClassName If given, the mapping data for just this class will be output
      * @return void
      * @see typo3.flow:doctrine:validate
      */
-    public function entityStatusCommand($dumpMappingData = false)
+    public function entityStatusCommand($dumpMappingData = false, $entityClassName = null)
     {
         $info = $this->doctrineService->getEntityStatus();
 
@@ -179,17 +180,33 @@ class DoctrineCommandController extends CommandController
             $this->output('You do not have any mapped Doctrine ORM entities according to the current configuration. ');
             $this->outputLine('If you have entities or mapping files you should check your mapping configuration for errors.');
         } else {
-            $this->outputLine('Found %d mapped entities:', array(count($info)));
-            foreach ($info as $entityClassName => $entityStatus) {
-                if ($entityStatus instanceof ClassMetadata) {
-                    $this->outputLine('[OK]   %s', array($entityClassName));
+            $this->outputLine('Found %d mapped entities:', [count($info)]);
+            $this->outputLine();
+            if ($entityClassName === null) {
+                foreach ($info as $entityClassName => $entityStatus) {
+                    if ($entityStatus instanceof ClassMetadata) {
+                        $this->outputLine('<success>[OK]</success>   %s', [$entityClassName]);
+                        if ($dumpMappingData) {
+                            Debugger::clearState();
+                            $this->outputLine(Debugger::renderDump($entityStatus, 0, true, true));
+                        }
+                    } else {
+                        $this->outputLine('<error>[FAIL]</error> %s', [$entityClassName]);
+                        $this->outputLine($entityStatus);
+                        $this->outputLine();
+                    }
+                }
+            } else {
+                if (array_key_exists($entityClassName, $info) && $info[$entityClassName] instanceof ClassMetadata) {
+                    $entityStatus = $info[$entityClassName];
+                    $this->outputLine('<success>[OK]</success>   %s', [$entityClassName]);
                     if ($dumpMappingData) {
                         Debugger::clearState();
                         $this->outputLine(Debugger::renderDump($entityStatus, 0, true, true));
                     }
                 } else {
-                    $this->outputLine('[FAIL] %s', array($entityClassName));
-                    $this->outputLine($entityStatus);
+                    $this->outputLine('<info>[FAIL]</info> %s', [$entityClassName]);
+                    $this->outputLine('Class not found.');
                     $this->outputLine();
                 }
             }
