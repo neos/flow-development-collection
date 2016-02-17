@@ -172,7 +172,9 @@ class FileSystemTarget implements TargetInterface
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
-                throw new Exception(sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $object->getFilename(), $object->getSha1(), $collection->getName()), 1417168142);
+                $message = sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $object->getFilename(), $object->getSha1(), $collection->getName());
+                $this->systemLogger->log($message, LOG_ERR);
+                continue;
             }
             $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
             fclose($sourceStream);
@@ -191,7 +193,9 @@ class FileSystemTarget implements TargetInterface
     {
         $sourceStream = $resource->getStream();
         if ($sourceStream === false) {
-            throw new Exception(sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName()), 1375258146);
+            $message = sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $resource->getName());
+            $this->systemLogger->log($message, LOG_ERR);
+            return;
         }
         $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($resource));
         fclose($sourceStream);
