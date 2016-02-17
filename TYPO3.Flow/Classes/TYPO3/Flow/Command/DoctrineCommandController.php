@@ -17,8 +17,9 @@ use Doctrine\DBAL\Migrations\MigrationException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Error\Debugger;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\Service as DoctrineService;
 use TYPO3\Flow\Utility\Files;
 
@@ -45,6 +46,12 @@ class DoctrineCommandController extends CommandController
      * @var PackageManagerInterface
      */
     protected $packageManager;
+
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * Injects the Flow settings, only the persistence part is kept for further use
@@ -298,20 +305,24 @@ class DoctrineCommandController extends CommandController
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-            if ($result == '') {
-                if (!$quiet) {
-                    $this->outputLine('No migration was necessary.');
+            try {
+                $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
+                if ($result == '') {
+                    if (!$quiet) {
+                        $this->outputLine('No migration was necessary.');
+                    }
+                } elseif ($output === null) {
+                    $this->outputLine($result);
+                } else {
+                    if (!$quiet) {
+                        $this->outputLine('Wrote migration SQL to file "' . $output . '".');
+                    }
                 }
-            } elseif ($output === null) {
-                $this->outputLine($result);
-            } else {
-                if (!$quiet) {
-                    $this->outputLine('Wrote migration SQL to file "' . $output . '".');
-                }
-            }
 
-            $this->emitAfterDatabaseMigration();
+                $this->emitAfterDatabaseMigration();
+            } catch (\Exception $exception) {
+                $this->handleException($exception);
+            }
         } else {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
@@ -346,7 +357,11 @@ class DoctrineCommandController extends CommandController
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+            try {
+                $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+            } catch (\Exception $exception) {
+                $this->handleException($exception);
+            }
         } else {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
@@ -457,5 +472,20 @@ class DoctrineCommandController extends CommandController
             $this->outputLine('- Review and adjust the generated migration.');
             $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', [$this->getFlowInvocationString()]);
         }
+    }
+
+    /**
+     * Output an error message and log the exception.
+     *
+     * @param \Exception $exception
+     * @return void
+     */
+    protected function handleException(\Exception $exception)
+    {
+        $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
+        $this->outputLine();
+        $this->outputLine('The exception details have been logged to the Flow system log.');
+        $this->systemLogger->logException($exception);
+        $this->quit(1);
     }
 }
