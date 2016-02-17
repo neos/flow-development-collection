@@ -1,10 +1,10 @@
 {
     "name": "neos/redirecthandler-databasestorage",
-    "type": "typo3-flow-package",
+    "type": "neos-package",
     "description": "A plugin for neos/redirecthandler to store redirection in the database",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": ">=3.0.0",
+        "typo3/flow": "~3.2",
         "neos/redirecthandler": "*"
     },
     "autoload": {
