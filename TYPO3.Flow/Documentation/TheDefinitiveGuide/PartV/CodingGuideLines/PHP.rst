@@ -23,11 +23,11 @@ CGL on One Page
 ===============
 
 .. figure:: Images/TYPO3_Flow_Coding_Guidelines_on_one_page.png
-	:alt: The Coding Guidelines on One Page
-	:class: screenshot-detail
-	:target: ../../../_downloads/TYPO3_Flow_Coding_Guidelines_on_one_page.pdf
+    :alt: The Coding Guidelines on One Page
+    :class: screenshot-detail
+    :target: ../../../_downloads/TYPO3_Flow_Coding_Guidelines_on_one_page.pdf
 
-	The Coding Guidelines on One Page
+    The Coding Guidelines on One Page
 
 The most important parts of our :download:`Coding Guidelines in a one page document
 <Pdf/TYPO3_Flow_Coding_Guidelines_on_one_page.pdf>`
@@ -89,7 +89,7 @@ PSR-2
 We follow the PSR-2 standard which is defined by PHP FIG. You can read the full standard
 on `psr-2 standard`_.
 
-.. _`_psr-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+.. _`psr-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
 Indentation and line formatting
 _______________________________
@@ -393,8 +393,8 @@ These are the rules for naming files:
   *Acme.DataAccess*
 
 ``TYPO3.Flow/Tests/Unit/Package/PackageManagerTest.php``
-	Contains the class ``\TYPO3\Flow\\Tests\Unit\Package\PackageManagerTest`` which
-	is a PHPUnit testcase for ``Package\PackageManager``.
+    Contains the class ``\TYPO3\Flow\\Tests\Unit\Package\PackageManagerTest`` which
+    is a PHPUnit testcase for ``Package\PackageManager``.
 
 
 PHP code formatting
@@ -655,10 +655,10 @@ In some cases this is not possible, for example when iterating through an array 
 add inline @var annotations to increase readability and to activate auto-completion and syntax-highlighting::
 
  protected function someMethod(array $products) {
- 	/** @var $product \Acme\SomePackage\Domain\Model\Product */
- 	foreach ($products as $product) {
- 		$product->getTitle();
- 	}
+    /** @var $product \Acme\SomePackage\Domain\Model\Product */
+    foreach ($products as $product) {
+        $product->getTitle();
+    }
  }
 
 Method documentation
@@ -911,9 +911,9 @@ PHP in General
    if ($foo !== $bar))        // GOOD
 
   .. figure:: Images/PHP_TrueFalse.jpg
-  	:alt: Truthy and falsy are fuzzy...
+    :alt: Truthy and falsy are fuzzy...
 
-  	Truthy and falsy are fuzzy...
+    Truthy and falsy are fuzzy...
 
 * Order of methods in classes. To gain a better overview, it helps if methods in classes
   are always ordered in a certain way. We prefer the following:
