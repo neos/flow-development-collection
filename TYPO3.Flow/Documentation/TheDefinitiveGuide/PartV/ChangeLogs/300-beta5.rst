@@ -382,7 +382,7 @@ does. A ``livereload.js`` script does get injected, but not by the
 rendering process. The script gets injected on the fly by
 python-livereload when serving the pages.
 
-.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
+.. _sphinx-autobuild: https://github.com/GaretJax/sphinx-autobuild
 
 * Commit: `6816685 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/681668508e192616365809e480e859deede52613>`_
 

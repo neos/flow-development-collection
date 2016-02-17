@@ -176,11 +176,11 @@ Resolves: FLOW-141
 
 Implements support to add values to a FlowQuery result without wrapping::
 
-	q(node).add(someOtherNode)
+    q(node).add(someOtherNode)
 
 Traversable arguments are still supported::
 
-	q(node).add(q(someOtherNode))
+    q(node).add(q(someOtherNode))
 
 Resolves: FLOW-142
 
@@ -350,6 +350,7 @@ The release CI job adjusted requirements dutifully, but the result was
 not as expected, because we humans missed some needed changes.
 
 * Commit: `0de3d5c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0de3d5c8b38d1b35b4eb4904166a7b37ab53701c>`_
+
 [TASK] Remove unintentional typo3/party requirement
 -----------------------------------------------------------------------------------------
 
@@ -535,8 +536,8 @@ identifier.
 Instead of showing an uncaught exception, the user will now be provided
 with a hint::
 
-	The cache "TYPO3.TypoScript.Content" does not exist.
-	Did you mean "TYPO3_TypoScript_Content"?
+    The cache "TYPO3.TypoScript.Content" does not exist.
+    Did you mean "TYPO3_TypoScript_Content"?
 
 * Commit: `ac8dd12 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ac8dd122686d700834273ccb6b4292f71fcc86fc>`_
 
@@ -3128,10 +3129,10 @@ environments.
 A cache is marked as "persistent" by setting the respective flag in the
 configuration in Caches.yaml::
 
-	Acme_MyCache:
-	  frontend: TYPO3\\Flow\\Cache\\Frontend\\StringFrontend
-	  backend: TYPO3\\Flow\\Cache\\Backend\\SimpleFileBackend
-	  persistent: true
+    Acme_MyCache:
+      frontend: TYPO3\\Flow\\Cache\\Frontend\\StringFrontend
+      backend: TYPO3\\Flow\\Cache\\Backend\\SimpleFileBackend
+      persistent: true
 
 Persistent caches won't be flushed by the ``flow:cache:flush`` commands,
 and for file based caches, the data is not stored in
@@ -3983,7 +3984,7 @@ Fixes: FLOW-324
 [BUGFIX] Failing unit test in ``XliffModelTest``
 -----------------------------------------------------------------------------------------
 
-Regression of ``I3b5f7e06eca6a2e7e7aa31148c1d031295964c92`
+Regression of `I3b5f7e06eca6a2e7e7aa31148c1d031295964c92`
 which didn't adjust the test accordingly.
 
 * Commit: `b83f1a2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b83f1a270271a31c224deb2a8f118926d4b47fb6>`_
@@ -4162,7 +4163,7 @@ confusing the renderer over at RDT itself.
 [BUGFIX] Relax YAML schema to work with PECL parser
 -----------------------------------------------------------------------------------------
 
-This adjusts the ``Objects.yaml` schema so that::
+This adjusts the `Objects.yaml` schema so that::
 
   ./flow configuration:validate
 
@@ -4574,7 +4575,7 @@ does. A ``livereload.js`` script does get injected, but not by the
 rendering process. The script gets injected on the fly by
 python-livereload when serving the pages.
 
-.. _sphinx_autobuild: https://github.com/GaretJax/sphinx-autobuild
+.. _sphinx-autobuild: https://github.com/GaretJax/sphinx-autobuild
 
 * Commit: `6816685 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/681668508e192616365809e480e859deede52613>`_
 
@@ -4783,8 +4784,8 @@ specified.
 Being able to specify the "value" argument in Form ViewHelpers is a
 good way to pre-format the initial value::
 
-	<f:form.textfield property="price"
-		value="{product.price -> f:format.number()}" />
+    <f:form.textfield property="price"
+        value="{product.price -> f:format.number()}" />
 
 The issue with this, however, was that upon re-display of the form due
 to property-mapping or validation errors the value argument had
@@ -5114,8 +5115,8 @@ Previously, if the user mis-spelled a ViewHelper, e.g. by typing
 ``<f:format.textField>`` instead of ``<f:format.textfield>``, the system
 failed with a fatal error of the following form::
 
-	Fatal error: Call to a member function getMethodParameters() on a non-object
-	in .../Core/ViewHelper/AbstractViewHelper.php on line 349
+    Fatal error: Call to a member function getMethodParameters() on a non-object
+    in .../Core/ViewHelper/AbstractViewHelper.php on line 349
 
 The cause of this error is that the reflection service was not properly
 injected into the ViewHelper, which happens because the class loader of Flow
