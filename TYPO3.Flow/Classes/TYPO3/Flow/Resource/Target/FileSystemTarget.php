@@ -106,7 +106,7 @@ class FileSystemTarget implements TargetInterface
      * @Flow\Inject
      * @var MessageCollector
      */
-    protected $notificationCollector;
+    protected $messageCollector;
 
     /**
      * Constructor
@@ -215,7 +215,7 @@ class FileSystemTarget implements TargetInterface
     protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection)
     {
         $message = sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName());
-        $this->notificationCollector->append($message, LOG_ERR);
+        $this->messageCollector->append($message);
     }
 
     /**
