@@ -13,13 +13,13 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
-use TYPO3\Flow\Resource\Publishing\Notification;
-use TYPO3\Flow\Resource\Publishing\NotificationCollector;
+use TYPO3\Flow\Resource\Publishing\MessageCollector;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\ResourceRepository;
 
@@ -62,9 +62,9 @@ class ResourceCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var NotificationCollector
+     * @var MessageCollector
      */
-    protected $notificationCollector;
+    protected $messageCollector;
 
     /**
      * Publish resources
@@ -95,11 +95,11 @@ class ResourceCommandController extends CommandController
                 $collection->publish();
             }
 
-            if ($this->notificationCollector->hasNotification()) {
+            if ($this->messageCollector->hasNotification()) {
                 $this->outputLine();
                 $this->outputLine('The system has generate some notifications, please check if you can solve some issue:');
-                $this->notificationCollector->flush(function (Notification $notification) {
-                    $this->outputLine($notification->getSeverityLabel() . ': ' . $notification->getMessage());
+                $this->messageCollector->flush(function (Message $notification) {
+                    $this->outputLine($notification->getSeverity() . ': ' . $notification->getMessage());
                 });
             }
         } catch (Exception $exception) {

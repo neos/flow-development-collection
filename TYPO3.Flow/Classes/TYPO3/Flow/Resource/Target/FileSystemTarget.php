@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Resource\Target;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
-use TYPO3\Flow\Resource\Publishing\NotificationCollector;
+use TYPO3\Flow\Resource\Publishing\MessageCollector;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceMetaDataInterface;
 use TYPO3\Flow\Utility\Files;
@@ -104,7 +104,7 @@ class FileSystemTarget implements TargetInterface
 
     /**
      * @Flow\Inject
-     * @var NotificationCollector
+     * @var MessageCollector
      */
     protected $notificationCollector;
 
