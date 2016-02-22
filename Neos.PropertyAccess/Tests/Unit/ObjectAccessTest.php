@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Reflection;
+namespace Neos\PropertyAccess\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.PropertyAccess package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,21 +11,23 @@ namespace TYPO3\Flow\Tests\Unit\Reflection;
  * source code.
  */
 
+use Neos\PropertyAccess\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
+use Neos\PropertyAccess\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
+use Neos\PropertyAccess\Tests\Unit\Fixture\ArrayAccessClass;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
-require_once('Fixture/Model/Entity.php');
 require_once('Fixture/Model/EntityWithDoctrineProxy.php');
 
 /**
  * Testcase for Object Access
  *
  */
-class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \TYPO3\Flow\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters
+     * @var DummyClassWithGettersAndSetters
      */
     protected $dummyObject;
 
@@ -33,7 +35,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->dummyObject = new \TYPO3\Flow\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+        $this->dummyObject = new DummyClassWithGettersAndSetters();
         $this->dummyObject->setProperty('string1');
         $this->dummyObject->setAnotherProperty(42);
         $this->dummyObject->shouldNotBePickedUp = true;
@@ -270,7 +272,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPropertyCanAccessPropertiesOfAnObjectImplementingArrayAccess()
     {
-        $arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
+        $arrayAccessInstance = new ArrayAccessClass(array('key' => 'value'));
         $expectedResult = 'value';
         $actualResult = ObjectAccess::getProperty($arrayAccessInstance, 'key');
         $this->assertEquals($expectedResult, $actualResult, 'getPropertyPath does not work with Array Access property.');
@@ -281,7 +283,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPropertyRespectsForceDirectAccessForArrayAccess()
     {
-        $arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
+        $arrayAccessInstance = new ArrayAccessClass(array('key' => 'value'));
         $actualResult = ObjectAccess::getProperty($arrayAccessInstance, 'internalProperty', true);
         $this->assertEquals('access through forceDirectAccess', $actualResult, 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
     }
@@ -399,7 +401,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getGettablePropertiesHandlesDoctrineProxy()
     {
-        $proxyObject = new \TYPO3\Flow\Tests\Reflection\Fixture\Model\EntityWithDoctrineProxy();
+        $proxyObject = new EntityWithDoctrineProxy();
+
         $expectedProperties = array();
         $actualProperties = ObjectAccess::getGettableProperties($proxyObject);
         $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
@@ -476,7 +479,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPropertyPathCanRecursivelyGetPropertiesOfAnObject()
     {
-        $alternativeObject = new \TYPO3\Flow\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+        $alternativeObject = new DummyClassWithGettersAndSetters();
         $alternativeObject->setProperty('test');
         $this->dummyObject->setProperty2($alternativeObject);
 
@@ -490,7 +493,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPropertyPathReturnsNullForNonExistingPropertyPath()
     {
-        $alternativeObject = new \TYPO3\Flow\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+        $alternativeObject = new DummyClassWithGettersAndSetters();
         $alternativeObject->setProperty(new \stdClass());
         $this->dummyObject->setProperty2($alternativeObject);
 
