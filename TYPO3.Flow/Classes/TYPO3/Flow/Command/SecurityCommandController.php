@@ -280,6 +280,9 @@ class SecurityCommandController extends CommandController
             }
 
             $methodNames = get_class_methods($controllerClassName);
+            if (!is_array($methodNames)) {
+                continue;
+            }
 
             $foundUnprotectedAction = false;
             foreach ($methodNames as $methodName) {
