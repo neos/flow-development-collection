@@ -102,19 +102,19 @@ which come with the Flow distribution for getting more examples.
 
 .. code-block:: yaml
 
-	#                                                                        #
-	# Settings Configuration for the TYPO3.Viewhelpertest Package            #
-	#                                                                        #
+    #                                                                        #
+    # Settings Configuration for the TYPO3.Viewhelpertest Package            #
+    #                                                                        #
 
-	TYPO3:
-	  Viewhelpertest:
-	    includeViewHelpers: [alias, base]
+    TYPO3:
+      Viewhelpertest:
+        includeViewHelpers: [alias, base]
 
-	    xhprof:
-	      rootDirectory: '' # path to the XHProf library
-	      outputDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/' # output directory
+        xhprof:
+          rootDirectory: '' # path to the XHProf library
+          outputDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/' # output directory
 
-	    profilingTemplatesDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/'
+        profilingTemplatesDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/'
 
 
 .. warning::
@@ -162,12 +162,12 @@ method.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function ($configurationManager) {
-			$configurationManager->registerConfigurationType('Views');
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function ($configurationManager) {
+            $configurationManager->registerConfigurationType('Views');
+        }
+    );
 
 This will allow to use the new configuration type ``Views`` in the same way as the other types
 supported by Flow natively, as soon as you have a file named ``Views.yaml`` in your configuration
@@ -181,15 +181,15 @@ constants in ``ConfigurationManager``.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function ($configurationManager) {
-			$configurationManager->registerConfigurationType(
-				'CustomObjects',
-				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
-			);
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function ($configurationManager) {
+            $configurationManager->registerConfigurationType(
+                'CustomObjects',
+                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
+            );
+        }
+    );
 
 Split configuration sources
 ---------------------------
@@ -202,31 +202,31 @@ configuration filenames.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function (ConfigurationManager $configurationManager) {
-			$configurationManager->registerConfigurationType(
-				'Models',
-				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-				TRUE
-			);
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function (ConfigurationManager $configurationManager) {
+            $configurationManager->registerConfigurationType(
+                'Models',
+                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                TRUE
+            );
+        }
+    );
 
 The above code will lead to the following files being read, sorted by name and merged if the
 configuration of type ``Models`` is requested:
 
 .. code-block:: text
 
-	Configuration/
-		Models.yaml
-		Models.Foo.yaml
-		Models.Bar.yaml
-		Models.Quux.yaml
+    Configuration/
+        Models.yaml
+        Models.Foo.yaml
+        Models.Bar.yaml
+        Models.Quux.yaml
 
 .. note::
-	Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
-	``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
+    Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
+    ``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
 
 Accessing Settings
 ==================
@@ -241,43 +241,43 @@ of a classes' package and output some option value:
 
 .. code-block:: yaml
 
-	Acme:
-	  Demo:
-	    administrator:
-	      email: 'john@doe.com'
-	      name: 'John Doe'
+    Acme:
+      Demo:
+        administrator:
+          email: 'john@doe.com'
+          name: 'John Doe'
 
 .. code-block:: php
 
-	namespace Acme\Demo;
+    namespace Acme\Demo;
 
-	class SomeClass {
+    class SomeClass {
 
-		/**
-		 * @var array
-		 */
-		protected $settings;
+        /**
+         * @var array
+         */
+        protected $settings;
 
-		/**
-		 * Inject the settings
-		 *
-		 * @param array $settings
-		 * @return void
-		 */
-		public function injectSettings(array $settings) {
-			$this->settings = $settings;
-		}
+        /**
+         * Inject the settings
+         *
+         * @param array $settings
+         * @return void
+         */
+        public function injectSettings(array $settings) {
+            $this->settings = $settings;
+        }
 
-		/**
-		 * Outputs some settings of the "Demo" package.
-		 *
-		 * @return void
-		 */
-		public function theMethod() {
-			echo ($this->settings['administrator']['name']);
-			echo ($this->settings['administrator']['email']);
-		}
-	}
+        /**
+         * Outputs some settings of the "Demo" package.
+         *
+         * @return void
+         */
+        public function theMethod() {
+            echo ($this->settings['administrator']['name']);
+            echo ($this->settings['administrator']['email']);
+        }
+    }
 
 .. note::
   Injecting all settings creates tight coupling to the settings. If you only need
@@ -305,61 +305,61 @@ The annotation provides three optional attributes related to configuration injec
 
 .. code-block:: yaml
 
-	Acme:
-	  Demo:
-	    administrator:
-	      name: 'John Doe'
-	SomeOther:
-	  Package:
-	    email: 'john@doe.com'
+    Acme:
+      Demo:
+        administrator:
+          name: 'John Doe'
+    SomeOther:
+      Package:
+        email: 'john@doe.com'
 
 
 .. code-block:: php
 
-	namespace Acme\Demo;
+    namespace Acme\Demo;
 
-	use TYPO3\Flow\Annotations as Flow;
+    use TYPO3\Flow\Annotations as Flow;
 
-	class SomeClass {
+    class SomeClass {
 
-		/**
-		 * @Flow\InjectConfiguration(path="administrator.name")
-		 * @var string
-		 */
-		protected $name;
+      /**
+       * @Flow\InjectConfiguration(path="administrator.name")
+       * @var string
+       */
+      protected $name;
 
-		/**
-		 * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
-		 * @var string
-		 */
-		protected $email;
+      /**
+       * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
+       * @var string
+       */
+      protected $email;
 
-		/**
-		 * @Flow\InjectConfiguration(package="SomeOther.Package")
-		 * @var array
-		 */
-		protected $someOtherPackageSettings = array();
+      /**
+       * @Flow\InjectConfiguration(package="SomeOther.Package")
+       * @var array
+       */
+      protected $someOtherPackageSettings = array();
 
-		/**
-		 * Overrides the name
-		 *
-		 * @param string $name
-		 * @return void
-		 */
-		public function setName($name) {
-			$this->name = $name;
-		}
+      /**
+       * Overrides the name
+       *
+       * @param string $name
+       * @return void
+       */
+      public function setName($name) {
+        $this->name = $name;
+      }
 
-		/**
-		 * Overrides the email
-		 *
-		 * @param string $email
-		 * @return void
-		 */
-		public function setEmail($email) {
-			$this->email = $email;
-		}
-	}
+      /**
+       * Overrides the email
+       *
+       * @param string $email
+       * @return void
+       */
+      public function setEmail($email) {
+        $this->email = $email;
+      }
+    }
 
 Working with other configuration
 --------------------------------
@@ -387,7 +387,7 @@ flush caches manually (should that be needed), use the following command:
 
 .. code-block:: bash
 
-	$ ./flow flow:cache:flush
+    $ ./flow flow:cache:flush
 
 Configuration Validation
 ========================
