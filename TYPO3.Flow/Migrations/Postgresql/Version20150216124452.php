@@ -19,7 +19,7 @@ class Version20150216124452 extends AbstractMigration
 
         if ($this->isPartyPackageInstalled()) {
             $this->addSql("ALTER TABLE typo3_flow_security_account DROP CONSTRAINT fk_65efb31c89954ee0");
-            $this->addSql("DROP INDEX idx_65efb31c89954ee0");
+            $this->addSql("DROP INDEX IF EXISTS idx_65efb31c89954ee0");
         }
 
         $this->addSql("ALTER TABLE typo3_flow_security_account DROP party");
