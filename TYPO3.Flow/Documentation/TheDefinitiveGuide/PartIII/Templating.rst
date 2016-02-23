@@ -2,7 +2,7 @@
 Templating
 ==========
 
-.. sectionauthor:: Sebastian Kurfürst <sebastian@typo3.org>
+.. sectionauthor:: Sebastian Kurfürst <sebastian@neos.io>
 
 .. in this template, the default highlighter is XML:
 

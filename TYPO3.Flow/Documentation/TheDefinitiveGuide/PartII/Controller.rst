@@ -43,7 +43,7 @@ The kickstarter created a very basic command controller containing only one comm
 		/**
 		 * An example command
 		 *
-		 * The comment of this command method is also used for TYPO3 Flow's help screens. The first line should give a very short
+		 * The comment of this command method is also used for Flow's help screens. The first line should give a very short
 		 * summary about what the command does. Then, after an empty line, you should explain in more detail what the command
 		 * does. You might also give some usage example.
 		 *

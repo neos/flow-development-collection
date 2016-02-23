@@ -1,7 +1,7 @@
 Error and Exception Handling
 ============================
 
-TYPO3 Flow reports applications errors by throwing specific exceptions. Exceptions are
+Flow reports applications errors by throwing specific exceptions. Exceptions are
 structured in a hierarchy which is based on base exception classes for each
 component. By default, PHP catchable errors, warnings and notices are automatically
 converted into exceptions in order to simplify the error handling.
@@ -14,7 +14,7 @@ Throwing Exceptions
 -------------------
 
 Applications should throw exceptions which are based on one of the exception classes
-provided by TYPO3 Flow. Each exception should be identified by a unique error code which
+provided by Flow. Each exception should be identified by a unique error code which
 is, by convention, the unix timestamp of the point in time when the developer
 implemented the code throwing the exception::
 
@@ -28,7 +28,7 @@ value assigned::
 
     class SomethingWasNotFoundException extends \TYPO3\Flow\Exception {
 
-        /**
+    /**
      * @var integer
      */
     protected $statusCode = 404;
@@ -38,7 +38,7 @@ value assigned::
 Exception Handlers
 ------------------
 
-TYPO3 Flow comes with two different exception handlers:
+Flow comes with two different exception handlers:
 
 * the ``DebugExceptionHandler`` displays a big amount of background information,
   including a call stack, in order to simplify debugging of the exception cause.
@@ -69,14 +69,14 @@ Reference Code
 
 In a production context, the exception handler should, for security reasons, not
 reveal any information about the inner workings and data of the application. In
-order to be able to track down the root of the problem, TYPO3 Flow generates a unique
+order to be able to track down the root of the problem, Flow generates a unique
 reference code when an exception is thrown. It is safe to display this reference
 code to the user who can, in turn, contact the administrators of the application
 to report the error. At the server side, detailed information about the exception
 is stored in a file named after the reference code.
 
 You will find report files for exceptions thrown in ``Data/Logs/Exceptions/``. In
-some rare cases though, when TYPO3 Flow is not even able to write the respective log
+some rare cases though, when Flow is not even able to write the respective log
 file, no details about the exception can be provided.
 
 .. figure:: Images/Error_ReferenceCode.png
@@ -88,7 +88,7 @@ file, no details about the exception can be provided.
 Error Handler
 -------------
 
-TYPO3 Flow provides a central error handler which jumps in if a PHP error, warning or
+Flow provides a central error handler which jumps in if a PHP error, warning or
 notice occurs. Instead of displaying or logging the error right away, it is
 transformed into an ``ErrorException``.
 

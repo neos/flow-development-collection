@@ -1,10 +1,10 @@
 HTTP Foundation
 ===============
 
-Most applications which are based on TYPO3 Flow are web applications. As the HTTP protocol is the foundation of the
-World Wide Web, it also plays an important role in the architecture of the TYPO3 Flow framework.
+Most applications which are based on Flow are web applications. As the HTTP protocol is the foundation of the
+World Wide Web, it also plays an important role in the architecture of the Flow framework.
 
-This chapter describes the mechanics behind TYPO3 Flow's request-response model, how it relates to the Model View
+This chapter describes the mechanics behind Flow's request-response model, how it relates to the Model View
 Controller framework and which API functions you can use to deal with specific aspects of the HTTP request and response.
 
 The HTTP 1.1 Specification
@@ -22,14 +22,14 @@ claim that you developed a true `REST`_ service.
 Application Flow
 ----------------
 
-The basic walk through a TYPO3 Flow-based web application is as follows:
+The basic walk through a Flow-based web application is as follows:
 
 * the browser sends an HTTP request to a webserver
-* the webserver calls Web/index.php and passes control over to TYPO3 Flow
+* the webserver calls Web/index.php and passes control over to Flow
 * the :abbr:`Bootstrap (\\TYPO3\\Flow\\Core\\Bootstrap)` initializes the bare minimum and passes control to a suitable
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\TYPO3\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
-  which initializes all important parts of TYPO3 Flow
+  which initializes all important parts of Flow
 * the HTTP Request Handler builds an HTTP Request and Response object. The
   :abbr:`Request object (\\TYPO3\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
   The :abbr:`Response object (\\TYPO3\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
@@ -80,10 +80,10 @@ Request Handler
 The request handler is responsible for taking a request and responding in a manner the client understands. The default
 HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Component chain``. Other
 request handlers may choose a completely different way to handle requests.
-Although TYPO3 Flow also supports other types of requests (most notably, from the command line interface), this chapter
+Although Flow also supports other types of requests (most notably, from the command line interface), this chapter
 only deals with HTTP requests.
 
-TYPO3 Flow comes with a very slim bootstrap, which results in few code being executed before control is handed over to
+Flow comes with a very slim bootstrap, which results in few code being executed before control is handed over to
 the request handler. This pays off in situations where a specialized request handler is supposed to handle specific
 requests in a very effective way. In fact, the request handler is responsible for executing big parts of the
 initialization procedures and thus can optimize the boot process by choosing only the parts it actually needs.
@@ -244,7 +244,7 @@ GET, POST and PUT arguments and even the information about uploaded files. Be aw
 sanitized or further processed and thus are not suitable for being used in controller actions. If you, however, need to
 access the raw data, these API function are the right way to retrieve them.
 
-Arguments provided by POST or PUT requests are usually encoded in one or the other way. TYPO3 Flow detects the encoding
+Arguments provided by POST or PUT requests are usually encoded in one or the other way. Flow detects the encoding
 through the ``Content-Type`` header and decodes the arguments and their values automatically.
 
 getContent()
@@ -298,7 +298,7 @@ sometimes referred to as ``GMT``, but in fact `Greenwich Mean Time`_ is not the 
 complicate things a bit more, according to the standards the HTTP headers will contain dates with the timezone declared
 as ``GMT`` – which in reality refers to ``UTC``.
 
-TYPO3 Flow will always return dates related to HTTP as UTC times. Keep that in mind if you pass dates from a different
+Flow will always return dates related to HTTP as UTC times. Keep that in mind if you pass dates from a different
 standard and then retrieve them again: the ``DateTime`` objects will mark the same point in time, but have a different
 time zone set.
 
@@ -388,7 +388,7 @@ A URL specifying two different representations of that resource:
 Throughout the framework we use the term ``URI`` instead of ``URL`` because it is more generic and more often than not,
 the correct term to use.
 
-All methods in TYPO3 Flow returning a URI will do so in form of a URI object. Most methods requiring a URI will also
+All methods in Flow returning a URI will do so in form of a URI object. Most methods requiring a URI will also
 accept a string representation.
 
 You are encouraged to use the ``Uri`` class for your own purposes – you'll get a nice API and validation for free!
@@ -398,14 +398,14 @@ Virtual Browser
 
 The HTTP foundation comes with a virtual browser which allows for sending and receiving HTTP requests and responses.
 The browser's API basically follows the functions of a typical web browser. The requests and responses are used in form
-of ``Http\Request`` and ``Http\Response`` instances, similar to the requests and responses used by TYPO3 Flow's request
+of ``Http\Request`` and ``Http\Response`` instances, similar to the requests and responses used by Flow's request
 handling mechanism.
 
 Request Engines
 ~~~~~~~~~~~~~~~
 
 The engine responsible for actually sending the request is pluggable. Currently there are two engines delivered with
-TYPO3 Flow:
+Flow:
 
 * ``InternalRequestEngine`` simulates requests for use in functional tests
 * ``CurlEngine`` uses the cURL extension to send real requests to other servers
@@ -475,7 +475,7 @@ other application parts which are accessible via HTTP. This browser has the ``In
 
 		/**
 		 * Send a request to a controller of my application.
-		 * Hint: The host name is not evaluated by TYPO3 Flow and thus doesn't matter
+		 * Hint: The host name is not evaluated by Flow and thus doesn't matter
 		 *
 		 * @test
 		 */

@@ -2,7 +2,7 @@
 Session Handling
 ================
 
-TYPO3 Flow has excellent support for working with sessions.
+Flow has excellent support for working with sessions.
 
 This chapter will explain:
 
@@ -12,7 +12,7 @@ This chapter will explain:
 Scope Session
 =============
 
-TYPO3 Flow does not only support the ``prototype`` and ``singleton`` object scopes, but also the
+Flow does not only support the ``prototype`` and ``singleton`` object scopes, but also the
 object scope ``session``. Objects marked like this basically behave like ``singleton`` objects
 which are automatically serialized into the user's session.
 
@@ -70,12 +70,12 @@ When a user browses the website, the following then happens:
 
 .. admonition:: Why is ``@Flow\Session(autoStart = TRUE)`` necessary?
 
-	If TYPO3 Flow did not have this annotation, there would be no way for it to determine
+	If Flow did not have this annotation, there would be no way for it to determine
 	when a session must be started. Thus, every user browsing the website would
 	*always* need a session as soon as an object of scope ``session`` is accessed.
 	This would happens if the ``session``-scoped object is still in its initial state.
 
-	To be able to use proxies such as Varnish, TYPO3 Flow defers the creation of a
+	To be able to use proxies such as Varnish, Flow defers the creation of a
 	session to a point in time when it is really needed -- and the developer needs
 	to tell the framework when that point is reached using the above annotation.
 
@@ -102,7 +102,7 @@ the session, the *session scope* should be used whenever possible.
 Session Backends
 ================
 
-The session implementation of TYPO3 Flow is written in pure PHP and uses the caching
+The session implementation of Flow is written in pure PHP and uses the caching
 framework as its storage. This allows for storing session data in a variety of
 backends, including PDO databases, APC, Memcache and Redis.
 
@@ -116,5 +116,5 @@ Caches.yaml file, placed in a package or the global configuration directory:
 
 The built-in session implementation provides a few more configuration options, related to
 the session cookie and the automatic garbage collection. Please refer to the
-Settings.yaml file of the TYPO3 Flow package for a list of all possible options and
+Settings.yaml file of the Flow package for a list of all possible options and
 their respective documentation.

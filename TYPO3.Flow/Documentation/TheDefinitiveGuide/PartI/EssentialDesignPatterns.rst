@@ -2,19 +2,19 @@
 Essential Design Patterns
 =========================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>, Ryan J. Peterson <ryan@mathusee.com>
+.. sectionauthor:: Robert Lemke <robert@neos.io>, Ryan J. Peterson <ryan@mathusee.com>
 
 
-TYPO3 Flow Paradigm
-===================
+Flow Paradigm
+=============
 
-TYPO3 Flow was designed from the ground up to be modular, adaptive and agile to
+Flow was designed from the ground up to be modular, adaptive and agile to
 enable developers of all skill levels to build maintainable, extensible and
 robust software through the implementation of several proven design paradigms.
 Building software based on these principles will allow for faster, better
 performing applications that can be extended to meet changing requirements while
 avoiding inherent problems introduced by traditional legacy code maintenance.
-TYPO3 Flow aims to make what you "should" do what you "want" to do by providing the
+Flow aims to make what you "should" do what you "want" to do by providing the
 framework and community around best practices in the respective essential design
 patterns.
 
@@ -34,7 +34,7 @@ boundaries of classes and even packages. One example for such a cross-cutting
 concern is security: Although the main purpose of a Forum package is to display
 and manage posts of a forum, it has to implement some kind of security to assert
 that only moderators can approve or delete posts. And many more packages need a
-similar functionality for protect the creation, deletion and update of records. .
+similar functionality for protect the creation, deletion and update of records.
 AOP enables you to move the security (or any other) aspect into its own package
 and leave the other objects with clear responsibilities, probably not
 implementing any security themselves.

@@ -14,10 +14,10 @@ technically okay code or a well considered, mature solution.
 
 These guidelines try to cover both, the technical standards as well as giving incentives
 for a common development style. These guidelines must be followed by everyone who creates
-code for the TYPO3 Flow core. Because Neos is based on TYPO3 Flow, it follows the same principles -
-therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Neos.
+code for the Flow core. Because Neos is based on Flow, it follows the same principles -
+therefore, whenever we mention Flow in the following sections, we equally refer to Neos.
 We hope that you feel encouraged to follow these guidelines as well when creating your own
-packages and TYPO3 Flow based applications.
+packages and Flow based applications.
 
 CGL on One Page
 ===============
@@ -37,7 +37,7 @@ Does it get any easier than that?
 Code Formatting and Layout
 ==========================
 
-The visual style of programming code is very important. In the TYPO3 project we want many
+The visual style of programming code is very important. In the Neos project we want many
 programmers to contribute, but in the same style. This will help us to:
 
 * Easily read/understand each others code and consequently easily spot security problems
@@ -46,7 +46,7 @@ programmers to contribute, but in the same style. This will help us to:
   programmers striving for excellence
 
 Some people may object to the visual guidelines since everyone has his own habits. You
-will have to overcome that in the case of TYPO3 Flow; the visual guidelines must be followed
+will have to overcome that in the case of Flow; the visual guidelines must be followed
 along with coding guidelines for security. We want all contributions to the project to be
 as similar in style and as secure as possible.
 
@@ -54,7 +54,7 @@ General considerations
 ----------------------
 
 * Follow the PSR-2 standard for code formatting
-* Almost every PHP file in TYPO3 Flow contains exactly one class and does not output anything
+* Almost every PHP file in Flow contains exactly one class and does not output anything
   if it is called directly. Therefore you start your file with a ``<?php`` tag and must not end it
   with the closing ``?>``.
 * Every file must contain a header stating namespace and licensing information
@@ -86,8 +86,7 @@ Make sure you use the correct license and mention the correct package in the hea
 PSR-2
 -----
 
-We follow the PSR-2 standard which is defined by PHP FIG. You can read the full standard
-on `psr-2 standard`_.
+We follow the PSR-2 standard which is defined by PHP FIG. You should read the full `PSR-2 standard`_.
 
 .. _`psr-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
@@ -117,7 +116,7 @@ Naming
 
 Naming is a repeatedly undervalued factor in the art of software development. Although
 everybody seems to agree on that nice names are a nice thing to have, most developers
-choose cryptic abbreviations in the end (to save some typing). Beware that we TYPO3 core
+choose cryptic abbreviations in the end (to save some typing). Beware that we Neos core
 developers are very passionate about naming (some people call it fanatic, well ...). In
 our opinion spending 15 minutes (or more ...) just to find a good name for a method is
 well spent time! There are zillions of reasons for using proper names and in the end they
@@ -130,22 +129,22 @@ languages.
 
 When using abbreviations or acronyms remember to make them camel-cased as needed, no
 all-uppercase stuff. Admittedly there are a few places where we violate that rule
-willingly (TYPO3 – will not change) and historically.
+willingly and for historical reasons.
 
 
 Vendor namespaces
 -----------------
 
-The base for namespaces as well as package keys is the vendor namespace. Since Flow is
-part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
-namespace. The Object Manager for example is known under the class name
-``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
-namespace.
+The base for namespaces as well as package keys is the vendor namespace. Since Flow started
+as part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
+namespace (at some point this will change). The Object Manager for example is known under
+the class name ``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme``
+vendor namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
-central package key registry (like the one we have for TYPO3 CMS extensions) and secondly,
-it allows anyone to seamlessly integrate third-party packages, such as Symfony2 components
-and Zend Framework components or virtually any other PHP 5.3+ based library.
+central package key registry and secondly, it allows anyone to seamlessly integrate third-party
+packages, such as Symfony2 components and Zend Framework components or virtually any other PHP
+library.
 
 Think about your own vendor namespace for a few minutes. It will stay with you for a long
 time.
@@ -378,7 +377,7 @@ These are the rules for naming files:
   tested, appended with "Test.php".
 * Files are placed in a directory structure representing the namespace structure.
 
-*File naming in TYPO3 Flow*
+*File naming in Flow*
 
 ``TYPO3.TemplateEngine/Classes/TYPO3/TemplateEngine/TemplateEngineInterface.php``
   Contains the interface ``\TYPO3\TemplateEngine\TemplateEngineInterface`` which is part
@@ -512,21 +511,21 @@ The syntax is as follows:
 
 * Start with one of the following codes:
 
-  [FEATURE]
+  FEATURE:
     A feature change. Most likely it will be an added feature, but it could also be removed. For additions there should
     be a corresponding ticket in the issue tracker.
-  [BUGFIX]
+  BUGFIX:
     A fix for a bug. There should be a ticket corresponding to this in the issue tracker as well as a new) unit test for
     the fix.
-  [SECURITY]
+  SECURITY:
     A security related change. Those must only be committed by active contributors in agreement with the
-    `TYPO3 Security Team`_.
-  [TASK]
+    security team.
+  TASK:
     Anything not covered by the above categories, e.g. coding style cleanup or documentation changes. Usually only used
     if there's no corresponding ticket.
 
-  Except for [SECURITY] each of the above codes can be prefixed with [WIP] to mark a change **work in progress**. This
-  means that it is not yet ready for a final review. The [WIP] Prefix must be removed before a change is merged.
+  Except for SECURITY each of the above codes can be prefixed with WIP to mark a change **work in progress**. This
+  means that it is not yet ready for a final review. The WIP prefix must be removed before a change is merged.
 
 * The code is followed by a short summary in the same line, no full stop at the end.
   If the change affects the public API or is likely to break things on the user side, start the line with **[!!!]**.
@@ -542,22 +541,16 @@ The syntax is as follows:
 * If corresponding tickets exist, mention the ticket number(s) using footer lines after
   another blank line and use the following actions:
 
-  Fixes: #<number>
-   If the change fixes a bug.
-  Resolves: #<number>
-   If the change resolves a feature request or task.
-  Related: #<number>
+  <Issue-Id> #close <optional comment here>
+   If the change fixes a bug, resolves a feature request or task.
+  <Issue-Id> #comment <some explanation here>
    If the change relates to an issue but does not resolve or fix it.
-
-* Fixes may be targeted at not only the master branch (i.e. the next major/point release),
-  but also for a point release in an older branch. Thus a ``Releases`` footer must address
-  the target branches.
 
 *A commit messages following the rules...*:
 
 .. code-block:: text
 
- [TASK] Short (50 chars or less) summary of changes
+ TASK: Short (50 chars or less) summary of changes
 
  More detailed explanatory text, if necessary.  Wrap it to about 72
  characters or so.  In some contexts, the first line is treated as the
@@ -583,22 +576,18 @@ The syntax is as follows:
    space. This format is rendered correctly by Forge (redmine)
  * Use a hanging indent
 
- Resolves: #123
- Resolves: #456
- Related: #789
- Releases: master, 1.1, 1.0
+ FLOW-123 #close
+ FLOW-789 #comment Fixes this partly, needs more work
 
 
 Examples of good and bad subject lines::
 
-   Introduce xyz service                             // BAD, missing code prefix
-   [BUGFIX] Fixed bug xyz                            // BAD, subject should be written in present tense
-   [WIP][!!!][TASK] A breaking change                // BAD, subject has to start with [!!!] for breaking changes
-   [BUGFIX] SessionManager removes expired sessions  // GOOD, the line explains what the change does, not what the
-                                                        bug is about (this should be explained in the following lines
-                                                        and in the related bug tracker ticket)
-
-.. _`TYPO3 Security Team`: http://typo3.org/teams/security/
+   Introduce xyz service                            // BAD, missing code prefix
+   BUGFIX: Fixed bug xyz                            // BAD, subject should be written in present tense
+   WIP !!! TASK: A breaking change                  // BAD, subject has to start with [!!!] for breaking changes
+   BUGFIX: SessionManager removes expired sessions  // GOOD, the line explains what the change does, not what the
+                                                       bug is about (this should be explained in the following lines
+                                                       and in the related bug tracker ticket)
 
 Source Code Documentation
 -------------------------
@@ -706,8 +695,8 @@ Defining the Public API
 -----------------------
 
 Not all methods with a public visibility are necessarily part of the intended public API
-of a project. For TYPO3 Flow, only the methods explicitly defined as part of the public API
-will be kept stable and are intended for use by developers using TYPO3 Flow. Also the API
+of a project. For Flow, only the methods explicitly defined as part of the public API
+will be kept stable and are intended for use by developers using Flow. Also the API
 documentation we produce will only cover the public API.
 
 To mark a method as part of the public API, include an ``@api`` annotation for it in the
@@ -734,7 +723,7 @@ docblock.
 Overview of Documentation Annotations
 -------------------------------------
 
-There are not only documentation annotations that can be used. In TYPO3 Flow annotations are
+There are not only documentation annotations that can be used. In Flow annotations are
 also used in the MVC component, for defining aspects and advices for the AOP framework as
 well as for giving instructions to the Persistence framework. See the individual chapters
 for information on their purpose and use.
@@ -823,15 +812,15 @@ the order given here should be kept for the sake of consistency.
 Best Practices
 ==============
 
-TYPO3 Flow
-----------
+Flow
+----
 
-This section gives you an overview of TYPO3 Flow's coding rules and best practices.
+This section gives you an overview of Flow's coding rules and best practices.
 
 Error Handling and Exceptions
 -----------------------------
 
-TYPO3 Flow makes use of a hierarchy for its exception classes. The general rule is to throw
+Flow makes use of a hierarchy for its exception classes. The general rule is to throw
 preferably specific exceptions and usually let them bubble up until a place where more
 general exceptions are caught. Consider the following example:
 
@@ -854,9 +843,6 @@ Throwing an exception
 When throwing an exception, make sure to provide a clear error message and an *error code
 being the unix timestamp of when you write the ``throw`` statement*. That error code must
 be unique, so watch out when doing copy and paste!
-
-For every exception there should be a page on the TYPO3 wiki, as exception messages link
-to that page, identified by the error code (unix timestamp).
 
 Unit Testing
 ------------

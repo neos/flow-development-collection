@@ -1,31 +1,31 @@
 Quickstart
 ==========
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 What Is in This Guide?
 ----------------------
 
-This guided tour gets you started with TYPO3 Flow by giving step-by-step instructions for the
+This guided tour gets you started with Flow by giving step-by-step instructions for the
 development of a small sample application. It will give you a first overview of the basic
 concepts and leaves the details to the full manual and more specific guides.
 
 Be warned that your head will be buzzed with several new concepts. But after you made your
 way through the whitewater you'll surely ride the wave in no time!
 
-What Is TYPO3 Flow?
--------------------
+What Is Flow?
+-------------
 
-TYPO3 Flow is a PHP-based application framework which is especially well-suited for
+Flow is a PHP-based application framework which is especially well-suited for
 enterprise-grade applications. Its architecture and conventions keep your head clear and
 let you focus on the essential parts of your application. Although stability, security and
 performance are all important elements of the framework's design, the fluent user
 experience is the one underlying theme which rules them all.
 
-As a matter of fact, TYPO3 Flow is easier to learn for PHP beginners than for veterans. It
+As a matter of fact, Flow is easier to learn for PHP beginners than for veterans. It
 takes a while to leave behind old paradigms and open up for new approaches. That being
-said, developing with TYPO3 Flow is very intuitive and the basic principles can be learned
-within a few hours. Even if you don't decide to use TYPO3 Flow for your next project, there are
+said, developing with Flow is very intuitive and the basic principles can be learned
+within a few hours. Even if you don't decide to use Flow for your next project, there are
 a lot of universal development techniques you can learn.
 
 .. tip::
@@ -33,10 +33,10 @@ a lot of universal development techniques you can learn.
     This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
     already, with a few shots of Espresso ...
 
-Installing TYPO3 Flow
----------------------
+Installing Flow
+---------------
 
-Setting up TYPO3 Flow is pretty straight-forward. As a minimum requirement you will need:
+Setting up Flow is pretty straight-forward. As a minimum requirement you will need:
 
 * A web server (we recommend Apache with the *mod_rewrite* module enabled)
 * PHP 5.5.0 or later
@@ -59,7 +59,7 @@ which boils down to this in the simplest case::
     syntax in manifest files.
 
 Then use Composer in a directory which will be accessible by your web server to download
-and install all packages of the TYPO3 Flow Base Distribution. The following command will
+and install all packages of the Flow Base Distribution. The following command will
 clone the latest version, include development dependencies and keep git metadata for future use::
 
  composer create-project --dev --keep-vcs typo3/flow-base-distribution Quickstart
@@ -87,9 +87,9 @@ You will end up with a directory structure like this:
 Setting File Permissions
 ------------------------
 
-You will access TYPO3 Flow from both, the command line and the web browser. In order to provide
+You will access Flow from both, the command line and the web browser. In order to provide
 write access to certain directories for both, you will need to set the file permissions
-accordingly. But don't worry, this is simply done by changing to the TYPO3 Flow base directory
+accordingly. But don't worry, this is simply done by changing to the Flow base directory
 (``Quickstart`` in the above example) and calling the following command:
 
 *command line*::
@@ -100,8 +100,8 @@ Please replace *john* by your own username. The second argument is supposed to b
 username of your web server and the last one specifies the web server's group. For most
 installations on Mac OS X this would be both *_www* instead of *www-data*.
 
-It can and usually will happen that TYPO3 Flow is launched from the command line by a different
-user. All users who plan using TYPO3 Flow from the command line need to join the web server's
+It can and usually will happen that Flow is launched from the command line by a different
+user. All users who plan using Flow from the command line need to join the web server's
 group. On a Linux machine this can be done by typing:
 
 *command line*::
@@ -142,10 +142,10 @@ Testing the Installation
 ------------------------
 
 .. figure:: Images/Welcome.png
-    :alt: The TYPO3 Flow Welcome Screen
+    :alt: The Flow Welcome Screen
     :class: screenshot-fullsize
 
-    The TYPO3 Flow Welcome Screen
+    The Flow Welcome Screen
 
 If your system is configured correctly you should now be able to access the Welcome
 screen:
@@ -155,7 +155,7 @@ screen:
     http://quickstart/
 
 If you did not follow our advice to create a virtual host, point your browser to the
-``Web`` directory of your TYPO3 Flow installation throughout this tutorial, for example:
+``Web`` directory of your Flow installation throughout this tutorial, for example:
 
 .. code-block:: text
 
@@ -178,12 +178,12 @@ permissions.
 
 .. tip::
 
-    There are some friendly ghosts in our `IRC channel`_ and in the `users mailing list`_
+    There are some friendly ghosts in our `Slack channel`_ and in the `Discuss forum`_
     – they will gladly help you out if you describe your problem as precisely as possible.
 
 .. rubric:: Some Note About Speed
 
-The first request will usually take quite a while because TYPO3 Flow does a lot of heavy
+The first request will usually take quite a while because Flow does a lot of heavy
 lifting in the background. It analyzes code, builds up reflection caches and applies
 security rules. During all the following examples you will work in the so called
 *Development Context*. It makes development very convenient but feels a lot slower than
@@ -258,7 +258,7 @@ browser::
         ));
     }
 
-Accepting some kind of user input is essential for most applications and TYPO3 Flow does a
+Accepting some kind of user input is essential for most applications and Flow does a
 great deal of processing and sanitizing any incoming data. Try it out – create a new
 action method like this one::
 
@@ -281,7 +281,7 @@ action method like this one::
 
     You should always properly document all your functions and class properties. This
     will not only help other developers to understand your code, but is also essential for
-    TYPO3 Flow to work properly.
+    Flow to work properly.
 
 Now test the new action by passing it a name like in the following URL:
 
@@ -289,7 +289,7 @@ Now test the new action by passing it a name like in the following URL:
 
     http://quickstart/Acme.Demo/Standard/hello?name=Robert
 
-The path segments of this URL tell TYPO3 Flow to which controller and action the web request
+The path segments of this URL tell Flow to which controller and action the web request
 should be dispatched to. In our example the parts are:
 
 * *Acme.Demo* (package key)
@@ -298,19 +298,19 @@ should be dispatched to. In our example the parts are:
 
 If everything went fine, you should be greeted by a friendly "`Hello Robert!`" – if that's
 the name you passed to the action. Also try leaving out the *name* parameter in the URL –
-TYPO3 Flow will complain about a missing argument.
+Flow will complain about a missing argument.
 
 Database Setup
 --------------
 
-One important design goal for TYPO3 Flow was to let a developer focus on the business logic and
-work in a truly object-oriented fashion. While you develop a TYPO3 Flow application, you will
+One important design goal for Flow was to let a developer focus on the business logic and
+work in a truly object-oriented fashion. While you develop a Flow application, you will
 hardly note that content is actually stored in a database. Your code won't contain any
 SQL query and you don't have to deal with setting up table structures.
 
-But before you can store anything, you still need to set up a database and tell TYPO3 Flow how
+But before you can store anything, you still need to set up a database and tell Flow how
 to access it. The credentials and driver options need to be specified in the global
-TYPO3 Flow settings.
+Flow settings.
 
 After you have created an empty database and set up a user with sufficient access
 rights, copy the file *Configuration/Settings.yaml.example* to
@@ -339,7 +339,7 @@ setup, it would look similar to this:
     * Spaces, not tabs: you must indent with exactly 2 spaces per level, don't use tabs.
 
 If you configured everything correctly, the following command will create the initial
-table structure needed by TYPO3 Flow:
+table structure needed by Flow:
 
 .. code-block:: bash
 
@@ -375,7 +375,7 @@ just generate some example with the kickstarter:
 
 Whenever a model is created or modified, the database structure needs to be adjusted to
 fit the new PHP code. This is something you should do consciously because existing data
-could be altered or removed – therefore this step isn't taken automatically by TYPO3 Flow.
+could be altered or removed – therefore this step isn't taken automatically by Flow.
 
 The kickstarter created a new model representing a coffee bean. For promoting the new
 structure to the database, just run the :command:`doctrine:update` command:
@@ -423,11 +423,14 @@ With this background, the following complete code listing powering the previous 
 may seem a bit odd, if not magical to you. Take a close look at each of the methods –
 can you imagine what they do? ::
 
+    use Acme\Demo\Domain\Model\CoffeeBean;
+    use Acme\Demo\Domain\Repository\CoffeeBeanRepository;
+    
     class CoffeeBeanController extends ActionController {
 
         /**
          * @Flow\Inject
-         * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
+         * @var CoffeeBeanRepository
          */
         protected $coffeeBeanRepository;
 
@@ -439,7 +442,7 @@ can you imagine what they do? ::
         }
 
         /**
-         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @param CoffeeBean $coffeeBean
          * @return void
          */
         public function showAction(CoffeeBean $coffeeBean) {
@@ -453,7 +456,7 @@ can you imagine what they do? ::
         }
 
         /**
-         * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
+         * @param CoffeeBean $newCoffeeBean
          * @return void
          */
         public function createAction(CoffeeBean $newCoffeeBean) {
@@ -463,7 +466,7 @@ can you imagine what they do? ::
         }
 
         /**
-         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @param CoffeeBean $coffeeBean
          * @return void
          */
         public function editAction(CoffeeBean $coffeeBean) {
@@ -471,7 +474,7 @@ can you imagine what they do? ::
         }
 
         /**
-         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @param CoffeeBean $coffeeBean
          * @return void
          */
         public function updateAction(CoffeeBean $coffeeBean) {
@@ -481,7 +484,7 @@ can you imagine what they do? ::
         }
 
         /**
-         * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
+         * @param CoffeeBean $coffeeBean
          * @return void
          */
         public function deleteAction(CoffeeBean $coffeeBean) {
@@ -496,7 +499,7 @@ You will learn all the nitty-gritty details of persistence (that is storing and
 retrieving objects in a database), Model-View Controller and validation in
 :doc:`The Definitive Guide <../TheDefinitiveGuide/index>`. With some hints
 for each of the actions of this controller though, you'll get some first impression of
-how basic operations like creating or deleting objects are handled in TYPO3 Flow.
+how basic operations like creating or deleting objects are handled in Flow.
 
 Without further ado let's take a closer look at some of the actions:
 
@@ -523,31 +526,31 @@ stating that only a single instance may exist at a time::
     class CoffeeBeanRepository extends Repository {
 
 Because PHP doesn't support the concept of annotations natively, we are using doc
-comments which are parsed by an annotation parser in TYPO3 Flow.
+comments which are parsed by an annotation parser in Flow.
 
-TYPO3 Flow's object management detects the ``Scope`` annotation and takes care of
+Flow's object management detects the ``Scope`` annotation and takes care of
 all the details. All you need to do in order to get the right ``CoffeeBeanRepository``
-instance is telling TYPO3 Flow to *inject* it into a class property you defined::
+instance is telling Flow to *inject* it into a class property you defined::
 
     /**
      * @Flow\Inject
-     * @var \Acme\Demo\Domain\Repository\CoffeeBeanRepository
+     * @var CoffeeBeanRepository
      */
     protected $coffeeBeanRepository;
 
-The ``Inject`` annotation tells TYPO3 Flow to set the ``$coffeeBeanRepository`` right
+The ``Inject`` annotation tells Flow to set the ``$coffeeBeanRepository`` right
 after the ``CoffeeBeanController`` class has been instantiated.
 
 .. tip::
 
-    This feature is called *Dependency Injection* and is an important feature of TYPO3 Flow.
+    This feature is called *Dependency Injection* and is an important feature of Flow.
     Although it is blindingly easy to use, you'll want to read some more about it later
     in the :doc:`related section <../TheDefinitiveGuide/PartIII/ObjectManagement>` of
     the main manual.
 
-TYPO3 Flow adheres to the Model-View-Controller pattern – that's why the actual output is not
+Flow adheres to the Model-View-Controller pattern – that's why the actual output is not
 generated by the action method itself. This task is delegated to the *view*, and that is,
-by default, a *Fluid* template (Fluid is the name of the templating engine TYPO3 Flow uses).
+by default, a *Fluid* template (Fluid is the name of the templating engine Flow uses).
 Following the conventions, there should be a directory structure in the
 :file:`Resources/Private/Templates/` folder of a package which corresponds to the
 controllers and actions. For the ``index`` action of the ``CoffeeBeanController`` the
@@ -579,7 +582,7 @@ showAction
 The ``showAction`` displays a single coffee bean::
 
     /**
-     * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean The coffee bean to show
+     * @param CoffeeBean $coffeeBean The coffee bean to show
      * @return void
      */
     public function showAction(CoffeeBean $coffeeBean) {
@@ -629,7 +632,7 @@ a GET parameter.
     That certainly is not a beautiful URL for a coffee bean – but you'll learn how to
     create nice ones in the main manual.
 
-Before the ``showAction`` method is actually called, TYPO3 Flow will analyze the GET and POST
+Before the ``showAction`` method is actually called, Flow will analyze the GET and POST
 parameters of the incoming HTTP request and convert identifiers into real objects
 again. By its UUID the coffee bean is retrieved from the ``CoffeeBeanRepository`` and
 eventually passed to the action method::
@@ -658,7 +661,7 @@ Like the ``showAction`` it expects a ``CoffeeBean`` as its argument::
         $this->redirect('index');
     }
 
-This time the argument contains not an existing coffee bean but a new one. TYPO3 Flow knows
+This time the argument contains not an existing coffee bean but a new one. Flow knows
 that the expected type is ``CoffeeBean`` (by the type hint in the method and the param annotation)
 and thus tries to convert the POST data sent by the form into a new ``CoffeeBean`` object.
 All you need to do is adding it to the Coffee Bean Repository.
@@ -711,7 +714,7 @@ is an already existing (that is, already *persisted*) coffee bean object with th
 modifications submitted by the user already applied.
 
 Any modifications to the ``CoffeBean`` object will be lost at the end of the request
-unless you tell TYPO3 Flow explicitly to apply the changes::
+unless you tell Flow explicitly to apply the changes::
 
     $this->coffeeBeanRepository->update($coffeeBean);
 
@@ -728,7 +731,7 @@ a POST or DELETE request instead.
 Next Steps
 ----------
 
-Congratulations! You already learned the most important concepts of TYPO3 Flow development.
+Congratulations! You already learned the most important concepts of Flow development.
 
 Certainly this tutorial will have raised more questions than it answered. Some of
 these concepts – and many more you will learn – take some time to get used to.
@@ -736,7 +739,7 @@ The best advice I can give you is to expect things to be rather simple and
 not look out for the complicated solution (you know, the *not to see the wood for
 the trees* thing ...).
 
-Next you should experiment a bit with TYPO3 Flow on your own. After you've collected
+Next you should experiment a bit with Flow on your own. After you've collected
 even more questions, I suggest reading the
 :doc:`Getting Started Tutorial <../TheDefinitiveGuide/PartII/index>`.
 
@@ -745,19 +748,19 @@ contains a few rough parts. Also the Getting Started Tutorial needs some love
 and restructuring. Still, it already may be a valuable source for further
 information and I recommend reading it.
 
-Get in touch with the growing TYPO3 Flow community and make sure to share your ideas
-about how we can improve TYPO3 Flow and its documentation:
+Get in touch with the growing Flow community and make sure to share your ideas
+about how we can improve Flow and its documentation:
 
-* `IRC channel`_
-* `users mailing list`_
+* `Slack channel`_
+* `Discuss forum`_
 
-I am sure that, if you’re a passionate developer, you will love TYPO3 Flow – because it was
+I am sure that, if you’re a passionate developer, you will love Flow – because it was
 made with you, the developer, in mind.
 
 Happy Flow Experience!
 
-*Robert on behalf of the TYPO3 Flow team*
+*Robert on behalf of the Neos team*
 
-.. _TYPO3 Flow Base Distribution: http://flow.typo3.org/download
-.. _IRC channel:             http://flow.typo3.org/support
-.. _users mailing list:      http://flow.typo3.org/support
+.. _Flow Base Distribution: https://github.com/neos/flow-base-distribution
+.. _Slack channel:          https://neos-project.slack.com/messages/flow-general/
+.. _Discuss forum:          https://discuss.neos.io

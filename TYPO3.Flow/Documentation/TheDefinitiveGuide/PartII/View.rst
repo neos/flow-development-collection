@@ -31,15 +31,15 @@ the *Acme.Blog* package:
 
 .. table:: Directory structure of a Flow package
 
-    ======================  ============================================================
-    Directory               Description
-    ======================  ============================================================
-    *Classes/*              All the .php class files of your package
-    *Documentation/*        The package's manual and other documentation
-    *Resources/*            Top folder for resources
-    *Resources/Public/*     Public resources - will be mirrored to the *Web* directory
-    *Resources/Private/*    Private resources - won't be mirrored to the *Web* directory
-    ======================  ============================================================
+    ====================== ============================================================
+    Directory              Description
+    ====================== ============================================================
+    *Classes/*             All the .php class files of your package
+    *Documentation/*       The package's manual and other documentation
+    *Resources/*           Top folder for resources
+    *Resources/Public/*    Public resources - will be mirrored to the *Web* directory
+    *Resources/Private/*   Private resources - won't be mirrored to the *Web* directory
+    ====================== ============================================================
 
 
 No matter what files and directories you create below ``Resources/Public/`` - all

@@ -1,11 +1,11 @@
 About this Guide
 ================
 
-The *TYPO3 Publications Style Guide* provides editorial guidelines for text in all kinds
+The *Publications Style Guide* provides editorial guidelines for text in all kinds
 of publications, technical documentation, and the software user interface of applications
-issued by the TYPO3 Project.
+issued by the Neos Project.
 
-Anybody writing text for the TYPO3 Project is encouraged to use this document as a guide
+Anybody writing text for the Neos Project is encouraged to use this document as a guide
 to writing style, usage and specific terminology.
 
 
