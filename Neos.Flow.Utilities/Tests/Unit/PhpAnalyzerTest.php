@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Utilities\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,13 +11,12 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
 /**
  * Testcase for the PhpAnalyzer utility class
  */
-class PhpAnalyzerTest extends UnitTestCase
+class PhpAnalyzerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return array

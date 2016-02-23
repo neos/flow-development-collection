@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Exception;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Utility\Exception;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Exception;
+
 /**
  * An Invalid Position Exception
  *
  * This exception is thrown by the ArraySorter if the given subject contains invalid "position" metadata
  *
  */
-class InvalidPositionException extends \TYPO3\Flow\Exception
+class InvalidPositionException extends Exception
 {
 }

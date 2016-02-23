@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Utilities\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,13 +12,12 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends UnitTestCase
+class FilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

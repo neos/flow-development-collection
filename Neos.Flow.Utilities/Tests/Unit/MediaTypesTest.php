@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Utilities\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use TYPO3\Flow\Utility\MediaTypes;
 /**
  * Testcase for the Utility Media Types class
  */
-class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
+class MediaTypesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Data Provider
@@ -95,7 +95,6 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces)
     {
-        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         $this->assertSame($expectedPieces, $actualPieces);
     }

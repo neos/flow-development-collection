@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Utility\Exception;
+namespace TYPO3\Flow\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +12,10 @@ namespace TYPO3\Flow\Utility\Exception;
  */
 
 /**
- * An Invalid Type Exception
+ * A generic Utility Exception
  *
+ * @api
  */
-class InvalidTypeException extends \TYPO3\Flow\Exception
+class Exception extends \Exception
 {
 }

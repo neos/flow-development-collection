@@ -1,0 +1,22 @@
+{
+    "name": "neos/flow-utilities",
+    "type": "library",
+    "description": "Flow Utility classes",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+
+    "require": {
+        "php": ">=5.5.0",
+        "ext-SPL": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Flow\\Utilities\\Tests\\": "Tests"
+        }
+    }
+}

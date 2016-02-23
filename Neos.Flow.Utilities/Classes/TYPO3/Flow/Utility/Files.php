@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -317,7 +317,7 @@ class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (\TYPO3\Flow\Error\Exception $ignoredException) {
+        } catch (\Exception $ignoredException) {
             $content = false;
         }
         return $content;
