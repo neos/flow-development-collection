@@ -84,7 +84,6 @@ class Bootstrap
      */
     public function __construct($context)
     {
-
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
 
