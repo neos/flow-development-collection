@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Core;
  */
 
 // Those are needed before the autoloader is active
-require_once (__DIR__ . '/../../../../../../Libraries/autoload.php');
+require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
