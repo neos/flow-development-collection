@@ -215,7 +215,7 @@ TYPO3:
       # Options for the default Doctrine persistence
       backendOptions:
         driver: 'pdo_mysql'
-        host: '127.0.0.1'
+        host: ''
         dbname: NULL
         user: NULL
         password: NULL

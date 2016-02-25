@@ -97,6 +97,17 @@ class EntityManagerFactory
         $config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(false);
 
+        // Set default host to 127.0.0.1 if there is no other host configured and at least one other necessary option
+        if ($this->settings['backendOptions']['host'] == '') {
+            if (
+                $this->settings['backendOptions']['dbname'] != '' ||
+                $this->settings['backendOptions']['user'] != '' ||
+                $this->settings['backendOptions']['password'] != ''
+            ) {
+                $this->settings['backendOptions']['host'] = '127.0.0.1';
+            }
+        }
+
         // The following code tries to connect first, if that succeeds, all is well. If not, the platform is fetched directly from the
         // driver - without version checks to the database server (to which no connection can be made) - and is added to the config
         // which is then used to create a new connection. This connection will then return the platform directly, without trying to
