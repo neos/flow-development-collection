@@ -92,7 +92,7 @@ class PackageCommandController extends CommandController
         }
 
         if (!ComposerUtility::isFlowPackageType($packageType)) {
-            $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageKey]);
+            $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageType]);
             $this->quit(1);
         }
         $package = $this->packageManager->createPackage($packageKey, null, null, null, ['type' => $packageType]);

@@ -2,10 +2,10 @@
 Package Management
 ==================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 
-TYPO3 Flow is a package-based system. In fact, TYPO3 Flow itself is just a package as well - but
+Flow is a package-based system. In fact, Flow itself is just a package as well - but
 obviously an important one. Packages act as a container for different matters: Most of
 them contain PHP code which adds certain functionality, others only contain documentation
 and yet other packages consist of templates, images or other resources.
@@ -16,9 +16,9 @@ Package Locations
 Framework and Application Packages
 ----------------------------------
 
-TYPO3 Flow packages are located in a sub folder of the *Packages/* directory. A typical
-application (such as TYPO3 Neos for example) will use the core packages which are bundled with
-TYPO3 Flow and use additional packages which are specific to the application. The framework
+Flow packages are located in a sub folder of the *Packages/* directory. A typical
+application (such as Neos for example) will use the core packages which are bundled with
+Flow and use additional packages which are specific to the application. The framework
 packages are kept in a directory called *Framework* while the application specific
 packages reside in the *Application* directory. This leads to the following
 folder structure:
@@ -31,7 +31,7 @@ Data/
 
 Packages/
   Framework/
-    The Framework directory contains packages of the TYPO3 Flow distribution.
+    The Framework directory contains packages of the Flow distribution.
 
   Application/
     The Application directory contains your own / application specific packages.
@@ -46,7 +46,7 @@ Additional Package Locations
 Apart from the *Application*, *Framework* and *Libraries* package directories you
 may define your very own additional package locations by just creating
 another directory in the application's *Packages* directory. One
-example for this is the TYPO3 Neos distribution, which expects packages with
+example for this is the Neos distribution, which expects packages with
 website resources in a folder named *Sites*.
 
 The location for Flow packages installed via Composer (as opposed to manually
@@ -68,11 +68,11 @@ entry in the *Settings.yaml* of the package that expects packages of that type::
 Package Directory Layout
 ========================
 
-The TYPO3 Flow package directory structure follows a certain convention which has the advantage
+The Flow package directory structure follows a certain convention which has the advantage
 that you don't need to care about any package-related configuration. If you put your files
 into the right directories, everything will just work.
 
-The directory layout inside a TYPO3 Flow package is as follows:
+The directory layout inside a Flow package is as follows:
 
 Classes/*VendorName*/*PackageName*
   This directory contains the actual source code for the package. Package authors
@@ -125,7 +125,7 @@ Resources
 
   Public
     Contains public resources for the package. All files in this directory
-    will be mirrored into TYPO3 Flow's *Web* directory by the Resource Manager
+    will be mirrored into Flow's *Web* directory by the Resource Manager
     (and therefore become accessible from the web). They will be delivered to
     the client directly without further processing.
 
@@ -157,7 +157,7 @@ class would be named *StandardController.php* and is expected to be in a directo
 *MyCompany.MyPackage/Classes/MyCompany/MyPackage/Controller*.
 
 All details about naming files, classes, methods and variables correctly can be found in
-the TYPO3 Flow Coding Guidelines. You're highly encouraged to read (and follow) them.
+the Flow Coding Guidelines. You're highly encouraged to read (and follow) them.
 
 Package Keys
 ============
@@ -167,8 +167,9 @@ different purposes. They save you from conflicts between packages which were pro
 different parties.
 
 We use *vendor namespaces* for package keys, i.e. all packages which are released
-and maintained by the TYPO3 Neos and Flow core teams start with ``TYPO3.*``. In your company
-we suggest that you use your company name as vendor namespace.
+and maintained by the Neos and Flow core teams start with ``TYPO3.*`` (for historical
+reasons) or ``Neos.*``. In your company we suggest that you use your company name as vendor
+namespace.
 
 Loading Order
 =============
@@ -185,10 +186,10 @@ root directory of your package.
 
 If no *PackageStates.php* exists in your *Configuration* folder, it will be created
 and all found packages will be activated. If *PackageStates.php* exists, you can use the
-package manager to activate and deactivate packages through the TYPO3 Flow command line script.
+package manager to activate and deactivate packages through the Flow command line script.
 
-The TYPO3 Flow command line interface is triggered through the *flow* script
-in the main directory of the TYPO3 Flow distribution. From a Unix
+The Flow command line interface is triggered through the *flow* script
+in the main directory of the Flow distribution. From a Unix
 shell you should be able to run the script by entering ``./flow`` (on windows,
 use ``flow.bat``).
 
@@ -262,7 +263,7 @@ The packages installed via `Composer`_ can be updated with the command::
 Package Meta Information
 ========================
 
-All packages need to provide some meta information to TYPO3 Flow. The data is split in two
+All packages need to provide some meta information to Flow. The data is split in two
 files, depending on primary use.
 
 composer.json
@@ -338,6 +339,5 @@ you need to adjust the manifest manually.
 Other autoloading ways (classmap generation and files) are currently not supported by
 Flow.
 
-.. _TYPO3 project: http://typo3.org
 .. _Composer:      http://getcomposer.org
 .. _Packagist:     http://packagist.org
