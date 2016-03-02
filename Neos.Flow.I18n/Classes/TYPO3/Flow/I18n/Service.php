@@ -1,0 +1,303 @@
+<?php
+namespace TYPO3\Flow\I18n;
+
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Utility\Files;
+
+/**
+ * A Service which provides further information about a given locale
+ * and the current state of the i18n and L10n components.
+ *
+ * @api
+ */
+class Service
+{
+    /**
+     * @var array
+     */
+    protected $settings;
+
+    /**
+     * A collection of Locale objects representing currently installed locales,
+     * in a hierarchical manner.
+     *
+     * @var LocaleCollection
+     */
+    protected $localeCollection;
+
+    /**
+     * @var VariableFrontend
+     */
+    protected $cache;
+
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * @var string[]
+     */
+    protected $localizationDirectories;
+
+    /**
+     * Service constructor.
+     *
+     * @param array $i18nSettings
+     * @param array $localizationDirectories
+     * @param VariableFrontend $cache
+     */
+    public function __construct(array $i18nSettings, array $localizationDirectories = [], VariableFrontend $cache = null)
+    {
+        $this->settings = $i18nSettings;
+        $this->localizationDirectories = $localizationDirectories;
+        $this->cache = $cache;
+
+        $this->initialize();
+    }
+
+    /**
+     * Initializes the locale service
+     *
+     * @return void
+     */
+    protected function initialize()
+    {
+        $this->configuration = new Configuration($this->settings['defaultLocale']);
+        $this->configuration->setFallbackRule($this->settings['fallbackRule']);
+        $cacheAvailable = ($this->cache !== null);
+        $cacheEntryAvailable = $cacheAvailable ? $this->cache->has('availableLocales') : false;
+
+        if ($cacheEntryAvailable) {
+            $this->localeCollection = $this->cache->get('availableLocales');
+            return;
+        }
+
+        $this->generateAvailableLocalesCollectionByScanningFilesystem();
+        if ($cacheAvailable) {
+            $this->cache->set('availableLocales', $this->localeCollection);
+        }
+    }
+
+    /**
+     * @return Configuration
+     * @api
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * Returns the path to the existing localized version of file given.
+     *
+     * Searching is done for the current locale if no $locale parameter is
+     * provided. The search is done according to the configured fallback
+     * rule.
+     *
+     * If parameter $strict is provided, searching is done only for the
+     * provided / current locale (without searching of files localized for
+     * more generic locales).
+     *
+     * If no localized version of file is found, $filepath is returned without
+     * any change.
+     *
+     * @param string $pathAndFilename Path to the file
+     * @param Locale $locale Desired locale of localized file
+     * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+     * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
+     * @see Configuration::setFallbackRule()
+     * @api
+     */
+    public function getLocalizedFilename($pathAndFilename, Locale $locale = null, $strict = false)
+    {
+        if ($locale === null) {
+            $locale = $this->configuration->getCurrentLocale();
+        }
+
+        $filename = basename($pathAndFilename);
+        if ((strpos($filename, '.')) !== false) {
+            $dotPosition = strrpos($pathAndFilename, '.');
+            $pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
+            $extension = substr($pathAndFilename, $dotPosition);
+        } else {
+            $pathAndFilenameWithoutExtension = $pathAndFilename;
+            $extension = '';
+        }
+
+        if ($strict === true) {
+            $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . (string)$locale . $extension;
+            if (file_exists($possibleLocalizedFilename)) {
+                return array($possibleLocalizedFilename, $locale);
+            }
+        } else {
+            foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
+                $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . $localeIdentifier . $extension;
+                if (file_exists($possibleLocalizedFilename)) {
+                    return array($possibleLocalizedFilename, $locale);
+                }
+            }
+        }
+        return array($pathAndFilename, $locale);
+    }
+
+    /**
+     * Returns the path to the existing localized version of file given.
+     *
+     * Searching is done for the current locale if no $locale parameter is
+     * provided. The search is done according to the configured fallback
+     * rule.
+     *
+     * If parameter $strict is provided, searching is done only for the
+     * provided / current locale (without searching of files localized for
+     * more generic locales).
+     *
+     * If no localized version of file is found, $filepath is returned without
+     * any change.
+     *
+     * @param string $path Base directory to the translation files
+     * @param string $sourceName name of the translation source
+     * @param Locale $locale Desired locale of XLIFF file
+     * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
+     * @see Configuration::setFallbackRule()
+     * @api
+     */
+    public function getXliffFilenameAndPath($path, $sourceName, Locale $locale = null)
+    {
+        if ($locale === null) {
+            $locale = $this->configuration->getCurrentLocale();
+        }
+
+        foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
+            $possibleXliffFilename = Files::concatenatePaths(array($path, $localeIdentifier, $sourceName . '.xlf'));
+            if (file_exists($possibleXliffFilename)) {
+                return array($possibleXliffFilename, $locale);
+            }
+        }
+        return array(false, $locale);
+    }
+
+    /**
+     * Build a chain of locale objects according to the fallback rule and
+     * the available locales.
+     *
+     * @param Locale $locale
+     * @return array
+     */
+    public function getLocaleChain(Locale $locale)
+    {
+        $fallbackRule = $this->configuration->getFallbackRule();
+        $localeChain = array((string)$locale => $locale);
+
+        if ($fallbackRule['strict'] === true) {
+            foreach ($fallbackRule['order'] as $localeIdentifier) {
+                $localeChain[$localeIdentifier] = new Locale($localeIdentifier);
+            }
+        } else {
+            $locale = $this->findBestMatchingLocale($locale);
+            while ($locale !== null) {
+                $localeChain[(string)$locale] = $locale;
+                $locale = $this->getParentLocaleOf($locale);
+            }
+            foreach ($fallbackRule['order'] as $localeIdentifier) {
+                $locale = new Locale($localeIdentifier);
+                $locale = $this->findBestMatchingLocale($locale);
+                while ($locale !== null) {
+                    $localeChain[(string)$locale] = $locale;
+                    $locale = $this->getParentLocaleOf($locale);
+                }
+            }
+        }
+        $locale = $this->configuration->getDefaultLocale();
+        $localeChain[(string)$locale] = $locale;
+
+        return $localeChain;
+    }
+
+    /**
+     * Returns a parent Locale object of the locale provided.
+     *
+     * @param Locale $locale The Locale to search parent for
+     * @return Locale Existing \TYPO3\Flow\I18n\Locale instance or NULL on failure
+     * @api
+     */
+    public function getParentLocaleOf(Locale $locale)
+    {
+        return $this->localeCollection->getParentLocaleOf($locale);
+    }
+
+    /**
+     * Returns Locale object which is the most similar to the "template" Locale
+     * object given as parameter, from the collection of locales available in
+     * the current Flow installation.
+     *
+     * @param Locale $locale The "template" Locale to be matched
+     * @return mixed Existing \TYPO3\Flow\I18n\Locale instance on success, NULL on failure
+     * @api
+     */
+    public function findBestMatchingLocale(Locale $locale)
+    {
+        return $this->localeCollection->findBestMatchingLocale($locale);
+    }
+
+    /**
+     * Finds all Locale objects representing locales available in the
+     * Flow installation. This is done by scanning all Private and Public
+     * resource files of all active packages, in order to find localized files.
+     *
+     * Localized files have a locale identifier added before their extension
+     * (or at the end of filename, if no extension exists). For example, a
+     * localized file for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
+     *
+     * Just one localized resource file causes the corresponding locale to be
+     * regarded as available (installed, supported).
+     *
+     * Note: result of this method invocation is cached
+     *
+     * @return void
+     */
+    protected function generateAvailableLocalesCollectionByScanningFilesystem()
+    {
+        $this->localeCollection = new LocaleCollection();
+
+        /** @var PackageInterface $activePackage */
+        foreach ($this->localizationDirectories as $packageResourcesPath) {
+            if (!is_dir($packageResourcesPath)) {
+                continue;
+            }
+
+            $directories = array(Files::getNormalizedPath($packageResourcesPath));
+            while ($directories !== array()) {
+                $currentDirectory = array_pop($directories);
+                if ($handle = opendir($currentDirectory)) {
+                    while (false !== ($filename = readdir($handle))) {
+                        if ($filename[0] === '.') {
+                            continue;
+                        }
+                        $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
+                        if (is_dir($pathAndFilename)) {
+                            array_push($directories, Files::getNormalizedPath($pathAndFilename));
+                        } else {
+                            $localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
+                            if ($localeIdentifier !== false) {
+                                $this->localeCollection->addLocale(new Locale($localeIdentifier));
+                            }
+                        }
+                    }
+                    closedir($handle);
+                }
+            }
+        }
+    }
+}

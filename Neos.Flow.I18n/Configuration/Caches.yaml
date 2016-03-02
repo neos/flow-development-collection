@@ -1,0 +1,20 @@
+#                                                                        #
+# Caches configuration                                                   #
+#                                                                        #
+# This file contains a list of caches which are automatically registered #
+# while initializing the cache framework. If caches want to benefit from #
+# the automatic flushing mechanisms (such as garbage collection and      #
+# automatic flushing by tag) they must be registered in a Caches.yaml    #
+# file.                                                                  #
+#                                                                        #
+
+# Flow_I18n_*
+#
+# These caches contain precompiled data from the CLDR and information about available
+# locales and translations.
+Flow_I18n_AvailableLocalesCache: []
+Flow_I18n_XmlModelCache: []
+Flow_I18n_Cldr_CldrModelCache: []
+Flow_I18n_Cldr_Reader_DatesReaderCache: []
+Flow_I18n_Cldr_Reader_NumbersReaderCache: []
+Flow_I18n_Cldr_Reader_PluralsReaderCache: []

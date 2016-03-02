@@ -1,0 +1,103 @@
+TYPO3\Flow\I18n\Detector:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\FormatResolver:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Service:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Translator:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Cldr\CldrModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_CldrModelCache
+
+TYPO3\Flow\I18n\Cldr\CldrParser:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Cldr\CldrRepository:
+  scope: 'singleton'
+  arguments:
+    1:
+      value: 'resource://Neos.Flow.I18n/Private/I18n/CLDR/Sources/'
+
+TYPO3\Flow\I18n\Cldr\Reader\DatesReader:
+  scope: 'singleton'
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_DatesReaderCache
+
+TYPO3\Flow\I18n\Cldr\Reader\NumbersReader:
+  scope: 'singleton'
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_NumbersReaderCache
+
+TYPO3\Flow\I18n\Cldr\Reader\PluralsReader:
+  scope: 'singleton'
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+
+TYPO3\Flow\I18n\Formatter\DatetimeFormatter:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Formatter\NumberFormatter:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Parser\DatetimeParser:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Parser\NumberParser:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider:
+  scope: 'singleton'
+
+TYPO3\Flow\I18n\Xliff\XliffModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_XmlModelCache
+    i18nLogger:
+      object:
+        factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Flow_I18n'
+          2:
+            value: 'TYPO3\Flow\Log\Logger'
+          3:
+            setting: TYPO3.Flow.log.i18nLogger.backend
+          4:
+            setting: TYPO3.Flow.log.i18nLogger.backendOptions
+
+TYPO3\Flow\I18n\Xliff\XliffParser:
+  scope: 'singleton'

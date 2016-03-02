@@ -1,0 +1,18 @@
+{
+    "name": "neos/flow-i18n",
+    "type": "neos-framework",
+    "description": "Flow I18n Servies",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+
+    "require": {
+        "php": ">=5.5.0",
+
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\i18n": "Classes"
+        }
+    }
+}

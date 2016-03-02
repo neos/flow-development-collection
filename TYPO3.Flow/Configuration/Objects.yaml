@@ -20,77 +20,12 @@ TYPO3\Flow\Cache\CacheFactory:
     1:
       setting: TYPO3.Flow.context
 
-
-#                                                                          #
-# I18n                                                                     #
-#                                                                          #
+#
+# i18n
+#
 
 TYPO3\Flow\I18n\Service:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_AvailableLocalesCache
-TYPO3\Flow\I18n\Cldr\CldrModel:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_Cldr_CldrModelCache
-TYPO3\Flow\I18n\Xliff\XliffModel:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_XmlModelCache
-    i18nLogger:
-      object:
-        factoryObjectName: TYPO3\Flow\Log\LoggerFactory
-        arguments:
-          1:
-            value: 'Flow_I18n'
-          2:
-            value: 'TYPO3\Flow\Log\Logger'
-          3:
-            setting: TYPO3.Flow.log.i18nLogger.backend
-          4:
-            setting: TYPO3.Flow.log.i18nLogger.backendOptions
-TYPO3\Flow\I18n\Cldr\Reader\DatesReader:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_Cldr_Reader_DatesReaderCache
-TYPO3\Flow\I18n\Cldr\Reader\NumbersReader:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_Cldr_Reader_NumbersReaderCache
-TYPO3\Flow\I18n\Cldr\Reader\PluralsReader:
-  properties:
-    cache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+  factoryObjectName: TYPO3\Flow\I18n\ServiceFactory
 
 #                                                                          #
 # Log                                                                      #
