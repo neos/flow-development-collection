@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Utilities\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Utilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,14 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Testcase for the Utility\TypeHandling class
  *
  */
-class TypeHandlingTest extends UnitTestCase
+class TypeHandlingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
