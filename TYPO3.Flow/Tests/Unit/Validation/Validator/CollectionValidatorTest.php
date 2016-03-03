@@ -112,4 +112,18 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
 
         $this->validator->validate($persistentCollection);
     }
+
+    /**
+     * @test
+     */
+    public function collectionValidatorTransfersElementValidatorOptionsToTheElementValidator()
+    {
+        $elementValidatorOptions = ['minimum' => 5];
+        $this->validator->_set('options', ['elementValidator' => 'NumberRange', 'elementValidatorOptions' => $elementValidatorOptions]);
+        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\NumberRangeValidator($elementValidatorOptions)));
+
+        $result = $this->validator->validate([5, 6, 1]);
+
+        $this->assertCount(1, $result->getFlattenedErrors());
+    }
 }
