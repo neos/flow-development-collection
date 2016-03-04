@@ -1,8 +1,8 @@
 <?php
-namespace Neos\PropertyAccess\Tests\Unit;
+namespace Neos\ObjectUtilities\Tests\Unit;
 
 /*
- * This file is part of the Neos.PropertyAccess package.
+ * This file is part of the Neos.ObjectUtilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace Neos\PropertyAccess\Tests\Unit;
  * source code.
  */
 
-use Neos\PropertyAccess\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
-use Neos\PropertyAccess\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
-use Neos\PropertyAccess\Tests\Unit\Fixture\ArrayAccessClass;
+use Neos\ObjectUtilities\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
+use Neos\ObjectUtilities\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
+use Neos\ObjectUtilities\Tests\Unit\Fixture\ArrayAccessClass;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');

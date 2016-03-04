@@ -1,8 +1,8 @@
 <?php
-namespace Neos\PropertyAccess\Tests\Unit\Fixture\Model;
+namespace Neos\ObjectUtilities\Tests\Unit\Fixture\Model;
 
 /*
- * This file is part of the Neos.PropertyAccess package.
+ * This file is part of the Neos.ObjectUtilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

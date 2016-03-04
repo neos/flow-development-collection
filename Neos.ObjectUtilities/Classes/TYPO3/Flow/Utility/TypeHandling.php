@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.ObjectUtilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Utility;
  */
 
 use Doctrine\ORM\Proxy\Proxy;
+use TYPO3\Flow\Utility\Exception\InvalidTypeException;
 
 /**
  * PHP type handling functions
@@ -50,7 +51,7 @@ class TypeHandling
             $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
             if ($elementType !== null && !self::isCollectionType($type)) {
-                throw new \TYPO3\Flow\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
+                throw new InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
             }
 
             return array(
@@ -58,7 +59,7 @@ class TypeHandling
                 'elementType' => $elementType
             );
         } else {
-            throw new \TYPO3\Flow\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
+            throw new InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
     }
 

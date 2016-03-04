@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Exception;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.ObjectUtilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,6 +15,6 @@ namespace TYPO3\Flow\Utility\Exception;
  * An Invalid Type Exception
  *
  */
-class InvalidTypeException extends \TYPO3\Flow\Exception
+class InvalidTypeException extends \Exception
 {
 }

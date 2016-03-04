@@ -1,14 +1,13 @@
 {
-    "name": "neos/property-access",
+    "name": "neos/object-utilities",
     "type": "library",
-    "description": "Flow array/object property access utilities",
-    "homepage": "http://flow.typo3.org",
+    "description": "Flow array/object property and type utilities",
+    "homepage": "http://www.flowframework.io",
     "license": [
         "MIT"
     ],
     "require": {
-        "php": ">=5.5.0",
-        "typo3/flow": "*"
+        "php": ">=5.5.0"
     },
     "require-dev": {
         "doctrine/orm": "~2.4.0"
@@ -20,7 +19,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\PropertyAccess\\Tests\\": "Tests"
+            "Neos\\ObjectUtilities\\Tests\\": "Tests"
         }
     }
 }
