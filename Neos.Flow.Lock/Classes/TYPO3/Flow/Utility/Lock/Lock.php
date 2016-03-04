@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Lock;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Lock package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,14 +11,9 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Core\Bootstrap;
-
 /**
  * A general lock class.
  *
- * @Flow\Scope("prototype")
  * @api
  */
 class Lock
@@ -27,6 +22,11 @@ class Lock
      * @var string
      */
     protected static $lockStrategyClassName;
+
+    /**
+     * @var LockManager
+     */
+    protected static $lockManager;
 
     /**
      * @var \TYPO3\Flow\Utility\Lock\LockStrategyInterface
@@ -49,15 +49,10 @@ class Lock
      */
     public function __construct($subject, $exclusiveLock = true)
     {
-        if (self::$lockStrategyClassName === null) {
-            if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(\TYPO3\Flow\Configuration\ConfigurationManager::class)) {
-                return;
-            }
-            $configurationManager = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-            $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
-            self::$lockStrategyClassName = $settings['utility']['lockStrategyClassName'];
+        if (self::$lockManager === null) {
+            return;
         }
-        $this->lockStrategy = new self::$lockStrategyClassName();
+        $this->lockStrategy = self::$lockManager->getLockStrategyInstance();
         $this->lockStrategy->acquire($subject, $exclusiveLock);
     }
 
@@ -67,6 +62,18 @@ class Lock
     public function getLockStrategy()
     {
         return $this->lockStrategy;
+    }
+
+    /**
+     * Set the instance of LockManager to use.
+     *
+     * Must be nullable especially for testing
+     *
+     * @param LockManager $lockManager
+     */
+    public static function setLockManager(LockManager $lockManager = null)
+    {
+        static::$lockManager = $lockManager;
     }
 
     /**

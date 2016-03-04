@@ -1,0 +1,27 @@
+{
+  "name": "neos/flow-lock",
+  "description" : "Flow Locking Implementation",
+  "license": "MIT",
+  "support": {
+    "email": "hello@neos.io",
+    "slack": "http://slack.neos.io/",
+    "forum": "https://discuss.neos.io/",
+    "issues": "https://jira.neos.io/browse/FLOW",
+    "docs": "http://flowframework.readthedocs.org/",
+    "source": "https://github.com/neos/composer-plugin"
+  },
+  "type": "library",
+  "require": {
+    "typo3/flow": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Flow\\Utility\\Lock\\": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TYPO3\\Flow\\Utility\\Lock\\Tests\\": "Tests"
+    }
+  }
+}

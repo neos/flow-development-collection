@@ -20,6 +20,9 @@ use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Lock\Lock;
+use TYPO3\Flow\Utility\Lock\LockManager;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -192,6 +195,12 @@ class Scripts
         } else {
             $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
         }
+
+        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
+            $environment->getPathToTemporaryDirectory(),
+            'Lock'
+        ])]);
+        Lock::setLockManager($lockManager);
 
         $configurationManager->injectEnvironment($environment);
         $packageManager->injectSettings($settings);
