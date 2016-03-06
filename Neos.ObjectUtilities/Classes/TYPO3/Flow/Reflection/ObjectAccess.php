@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Reflection;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.ObjectUtilities package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Reflection;
  */
 
 use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -108,7 +109,7 @@ class ObjectAccess
         }
 
         $propertyExists = true;
-        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($subject);
+        $className = TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
             if (property_exists($className, $propertyName)) {
@@ -238,7 +239,7 @@ class ObjectAccess
         }
 
         if ($forceDirectAccess === true) {
-            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($subject);
+            $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new PropertyReflection($className, $propertyName);
                 $propertyReflection->setValue($subject, $propertyValue);
@@ -278,7 +279,7 @@ class ObjectAccess
             $className = 'stdClass';
             unset(self::$gettablePropertyNamesCache[$className]);
         } else {
-            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+            $className = TypeHandling::getTypeForValue($object);
             $declaredPropertyNames = array_keys(get_class_vars($className));
         }
 
@@ -323,7 +324,7 @@ class ObjectAccess
         if ($object instanceof \stdClass) {
             $declaredPropertyNames = array_keys(get_object_vars($object));
         } else {
-            $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+            $className = TypeHandling::getTypeForValue($object);
             $declaredPropertyNames = array_keys(get_class_vars($className));
         }
 
@@ -352,7 +353,7 @@ class ObjectAccess
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
 
-        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+        $className = TypeHandling::getTypeForValue($object);
         if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
             return true;
         } elseif (array_search($propertyName, array_keys(get_class_vars($className))) !== false) {
@@ -389,7 +390,7 @@ class ObjectAccess
         if (is_callable(array($object, 'has' . $uppercasePropertyName))) {
             return true;
         }
-        $className = \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($object);
+        $className = TypeHandling::getTypeForValue($object);
         return (array_search($propertyName, array_keys(get_class_vars($className))) !== false);
     }
 
