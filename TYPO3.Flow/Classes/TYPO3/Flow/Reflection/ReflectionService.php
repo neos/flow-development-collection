@@ -2186,6 +2186,6 @@ class ReflectionService
      */
     protected function hasFrozenCacheInProduction()
     {
-        return $this->context->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
+        return $this->environment->getContext()->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
     }
 }
