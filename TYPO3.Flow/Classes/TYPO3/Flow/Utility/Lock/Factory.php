@@ -31,9 +31,8 @@ class Factory
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
      * @return Lock
-     * @todo try to use the runtime cache a single lock object per subject
      */
-    public static function create($subject, $exclusiveLock = true)
+    public static function acquire($subject, $exclusiveLock = true)
     {
         return new Lock($subject, $exclusiveLock);
     }

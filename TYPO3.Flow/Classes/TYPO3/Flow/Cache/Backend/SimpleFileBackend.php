@@ -214,7 +214,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $lock = LockFactory::create($pathAndFilename, false);
+        $lock = LockFactory::acquire($pathAndFilename, false);
         $result = file_get_contents($pathAndFilename);
         $lock->release();
 
@@ -258,7 +258,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            $lock = LockFactory::create($pathAndFilename);
+            $lock = LockFactory::acquire($pathAndFilename);
             unlink($pathAndFilename);
             $lock->release();
         } catch (\Exception $exception) {
@@ -351,7 +351,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $lock = LockFactory::create($pathAndFilename, false);
+        $lock = LockFactory::acquire($pathAndFilename, false);
         $result = file_get_contents($pathAndFilename);
         $lock->release();
         return $result;
@@ -441,7 +441,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        $lock = LockFactory::create($cacheEntryPathAndFilename);
+        $lock = LockFactory::acquire($cacheEntryPathAndFilename);
         $result = file_put_contents($cacheEntryPathAndFilename, $data);
         $lock->release();
 

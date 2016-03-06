@@ -82,13 +82,13 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            $lock = LockFactory::create($cacheEntryPathAndFilename);
+            $lock = LockFactory::acquire($cacheEntryPathAndFilename);
             file_put_contents($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
             $lock->release();
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-        $lock = LockFactory::create($cachePathAndFileName);
+        $lock = LockFactory::acquire($cachePathAndFileName);
         if ($this->useIgBinary === true) {
             file_put_contents($cachePathAndFileName, igbinary_serialize($this->cacheEntryIdentifiers));
         } else {
@@ -127,7 +127,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if (is_file($this->cacheDirectory . 'FrozenCache.data')) {
             $this->frozen = true;
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-            $lock = LockFactory::create($cachePathAndFileName, false);
+            $lock = LockFactory::acquire($cachePathAndFileName, false);
             $data = file_get_contents($cachePathAndFileName);
             $lock->release();
             if ($this->useIgBinary === true) {
@@ -268,7 +268,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             }
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
-            $lock = LockFactory::create($cacheEntryPathAndFilename, false);
+            $lock = LockFactory::acquire($cacheEntryPathAndFilename, false);
             $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
             $metaData = file_get_contents($cacheEntryPathAndFilename, null, null, $index);
             $lock->release();
@@ -339,7 +339,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         if ($acquireLock) {
-            $lock = LockFactory::create($cacheEntryPathAndFilename, false);
+            $lock = LockFactory::acquire($cacheEntryPathAndFilename, false);
         }
         $cacheData = file_get_contents($cacheEntryPathAndFilename);
         if ($acquireLock) {
@@ -435,7 +435,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         if ($this->frozen === true) {
             if ($acquireLock) {
-                $lock = LockFactory::create($pathAndFilename, false);
+                $lock = LockFactory::acquire($pathAndFilename, false);
             }
             $result = (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
             if ($acquireLock) {
@@ -448,7 +448,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return false;
         }
         if ($acquireLock) {
-            $lock = LockFactory::create($pathAndFilename, false);
+            $lock = LockFactory::acquire($pathAndFilename, false);
         }
         $cacheData = file_get_contents($pathAndFilename);
         if ($acquireLock) {
