@@ -482,6 +482,9 @@ class Package implements PackageInterface
                     str_replace('\\', '/', $autoloadNamespace)
                 ]) . '/';
         }
+        if ($autoloadType === ClassLoader::MAPPING_TYPE_PSR4) {
+            $normalizedAutoloadPath = rtrim($normalizedAutoloadPath, '/') . '/';
+        }
 
         return $normalizedAutoloadPath;
     }
