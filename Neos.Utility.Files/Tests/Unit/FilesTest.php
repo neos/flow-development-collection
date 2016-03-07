@@ -12,13 +12,12 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends UnitTestCase
+class FilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

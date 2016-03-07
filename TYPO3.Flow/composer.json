@@ -14,6 +14,7 @@
         "ext-reflection": "*",
 
         "neos/utility-unicode": "*",
+        "neos/utility-files": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
