@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Utility\Arrays\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Arrays package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * Testcase for the Utility Array class
  *
  */
-class ArraysTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArraysTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test

@@ -25,9 +25,10 @@
     "replace": {
         "neos/flow-lock": "self.version",
         "neos/object-utilities": "self.version",
-        "neos/utility-unicode": "self.version",
+        "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-media-types": "self.version",
+        "neos/utility-unicode": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -43,11 +44,7 @@
         "psr-0": {
             "TYPO3\\Flow\\Utility\\Lock\\": "Neos.Flow.Lock/Classes",
             "TYPO3\\Flow\\Reflection": "Neos.ObjectUtilities/Classes",
-            "TYPO3\\Flow\\Utility": [
-              "Neos.ObjectUtilities/Classes",
-              "Neos.Utility.Files/Classes",
-              "Neos.Utility.MediaTypes/Classes"
-            ],
+            "TYPO3\\Flow\\Utility": "Neos.Utility.MediaTypes/Classes",
             "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
             "TYPO3\\Flow": "TYPO3.Flow/Classes",
@@ -65,9 +62,10 @@
         "psr-4": {
             "TYPO3\\Flow\\Utility\\Lock\\Tests\\": "Neos.Flow.Lock/Tests",
             "Neos\\ObjectUtilities\\Tests\\": "Neos.ObjectUtilities/Tests",
-            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Neos.Utility.Unicode/Tests",
+            "Neos\\Utility\\Arrays\\Tests\\": "Neos.Utility.Arrays/Tests",
             "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Neos.Utility.Files/Tests",
-            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Neos.Utility.MediaTypes/Tests"
+            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Neos.Utility.MediaTypes/Tests",
+            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Neos.Utility.Unicode/Tests"
         }
     },
     "require-dev": {
