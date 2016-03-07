@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Utility\Exception;
+namespace TYPO3\Flow\Utility\Lock;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow.Lock package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
