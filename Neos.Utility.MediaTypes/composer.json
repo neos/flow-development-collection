@@ -1,0 +1,20 @@
+{
+    "name": "neos/utility-media-types",
+    "type": "library",
+    "description": "Flow Media Types Utilities",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Tests"
+        }
+    }
+}

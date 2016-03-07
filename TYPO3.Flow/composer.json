@@ -15,6 +15,7 @@
 
         "neos/utility-unicode": "*",
         "neos/utility-files": "*",
+        "neos/utility-media-types": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
