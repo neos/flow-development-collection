@@ -42,14 +42,33 @@
     },
     "autoload": {
         "psr-0": {
-            "TYPO3\\Flow\\Utility\\Lock\\": "Neos.Flow.Lock/Classes",
-            "TYPO3\\Flow\\Reflection": "Neos.ObjectUtilities/Classes",
-            "TYPO3\\Flow\\Utility": "Neos.Utility.MediaTypes/Classes",
-            "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
-            "TYPO3\\Eel": "TYPO3.Eel/Classes",
-            "TYPO3\\Flow": "TYPO3.Flow/Classes",
-            "TYPO3\\Fluid": "TYPO3.Fluid/Classes",
-            "TYPO3\\Kickstart": "TYPO3.Kickstart/Classes"
+            "TYPO3\\Flow\\Utility\\Lock\\": [
+                "Neos.Flow.Lock/Classes"
+            ],
+            "TYPO3\\Flow\\Reflection": [
+                "Neos.ObjectUtilities/Classes"
+            ],
+            "TYPO3\\Flow\\Utility": [
+                "Neos.ObjectUtilities/Classes",
+                "Neos.Utility.Arrays/Classes",
+                "Neos.Utility.Files/Classes",
+                "Neos.Utility.MediaTypes/Classes"
+            ],
+            "TYPO3\\Flow\\Utility\\Unicode": [
+                "Neos.Utility.Unicode/Classes"
+            ],
+            "TYPO3\\Eel": [
+                "TYPO3.Eel/Classes"
+            ],
+            "TYPO3\\Flow": [
+                "TYPO3.Flow/Classes"
+            ],
+            "TYPO3\\Fluid": [
+                "TYPO3.Fluid/Classes"
+            ],
+            "TYPO3\\Kickstart": [
+                "TYPO3.Kickstart/Classes"
+            ]
         }
     },
     "extra": {
@@ -60,12 +79,24 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TYPO3\\Flow\\Utility\\Lock\\Tests\\": "Neos.Flow.Lock/Tests",
-            "Neos\\ObjectUtilities\\Tests\\": "Neos.ObjectUtilities/Tests",
-            "Neos\\Utility\\Arrays\\Tests\\": "Neos.Utility.Arrays/Tests",
-            "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Neos.Utility.Files/Tests",
-            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Neos.Utility.MediaTypes/Tests",
-            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Neos.Utility.Unicode/Tests"
+            "TYPO3\\Flow\\Utility\\Lock\\Tests\\": [
+                "Neos.Flow.Lock/Tests"
+            ],
+            "Neos\\ObjectUtilities\\Tests\\": [
+                "Neos.ObjectUtilities/Tests"
+            ],
+            "Neos\\Utility\\Arrays\\Tests\\": [
+                "Neos.Utility.Arrays/Tests"
+            ],
+            "TYPO3\\Flow\\Utility\\Files\\Tests\\": [
+                "Neos.Utility.Files/Tests"
+            ],
+            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": [
+                "Neos.Utility.MediaTypes/Tests"
+            ],
+            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": [
+                "Neos.Utility.Unicode/Tests"
+            ]
         }
     },
     "require-dev": {
