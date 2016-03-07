@@ -97,7 +97,7 @@ class ResourceCommandController extends CommandController
 
             if ($this->messageCollector->hasNotification()) {
                 $this->outputLine();
-                $this->outputLine('The system has generate some notifications, please check if you can solve some issue:');
+                $this->outputLine('The system has generate some notifications. You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
                 $this->messageCollector->flush(function (Message $notification) {
                     $this->outputLine($notification->getSeverity() . ': ' . $notification->getMessage());
                 });
