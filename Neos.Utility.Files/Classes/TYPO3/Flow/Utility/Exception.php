@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Utility;
  */
 
 /**
- * A generic Utility Exception
+ * A generic File Utility Exception
  *
  * @api
  */
-class Exception extends \TYPO3\Flow\Exception
+class Exception extends \Exception
 {
 }

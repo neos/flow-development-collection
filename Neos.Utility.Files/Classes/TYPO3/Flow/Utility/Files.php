@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Exception;
+
 /**
  * File and directory functions
  */
@@ -101,7 +103,7 @@ class Files
     public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
     {
         if (!is_dir($path)) {
-            throw new \Exception('"' . $path . '" is no directory.', 1207253462);
+            throw new Exception('"' . $path . '" is no directory.', 1207253462);
         }
 
         $directories = array(self::getNormalizedPath($path));
@@ -142,19 +144,19 @@ class Files
     public static function emptyDirectoryRecursively($path)
     {
         if (!is_dir($path)) {
-            throw new \Exception('"' . $path . '" is no directory.', 1169047616);
+            throw new Exception('"' . $path . '" is no directory.', 1169047616);
         }
 
         if (self::is_link($path)) {
             if (self::unlink($path) !== true) {
-                throw new \Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
+                throw new Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
             }
         } else {
             $directoryIterator = new \RecursiveDirectoryIterator($path);
             foreach ($directoryIterator as $fileInfo) {
                 if (!$fileInfo->isDir()) {
                     if (self::unlink($fileInfo->getPathname()) !== true) {
-                        throw new \Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+                        throw new Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
                     }
                 } elseif (!$directoryIterator->isDot()) {
                     self::removeDirectoryRecursively($fileInfo->getPathname());
@@ -181,7 +183,7 @@ class Files
         if ($basePath !== null) {
             $basePath = trim($basePath, '/');
             if (strpos($path, $basePath) !== 0) {
-                throw new \Exception(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
+                throw new Exception(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
         }
         foreach (array_reverse(explode('/', $path)) as $currentSegment) {
@@ -213,16 +215,16 @@ class Files
     {
         if (self::is_link($path)) {
             if (self::unlink($path) !== true) {
-                throw new \Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
+                throw new Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
             }
         } else {
             self::emptyDirectoryRecursively($path);
             try {
                 if (rmdir($path) !== true) {
-                    throw new \Exception('Could not remove directory "' . $path . '".', 1316000298);
+                    throw new Exception('Could not remove directory "' . $path . '".', 1316000298);
                 }
             } catch (\Exception $exception) {
-                throw new \Exception('Could not remove directory "' . $path . '".', 1323961907);
+                throw new Exception('Could not remove directory "' . $path . '".', 1323961907);
             }
         }
     }
@@ -243,14 +245,14 @@ class Files
             $path = substr($path, 0, -1);
         }
         if (is_file($path)) {
-            throw new \Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
+            throw new Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
         }
         if (!is_dir($path) && $path !== '') {
             $oldMask = umask(000);
             mkdir($path, 0777, true);
             umask($oldMask);
             if (!is_dir($path)) {
-                throw new \Exception('Could not create directory "' . $path . '"!', 1170251400);
+                throw new Exception('Could not create directory "' . $path . '"!', 1170251400);
             }
         }
     }
@@ -276,12 +278,12 @@ class Files
     public static function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = false, $copyDotFiles = false)
     {
         if (!is_dir($sourceDirectory)) {
-            throw new \Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+            throw new Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
         }
 
         self::createDirectoryRecursively($targetDirectory);
         if (!is_dir($targetDirectory)) {
-            throw new \Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
+            throw new Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
         }
 
         foreach (self::getRecursiveDirectoryGenerator($sourceDirectory, null, false, $copyDotFiles) as $filename) {
@@ -317,7 +319,7 @@ class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (\TYPO3\Flow\Error\Exception $ignoredException) {
+        } catch (\Exception $ignoredException) {
             $content = false;
         }
         return $content;
@@ -470,7 +472,7 @@ class Files
         }
         $pow = array_search($unit, self::$sizeUnits, true);
         if ($pow === false) {
-            throw new \Exception(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
+            throw new Exception(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
         }
         return $size * pow(2, (10 * $pow));
     }
