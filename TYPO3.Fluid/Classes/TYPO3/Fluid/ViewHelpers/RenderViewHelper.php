@@ -139,11 +139,11 @@ class RenderViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
     /**
      * Loads the "argument" child nodes.
      *
-     * @param $arguments
+     * @param array $arguments
      *
      * @return array
      */
-    protected function loadArgumentChildrenIntoArguments($arguments)
+    protected function loadArgumentChildrenIntoArguments(array $arguments)
     {
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
