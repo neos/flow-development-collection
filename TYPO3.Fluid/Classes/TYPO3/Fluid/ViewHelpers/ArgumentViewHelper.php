@@ -16,6 +16,21 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * "ARGUMENT" -> only has an effect inside of "RENDER". See Render-ViewHelper for documentation.
  *
+ * = Examples =
+ * 
+ * <code title="Passing variables to a partial using the argument ViewHelper">
+ * <f:render partial="somePartial" arguments="{foo: 'fooValue', bar: 'barValue'}">
+ *     <f:argument name="baz">
+ *          <div>This is just a <b>simple snippet</b> to demonstrate the idea.</div>
+ *     </f:argument>
+ *     <f:argument name="foo">Overwrites the argument foo.</f:argument>
+ * </f:render>
+ * </code>
+ * <output>
+ * the content of the partial "somePartial".
+ * Available variables passed to the partial are foo, bar, baz.
+ * </output>
+ *
  * @see \TYPO3\Fluid\ViewHelpers\RenderViewHelper
  * @api
  */
