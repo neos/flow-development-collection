@@ -39,6 +39,7 @@
     "autoload": {
         "psr-0": {
             "TYPO3\\Flow\\Reflection": "Neos.ObjectUtilities/Classes",
+            "TYPO3\\Flow\\Utility": "Neos.ObjectUtilities/Classes",
             "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
             "TYPO3\\Flow": "TYPO3.Flow/Classes",
