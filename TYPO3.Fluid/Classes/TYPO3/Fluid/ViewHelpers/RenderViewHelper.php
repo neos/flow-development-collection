@@ -147,7 +147,7 @@ class RenderViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
     {
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ArgumentViewHelper::class
+                && $childNode->getViewHelperClassName() === ArgumentViewHelper::class
             ) {
                 $childNodeArguments = $childNode->getArguments();
                 if (isset($childNodeArguments['name'])) {
