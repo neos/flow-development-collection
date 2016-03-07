@@ -28,6 +28,8 @@
         "neos/utility-unicode": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-media-types": "self.version",
+        "neos/utility-arrays": "self.version",
+        "neos/utility-algorithms": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -46,7 +48,9 @@
             "TYPO3\\Flow\\Utility": [
               "Neos.ObjectUtilities/Classes",
               "Neos.Utility.Files/Classes",
-              "Neos.Utility.MediaTypes/Classes"
+              "Neos.Utility.MediaTypes/Classes",
+              "Neos.Utility.Arrays/Classes",
+              "Neos.Utility.Algorithms/Classes"
             ],
             "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
@@ -67,7 +71,9 @@
             "Neos\\ObjectUtilities\\Tests\\": "Neos.ObjectUtilities/Tests",
             "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Neos.Utility.Unicode/Tests",
             "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Neos.Utility.Files/Tests",
-            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Neos.Utility.MediaTypes/Tests"
+            "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": "Neos.Utility.MediaTypes/Tests",
+            "TYPO3\\Flow\\Utility\\Arrays\\Tests\\": "Neos.Utility.Arrays/Tests",
+            "TYPO3\\Flow\\Utility\\Algorithms\\Tests\\": "Neos.Utility.Algorithms/Tests",
         }
     },
     "require-dev": {
