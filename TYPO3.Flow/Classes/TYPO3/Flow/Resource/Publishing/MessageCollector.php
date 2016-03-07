@@ -29,7 +29,7 @@ class MessageCollector
     /**
      * @var \SplObjectStorage
      */
-    protected $backends;
+    protected $messages;
 
     /**
      * @Flow\Inject
@@ -42,7 +42,7 @@ class MessageCollector
      */
     public function __construct()
     {
-        $this->backends = new \SplObjectStorage();
+        $this->messages = new \SplObjectStorage();
     }
 
     /**
@@ -69,7 +69,7 @@ class MessageCollector
             default:
                 throw new Exception('Invalid severity', 1455819761);
         }
-        $this->backends->attach($notification);
+        $this->messages->attach($notification);
     }
 
     /**
@@ -77,7 +77,7 @@ class MessageCollector
      */
     public function hasNotification()
     {
-        return $this->backends->count() > 0;
+        return $this->messages->count() > 0;
     }
 
     /**
@@ -86,9 +86,9 @@ class MessageCollector
      */
     public function flush(callable $callback = null)
     {
-        foreach ($this->backends as $message) {
+        foreach ($this->messages as $message) {
             /** @var Message $message */
-            $this->backends->detach($message);
+            $this->messages->detach($message);
             $this->systemLogger->log('ResourcePublishingMessage: ' . $message->getMessage(), $message->getSeverity());
             if ($callback !== null) {
                 $callback($message);
