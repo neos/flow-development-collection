@@ -11,6 +11,8 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Arrays;
+
 /**
  * Testcase for the Utility Array class
  *
@@ -22,7 +24,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      */
     public function containsMultipleTypesReturnsFalseOnEmptyArray()
     {
-        $this->assertFalse(\TYPO3\Flow\Utility\Arrays::containsMultipleTypes(array()), 'An empty array was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes(array()), 'An empty array was seen as containing multiple types');
     }
 
     /**
@@ -30,7 +32,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      */
     public function containsMultipleTypesReturnsFalseOnArrayWithIntegers()
     {
-        $this->assertFalse(\TYPO3\Flow\Utility\Arrays::containsMultipleTypes(array(1, 2, 3)), 'An array with only integers was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes(array(1, 2, 3)), 'An array with only integers was seen as containing multiple types');
     }
 
     /**
@@ -38,7 +40,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      */
     public function containsMultipleTypesReturnsFalseOnArrayWithObjects()
     {
-        $this->assertFalse(\TYPO3\Flow\Utility\Arrays::containsMultipleTypes(array(new \stdClass(), new \stdClass(), new \stdClass())), 'An array with only \stdClass was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes(array(new \stdClass(), new \stdClass(), new \stdClass())), 'An array with only \stdClass was seen as containing multiple types');
     }
 
     /**
@@ -46,7 +48,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      */
     public function containsMultipleTypesReturnsTrueOnMixedArray()
     {
-        $this->assertTrue(\TYPO3\Flow\Utility\Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
+        $this->assertTrue(Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
     }
 
     /**
@@ -55,7 +57,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath()
     {
         $array = array('Foo' => 'the value');
-        $this->assertSame('the value', \TYPO3\Flow\Utility\Arrays::getValueByPath($array, array('Foo')));
+        $this->assertSame('the value', Arrays::getValueByPath($array, array('Foo')));
     }
 
     /**
@@ -64,7 +66,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-        $this->assertSame('the value', \TYPO3\Flow\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 2)));
+        $this->assertSame('the value', Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 2)));
     }
 
     /**
@@ -75,7 +77,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $path = 'Foo.Bar.Baz.2';
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
         $expectedResult = 'the value';
-        $actualResult = \TYPO3\Flow\Utility\Arrays::getValueByPath($array, $path);
+        $actualResult = Arrays::getValueByPath($array, $path);
         $this->assertSame($expectedResult, $actualResult);
     }
 
@@ -86,7 +88,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-        \TYPO3\Flow\Utility\Arrays::getValueByPath($array, null);
+        Arrays::getValueByPath($array, null);
     }
 
     /**
@@ -95,7 +97,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-        $this->assertNULL(\TYPO3\Flow\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Bax', 2)));
+        $this->assertNULL(Arrays::getValueByPath($array, array('Foo', 'Bar', 'Bax', 2)));
     }
 
     /**
@@ -104,7 +106,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => 'the value')));
-        $this->assertNULL(\TYPO3\Flow\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
+        $this->assertNULL(Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
     }
 
     /**
@@ -118,7 +120,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $object->b->c = 'w';
         $object->d = array('i' => 'foo', 'j' => 12, 'k' => true, 'l' => new \stdClass());
 
-        $array = \TYPO3\Flow\Utility\Arrays::convertObjectToArray($object);
+        $array = Arrays::convertObjectToArray($object);
         $expected = array(
             'a' => 'v',
             'b' => array(
@@ -143,7 +145,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $array = array();
         $path = array('foo', 'bar', 'baz');
         $expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
-        $actualValue = \TYPO3\Flow\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+        $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -155,7 +157,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $array = array();
         $path = 'foo.bar.baz';
         $expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
-        $actualValue = \TYPO3\Flow\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+        $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -167,7 +169,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $array = array('foo' => array('bar' => 'should be overriden'), 'bar' => 'Baz');
         $path = array('foo', 'bar', 'baz');
         $expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')), 'bar' => 'Baz');
-        $actualValue = \TYPO3\Flow\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+        $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -178,7 +180,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-        \TYPO3\Flow\Utility\Arrays::setValueByPath($array, null, 'Some Value');
+        Arrays::setValueByPath($array, null, 'Some Value');
     }
 
     /**
@@ -188,7 +190,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function setValueByPathThrowsExceptionIfSubjectIsNoArray()
     {
         $subject = 'foobar';
-        \TYPO3\Flow\Utility\Arrays::setValueByPath($subject, 'foo', 'bar');
+        Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
     /**
@@ -198,7 +200,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function setValueByPathThrowsExceptionIfSubjectIsNoArrayAccess()
     {
         $subject = new \stdClass();
-        \TYPO3\Flow\Utility\Arrays::setValueByPath($subject, 'foo', 'bar');
+        Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
     /**
@@ -207,7 +209,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function setValueByLeavesInputArrayUnchanged()
     {
         $subject = $subjectBackup = array('foo' => 'bar');
-        \TYPO3\Flow\Utility\Arrays::setValueByPath($subject, 'foo', 'baz');
+        Arrays::setValueByPath($subject, 'foo', 'baz');
         $this->assertEquals($subject, $subjectBackup);
     }
 
@@ -219,7 +221,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
         $path = array('foo', 'bar', 'nonExistingKey');
         $expectedValue = $array;
-        $actualValue = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($array, $path);
+        $actualValue = Arrays::unsetValueByPath($array, $path);
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -232,7 +234,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $path = array('foo', 'bar', 'baz');
         $expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');
         ;
-        $actualValue = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($array, $path);
+        $actualValue = Arrays::unsetValueByPath($array, $path);
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -245,7 +247,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $path = 'foo.bar.baz';
         $expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');
         ;
-        $actualValue = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($array, $path);
+        $actualValue = Arrays::unsetValueByPath($array, $path);
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -258,7 +260,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
         $path = array('foo');
         $expectedValue = array('bar' => 'Baz');
         ;
-        $actualValue = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($array, $path);
+        $actualValue = Arrays::unsetValueByPath($array, $path);
         $this->assertEquals($expectedValue, $actualValue);
     }
 
@@ -269,7 +271,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-        \TYPO3\Flow\Utility\Arrays::unsetValueByPath($array, null);
+        Arrays::unsetValueByPath($array, null);
     }
 
     /**
@@ -279,7 +281,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     {
         $array = array('EmptyElement' => null, 'Foo' => array('Bar' => array('Baz' => array('NotNull' => '', 'AnotherEmptyElement' => null))));
         $expectedResult = array('Foo' => array('Bar' => array('Baz' => array('NotNull' => ''))));
-        $actualResult = \TYPO3\Flow\Utility\Arrays::removeEmptyElementsRecursively($array);
+        $actualResult = Arrays::removeEmptyElementsRecursively($array);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -290,7 +292,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     {
         $array = array('EmptyElement' => array(), 'Foo' => array('Bar' => array('Baz' => array('AnotherEmptyElement' => null))), 'NotNull' => 123);
         $expectedResult = array('NotNull' => 123);
-        $actualResult = \TYPO3\Flow\Utility\Arrays::removeEmptyElementsRecursively($array);
+        $actualResult = Arrays::removeEmptyElementsRecursively($array);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -502,7 +504,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      */
     public function arrayMergeRecursiveOverruleMergesSimpleArrays($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride, $expected)
     {
-        $actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
+        $actual = Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
         $this->assertSame($expected, $actual);
     }
 
@@ -530,7 +532,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
             'k3' => 'v3'
         );
 
-        $actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function ($simpleType) {
+        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function ($simpleType) {
             return array('__convertedValue' => $simpleType);
         });
         $this->assertSame($expected, $actual);
@@ -563,7 +565,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
             'k3' => null
         );
 
-        $actual = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function ($simpleType) {
+        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function ($simpleType) {
             if ($simpleType === null) {
                 return null;
             }

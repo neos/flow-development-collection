@@ -26,7 +26,7 @@ use TYPO3\Flow\Utility\TypeHandling;
  * getPropertyPath().
  *
  */
-class ObjectAccess
+abstract class ObjectAccess
 {
     /**
      * Internal RuntimeCache for getGettablePropertyNames()

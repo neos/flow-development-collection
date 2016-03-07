@@ -18,7 +18,7 @@ use TYPO3\Flow\Utility\Exception\InvalidTypeException;
  * PHP type handling functions
  *
  */
-class TypeHandling
+abstract class TypeHandling
 {
     /**
      * A property type parse pattern.

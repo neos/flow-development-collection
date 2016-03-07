@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**

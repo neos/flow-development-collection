@@ -13,9 +13,12 @@
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
+        "neos/object-utilities": "*",
         "neos/utility-unicode": "*",
         "neos/utility-files": "*",
         "neos/utility-media-types": "*",
+        "neos/utility-arrays": "*",
+        "neos/flow-lock": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",

@@ -11,13 +11,11 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * Some array functions to help with common tasks
  *
  */
-class Arrays
+abstract class Arrays
 {
     /**
      * Explodes a $string delimited by $delimiter and passes each item in the array through intval().
