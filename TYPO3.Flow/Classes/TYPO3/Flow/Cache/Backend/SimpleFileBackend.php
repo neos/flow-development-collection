@@ -214,7 +214,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        LockFactory::acquireCallback($pathAndFilename, false, function() use (&$result, $pathAndFilename) {
+        LockFactory::acquireCallback($pathAndFilename, false, function () use (&$result, $pathAndFilename) {
             $result = file_get_contents($pathAndFilename);
         });
 
@@ -258,7 +258,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            LockFactory::acquireCallback($pathAndFilename, true, function() use ($pathAndFilename) {
+            LockFactory::acquireCallback($pathAndFilename, true, function () use ($pathAndFilename) {
                 unlink($pathAndFilename);
             });
         } catch (\Exception $exception) {
@@ -351,7 +351,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        LockFactory::acquireCallback($pathAndFilename, false, function() use(&$result, $pathAndFilename) {
+        LockFactory::acquireCallback($pathAndFilename, false, function () use (&$result, $pathAndFilename) {
             $result = file_get_contents($pathAndFilename);
         });
         return $result;
@@ -441,7 +441,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        LockFactory::acquireCallback($cacheEntryPathAndFilename, true, function() use (&$result, $cacheEntryPathAndFilename, $data) {
+        LockFactory::acquireCallback($cacheEntryPathAndFilename, true, function () use (&$result, $cacheEntryPathAndFilename, $data) {
             $result = file_put_contents($cacheEntryPathAndFilename, $data);
         });
 

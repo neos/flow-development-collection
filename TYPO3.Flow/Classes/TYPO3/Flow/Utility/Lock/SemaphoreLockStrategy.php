@@ -125,12 +125,12 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     protected function requestAccess($accessType = self::READ_ACCESS)
     {
         if ($accessType == self::WRITE_ACCESS) {
-            $this->semCallback($this->mutex, function() {
+            $this->semCallback($this->mutex, function () {
                 $this->writers++;
             });
             sem_acquire($this->resource);
         } else {
-            $this->semCallback($this->mutex, function() {
+            $this->semCallback($this->mutex, function () {
                 if ($this->writers > 0 || $this->readers=== 0) {
                     sem_release($this->mutex);
                     sem_acquire($this->resource);
@@ -147,12 +147,12 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     protected function requestRelease($accessType = self::READ_ACCESS)
     {
         if ($accessType == self::WRITE_ACCESS) {
-            $this->semCallback($this->mutex, function() {
+            $this->semCallback($this->mutex, function () {
                 $this->writers--;
             });
             @sem_release($this->resource);
         } else {
-            $this->semCallback($this->mutex, function() {
+            $this->semCallback($this->mutex, function () {
                 $this->readers--;
                 if ($this->readers === 0) {
                     @sem_release($this->resource);
