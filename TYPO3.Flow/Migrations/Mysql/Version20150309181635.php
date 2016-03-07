@@ -17,8 +17,11 @@ class Version20150309181635 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_account ON typo3_flow_security_account");
-        $this->addSql("CREATE UNIQUE INDEX flow_identity_typo3_flow_security_account ON typo3_flow_security_account (accountidentifier, authenticationprovidername)");
+        $indexes = $this->sm->listTableIndexes('typo3_flow_security_account');
+        if (array_key_exists('flow3_identity_typo3_flow3_security_account', $indexes)) {
+            $this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_account ON typo3_flow_security_account");
+            $this->addSql("CREATE UNIQUE INDEX flow_identity_typo3_flow_security_account ON typo3_flow_security_account (accountidentifier, authenticationprovidername)");
+        }
     }
 
     /**

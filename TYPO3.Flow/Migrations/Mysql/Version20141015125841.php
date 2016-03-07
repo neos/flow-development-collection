@@ -27,8 +27,8 @@ class Version20141015125841 extends AbstractMigration
 
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP FOREIGN KEY FK_B4D45B32A4A851AF');
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP FOREIGN KEY typo3_flow_resource_resource_ibfk_1');
-        $this->addSql('ALTER TABLE typo3_flow_resource_resource CHANGE resourcepointer sha1 VARCHAR(40) NOT NULL, ADD md5 VARCHAR(32) DEFAULT NULL, ADD collectionname VARCHAR(255) DEFAULT NULL, DROP publishingconfiguration, DROP fileextension, ADD mediatype VARCHAR(100) DEFAULT NULL, ADD relativepublicationpath VARCHAR(255) NOT NULL, ADD filesize NUMERIC(20, 0) DEFAULT NULL');
         $this->addSql('DROP INDEX IDX_B4D45B323CB65D1 ON typo3_flow_resource_resource');
+        $this->addSql('ALTER TABLE typo3_flow_resource_resource CHANGE resourcepointer sha1 VARCHAR(40) NOT NULL, ADD md5 VARCHAR(32) DEFAULT NULL, ADD collectionname VARCHAR(255) DEFAULT NULL, DROP publishingconfiguration, DROP fileextension, ADD mediatype VARCHAR(100) DEFAULT NULL, ADD relativepublicationpath VARCHAR(255) NOT NULL, ADD filesize NUMERIC(20, 0) DEFAULT NULL');
         $this->addSql('DROP TABLE typo3_flow_resource_resourcepointer');
     }
 
