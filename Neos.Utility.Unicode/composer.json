@@ -1,0 +1,21 @@
+{
+    "name": "neos/utility-unicode",
+    "type": "library",
+    "description": "Flow Unicode Utilities",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility\\Unicode": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Tests"
+        }
+    }
+}

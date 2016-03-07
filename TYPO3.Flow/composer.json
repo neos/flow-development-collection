@@ -11,8 +11,9 @@
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
-        "ext-mbstring": "*",
         "ext-reflection": "*",
+
+        "neos/utility-unicode": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
