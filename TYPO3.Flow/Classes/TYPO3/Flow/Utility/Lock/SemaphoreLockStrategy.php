@@ -125,19 +125,19 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     protected function requestAccess($accessType = self::READ_ACCESS)
     {
         if ($accessType == self::WRITE_ACCESS) {
-            sem_acquire($this->mutex);
-            $this->writers++;
-            sem_release($this->mutex);
+            $this->semCallback($this->mutex, function() {
+                $this->writers++;
+            });
             sem_acquire($this->resource);
         } else {
-            sem_acquire($this->mutex);
-            if ($this->writers > 0 || $this->readers === 0) {
-                sem_release($this->mutex);
-                sem_acquire($this->resource);
-                sem_acquire($this->mutex);
-            }
-            $this->readers++;
-            sem_release($this->mutex);
+            $this->semCallback($this->mutex, function() {
+                if ($this->writers > 0 || $this->readers=== 0) {
+                    sem_release($this->mutex);
+                    sem_acquire($this->resource);
+                    sem_acquire($this->mutex);
+                }
+                $this->readers++;
+            });
         }
     }
 
@@ -147,25 +147,28 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     protected function requestRelease($accessType = self::READ_ACCESS)
     {
         if ($accessType == self::WRITE_ACCESS) {
-            sem_acquire($this->mutex);
-            $this->writers--;
-            sem_release($this->mutex);
+            $this->semCallback($this->mutex, function() {
+                $this->writers--;
+            });
             @sem_release($this->resource);
         } else {
-            sem_acquire($this->mutex);
-            $this->readers--;
-            if ($this->readers === 0) {
-                @sem_release($this->resource);
-            }
-            sem_release($this->mutex);
+            $this->semCallback($this->mutex, function() {
+                $this->readers--;
+                if ($this->readers === 0) {
+                    @sem_release($this->resource);
+                }
+            });
         }
     }
 
     /**
-     * Release the current semaphore
+     * @param resource $resource is a semaphore resource, obtained from <b>sem_get</b>
+     * @param callable $callback
      */
-    public function __destruct()
+    protected function semCallback($resource, $callback)
     {
-        $this->requestRelease($this->getAccessMode());
+        sem_acquire($resource);
+        $callback();
+        sem_release($resource);
     }
 }
