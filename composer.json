@@ -7,10 +7,10 @@
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
+        "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
-        "ext-mbstring": "*",
         "ext-reflection": "*",
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
@@ -24,6 +24,7 @@
     },
     "replace": {
         "neos/object-utilities": "self.version",
+        "neos/utility-unicode": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -38,6 +39,7 @@
     "autoload": {
         "psr-0": {
             "TYPO3\\Flow\\Reflection": "Neos.ObjectUtilities/Classes",
+            "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
             "TYPO3\\Flow": "TYPO3.Flow/Classes",
             "TYPO3\\Fluid": "TYPO3.Fluid/Classes",
@@ -55,7 +57,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ObjectUtilities\\Tests\\": "Neos.ObjectUtilities/Tests"
+            "Neos\\ObjectUtilities\\Tests\\": "Neos.ObjectUtilities/Tests",
+            "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Neos.Utility.Unicode/Tests"
         }
     }
 }
