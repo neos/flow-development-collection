@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A general lock class.
@@ -23,11 +21,6 @@ use TYPO3\Flow\Core\Bootstrap;
 class Factory
 {
     /**
-     * @var array
-     */
-    protected static $runtimeCache;
-
-    /**
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
      * @return Lock
@@ -35,5 +28,18 @@ class Factory
     public static function acquire($subject, $exclusiveLock = true)
     {
         return new Lock($subject, $exclusiveLock);
+    }
+
+    /**
+     * @param string $subject
+     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
+     * @param callable $callback A callback executed before the relase of the lock
+     * @return void
+     */
+    public static function acquireCallback($subject, $exclusiveLock, $callback)
+    {
+        $lock = self::acquire($subject, $exclusiveLock);
+        $callback();
+        $lock->release();
     }
 }
