@@ -1,0 +1,16 @@
+{
+    "name": "neos/utility-opcode-cache",
+    "type": "library",
+    "description": "Flow Opcode Cache Utilities",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility": "Classes"
+        }
+    }
+}
