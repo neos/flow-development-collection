@@ -75,6 +75,11 @@
             "TYPO3\\Kickstart": [
                 "TYPO3.Kickstart/Classes"
             ]
+        },
+        "psr-4": {
+            "TYPO3\\Flow\\Core\\Migrations": [
+                "TYPO3.Flow/Scripts/Migrations"
+            ]
         }
     },
     "extra": {
