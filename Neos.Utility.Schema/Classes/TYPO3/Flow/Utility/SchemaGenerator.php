@@ -19,7 +19,6 @@ namespace TYPO3\Flow\Utility;
  *
  * See \TYPO3\Flow\Utility\SchemaValidator for a description of all features
  * of the SchemaValidator
- *
  */
 class SchemaGenerator
 {

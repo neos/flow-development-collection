@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * A general purpose Array Validator which can check PHP arrays for validity
  * according to some schema.
@@ -47,7 +45,6 @@ use TYPO3\Flow\Annotations as Flow;
  * Combine types to allow mixed types, the primitive type of the given value is used to determine which type to validate for:
  * - type: ['integer', 'string']
  *
- * @Flow\Scope("singleton")
  */
 class SchemaValidator
 {
