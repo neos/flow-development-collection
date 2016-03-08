@@ -20,6 +20,7 @@
         "neos/utility-arrays": "*",
         "neos/flow-lock": "*",
         "neos/utility-schema": "*",
+        "neos/utility-pdo": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
