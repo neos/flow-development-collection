@@ -18,6 +18,7 @@
         "neos/utility-media-types": "*",
         "neos/utility-arrays": "*",
         "neos/utility-algorithms": "*",
+        "neos/utility-schema": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
