@@ -1,0 +1,21 @@
+{
+    "name": "neos/utility-reflection",
+    "type": "library",
+    "description": "Flow Reflection Utilities",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Utility\\Reflection\\Tests\\": "Tests"
+        }
+    }
+}

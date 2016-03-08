@@ -19,6 +19,7 @@
         "neos/utility-arrays": "*",
         "neos/utility-algorithms": "*",
         "neos/utility-schema": "*",
+        "neos/utility-reflection": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
