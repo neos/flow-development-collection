@@ -28,10 +28,10 @@
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-media-types": "self.version",
-        "neos/utility-unicode": "self.version",
-        "neos/utility-schema": "self.version",
-        "neos/utility-pdo": "self.version",
         "neos/utility-opcode-cache": "self.version",
+        "neos/utility-pdo": "self.version",
+        "neos/utility-schema": "self.version",
+        "neos/utility-unicode": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -52,13 +52,13 @@
                 "Neos.ObjectUtilities/Classes"
             ],
             "TYPO3\\Flow\\Utility": [
-              "Neos.ObjectUtilities/Classes",
-              "Neos.Utility.Files/Classes",
-              "Neos.Utility.MediaTypes/Classes",
-              "Neos.Utility.Arrays/Classes",
-              "Neos.Utility.Schema/Classes",
-              "Neos.Utility.Pdo/Classes",
-              "Neos.Utility.OpcodeCache/Classes"
+                "Neos.ObjectUtilities/Classes",
+                "Neos.Utility.Arrays/Classes",
+                "Neos.Utility.Files/Classes",
+                "Neos.Utility.MediaTypes/Classes",
+                "Neos.Utility.OpcodeCache/Classes",
+                "Neos.Utility.Pdo/Classes",
+                "Neos.Utility.Schema/Classes"
             ],
             "TYPO3\\Flow\\Utility\\Unicode": [
                 "Neos.Utility.Unicode/Classes"
@@ -100,13 +100,17 @@
             "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": [
                 "Neos.Utility.MediaTypes/Tests"
             ],
+            "TYPO3\\Flow\\Utility\\Schema\\Tests\\": [
+                "Neos.Utility.Schema/Tests"
+            ],
             "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": [
                 "Neos.Utility.Unicode/Tests"
-            ],
-            "TYPO3\\Flow\\Utility\\Schema\\Tests\\": "Neos.Utility.Schema/Tests"
+            ]
         }
     },
     "require-dev": {
-        "doctrine/orm": "~2.4.0"
+        "doctrine/orm": "~2.4.0",
+        "phpunit/phpunit": "~4.8 || ~5.0",
+        "mikey179/vfsstream": "~1.6"
     }
 }

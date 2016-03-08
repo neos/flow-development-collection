@@ -13,14 +13,13 @@
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
+        "neos/flow-lock": "*",
         "neos/object-utilities": "*",
+        "neos/utility-arrays": "*",
         "neos/utility-files": "*",
         "neos/utility-media-types": "*",
-        "neos/utility-arrays": "*",
-        "neos/flow-lock": "*",
         "neos/utility-opcode-cache": "*",
         "neos/utility-pdo": "*",
-        "neos/utility-reflection": "*",
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
 
