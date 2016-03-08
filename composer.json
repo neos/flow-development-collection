@@ -32,6 +32,7 @@
         "neos/utility-algorithms": "self.version",
         "neos/utility-schema": "self.version",
         "neos/utility-reflection": "self.version",
+        "neos/utility-pdo": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -54,7 +55,8 @@
               "Neos.Utility.Arrays/Classes",
               "Neos.Utility.Algorithms/Classes",
               "Neos.Utility.Schema/Classes",
-              "Neos.Utility.Reflection/Classes"
+              "Neos.Utility.Reflection/Classes",
+              "Neos.Utility.Pdo/Classes"
             ],
             "TYPO3\\Flow\\Utility\\Unicode": "Neos.Utility.Unicode/Classes",
             "TYPO3\\Eel": "TYPO3.Eel/Classes",
