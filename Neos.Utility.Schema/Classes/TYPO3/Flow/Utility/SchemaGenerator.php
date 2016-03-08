@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * Configuration schema generator.
  *
@@ -22,7 +20,6 @@ use TYPO3\Flow\Annotations as Flow;
  * See \TYPO3\Flow\Utility\SchemaValidator for a description of all features
  * of the SchemaValidator
  *
- * @Flow\Scope("singleton")
  */
 class SchemaGenerator
 {
@@ -105,7 +102,7 @@ class SchemaGenerator
     protected function generateStringSchema($stringValue)
     {
         $schema = array('type' => 'string');
-        $schemaValidator = new \TYPO3\Flow\Utility\SchemaValidator();
+        $schemaValidator = new SchemaValidator();
         $detectedFormat = null;
 
         $detectableFormats = array('uri','email','ip-address','class-name','interface-name');

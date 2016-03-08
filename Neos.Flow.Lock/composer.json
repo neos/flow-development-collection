@@ -12,7 +12,7 @@
   },
   "type": "library",
   "require": {
-    "typo3/flow": "*"
+    "neos/utility-files": "*"
   },
   "autoload": {
     "psr-0": {

@@ -11,20 +11,22 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Utility\SchemaValidator;
+
 /**
  * Testcase for the configuration validator
  *
  */
-class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \TYPO3\Flow\Utility\SchemaValidator
+     * @var SchemaValidator
      */
     protected $configurationValidator;
 
     public function setUp()
     {
-        $this->configurationValidator = $this->getAccessibleMock(\TYPO3\Flow\Utility\SchemaValidator::class, array('getError'));
+        $this->configurationValidator = $this->getMock(SchemaValidator::class, array('getError'));
     }
 
     /**

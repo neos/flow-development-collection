@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Utility\SchemaGenerator;
 
 /**
  * Testcase for the Schema Generator
  *
  */
-class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SchemaGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \TYPO3\Flow\Utility\SchemaGenerator
@@ -24,7 +25,7 @@ class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->configurationGenerator = $this->getAccessibleMock(\TYPO3\Flow\Utility\SchemaGenerator::class, array('getError'));
+        $this->configurationGenerator = new SchemaGenerator();
     }
 
     /**
