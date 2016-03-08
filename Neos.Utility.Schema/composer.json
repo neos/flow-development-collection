@@ -1,0 +1,21 @@
+{
+    "name": "neos/utility-schema",
+    "type": "library",
+    "description": "Flow Schema Utilities",
+    "homepage": "http://flow.typo3.org",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+        "ramsey/uuid": "^3.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Utility": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Utility\\Schema\\Tests\\": "Tests"
+        }
+    }
+}

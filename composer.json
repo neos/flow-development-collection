@@ -29,6 +29,8 @@
         "neos/utility-files": "self.version",
         "neos/utility-media-types": "self.version",
         "neos/utility-unicode": "self.version",
+        "neos/utility-arrays": "self.version",
+        "neos/utility-schema": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
         "typo3/fluid": "self.version",
@@ -49,10 +51,11 @@
                 "Neos.ObjectUtilities/Classes"
             ],
             "TYPO3\\Flow\\Utility": [
-                "Neos.ObjectUtilities/Classes",
-                "Neos.Utility.Arrays/Classes",
-                "Neos.Utility.Files/Classes",
-                "Neos.Utility.MediaTypes/Classes"
+              "Neos.ObjectUtilities/Classes",
+              "Neos.Utility.Files/Classes",
+              "Neos.Utility.MediaTypes/Classes",
+              "Neos.Utility.Arrays/Classes",
+              "Neos.Utility.Schema/Classes"
             ],
             "TYPO3\\Flow\\Utility\\Unicode": [
                 "Neos.Utility.Unicode/Classes"
@@ -96,7 +99,8 @@
             ],
             "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": [
                 "Neos.Utility.Unicode/Tests"
-            ]
+            ],
+            "TYPO3\\Flow\\Utility\\Schema\\Tests\\": "Neos.Utility.Schema/Tests"
         }
     },
     "require-dev": {

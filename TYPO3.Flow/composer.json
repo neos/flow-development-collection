@@ -19,6 +19,7 @@
         "neos/utility-media-types": "*",
         "neos/utility-arrays": "*",
         "neos/flow-lock": "*",
+        "neos/utility-schema": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
