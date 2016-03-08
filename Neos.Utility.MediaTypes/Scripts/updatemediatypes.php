@@ -37,7 +37,7 @@ $mediaTypesToFileExtensionsCode = '';
 $fileExtensionsAndMediaType = array();
 
 foreach ($mediaTypesAndFileExtensions as $mediaType => $fileExtensions) {
-    $mediaTypesToFileExtensionsCode .= "\t\t'$mediaType' => array('" . implode("', '", $fileExtensions) . "'),\n";
+    $mediaTypesToFileExtensionsCode .= "        '$mediaType' => array('" . implode("', '", $fileExtensions) . "'),\n";
     foreach ($fileExtensions as $fileExtension) {
         $fileExtensionsAndMediaType[$fileExtension] = $mediaType;
     }
@@ -47,10 +47,10 @@ ksort($fileExtensionsAndMediaType);
 
 $fileExtensionsToMediaTypeCode = '';
 foreach ($fileExtensionsAndMediaType as $fileExtension => $mediaType) {
-    $fileExtensionsToMediaTypeCode .= "\t\t'$fileExtension' => '$mediaType',\n";
+    $fileExtensionsToMediaTypeCode .= "        '$fileExtension' => '$mediaType',\n";
 }
 
 $classCode = file_get_contents($mediaTypesClassPathAndFilename);
-$classCode = preg_replace('/(extensionToMediaType = array\(\n)([^\)]+)(\t\);)/', '$1' . $fileExtensionsToMediaTypeCode . "\t);", $classCode);
-$classCode = preg_replace('/(mediaTypeToFileExtension = array\(\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "\t);", $classCode);
+$classCode = preg_replace('/(extensionToMediaType = array\(\n)([^\)]+)(\t\);)/', '$1' . $fileExtensionsToMediaTypeCode . "    );", $classCode);
+$classCode = preg_replace('/(mediaTypeToFileExtension = array\(\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    );", $classCode);
 file_put_contents($mediaTypesClassPathAndFilename, $classCode);

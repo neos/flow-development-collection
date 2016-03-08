@@ -1616,7 +1616,7 @@ class MediaTypes
         'audio/adpcm' => array('adp'),
         'audio/basic' => array('au', 'snd'),
         'audio/midi' => array('mid', 'midi', 'kar', 'rmi'),
-        'audio/mp4' => array('mp4a'),
+        'audio/mp4' => array('m4a', 'mp4a'),
         'audio/mpeg' => array('mpga', 'mp2', 'mp2a', 'mp3', 'm2a', 'm3a'),
         'audio/ogg' => array('oga', 'ogg', 'spx'),
         'audio/s3m' => array('s3m'),
