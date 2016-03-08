@@ -21,6 +21,7 @@
         "neos/flow-lock": "*",
         "neos/utility-schema": "*",
         "neos/utility-pdo": "*",
+        "neos/utility-opcode-cache": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
