@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-0": {
-      "TYPO3\\Flow\\Utility\\Lock\\": "Classes"
+      "TYPO3\\Flow\\Utility\\Lock": "Classes"
     }
   },
   "autoload-dev": {
