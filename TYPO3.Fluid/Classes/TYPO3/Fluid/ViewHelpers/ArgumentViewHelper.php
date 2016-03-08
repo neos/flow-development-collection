@@ -17,7 +17,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * "ARGUMENT" -> only has an effect inside of "RENDER". See Render-ViewHelper for documentation.
  *
  * = Examples =
- * 
+ *
  * <code title="Passing variables to a partial using the argument ViewHelper">
  * <f:render partial="somePartial" arguments="{foo: 'fooValue', bar: 'barValue'}">
  *     <f:argument name="baz">
