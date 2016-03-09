@@ -13,8 +13,8 @@
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
-        "neos/flow-lock": "*",
-        "neos/object-utilities": "*",
+        "neos/utility-lock": "*",
+        "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "neos/utility-files": "*",
         "neos/utility-media-types": "*",
