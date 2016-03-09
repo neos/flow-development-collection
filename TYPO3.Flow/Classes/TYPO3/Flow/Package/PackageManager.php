@@ -933,7 +933,7 @@ class PackageManager implements PackageManagerInterface
             'packagePath' => str_replace($this->packagesBasePath, '', $packagePath),
             'composerName' => $composerManifest['name'],
             'autoloadConfiguration' => $autoload,
-            'packageClassInformation' => $this->packageFactory->detectFlowPackageFilePath($packageKey, $packagePath, $autoload)
+            'packageClassInformation' => $this->packageFactory->detectFlowPackageFilePath($packageKey, $packagePath)
         ];
     }
 
