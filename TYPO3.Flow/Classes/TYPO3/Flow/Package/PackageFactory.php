@@ -78,8 +78,8 @@ class PackageFactory
         }
 
         $possiblePackageClassPaths = [
-            Files::concatenatePaths(array('Classes', 'Package.php')),
-            Files::concatenatePaths(array('Classes', str_replace('.', '/', $packageKey), 'Package.php'))
+            Files::concatenatePaths(['Classes', 'Package.php']),
+            Files::concatenatePaths(['Classes', str_replace('.', '/', $packageKey), 'Package.php'])
         ];
 
         $foundPackageClassPaths = array_filter($possiblePackageClassPaths, function ($packageClassPathAndFilename) use ($absolutePackagePath) {
@@ -104,6 +104,6 @@ class PackageFactory
             throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey, $packageClassPathAndFilename), 1327587091);
         }
 
-        return array('className' => $packageClassName, 'pathAndFilename' => $packageClassPathAndFilename);
+        return ['className' => $packageClassName, 'pathAndFilename' => $packageClassPathAndFilename];
     }
 }
