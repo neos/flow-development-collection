@@ -1,5 +1,5 @@
 {
-  "name": "neos/flow-lock",
+  "name": "neos/utility-lock",
   "description" : "Flow Locking Implementation",
   "license": "MIT",
   "support": {

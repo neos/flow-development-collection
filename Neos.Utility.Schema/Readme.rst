@@ -14,3 +14,9 @@ Contribute
 If you want to contribute to the Flow framework, please have a look at
 https://github.com/neos/flow-development-collection - it is the repository
 used for development and all pull requests should go into it.
+
+Dependencies
+------------
+
+Uses the Flow Error objects to return structured validation results therefore depends on
+typo3/flow for now.

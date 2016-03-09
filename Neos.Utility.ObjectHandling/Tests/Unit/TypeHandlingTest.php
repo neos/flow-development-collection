@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ObjectUtilities\Tests\Unit;
+namespace Neos\Utility\ObjectHandling\Tests\Unit;
 
 /*
  * This file is part of the Neos.ObjectUtilities package.

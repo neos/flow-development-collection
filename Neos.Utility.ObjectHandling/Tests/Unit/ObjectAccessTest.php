@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ObjectUtilities\Tests\Unit;
+namespace Neos\Utility\ObjectHandling\Tests\Unit;
 
 /*
  * This file is part of the Neos.ObjectUtilities package.
@@ -11,9 +11,9 @@ namespace Neos\ObjectUtilities\Tests\Unit;
  * source code.
  */
 
-use Neos\ObjectUtilities\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
-use Neos\ObjectUtilities\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
-use Neos\ObjectUtilities\Tests\Unit\Fixture\ArrayAccessClass;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');

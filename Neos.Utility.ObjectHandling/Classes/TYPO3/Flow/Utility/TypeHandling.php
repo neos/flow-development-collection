@@ -153,6 +153,7 @@ abstract class TypeHandling
      *
      * @param string $hexadecimalData A hex encoded string of data
      * @return string A binary string decoded from the input
+     * @deprecated Will be removed in next major version.
      */
     public static function hex2bin($hexadecimalData)
     {

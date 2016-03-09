@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ObjectUtilities\Tests\Unit\Fixture;
+namespace Neos\Utility\ObjectHandling\Tests\Unit\Fixture;
 
 /*
  * This file is part of the Neos.ObjectUtilities package.

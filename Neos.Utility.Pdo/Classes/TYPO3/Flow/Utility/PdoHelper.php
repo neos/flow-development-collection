@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Utility;
  * A helper class for handling PDO databases
  *
  */
-class PdoHelper
+abstract class PdoHelper
 {
     /**
      * Pumps the SQL into the database. Use for DDL only.

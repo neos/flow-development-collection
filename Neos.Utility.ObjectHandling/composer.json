@@ -1,5 +1,5 @@
 {
-    "name": "neos/object-utilities",
+    "name": "neos/utility-objecthandling",
     "type": "library",
     "description": "Flow array/object property and type utilities",
     "homepage": "http://www.flowframework.io",
@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ObjectUtilities\\Tests\\": "Tests"
+            "Neos\\Utility\\ObjectHandling\\Tests\\": "Tests"
         }
     }
 }
