@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  * source code.
  */
 
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Package\Package;
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Package\PackageManager;
@@ -32,6 +33,7 @@ class PackageTest extends UnitTestCase
      */
     public function setUp()
     {
+        ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(\TYPO3\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
         ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', array(), true);
