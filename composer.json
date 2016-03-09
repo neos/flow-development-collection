@@ -7,7 +7,6 @@
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
-        "neos/object-utilities": "*",
         "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
