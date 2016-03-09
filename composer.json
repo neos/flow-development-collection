@@ -7,11 +7,13 @@
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
+        "neos/object-utilities": "*",
         "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
+        "neos/flow-lock": "*",
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
         "doctrine/orm": "~2.4.0",
@@ -23,11 +25,11 @@
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
-        "neos/flow-lock": "self.version",
-        "neos/object-utilities": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
+        "neos/utility-lock": "self.version",
         "neos/utility-media-types": "self.version",
+        "neos/utility-objecthandling": "self.version",
         "neos/utility-opcode-cache": "self.version",
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
@@ -45,20 +47,20 @@
     },
     "autoload": {
         "psr-0": {
-            "TYPO3\\Flow\\Utility\\Lock": [
-                "Neos.Flow.Lock/Classes"
-            ],
-            "TYPO3\\Flow\\Reflection": [
-                "Neos.ObjectUtilities/Classes"
-            ],
             "TYPO3\\Flow\\Utility": [
-                "Neos.ObjectUtilities/Classes",
                 "Neos.Utility.Arrays/Classes",
                 "Neos.Utility.Files/Classes",
                 "Neos.Utility.MediaTypes/Classes",
+                "Neos.Utility.ObjectHandling/Classes",
                 "Neos.Utility.OpcodeCache/Classes",
                 "Neos.Utility.Pdo/Classes",
                 "Neos.Utility.Schema/Classes"
+            ],
+            "TYPO3\\Flow\\Utility\\Lock": [
+                "Neos.Utility.Lock/Classes"
+            ],
+            "TYPO3\\Flow\\Reflection": [
+                "Neos.Utility.ObjectHandling/Classes"
             ],
             "TYPO3\\Flow\\Utility\\Unicode": [
                 "Neos.Utility.Unicode/Classes"
@@ -90,20 +92,20 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TYPO3\\Flow\\Utility\\Lock\\Tests\\": [
-                "Neos.Flow.Lock/Tests"
-            ],
-            "Neos\\ObjectUtilities\\Tests\\": [
-                "Neos.ObjectUtilities/Tests"
-            ],
             "Neos\\Utility\\Arrays\\Tests\\": [
                 "Neos.Utility.Arrays/Tests"
             ],
             "TYPO3\\Flow\\Utility\\Files\\Tests\\": [
                 "Neos.Utility.Files/Tests"
             ],
+            "TYPO3\\Flow\\Utility\\Lock\\Tests\\": [
+                "Neos.Utility.Lock/Tests"
+            ],
             "TYPO3\\Flow\\Utility\\MediaTypes\\Tests\\": [
                 "Neos.Utility.MediaTypes/Tests"
+            ],
+            "Neos\\Utility\\ObjectHandling\\Tests\\": [
+                "Neos.Utility.ObjectHandling/Tests"
             ],
             "TYPO3\\Flow\\Utility\\Schema\\Tests\\": [
                 "Neos.Utility.Schema/Tests"
@@ -114,8 +116,8 @@
         }
     },
     "require-dev": {
-        "doctrine/orm": "~2.4.0",
+        "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~4.8 || ~5.0",
-        "mikey179/vfsstream": "~1.6"
+        "doctrine/orm": "~2.4.0"
     }
 }
