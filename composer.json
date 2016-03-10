@@ -23,6 +23,7 @@
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
+        "neos/error-messages": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -45,6 +46,9 @@
     },
     "autoload": {
         "psr-0": {
+            "TYPO3\\Flow\\Error": [
+                "Neos.Error.Messages/Classes"
+            ],
             "TYPO3\\Flow\\Utility": [
                 "Neos.Utility.Arrays/Classes",
                 "Neos.Utility.Files/Classes",
@@ -89,12 +93,15 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~4.8 || ~5.2.0",
+        "mikey179/vfsstream": "~1.6",
         "doctrine/orm": "~2.4.0"
     },
     "autoload-dev": {
         "psr-4": {
+            "Neos\\Error\\Messages\\Tests\\": [
+                "Neos.Error.Messages/Tests"
+            ],
             "Neos\\Utility\\Arrays\\Tests\\": [
                 "Neos.Utility.Arrays/Tests"
             ],
