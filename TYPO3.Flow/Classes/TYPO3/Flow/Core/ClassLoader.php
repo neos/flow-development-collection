@@ -91,13 +91,6 @@ class ClassLoader
     );
 
     /**
-     * Map of FQ classname to include path.
-     *
-     * @var array
-     */
-    protected $classMap;
-
-    /**
      * @var array
      */
     protected $fallbackClassPaths = array();
@@ -125,13 +118,12 @@ class ClassLoader
     {
         $distributionComposerManifest = json_decode(file_get_contents(FLOW_PATH_ROOT . 'composer.json'));
         $this->defaultVendorDirectory = $distributionComposerManifest->config->{'vendor-dir'};
-        $composerPath = FLOW_PATH_ROOT . $this->defaultVendorDirectory . '/composer/';
 
         foreach ($defaultPackageEntries as $entry) {
             $this->createNamespaceMapEntry($entry['namespace'], $entry['classPath'], $entry['mappingType']);
         }
 
-        $this->initializeAutoloadInformation($composerPath, $context);
+        $this->initializeAvailableProxyClasses($context);
     }
 
     /**
@@ -167,11 +159,6 @@ class ClassLoader
 
         // Loads any known proxied class:
         if ($this->classesCache !== null && ($this->availableProxyClasses === null || isset($this->availableProxyClasses[implode('_', $namespaceParts)])) && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== false) {
-            return true;
-        }
-
-        if (isset($this->classMap[$className])) {
-            include($this->classMap[$className]);
             return true;
         }
 
@@ -374,88 +361,17 @@ class ClassLoader
     }
 
     /**
-     * @param string $composerPath Path to the composer directory (with trailing slash).
-     * @param ApplicationContext $context
-     * @return void
-     */
-    protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = null)
-    {
-        if (is_file($composerPath . 'autoload_classmap.php')) {
-            $classMap = include($composerPath . 'autoload_classmap.php');
-            if ($classMap !== false) {
-                $this->classMap = $classMap;
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_namespaces.php')) {
-            $namespaceMap = include($composerPath . 'autoload_namespaces.php');
-            if ($namespaceMap !== false) {
-                foreach ($namespaceMap as $namespace => $paths) {
-                    if (!is_array($paths)) {
-                        $paths = [$paths];
-                    }
-                    foreach ($paths as $path) {
-                        if ($namespace === '') {
-                            $this->createFallbackPathEntry($path);
-                        } else {
-                            $this->createNamespaceMapEntry($namespace, $path);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_psr4.php')) {
-            $psr4Map = include($composerPath . 'autoload_psr4.php');
-            if ($psr4Map !== false) {
-                foreach ($psr4Map as $namespace => $possibleClassPaths) {
-                    if (!is_array($possibleClassPaths)) {
-                        $possibleClassPaths = [$possibleClassPaths];
-                    }
-                    foreach ($possibleClassPaths as $possibleClassPath) {
-                        if ($namespace === '') {
-                            $this->createFallbackPathEntry($possibleClassPath);
-                        } else {
-                            $this->createNamespaceMapEntry($namespace, $possibleClassPath, self::MAPPING_TYPE_PSR4);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (is_file($composerPath . 'include_paths.php')) {
-            $includePaths = include($composerPath . 'include_paths.php');
-            if ($includePaths !== false) {
-                array_push($includePaths, get_include_path());
-                set_include_path(implode(PATH_SEPARATOR, $includePaths));
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_files.php')) {
-            $includeFiles = include($composerPath . 'autoload_files.php');
-            if ($includeFiles !== false) {
-                foreach ($includeFiles as $file) {
-                    require_once($file);
-                }
-            }
-        }
-
-        if ($context !== null) {
-            $proxyClasses = @include(FLOW_PATH_TEMPORARY . 'AvailableProxyClasses.php');
-            if ($proxyClasses !== false) {
-                $this->availableProxyClasses = $proxyClasses;
-            }
-        }
-    }
-
-    /**
      * Initialize available proxy classes from the cached list.
      *
      * @param ApplicationContext $context
      * @return void
      */
-    public function initializeAvailableProxyClasses(ApplicationContext $context)
+    public function initializeAvailableProxyClasses(ApplicationContext $context = null)
     {
+        if ($context === null) {
+            return;
+        }
+
         $proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
