@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Utitlity\Unicode\Tests\Unit;
+namespace Neos\Utility\Unicode\Tests\Unit;
 
 /*
  * This file is part of the Neos.Utility.Unicode package.
