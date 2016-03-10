@@ -16,7 +16,7 @@ use TYPO3\Flow\Utility\Exception;
 /**
  * File and directory functions
  */
-class Files
+abstract class Files
 {
     /**
      * Replacing backslashes and double slashes to slashes.

@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Utility;
  * It has been inspired by the corresponding functionality in TYPO3 CMS (OpcodeCacheUtility.php), especially the cache-
  * invalidate functions.
  */
-class OpcodeCacheHelper
+abstract class OpcodeCacheHelper
 {
     /**
      * Contains callback functions for all active Opcode caches which can be used to flush a file.
