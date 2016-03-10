@@ -217,7 +217,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $expectedHeaders = array(
             'HTTP/1.1 123 Custom Status',
-            'X-Flow-Powered: Flow/' . FLOW_VERSION_BRANCH,
+            'X-Flow-Powered: Flow',
             'Content-Type: text/html; charset=UTF-8',
             'MyHeader: MyValue',
             'OtherHeader: OtherValue',
