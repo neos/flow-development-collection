@@ -1,18 +1,16 @@
 {
   "name": "neos/utility-lock",
-  "description" : "Flow Locking Implementation",
-  "license": "MIT",
-  "support": {
-    "email": "hello@neos.io",
-    "slack": "http://slack.neos.io/",
-    "forum": "https://discuss.neos.io/",
-    "issues": "https://jira.neos.io/browse/FLOW",
-    "docs": "http://flowframework.readthedocs.org/",
-    "source": "https://github.com/neos/composer-plugin"
-  },
+  "description": "Flow Locking Implementation",
   "type": "library",
+  "homepage": "http://flow.typo3.org",
+  "license": "MIT",
   "require": {
-    "neos/utility-files": "*"
+    "neos/utility-files": "*",
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "mikey179/vfsstream": "~1.6",
+    "phpunit/phpunit": "~4.8 || ~5.0"
   },
   "autoload": {
     "psr-0": {

@@ -1,27 +1,25 @@
 {
-    "name": "neos/utility-objecthandling",
-    "type": "library",
-    "description": "Flow array/object property and type utilities",
-    "homepage": "http://www.flowframework.io",
-    "license": [
-        "MIT"
-    ],
-    "require": {
-        "php": ">=5.5.0"
-    },
-    "require-dev": {
-        "doctrine/orm": "~2.4.0",
-        "phpunit/phpunit": "~4.8 || ~5.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "TYPO3\\Flow\\Reflection": "Classes",
-            "TYPO3\\Flow\\Utility": "Classes"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Neos\\Utility\\ObjectHandling\\Tests\\": "Tests"
-        }
+  "name": "neos/utility-objecthandling",
+  "description": "Flow array/object property and type utilities",
+  "type": "library",
+  "homepage": "http://flow.typo3.org",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "doctrine/orm": "~2.4.0",
+    "phpunit/phpunit": "~4.8 || ~5.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Flow\\Reflection": "Classes",
+      "TYPO3\\Flow\\Utility": "Classes"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Neos\\Utility\\ObjectHandling\\Tests\\": "Tests"
+    }
+  }
 }

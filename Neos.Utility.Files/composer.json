@@ -1,24 +1,24 @@
 {
-    "name": "neos/utility-files",
-    "type": "library",
-    "description": "Flow Files Utilities",
-    "homepage": "http://flow.typo3.org",
-    "license": ["MIT"],
-    "require": {
-        "php": ">=5.5.0"
-    },
-    "require-dev": {
-        "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~4.8 || ~5.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "TYPO3\\Flow\\Utility": "Classes"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Tests"
-        }
+  "name": "neos/utility-files",
+  "description": "Flow Files Utilities",
+  "type": "library",
+  "homepage": "http://flow.typo3.org",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "mikey179/vfsstream": "~1.6",
+    "phpunit/phpunit": "~4.8 || ~5.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Flow\\Utility": "Classes"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Tests"
+    }
+  }
 }
