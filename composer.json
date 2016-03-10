@@ -7,11 +7,11 @@
     "type": "neos-package-collection",
     "require": {
         "php": ">=5.5.0",
+        "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
-        "ext-mbstring": "*",
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
         "doctrine/orm": "~2.4.0",
@@ -40,6 +40,9 @@
         "typo3/kickstart": "self.version"
     },
     "suggest": {
+        "ext-memcache": "If you have a memcache server and want to use it for caching.",
+        "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
+        "ext-redis": "If you have a redis server and want to use it for caching.",
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "typo3/party": "To make use of basic user handling",
@@ -85,6 +88,9 @@
             ]
         },
         "psr-4": {
+            "Neos\\Cache\\": [
+                "Neos.Cache/Classes"
+            ],
             "TYPO3\\Flow\\Core\\Migrations\\": [
                 "TYPO3.Flow/Scripts/Migrations"
             ]
@@ -105,6 +111,11 @@
                 "Neos.Utility.Schema"
             ]
         }
+    },
+    "require-dev": {
+        "mikey179/vfsstream": "~1.6",
+        "phpunit/phpunit": "~4.8 || ~5.2.0",
+        "doctrine/orm": "~2.4.0"
     },
     "autoload-dev": {
         "psr-4": {
@@ -136,10 +147,5 @@
                 "Neos.Utility.Unicode/Tests"
             ]
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~4.8 || ~5.2.0",
-        "mikey179/vfsstream": "~1.6",
-        "doctrine/orm": "~2.4.0"
     }
 }

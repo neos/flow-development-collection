@@ -13,14 +13,14 @@ namespace TYPO3\Flow\Cache\Backend;
 
 // @codeCoverageIgnoreStart
 
-use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
 
 /**
  * A caching backend which forgets everything immediately
  *
  * @api
  */
-class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface
+class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInterface, TaggableBackendInterface
 {
     /**
      * Acts as if it would save data

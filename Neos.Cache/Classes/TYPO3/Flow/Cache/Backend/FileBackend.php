@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
@@ -23,7 +22,6 @@ use TYPO3\Flow\Utility\OpcodeCacheHelper;
  * A caching backend which stores cache entries in files
  *
  * @api
- * @Flow\Proxy(false)
  */
 class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterface, FreezableBackendInterface, TaggableBackendInterface
 {

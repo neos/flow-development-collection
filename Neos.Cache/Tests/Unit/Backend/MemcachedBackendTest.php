@@ -11,7 +11,10 @@ namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Backend\MemcachedBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Frontend\AbstractFrontend;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -21,11 +24,6 @@ use TYPO3\Flow\Cache\Tests\BaseTestCase;
  */
 class MemcachedBackendTest extends BaseTestCase
 {
-    /**
-     * @var \TYPO3\Flow\Utility\Environment
-     */
-    protected $mockEnvironment;
-
     /**
      * Sets up this testcase
      *
@@ -40,8 +38,6 @@ class MemcachedBackendTest extends BaseTestCase
         } catch (\Exception $e) {
             $this->markTestSkipped('memcached not reachable');
         }
-
-        $this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
     }
 
     /**
@@ -51,7 +47,7 @@ class MemcachedBackendTest extends BaseTestCase
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
         $backendOptions = array('servers' => array('localhost:11211'));
-        $backend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
+        $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
@@ -63,7 +59,7 @@ class MemcachedBackendTest extends BaseTestCase
      */
     public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured()
     {
-        $backend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend($this->getEnvironmentConfiguration(), []);
+        $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), []);
     }
 
     /**
@@ -234,14 +230,14 @@ class MemcachedBackendTest extends BaseTestCase
     {
         $backendOptions = array('servers' => array('localhost:11211'));
 
-        $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
+        $thisCache = $this->getMock(AbstractFrontend::class, array(), array(), '', false);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-        $thisBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
+        $thisBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
+        $thatCache = $this->getMock(AbstractFrontend::class, array(), array(), '', false);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-        $thatBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
+        $thatBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thatBackend->setCache($thatCache);
 
         $thisBackend->set('thisEntry', 'Hello');
@@ -273,15 +269,15 @@ class MemcachedBackendTest extends BaseTestCase
      * Sets up the memcached backend used for testing
      *
      * @param array $backendOptions Options for the memcache backend
-     * @return \TYPO3\Flow\Cache\Backend\MemcachedBackend
+     * @return MemcachedBackend
      */
     protected function setUpBackend(array $backendOptions = array())
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $cache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
         if ($backendOptions == array()) {
             $backendOptions = array('servers' => array('localhost:11211'));
         }
-        $backend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
+        $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $backend->setCache($cache);
         return $backend;
     }

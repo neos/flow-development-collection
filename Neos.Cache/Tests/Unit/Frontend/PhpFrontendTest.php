@@ -1,6 +1,8 @@
 <?php
 namespace TYPO3\Flow\Cache\Tests\Unit\Frontend;
 
+include_once(__DIR__ . '/../../BaseTestCase.php');
+
 /*
  * This file is part of the Neos.Cache package.
  *

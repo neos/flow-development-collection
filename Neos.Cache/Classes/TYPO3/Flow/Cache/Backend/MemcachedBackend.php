@@ -44,7 +44,7 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class MemcachedBackend extends AbstractBackendBase implements TaggableBackendInterface
+class MemcachedBackend extends AbstractBackend implements TaggableBackendInterface
 {
     /**
      * Max bucket size, (1024*1024)-42 bytes
@@ -90,10 +90,6 @@ class MemcachedBackend extends AbstractBackendBase implements TaggableBackendInt
             throw new Exception('The PHP extension "memcache" or "memcached" must be installed and loaded in order to use the Memcache backend.', 1213987706);
         }
         parent::__construct($environmentConfiguration, $options);
-
-        if (!count($this->servers)) {
-            throw new Exception('No servers were given to Memcache', 1213115903);
-        }
     }
 
     /**

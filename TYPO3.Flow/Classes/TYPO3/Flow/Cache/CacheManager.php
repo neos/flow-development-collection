@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;

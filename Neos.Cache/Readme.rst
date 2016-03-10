@@ -14,9 +14,3 @@ Contribute
 If you want to contribute to the Flow framework, please have a look at
 https://github.com/neos/flow-development-collection - it is the repository
 used for development and all pull requests should go into it.
-
-Dependencies
-------------
-Currently this package still depends on the Neos.Cache package,
-solely because it uses some of the Utiiliy methods. After those are
-split to a separate package this can change.

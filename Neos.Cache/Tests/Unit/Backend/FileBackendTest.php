@@ -1,6 +1,8 @@
 <?php
 namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
 
+include_once(__DIR__ . '/../../BaseTestCase.php');
+
 /*
  * This file is part of the Neos.Cache package.
  *
@@ -15,7 +17,6 @@ use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the cache to file backend
