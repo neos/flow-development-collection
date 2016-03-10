@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Utility\Unicode;
  */
 
 /**
- * A PHP-based port of PHP6's built in TextIterator
+ * A UTF8-aware TextIterator
  *
  */
 class TextIteratorElement

@@ -14,8 +14,3 @@ Contribute
 If you want to contribute to the Flow framework, please have a look at
 https://github.com/neos/flow-development-collection - it is the repository
 used for development and all pull requests should go into it.
-
-Dependencies
-------------
-
-This package uses the File Utility of Flow, as soon as that was split to a separete

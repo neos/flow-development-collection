@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Utility\Unicode;
  * source code.
  */
 
-
 /**
  * A class with UTF-8 string functions, some inspired by what might be in some
  * future PHP version...

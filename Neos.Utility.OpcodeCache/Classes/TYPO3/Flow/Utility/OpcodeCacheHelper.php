@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.OpCodeCache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

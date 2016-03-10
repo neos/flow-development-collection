@@ -84,7 +84,6 @@ abstract class Files
      * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
      * @param boolean $returnDotFiles If turned on, also files beginning with a dot will be returned
      * @return array Filenames including full path
-     * @throws \Exception
      * @api
      */
     public static function readDirectoryRecursively($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
@@ -98,7 +97,7 @@ abstract class Files
      * @param boolean $returnRealPath
      * @param boolean $returnDotFiles
      * @return \Generator
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
     {
@@ -137,7 +136,7 @@ abstract class Files
      *
      * @param string $path Path to the directory which shall be emptied.
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @see removeDirectoryRecursively()
      * @api
      */
@@ -176,7 +175,7 @@ abstract class Files
      * @return void
      * @see removeDirectoryRecursively()
      * @api
-     * @throws \Exception
+     * @throws Exception
      */
     public static function removeEmptyDirectoriesOnPath($path, $basePath = null)
     {
@@ -207,7 +206,7 @@ abstract class Files
      *
      * @param  string $path Path to the directory which shall be removed completely.
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @see emptyDirectoryRecursively()
      * @api
      */
@@ -235,7 +234,7 @@ abstract class Files
      *
      * @param string $path Path to the directory which shall be created
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @todo Make mode configurable / make umask configurable
      * @api
      */
@@ -272,7 +271,7 @@ abstract class Files
      * @param boolean $keepExistingFiles
      * @param boolean $copyDotFiles
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @api
      */
     public static function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = false, $copyDotFiles = false)
@@ -454,7 +453,7 @@ abstract class Files
      *
      * @param string $sizeString the human-readable size string (e.g. ini_get('upload_max_filesize'))
      * @return float The number of bytes the $sizeString represents or 0 if the number could not be parsed
-     * @throws \Exception if the specified unit could not be resolved
+     * @throws Exception if the specified unit could not be resolved
      */
     public static function sizeStringToBytes($sizeString)
     {

@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility\Lock\Tests\Unit;
 
 /*
- * This file is part of the Neos.Flow.Lock package.
+ * This file is part of the Neos.Utility.Lock package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

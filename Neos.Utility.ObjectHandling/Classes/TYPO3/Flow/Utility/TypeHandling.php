@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Utility;
 
 /*
- * This file is part of the Neos.ObjectUtilities package.
+ * This file is part of the Neos.Utility.ObjectHandling package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Utility\Unicode;
  */
 
 /**
- * Exception thrown if a feature is not supported by the PHP6 backport code.
+ * Exception thrown if a feature is not supported.
  *
  * @api
  */

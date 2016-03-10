@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Schema package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Utility\SchemaGenerator;
 
 /**

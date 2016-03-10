@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Core;
  * source code.
  */
 
-// Those are needed before the autoloader is active
+// Load the composer autoloader first
 require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
 use TYPO3\Flow\Annotations as Flow;
