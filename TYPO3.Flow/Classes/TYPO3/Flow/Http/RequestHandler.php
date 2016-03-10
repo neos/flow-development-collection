@@ -179,42 +179,55 @@ class RequestHandler implements HttpRequestHandlerInterface
             return;
         }
 
+        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'TYPO3.Flow');
+        if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
+            if ($applicationIsFlow) {
+                $response->getHeaders()->set('X-Powered-By', 'Flow');
+            } else {
+                $response->getHeaders()->set('X-Powered-By', 'Flow ' . $this->settings['core']['applicationName']);
+            }
+            return;
+        }
+
         /** @var Package $applicationPackage */
         /** @var Package $flowPackage */
         $flowPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Flow');
         $applicationPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage($this->settings['core']['applicationPackageKey']);
-        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'TYPO3.Flow');
 
-        switch ($this->settings['http']['applicationToken']) {
-            case 'ApplicationName':
-                if ($applicationIsFlow) {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow');
-                } else {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow ' . $this->settings['core']['applicationName']);
-                }
-            break;
-            case 'MajorVersion':
-                preg_match('/^(\d+)/', $flowPackage->getInstalledVersion(), $flowVersionMatches);
-                $flowVersion = isset($flowVersionMatches[1]) ? $flowVersionMatches[1] : '';
-                preg_match('/^(\d+)/', $applicationPackage->getInstalledVersion(), $applicationVersionMatches);
-                $applicationVersion = isset($applicationVersionMatches[1]) ? $applicationVersionMatches[1] : '';
-                if ($applicationIsFlow) {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
-                } else {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
-                }
-            break;
-            case 'MinorVersion':
-                preg_match('/^(\d+\.\d+)/', $flowPackage->getInstalledVersion(), $flowVersionMatches);
-                $flowVersion = isset($flowVersionMatches[1]) ? $flowVersionMatches[1] : '';
-                preg_match('/^(\d+\.\d+)/', $applicationPackage->getInstalledVersion(), $applicationVersionMatches);
-                $applicationVersion = isset($applicationVersionMatches[1]) ? $applicationVersionMatches[1] : '';
-                if ($applicationIsFlow) {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
-                } else {
-                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
-                }
-            break;
+        if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
+            $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());
+            $applicationVersion = $this->renderMajorVersion($applicationPackage->getInstalledVersion());
+        } else {
+            $flowVersion = $this->renderMinorVersion($flowPackage->getInstalledVersion());
+            $applicationVersion = $this->renderMinorVersion($applicationPackage->getInstalledVersion());
         }
+
+        if ($applicationIsFlow) {
+            $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
+        } else {
+            $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
+        }
+    }
+
+    /**
+     * Renders a major version out of a full version string
+     *
+     * @param string $version For example "2.3.7"
+     * @return string For example "2"
+     */
+    protected function renderMajorVersion($version) {
+        preg_match('/^(\d+)/', $version, $versionMatches);
+        return isset($versionMatches[1]) ? $versionMatches[1] : '';
+    }
+
+    /**
+     * Renders a minor version out of a full version string
+     *
+     * @param string $version For example "2.3.7"
+     * @return string For example "2.3"
+     */
+    protected function renderMinorVersion($version) {
+        preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
+        return isset($versionMatches[1]) ? $versionMatches[1] : '';
     }
 }
