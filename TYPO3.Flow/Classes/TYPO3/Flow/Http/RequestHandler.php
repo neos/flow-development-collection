@@ -203,7 +203,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         }
 
         if ($applicationIsFlow) {
-            $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
+            $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev'));
         } else {
             $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
         }
