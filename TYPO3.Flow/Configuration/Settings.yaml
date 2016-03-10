@@ -136,6 +136,17 @@ TYPO3:
       routes: []
 
     http:
+
+      # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
+      #
+      # The value can be one of:
+      #
+      # - "ApplicationName" (the application name only, determined via the TYPO3.Flow.core.applicationKey setting)
+      # - "MajorVersion" (the application name + major version, e.g. "Neos/2"
+      # - "MinorVersion" (the application name + minor version, e.g. "Neos/2.1"
+      #
+      applicationToken: 'MinorVersion'
+
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
       # "Http\Request->getBaseUri()".

@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Component\ComponentContext;
+use TYPO3\Flow\Package\Package;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -103,6 +104,7 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->boot();
         $this->resolveDependencies();
+        $this->addPoweredHeader($this->response);
         if (isset($this->settings['http']['baseUri'])) {
             $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
@@ -163,5 +165,49 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+    }
+
+    /**
+     * Adds an HTTP header to the Response which indicates that the application is powered by Flow.
+     *
+     * @param Response $response
+     * @return void
+     */
+    protected function addPoweredHeader(Response $response)
+    {
+        $flowPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Flow');
+        $applicationPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage($this->settings['core']['applicationPackageKey']);
+        /** @var Package $applicationPackage */
+        /** @var Package $flowPackage */
+        $applicationName = str_replace(' ', '', $applicationPackage->getComposerManifest('description'));
+        $applicationIsFlow = $applicationPackage->getComposerManifest('description') === $flowPackage->getComposerManifest('description');
+
+        switch ($this->settings['http']['applicationToken']) {
+            case 'ApplicationName':
+                $response->getHeaders()->set('X-Powered-By', 'Flow ' . $applicationName);
+            break;
+            case 'MajorVersion':
+                preg_match('/^(\d+)/', $flowPackage->getInstalledVersion(), $flowVersionMatches);
+                $flowVersion = isset($flowVersionMatches[1]) ? $flowVersionMatches[1] : '';
+                preg_match('/^(\d+)/', $applicationPackage->getInstalledVersion(), $applicationVersionMatches);
+                $applicationVersion = isset($applicationVersionMatches[1]) ? $applicationVersionMatches[1] : '';
+                if ($applicationIsFlow) {
+                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
+                } else {
+                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $applicationName . '/' . ($applicationVersion ?: 'dev'));
+                }
+            break;
+            case 'MinorVersion':
+                preg_match('/^(\d+\.\d+)/', $flowPackage->getInstalledVersion(), $flowVersionMatches);
+                $flowVersion = isset($flowVersionMatches[1]) ? $flowVersionMatches[1] : '';
+                preg_match('/^(\d+\.\d+)/', $applicationPackage->getInstalledVersion(), $applicationVersionMatches);
+                $applicationVersion = isset($applicationVersionMatches[1]) ? $applicationVersionMatches[1] : '';
+                if ($applicationIsFlow) {
+                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . $flowVersion ?: 'dev');
+                } else {
+                    $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $applicationName . '/' . ($applicationVersion ?: 'dev'));
+                }
+            break;
+        }
     }
 }
