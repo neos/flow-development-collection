@@ -36,10 +36,10 @@ TYPO3:
       context: ''
 
       # Key of the "main" package of the application. This package's meta data is used for displaying the application
-      # version and possibly other metadata in the X-Powered-By HTTP header, ./flow command line help and where else needed.
+      # version and possibly other metadata in the X-Flow-Powered HTTP header, ./flow command line help and where else needed.
       applicationPackageKey: 'TYPO3.Flow'
 
-      # Human-readable name of the "main" package of the application. This name is displayed in the X-Powered-By
+      # Human-readable name of the "main" package of the application. This name is displayed in the X-Flow-Powered
       # HTTP header, in the ./flow command line help and where else needed.
       applicationName: 'Flow'
 
@@ -141,7 +141,7 @@ TYPO3:
 
     http:
 
-      # Defines the "application token" which is sent by in HTTP Response "X-Powered-By" headers.
+      # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
       #
       # The value can be one of:
       #

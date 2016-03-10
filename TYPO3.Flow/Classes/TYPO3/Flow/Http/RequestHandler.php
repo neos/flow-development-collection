@@ -182,9 +182,9 @@ class RequestHandler implements HttpRequestHandlerInterface
         $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'TYPO3.Flow');
         if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
             if ($applicationIsFlow) {
-                $response->getHeaders()->set('X-Powered-By', 'Flow');
+                $response->getHeaders()->set('X-Flow-Powered', 'Flow');
             } else {
-                $response->getHeaders()->set('X-Powered-By', 'Flow ' . $this->settings['core']['applicationName']);
+                $response->getHeaders()->set('X-Flow-Powered', 'Flow ' . $this->settings['core']['applicationName']);
             }
             return;
         }
@@ -203,9 +203,9 @@ class RequestHandler implements HttpRequestHandlerInterface
         }
 
         if ($applicationIsFlow) {
-            $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev'));
+            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev'));
         } else {
-            $response->getHeaders()->set('X-Powered-By', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
+            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
         }
     }
 
@@ -215,7 +215,8 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @param string $version For example "2.3.7"
      * @return string For example "2"
      */
-    protected function renderMajorVersion($version) {
+    protected function renderMajorVersion($version)
+    {
         preg_match('/^(\d+)/', $version, $versionMatches);
         return isset($versionMatches[1]) ? $versionMatches[1] : '';
     }
@@ -226,7 +227,8 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @param string $version For example "2.3.7"
      * @return string For example "2.3"
      */
-    protected function renderMinorVersion($version) {
+    protected function renderMinorVersion($version)
+    {
         preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
         return isset($versionMatches[1]) ? $versionMatches[1] : '';
     }

@@ -434,7 +434,7 @@ Sending a request and processing the response is a matter of a few lines::
 		 */
 		public function testAction() {
 			$this->browser->setRequestEngine($this->browserRequestEngine);
-			$response = $this->browser->request('http://flow.typo3.org');
+			$response = $this->browser->request('https://www.flowframework.io');
 			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
 		}
 	}
