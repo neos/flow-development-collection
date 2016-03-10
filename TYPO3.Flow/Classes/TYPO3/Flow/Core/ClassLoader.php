@@ -91,13 +91,6 @@ class ClassLoader
     );
 
     /**
-     * Map of FQ classname to include path.
-     *
-     * @var array
-     */
-    protected $classMap;
-
-    /**
      * @var array
      */
     protected $fallbackClassPaths = array();
@@ -166,11 +159,6 @@ class ClassLoader
 
         // Loads any known proxied class:
         if ($this->classesCache !== null && ($this->availableProxyClasses === null || isset($this->availableProxyClasses[implode('_', $namespaceParts)])) && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== false) {
-            return true;
-        }
-
-        if (isset($this->classMap[$className])) {
-            include($this->classMap[$className]);
             return true;
         }
 
