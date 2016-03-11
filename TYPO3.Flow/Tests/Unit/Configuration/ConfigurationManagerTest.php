@@ -670,6 +670,20 @@ EOD;
         $this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
         $configurationManager->_set('context', $this->mockContext);
         $configurationManager->_set('configurations', $mockConfigurations);
+        $configurationManager->_set('configurationTypes', [
+            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_CACHES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+        ]);
 
         $configurationManager->_call('saveConfigurationCache');
 
