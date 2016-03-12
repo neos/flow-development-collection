@@ -366,8 +366,12 @@ class ConfigurationManager
             break;
 
             case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                $this->loadConfiguration($configurationType, $this->packages);
-                $configuration = &$this->configurations[$configurationType];
+                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === []) {
+                    $this->loadConfiguration($configurationType, $this->packages);
+                }
+                if (isset($this->configurations[$configurationType])) {
+                    $configuration = &$this->configurations[$configurationType];
+                }
             break;
         }
 
@@ -594,6 +598,11 @@ class ConfigurationManager
      */
     protected function saveConfigurationCache()
     {
+        // Make sure that all configuration types are loaded before writing configuration caches.
+        foreach (array_keys($this->configurationTypes) as $configurationType) {
+            $this->getConfiguration($configurationType);
+        }
+
         $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
         if (!file_exists($configurationCachePath)) {
             Files::createDirectoryRecursively($configurationCachePath);
