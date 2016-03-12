@@ -1,8 +1,10 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
+namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+
+include_once('MemcachedBackendTest.php');
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Cache package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
