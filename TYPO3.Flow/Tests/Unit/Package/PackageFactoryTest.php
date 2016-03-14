@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Package\PackageFactory;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -36,6 +37,7 @@ class PackageFactoryTest extends UnitTestCase
      */
     public function setUp()
     {
+        ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(\TYPO3\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
         ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', array(), true);
@@ -61,7 +63,7 @@ class PackageFactoryTest extends UnitTestCase
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         $packageFilePath = $packagePath . 'Classes/Some/Package/Package.php';
         mkdir(dirname($packageFilePath), 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
         file_put_contents($packageFilePath, '<?php // no class');
 
         $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
@@ -76,7 +78,7 @@ class PackageFactoryTest extends UnitTestCase
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         $packageFilePath = $packagePath . 'Classes/Some/Package/Package.php';
         mkdir(dirname($packageFilePath), 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
         file_put_contents($packageFilePath, '<?php namespace TYPO3\\Flow\\Fixtures { class CustomPackage1 {}}');
 
         require($packageFilePath);
@@ -92,7 +94,7 @@ class PackageFactoryTest extends UnitTestCase
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         $packageFilePath = $packagePath . 'Classes/Some/Package/Package.php';
         mkdir(dirname($packageFilePath), 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
         file_put_contents($packageFilePath, '<?php namespace TYPO3\\Flow\\Fixtures { class CustomPackage2 extends \\TYPO3\\Flow\\Package\\Package {}}');
 
         require($packageFilePath);
@@ -109,7 +111,7 @@ class PackageFactoryTest extends UnitTestCase
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         $packageFilePath = $packagePath . 'Classes/Package.php';
         mkdir(dirname($packageFilePath), 0777, true);
-        $rawComposerManifest = '{"name": "some/package", "type": "flow-test", "autoload": { "psr-4": { "Foo": "bar" }}}';
+        $rawComposerManifest = '{"name": "some/package", "type": "neos-test", "autoload": { "psr-4": { "Foo": "bar" }}}';
         $composerManifest = json_decode($rawComposerManifest, true);
         file_put_contents($packagePath . 'composer.json', $rawComposerManifest);
         file_put_contents($packageFilePath, '<?php namespace TYPO3\\Flow\\Fixtures { class CustomPackage3 extends \\TYPO3\\Flow\\Package\\Package {}}');
@@ -127,7 +129,7 @@ class PackageFactoryTest extends UnitTestCase
     {
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         mkdir($packagePath, 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test"}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test"}');
 
         $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
         $this->assertSame(\TYPO3\Flow\Package\Package::class, get_class($package));

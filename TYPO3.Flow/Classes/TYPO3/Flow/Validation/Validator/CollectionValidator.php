@@ -25,6 +25,7 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected $supportedOptions = array(
         'elementValidator' => array(null, 'The validator type to use for the collection elements', 'string'),
+        'elementValidatorOptions' => array([], 'The validator options to use for the collection elements', 'array'),
         'elementType' => array(null, 'The type of the elements in the collection', 'string'),
         'validationGroups' => array(null, 'The validation groups to link to', 'string'),
     );
@@ -77,7 +78,7 @@ class CollectionValidator extends GenericObjectValidator
     {
         foreach ($value as $index => $collectionElement) {
             if (isset($this->options['elementValidator'])) {
-                $collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator']);
+                $collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator'], $this->options['elementValidatorOptions']);
             } elseif (isset($this->options['elementType'])) {
                 if (isset($this->options['validationGroups'])) {
                     $collectionElementValidator = $this->validatorResolver->getBaseValidatorConjunction($this->options['elementType'], $this->options['validationGroups']);

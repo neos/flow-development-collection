@@ -51,7 +51,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
      */
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
-        $this->validator->_set('options', array('elementValidator' => 'EmailAddress'));
+        $this->validator->_set('options', array('elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []));
         $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\EmailAddressValidator()));
 
         $arrayOfEmailAddresses = array(
@@ -87,7 +87,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
 
         // Create validators
         $aValidator = new \TYPO3\Flow\Validation\Validator\GenericObjectValidator(array());
-        $this->validator->_set('options', array('elementValidator' => 'Integer'));
+        $this->validator->_set('options', array('elementValidator' => 'Integer', 'elementValidatorOptions' => []));
         $integerValidator = new \TYPO3\Flow\Validation\Validator\IntegerValidator(array());
 
         // Add validators to properties
@@ -111,5 +111,19 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
         $this->mockValidatorResolver->expects($this->never())->method('createValidator');
 
         $this->validator->validate($persistentCollection);
+    }
+
+    /**
+     * @test
+     */
+    public function collectionValidatorTransfersElementValidatorOptionsToTheElementValidator()
+    {
+        $elementValidatorOptions = ['minimum' => 5];
+        $this->validator->_set('options', ['elementValidator' => 'NumberRange', 'elementValidatorOptions' => $elementValidatorOptions]);
+        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\NumberRangeValidator($elementValidatorOptions)));
+
+        $result = $this->validator->validate([5, 6, 1]);
+
+        $this->assertCount(1, $result->getFlattenedErrors());
     }
 }

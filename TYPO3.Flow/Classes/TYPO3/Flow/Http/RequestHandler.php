@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Component\ComponentContext;
+use TYPO3\Flow\Package\Package;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -103,6 +104,7 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->boot();
         $this->resolveDependencies();
+        $this->addPoweredByHeader($this->response);
         if (isset($this->settings['http']['baseUri'])) {
             $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
@@ -164,5 +166,71 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+    }
+
+    /**
+     * Adds an HTTP header to the Response which indicates that the application is powered by Flow.
+     *
+     * @param Response $response
+     * @return void
+     */
+    protected function addPoweredByHeader(Response $response)
+    {
+        if ($this->settings['http']['applicationToken'] === 'Off') {
+            return;
+        }
+
+        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'TYPO3.Flow');
+        if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
+            if ($applicationIsFlow) {
+                $response->getHeaders()->set('X-Flow-Powered', 'Flow');
+            } else {
+                $response->getHeaders()->set('X-Flow-Powered', 'Flow ' . $this->settings['core']['applicationName']);
+            }
+            return;
+        }
+
+        /** @var Package $applicationPackage */
+        /** @var Package $flowPackage */
+        $flowPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Flow');
+        $applicationPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage($this->settings['core']['applicationPackageKey']);
+
+        if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
+            $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());
+            $applicationVersion = $this->renderMajorVersion($applicationPackage->getInstalledVersion());
+        } else {
+            $flowVersion = $this->renderMinorVersion($flowPackage->getInstalledVersion());
+            $applicationVersion = $this->renderMinorVersion($applicationPackage->getInstalledVersion());
+        }
+
+        if ($applicationIsFlow) {
+            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev'));
+        } else {
+            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
+        }
+    }
+
+    /**
+     * Renders a major version out of a full version string
+     *
+     * @param string $version For example "2.3.7"
+     * @return string For example "2"
+     */
+    protected function renderMajorVersion($version)
+    {
+        preg_match('/^(\d+)/', $version, $versionMatches);
+        return isset($versionMatches[1]) ? $versionMatches[1] : '';
+    }
+
+    /**
+     * Renders a minor version out of a full version string
+     *
+     * @param string $version For example "2.3.7"
+     * @return string For example "2.3"
+     */
+    protected function renderMinorVersion($version)
+    {
+        preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
+        return isset($versionMatches[1]) ? $versionMatches[1] : '';
     }
 }

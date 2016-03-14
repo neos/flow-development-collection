@@ -51,6 +51,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUp()
     {
+        ComposerUtility::flushCaches();
         vfsStream::setup('Test');
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock(\TYPO3\Flow\SignalSlot\Dispatcher::class)));

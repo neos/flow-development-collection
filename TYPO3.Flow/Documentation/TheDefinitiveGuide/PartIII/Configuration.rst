@@ -2,9 +2,9 @@
 Configuration
 =============
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
-Configuration is an important aspect of versatile applications. TYPO3 Flow provides you with
+Configuration is an important aspect of versatile applications. Flow provides you with
 configuration mechanisms which have a small footprint and are convenient to use and
 powerful at the same time. Hub for all configuration is the configuration manager which
 handles alls configuration tasks like reading configuration, configuration cascading, and
@@ -27,8 +27,8 @@ i.e. later values override prior ones):
   defined in the package's configuration directories.
 
 ``/Packages/<PackageDirectoryAndName>/Configuration/<ApplicationContext>/``
-  There may exist a subdirectory for each application context (see TYPO3 Flow Bootstrap
-  section). This configuration is only loaded if TYPO3 Flow runs in the respective
+  There may exist a subdirectory for each application context (see Flow Bootstrap
+  section). This configuration is only loaded if Flow runs in the respective
   application context.
 
 ``/Configuration/<ApplicationContext>/``
@@ -46,7 +46,7 @@ folders are reserved for the Flow configuration system.
 Configuration Files
 ===================
 
-TYPO3 Flow distinguishes between different types of configuration. The most important type of
+Flow distinguishes between different types of configuration. The most important type of
 configuration are the settings, however other configuration types exist for special
 purposes.
 
@@ -91,30 +91,30 @@ Defining Configuration
 Configuration Format
 --------------------
 
-The format of TYPO3 Flow's configuration files is YAML. YAML is a well-readable format which is
+The format of Flow's configuration files is YAML. YAML is a well-readable format which is
 especially well-suited for defining configuration. The full specification among with many
 examples can be found on the `YAML website <http://www.yaml.org/>`_. All important parts of the YAML
-specification are supported by the parser used by TYPO3 Flow, it might happen though that some
+specification are supported by the parser used by Flow, it might happen though that some
 exotic features won't have the desired effect. At best you look at the configuration files
-which come with the TYPO3 Flow distribution for getting more examples.
+which come with the Flow distribution for getting more examples.
 
 **Example: a package-level Settings.yaml**
 
 .. code-block:: yaml
 
-	#                                                                        #
-	# Settings Configuration for the TYPO3.Viewhelpertest Package            #
-	#                                                                        #
+    #                                                                        #
+    # Settings Configuration for the TYPO3.Viewhelpertest Package            #
+    #                                                                        #
 
-	TYPO3:
-	  Viewhelpertest:
-	    includeViewHelpers: [alias, base]
+    TYPO3:
+      Viewhelpertest:
+        includeViewHelpers: [alias, base]
 
-	    xhprof:
-	      rootDirectory: '' # path to the XHProf library
-	      outputDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/' # output directory
+        xhprof:
+          rootDirectory: '' # path to the XHProf library
+          outputDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/' # output directory
 
-	    profilingTemplatesDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/'
+        profilingTemplatesDirectory: '%FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/'
 
 
 .. warning::
@@ -162,12 +162,12 @@ method.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function ($configurationManager) {
-			$configurationManager->registerConfigurationType('Views');
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function ($configurationManager) {
+            $configurationManager->registerConfigurationType('Views');
+        }
+    );
 
 This will allow to use the new configuration type ``Views`` in the same way as the other types
 supported by Flow natively, as soon as you have a file named ``Views.yaml`` in your configuration
@@ -181,15 +181,15 @@ constants in ``ConfigurationManager``.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function ($configurationManager) {
-			$configurationManager->registerConfigurationType(
-				'CustomObjects',
-				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
-			);
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function ($configurationManager) {
+            $configurationManager->registerConfigurationType(
+                'CustomObjects',
+                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
+            );
+        }
+    );
 
 Split configuration sources
 ---------------------------
@@ -202,82 +202,82 @@ configuration filenames.
 
 .. code-block:: php
 
-	$dispatcher = $bootstrap->getSignalSlotDispatcher();
-	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function (ConfigurationManager $configurationManager) {
-			$configurationManager->registerConfigurationType(
-				'Models',
-				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-				TRUE
-			);
-		}
-	);
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+        function (ConfigurationManager $configurationManager) {
+            $configurationManager->registerConfigurationType(
+                'Models',
+                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                TRUE
+            );
+        }
+    );
 
 The above code will lead to the following files being read, sorted by name and merged if the
 configuration of type ``Models`` is requested:
 
 .. code-block:: text
 
-	Configuration/
-		Models.yaml
-		Models.Foo.yaml
-		Models.Bar.yaml
-		Models.Quux.yaml
+    Configuration/
+        Models.yaml
+        Models.Foo.yaml
+        Models.Bar.yaml
+        Models.Quux.yaml
 
 .. note::
-	Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
-	``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
+    Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
+    ``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
 
 Accessing Settings
 ==================
 
-In almost all cases, TYPO3 Flow will automatically provide you with the right configuration.
+In almost all cases, Flow will automatically provide you with the right configuration.
 
 What you usually want to work with are ``settings``, which are application-specific to
-your package. The following example demonstrates how to let TYPO3 Flow inject the settings
+your package. The following example demonstrates how to let Flow inject the settings
 of a classes' package and output some option value:
 
 **Example: Settings Injection**
 
 .. code-block:: yaml
 
-	Acme:
-	  Demo:
-	    administrator:
-	      email: 'john@doe.com'
-	      name: 'John Doe'
+    Acme:
+      Demo:
+        administrator:
+          email: 'john@doe.com'
+          name: 'John Doe'
 
 .. code-block:: php
 
-	namespace Acme\Demo;
+    namespace Acme\Demo;
 
-	class SomeClass {
+    class SomeClass {
 
-		/**
-		 * @var array
-		 */
-		protected $settings;
+        /**
+         * @var array
+         */
+        protected $settings;
 
-		/**
-		 * Inject the settings
-		 *
-		 * @param array $settings
-		 * @return void
-		 */
-		public function injectSettings(array $settings) {
-			$this->settings = $settings;
-		}
+        /**
+         * Inject the settings
+         *
+         * @param array $settings
+         * @return void
+         */
+        public function injectSettings(array $settings) {
+            $this->settings = $settings;
+        }
 
-		/**
-		 * Outputs some settings of the "Demo" package.
-		 *
-		 * @return void
-		 */
-		public function theMethod() {
-			echo ($this->settings['administrator']['name']);
-			echo ($this->settings['administrator']['email']);
-		}
-	}
+        /**
+         * Outputs some settings of the "Demo" package.
+         *
+         * @return void
+         */
+        public function theMethod() {
+            echo ($this->settings['administrator']['name']);
+            echo ($this->settings['administrator']['email']);
+        }
+    }
 
 .. note::
   Injecting all settings creates tight coupling to the settings. If you only need
@@ -287,7 +287,7 @@ of a classes' package and output some option value:
 Injection of single settings into properties
 --------------------------------------------
 
-TYPO3 Flow provides a way to inject specific settings through the ``InjectConfiguration`` annotation directly into your
+Flow provides a way to inject specific settings through the ``InjectConfiguration`` annotation directly into your
 properties.
 The annotation provides three optional attributes related to configuration injection:
 
@@ -305,61 +305,61 @@ The annotation provides three optional attributes related to configuration injec
 
 .. code-block:: yaml
 
-	Acme:
-	  Demo:
-	    administrator:
-	      name: 'John Doe'
-	SomeOther:
-	  Package:
-	    email: 'john@doe.com'
+    Acme:
+      Demo:
+        administrator:
+          name: 'John Doe'
+    SomeOther:
+      Package:
+        email: 'john@doe.com'
 
 
 .. code-block:: php
 
-	namespace Acme\Demo;
+    namespace Acme\Demo;
 
-	use TYPO3\Flow\Annotations as Flow;
+    use TYPO3\Flow\Annotations as Flow;
 
-	class SomeClass {
+    class SomeClass {
 
-		/**
-		 * @Flow\InjectConfiguration(path="administrator.name")
-		 * @var string
-		 */
-		protected $name;
+      /**
+       * @Flow\InjectConfiguration(path="administrator.name")
+       * @var string
+       */
+      protected $name;
 
-		/**
-		 * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
-		 * @var string
-		 */
-		protected $email;
+      /**
+       * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
+       * @var string
+       */
+      protected $email;
 
-		/**
-		 * @Flow\InjectConfiguration(package="SomeOther.Package")
-		 * @var array
-		 */
-		protected $someOtherPackageSettings = array();
+      /**
+       * @Flow\InjectConfiguration(package="SomeOther.Package")
+       * @var array
+       */
+      protected $someOtherPackageSettings = array();
 
-		/**
-		 * Overrides the name
-		 *
-		 * @param string $name
-		 * @return void
-		 */
-		public function setName($name) {
-			$this->name = $name;
-		}
+      /**
+       * Overrides the name
+       *
+       * @param string $name
+       * @return void
+       */
+      public function setName($name) {
+        $this->name = $name;
+      }
 
-		/**
-		 * Overrides the email
-		 *
-		 * @param string $email
-		 * @return void
-		 */
-		public function setEmail($email) {
-			$this->email = $email;
-		}
-	}
+      /**
+       * Overrides the email
+       *
+       * @param string $email
+       * @return void
+       */
+      public function setEmail($email) {
+        $this->email = $email;
+      }
+    }
 
 Working with other configuration
 --------------------------------
@@ -370,7 +370,7 @@ special configuration types. The ``ConfigurationManager`` provides a method call
 actual configuration type you are requesting.
 
 Bottom line is that you should be highly aware of what you're doing when working with
-these special options and that they might change in a later version of TYPO3 Flow. Usually
+these special options and that they might change in a later version of Flow. Usually
 there are much better ways to get the desired information (e.g. ask the Object Manager for
 object configuration).
 
@@ -378,7 +378,7 @@ Configuration Cache
 ===================
 
 Parsing the YAML configuration files takes a bit of time which remarkably slows down the
-initialization of TYPO3 Flow. That's why all configuration is cached by default, the
+initialization of Flow. That's why all configuration is cached by default, the
 configuration manager will compile all loaded configuration into a PHP file which will be
 loaded in subsequent calls instead of parsing the YAML files again.
 
@@ -387,13 +387,13 @@ flush caches manually (should that be needed), use the following command:
 
 .. code-block:: bash
 
-	$ ./flow flow:cache:flush
+    $ ./flow flow:cache:flush
 
 Configuration Validation
 ========================
 
 Errors in configuration can lead to hard to spot errors and seemingly random
-weird behavior. TYPO3 Flow therefore comes with a general purpose array validator
+weird behavior. Flow therefore comes with a general purpose array validator
 which can check PHP arrays for validity according to some schema.
 
 This validator is used in the ``configuration:validate`` command::

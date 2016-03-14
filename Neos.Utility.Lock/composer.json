@@ -1,0 +1,25 @@
+{
+  "name": "neos/utility-lock",
+  "description": "Flow Locking Implementation",
+  "type": "library",
+  "homepage": "http://flow.typo3.org",
+  "license": "MIT",
+  "require": {
+    "neos/utility-files": "*",
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "mikey179/vfsstream": "~1.6",
+    "phpunit/phpunit": "~4.8 || ~5.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Flow\\Utility\\Lock": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TYPO3\\Flow\\Utility\\Lock\\Tests\\": "Tests"
+    }
+  }
+}

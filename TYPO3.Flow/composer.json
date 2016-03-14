@@ -11,8 +11,17 @@
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
-        "ext-mbstring": "*",
         "ext-reflection": "*",
+
+        "neos/utility-lock": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-files": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/utility-opcodecache": "*",
+        "neos/utility-pdo": "*",
+        "neos/utility-schema": "*",
+        "neos/utility-unicode": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
@@ -39,6 +48,9 @@
     "autoload": {
         "psr-0": {
             "TYPO3\\Flow": "Classes"
+        },
+        "psr-4": {
+            "TYPO3\\Flow\\Core\\Migrations\\": "Scripts/Migrations"
         }
     }
 }
