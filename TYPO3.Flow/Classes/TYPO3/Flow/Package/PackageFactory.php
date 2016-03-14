@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
+use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Package\Exception\InvalidPackagePathException;
 use TYPO3\Flow\Utility\Files;
@@ -38,7 +39,7 @@ class PackageFactory
         $absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
 
         if ($packageClassInformation === null) {
-            $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath, $autoloadConfiguration);
+            $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
         }
 
         $packageClassName = Package::class;
@@ -61,25 +62,41 @@ class PackageFactory
      *
      * @param string $packageKey The package key
      * @param string $absolutePackagePath Absolute path to the package
-     * @param array $autoloadDirectives
      * @return array The path to the package file and classname for this package or an empty array if none was found.
      * @throws Exception\CorruptPackageException
      * @throws InvalidPackagePathException
      */
-    public function detectFlowPackageFilePath($packageKey, $absolutePackagePath, array $autoloadDirectives = [])
+    public function detectFlowPackageFilePath($packageKey, $absolutePackagePath)
     {
         if (!is_dir($absolutePackagePath)) {
             throw new InvalidPackagePathException(sprintf('The given package path "%s" is not a readable directory.', $absolutePackagePath), 1445904440);
         }
-        if (isset($autoloadDirectives[ClassLoader::MAPPING_TYPE_PSR4])) {
-            $packageClassPathAndFilename = Files::concatenatePaths(array('Classes', 'Package.php'));
-        } else {
-            $packageClassPathAndFilename = Files::concatenatePaths(array('Classes', str_replace('.', '/', $packageKey), 'Package.php'));
-        }
-        $absolutePackageClassPath = Files::concatenatePaths(array($absolutePackagePath, $packageClassPathAndFilename));
-        if (!is_file($absolutePackageClassPath)) {
+
+        $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);
+        if (!ComposerUtility::isFlowPackageType(isset($composerManifest['type']) ? $composerManifest['type'] : '')) {
             return [];
         }
+
+        $possiblePackageClassPaths = [
+            Files::concatenatePaths(['Classes', 'Package.php']),
+            Files::concatenatePaths(['Classes', str_replace('.', '/', $packageKey), 'Package.php'])
+        ];
+
+        $foundPackageClassPaths = array_filter($possiblePackageClassPaths, function ($packageClassPathAndFilename) use ($absolutePackagePath) {
+            $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
+            return is_file($absolutePackageClassPath);
+        });
+
+        if ($foundPackageClassPaths === []) {
+            return [];
+        }
+
+        if (count($foundPackageClassPaths) > 1) {
+            throw new Exception\CorruptPackageException(sprintf('The package "%s" contains multiple possible "Package.php" files. Please make sure that only one "Package.php" exists in the autoload root(s) of your Flow package.', $packageKey), 1457454840);
+        }
+
+        $packageClassPathAndFilename = reset($foundPackageClassPaths);
+        $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
 
         $packageClassContents = file_get_contents($absolutePackageClassPath);
         $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
@@ -87,6 +104,6 @@ class PackageFactory
             throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey, $packageClassPathAndFilename), 1327587091);
         }
 
-        return array('className' => $packageClassName, 'pathAndFilename' => $packageClassPathAndFilename);
+        return ['className' => $packageClassName, 'pathAndFilename' => $packageClassPathAndFilename];
     }
 }

@@ -664,9 +664,9 @@ class Session implements SessionInterface
             }
             $this->started = false;
 
-            $decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
+            $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
             $factor = ($decimals > -1) ? $decimals * 10 : 1;
-            if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+            if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
                 $this->collectGarbage();
             }
         }

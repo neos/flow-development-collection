@@ -20,6 +20,7 @@ use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
 use TYPO3\Flow\Validation\ValidatorResolver;
@@ -74,6 +75,12 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $settings;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -125,6 +132,7 @@ class InternalRequestEngine implements RequestEngineInterface
         if ($session->isStarted()) {
             $session->close();
         }
+        $this->persistenceManager->clearState();
         return $response;
     }
 

@@ -27,7 +27,7 @@ class Version20141118174722 extends AbstractMigration
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP CONSTRAINT fk_b4d45b32a4a851af');
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP CONSTRAINT fk_b4d45b323cb65d1');
 
-        $this->addSql('DROP INDEX idx_b4d45b323cb65d1');
+        $this->addSql('DROP INDEX IF EXISTS idx_b4d45b323cb65d1');
 
         $this->addSql('ALTER TABLE typo3_flow_resource_resource RENAME resourcepointer TO sha1');
         $this->addSql('ALTER TABLE typo3_flow_resource_resource ALTER sha1 TYPE VARCHAR(40), ALTER sha1 DROP DEFAULT, ALTER sha1 SET NOT NULL');

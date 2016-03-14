@@ -2,7 +2,7 @@
 Resource Management
 ===================
 
-.. sectionauthor:: Christian Müller <christian.mueller@typo3.org>
+.. sectionauthor:: Christian Müller <christian.mueller@neos.io>
 
 
 Traditionally a PHP application deals directly with all kinds of files. Realizing a file
@@ -11,7 +11,7 @@ with deciphering the ``$_FILES`` superglobal and move the uploaded file from the
 location to a safer place. You also need to analyze the content (is it safe?), control web
 access and ultimately delete the file when it's not needed anymore.
 
-TYPO3 Flow relieves you of this hassle and lets you deal with simple ``Resource`` objects
+Flow relieves you of this hassle and lets you deal with simple ``Resource`` objects
 instead. File uploads are handled automatically, enforcing the restrictions which were
 configured by means of validation rules. The publishing mechanism was designed to support
 a wide range of scenarios, starting from simple publication to the local file system up to
@@ -57,7 +57,7 @@ Flow comes configured with two storages by default:
 Target
 ======
 
-TYPO3 Flow is a web application framework and as such some (or most) of the resources in the system need
+Flow is a web application framework and as such some (or most) of the resources in the system need
 to be made accessible online. The resource storages are not meant to be accessible so a ``Target`` is a
 configured way of telling how resources are to be published to the web. The default target for our
 persistent storage above is configured like this:
@@ -84,7 +84,7 @@ could publish the resources to CDNs or other external locations that are publicl
 Collections
 ===========
 
-TYPO3 Flow bundles your ``Resource`` objects into collections to allow separation of different types of
+Flow bundles your ``Resource`` objects into collections to allow separation of different types of
 resources. A ``Collection`` is the binding between a ``Storage`` and a ``Target`` and each ``Resource``
 belongs to exactly one ``Collection`` and by that is stored in the matching storage and published to the
 matching target. You can configure as many collections as you need for specific parts of your application.
@@ -102,7 +102,7 @@ Flow comes preconfigured with two default collections:
 Package Resources
 =================
 
-TYPO3 Flow packages may provide any amount of static resources. They might be images,
+Flow packages may provide any amount of static resources. They might be images,
 stylesheets, javascripts, templates or any other file which is used within the application
 or published to the web. Static resources may either be public or private:
 
@@ -180,7 +180,7 @@ This is what happens in detail while executing the ``importImageAction`` method:
 
 #. The URI (in our case an absolute path and filename) is passed to the ``importResource()``
    method which analyzes the file found at that location.
-#. The file is imported into TYPO3 Flow's persistent resources storage using the sha1 hash over
+#. The file is imported into Flow's persistent resources storage using the sha1 hash over
    the file content as its filename. If a file with exactly the same content is imported
    it will reuse the already stored file data.
 #. The Resource Manager returns a new ``Resource`` object which refers to the newly
@@ -203,7 +203,7 @@ If you already have the new resource`s content available as a string you can use
 Resource Uploads
 ----------------
 
-The second way to create new resources is uploading them via a POST request. TYPO3 Flow's MVC
+The second way to create new resources is uploading them via a POST request. Flow's MVC
 framework detects incoming file uploads and automatically converts them into ``Resource``
 objects. In order to persist an uploaded resource you only need to persist the resulting
 object.
@@ -333,10 +333,10 @@ This will publish all collections, you can also just publish the *static* ``Coll
 ``--collection`` argument.
 
 
-.. admonition:: Why TYPO3 Flow uses symbolic links by default
+.. admonition:: Why Flow uses symbolic links by default
 
   Publishing resources basically means copying files from the ``Storage`` location to the ``Target``.
-  In the default configuration TYPO3 Flow instead creates symbolic links, making the resources
+  In the default configuration Flow instead creates symbolic links, making the resources
   consume less disk space and work faster. By changing the ``Target`` configuration you can change this.
 
 Package Resources
@@ -406,7 +406,7 @@ Resource Stream Wrapper
 Static resources are often used by packages internally. Typical use cases are templates,
 XML, YAML or other data files and images for further processing. You might be tempted to
 refer to these files by using one of the ``FLOW_PATH_*`` constants or by creating a path
-relative to your package. A much better and more convenient way is using TYPO3 Flow's built-in
+relative to your package. A much better and more convenient way is using Flow's built-in
 package resources stream wrapper.
 
 The following example reads the content of the file
@@ -418,7 +418,8 @@ The following example reads the content of the file
 		'resource://Acme.Demo/Private/Templates/SomeTemplate.html'
 	);
 
-Some situations might require access to persistent resources. The resource stream wrapper also supports this. To use this feature, just pass the resource hash:
+Some situations might require access to persistent resources. The resource stream wrapper also supports
+this. To use this feature, just pass the resource hash:
 
 *Example: Accessing persisted resources* ::
 

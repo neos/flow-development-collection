@@ -11,15 +11,8 @@ namespace TYPO3\Flow\Core;
  * source code.
  */
 
-// Those are needed before the autoloader is active
-require_once(__DIR__ . '/ApplicationContext.php');
-require_once(__DIR__ . '/../Exception.php');
-require_once(__DIR__ . '/../Utility/Files.php');
-require_once(__DIR__ . '/../Package/PackageInterface.php');
-require_once(__DIR__ . '/../Package/Package.php');
-require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
-require_once(__DIR__ . '/../Package/PackageManager.php');
-require_once(__DIR__ . '/Booting/Scripts.php');
+// Load the composer autoloader first
+require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
@@ -55,7 +48,7 @@ class Bootstrap
     /**
      * @var array
      */
-    protected $requestHandlers;
+    protected $requestHandlers = array();
 
     /**
      * @var string
