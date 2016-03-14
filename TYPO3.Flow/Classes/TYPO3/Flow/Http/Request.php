@@ -148,7 +148,7 @@ class Request extends Message
             $defaultServerEnvironment['HTTP_CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         }
 
-        $query = $uri->getQuery();
+        $query = trim($uri->getQuery());
         $fragment = $uri->getFragment();
         $overrideValues = array(
             'REQUEST_URI' => $uri->getPath() . ($query !== '' ? '?' . $query : '') . ($fragment !== '' ? '#' . $fragment : ''),
