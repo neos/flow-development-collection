@@ -22,7 +22,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
  *
  * @api
  */
-class Logger implements SystemLoggerInterface, SecurityLoggerInterface
+class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, SecurityLoggerInterface
 {
     /**
      * @var \SplObjectStorage
@@ -112,8 +112,6 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
     }
 
     /**
-     * Writes information about the given exception into the log.
-     *
      * @param \Exception $exception The exception to log
      * @param array $additionalData Additional data to log
      * @return void
@@ -121,13 +119,36 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
      */
     public function logException(\Exception $exception, array $additionalData = array())
     {
-        $backTrace = $exception->getTrace();
+        $this->logError($exception, $additionalData);
+    }
+
+    /**
+     * @param \Throwable $throwable The throwable to log
+     * @param array $additionalData Additional data to log
+     * @return void
+     * @api
+     */
+    public function logThrowable(\Throwable $throwable, array $additionalData = array())
+    {
+        $this->logError($throwable, $additionalData);
+    }
+
+    /**
+     * Writes information about the given exception into the log.
+     *
+     * @param object $error \Exception or \Throwable
+     * @param array $additionalData Additional data to log
+     * @return void
+     */
+    protected function logError($error, array $additionalData = array())
+    {
+        $backTrace = $error->getTrace();
         $className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
         $methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
-        $message = $this->getExceptionLogMessage($exception);
+        $message = $this->getErrorLogMessage($error);
 
-        if ($exception->getPrevious() !== null) {
-            $additionalData['previousException'] = $this->getExceptionLogMessage($exception->getPrevious());
+        if ($error->getPrevious() !== null) {
+            $additionalData['previousException'] = $this->getErrorLogMessage($error->getPrevious());
         }
 
         $explodedClassName = explode('\\', $className);
@@ -138,10 +159,10 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
             mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
         }
         if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-            $referenceCode = ($exception instanceof Exception) ? $exception->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
-            $exceptionDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
-            file_put_contents($exceptionDumpPathAndFilename, $this->renderExceptionInfo($exception));
-            $message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
+            $referenceCode = ($error instanceof Exception) ? $error->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+            $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
+            file_put_contents($errorDumpPathAndFilename, $this->renderErrorInfo($error));
+            $message .= ' - See also: ' . basename($errorDumpPathAndFilename);
         } else {
             $this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'Flow', __CLASS__, __FUNCTION__);
         }
@@ -150,22 +171,22 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
     }
 
     /**
-     * Get current exception post mortem informations with support for exception chaining
+     * Get current error post mortem informations with support for error chaining
      *
-     * @param \Exception $exception
+     * @param object $error \Exception or \Throwable
      * @return string
      */
-    protected function renderExceptionInfo(\Exception $exception)
+    protected function renderErrorInfo($error)
     {
         $maximumDepth = 100;
-        $backTrace = $exception->getTrace();
-        $message = $this->getExceptionLogMessage($exception);
+        $backTrace = $error->getTrace();
+        $message = $this->getErrorLogMessage($error);
         $postMortemInfo = $this->renderBacktrace($message, $backTrace);
         $depth = 0;
-        while ($exception->getPrevious() instanceof \Exception && $depth < $maximumDepth) {
-            $exception = $exception->getPrevious();
-            $message = 'Previous exception: ' . $this->getExceptionLogMessage($exception);
-            $backTrace = $exception->getTrace();
+        while (($error->getPrevious() instanceof \Throwable || $error->getPrevious() instanceof \Exception) && $depth < $maximumDepth) {
+            $error = $error->getPrevious();
+            $message = 'Previous exception: ' . $this->getErrorLogMessage($error);
+            $backTrace = $error->getTrace();
             $postMortemInfo .= PHP_EOL . $this->renderBacktrace($message, $backTrace);
             ++$depth;
         }
@@ -180,15 +201,15 @@ class Logger implements SystemLoggerInterface, SecurityLoggerInterface
     }
 
     /**
-     * @param \Exception $exception
+     * @param object $error \Exception or \Throwable
      * @return string
      */
-    protected function getExceptionLogMessage(\Exception $exception)
+    protected function getErrorLogMessage($error)
     {
-        $exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
-        $backTrace = $exception->getTrace();
+        $errorCodeNumber = ($error->getCode() > 0) ? ' #' . $error->getCode() : '';
+        $backTrace = $error->getTrace();
         $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-        return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage();
+        return 'Uncaught exception' . $errorCodeNumber . $line . ': ' . $error->getMessage();
     }
 
     /**
