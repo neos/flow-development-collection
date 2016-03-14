@@ -84,7 +84,10 @@ class ResourceCommandController extends CommandController
             foreach ($collections as $collection) {
                 /** @var CollectionInterface $collection */
                 $this->outputLine('Publishing resources of collection "%s"', array($collection->getName()));
-                $collection->publish();
+                $target = $collection->getTarget();
+                $target->publishCollection($collection, function ($iteration) {
+                    $this->clearState($iteration);
+                });
             }
         } catch (Exception $exception) {
             $this->outputLine();
@@ -180,12 +183,16 @@ class ResourceCommandController extends CommandController
 
         $brokenResources = array();
         $relatedAssets = new \SplObjectStorage();
-        foreach ($this->resourceRepository->findAll() as $resource) {
+        $relatedThumbnails = new \SplObjectStorage();
+        $iterator = $this->resourceRepository->findAllIterator();
+        foreach ($this->resourceRepository->iterate($iterator, function ($iteration) {
+            $this->clearState($iteration);
+        }) as $resource) {
             $this->output->progressAdvance(1);
             /* @var \TYPO3\Flow\Resource\Resource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $resource;
+                $brokenResources[] = $resource->getSha1();
             }
         }
 
@@ -193,13 +200,21 @@ class ResourceCommandController extends CommandController
         $this->outputLine();
 
         if ($mediaPackagePresent && count($brokenResources) > 0) {
-            $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
             /* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
+            $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
+            /* @var \TYPO3\Media\Domain\Repository\ThumbnailRepository $thumbnailRepository */
+            $thumbnailRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\ThumbnailRepository::class);
 
-            foreach ($brokenResources as $resource) {
+            foreach ($brokenResources as $key => $resourceSha1) {
+                $resource = $this->resourceRepository->findOneBySha1($resourceSha1);
+                $brokenResources[$key] = $resource;
                 $assets = $assetRepository->findByResource($resource);
                 if ($assets !== null) {
                     $relatedAssets[$resource] = $assets;
+                }
+                $thumbnails = $thumbnailRepository->findByResource($resource);
+                if ($assets !== null) {
+                    $relatedThumbnails[$resource] = $thumbnails;
                 }
             }
         }
@@ -209,7 +224,7 @@ class ResourceCommandController extends CommandController
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
-                $this->outputLine('%s (%s) %s', array($resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()));
+                $this->outputLine('%s (%s) from "%s" collection', array($resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()));
                 if (isset($relatedAssets[$resource])) {
                     foreach ($relatedAssets[$resource] as $asset) {
                         $this->outputLine(' -> %s (%s)', array(get_class($asset), $asset->getIdentifier()));
@@ -223,17 +238,41 @@ class ResourceCommandController extends CommandController
 
             switch ($response) {
                 case 'y':
-                    foreach ($brokenResources as $resource) {
+                    $brokenAssetCounter = 0;
+                    $brokenThumbnailCounter = 0;
+                    foreach ($brokenResources as $sha1 => $resource) {
+                        $this->outputLine('- delete %s (%s) from "%s" collection', [
+                            $resource->getFilename(),
+                            $resource->getSha1(),
+                            $resource->getCollectionName()
+                        ]);
                         $resource->disableLifecycleEvents();
-                        $this->persistenceManager->remove($resource);
+                        $this->resourceRepository->remove($resource);
                         if (isset($relatedAssets[$resource])) {
                             foreach ($relatedAssets[$resource] as $asset) {
                                 $assetRepository->remove($asset);
+                                $brokenAssetCounter++;
                             }
                         }
+                        if (isset($relatedThumbnails[$resource])) {
+                            foreach ($relatedThumbnails[$resource] as $thumbnail) {
+                                $thumbnailRepository->remove($thumbnail);
+                                $brokenThumbnailCounter++;
+                            }
+                        }
+                        $this->persistenceManager->persistAll();
                     }
-                    $this->outputLine('Removed %s resource object(s) from the database.', array(count($brokenResources)));
-                break;
+                    $brokenResourcesCounter = count($brokenResources);
+                    if ($brokenResourcesCounter > 0) {
+                        $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
+                    }
+                    if ($brokenAssetCounter > 0) {
+                        $this->outputLine('Removed %s asset object(s) from the database.', [$brokenAssetCounter]);
+                    }
+                    if ($brokenThumbnailCounter > 0) {
+                        $this->outputLine('Removed %s thumbnail object(s) from the database.', [$brokenThumbnailCounter]);
+                    }
+                    break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
                 break;
@@ -242,6 +281,19 @@ class ResourceCommandController extends CommandController
                     $this->quit(0);
                 break;
             }
+        }
+    }
+
+    /**
+     * This method is used internal as a callback method to clear doctrine states
+     *
+     * @param integer $iteration
+     * @return void
+     */
+    protected function clearState($iteration)
+    {
+        if ($iteration % 1000 === 0) {
+            $this->persistenceManager->clearState();
         }
     }
 }
