@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Log;
  *
  * @api
  */
-class EarlyLogger implements SystemLoggerInterface
+class EarlyLogger implements ThrowableLoggerInterface
 {
     /**
      * @var array
@@ -28,6 +28,11 @@ class EarlyLogger implements SystemLoggerInterface
      * @var array
      */
     protected $exceptions = array();
+
+    /**
+     * @var array
+     */
+    protected $throwables = array();
 
     /**
      * Adds a backend to which the logger sends the logging data
@@ -63,6 +68,7 @@ class EarlyLogger implements SystemLoggerInterface
     {
         $this->logEntries = array();
         $this->exceptions = array();
+        $this->throwables = array();
     }
 
     /**
@@ -96,6 +102,19 @@ class EarlyLogger implements SystemLoggerInterface
     }
 
     /**
+     * Writes information about the given exception into the log.
+     *
+     * @param \Throwable $throwable The exception to log
+     * @param array $additionalData Additional data to log
+     * @return void
+     * @api
+     */
+    public function logThrowable(\Throwable $throwable, array $additionalData = array())
+    {
+        $this->throwables[] = func_get_args();
+    }
+
+    /**
      * Replays internal logs on provided logger. Use to transfer early logs to real logger when available.
      *
      * @see \TYPO3\Flow\Package\PackageManager
@@ -114,8 +133,13 @@ class EarlyLogger implements SystemLoggerInterface
             $logger->log('[Done replaying logs from instance of EarlyLogger.]');
         }
         if (count($this->exceptions) > 0) {
-            foreach ($this->logEntries as $logEntry) {
-                call_user_func_array(array($logger, 'logException'), $logEntry);
+            foreach ($this->exceptions as $exception) {
+                call_user_func_array(array($logger, 'logException'), $exception);
+            }
+        }
+        if (count($this->throwables) > 0 && $logger instanceof ThrowableLoggerInterface) {
+            foreach ($this->throwables as $throwable) {
+                call_user_func_array(array($logger, 'logThrowable'), $throwable);
             }
         }
         if ($resetLogs === true) {

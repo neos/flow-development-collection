@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Error;
  * source code.
  */
 
+use TYPO3\Flow\Log\ThrowableLoggerInterface;
+
 require_once('Exception.php');
 
 /**
@@ -76,7 +78,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         if (is_object($this->systemLogger)) {
             $options = $this->resolveCustomRenderingOptions($exception);
             if (isset($options['logException']) && $options['logException']) {
-                if ($exception instanceof \Exception) {
+                if ($exception instanceof \Throwable) {
+                    if ($this->systemLogger instanceof ThrowableLoggerInterface) {
+                        $this->systemLogger->logThrowable($exception);
+                    } else {
+                        // Convert \Throwable to \Exception for non-supporting logger implementations
+                        $this->systemLogger->logException(new \Exception($exception->getMessage(), $exception->getCode()));
+                    }
+                } elseif ($exception instanceof \Exception) {
                     $this->systemLogger->logException($exception);
                 }
             }
