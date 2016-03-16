@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Log;
  *
  * @api
  */
-class EarlyLogger implements ThrowableLoggerInterface
+class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
 {
     /**
      * @var array
