@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="vi" state="needs-translation">Authentication required</target></trans-unit>
+			<target xml:lang="vi" state="translated">Yêu cầu xác thực</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="vi" state="translated">Tên truy cập</target></trans-unit>
