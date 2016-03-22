@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Monitor\FileMonitor;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
@@ -458,9 +459,14 @@ class Scripts
         $context = $bootstrap->getContext();
         /** @var PackageManagerInterface $packageManager */
         $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
+
         /** @var PackageInterface $package */
         foreach ($packageManager->getActivePackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
+                continue;
+            }
+            if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
                 continue;
             }
 
@@ -483,6 +489,24 @@ class Scripts
         foreach ($fileMonitors as $fileMonitor) {
             $fileMonitor->shutdownObject();
         }
+    }
+
+    /**
+     * @param Bootstrap $bootstrap
+     * @return array
+     */
+    protected static function getListOfPackagesWithConfiguredObjects($bootstrap)
+    {
+        $objectManager = $bootstrap->getEarlyInstance(ObjectManagerInterface::class);
+        $packagesWithConfiguredObjects = array_reduce($objectManager->getAllObjectConfigurations(), function ($foundPackages, $item) {
+            if (isset($item['p']) && !in_array($item['p'], $foundPackages)) {
+                $foundPackages[] = $item['p'];
+            }
+
+            return $foundPackages;
+        }, []);
+
+        return $packagesWithConfiguredObjects;
     }
 
     /**
