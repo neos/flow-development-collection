@@ -344,7 +344,6 @@ class ReflectionService
         foreach ($this->settings['reflection']['ignoredTags'] as $tag) {
             AnnotationReader::addGlobalIgnoredName($tag);
         }
-        AnnotationRegistry::registerLoader(array($this->classLoader, 'loadClass'));
 
         $this->initialized = true;
     }
