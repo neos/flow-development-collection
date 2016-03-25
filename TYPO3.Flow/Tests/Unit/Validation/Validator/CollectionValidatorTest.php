@@ -26,7 +26,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
     public function setUp()
     {
         parent::setUp();
-        $this->mockValidatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array(), array(), '', false);
+        $this->mockValidatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array('createValidator', 'buildBaseValidatorConjunction'), array(), '', false);
         $this->validator->_set('validatorResolver', $this->mockValidatorResolver);
     }
 

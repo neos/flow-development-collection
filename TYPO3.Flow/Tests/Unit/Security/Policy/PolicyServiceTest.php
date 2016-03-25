@@ -1202,7 +1202,6 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         ));
 
         $mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
-        $mockRoleRepository->expects($this->any())->method('isConnected')->will($this->returnValue(true));
 
         $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $mockPersistenceManager->expects($this->any())->method('isConnected')->will($this->returnValue(true));
