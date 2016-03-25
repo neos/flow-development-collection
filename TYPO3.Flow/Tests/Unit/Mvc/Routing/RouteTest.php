@@ -53,7 +53,6 @@ class RouteTest extends UnitTestCase
     public function setUp()
     {
         $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallBack')));
         $this->route = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Route', array('dummy'));
         $this->route->_set('objectManager', $this->mockObjectManager);
 
@@ -73,16 +72,6 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
 
         return $this->route->matches($mockHttpRequest);
-    }
-
-    /**
-     * @return object but only mocks
-     */
-    public function objectManagerCallBack()
-    {
-        $arguments = func_get_args();
-        $objectName = array_shift($arguments);
-        return $this->getMock($objectName, array('dummy'), $arguments);
     }
 
     /*                                                                        *
