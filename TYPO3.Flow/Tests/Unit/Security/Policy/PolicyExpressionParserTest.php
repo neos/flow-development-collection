@@ -62,11 +62,8 @@ class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         );
 
-        $mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', false);
-
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $mockObjectManager->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));
-        $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($this->getMock('TYPO3\Flow\Log\SystemLoggerInterface')));
+        $mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Log\SystemLoggerInterface')->will($this->returnValue($this->getMock('TYPO3\Flow\Log\SystemLoggerInterface')));
 
         $parser = new \TYPO3\Flow\Security\Policy\PolicyExpressionParser();
         $parser->injectObjectManager($mockObjectManager);

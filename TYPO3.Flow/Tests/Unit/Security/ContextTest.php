@@ -391,7 +391,7 @@ class ContextTest extends UnitTestCase
             }
         ));
 
-        $securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+        $securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'getAccount'));
         $securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
         $securityContext->_set('activeTokens', array($mockToken));
         $securityContext->_set('policyService', $mockPolicyService);
@@ -443,7 +443,7 @@ class ContextTest extends UnitTestCase
             }
         ));
 
-        $securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+        $securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'getAccount'));
         $securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
         $securityContext->_set('activeTokens', array($mockToken));
         $securityContext->_set('policyService', $mockPolicyService);

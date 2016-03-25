@@ -99,7 +99,7 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface', array(), array(), '', false);
 
         $mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', false);
-        $mockResourcePublisher->expects($this->never())->method('publishStaticResource');
+        $mockResourcePublisher->expects($this->never())->method('publishStaticResources');
 
 
         $resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
