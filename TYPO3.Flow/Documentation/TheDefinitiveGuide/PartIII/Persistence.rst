@@ -671,7 +671,7 @@ metadata::
 	  /**
 	   * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Blog\Domain\Model\Comment>
 	   * @ORM\OneToMany(targetEntity="TYPO3\Blog\Domain\Model\Comment", mappedBy="post",
-	    cascade={"all"}, orphanRemoval="true")
+	    cascade={"all"}, orphanRemoval=true)
 	   * @ORM\OrderBy({"date" = "DESC"})
 	   */
 	  protected $comments;
