@@ -32,9 +32,8 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
 			public function __clone() {}
 		}');
         $object = $this->getMock($fullClassName);
-        $object->expects($this->any())->method('Flow_Persistence_isNew')->will($this->returnValue(false));
 
-        $formViewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper::class, array('dummy'), array(), '', false);
+        $formViewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper::class, array('isObjectAccessorMode'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($formViewHelper);
         $formViewHelper->injectPersistenceManager($mockPersistenceManager);
 

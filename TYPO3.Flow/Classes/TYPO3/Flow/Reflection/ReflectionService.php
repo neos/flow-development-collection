@@ -359,7 +359,6 @@ class ReflectionService
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }
         }
-        AnnotationRegistry::registerLoader([$this->classLoader, 'loadClass']);
 
         $this->initialized = true;
     }

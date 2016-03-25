@@ -26,7 +26,6 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', false);
         $mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(true));
-        $mockReflectionService->expects($this->any())->method('getIgnoredTags')->will($this->returnValue(array('return')));
         $mockReflectionService->expects($this->any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will($this->returnValue(array(
             'param' => array('string $name')
         )));
