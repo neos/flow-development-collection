@@ -155,11 +155,6 @@ class ConfigurationManager
     protected $configurationSource;
 
     /**
-     * @var Environment
-     */
-    protected $environment;
-
-    /**
      * @var string
      */
     protected $includeCachedConfigurationsPathAndFilename;
@@ -193,6 +188,13 @@ class ConfigurationManager
     protected $subRoutesRecursionLevel = 0;
 
     /**
+     * An absolute file path to store configuration caches in. If null no cache will be active.
+     *
+     * @var string
+     */
+    protected $temporaryDirectoryPath;
+
+    /**
      * Constructs the configuration manager
      *
      * @param ApplicationContext $context The application context to fetch configuration for
@@ -223,14 +225,13 @@ class ConfigurationManager
     }
 
     /**
-     * Injects the environment
+     * Set an absolute file path to store configuration caches in. If null no cache will be active.
      *
-     * @param Environment $environment
-     * @return void
+     * @param string $temporaryDirectoryPath
      */
-    public function injectEnvironment(Environment $environment)
+    public function setTemporaryDirectoryPath($temporaryDirectoryPath)
     {
-        $this->environment = $environment;
+        $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
 
     /**
@@ -481,7 +482,7 @@ class ConfigurationManager
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 if ($this->context->isTesting()) {
-                    $testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy';
+                    $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';
                     if ($this->configurationSource->has($testingPolicyPathAndFilename)) {
                         $this->configurations[$configurationType] = $this->configurationSource->load($testingPolicyPathAndFilename);
                         break;
@@ -578,7 +579,11 @@ class ConfigurationManager
      */
     public function flushConfigurationCache()
     {
-        $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+        $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
+        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         $cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
         if (is_file($cachePathAndFilename)) {
             if (unlink($cachePathAndFilename) === false) {
@@ -586,7 +591,6 @@ class ConfigurationManager
             }
             OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
         }
-        $this->configurations = array(self::CONFIGURATION_TYPE_SETTINGS => array());
     }
 
     /**
@@ -603,7 +607,11 @@ class ConfigurationManager
             $this->getConfiguration($configurationType);
         }
 
-        $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
+
+        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         if (!file_exists($configurationCachePath)) {
             Files::createDirectoryRecursively($configurationCachePath);
         }

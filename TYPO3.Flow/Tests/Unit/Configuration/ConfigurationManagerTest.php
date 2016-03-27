@@ -661,11 +661,8 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
         );
 
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array('getPathToTemporaryDirectory'), array(), '', false);
-        $mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
-
         $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration'), array(), '', false);
-        $configurationManager->injectEnvironment($mockEnvironment);
+        $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
         $this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
         $configurationManager->_set('context', $this->mockContext);
