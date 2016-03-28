@@ -18,6 +18,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 /**
  * TypeConverter which converts generic objects to arrays by converting and returning
  *
+ * @Flow\Scope("singleton")
  */
 class ArrayFromObjectConverter extends AbstractTypeConverter
 {
