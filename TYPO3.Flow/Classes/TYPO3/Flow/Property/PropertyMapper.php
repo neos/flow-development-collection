@@ -32,12 +32,6 @@ class PropertyMapper
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
-     */
-    protected $configurationBuilder;
-
-    /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
     protected $cache;
@@ -102,15 +96,16 @@ class PropertyMapper
      *
      * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
      * @param string $targetType The type of the target; can be either a class name or a simple type.
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
      * @return mixed an instance of $targetType
-     * @throws \TYPO3\Flow\Property\Exception
+     * @throws Exception
+     * @throws \TYPO3\Flow\Security\Exception
      * @api
      */
-    public function convert($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convert($source, $targetType, PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
-            $configuration = $this->configurationBuilder->build();
+            $configuration = $this->buildPropertyMappingConfiguration();
         }
 
         $currentPropertyPath = [];
@@ -125,7 +120,7 @@ class PropertyMapper
         } catch (\TYPO3\Flow\Security\Exception $exception) {
             throw $exception;
         } catch (\Exception $exception) {
-            throw new \TYPO3\Flow\Property\Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
+            throw new Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
 
@@ -145,13 +140,13 @@ class PropertyMapper
      *
      * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
      * @param string $targetType The type of the target; can be either a class name or a simple type.
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
+     * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
      * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
      * @return mixed an instance of $targetType
      * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
      * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
-    protected function doMapping($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
+    protected function doMapping($source, $targetType, PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
     {
         if (is_object($source)) {
             $targetClass = TypeHandling::truncateElementType($targetType);
@@ -210,12 +205,12 @@ class PropertyMapper
      *
      * @param mixed $source
      * @param string $targetType
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return \TYPO3\Flow\Property\TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
      * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
      * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
      */
-    protected function findTypeConverter($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration)
+    protected function findTypeConverter($source, $targetType, PropertyMappingConfigurationInterface $configuration)
     {
         if ($configuration->getTypeConverter() !== null) {
             return $configuration->getTypeConverter();
@@ -417,5 +412,25 @@ class PropertyMapper
     public function getTypeConverters()
     {
         return $this->typeConverters;
+    }
+
+    /**
+     * Builds the default property mapping configuration.
+     *
+     * @param string $type the implementation class name of the PropertyMappingConfiguration to instantiate; must be a subclass of TYPO3\Flow\Property\PropertyMappingConfiguration
+     * @return PropertyMappingConfiguration
+     */
+    public function buildPropertyMappingConfiguration($type = PropertyMappingConfiguration::class)
+    {
+        /** @var PropertyMappingConfiguration $configuration */
+        $configuration = new $type();
+
+        $configuration->setTypeConverterOptions(TypeConverter\PersistentObjectConverter::class, [
+            TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true,
+            TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => true
+        ]);
+        $configuration->allowAllProperties();
+
+        return $configuration;
     }
 }
