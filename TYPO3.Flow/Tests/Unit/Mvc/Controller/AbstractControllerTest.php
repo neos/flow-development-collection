@@ -216,7 +216,7 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects($this->never())->method('setControllerSubpackageKey');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with(null);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', array('foo' => 'bar'));
