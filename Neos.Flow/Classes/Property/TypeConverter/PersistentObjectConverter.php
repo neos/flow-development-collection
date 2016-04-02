@@ -205,7 +205,11 @@ class PersistentObjectConverter extends ObjectConverter
                     throw new InvalidTargetException($exceptionMessage, 1421498771);
                 }
             }
-            $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+            if ($this->isCollectionPropertyWithAddRemoveMethods($object, $propertyName, $propertyValue)) {
+                $result = $this->updateCollectionWithAddRemoveCalls($object, $propertyName, $propertyValue);
+            } else {
+                $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+            }
             if ($result === false) {
                 $exceptionMessage = sprintf(
                     'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',

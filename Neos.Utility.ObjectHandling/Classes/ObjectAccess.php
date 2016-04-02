@@ -257,8 +257,6 @@ abstract class ObjectAccess
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (self::isCollectionPropertyWithAddRemoveMethods($subject, $propertyName, $propertyValue, $addRemoveMethods)) {
-            self::updateCollectionWithAddRemoveCalls($subject, $propertyName, $propertyValue, $addRemoveMethods['add'], $addRemoveMethods['remove']);
         } elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
@@ -269,65 +267,6 @@ abstract class ObjectAccess
             return false;
         }
         return true;
-    }
-
-    /**
-     * Check if the given $property is any type that can be assigned to a collection type property and $subject
-     * has add* and remove* methods for that property.
-     *
-     * @param mixed $subject The subject to check the collection property on
-     * @param string $propertyName The property name of the collection property
-     * @param mixed $propertyValue The new value for the collection property
-     * @param array $addRemoveMethods An array given by reference that will hold the inflected add* and remove* method names
-     * @return boolean TRUE if $value is either NULL or any collection Type and $subject has both an add* and remove* method for this property
-     */
-    protected static function isCollectionPropertyWithAddRemoveMethods($subject, $propertyName, $propertyValue, &$addRemoveMethods)
-    {
-        $isCollectionType = true;
-        if ($propertyValue !== null) {
-            $propertyType = TypeHandling::getTypeForValue($propertyValue);
-            $isCollectionType = TypeHandling::isCollectionType($propertyType);
-        }
-        if (!$isCollectionType) {
-            return false;
-        }
-
-        $addRemoveMethods['add'] = self::buildAdderMethodName($propertyName);
-        $addRemoveMethods['remove'] = self::buildRemoverMethodName($propertyName);
-        return is_callable(array($subject, $addRemoveMethods['add'])) && is_callable(array($subject, $addRemoveMethods['remove']));
-    }
-
-    /**
-     * @param mixed $subject The subject to update the collection property on
-     * @param string $propertyName The property name of the collection property to update
-     * @param mixed $propertyValue The new value to change the collection property to
-     * @param string $addMethodName The name of the method to use for adding items to the subject's collection property
-     * @param string $removeMethodName The name of the method to use for removing items from the subject's collection property
-     * @return void
-     */
-    protected static function updateCollectionWithAddRemoveCalls($subject, $propertyName, $propertyValue, $addMethodName, $removeMethodName)
-    {
-        $itemsToAdd = ($propertyValue instanceof \Traversable) ? iterator_to_array($propertyValue) : (array)$propertyValue;
-        $itemsToRemove = array();
-        $currentValue = self::getProperty($subject, $propertyName);
-        $currentValue = ($currentValue instanceof \Traversable) ? iterator_to_array($currentValue) : (array)$currentValue;
-        foreach ($currentValue as $currentItem) {
-            foreach ($itemsToAdd as $key => $newItem) {
-                if ($currentItem === $newItem) {
-                    unset($itemsToAdd[$key]);
-                    // Continue to next $currentItem
-                    continue 2;
-                }
-            }
-            $itemsToRemove[] = $currentItem;
-        }
-
-        foreach ($itemsToRemove as $item) {
-            $subject->$removeMethodName($item);
-        }
-        foreach ($itemsToAdd as $item) {
-            $subject->$addMethodName($item);
-        }
     }
 
     /**

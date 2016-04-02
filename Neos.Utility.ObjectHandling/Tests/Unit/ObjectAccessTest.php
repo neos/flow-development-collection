@@ -217,24 +217,6 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function setPropertyUsesAddAndRemoveMethods()
-    {
-        ObjectAccess::setProperty($this->dummyObject, 'arrayProperties', null);
-        $this->assertAttributeEquals(array(), 'arrayProperties', $this->dummyObject);
-
-        ObjectAccess::setProperty($this->dummyObject, 'arrayProperties', array(1,2,3));
-        $this->assertAttributeEquals(array('added1' => 1, 'added2' => 2, 'added3' => 3), 'arrayProperties', $this->dummyObject);
-
-        ObjectAccess::setProperty($this->dummyObject, 'arrayProperties', array(1,2));
-        $this->assertAttributeEquals(array('added1' => 1, 'added2' => 2, 'added3' => 'removed'), 'arrayProperties', $this->dummyObject);
-
-        ObjectAccess::setProperty($this->dummyObject, 'arrayProperties', null);
-        $this->assertAttributeEquals(array('added1' => 'removed', 'added2' => 'removed', 'added3' => 'removed'), 'arrayProperties', $this->dummyObject);
-    }
-
-    /**
-     * @test
-     */
     public function getPropertyCanAccessPropertiesOfAnArrayObject()
     {
         $arrayObject = new \ArrayObject(['key' => 'value']);
