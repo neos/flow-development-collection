@@ -27,8 +27,6 @@ class DummyClassWithGettersAndSetters
 
     protected $unexposedProperty = 'unexposed';
 
-    protected $arrayProperties = array();
-
     public $publicProperty;
     public $publicProperty2 = 42;
 

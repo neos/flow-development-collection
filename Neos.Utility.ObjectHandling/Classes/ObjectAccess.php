@@ -13,7 +13,6 @@ namespace Neos\Utility;
 
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\TypeHandling;
-use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -431,30 +430,6 @@ abstract class ObjectAccess
     public static function buildSetterMethodName(string $propertyName): string
     {
         return 'set' . ucfirst($propertyName);
-    }
-
-    /**
-     * Build the remover method name for a given property by singularizing the name
-     * and capitalizing the first letter of the property, then prepending it with "remove".
-     *
-     * @param string $propertyName Name of the property
-     * @return string Name of the remover method name
-     */
-    public static function buildRemoverMethodName($propertyName)
-    {
-        return 'remove' . ucfirst(Inflector::singularize($propertyName));
-    }
-
-    /**
-     * Build the adder method name for a given property by singularizing the name
-     * and capitalizing the first letter of the property, then prepending it with "add".
-     *
-     * @param string $propertyName Name of the property
-     * @return string Name of the adder method name
-     */
-    public static function buildAdderMethodName($propertyName)
-    {
-        return 'add' . ucfirst(Inflector::singularize($propertyName));
     }
 
     /**

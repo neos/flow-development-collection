@@ -23,7 +23,6 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.

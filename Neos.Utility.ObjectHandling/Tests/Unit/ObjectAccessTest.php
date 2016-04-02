@@ -333,7 +333,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable()
     {
-        $expectedPropertyNames = ['anotherBooleanProperty', 'anotherProperty', 'arrayProperties', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2'];
+        $expectedPropertyNames = ['anotherBooleanProperty', 'anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2'];
         $actualPropertyNames = ObjectAccess::getGettablePropertyNames($this->dummyObject);
         $this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
     }
@@ -371,7 +371,6 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
             'anotherBooleanProperty' => false,
             'anotherProperty' => 42,
             'booleanProperty' => 'method called 1',
-            'arrayProperties' => array(),
             'property' => 'string1',
             'property2' => null,
             'publicProperty' => null,
