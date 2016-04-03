@@ -197,13 +197,14 @@ class Scripts
             $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
         }
 
+        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+
         $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
             $environment->getPathToTemporaryDirectory(),
             'Lock'
         ])]);
         Lock::setLockManager($lockManager);
 
-        $configurationManager->injectEnvironment($environment);
         $packageManager->injectSettings($settings);
 
         $bootstrap->getSignalSlotDispatcher()->dispatch(\TYPO3\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady', array($configurationManager));
