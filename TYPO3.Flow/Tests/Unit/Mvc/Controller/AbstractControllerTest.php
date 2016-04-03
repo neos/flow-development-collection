@@ -194,7 +194,7 @@ class AbstractControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function forwardSetsAndResetsSubpackageKeyIfNeeded()
+    public function forwardSetsSubpackageKeyIfNeeded()
     {
         $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
@@ -212,11 +212,24 @@ class AbstractControllerTest extends UnitTestCase
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', array('foo' => 'bar'));
         } catch (\TYPO3\Flow\Mvc\Exception\ForwardException $exception) {
         }
+    }
+
+    /**
+     * @test
+     */
+    public function forwardResetsSubpackageKeyIfNotSetInPackageKey()
+    {
+        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
+
+        $controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
+        $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects($this->never())->method('setControllerSubpackageKey');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with(null);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', array('foo' => 'bar'));
