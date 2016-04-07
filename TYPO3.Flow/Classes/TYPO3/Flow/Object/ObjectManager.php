@@ -464,6 +464,17 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Returns all current object configurations.
+     * For internal use in bootstrap only. Can change anytime.
+     *
+     * @return array
+     */
+    public function getAllObjectConfigurations()
+    {
+        return $this->objects;
+    }
+
+    /**
      * Invokes the Factory defined in the object configuration of the specified object in order
      * to build an instance. Arguments which were defined in the object configuration are
      * passed to the factory method.

@@ -661,15 +661,26 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
         );
 
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array('getPathToTemporaryDirectory'), array(), '', false);
-        $mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
-
         $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration'), array(), '', false);
-        $configurationManager->injectEnvironment($mockEnvironment);
+        $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
         $this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
         $configurationManager->_set('context', $this->mockContext);
         $configurationManager->_set('configurations', $mockConfigurations);
+        $configurationManager->_set('configurationTypes', [
+            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_CACHES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+        ]);
 
         $configurationManager->_call('saveConfigurationCache');
 

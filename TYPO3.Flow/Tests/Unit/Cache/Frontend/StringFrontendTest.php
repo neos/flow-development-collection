@@ -111,8 +111,8 @@ class StringFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getByTagRejectsInvalidTags()
     {
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\BackendInterface::class, array(), array(), '', false);
-        $backend->expects($this->never())->method('getByTag');
+        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\TaggableBackendInterface::class, array(), array(), '', false);
+        $backend->expects($this->never())->method('findIdentifiersByTag');
 
         $cache = new \TYPO3\Flow\Cache\Frontend\StringFrontend('StringFrontend', $backend);
         $cache->getByTag('SomeInvalid\Tag');

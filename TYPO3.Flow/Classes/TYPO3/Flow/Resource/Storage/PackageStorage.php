@@ -41,9 +41,10 @@ class PackageStorage extends FileSystemStorage
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @param callable $callback Function called after each iteration
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
-    public function getObjects()
+    public function getObjects(callable $callback = null)
     {
         return $this->getObjectsByPathPattern('*');
     }
@@ -52,11 +53,11 @@ class PackageStorage extends FileSystemStorage
      * Return all Objects stored in this storage filtered by the given directory / filename pattern
      *
      * @param string $pattern A glob compatible directory / filename pattern
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @param callable $callback Function called after each object
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
-    public function getObjectsByPathPattern($pattern)
+    public function getObjectsByPathPattern($pattern, callable $callback = null)
     {
-        $objects = array();
         $directories = array();
 
         if (strpos($pattern, '/') !== false) {
@@ -77,6 +78,7 @@ class PackageStorage extends FileSystemStorage
             }
         }
 
+        $iteration = 0;
         foreach ($directories as $packageKey => $packageDirectories) {
             foreach ($packageDirectories as $directoryPath) {
                 foreach (Files::getRecursiveDirectoryGenerator($directoryPath) as $resourcePathAndFilename) {
@@ -91,13 +93,17 @@ class PackageStorage extends FileSystemStorage
                         list(, $path) = explode('/', str_replace($packages[$packageKey]->getResourcesPath(), '', $pathInfo['dirname']), 2);
                         $object->setRelativePublicationPath($packageKey . '/' . $path . '/');
                     }
-                    $object->setStream(function () use ($resourcePathAndFilename) { return fopen($resourcePathAndFilename, 'r'); });
-                    $objects[] = $object;
+                    $object->setStream(function () use ($resourcePathAndFilename) {
+                        return fopen($resourcePathAndFilename, 'r');
+                    });
+                    yield $object;
+                    if (is_callable($callback)) {
+                        call_user_func($callback, $iteration, $object);
+                    }
+                    $iteration++;
                 }
             }
         }
-
-        return $objects;
     }
 
     /**

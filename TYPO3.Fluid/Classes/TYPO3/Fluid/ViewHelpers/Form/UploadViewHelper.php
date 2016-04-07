@@ -105,7 +105,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
             if ($this->hasArgument('id')) {
                 $resourceIdentityAttribute = ' id="' . htmlspecialchars($this->arguments['id']) . '-resource-identity"';
             }
-            $output .= '<input type="hidden" name="'. htmlspecialchars($nameAttribute) . '[originallySubmittedResource][__identity]" value="' . $this->persistenceManager->getIdentifierByObject($resource) . '"' . htmlspecialchars($resourceIdentityAttribute) . ' />';
+            $output .= '<input type="hidden" name="'. htmlspecialchars($nameAttribute) . '[originallySubmittedResource][__identity]" value="' . $this->persistenceManager->getIdentifierByObject($resource) . '"' . $resourceIdentityAttribute . ' />';
         }
 
         if ($this->hasArgument('collection') && $this->arguments['collection'] !== false && $this->arguments['collection'] !== '') {
