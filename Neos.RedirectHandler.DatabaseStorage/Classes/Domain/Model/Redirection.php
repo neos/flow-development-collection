@@ -107,7 +107,7 @@ class Redirection
      * @var \DateTime
      * @ORM\Column(nullable=true)
      */
-    protected $lastHitCount;
+    protected $lastHit;
 
     /**
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
@@ -240,9 +240,9 @@ class Redirection
     /**
      * @return \DateTime
      */
-    public function getLastHitCount()
+    public function getLastHit()
     {
-        return $this->lastHitCount;
+        return $this->lastHit;
     }
 
     /**
@@ -252,6 +252,6 @@ class Redirection
     {
         $this->hitCounter++;
 
-        $this->lastHitCount = new Now();
+        $this->lastHit = new Now();
     }
 }

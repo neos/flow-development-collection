@@ -34,7 +34,7 @@ class RedirectionTest extends UnitTestCase
         $this->assertSame('target/path', $redirection->getTargetUriPath());
         $this->assertSame(301, $redirection->getStatusCode());
         $this->assertSame(null, $redirection->getHost());
-        $this->assertSame(null, $redirection->getLastHitCount());
+        $this->assertSame(null, $redirection->getLastHit());
         $this->assertSame(0, $redirection->getHitCounter());
     }
 
@@ -48,7 +48,7 @@ class RedirectionTest extends UnitTestCase
         $this->assertSame('target/path', $redirection->getTargetUriPath());
         $this->assertSame(301, $redirection->getStatusCode());
         $this->assertSame(null, $redirection->getHost());
-        $this->assertSame(null, $redirection->getLastHitCount());
+        $this->assertSame(null, $redirection->getLastHit());
         $this->assertSame(0, $redirection->getHitCounter());
     }
 
@@ -62,7 +62,7 @@ class RedirectionTest extends UnitTestCase
         $this->assertSame('target/path', $redirection->getTargetUriPath());
         $this->assertSame(303, $redirection->getStatusCode());
         $this->assertSame('www.host.com', $redirection->getHost());
-        $this->assertSame(null, $redirection->getLastHitCount());
+        $this->assertSame(null, $redirection->getLastHit());
         $this->assertSame(0, $redirection->getHitCounter());
     }
 
