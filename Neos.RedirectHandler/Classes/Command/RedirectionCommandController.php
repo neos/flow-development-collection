@@ -45,6 +45,7 @@ class RedirectionCommandController extends CommandController
      *
      * @param string $filename CSV file path, if null use standard output
      * @param string $host Optional host pattern
+     * @return void
      */
     public function exportCommand($filename = null, $host = null)
     {
@@ -74,6 +75,7 @@ class RedirectionCommandController extends CommandController
      * Load redirection from a CSV file
      *
      * @param string $filename CSV file path
+     * @return void
      */
     public function importCommand($filename)
     {

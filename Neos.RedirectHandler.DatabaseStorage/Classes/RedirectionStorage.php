@@ -64,7 +64,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
-     * @return RedirectionDto or NULL if no redirection exists for the given $sourceUriPath
+     * @return RedirectionDto|null if no redirection exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
@@ -94,6 +94,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      * Return a list of all host patterns
      *
      * @return array
+     * @api
      */
     public function getDistinctHosts()
     {
@@ -217,7 +218,8 @@ class RedirectionStorage implements RedirectionStorageInterface
      * Increment the hit counter for the given redirection
      *
      * @param RedirectionDto $redirection
-     * @return mixed
+     * @return void
+     * @api
      */
     public function incrementHitCount(RedirectionDto $redirection)
     {
