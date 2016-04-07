@@ -158,7 +158,7 @@ class RedirectionRepository extends Repository
             if ($callback !== null) {
                 call_user_func($callback, $iteration, $object);
             }
-            ++$iteration;
+            $iteration++;
         }
     }
 }
