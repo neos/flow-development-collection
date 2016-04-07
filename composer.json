@@ -90,7 +90,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~4.8 || ~5.0",
+        "phpunit/phpunit": "~4.8 || ~5.2.0",
         "doctrine/orm": "~2.4.0"
     },
     "autoload-dev": {
