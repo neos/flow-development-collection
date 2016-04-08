@@ -172,19 +172,19 @@ class RedirectionCommandController extends CommandController
      *
      * This command deletes a redirection from the RedirectRepository
      *
-     * @param string $sourcePath The source URI path of the redirection to remove, as given by redirect:list
+     * @param string $source The source URI path of the redirection to remove, as given by redirect:list
      * @param string $host Full qualified hostname or host pattern
      * @return void
      */
-    public function removeCommand($sourcePath, $host = null)
+    public function removeCommand($source, $host = null)
     {
-        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourcePath, $host);
+        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         if ($redirect === null) {
-            $this->outputLine('There is no redirection with the source URI path "%s"', [$sourcePath]);
+            $this->outputLine('There is no redirection with the source URI path "%s"', [$source]);
             $this->quit(1);
         }
-        $this->redirectStorage->removeOneBySourceUriPathAndHost($sourcePath, $host);
-        $this->outputLine('Removed redirection with the source URI path "%s"', [$sourcePath]);
+        $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
+        $this->outputLine('Removed redirection with the source URI path "%s"', [$source]);
     }
 
     /**
@@ -210,15 +210,49 @@ class RedirectionCommandController extends CommandController
      *
      * This command adds a new redirection to the RedirectRepository using the RedirectionService
      *
-     * @param string $sourcePath The relative URI path that should trigger the redirect
-     * @param string $targetPath The relative URI path that should be redirected to
+     * @param string $source The relative URI path that should trigger the redirect
+     * @param string $target The relative URI path that should be redirected to
      * @param integer $statusCode The status code of the redirect header
      * @param string $host Host or host pattern to match the redirect
+     * @param boolean $force Replace existing redirection (based on the source URI)
      * @return void
      */
-    public function addCommand($sourcePath, $targetPath, $statusCode, $host = null)
+    public function addCommand($source, $target, $statusCode, $host = null, $force = false)
     {
-        $this->redirectStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$host]);
-        $this->outputLine('New redirection created!');
+        $replace = false;
+        $outputLine = function ($prefix, $redirect) {
+            $this->outputLine('%s %s <info>=></info> %s <comment>(%d)</comment> - %s', [
+                $prefix,
+                $redirect->getSourceUriPath(),
+                $redirect->getTargetUriPath(),
+                $redirect->getStatusCode(),
+                $redirect->getHost() ?: 'no host'
+            ]);
+        };
+        $this->outputLine();
+        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
+        if ($redirect !== null && $force === false) {
+            $this->outputLine('A redirection with the same source URI exist, see bellow:');
+            $this->outputLine();
+            $outputLine('<error>!!</error>', $redirect);
+            $this->outputLine();
+            $this->outputLine('Use --force to replace it');
+            $this->outputLine();
+            $this->sendAndExit(1);
+        } elseif ($redirect !== null && $force === true) {
+            $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
+            $this->persistenceManager->persistAll();
+            $replace = true;
+        }
+        $redirects = $this->redirectStorage->addRedirection($source, $target, $statusCode, [$host]);
+        $redirect = reset($redirects);
+        if ($replace) {
+            $this->outputLine('New redirection updated!');
+        } else {
+            $this->outputLine('New redirection created!');
+        }
+        $this->outputLine();
+        $outputLine($replace ? '<info>++</info>' : '<info>--</info>', $redirect);
+        $this->outputLine();
     }
 }
