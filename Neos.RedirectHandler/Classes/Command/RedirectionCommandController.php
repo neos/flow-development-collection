@@ -117,7 +117,7 @@ class RedirectionCommandController extends CommandController
                 $redirect->getSourceUriPath(),
                 $redirect->getTargetUriPath(),
                 $redirect->getStatusCode(),
-                $redirect->getHost()
+                $redirect->getHost() ?: '[no host attached]'
             ]);
         }
         if ($filename === null) {
@@ -135,27 +135,42 @@ class RedirectionCommandController extends CommandController
      */
     public function importCommand($filename)
     {
+        $this->outputLine();
         if (!class_exists(Reader::class)) {
             $this->outputWarningForLeagueCsvPackage();
         }
+        if (!is_readable($filename)) {
+            $this->outputLine('<error>Sorry, but the file "%s" is not readable or does not exist...</error>', [$filename]);
+            $this->outputLine();
+            $this->sendAndExit(1);
+        }
+        $this->outputLine('Import redirection from "%s"', [$filename]);
+        $this->outputLine();
         $reader = Reader::createFromPath($filename);
         $counter = 0;
         foreach ($reader as $index => $row) {
             list($sourceUriPath, $targetUriPath, $statusCode, $hosts) = $row;
-            $hosts = Arrays::trimExplode(',', $hosts);
+            $hosts = Arrays::trimExplode('|', $hosts);
+            $forcePersist = false;
             foreach ($hosts as $host) {
                 $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
-                if ($redirect !== null && $redirect->getTargetUriPath() !== $targetUriPath && $redirect->getStatusCode() !== $statusCode) {
-                    $this->outputLine('- [%d] %s', [$statusCode, $sourceUriPath]);
+                if ($redirect !== null) {
+                    $this->outputRedirectLine('<info>--</info>', $redirect);
                     $this->redirectStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
-                    $this->persistenceManager->persistAll();
+                    $forcePersist = true;
                 }
             }
+            if ($forcePersist) {
+                $this->persistenceManager->persistAll();
+            }
             try {
-                $this->redirectStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
-                $this->outputLine('+ [%d] %s', [$statusCode, $sourceUriPath]);
+                $redirects = $this->redirectStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
+                foreach ($redirects as $redirect) {
+                    $this->outputRedirectLine('<info>++</info>', $redirect);
+                }
+                $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
-                $this->outputLine('~ [%d] %s', [$statusCode, $sourceUriPath]);
+                $this->outputLine('<error>!!</error> [%d] %s', [$statusCode, $sourceUriPath]);
             }
             $counter++;
             if ($counter % 50 === 0) {
@@ -163,6 +178,7 @@ class RedirectionCommandController extends CommandController
                 $this->persistenceManager->clearState();
             }
         }
+        $this->outputLine();
     }
 
     /**
@@ -231,40 +247,41 @@ class RedirectionCommandController extends CommandController
      */
     public function addCommand($source, $target, $statusCode, $host = null, $force = false)
     {
-        $replace = false;
-        $outputLine = function ($prefix, $redirect) {
-            $this->outputLine('%s %s <info>=></info> %s <comment>(%d)</comment> - %s', [
-                $prefix,
-                $redirect->getSourceUriPath(),
-                $redirect->getTargetUriPath(),
-                $redirect->getStatusCode(),
-                $redirect->getHost() ?: 'no host'
-            ]);
-        };
+        $this->outputLine();
+        $this->outputLine('Create a redirection ...');
         $this->outputLine();
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         if ($redirect !== null && $force === false) {
             $this->outputLine('A redirection with the same source URI exist, see bellow:');
             $this->outputLine();
-            $outputLine('<error>!!</error>', $redirect);
+            $this->outputRedirectLine('<error>!!</error>', $redirect);
             $this->outputLine();
             $this->outputLine('Use --force to replace it');
             $this->outputLine();
             $this->sendAndExit(1);
         } elseif ($redirect !== null && $force === true) {
             $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
+            $this->outputRedirectLine('<info>--</info>', $redirect);
             $this->persistenceManager->persistAll();
-            $replace = true;
         }
         $redirects = $this->redirectStorage->addRedirection($source, $target, $statusCode, [$host]);
         $redirect = reset($redirects);
-        if ($replace) {
-            $this->outputLine('New redirection updated!');
-        } else {
-            $this->outputLine('New redirection created!');
-        }
+        $this->outputRedirectLine('<info>++</info>', $redirect);
         $this->outputLine();
-        $outputLine($replace ? '<info>++</info>' : '<info>--</info>', $redirect);
-        $this->outputLine();
+    }
+
+    /**
+     * @param string $prefix
+     * @param RedirectInterface $redirect
+     */
+    protected function outputRedirectLine($prefix, RedirectInterface $redirect)
+    {
+        $this->outputLine('   %s %s <info>=></info> %s <comment>(%d)</comment> - %s', [
+            $prefix,
+            $redirect->getSourceUriPath(),
+            $redirect->getTargetUriPath(),
+            $redirect->getStatusCode(),
+            $redirect->getHost() ?: 'no host'
+        ]);
     }
 }
