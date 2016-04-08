@@ -14,7 +14,6 @@ namespace Neos\RedirectHandler\Command;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Neos\RedirectHandler\Exception;
-use Neos\RedirectHandler\Redirect;
 use Neos\RedirectHandler\RedirectInterface;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
@@ -40,6 +39,63 @@ class RedirectionCommandController extends CommandController
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @param string $host
+     * @param string $match
+     */
+    public function listCommand($host = null, $match = null)
+    {
+        $outputByHost = function ($host) use ($match) {
+            $redirects = $this->redirectStorage->getAll($host);
+            $this->outputLine();
+            if ($host !== null) {
+                $this->outputLine('<info>==</info> <b>Redirection for %s</b>', [$host]);
+            } else {
+                $this->outputLine('<info>==</info> <b>Redirection without host attached</b>', [$host]);
+            }
+            if ($match !== null) {
+                $this->outputLine('   <info>++</info> <b>Show only if source or target URI match <u>#%s#"</u></b>', [$match]);
+            }
+            $this->outputLine();
+            sleep(1);
+            /** @var $redirect RedirectInterface */
+            foreach ($redirects as $redirect) {
+                $outputLine = function ($source, $target, $statusCode) {
+                    $this->outputLine('   <comment>></comment> %s <info>=></info> %s <comment>(%d)</comment>', [
+                        $source,
+                        $target,
+                        $statusCode
+                    ]);
+                };
+                $source = $redirect->getSourceUriPath();
+                $target = $redirect->getTargetUriPath();
+                $statusCode = $redirect->getStatusCode();
+                if ($match === null) {
+                    $outputLine($source, $target, $statusCode);
+                } else {
+                    $regexp = sprintf('#%s#', $match);
+                    $matches = preg_grep($regexp, [$target, $source]);
+                    if (count($matches) > 0) {
+                        $replace = "<error>$0</error>";
+                        $source = preg_replace($regexp, $replace, $source);
+                        $target = preg_replace($regexp, $replace, $target);
+                        $outputLine($source, $target, $statusCode);
+                    }
+                }
+            }
+        };
+        if ($host !== null) {
+            $outputByHost($host);
+        } else {
+            $hosts = $this->redirectStorage->getDistinctHosts();
+            if ($hosts !== []) {
+                array_map($outputByHost, $hosts);
+            }
+            $outputByHost($host);
+        }
+        $this->outputLine();
+    }
 
     /**
      * Save all redirectection to a CSV file
