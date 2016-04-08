@@ -149,16 +149,24 @@ class RedirectionCommandController extends CommandController
         $reader = Reader::createFromPath($filename);
         $counter = 0;
         foreach ($reader as $index => $row) {
+            $skipped = false;
             list($sourceUriPath, $targetUriPath, $statusCode, $hosts) = $row;
             $hosts = Arrays::trimExplode('|', $hosts);
             $forcePersist = false;
-            foreach ($hosts as $host) {
+            foreach ($hosts as $key => $host) {
                 $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
-                if ($redirect !== null) {
+                if ($this->isSame($sourceUriPath, $targetUriPath, $host, $statusCode, $redirect) === false) {
                     $this->outputRedirectLine('<info>--</info>', $redirect);
                     $this->redirectStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
                     $forcePersist = true;
+                } else {
+                    $this->outputRedirectLine('<info>~~</info>', $redirect);
+                    unset($hosts[$key]);
+                    $skipped = true;
                 }
+            }
+            if ($skipped === true && $hosts === []) {
+                continue;
             }
             if ($forcePersist) {
                 $this->persistenceManager->persistAll();
@@ -170,6 +178,7 @@ class RedirectionCommandController extends CommandController
                 }
                 $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
+                \TYPO3\Flow\var_dump($exception);
                 $this->outputLine('<error>!!</error> [%d] %s', [$statusCode, $sourceUriPath]);
             }
             $counter++;
@@ -179,6 +188,22 @@ class RedirectionCommandController extends CommandController
             }
         }
         $this->outputLine();
+    }
+
+    /**
+     * @param RedirectInterface $redirect
+     * @param string $sourceUriPath
+     * @param string $targetUriPath
+     * @param string $host
+     * @param integer $statusCode
+     * @return boolean
+     */
+    protected function isSame($sourceUriPath, $targetUriPath, $host, $statusCode, RedirectInterface $redirect = null)
+    {
+        if ($redirect === null) {
+            return false;
+        }
+        return $redirect->getSourceUriPath() === $sourceUriPath && $redirect->getTargetUriPath() === $targetUriPath && $redirect->getHost() === $host && $redirect->getStatusCode() === (integer)$statusCode;
     }
 
     /**
@@ -251,7 +276,8 @@ class RedirectionCommandController extends CommandController
         $this->outputLine('Create a redirection ...');
         $this->outputLine();
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
-        if ($redirect !== null && $force === false) {
+        $isSame = $this->isSame($source, $target, $host, $statusCode, $redirect);
+        if ($redirect !== null && $isSame === false && $force === false) {
             $this->outputLine('A redirection with the same source URI exist, see bellow:');
             $this->outputLine();
             $this->outputRedirectLine('<error>!!</error>', $redirect);
@@ -259,10 +285,14 @@ class RedirectionCommandController extends CommandController
             $this->outputLine('Use --force to replace it');
             $this->outputLine();
             $this->sendAndExit(1);
-        } elseif ($redirect !== null && $force === true) {
+        } elseif ($redirect !== null && $isSame === false && $force === true) {
             $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
             $this->outputRedirectLine('<info>--</info>', $redirect);
             $this->persistenceManager->persistAll();
+        } elseif ($redirect !== null && $isSame === true) {
+            $this->outputRedirectLine('<info>~~</info>', $redirect);
+            $this->outputLine();
+            $this->sendAndExit();
         }
         $redirects = $this->redirectStorage->addRedirection($source, $target, $statusCode, [$host]);
         $redirect = reset($redirects);
