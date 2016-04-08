@@ -10,20 +10,20 @@ namespace Neos\RedirectHandler\Storage;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
-use Neos\RedirectHandler\Redirection as RedirectionDto;
+use Neos\RedirectHandler\Redirect as RedirectDto;
+use Neos\RedirectHandler\RedirectInterface;
 
 /**
- * Redirection Storage Interface
+ * Redirect Storage Interface
  */
-interface RedirectionStorageInterface
+interface RedirectStorageInterface
 {
     /**
      * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
-     * @return RedirectionDto or NULL if no redirection exists for the given $sourceUriPath
+     * @return RedirectDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null);
@@ -32,7 +32,7 @@ interface RedirectionStorageInterface
      * Returns all registered redirection records
      *
      * @param string $host Full qualified hostname or host pattern
-     * @return \Generator<RedirectionDto>
+     * @return \Generator<RedirectDto>
      * @api
      */
     public function getAll($host = null);
@@ -70,7 +70,7 @@ interface RedirectionStorageInterface
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
      * @param array $hosts the list of host patterns
-     * @return array<Redirection> the freshly generated redirection instance
+     * @return array<Redirect> the freshly generated redirection instance
      * @api
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = []);
@@ -78,8 +78,8 @@ interface RedirectionStorageInterface
     /**
      * Increment the hit counter for the given redirection
      *
-     * @param RedirectionDto $redirection
-     * @return mixed
+     * @param RedirectInterface $redirect
+     * @return void
      */
-    public function incrementHitCount(RedirectionDto $redirection);
+    public function incrementHitCount(RedirectInterface $redirect);
 }

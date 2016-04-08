@@ -11,7 +11,7 @@ namespace Neos\RedirectHandler;
  * source code.
  */
 
-use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Request as Request;
@@ -29,9 +29,9 @@ class RedirectionService
 {
     /**
      * @Flow\Inject
-     * @var RedirectionStorageInterface
+     * @var RedirectStorageInterface
      */
-    protected $redirectionStorage;
+    protected $redirectStorage;
 
     /**
      * @Flow\Inject
@@ -55,14 +55,14 @@ class RedirectionService
     public function buildResponseIfApplicable(Request $httpRequest)
     {
         try {
-            $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($httpRequest->getRelativePath(), $httpRequest->getBaseUri()->getHost());
-            if ($redirection === null) {
+            $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($httpRequest->getRelativePath(), $httpRequest->getBaseUri()->getHost());
+            if ($redirect === null) {
                 return null;
             }
             if (isset($this->featureSwitch['hitCounter']) && $this->featureSwitch['hitCounter'] === true) {
-                $this->redirectionStorage->incrementHitCount($redirection);
+                $this->redirectStorage->incrementHitCount($redirect);
             }
-            return $this->buildResponse($httpRequest, $redirection);
+            return $this->buildResponse($httpRequest, $redirect);
         } catch (\Exception $exception) {
             // skip triggering the redirect if there was an error accessing the database (wrong credentials, ...)
             return null;
@@ -71,20 +71,20 @@ class RedirectionService
 
     /**
      * @param Request $httpRequest
-     * @param Redirection $redirection
+     * @param RedirectInterface $redirect
      * @return Response|null
      */
-    protected function buildResponse(Request $httpRequest, Redirection $redirection)
+    protected function buildResponse(Request $httpRequest, RedirectInterface $redirect)
     {
         if (headers_sent() === true && FLOW_SAPITYPE !== 'CLI') {
             return null;
         }
         $response = new Response();
-        $statusCode = $redirection->getStatusCode();
+        $statusCode = $redirect->getStatusCode();
         $response->setStatus($statusCode);
         if ($statusCode >= 300 && $statusCode <= 399) {
             $response->setHeaders(new Headers([
-                'Location' => $httpRequest->getBaseUri() . $redirection->getTargetUriPath(),
+                'Location' => $httpRequest->getBaseUri() . $redirect->getTargetUriPath(),
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
                 'Expires' => 'Sat, 26 Jul 1997 05:00:00 GMT'
             ]));
@@ -95,12 +95,12 @@ class RedirectionService
     /**
      * Signals that a redirection has been created.
      *
-     * @param Redirection $redirection
+     * @param RedirectInterface $redirect
      * @return void
      * @Flow\Signal
      * @api
      */
-    public function emitRedirectionCreated(Redirection $redirection)
+    public function emitRedirectionCreated(RedirectInterface $redirect)
     {
     }
 }

@@ -15,7 +15,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
@@ -26,7 +26,7 @@ use TYPO3\Flow\Persistence\Repository;
  *
  * @Flow\Scope("singleton")
  */
-class RedirectionRepository extends Repository
+class RedirectRepository extends Repository
 {
     /**
      * @Flow\Inject
@@ -45,7 +45,7 @@ class RedirectionRepository extends Repository
     /**
      * @param string $sourceUriPath
      * @param string $host Host or host pattern
-     * @return Redirection
+     * @return Redirect
      */
     public function findOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
@@ -67,7 +67,7 @@ class RedirectionRepository extends Repository
     /**
      * @param string $targetUriPath
      * @param string $host Host or host pattern
-     * @return Redirection
+     * @return Redirect
      */
     public function findOneByTargetUriPathAndHost($targetUriPath, $host = null)
     {
@@ -94,7 +94,7 @@ class RedirectionRepository extends Repository
     public function findByTargetUriPathAndHost($targetUriPath, $host = null)
     {
         /** @var Query $query */
-        $query = $this->entityManager->createQuery('SELECT r FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r WHERE r.targetUriPathHash = :targetUriPathHash AND (r.host = :host OR r.host IS NULL)');
+        $query = $this->entityManager->createQuery('SELECT r FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r WHERE r.targetUriPathHash = :targetUriPathHash AND (r.host = :host OR r.host IS NULL)');
         $query->setParameter('targetUriPathHash', md5(trim($targetUriPath, '/')));
         $query->setParameter('host', $host);
 
@@ -106,7 +106,7 @@ class RedirectionRepository extends Repository
      *
      * @param string $host Full qualified hostname or host pattern
      * @param callable $callback
-     * @return \Generator<Redirection>
+     * @return \Generator<Redirect>
      */
     public function findAll($host = null, callable $callback = null)
     {
@@ -135,7 +135,7 @@ class RedirectionRepository extends Repository
     public function findDistinctHosts()
     {
         /** @var Query $query */
-        $query = $this->entityManager->createQuery('SELECT DISTINCT r.host FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection r');
+        $query = $this->entityManager->createQuery('SELECT DISTINCT r.host FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r');
         return array_filter(array_map(function($record) {
             return $record['host'];
         }, $query->getResult()));
@@ -146,13 +146,13 @@ class RedirectionRepository extends Repository
      *
      * @param IterableResult $iterator
      * @param callable $callback
-     * @return \Generator<RedirectionDto>
+     * @return \Generator<RedirectDto>
      */
     protected function iterate(IterableResult $iterator, callable $callback = null)
     {
         $iteration = 0;
         foreach ($iterator as $object) {
-            /** @var Redirection $object */
+            /** @var Redirect $object */
             $object = current($object);
             yield $object;
             if ($callback !== null) {

@@ -12,11 +12,12 @@ namespace Neos\RedirectHandler\DatabaseStorage;
  */
 
 use Doctrine\ORM\OptimisticLockException;
-use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
-use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectionRepository;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectRepository;
 use Neos\RedirectHandler\Exception;
-use Neos\RedirectHandler\Redirection as RedirectionDto;
-use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
+use Neos\RedirectHandler\Redirect as RedirectDto;
+use Neos\RedirectHandler\RedirectInterface;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\RedirectHandler\Traits\RedirectSignalTrait;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
@@ -27,15 +28,15 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class RedirectionStorage implements RedirectionStorageInterface
+class RedirectStorage implements RedirectStorageInterface
 {
     use RedirectSignalTrait;
 
     /**
      * @Flow\Inject
-     * @var RedirectionRepository
+     * @var RedirectRepository
      */
-    protected $redirectionRepository;
+    protected $redirectRepository;
 
     /**
      * @Flow\Inject
@@ -67,29 +68,29 @@ class RedirectionStorage implements RedirectionStorageInterface
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
-     * @return RedirectionDto|null if no redirection exists for the given $sourceUriPath
+     * @return RedirectDto|null if no redirection exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
-        $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
-        if ($redirection === null) {
+        $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
+        if ($redirect === null) {
             return null;
         }
-        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
+        return RedirectDto::create($redirect);
     }
 
     /**
      * Returns all registered redirection records
      *
      * @param string $host Full qualified hostname or host pattern
-     * @return \Generator<RedirectionDto>
+     * @return \Generator<RedirectDto>
      * @api
      */
     public function getAll($host = null)
     {
-        foreach ($this->redirectionRepository->findAll($host) as $redirection) {
-            yield new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
+        foreach ($this->redirectRepository->findAll($host) as $redirect) {
+            yield RedirectDto::create($redirect);
         }
     }
 
@@ -101,7 +102,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      */
     public function getDistinctHosts()
     {
-        return $this->redirectionRepository->findDistinctHosts();
+        return $this->redirectRepository->findDistinctHosts();
     }
 
     /**
@@ -114,11 +115,11 @@ class RedirectionStorage implements RedirectionStorageInterface
      */
     public function removeOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
-        $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
-        if ($redirection === null) {
+        $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
+        if ($redirect === null) {
             return;
         }
-        $this->redirectionRepository->remove($redirection);
+        $this->redirectRepository->remove($redirect);
     }
 
     /**
@@ -130,7 +131,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      */
     public function removeAll($host = null)
     {
-        $this->redirectionRepository->removeAll($host);
+        $this->redirectRepository->removeAll($host);
     }
 
     /**
@@ -140,22 +141,22 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
      * @param array $hosts the list of host patterns
-     * @return array<Redirection> the freshly generated redirections instance
+     * @return array<Redirect> the freshly generated redirections instance
      * @api
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
     {
         $statusCode = $statusCode ?: (integer)$this->defaultStatusCode['redirect'];
-        $redirections = [];
+        $redirects = [];
         if ($hosts !== []) {
-            array_map(function($host) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirections) {
-                $redirections[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host);
+            array_map(function($host) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirects) {
+                $redirects[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host);
             }, $hosts);
         } else {
-            $redirections[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode);
+            $redirects[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode);
         }
-        $this->emitRedirectionCreated($redirections);
-        return $redirections;
+        $this->emitRedirectionCreated($redirects);
+        return $redirects;
     }
 
     /**
@@ -165,7 +166,7 @@ class RedirectionStorage implements RedirectionStorageInterface
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
      * @param string $host the host patterns for the current redirection
-     * @return Redirection the freshly generated redirection instance
+     * @return Redirect the freshly generated redirection instance
      * @api
      */
     protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
@@ -174,46 +175,46 @@ class RedirectionStorage implements RedirectionStorageInterface
         if (isset($this->runtimeCache[$hash])) {
             return $this->runtimeCache[$hash];
         }
-        $redirection = new Redirection($sourceUriPath, $targetUriPath, $statusCode, $host);
-        $this->updateDependingRedirects($redirection);
-        $this->redirectionRepository->add($redirection);
+        $redirect = new Redirect($sourceUriPath, $targetUriPath, $statusCode, $host);
+        $this->updateDependingRedirects($redirect);
+        $this->redirectRepository->add($redirect);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
-        $this->runtimeCache[$hash] = $redirection;
-        return new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
+        $this->runtimeCache[$hash] = $redirect;
+        return RedirectDto::create($redirect);
     }
 
     /**
      * Updates affected redirection instances in order to avoid redundant or circular redirects
      *
-     * @param Redirection $newRedirection
+     * @param RedirectInterface $newRedirect
      * @return void
      * @throws Exception if creating the redirect would cause conflicts
      */
-    protected function updateDependingRedirects(Redirection $newRedirection)
+    protected function updateDependingRedirects(RedirectInterface $newRedirect)
     {
-        /** @var $existingRedirectionForSourceUriPath Redirection */
-        $existingRedirectionForSourceUriPath = $this->redirectionRepository->findOneBySourceUriPathAndHost($newRedirection->getSourceUriPath());
-        /** @var $existingRedirectionForTargetUriPath Redirection */
-        $existingRedirectionForTargetUriPath = $this->redirectionRepository->findOneBySourceUriPathAndHost($newRedirection->getTargetUriPath());
+        /** @var $existingRedirectForSourceUriPath Redirect */
+        $existingRedirectForSourceUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getSourceUriPath());
+        /** @var $existingRedirectForTargetUriPath Redirect */
+        $existingRedirectForTargetUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getTargetUriPath());
 
-        if ($existingRedirectionForTargetUriPath !== null) {
-            if ($existingRedirectionForTargetUriPath->getTargetUriPath() === $newRedirection->getSourceUriPath()) {
-                $this->redirectionRepository->remove($existingRedirectionForTargetUriPath);
+        if ($existingRedirectForTargetUriPath !== null) {
+            if ($existingRedirectForTargetUriPath->getTargetUriPath() === $newRedirect->getSourceUriPath()) {
+                $this->redirectRepository->remove($existingRedirectForTargetUriPath);
             } else {
-                throw new Exception(sprintf('A redirect exists for the target URI path "%s", please remove it first.', $newRedirection->getTargetUriPath()), 1382091526);
+                throw new Exception(sprintf('A redirect exists for the target URI path "%s", please remove it first.', $newRedirect->getTargetUriPath()), 1382091526);
             }
         }
-        if ($existingRedirectionForSourceUriPath !== null) {
-            throw new Exception(sprintf('A redirect exists for the source URI path "%s", please remove it first.', $newRedirection->getSourceUriPath()), 1382091456);
+        if ($existingRedirectForSourceUriPath !== null) {
+            throw new Exception(sprintf('A redirect exists for the source URI path "%s", please remove it first.', $newRedirect->getSourceUriPath()), 1382091456);
         }
-        $obsoleteRedirectionInstances = $this->redirectionRepository->findByTargetUriPathAndHost($newRedirection->getSourceUriPath(), $newRedirection->getHost());
-        /** @var $obsoleteRedirection Redirection */
-        foreach ($obsoleteRedirectionInstances as $obsoleteRedirection) {
-            if ($obsoleteRedirection->getSourceUriPath() === $newRedirection->getTargetUriPath()) {
-                $this->redirectionRepository->remove($obsoleteRedirection);
+        $obsoleteRedirectInstances = $this->redirectRepository->findByTargetUriPathAndHost($newRedirect->getSourceUriPath(), $newRedirect->getHost());
+        /** @var $obsoleteRedirect Redirect */
+        foreach ($obsoleteRedirectInstances as $obsoleteRedirect) {
+            if ($obsoleteRedirect->getSourceUriPath() === $newRedirect->getTargetUriPath()) {
+                $this->redirectRepository->remove($obsoleteRedirect);
             } else {
-                $obsoleteRedirection->setTargetUriPath($newRedirection->getTargetUriPath());
-                $this->redirectionRepository->update($obsoleteRedirection);
+                $obsoleteRedirect->setTargetUriPath($newRedirect->getTargetUriPath());
+                $this->redirectRepository->update($obsoleteRedirect);
             }
         }
     }
@@ -221,21 +222,21 @@ class RedirectionStorage implements RedirectionStorageInterface
     /**
      * Increment the hit counter for the given redirection
      *
-     * @param RedirectionDto $redirection
+     * @param RedirectInterface $redirect
      * @return void
      * @api
      */
-    public function incrementHitCount(RedirectionDto $redirection)
+    public function incrementHitCount(RedirectInterface $redirect)
     {
         for ($i = 0; $i < 10; $i++) {
             try {
-                $redirection = $this->redirectionRepository->findOneBySourceUriPathAndHost($redirection->getSourceUriPath(), $redirection->getHost());
-                if ($redirection === null) {
+                $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($redirect->getSourceUriPath(), $redirect->getHost());
+                if ($redirect === null) {
                     return;
                 }
-                $redirection->incrementHitCounter();
-                $this->redirectionRepository->update($redirection);
-                $this->persistenceManager->whitelistObject($redirection);
+                $redirect->incrementHitCounter();
+                $this->redirectRepository->update($redirect);
+                $this->persistenceManager->whitelistObject($redirect);
                 $this->persistenceManager->persistAll(true);
                 return;
             } catch (OptimisticLockException $exception) {

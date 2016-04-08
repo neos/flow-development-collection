@@ -15,9 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A Redirection DTO
+ * A Redirect DTO
  */
-class Redirection
+class Redirect implements RedirectInterface
 {
     /**
      * Relative URI path for which this redirect should be triggered
@@ -59,6 +59,15 @@ class Redirection
         $this->targetUriPath = trim($targetUriPath, '/');
         $this->statusCode = (integer)$statusCode;
         $this->host = trim($host);
+    }
+
+    /**
+     * @param RedirectInterface $redirect
+     * @return RedirectInterface
+     */
+    public static function create(RedirectInterface $redirect)
+    {
+        return new self($redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode(), $redirect->getHost());
     }
 
     /**

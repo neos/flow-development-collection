@@ -14,8 +14,9 @@ namespace Neos\RedirectHandler\Command;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Neos\RedirectHandler\Exception;
-use Neos\RedirectHandler\Redirection;
-use Neos\RedirectHandler\Storage\RedirectionStorageInterface;
+use Neos\RedirectHandler\Redirect;
+use Neos\RedirectHandler\RedirectInterface;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -30,9 +31,9 @@ class RedirectionCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var RedirectionStorageInterface
+     * @var RedirectStorageInterface
      */
-    protected $redirectionStorage;
+    protected $redirectStorage;
 
     /**
      * @Flow\Inject
@@ -54,14 +55,14 @@ class RedirectionCommandController extends CommandController
             $this->sendAndExit(1);
         }
         $writer = Writer::createFromFileObject(new \SplTempFileObject());
-        $redirections = $this->redirectionStorage->getAll($host);
-        /** @var $redirection Redirection */
-        foreach ($redirections as $redirection) {
+        $redirects = $this->redirectStorage->getAll($host);
+        /** @var $redirect RedirectInterface */
+        foreach ($redirects as $redirect) {
             $writer->insertOne([
-                $redirection->getSourceUriPath(),
-                $redirection->getTargetUriPath(),
-                $redirection->getStatusCode(),
-                $redirection->getHost()
+                $redirect->getSourceUriPath(),
+                $redirect->getTargetUriPath(),
+                $redirect->getStatusCode(),
+                $redirect->getHost()
             ]);
         }
         if ($filename === null) {
@@ -89,15 +90,15 @@ class RedirectionCommandController extends CommandController
             list($sourceUriPath, $targetUriPath, $statusCode, $hosts) = $row;
             $hosts = Arrays::trimExplode(',', $hosts);
             foreach ($hosts as $host) {
-                $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
-                if ($redirection !== null && $redirection->getTargetUriPath() !== $targetUriPath && $redirection->getStatusCode() !== $statusCode) {
+                $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
+                if ($redirect !== null && $redirect->getTargetUriPath() !== $targetUriPath && $redirect->getStatusCode() !== $statusCode) {
                     $this->outputLine('- [%d] %s', [$statusCode, $sourceUriPath]);
-                    $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
+                    $this->redirectStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
                     $this->persistenceManager->persistAll();
                 }
             }
             try {
-                $this->redirectionStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
+                $this->redirectStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
                 $this->outputLine('+ [%d] %s', [$statusCode, $sourceUriPath]);
             } catch (Exception $exception) {
                 $this->outputLine('~ [%d] %s', [$statusCode, $sourceUriPath]);
@@ -113,7 +114,7 @@ class RedirectionCommandController extends CommandController
     /**
      * Removes a redirection
      *
-     * This command deletes a redirection from the RedirectionRepository
+     * This command deletes a redirection from the RedirectRepository
      *
      * @param string $sourcePath The source URI path of the redirection to remove, as given by redirect:list
      * @param string $host Full qualified hostname or host pattern
@@ -121,26 +122,26 @@ class RedirectionCommandController extends CommandController
      */
     public function removeCommand($sourcePath, $host = null)
     {
-        $redirection = $this->redirectionStorage->getOneBySourceUriPathAndHost($sourcePath, $host);
-        if ($redirection === null) {
+        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourcePath, $host);
+        if ($redirect === null) {
             $this->outputLine('There is no redirection with the source URI path "%s"', [$sourcePath]);
             $this->quit(1);
         }
-        $this->redirectionStorage->removeOneBySourceUriPathAndHost($sourcePath, $host);
+        $this->redirectStorage->removeOneBySourceUriPathAndHost($sourcePath, $host);
         $this->outputLine('Removed redirection with the source URI path "%s"', [$sourcePath]);
     }
 
     /**
      * Removes all redirections
      *
-     * This command deletes all redirections from the RedirectionRepository
+     * This command deletes all redirections from the RedirectRepository
      *
      * @param string $host Full qualified hostname or host pattern
      * @return void
      */
     public function removeAllCommand($host = null)
     {
-        $this->redirectionStorage->removeAll($host);
+        $this->redirectStorage->removeAll($host);
         if ($host === null) {
             $this->outputLine('Removed all redirections');
         } else {
@@ -151,7 +152,7 @@ class RedirectionCommandController extends CommandController
     /**
      * Adds a redirection
      *
-     * This command adds a new redirection to the RedirectionRepository using the RedirectionService
+     * This command adds a new redirection to the RedirectRepository using the RedirectionService
      *
      * @param string $sourcePath The relative URI path that should trigger the redirect
      * @param string $targetPath The relative URI path that should be redirected to
@@ -161,7 +162,7 @@ class RedirectionCommandController extends CommandController
      */
     public function addCommand($sourcePath, $targetPath, $statusCode, $host = null)
     {
-        $this->redirectionStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$host]);
+        $this->redirectStorage->addRedirection($sourcePath, $targetPath, $statusCode, [$host]);
         $this->outputLine('New redirection created!');
     }
 }

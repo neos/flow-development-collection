@@ -11,8 +11,8 @@ namespace Neos\RedirectHandler\Traits;
  * source code.
  */
 
-use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirection;
-use Neos\RedirectHandler\Redirection as RedirectionDto;
+use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
+use Neos\RedirectHandler\Redirect as RedirectDto;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -33,16 +33,14 @@ trait RedirectSignalTrait
     protected $_logger;
 
     /**
-     * @param array <Redirection> $redirections
+     * @param array <Redirect> $redirections
      * @return void
      */
-    public function emitRedirectionCreated(array $redirections)
+    public function emitRedirectionCreated(array $redirects)
     {
-        foreach ($redirections as $redirection) {
-            /** @var Redirection $redirection */
-            $redirectionDto = new RedirectionDto($redirection->getSourceUriPath(), $redirection->getTargetUriPath(), $redirection->getStatusCode(), $redirection->getHost());
-            $this->_redirectionService->emitRedirectionCreated($redirectionDto);
-            $this->_logger->log(sprintf('Redirection from %s %s -> %s (%d) added', $redirectionDto->getHost(), $redirectionDto->getSourceUriPath(), $redirectionDto->getTargetUriPath(), $redirectionDto->getStatusCode()), LOG_DEBUG);
+        foreach ($redirects as $redirect) {
+            $this->_redirectionService->emitRedirectionCreated($redirect);
+            $this->_logger->log(sprintf('Redirect from %s %s -> %s (%d) added', $redirect->getHost(), $redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode()), LOG_DEBUG);
         }
     }
 }

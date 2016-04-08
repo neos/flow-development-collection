@@ -12,11 +12,12 @@ namespace Neos\RedirectHandler\DatabaseStorage\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\RedirectHandler\RedirectInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Now;
 
 /**
- * A Redirection model that represents a HTTP redirect
+ * A Redirect model that represents a HTTP redirect
  *
  * @see RedirectionService
  *
@@ -28,7 +29,7 @@ use TYPO3\Flow\Utility\Now;
  * 	}
  * )
  */
-class Redirection
+class Redirect implements RedirectInterface
 {
     /**
      * @var \DateTime

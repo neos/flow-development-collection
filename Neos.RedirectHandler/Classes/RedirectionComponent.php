@@ -20,7 +20,7 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Mvc\Routing\RoutingComponent;
 
 /**
- * Redirection HTTP Component
+ * Redirect HTTP Component
  */
 class RedirectionComponent implements ComponentInterface
 {
