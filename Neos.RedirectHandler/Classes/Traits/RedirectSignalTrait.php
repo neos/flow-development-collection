@@ -11,8 +11,8 @@ namespace Neos\RedirectHandler\Traits;
  * source code.
  */
 
-use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
-use Neos\RedirectHandler\Redirect as RedirectDto;
+use Neos\RedirectHandler\Exception;
+use Neos\RedirectHandler\RedirectInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -33,12 +33,16 @@ trait RedirectSignalTrait
     protected $_logger;
 
     /**
-     * @param array <Redirect> $redirections
+     * @param array $redirects <Redirect> $redirections
      * @return void
+     * @throws Exception
      */
     public function emitRedirectionCreated(array $redirects)
     {
         foreach ($redirects as $redirect) {
+            if (!$redirect instanceof RedirectInterface) {
+                throw new Exception('Redirect should implement RedirectInterface', 1460139669);
+            }
             $this->_redirectionService->emitRedirectionCreated($redirect);
             $this->_logger->log(sprintf('Redirect from %s %s -> %s (%d) added', $redirect->getHost(), $redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode()), LOG_DEBUG);
         }

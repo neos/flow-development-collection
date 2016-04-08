@@ -15,6 +15,8 @@ use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectRepository;
 use Neos\RedirectHandler\DatabaseStorage\RedirectStorage;
 use Neos\RedirectHandler\Redirect as RedirectDto;
+use Neos\RedirectHandler\RedirectionService;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;
 
@@ -39,6 +41,11 @@ class RedirectStorageTest extends UnitTestCase
     protected $mockRouterCachingService;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|RedirectionService
+     */
+    protected $redirectionServiceMock;
+
+    /**
      * Sets up this test case
      */
     protected function setUp()
@@ -50,13 +57,22 @@ class RedirectStorageTest extends UnitTestCase
         $this->mockRedirectRepository = $this->getMockBuilder(RedirectRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->inject($this->redirectStorage, 'redirectRepository', $this->mockRedirectRepository);
 
         $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->inject($this->redirectStorage, 'redirectionRepository', $this->mockRedirectRepository);
         $this->inject($this->redirectStorage, 'routerCachingService', $this->mockRouterCachingService);
+
+        $this->redirectionServiceMock = $this->getMockBuilder(RedirectionService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->inject($this->redirectStorage, '_redirectionService', $this->redirectionServiceMock);
+
+        $loggerMock = $this->getMockBuilder(SystemLoggerInterface::class)
+            ->getMock();
+        $this->inject($this->redirectStorage, '_logger', $loggerMock);
+
     }
 
     /**
@@ -158,7 +174,7 @@ class RedirectStorageTest extends UnitTestCase
     /**
      * @test
      */
-    public function addRedirectFlushesRouterCacheForAffectedUri()
+    public function addRedirectEmitSignalAndFlushesRouterCacheForAffectedUri()
     {
         $this->mockRedirectRepository
             ->expects($this->atLeastOnce())
@@ -169,6 +185,10 @@ class RedirectStorageTest extends UnitTestCase
             ->expects($this->once())
             ->method('flushCachesForUriPath')
             ->with('some/relative/path');
+
+        $this->redirectionServiceMock
+            ->expects($this->atLeastOnce())
+            ->method('emitRedirectionCreated');
 
         $this->redirectStorage->addRedirection('some/relative/path', 'target');
     }
