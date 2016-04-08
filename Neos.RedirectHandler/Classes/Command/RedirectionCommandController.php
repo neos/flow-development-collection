@@ -107,8 +107,7 @@ class RedirectionCommandController extends CommandController
     public function exportCommand($filename = null, $host = null)
     {
         if (!class_exists(Writer::class)) {
-            $this->outputLine('Please run: composer require league/csv to use the export command');
-            $this->sendAndExit(1);
+            $this->outputWarningForLeagueCsvPackage();
         }
         $writer = Writer::createFromFileObject(new \SplTempFileObject());
         $redirects = $this->redirectStorage->getAll($host);
@@ -137,8 +136,7 @@ class RedirectionCommandController extends CommandController
     public function importCommand($filename)
     {
         if (!class_exists(Reader::class)) {
-            $this->outputLine('Please run: composer require league/csv to use the export command');
-            $this->sendAndExit(1);
+            $this->outputWarningForLeagueCsvPackage();
         }
         $reader = Reader::createFromPath($filename);
         $counter = 0;
@@ -165,6 +163,20 @@ class RedirectionCommandController extends CommandController
                 $this->persistenceManager->clearState();
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    protected function outputWarningForLeagueCsvPackage()
+    {
+        $this->outputLine();
+        $this->outputLine('<info>Import/Export</info> features require the package <b>league/csv</b>');
+        $this->outputLine();
+        $this->outputLine('Open your shell and launch:');
+        $this->outputLine('# <comment>composer require league/csv</comment>');
+        $this->outputLine();
+        $this->sendAndExit(1);
     }
 
     /**
