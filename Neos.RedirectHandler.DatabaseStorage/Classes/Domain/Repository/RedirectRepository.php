@@ -37,10 +37,10 @@ class RedirectRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'sourceUriPath' => QueryInterface::ORDER_ASCENDING,
         'host' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 
     /**
      * @param string $sourceUriPath
@@ -136,7 +136,7 @@ class RedirectRepository extends Repository
     {
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT DISTINCT r.host FROM Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r');
-        return array_filter(array_map(function($record) {
+        return array_filter(array_map(function ($record) {
             return $record['host'];
         }, $query->getResult()));
     }

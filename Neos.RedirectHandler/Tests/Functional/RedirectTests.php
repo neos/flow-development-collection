@@ -126,9 +126,9 @@ class RedirectTests extends FunctionalTestCase
         $this->redirectionService->addRedirection('d', 'c');
         $this->persistenceManager->persistAll();
 
-        $expectedRedirects = array('a' => 'b', 'd' => 'c');
+        $expectedRedirects = ['a' => 'b', 'd' => 'c'];
 
-        $resultingRedirects = array();
+        $resultingRedirects = [];
         foreach ($this->redirectRepository->findAll() as $redirect) {
             $resultingRedirects[$redirect->getSourceUriPath()] = $redirect->getTargetUriPath();
         }
@@ -140,58 +140,58 @@ class RedirectTests extends FunctionalTestCase
      */
     public function addRedirectDataProvider()
     {
-        return array(
+        return [
             // avoid redundant redirects (c -> d gets updated to c -> e)
-            array(
-                'existingRedirects' => array(
+            [
+                'existingRedirects' => [
                     'a' => 'b',
                     'c' => 'd',
-                ),
-                'newRedirects' => array(
+                ],
+                'newRedirects' => [
                     'd' => 'e',
-                ),
-                'expectedRedirects' => array(
+                ],
+                'expectedRedirects' => [
                     'a' => 'b',
                     'c' => 'e',
                     'd' => 'e',
-                ),
-            ),
+                ],
+            ],
             // avoid redundant redirects, recursively (c -> d gets updated to c -> e)
-            array(
-                'existingRedirects' => array(
+            [
+                'existingRedirects' => [
                     'a' => 'b',
                     'c' => 'b',
-                ),
-                'newRedirects' => array(
+                ],
+                'newRedirects' => [
                     'b' => 'd',
-                ),
-                'expectedRedirects' => array(
+                ],
+                'expectedRedirects' => [
                     'a' => 'd',
                     'b' => 'd',
                     'c' => 'd',
-                ),
-            ),
+                ],
+            ],
             // avoid circular redirects (c -> d is replaced by d -> c)
-            array(
-                'existingRedirects' => array(
+            [
+                'existingRedirects' => [
                     'a' => 'b',
                     'c' => 'd',
-                ),
-                'newRedirects' => array(
+                ],
+                'newRedirects' => [
                     'd' => 'c',
-                ),
-                'expectedRedirects' => array(
+                ],
+                'expectedRedirects' => [
                     'a' => 'b',
                     'd' => 'c',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
      * @test
      * @dataProvider addRedirectDataProvider
-     * 
+     *
      * @param array $existingRedirects
      * @param array $newRedirects
      * @param array $expectedRedirects
@@ -208,7 +208,7 @@ class RedirectTests extends FunctionalTestCase
         }
         $this->persistenceManager->persistAll();
 
-        $resultingRedirects = array();
+        $resultingRedirects = [];
         foreach ($this->redirectRepository->findAll() as $redirect) {
             $resultingRedirects[$redirect->getSourceUriPath()] = $redirect->getTargetUriPath();
         }
