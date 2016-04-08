@@ -23,8 +23,8 @@
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
-        "neos/redirecthandler": "self.version",
         "neos/redirecthandler-databasestorage": "self.version",
+        "neos/redirecthandler": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -40,6 +40,7 @@
         "typo3/kickstart": "self.version"
     },
     "suggest": {
+        "league/csv": "Allows import/export based on CSV files",
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "typo3/party": "To make use of basic user handling",
@@ -47,8 +48,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\RedirectHandler\\": "Neos.RedirectHandler/Classes",
-            "Neos\\RedirectHandler\\DatabaseStorage\\": "Neos.RedirectHandler.DatabaseStorage/Classes"
+            "Neos\\RedirectHandler\\DatabaseStorage\\": [
+                "Neos.RedirectHandler.DatabaseStorage/Classes"
+            ],
+            "Neos\\RedirectHandler\\": [
+                "Neos.RedirectHandler/Classes"
+            ],
+            "TYPO3\\Flow\\Core\\Migrations\\": [
+                "TYPO3.Flow/Scripts/Migrations"
+            ]
         },
         "psr-0": {
             "TYPO3\\Flow\\Utility": [
@@ -80,11 +88,6 @@
             ],
             "TYPO3\\Kickstart": [
                 "TYPO3.Kickstart/Classes"
-            ]
-        },
-        "psr-4": {
-            "TYPO3\\Flow\\Core\\Migrations\\": [
-                "TYPO3.Flow/Scripts/Migrations"
             ]
         }
     },
