@@ -39,7 +39,7 @@ class RedirectRepository extends Repository
      */
     protected $defaultOrderings = [
         'sourceUriPath' => QueryInterface::ORDER_ASCENDING,
-        'host' => QueryInterface::ORDER_ASCENDING
+        'host' => QueryInterface::ORDER_DESCENDING
     ];
 
     /**
