@@ -41,8 +41,9 @@ class RedirectionCommandController extends CommandController
     protected $persistenceManager;
 
     /**
-     * @param string $host
-     * @param string $match
+     * @param string $host Filter redirection by the given hostname
+     * @param string $match Match source or target URI by a regular expression
+     * @return void
      */
     public function listCommand($host = null, $match = null)
     {
@@ -55,10 +56,10 @@ class RedirectionCommandController extends CommandController
                 $this->outputLine('<info>==</info> <b>Redirection without host attached</b>', [$host]);
             }
             if ($match !== null) {
-                $this->outputLine('   <info>++</info> <b>Show only if source or target URI match <u>#%s#"</u></b>', [$match]);
+                $this->outputLine('   <info>++</info> <b>Show only if source or target URI match <u>%s</u></b>', [$match]);
+                sleep(1);
             }
             $this->outputLine();
-            sleep(1);
             /** @var $redirect RedirectInterface */
             foreach ($redirects as $redirect) {
                 $outputLine = function ($source, $target, $statusCode) {
@@ -144,7 +145,7 @@ class RedirectionCommandController extends CommandController
             $this->outputLine();
             $this->sendAndExit(1);
         }
-        $this->outputLine('Import redirection from "%s"', [$filename]);
+        $this->outputLine('<b>Import redirection from "%s"</b>', [$filename]);
         $this->outputLine();
         $reader = Reader::createFromPath($filename);
         $counter = 0;
@@ -155,12 +156,13 @@ class RedirectionCommandController extends CommandController
             $forcePersist = false;
             foreach ($hosts as $key => $host) {
                 $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
-                if ($this->isSame($sourceUriPath, $targetUriPath, $host, $statusCode, $redirect) === false) {
+                $isSame = $this->isSame($sourceUriPath, $targetUriPath, $host, $statusCode, $redirect);
+                if ($redirect !== null && $isSame === false) {
                     $this->outputRedirectLine('<info>--</info>', $redirect);
                     $this->redirectStorage->removeOneBySourceUriPathAndHost($sourceUriPath, $host);
                     $forcePersist = true;
-                } else {
-                    $this->outputRedirectLine('<info>~~</info>', $redirect);
+                } elseif ($isSame === true) {
+                    $this->outputRedirectLine('<comment>~~</comment>', $redirect);
                     unset($hosts[$key]);
                     $skipped = true;
                 }
@@ -188,6 +190,7 @@ class RedirectionCommandController extends CommandController
             }
         }
         $this->outputLine();
+        $this->outputLegend();
     }
 
     /**
@@ -252,7 +255,7 @@ class RedirectionCommandController extends CommandController
     {
         $this->redirectStorage->removeAll($host);
         if ($host === null) {
-            $this->outputLine('Removed all redirections');
+            $this->outputLine('Removed all redirections with no host attached');
         } else {
             $this->outputLine('Removed all redirections for host "%s"', [$host]);
         }
@@ -273,7 +276,7 @@ class RedirectionCommandController extends CommandController
     public function addCommand($source, $target, $statusCode, $host = null, $force = false)
     {
         $this->outputLine();
-        $this->outputLine('Create a redirection ...');
+        $this->outputLine('<b>Create a redirection ...</b>');
         $this->outputLine();
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         $isSame = $this->isSame($source, $target, $host, $statusCode, $redirect);
@@ -290,14 +293,16 @@ class RedirectionCommandController extends CommandController
             $this->outputRedirectLine('<info>--</info>', $redirect);
             $this->persistenceManager->persistAll();
         } elseif ($redirect !== null && $isSame === true) {
-            $this->outputRedirectLine('<info>~~</info>', $redirect);
+            $this->outputRedirectLine('<comment>~~</comment>', $redirect);
             $this->outputLine();
+            $this->outputLegend();
             $this->sendAndExit();
         }
         $redirects = $this->redirectStorage->addRedirection($source, $target, $statusCode, [$host]);
         $redirect = reset($redirects);
         $this->outputRedirectLine('<info>++</info>', $redirect);
         $this->outputLine();
+        $this->outputLegend();
     }
 
     /**
@@ -313,5 +318,19 @@ class RedirectionCommandController extends CommandController
             $redirect->getStatusCode(),
             $redirect->getHost() ?: 'no host'
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    protected function outputLegend()
+    {
+        $this->outputLine('<b>Legend</b>');
+        $this->outputLine();
+        $this->outputLine('   <info>++</info> Redirection created');
+        $this->outputLine('   <info>--</info> Redirection removed');
+        $this->outputLine('   <comment>~~</comment> Redirection do not need update');
+        $this->outputLine('   <error>!!</error> Error');
+        $this->outputLine();
     }
 }
