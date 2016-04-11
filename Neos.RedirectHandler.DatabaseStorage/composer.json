@@ -4,7 +4,7 @@
     "description": "A plugin for neos/redirecthandler to store redirection in the database",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "~3.2",
+        "typo3/flow": "*",
         "neos/redirecthandler": "*"
     },
     "autoload": {
