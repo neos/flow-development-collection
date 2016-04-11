@@ -16,7 +16,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Now;
 
 /**
- * Test case for the RedirectionService class
+ * Test case for the Redirect class
  */
 class RedirectTest extends UnitTestCase
 {

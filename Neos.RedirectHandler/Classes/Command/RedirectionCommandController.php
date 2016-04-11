@@ -41,19 +41,19 @@ class RedirectionCommandController extends CommandController
     protected $persistenceManager;
 
     /**
-     * @param string $host Filter redirection by the given hostname
+     * @param string $host Filter redirects by the given hostname
      * @param string $match Match source or target URI by a regular expression
      * @return void
      */
     public function listCommand($host = null, $match = null)
     {
-        $outputByHost = function ($host) use ($match) {
+        $outputByHost = function ($host = null) use ($match) {
             $redirects = $this->redirectStorage->getAll($host);
             $this->outputLine();
             if ($host !== null) {
-                $this->outputLine('<info>==</info> <b>Redirection for %s</b>', [$host]);
+                $this->outputLine('<info>==</info> <b>Redirect for %s</b>', [$host]);
             } else {
-                $this->outputLine('<info>==</info> <b>Redirection without host attached</b>', [$host]);
+                $this->outputLine('<info>==</info> <b>Redirect without host attached</b>', [$host]);
             }
             if ($match !== null) {
                 $this->outputLine('   <info>++</info> <b>Show only if source or target URI match <u>%s</u></b>', [$match]);
@@ -87,7 +87,7 @@ class RedirectionCommandController extends CommandController
             }
         };
         if ($host !== null) {
-            $outputByHost($host);
+            $outputByHost();
         } else {
             $hosts = $this->redirectStorage->getDistinctHosts();
             if ($hosts !== []) {
@@ -129,7 +129,7 @@ class RedirectionCommandController extends CommandController
     }
 
     /**
-     * Load redirection from a CSV file
+     * Import redirects from a CSV file
      *
      * @param string $filename CSV file path
      * @return void
@@ -145,7 +145,7 @@ class RedirectionCommandController extends CommandController
             $this->outputLine();
             $this->sendAndExit(1);
         }
-        $this->outputLine('<b>Import redirection from "%s"</b>', [$filename]);
+        $this->outputLine('<b>Import redirects from "%s"</b>', [$filename]);
         $this->outputLine();
         $reader = Reader::createFromPath($filename);
         $counter = 0;
@@ -224,11 +224,11 @@ class RedirectionCommandController extends CommandController
     }
 
     /**
-     * Removes a redirection
+     * Removes a redirect
      *
-     * This command deletes a redirection from the RedirectRepository
+     * This command deletes a redirect from the RedirectRepository
      *
-     * @param string $source The source URI path of the redirection to remove, as given by redirect:list
+     * @param string $source The source URI path of the redirect to remove, as given by redirect:list
      * @param string $host Full qualified hostname or host pattern
      * @return void
      */
@@ -236,17 +236,17 @@ class RedirectionCommandController extends CommandController
     {
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         if ($redirect === null) {
-            $this->outputLine('There is no redirection with the source URI path "%s"', [$source]);
+            $this->outputLine('There is no redirect with the source URI path "%s"', [$source]);
             $this->quit(1);
         }
         $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
-        $this->outputLine('Removed redirection with the source URI path "%s"', [$source]);
+        $this->outputLine('Removed redirect with the source URI path "%s"', [$source]);
     }
 
     /**
-     * Removes all redirections
+     * Removes all redirects
      *
-     * This command deletes all redirections from the RedirectRepository
+     * This command deletes all redirects from the RedirectRepository
      *
      * @param string $host Full qualified hostname or host pattern
      * @return void
@@ -255,33 +255,33 @@ class RedirectionCommandController extends CommandController
     {
         $this->redirectStorage->removeAll($host);
         if ($host === null) {
-            $this->outputLine('Removed all redirections with no host attached');
+            $this->outputLine('Removed all redirects with no host attached');
         } else {
-            $this->outputLine('Removed all redirections for host "%s"', [$host]);
+            $this->outputLine('Removed all redirects for host "%s"', [$host]);
         }
     }
 
     /**
-     * Adds a redirection
+     * Adds a redirect
      *
-     * This command adds a new redirection to the RedirectRepository using the RedirectionService
+     * This command adds a new redirect to the RedirectRepository using the RedirectionService
      *
      * @param string $source The relative URI path that should trigger the redirect
      * @param string $target The relative URI path that should be redirected to
      * @param integer $statusCode The status code of the redirect header
      * @param string $host Host or host pattern to match the redirect
-     * @param boolean $force Replace existing redirection (based on the source URI)
+     * @param boolean $force Replace existing redirect (based on the source URI)
      * @return void
      */
     public function addCommand($source, $target, $statusCode, $host = null, $force = false)
     {
         $this->outputLine();
-        $this->outputLine('<b>Create a redirection ...</b>');
+        $this->outputLine('<b>Create a redirect ...</b>');
         $this->outputLine();
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         $isSame = $this->isSame($source, $target, $host, $statusCode, $redirect);
         if ($redirect !== null && $isSame === false && $force === false) {
-            $this->outputLine('A redirection with the same source URI exist, see bellow:');
+            $this->outputLine('A redirect with the same source URI exist, see below:');
             $this->outputLine();
             $this->outputRedirectLine('<error>!!</error>', $redirect);
             $this->outputLine();
@@ -308,6 +308,7 @@ class RedirectionCommandController extends CommandController
     /**
      * @param string $prefix
      * @param RedirectInterface $redirect
+     * @return void
      */
     protected function outputRedirectLine($prefix, RedirectInterface $redirect)
     {
@@ -327,9 +328,9 @@ class RedirectionCommandController extends CommandController
     {
         $this->outputLine('<b>Legend</b>');
         $this->outputLine();
-        $this->outputLine('   <info>++</info> Redirection created');
-        $this->outputLine('   <info>--</info> Redirection removed');
-        $this->outputLine('   <comment>~~</comment> Redirection do not need update');
+        $this->outputLine('   <info>++</info> Redirect created');
+        $this->outputLine('   <info>--</info> Redirect removed');
+        $this->outputLine('   <comment>~~</comment> Redirect do not need update');
         $this->outputLine('   <error>!!</error> Error');
         $this->outputLine();
     }

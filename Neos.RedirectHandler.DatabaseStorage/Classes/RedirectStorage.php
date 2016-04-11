@@ -24,7 +24,7 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 
 /**
- * Database Storage for the Redirections
+ * Database Storage for the Redirects
  *
  * @Flow\Scope("singleton")
  */
@@ -51,7 +51,7 @@ class RedirectStorage implements RedirectStorageInterface
     protected $routerCachingService;
 
     /**
-     * Runtime cache to avoid creating multiple time the same redirection
+     * Runtime cache to avoid creating multiple time the same redirect
      *
      * @var array
      */
@@ -64,11 +64,11 @@ class RedirectStorage implements RedirectStorageInterface
     protected $defaultStatusCode;
 
     /**
-     * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
+     * Returns one redirect for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
-     * @return RedirectDto|null if no redirection exists for the given $sourceUriPath
+     * @return RedirectDto|null if no redirect exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
@@ -81,7 +81,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Returns all registered redirection records
+     * Returns all registered redirects records
      *
      * @param string $host Full qualified hostname or host pattern
      * @return \Generator<RedirectDto>
@@ -106,7 +106,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Removes a redirection for the given $sourceUriPath if it exists
+     * Removes a redirect for the given $sourceUriPath if it exists
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
@@ -123,7 +123,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Removes all registered redirection records
+     * Removes all registered redirects
      *
      * @param string $host Full qualified hostname or host pattern
      * @return void
@@ -135,13 +135,13 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Adds a redirection to the repository and updates related redirection instances accordingly
+     * Adds a redirect to the repository and updates related redirect instances accordingly
      *
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
      * @param array $hosts the list of host patterns
-     * @return array<Redirect> the freshly generated redirections instance
+     * @return array<Redirect> the freshly generated redirects instance
      * @api
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
@@ -160,13 +160,13 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Adds a redirection to the repository and updates related redirection instances accordingly
+     * Adds a redirect to the repository and updates related redirects accordingly
      *
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param string $host the host patterns for the current redirection
-     * @return Redirect the freshly generated redirection instance
+     * @param string $host the host patterns for the current redirect
+     * @return Redirect the freshly generated redirect DTO instance
      * @api
      */
     protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
@@ -184,7 +184,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Updates affected redirection instances in order to avoid redundant or circular redirects
+     * Updates affected redirects in order to avoid redundant or circular redirections
      *
      * @param RedirectInterface $newRedirect
      * @return void
@@ -220,7 +220,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Increment the hit counter for the given redirection
+     * Increment the hit counter for the given redirect
      *
      * @param RedirectInterface $redirect
      * @return void

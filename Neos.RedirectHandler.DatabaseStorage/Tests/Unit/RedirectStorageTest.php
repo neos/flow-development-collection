@@ -21,7 +21,7 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Test case for the RedirectionService class
+ * Test case for the RedirectStorage class
  */
 class RedirectStorageTest extends UnitTestCase
 {

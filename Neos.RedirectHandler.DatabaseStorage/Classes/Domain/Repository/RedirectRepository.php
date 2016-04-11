@@ -21,7 +21,7 @@ use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 
 /**
- * Repository for redirection instances.
+ * Repository for redirect instances.
  * Note: You should not interact with this repository directly. Instead use the RedirectionService!
  *
  * @Flow\Scope("singleton")
