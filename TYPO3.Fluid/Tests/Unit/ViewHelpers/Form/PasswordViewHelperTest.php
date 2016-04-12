@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Fluid\ViewHelpers\Form;
+namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Form;
 
 /*
  * This file is part of the TYPO3.Fluid package.
@@ -69,6 +69,31 @@ class PasswordViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
         $this->viewHelper->setViewHelperNode(new \TYPO3\Fluid\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
         $this->viewHelper->initialize();
         $this->viewHelper->render();
+    }
+
+    /**
+     * @test
+     */
+    public function renderCorrectlySetsRequiredAttribute()
+    {
+        $mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute', 'setContent', 'render'), array(), '', false);
+        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'password');
+        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
+        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('required', 'required');
+        $mockTagBuilder->expects($this->once())->method('render');
+        $this->viewHelper->injectTagBuilder($mockTagBuilder);
+
+        $arguments = array(
+            'name' => 'NameOfTextbox',
+            'value' => 'Current value'
+        );
+        $this->viewHelper->setArguments($arguments);
+
+        $this->viewHelper->setViewHelperNode(new \TYPO3\Fluid\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
+        $this->viewHelper->initialize();
+        $this->viewHelper->render(true);
     }
 
     /**
