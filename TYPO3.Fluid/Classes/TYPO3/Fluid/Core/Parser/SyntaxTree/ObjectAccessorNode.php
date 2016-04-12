@@ -86,8 +86,18 @@ class ObjectAccessorNode extends AbstractNode
      */
     public static function getPropertyPath($subject, $propertyPath, RenderingContextInterface $renderingContext)
     {
+        $subject = static::applyPropertyAccessHandling($subject, $renderingContext);
+
+        if ($propertyPath === '') {
+            return $subject;
+        }
+
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
+            if ($subject === null || is_scalar($subject)) {
+                return null;
+            }
+
             try {
                 $subject = ObjectAccess::getProperty($subject, $pathSegment);
             } catch (PropertyNotAccessibleException $exception) {
@@ -98,13 +108,26 @@ class ObjectAccessorNode extends AbstractNode
                 break;
             }
 
-            if ($subject instanceof RenderingContextAwareInterface) {
-                $subject->setRenderingContext($renderingContext);
-            }
-            if ($subject instanceof TemplateObjectAccessInterface) {
-                $subject = $subject->objectAccess();
-            }
+            $subject = static::applyPropertyAccessHandling($subject, $renderingContext);
         }
+
+        return $subject;
+    }
+
+    /**
+     * @param mixed $subject
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     */
+    public static function applyPropertyAccessHandling($subject, RenderingContextInterface $renderingContext)
+    {
+        if ($subject instanceof RenderingContextAwareInterface) {
+            $subject->setRenderingContext($renderingContext);
+        }
+        if ($subject instanceof TemplateObjectAccessInterface) {
+            $subject = $subject->objectAccess();
+        }
+
         return $subject;
     }
 }

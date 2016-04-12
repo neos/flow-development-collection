@@ -170,6 +170,7 @@ EOD;
  */
 public function %s(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface \$renderingContext) {
 \$self = \$this;
+\$currentVariableContainer = \$renderingContext->getTemplateVariableContainer();
 %s
 return %s;
 }
@@ -306,10 +307,16 @@ EOD;
      */
     protected function convertObjectAccessorNode(ObjectAccessorNode $node)
     {
-        return array(
+        $objectPathSegments = explode('.', $node->getObjectPath());
+        $firstPathElement = array_shift($objectPathSegments);
+
+        $executionCode = '\TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode::getPropertyPath($currentVariableContainer->getOrNull(\'%s\'), \'%s\', $renderingContext)';
+        $convertedNode = array(
             'initialization' => '',
-            'execution' => sprintf('\TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode::getPropertyPath($renderingContext->getTemplateVariableContainer(), \'%s\', $renderingContext)', $node->getObjectPath())
+            'execution' => sprintf($executionCode, $firstPathElement, implode('.', $objectPathSegments))
         );
+
+        return $convertedNode;
     }
 
     /**
@@ -419,9 +426,14 @@ EOD;
      */
     public function wrapChildNodesInClosure(AbstractNode $node)
     {
+        $convertedSubNodes = $this->convertListOfSubNodes($node);
+        if ($convertedSubNodes['execution'] === 'NULL') {
+            return 'function() {return NULL;}' . chr(10);
+        }
+
         $closure = '';
         $closure .= 'function() use ($renderingContext, $self) {' . chr(10);
-        $convertedSubNodes = $this->convertListOfSubNodes($node);
+        $closure .= '$currentVariableContainer = $renderingContext->getTemplateVariableContainer();' . chr(10);
         $closure .= $convertedSubNodes['initialization'];
         $closure .= sprintf('return %s;', $convertedSubNodes['execution']) . chr(10);
         $closure .= '}';
