@@ -462,6 +462,8 @@ class ProxyClassBuilder
             $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
         }
 
+        $proxyClass->addTraits(['\TYPO3\Flow\Aop\AdvicesTrait']);
+
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
         $proxyClass->addProperty('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'array()');
