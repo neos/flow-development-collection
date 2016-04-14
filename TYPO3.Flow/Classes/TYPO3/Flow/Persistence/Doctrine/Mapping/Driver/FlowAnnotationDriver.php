@@ -940,7 +940,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             }
         }
 
-        $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
+        $proxyAnnotation = $this->reader->getClassAnnotation($class, \TYPO3\Flow\Annotations\Proxy::class);
+        if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
+            $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
+        }
     }
 
     /**
