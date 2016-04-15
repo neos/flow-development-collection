@@ -95,7 +95,7 @@ class ResourceCommandController extends CommandController
                 $collection->publish();
             }
 
-            if ($this->messageCollector->hasNotification()) {
+            if ($this->messageCollector->hasMessages()) {
                 $this->outputLine();
                 $this->outputLine('The resources were published, but a few inconsistencies were detected. You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
                 $this->messageCollector->flush(function (Message $notification) {

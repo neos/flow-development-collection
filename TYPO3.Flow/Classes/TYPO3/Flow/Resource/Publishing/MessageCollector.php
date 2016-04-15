@@ -20,7 +20,7 @@ use TYPO3\Flow\Exception;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
- * Notification Collector
+ * Message Collector
  *
  * @Flow\Scope("singleton")
  */
@@ -50,6 +50,7 @@ class MessageCollector
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
      * @param integer $code A unique error code
      * @throws Exception
+     * @api
      */
     public function append($message, $severity = Error::SEVERITY_ERROR, $code = null)
     {
@@ -74,8 +75,9 @@ class MessageCollector
 
     /**
      * @return boolean
+     * @api
      */
-    public function hasNotification()
+    public function hasMessages()
     {
         return $this->messages->count() > 0;
     }
@@ -83,13 +85,14 @@ class MessageCollector
     /**
      * @param callable $callback a callback function to process every notification
      * @return \Generator
+     * @api
      */
     public function flush(callable $callback = null)
     {
         foreach ($this->messages as $message) {
             /** @var Message $message */
             $this->messages->detach($message);
-            $this->systemLogger->log('ResourcePublishingMessage: ' . $message->getMessage(), $message->getSeverity());
+            $this->systemLogger->log('ResourceMessageCollectorMessage: ' . $message->getMessage(), $message->getSeverity());
             if ($callback !== null) {
                 $callback($message);
             }
