@@ -118,7 +118,7 @@ class RedirectionCommandController extends CommandController
                 $redirect->getSourceUriPath(),
                 $redirect->getTargetUriPath(),
                 $redirect->getStatusCode(),
-                $redirect->getHost() ?: '[no host attached]'
+                $redirect->getHost()
             ]);
         }
         if ($filename === null) {
@@ -155,6 +155,8 @@ class RedirectionCommandController extends CommandController
             $hosts = Arrays::trimExplode('|', $hosts);
             $forcePersist = false;
             foreach ($hosts as $key => $host) {
+                $host = trim($host);
+                $host = $host === '' ? null : $host;
                 $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($sourceUriPath, $host);
                 $isSame = $this->isSame($sourceUriPath, $targetUriPath, $host, $statusCode, $redirect);
                 if ($redirect !== null && $isSame === false) {
