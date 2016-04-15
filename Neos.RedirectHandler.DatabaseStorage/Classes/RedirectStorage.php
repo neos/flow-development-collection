@@ -51,13 +51,6 @@ class RedirectStorage implements RedirectStorageInterface
     protected $routerCachingService;
 
     /**
-     * Runtime cache to avoid creating multiple time the same redirect
-     *
-     * @var array
-     */
-    protected $runtimeCache = [];
-
-    /**
      * @Flow\InjectConfiguration(path="statusCode", package="Neos.RedirectHandler")
      * @var array
      */
@@ -171,15 +164,10 @@ class RedirectStorage implements RedirectStorageInterface
      */
     protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {
-        $hash = md5($host . $sourceUriPath . $targetUriPath . $statusCode);
-        if (isset($this->runtimeCache[$hash])) {
-            return $this->runtimeCache[$hash];
-        }
         $redirect = new Redirect($sourceUriPath, $targetUriPath, $statusCode, $host);
         $this->updateDependingRedirects($redirect);
         $this->redirectRepository->add($redirect);
         $this->routerCachingService->flushCachesForUriPath($sourceUriPath);
-        $this->runtimeCache[$hash] = $redirect;
         return RedirectDto::create($redirect);
     }
 
