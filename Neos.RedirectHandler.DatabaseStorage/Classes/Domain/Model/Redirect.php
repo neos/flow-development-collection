@@ -219,19 +219,19 @@ class Redirect implements RedirectInterface
      */
     public function getStatusCode()
     {
-        return $this->statusCode;
+        return (integer)$this->statusCode;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getHost()
     {
-        return $this->host;
+        return trim($this->host) === '' ? null : $this->host;
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getHitCounter()
     {

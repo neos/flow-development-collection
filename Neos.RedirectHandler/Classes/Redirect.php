@@ -91,7 +91,7 @@ class Redirect implements RedirectInterface
      */
     public function getStatusCode()
     {
-        return $this->statusCode;
+        return (integer)$this->statusCode;
     }
 
     /**
@@ -99,6 +99,6 @@ class Redirect implements RedirectInterface
      */
     public function getHost()
     {
-        return $this->host;
+        return trim($this->host) === '' ? null : $this->host;
     }
 }

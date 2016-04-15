@@ -153,6 +153,9 @@ class RedirectionCommandController extends CommandController
             $skipped = false;
             list($sourceUriPath, $targetUriPath, $statusCode, $hosts) = $row;
             $hosts = Arrays::trimExplode('|', $hosts);
+            if ($hosts === []) {
+                $hosts = [null];
+            }
             $forcePersist = false;
             foreach ($hosts as $key => $host) {
                 $host = trim($host);
@@ -182,7 +185,8 @@ class RedirectionCommandController extends CommandController
                 }
                 $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
-                $this->outputLine('<error>!!</error> [%d] %s', [$statusCode, $sourceUriPath]);
+                $this->outputLine('   <error>!!</error> %s => %s <comment>(%d)</comment> - %s', [$sourceUriPath, $targetUriPath, $statusCode, $hosts ? json_encode($hosts) : 'no host']);
+                $this->outputLine('      Message: %s', [$exception->getMessage()]);
             }
             $counter++;
             if ($counter % 50 === 0) {
