@@ -38,7 +38,7 @@ class MessageCollector
     protected $systemLogger;
 
     /**
-     * Notification Collector constructor
+     * Message Collector Constructor
      */
     public function __construct()
     {
@@ -49,6 +49,7 @@ class MessageCollector
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
      * @param integer $code A unique error code
+     * @return void
      * @throws Exception
      * @api
      */
@@ -84,7 +85,7 @@ class MessageCollector
 
     /**
      * @param callable $callback a callback function to process every notification
-     * @return \Generator
+     * @return void
      * @api
      */
     public function flush(callable $callback = null)
@@ -101,6 +102,8 @@ class MessageCollector
 
     /**
      * Flush all notification during the object lifecycle
+     *
+     * @return void
      */
     public function __destruct()
     {
