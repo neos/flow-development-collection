@@ -216,20 +216,10 @@ class RedirectStorage implements RedirectStorageInterface
      */
     public function incrementHitCount(RedirectInterface $redirect)
     {
-        for ($i = 0; $i < 10; $i++) {
-            try {
-                $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($redirect->getSourceUriPath(), $redirect->getHost());
-                if ($redirect === null) {
-                    return;
-                }
-                $redirect->incrementHitCounter();
-                $this->redirectRepository->update($redirect);
-                $this->persistenceManager->whitelistObject($redirect);
-                $this->persistenceManager->persistAll(true);
-                return;
-            } catch (OptimisticLockException $exception) {
-                usleep($i * 10);
-            }
+        try {
+            $this->redirectRepository->incrementHitCount($redirect);
+        } catch (\Exception $exception) {
+            $this->_logger->logException($exception);
         }
     }
 }

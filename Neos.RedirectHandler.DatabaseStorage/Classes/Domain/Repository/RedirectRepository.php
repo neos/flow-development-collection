@@ -16,6 +16,7 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
+use Neos\RedirectHandler\RedirectInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
@@ -139,6 +140,22 @@ class RedirectRepository extends Repository
         return array_filter(array_map(function ($record) {
             return $record['host'];
         }, $query->getResult()));
+    }
+
+    /**
+     * @param RedirectInterface $redirect
+     * @return void
+     */
+    public function incrementHitCount(RedirectInterface $redirect)
+    {
+        /** @var Query $query */
+        $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1 WHERE r.sourceUriPath = :sourceUriPath and r.host = :host');
+        $query->setParameter('host', $redirect->getHost())
+            ->setParameters([
+                'sourceUriPath' => $redirect->getSourceUriPath(),
+                'host' => $redirect->getHost()
+            ])
+            ->execute();
     }
 
     /**
