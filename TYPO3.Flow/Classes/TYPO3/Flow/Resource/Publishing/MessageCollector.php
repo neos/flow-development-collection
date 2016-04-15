@@ -93,7 +93,7 @@ class MessageCollector
         foreach ($this->messages as $message) {
             /** @var Message $message */
             $this->messages->detach($message);
-            $this->systemLogger->log('ResourceMessageCollectorMessage: ' . $message->getMessage(), $message->getSeverity());
+            $this->systemLogger->log('ResourcePublishingMessage: ' . $message->getMessage(), $message->getSeverity());
             if ($callback !== null) {
                 $callback($message);
             }
