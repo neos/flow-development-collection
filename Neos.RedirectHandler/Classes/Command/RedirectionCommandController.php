@@ -180,7 +180,6 @@ class RedirectionCommandController extends CommandController
                 }
                 $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
-                \TYPO3\Flow\var_dump($exception);
                 $this->outputLine('<error>!!</error> [%d] %s', [$statusCode, $sourceUriPath]);
             }
             $counter++;
