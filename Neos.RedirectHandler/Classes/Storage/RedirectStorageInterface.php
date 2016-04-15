@@ -19,7 +19,7 @@ use Neos\RedirectHandler\RedirectInterface;
 interface RedirectStorageInterface
 {
     /**
-     * Returns one redirection for the given $sourceUriPath or NULL if it doesn't exist
+     * Returns one redirect DTO for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
@@ -29,7 +29,7 @@ interface RedirectStorageInterface
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null);
 
     /**
-     * Returns all registered redirection records
+     * Returns all registered redirects
      *
      * @param string $host Full qualified hostname or host pattern
      * @return \Generator<RedirectDto>
@@ -38,14 +38,14 @@ interface RedirectStorageInterface
     public function getAll($host = null);
 
     /**
-     * Return a list of all host patterns
+     * Return a list of all hosts
      *
      * @return array
      */
     public function getDistinctHosts();
 
     /**
-     * Removes a redirection for the given $sourceUriPath if it exists
+     * Removes a redirect for the given $sourceUriPath if it exists
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
@@ -55,7 +55,7 @@ interface RedirectStorageInterface
     public function removeOneBySourceUriPathAndHost($sourceUriPath, $host = null);
 
     /**
-     * Removes all registered redirection records
+     * Removes all registered redirects
      *
      * @param string $host Full qualified hostname or host pattern
      * @return void
@@ -64,19 +64,19 @@ interface RedirectStorageInterface
     public function removeAll($host = null);
 
     /**
-     * Adds a redirection to the repository and updates related redirection instances accordingly
+     * Adds a redirect to the repository and updates related redirects accordingly
      *
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
      * @param array $hosts the list of host patterns
-     * @return array<Redirect> the freshly generated redirection instance
+     * @return array<Redirect> the freshly generated redirects
      * @api
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = []);
 
     /**
-     * Increment the hit counter for the given redirection
+     * Increment the hit counter for the given redirect
      *
      * @param RedirectInterface $redirect
      * @return void

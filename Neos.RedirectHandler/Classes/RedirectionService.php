@@ -20,8 +20,9 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 
 /**
  * Central authority for HTTP redirects.
+ *
  * This service is used to redirect to any configured target URI *before* the Routing Framework kicks in and it
- * should be used to create new redirection instances.
+ * should be used to create new redirect instances.
  *
  * @Flow\Scope("singleton")
  */
@@ -46,7 +47,7 @@ class RedirectionService
     protected $featureSwitch;
 
     /**
-     * Searches for an applicable redirection record and create HTTP response
+     * Searches for a matching redirect for the given HTTP response
      *
      * @param Request $httpRequest
      * @return Response|null

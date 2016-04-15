@@ -33,7 +33,7 @@ trait RedirectSignalTrait
     protected $_logger;
 
     /**
-     * @param array $redirects <Redirect> $redirections
+     * @param array $redirects
      * @return void
      * @throws Exception
      */

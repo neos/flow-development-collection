@@ -14,7 +14,7 @@ namespace Neos\RedirectHandler;
 use TYPO3\Flow\Http;
 
 /**
- * A generic "redirection" exception
+ * A generic RedirectHandler exception
  *
  * @api
  */

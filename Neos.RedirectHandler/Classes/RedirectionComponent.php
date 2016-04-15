@@ -37,7 +37,7 @@ class RedirectionComponent implements ComponentInterface
     protected $redirectionService;
 
     /**
-     * Check if the current request need a redirection
+     * Check if the current request match a redirect
      *
      * @param ComponentContext $componentContext
      * @return void
