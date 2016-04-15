@@ -263,7 +263,7 @@ class RedirectionCommandController extends CommandController
     /**
      * Adds a redirect
      *
-     * This command adds a new redirect to the RedirectRepository using the RedirectionService
+     * This command adds a new redirect to the RedirectRepository using the RedirectService
      *
      * @param string $source The relative URI path that should trigger the redirect
      * @param string $target The relative URI path that should be redirected to

@@ -19,7 +19,7 @@ use TYPO3\Flow\Utility\Now;
 /**
  * A Redirect model that represents a HTTP redirect
  *
- * @see RedirectionService
+ * @see RedirectService
  *
  * @Flow\Entity
  * @ORM\Table(

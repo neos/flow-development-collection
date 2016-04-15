@@ -22,9 +22,9 @@ trait RedirectSignalTrait
 {
     /**
      * @Flow\Inject
-     * @var \Neos\RedirectHandler\RedirectionService
+     * @var \Neos\RedirectHandler\RedirectService
      */
-    protected $_redirectionService;
+    protected $_redirectService;
 
     /**
      * @Flow\Inject
@@ -43,7 +43,7 @@ trait RedirectSignalTrait
             if (!$redirect instanceof RedirectInterface) {
                 throw new Exception('Redirect should implement RedirectInterface', 1460139669);
             }
-            $this->_redirectionService->emitRedirectionCreated($redirect);
+            $this->_redirectService->emitRedirectionCreated($redirect);
             $this->_logger->log(sprintf('Redirect from %s %s -> %s (%d) added', $redirect->getHost(), $redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode()), LOG_DEBUG);
         }
     }

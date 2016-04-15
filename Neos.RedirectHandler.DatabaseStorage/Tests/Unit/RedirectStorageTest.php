@@ -15,7 +15,7 @@ use Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect;
 use Neos\RedirectHandler\DatabaseStorage\Domain\Repository\RedirectRepository;
 use Neos\RedirectHandler\DatabaseStorage\RedirectStorage;
 use Neos\RedirectHandler\Redirect as RedirectDto;
-use Neos\RedirectHandler\RedirectionService;
+use Neos\RedirectHandler\RedirectService;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -41,9 +41,9 @@ class RedirectStorageTest extends UnitTestCase
     protected $mockRouterCachingService;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RedirectionService
+     * @var \PHPUnit_Framework_MockObject_MockObject|RedirectService
      */
-    protected $redirectionServiceMock;
+    protected $redirectServiceMock;
 
     /**
      * Sets up this test case
@@ -64,10 +64,10 @@ class RedirectStorageTest extends UnitTestCase
             ->getMock();
         $this->inject($this->redirectStorage, 'routerCachingService', $this->mockRouterCachingService);
 
-        $this->redirectionServiceMock = $this->getMockBuilder(RedirectionService::class)
+        $this->redirectServiceMock = $this->getMockBuilder(RedirectService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->inject($this->redirectStorage, '_redirectionService', $this->redirectionServiceMock);
+        $this->inject($this->redirectStorage, '_redirectService', $this->redirectServiceMock);
 
         $loggerMock = $this->getMockBuilder(SystemLoggerInterface::class)
             ->getMock();
@@ -186,7 +186,7 @@ class RedirectStorageTest extends UnitTestCase
             ->method('flushCachesForUriPath')
             ->with('some/relative/path');
 
-        $this->redirectionServiceMock
+        $this->redirectServiceMock
             ->expects($this->atLeastOnce())
             ->method('emitRedirectionCreated');
 

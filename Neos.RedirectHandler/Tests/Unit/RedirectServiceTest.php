@@ -13,7 +13,7 @@ namespace Neos\RedirectHandler\Tests\Unit;
 
 use Doctrine\DBAL\DBALException;
 use Neos\RedirectHandler\Redirect;
-use Neos\RedirectHandler\RedirectionService;
+use Neos\RedirectHandler\RedirectService;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
@@ -21,14 +21,14 @@ use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Test case for the RedirectionService class
+ * Test case for the RedirectService class
  */
-class RedirectionServiceTest extends UnitTestCase
+class RedirectServiceTest extends UnitTestCase
 {
     /**
-     * @var RedirectionService
+     * @var RedirectService
      */
-    protected $redirectionService;
+    protected $redirectService;
 
     /**
      * @var RedirectStorageInterface
@@ -45,13 +45,13 @@ class RedirectionServiceTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->redirectionService = new RedirectionService();
+        $this->redirectService = new RedirectService();
 
         $this->mockRedirectStorage = $this->getMockBuilder(RedirectStorageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->inject($this->redirectionService, 'redirectStorage', $this->mockRedirectStorage);
+        $this->inject($this->redirectService, 'redirectStorage', $this->mockRedirectStorage);
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -77,7 +77,7 @@ class RedirectionServiceTest extends UnitTestCase
             ->method('getOneBySourceUriPathAndHost')
             ->will($this->throwException(new DBALException()));
 
-        $this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest);
+        $this->redirectService->buildResponseIfApplicable($this->mockHttpRequest);
     }
 
     /**
@@ -96,7 +96,7 @@ class RedirectionServiceTest extends UnitTestCase
             ->with('some/relative/path')
             ->will($this->returnValue(null));
 
-        $this->assertNull($this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest));
+        $this->assertNull($this->redirectService->buildResponseIfApplicable($this->mockHttpRequest));
     }
 
     /**
@@ -123,9 +123,9 @@ class RedirectionServiceTest extends UnitTestCase
             ->with('some/relative/path')
             ->willReturn($mockRedirect);
 
-        $this->inject($this->redirectionService, 'redirectStorage', $this->mockRedirectStorage);
+        $this->inject($this->redirectService, 'redirectStorage', $this->mockRedirectStorage);
 
-        $request = $this->redirectionService->buildResponseIfApplicable($this->mockHttpRequest);
+        $request = $this->redirectService->buildResponseIfApplicable($this->mockHttpRequest);
 
         $this->assertInstanceOf(Response::class, $request);
     }

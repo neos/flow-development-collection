@@ -22,7 +22,7 @@ use TYPO3\Flow\Persistence\Repository;
 
 /**
  * Repository for redirect instances.
- * Note: You should not interact with this repository directly. Instead use the RedirectionService!
+ * Note: You should not interact with this repository directly. Instead use the RedirectService!
  *
  * @Flow\Scope("singleton")
  */

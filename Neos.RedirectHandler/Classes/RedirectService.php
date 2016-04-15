@@ -26,7 +26,7 @@ use TYPO3\Flow\Mvc\Routing\RouterCachingService;
  *
  * @Flow\Scope("singleton")
  */
-class RedirectionService
+class RedirectService
 {
     /**
      * @Flow\Inject

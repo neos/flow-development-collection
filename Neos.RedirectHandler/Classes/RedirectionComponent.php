@@ -31,10 +31,10 @@ class RedirectionComponent implements ComponentInterface
     protected $routerCachingService;
 
     /**
-     * @var RedirectionService
+     * @var RedirectService
      * @Flow\Inject
      */
-    protected $redirectionService;
+    protected $redirectService;
 
     /**
      * Check if the current request match a redirect
@@ -49,7 +49,7 @@ class RedirectionComponent implements ComponentInterface
             return;
         }
         $httpRequest = $componentContext->getHttpRequest();
-        $response = $this->redirectionService->buildResponseIfApplicable($httpRequest);
+        $response = $this->redirectService->buildResponseIfApplicable($httpRequest);
         if ($response !== null) {
             $componentContext->replaceHttpResponse($response);
             $componentContext->setParameter(ComponentChain::class, 'cancel', true);
