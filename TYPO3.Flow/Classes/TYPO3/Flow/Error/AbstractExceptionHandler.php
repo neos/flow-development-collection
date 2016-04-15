@@ -15,6 +15,7 @@ use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Log\ThrowableLoggerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Fluid\View\StandaloneView;
 
@@ -88,7 +89,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
 
         if (is_object($this->systemLogger) && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
-            if ($exception instanceof \Exception) {
+            if ($exception instanceof \Throwable) {
+                if ($this->systemLogger instanceof ThrowableLoggerInterface) {
+                    $this->systemLogger->logThrowable($exception);
+                } else {
+                    // Convert \Throwable to \Exception for non-supporting logger implementations
+                    $this->systemLogger->logException(new \Exception($exception->getMessage(), $exception->getCode()));
+                }
+            } elseif ($exception instanceof \Exception) {
                 $this->systemLogger->logException($exception);
             }
         }

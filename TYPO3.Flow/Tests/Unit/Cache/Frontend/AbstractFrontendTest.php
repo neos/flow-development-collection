@@ -68,7 +68,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function flushByTagRejectsInvalidTags()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock('TYPO3\Flow\Cache\Backend\BackendInterface');
+        $backend = $this->getMock('TYPO3\Flow\Cache\Backend\TaggableBackendInterface');
         $backend->expects($this->never())->method('flushByTag');
 
         $cache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
