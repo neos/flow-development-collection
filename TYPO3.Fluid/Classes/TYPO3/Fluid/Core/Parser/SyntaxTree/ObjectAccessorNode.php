@@ -76,6 +76,8 @@ class ObjectAccessorNode extends AbstractNode
      *
      * If propertyPath is "bla.blubb", then we first call getProperty($object, 'bla'),
      * and on the resulting object we call getProperty(..., 'blubb').
+     * If propertyPath is "bla.isBlubb" or "bla.hasBlubb", and calling getProperty(..., 'isBlubb'/'hasBlubb')
+     * fails, we directly call $bla->isBlubb()/$bla->hasBlubb().
      *
      * For arrays the keys are checked likewise.
      *
@@ -87,11 +89,19 @@ class ObjectAccessorNode extends AbstractNode
     public static function getPropertyPath($subject, $propertyPath, RenderingContextInterface $renderingContext)
     {
         $propertyPathSegments = explode('.', $propertyPath);
-        foreach ($propertyPathSegments as $pathSegment) {
+        foreach ($propertyPathSegments as $propertyName) {
             try {
-                $subject = ObjectAccess::getProperty($subject, $pathSegment);
+                $subject = ObjectAccess::getProperty($subject, $propertyName);
             } catch (PropertyNotAccessibleException $exception) {
-                $subject = null;
+                if (is_object($subject) && preg_match('/^(is|has)([A-Z].*)/', $propertyName, $matches) > 0) {
+                    try {
+                        $subject = $subject->$propertyName();
+                    } catch (\Exception $exception) {
+                        $subject = null;
+                    }
+                } else {
+                    $subject = null;
+                }
             }
 
             if ($subject === null) {

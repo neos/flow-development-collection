@@ -157,8 +157,10 @@ Instead of passing strings to the template, we are passing whole objects around
 now - which is much nicer to use both from the controller and the view side. To
 access certain properties of these objects, you can use Object Accessors. By writing
 ``{blog.title}``, the template engine will call a ``getTitle()`` method on the blog
-object, if it exists. Besides, you can use that syntax to traverse associative arrays
-and public properties.
+object, if it exists. By writing ``{blog.isPublic}`` or ``{blog.hasPosts}``, the
+template engine will call ``isPublic()`` or ``hasPosts()`` respectively, unless
+``getIsPublic()`` or ``getHasPosts()`` methods exist.
+Besides, you can use that syntax to traverse associative arrays and public properties.
 
 .. Tip::
 
