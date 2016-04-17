@@ -23,10 +23,11 @@ interface RedirectStorageInterface
      *
      * @param string $sourceUriPath
      * @param string $host Full qualified hostname or host pattern
+     * @param boolean $fallback If not redirect found, match a redirect with host value as null
      * @return RedirectDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
      */
-    public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null);
+    public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null, $fallback = true);
 
     /**
      * Returns all registered redirects

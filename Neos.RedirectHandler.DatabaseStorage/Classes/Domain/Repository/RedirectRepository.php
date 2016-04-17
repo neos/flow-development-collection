@@ -46,21 +46,29 @@ class RedirectRepository extends Repository
     /**
      * @param string $sourceUriPath
      * @param string $host Host or host pattern
+     * @param boolean $fallback If not redirect found, match a redirect with host value as null
      * @return Redirect
      */
-    public function findOneBySourceUriPathAndHost($sourceUriPath, $host = null)
+    public function findOneBySourceUriPathAndHost($sourceUriPath, $host = null, $fallback = true)
     {
         $query = $this->createQuery();
 
-        $query->matching(
-            $query->logicalAnd(
+        if ($fallback === true) {
+            $constraints = $query->logicalAnd(
                 $query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))),
                 $query->logicalOr(
                     $query->equals('host', $host),
                     $query->equals('host', null)
                 )
-            )
-        );
+            );
+        } else {
+            $constraints = $query->logicalAnd(
+                $query->equals('sourceUriPathHash', md5(trim($sourceUriPath, '/'))),
+                $query->equals('host', $host)
+            );
+        }
+
+        $query->matching($constraints);
 
         return $query->execute()->getFirst();
     }

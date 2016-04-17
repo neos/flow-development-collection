@@ -314,7 +314,7 @@ class RedirectionCommandController extends CommandController
         $this->outputLine();
         $this->outputLine('<b>Create a redirect ...</b>');
         $this->outputLine();
-        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
+        $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host, false);
         $isSame = $this->isSame($source, $target, $host, $statusCode, $redirect);
         if ($redirect !== null && $isSame === false && $force === false) {
             $this->outputLine('A redirect with the same source URI exist, see below:');

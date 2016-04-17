@@ -59,9 +59,9 @@ class RedirectStorage implements RedirectStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
+    public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null, $fallback = true)
     {
-        $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host);
+        $redirect = $this->redirectRepository->findOneBySourceUriPathAndHost($sourceUriPath, $host, $fallback);
         if ($redirect === null) {
             return null;
         }
@@ -160,9 +160,9 @@ class RedirectStorage implements RedirectStorageInterface
     protected function updateDependingRedirects(RedirectInterface $newRedirect)
     {
         /** @var $existingRedirectForSourceUriPath Redirect */
-        $existingRedirectForSourceUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getSourceUriPath());
+        $existingRedirectForSourceUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getSourceUriPath(), $newRedirect->getHost(), false);
         /** @var $existingRedirectForTargetUriPath Redirect */
-        $existingRedirectForTargetUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getTargetUriPath());
+        $existingRedirectForTargetUriPath = $this->redirectRepository->findOneBySourceUriPathAndHost($newRedirect->getTargetUriPath(), $newRedirect->getHost(), false);
 
         if ($existingRedirectForTargetUriPath !== null) {
             if ($existingRedirectForTargetUriPath->getTargetUriPath() === $newRedirect->getSourceUriPath()) {
