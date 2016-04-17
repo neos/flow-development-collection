@@ -131,6 +131,32 @@ class RedirectRepository extends Repository
     }
 
     /**
+     * @return void
+     */
+    public function removeAll()
+    {
+        /** @var Query $query */
+        $query = $this->entityManager->createQuery('DELETE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r');
+        $query->execute();
+    }
+
+    /**
+     * @param string|null $host
+     * @return void
+     */
+    public function removeByHost($host = null)
+    {
+        /** @var Query $query */
+        if ($host === null) {
+            $query = $this->entityManager->createQuery('DELETE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r WHERE r.host IS NULL');
+        } else {
+            $query = $this->entityManager->createQuery('DELETE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r WHERE r.host = :host');
+            $query->setParameter(':host', $host);
+        }
+        $query->execute();
+    }
+
+    /**
      * Return a list of all host patterns
      *
      * @return array

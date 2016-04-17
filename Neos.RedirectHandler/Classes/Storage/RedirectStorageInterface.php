@@ -41,6 +41,7 @@ interface RedirectStorageInterface
      * Return a list of all hosts
      *
      * @return array
+     * @api
      */
     public function getDistinctHosts();
 
@@ -57,11 +58,19 @@ interface RedirectStorageInterface
     /**
      * Removes all registered redirects
      *
+     * @return void
+     * @api
+     */
+    public function removeAll();
+
+    /**
+     * Removes all registered redirects by host
+     *
      * @param string $host Full qualified hostname or host pattern
      * @return void
      * @api
      */
-    public function removeAll($host = null);
+    public function removeByHost($host = null);
 
     /**
      * Adds a redirect to the repository and updates related redirects accordingly
@@ -80,6 +89,7 @@ interface RedirectStorageInterface
      *
      * @param RedirectInterface $redirect
      * @return void
+     * @api
      */
     public function incrementHitCount(RedirectInterface $redirect);
 }

@@ -57,12 +57,7 @@ class RedirectStorage implements RedirectStorageInterface
     protected $defaultStatusCode;
 
     /**
-     * Returns one redirect for the given $sourceUriPath or NULL if it doesn't exist
-     *
-     * @param string $sourceUriPath
-     * @param string $host Full qualified hostname or host pattern
-     * @return RedirectDto|null if no redirect exists for the given $sourceUriPath
-     * @api
+     * {@inheritdoc}
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
@@ -74,11 +69,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Returns all registered redirects records
-     *
-     * @param string $host Full qualified hostname or host pattern
-     * @return \Generator<RedirectDto>
-     * @api
+     * {@inheritdoc}
      */
     public function getAll($host = null)
     {
@@ -88,10 +79,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Return a list of all host patterns
-     *
-     * @return array
-     * @api
+     * {@inheritdoc}
      */
     public function getDistinctHosts()
     {
@@ -99,12 +87,7 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Removes a redirect for the given $sourceUriPath if it exists
-     *
-     * @param string $sourceUriPath
-     * @param string $host Full qualified hostname or host pattern
-     * @return void
-     * @api
+     * {@inheritdoc}
      */
     public function removeOneBySourceUriPathAndHost($sourceUriPath, $host = null)
     {
@@ -116,26 +99,22 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
-     * Removes all registered redirects
-     *
-     * @param string $host Full qualified hostname or host pattern
-     * @return void
-     * @api
+     * {@inheritdoc}
      */
-    public function removeAll($host = null)
+    public function removeAll()
     {
-        $this->redirectRepository->removeAll($host);
+        $this->redirectRepository->removeAll();
     }
 
     /**
-     * Adds a redirect to the repository and updates related redirect instances accordingly
-     *
-     * @param string $sourceUriPath the relative URI path that should trigger a redirect
-     * @param string $targetUriPath the relative URI path the redirect should point to
-     * @param integer $statusCode the status code of the redirect header
-     * @param array $hosts the list of host patterns
-     * @return array<Redirect> the freshly generated redirects instance
-     * @api
+     * {@inheritdoc}
+     */
+    public function removeByHost($host = null) {
+        $this->redirectRepository->removeByHost($host);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
     {
