@@ -41,7 +41,7 @@ class Redirect implements RedirectInterface
     protected $statusCode;
 
     /**
-     * Host pattern
+     * Full qualified host name
      *
      * @var string
      */
@@ -51,7 +51,7 @@ class Redirect implements RedirectInterface
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
      * @param string $targetUriPath target URI path to which a redirect should be pointed
      * @param integer $statusCode status code to be send with the redirect header
-     * @param string $host host or host pattern to match the redirect
+     * @param string $host Full qualified host name to match the redirect
      */
     public function __construct($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {

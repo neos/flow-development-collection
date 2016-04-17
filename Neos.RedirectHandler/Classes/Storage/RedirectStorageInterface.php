@@ -22,7 +22,7 @@ interface RedirectStorageInterface
      * Returns one redirect DTO for the given $sourceUriPath or NULL if it doesn't exist
      *
      * @param string $sourceUriPath
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @param boolean $fallback If not redirect found, match a redirect with host value as null
      * @return RedirectDto or NULL if no redirection exists for the given $sourceUriPath
      * @api
@@ -32,7 +32,7 @@ interface RedirectStorageInterface
     /**
      * Returns all registered redirects
      *
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @return \Generator<RedirectDto>
      * @api
      */
@@ -50,7 +50,7 @@ interface RedirectStorageInterface
      * Removes a redirect for the given $sourceUriPath if it exists
      *
      * @param string $sourceUriPath
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @return void
      * @api
      */
@@ -67,7 +67,7 @@ interface RedirectStorageInterface
     /**
      * Removes all registered redirects by host
      *
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @return void
      * @api
      */
@@ -79,7 +79,7 @@ interface RedirectStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param array $hosts the list of host patterns
+     * @param array $hosts list of full qualified host name
      * @return array<Redirect> the freshly generated redirects
      * @api
      */

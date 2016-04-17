@@ -107,7 +107,7 @@ class RedirectionCommandController extends CommandController
      * Save all redirectection to a CSV file
      *
      * @param string $filename CSV file path, if null use standard output
-     * @param string $host Optional host pattern
+     * @param string $host Optional full qualified host name
      * @return void
      */
     public function exportCommand($filename = null, $host = null)
@@ -250,7 +250,7 @@ class RedirectionCommandController extends CommandController
      * This command deletes a redirect from the RedirectRepository
      *
      * @param string $source The source URI path of the redirect to remove, as given by redirect:list
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @return void
      */
     public function removeCommand($source, $host = null)
@@ -284,7 +284,7 @@ class RedirectionCommandController extends CommandController
      * by default redirect with NULL host property match all host, until more
      * specific host can be found.
      *
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @return void
      */
     public function removeByHostCommand($host = null)
@@ -305,7 +305,7 @@ class RedirectionCommandController extends CommandController
      * @param string $source The relative URI path that should trigger the redirect
      * @param string $target The relative URI path that should be redirected to
      * @param integer $statusCode The status code of the redirect header
-     * @param string $host Host or host pattern to match the redirect
+     * @param string $host Full qualified host name
      * @param boolean $force Replace existing redirect (based on the source URI)
      * @return void
      */

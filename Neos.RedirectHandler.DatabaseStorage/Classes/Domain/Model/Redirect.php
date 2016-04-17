@@ -91,7 +91,7 @@ class Redirect implements RedirectInterface
     protected $statusCode;
 
     /**
-     * Host Pattern
+     * Full qualified host name
      *
      * @var string
      * @ORM\Column(nullable=true)
@@ -114,7 +114,7 @@ class Redirect implements RedirectInterface
      * @param string $sourceUriPath relative URI path for which a redirect should be triggered
      * @param string $targetUriPath target URI path to which a redirect should be pointed
      * @param integer $statusCode status code to be send with the redirect header
-     * @param string $host Host or host pattern
+     * @param string $host Full qualified host name
      */
     public function __construct($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {

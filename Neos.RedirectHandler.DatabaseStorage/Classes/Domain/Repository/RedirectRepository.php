@@ -45,7 +45,7 @@ class RedirectRepository extends Repository
 
     /**
      * @param string $sourceUriPath
-     * @param string $host Host or host pattern
+     * @param string $host Full qualified host name
      * @param boolean $fallback If not redirect found, match a redirect with host value as null
      * @return Redirect
      */
@@ -75,7 +75,7 @@ class RedirectRepository extends Repository
 
     /**
      * @param string $targetUriPath
-     * @param string $host Host or host pattern
+     * @param string $host Full qualified host name
      * @return Redirect
      */
     public function findOneByTargetUriPathAndHost($targetUriPath, $host = null)
@@ -97,7 +97,7 @@ class RedirectRepository extends Repository
 
     /**
      * @param string $targetUriPath
-     * @param string $host Host or host pattern
+     * @param string $host Full qualified host name
      * @return QueryInterface
      */
     public function findByTargetUriPathAndHost($targetUriPath, $host = null)
@@ -113,7 +113,7 @@ class RedirectRepository extends Repository
     /**
      * Finds all objects and return an IterableResult
      *
-     * @param string $host Full qualified hostname or host pattern
+     * @param string $host Full qualified host name
      * @param callable $callback
      * @return \Generator<Redirect>
      */
@@ -165,7 +165,7 @@ class RedirectRepository extends Repository
     }
 
     /**
-     * Return a list of all host patterns
+     * Return a list of all hosts
      *
      * @return array
      */

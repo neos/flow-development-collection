@@ -137,7 +137,7 @@ class RedirectStorage implements RedirectStorageInterface
      * @param string $sourceUriPath the relative URI path that should trigger a redirect
      * @param string $targetUriPath the relative URI path the redirect should point to
      * @param integer $statusCode the status code of the redirect header
-     * @param string $host the host patterns for the current redirect
+     * @param string $host the host for the current redirect
      * @return Redirect the freshly generated redirect DTO instance
      * @api
      */
