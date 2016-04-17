@@ -53,10 +53,10 @@ class RedirectionCommandController extends CommandController
             if ($host !== null) {
                 $this->outputLine('<info>==</info> <b>Redirect for %s</b>', [$host]);
             } else {
-                $this->outputLine('<info>==</info> <b>Redirect without host attached</b>', [$host]);
+                $this->outputLine('<info>==</info> <b>Redirects valid for all hosts</b>', [$host]);
             }
             if ($match !== null) {
-                $this->outputLine('   <info>++</info> <b>Show only if source or target URI match <u>%s</u></b>', [$match]);
+                $this->outputLine('   <info>++</info> <b>Only showing redirects where source or target URI matches <u>%s</u></b>', [$match]);
                 sleep(1);
             }
             $this->outputLine();
@@ -335,7 +335,7 @@ class RedirectionCommandController extends CommandController
         $this->outputLine();
         $this->outputLine('   <info>++</info> Redirect created');
         $this->outputLine('   <info>--</info> Redirect removed');
-        $this->outputLine('   <comment>~~</comment> Redirect do not need update');
+        $this->outputLine('   <comment>~~</comment> Redirect not modified');
         $this->outputLine('   <error>!!</error> Error');
         $this->outputLine();
     }
