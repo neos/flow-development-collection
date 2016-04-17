@@ -95,13 +95,10 @@ class RedirectionCommandController extends CommandController
             }
         };
         if ($host !== null) {
-            $outputByHost();
-        } else {
-            $hosts = $this->redirectStorage->getDistinctHosts();
-            if ($hosts !== []) {
-                array_map($outputByHost, $hosts);
-            }
             $outputByHost($host);
+        } else {
+            $hosts = array_merge([null], $this->redirectStorage->getDistinctHosts());
+            array_map($outputByHost, $hosts);
         }
         $this->outputLine();
     }

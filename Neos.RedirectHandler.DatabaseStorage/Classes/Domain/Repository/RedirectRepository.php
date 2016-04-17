@@ -120,6 +120,8 @@ class RedirectRepository extends Repository
         if ($host !== null) {
             $query->andWhere('r.host = :host')
                 ->setParameter('host', $host);
+        } else {
+            $query->andWhere('r.host IS NULL');
         }
 
         $query->orderBy('r.host', 'ASC');
