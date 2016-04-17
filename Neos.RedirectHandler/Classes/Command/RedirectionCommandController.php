@@ -192,12 +192,12 @@ class RedirectionCommandController extends CommandController
                 /** @var Redirect $redirect */
                 foreach ($redirects as $redirect) {
                     $this->outputRedirectLine('<info>++</info>', $redirect);
-                    $messageArguments = [$redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode(), $redirect->getHost() ?: 'no host'];
+                    $messageArguments = [$redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode(), $redirect->getHost() ?: 'all host'];
                     $this->logger->log(vsprintf('Redirect import success, sourceUriPath=%s, targetUriPath=%s, statusCode=%d, hosts=%s', $messageArguments), LOG_ERR);
                 }
                 $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
-                $messageArguments = [$sourceUriPath, $targetUriPath, $statusCode, $hosts ? json_encode($hosts) : 'no host'];
+                $messageArguments = [$sourceUriPath, $targetUriPath, $statusCode, $hosts ? json_encode($hosts) : 'all host'];
                 $this->outputLine('   <error>!!</error> %s => %s <comment>(%d)</comment> - %s', $messageArguments);
                 $this->outputLine('      Message: %s', [$exception->getMessage()]);
                 $this->logger->log(vsprintf('Redirect import error, sourceUriPath=%s, targetUriPath=%s, statusCode=%d, hosts=%s', $messageArguments), LOG_ERR);
@@ -341,7 +341,7 @@ class RedirectionCommandController extends CommandController
             $redirect->getSourceUriPath(),
             $redirect->getTargetUriPath(),
             $redirect->getStatusCode(),
-            $redirect->getHost() ?: 'no host'
+            $redirect->getHost() ?: 'all host'
         ]);
     }
 
