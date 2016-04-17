@@ -1,7 +1,7 @@
 .. _`Redirect Command Reference`:
 
 Redirect Command Reference
-=======================
+==========================
 
 .. note:
 
@@ -21,7 +21,7 @@ commands that may be available, use::
 
 
 Package *Neos.RedirectHandler*
----------------------
+------------------------------
 
 ``Neos.RedirectHandler:redirection:add``
 ****************************************
@@ -118,7 +118,8 @@ Options
 
 This command will export all redirects into a CSV format within the ``Data`` folder.
 You can set a preferred filename before the export with the optional ``filename`` argument.
-
+If no ``filename`` argument is supplied, the export will be returned within the CLI.
+This operation requires the package ``league/csv``. Install it by running ``composer require league/csv``.
 
 
 Options
@@ -137,6 +138,7 @@ Options
 
 This command is used to (re)import CSV files containing redirects.
 The argument ``filename`` is the name of the file you uploaded to the ``Data`` folder.
+This operation requires the package ``league/csv``. Install it by running ``composer require league/csv``.
 
 
 
