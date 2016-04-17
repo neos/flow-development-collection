@@ -27,6 +27,16 @@ use TYPO3\Flow\Tests\UnitTestCase;
  */
 class RequestTest extends UnitTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        Request::setTrustedProxyHeader(Request::HEADER_CLIENT_IP, 'X-Forwarded-For');
+        Request::setTrustedProxyHeader(Request::HEADER_HOST, 'X-Forwarded-Host');
+        Request::setTrustedProxyHeader(Request::HEADER_PORT, 'X-Forwarded-Port');
+        Request::setTrustedProxyHeader(Request::HEADER_PROTOCOL, 'X-Forwarded-Proto');
+        Request::setTrustedProxies('*');
+    }
+
     /**
      * @test
      * @backupGlobals disabled
@@ -768,6 +778,96 @@ class RequestTest extends UnitTestCase
         $this->assertEquals('http://acme.com', (string)$request->getUri());
         $this->assertEquals('http', $request->getUri()->getScheme());
         $this->assertFalse($request->isSecure());
+    }
+
+    /**
+     * @test
+     */
+    public function isFromTrustedProxyByDefault()
+    {
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertTrue($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isFromTrustedProxyIfRemoteAddressMatchesRange()
+    {
+        Request::setTrustedProxies('127.0.0.0/24');
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertTrue($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isNotFromTrustedProxyIfNoProxiesAreTrusted()
+    {
+        Request::setTrustedProxies([]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertFalse($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isNotFromTrustedProxyIfRemoteAddressDoesntMatch()
+    {
+        Request::setTrustedProxies('10.0.0.1/24');
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertFalse($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRemoteAddressIfNoProxiesAreTrusted()
+    {
+        Request::setTrustedProxies([]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('127.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRemoteAddressIfHeaderNotTrusted()
+    {
+        Request::setTrustedProxies('127.0.0.1');
+        Request::setTrustedProxyHeader(Request::HEADER_CLIENT_IP, '');
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('127.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsForwardedForAddressIfProxyTrusted()
+    {
+        Request::setTrustedProxies('127.0.0.1');
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('10.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
+    {
+        Request::setTrustedProxies('*');
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1, 10.0.0.2, 10.0.0.3'));
+        $this->assertEquals('10.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
+    {
+        Request::setTrustedProxies(['127.0.0.1','10.0.0.1/24']);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2'));
+        $this->assertEquals('215.0.0.1', $request->getTrustedClientIpAddress());
     }
 
     /**

@@ -65,7 +65,7 @@ class Ip implements RequestPatternInterface
      * @param string $range The CIDR range pattern to match against
      * @return boolean TRUE if the pattern matched, FALSE otherwise
      */
-    protected function cidrMatch($ip, $range)
+    public function cidrMatch($ip, $range)
     {
         if (strpos($range, '/') === false) {
             $bits = null;
