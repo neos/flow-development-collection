@@ -28,7 +28,8 @@ Package *Neos.RedirectHandler*
 
 **Adding custom redirects**
 
-Creates a new custom redirect. Who can pass the options bellow in one line or assign them separately after running the command without the mandatory arguments. You can also add the optional argument ``host`` to define multiple hosts for the redirect.
+Creates a new custom redirect.  The optional argument ``host`` is used to define a specific redirect only valid for a certain domain.
+If no ``host`` argument is supplied, the redirect will act as a fallback redirect for all domains in use.
 
 If any redirect exists with the same ``source`` property, it will be replaced if the ``force`` property has been set.
 
