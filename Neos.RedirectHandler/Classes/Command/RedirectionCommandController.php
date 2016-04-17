@@ -257,7 +257,7 @@ class RedirectionCommandController extends CommandController
     {
         $redirect = $this->redirectStorage->getOneBySourceUriPathAndHost($source, $host);
         if ($redirect === null) {
-            $this->outputLine('There is no redirect with the source URI path "%s"', [$source]);
+            $this->outputLine('There is no redirect with the source URI path "%s", maybe you forgot the --host argument ?', [$source]);
             $this->quit(1);
         }
         $this->redirectStorage->removeOneBySourceUriPathAndHost($source, $host);
