@@ -89,7 +89,11 @@ class Request extends AbstractMessage
         } else {
             $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
         }
-        $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
+        if ($this->headers->has('X-Original-Host')) {
+            $host = $this->headers->get('X-Original-Host');
+        } else {
+            $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
+        }
         $requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
         if (substr($requestUri, 0, 10) === '/index.php') {
             $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
