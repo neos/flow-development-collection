@@ -14,10 +14,12 @@ namespace Neos\RedirectHandler\Command;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Neos\RedirectHandler\Exception;
+use Neos\RedirectHandler\Redirect;
 use Neos\RedirectHandler\RedirectInterface;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -39,6 +41,12 @@ class RedirectionCommandController extends CommandController
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $logger;
 
     /**
      * @param string $host Filter redirects by the given hostname
@@ -136,6 +144,7 @@ class RedirectionCommandController extends CommandController
      */
     public function importCommand($filename)
     {
+        $hasErrors = false;
         $this->outputLine();
         if (!class_exists(Reader::class)) {
             $this->outputWarningForLeagueCsvPackage();
@@ -180,13 +189,20 @@ class RedirectionCommandController extends CommandController
             }
             try {
                 $redirects = $this->redirectStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
+                /** @var Redirect $redirect */
                 foreach ($redirects as $redirect) {
                     $this->outputRedirectLine('<info>++</info>', $redirect);
+                    $messageArguments = [$redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode(), $redirect->getHost() ?: 'no host'];
+                    $this->logger->log(vsprintf('Redirect import success, sourceUriPath=%s, targetUriPath=%s, statusCode=%d, hosts=%s', $messageArguments), LOG_ERR);
                 }
                 $this->persistenceManager->persistAll();
             } catch (Exception $exception) {
-                $this->outputLine('   <error>!!</error> %s => %s <comment>(%d)</comment> - %s', [$sourceUriPath, $targetUriPath, $statusCode, $hosts ? json_encode($hosts) : 'no host']);
+                $messageArguments = [$sourceUriPath, $targetUriPath, $statusCode, $hosts ? json_encode($hosts) : 'no host'];
+                $this->outputLine('   <error>!!</error> %s => %s <comment>(%d)</comment> - %s', $messageArguments);
                 $this->outputLine('      Message: %s', [$exception->getMessage()]);
+                $this->logger->log(vsprintf('Redirect import error, sourceUriPath=%s, targetUriPath=%s, statusCode=%d, hosts=%s', $messageArguments), LOG_ERR);
+                $this->logger->logException($exception);
+                $hasErrors = true;
             }
             $counter++;
             if ($counter % 50 === 0) {
@@ -195,6 +211,9 @@ class RedirectionCommandController extends CommandController
             }
         }
         $this->outputLine();
+        if ($hasErrors === true) {
+            $this->outputLine('   <error>!!</error> some errors appeared during import, please check the log or the CLI output.');
+        }
         $this->outputLegend();
     }
 
