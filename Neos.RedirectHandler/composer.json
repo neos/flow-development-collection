@@ -1,8 +1,8 @@
 {
     "name": "neos/redirecthandler",
     "type": "neos-package",
-    "description": "Basic API to handle http redirect with Flow Framework",
-    "license": "GPL-3.0+",
+    "description": "Basic API to handle HTTP redirects with the Flow Framework",
+    "license": "MIT",
     "require": {
         "typo3/flow": "*"
     },
