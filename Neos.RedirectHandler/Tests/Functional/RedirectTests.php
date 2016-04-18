@@ -51,7 +51,7 @@ class RedirectTests extends FunctionalTestCase
     public function addRedirectTrimsLeadingAndTrailingSlashesOfSourceAndTargetPath()
     {
         $this->assertEquals(0, $this->redirectRepository->countAll());
-        $this->redirectService->addRedirection('/some/source/path/', '/some/target/path/');
+        $this->redirectService->addRedirect('/some/source/path/', '/some/target/path/');
 
         $this->persistenceManager->persistAll();
         $redirect = $this->redirectRepository->findAll()->getFirst();
@@ -66,7 +66,7 @@ class RedirectTests extends FunctionalTestCase
     public function addRedirectSetsTheCorrectDefaultStatusCode()
     {
         $this->assertEquals(0, $this->redirectRepository->countAll());
-        $this->redirectService->addRedirection('some/source/path', 'some/target/path');
+        $this->redirectService->addRedirect('some/source/path', 'some/target/path');
 
         $this->persistenceManager->persistAll();
         $redirect = $this->redirectRepository->findAll()->getFirst();
@@ -80,7 +80,7 @@ class RedirectTests extends FunctionalTestCase
     public function addRedirectRespectsTheGivenStatusCode()
     {
         $this->assertEquals(0, $this->redirectRepository->countAll());
-        $this->redirectService->addRedirection('some/source/path', 'some/target/path', 123);
+        $this->redirectService->addRedirect('some/source/path', 'some/target/path', 123);
 
         $this->persistenceManager->persistAll();
         $redirect = $this->redirectRepository->findAll()->getFirst();
@@ -94,11 +94,11 @@ class RedirectTests extends FunctionalTestCase
      */
     public function addRedirectThrowsExceptionIfARedirectExistsForTheGivenSourceUriPath()
     {
-        $this->redirectService->addRedirection('a', 'b');
-        $this->redirectService->addRedirection('c', 'd');
+        $this->redirectService->addRedirect('a', 'b');
+        $this->redirectService->addRedirect('c', 'd');
         $this->persistenceManager->persistAll();
 
-        $this->redirectService->addRedirection('c', 'e');
+        $this->redirectService->addRedirect('c', 'e');
     }
 
     /**
@@ -107,11 +107,11 @@ class RedirectTests extends FunctionalTestCase
      */
     public function addRedirectThrowsExceptionIfARedirectExistsForTheGivenTargetUriPath()
     {
-        $this->redirectService->addRedirection('a', 'b');
-        $this->redirectService->addRedirection('c', 'd');
+        $this->redirectService->addRedirect('a', 'b');
+        $this->redirectService->addRedirect('c', 'd');
         $this->persistenceManager->persistAll();
 
-        $this->redirectService->addRedirection('b', 'c');
+        $this->redirectService->addRedirect('b', 'c');
     }
 
     /**
@@ -119,11 +119,11 @@ class RedirectTests extends FunctionalTestCase
      */
     public function addRedirectDoesNotThrowAnExceptionIfARedirectReversesAnExistingRedirect()
     {
-        $this->redirectService->addRedirection('a', 'b');
-        $this->redirectService->addRedirection('c', 'd');
+        $this->redirectService->addRedirect('a', 'b');
+        $this->redirectService->addRedirect('c', 'd');
         $this->persistenceManager->persistAll();
 
-        $this->redirectService->addRedirection('d', 'c');
+        $this->redirectService->addRedirect('d', 'c');
         $this->persistenceManager->persistAll();
 
         $expectedRedirects = ['a' => 'b', 'd' => 'c'];
@@ -199,12 +199,12 @@ class RedirectTests extends FunctionalTestCase
     public function addRedirectTests(array $existingRedirects, array $newRedirects, array $expectedRedirects)
     {
         foreach ($existingRedirects as $sourceUriPath => $targetUriPath) {
-            $this->redirectService->addRedirection($sourceUriPath, $targetUriPath);
+            $this->redirectService->addRedirect($sourceUriPath, $targetUriPath);
         }
         $this->persistenceManager->persistAll();
 
         foreach ($newRedirects as $sourceUriPath => $targetUriPath) {
-            $this->redirectService->addRedirection($sourceUriPath, $targetUriPath);
+            $this->redirectService->addRedirect($sourceUriPath, $targetUriPath);
         }
         $this->persistenceManager->persistAll();
 

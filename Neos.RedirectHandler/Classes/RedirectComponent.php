@@ -22,7 +22,7 @@ use TYPO3\Flow\Mvc\Routing\RoutingComponent;
 /**
  * Redirect HTTP Component
  */
-class RedirectionComponent implements ComponentInterface
+class RedirectComponent implements ComponentInterface
 {
     /**
      * @var RouterCachingService

@@ -37,13 +37,13 @@ trait RedirectSignalTrait
      * @return void
      * @throws Exception
      */
-    public function emitRedirectionCreated(array $redirects)
+    public function emitRedirectCreated(array $redirects)
     {
         foreach ($redirects as $redirect) {
             if (!$redirect instanceof RedirectInterface) {
                 throw new Exception('Redirect should implement RedirectInterface', 1460139669);
             }
-            $this->_redirectService->emitRedirectionCreated($redirect);
+            $this->_redirectService->emitRedirectCreated($redirect);
             $this->_logger->log(sprintf('Redirect from %s %s -> %s (%d) added', $redirect->getHost(), $redirect->getSourceUriPath(), $redirect->getTargetUriPath(), $redirect->getStatusCode()), LOG_DEBUG);
         }
     }
