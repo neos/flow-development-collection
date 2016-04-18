@@ -94,14 +94,14 @@ class RedirectService
     }
 
     /**
-     * Signals that a redirection has been created.
+     * Signals that a redirect has been created.
      *
      * @param RedirectInterface $redirect
      * @return void
      * @Flow\Signal
      * @api
      */
-    public function emitRedirectionCreated(RedirectInterface $redirect)
+    public function emitRedirectCreated(RedirectInterface $redirect)
     {
     }
 }

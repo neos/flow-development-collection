@@ -188,8 +188,8 @@ class RedirectStorageTest extends UnitTestCase
 
         $this->redirectServiceMock
             ->expects($this->atLeastOnce())
-            ->method('emitRedirectionCreated');
+            ->method('emitRedirectCreated');
 
-        $this->redirectStorage->addRedirection('some/relative/path', 'target');
+        $this->redirectStorage->addRedirect('some/relative/path', 'target');
     }
 }
