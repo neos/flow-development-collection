@@ -24,7 +24,7 @@ use TYPO3\Flow\Utility\Now;
  * @Flow\Entity
  * @ORM\Table(
  * 	indexes={
- * 		@ORM\Index(name="sourceuripathhash",columns={"targeturipathhash","host"}),
+ * 		@ORM\Index(name="sourceuripathhash",columns={"sourceuripathhash","host"}),
  * 		@ORM\Index(name="targeturipathhash",columns={"targeturipathhash","host"})
  * 	}
  * )
