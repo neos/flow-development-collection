@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Initial migration for the "Redirect" entity
  */
-class Version20130826225205 extends AbstractMigration
+class Version20160418100005 extends AbstractMigration
 {
     /**
      * @param Schema $schema
