@@ -280,19 +280,19 @@ class RedirectionCommandController extends CommandController
     /**
      * Removes all redirects by host
      *
-     * This command deletes all redirects from the RedirectRepository by host value
-     * by default redirect with NULL host property match all host, until more
-     * specific host can be found.
+     * This command deletes all redirects from the RedirectRepository by host value.
+     * If ``all`` is entered the redirects valid for all hosts are deleted.
      *
-     * @param string $host Full qualified host name
+     * @param string $host Fully qualified host name or `all` to delete redirects valid for all hosts
      * @return void
      */
-    public function removeByHostCommand($host = null)
+    public function removeByHostCommand($host)
     {
-        $this->redirectStorage->removeByHost($host);
-        if ($host === null) {
-            $this->outputLine('Removed all redirects matching all hosts');
+        if ($host === 'all') {
+            $this->redirectStorage->removeByHost(null);
+            $this->outputLine('Removed redirects matching all hosts');
         } else {
+            $this->redirectStorage->removeByHost($host);
             $this->outputLine('Removed all redirects for host "%s"', [$host]);
         }
     }
