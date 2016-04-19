@@ -116,18 +116,18 @@ class RedirectStorage implements RedirectStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
+    public function addRedirect($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = [])
     {
         $statusCode = $statusCode ?: (integer)$this->defaultStatusCode['redirect'];
         $redirects = [];
         if ($hosts !== []) {
             array_map(function($host) use ($sourceUriPath, $targetUriPath, $statusCode, &$redirects) {
-                $redirects[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host);
+                $redirects[] = $this->addRedirectByHost($sourceUriPath, $targetUriPath, $statusCode, $host);
             }, $hosts);
         } else {
-            $redirects[] = $this->addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode);
+            $redirects[] = $this->addRedirectByHost($sourceUriPath, $targetUriPath, $statusCode);
         }
-        $this->emitRedirectionCreated($redirects);
+        $this->emitRedirectCreated($redirects);
         return $redirects;
     }
 
@@ -141,7 +141,7 @@ class RedirectStorage implements RedirectStorageInterface
      * @return Redirect the freshly generated redirect DTO instance
      * @api
      */
-    protected function addRedirectionByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
+    protected function addRedirectByHost($sourceUriPath, $targetUriPath, $statusCode, $host = null)
     {
         $redirect = new Redirect($sourceUriPath, $targetUriPath, $statusCode, $host);
         $this->updateDependingRedirects($redirect);

@@ -24,7 +24,7 @@ interface RedirectStorageInterface
      * @param string $sourceUriPath
      * @param string $host Full qualified host name
      * @param boolean $fallback If not redirect found, match a redirect with host value as null
-     * @return RedirectDto or NULL if no redirection exists for the given $sourceUriPath
+     * @return RedirectDto or NULL if no redirect exists for the given $sourceUriPath
      * @api
      */
     public function getOneBySourceUriPathAndHost($sourceUriPath, $host = null, $fallback = true);
@@ -83,7 +83,7 @@ interface RedirectStorageInterface
      * @return array<Redirect> the freshly generated redirects
      * @api
      */
-    public function addRedirection($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = []);
+    public function addRedirect($sourceUriPath, $targetUriPath, $statusCode = null, array $hosts = []);
 
     /**
      * Increment the hit counter for the given redirect

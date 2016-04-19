@@ -28,7 +28,7 @@ use TYPO3\Flow\Utility\Arrays;
  *
  * @Flow\Scope("singleton")
  */
-class RedirectionCommandController extends CommandController
+class RedirectCommandController extends CommandController
 {
     /**
      * @Flow\Inject
@@ -185,7 +185,7 @@ class RedirectionCommandController extends CommandController
                 $this->persistenceManager->persistAll();
             }
             try {
-                $redirects = $this->redirectStorage->addRedirection($sourceUriPath, $targetUriPath, $statusCode, $hosts);
+                $redirects = $this->redirectStorage->addRedirect($sourceUriPath, $targetUriPath, $statusCode, $hosts);
                 /** @var Redirect $redirect */
                 foreach ($redirects as $redirect) {
                     $this->outputRedirectLine('<info>++</info>', $redirect);
@@ -334,7 +334,7 @@ class RedirectionCommandController extends CommandController
             $this->outputLegend();
             $this->sendAndExit();
         }
-        $redirects = $this->redirectStorage->addRedirection($source, $target, $statusCode, [$host]);
+        $redirects = $this->redirectStorage->addRedirect($source, $target, $statusCode, [$host]);
         $redirect = reset($redirects);
         $this->outputRedirectLine('<info>++</info>', $redirect);
         $this->outputLine();

@@ -70,7 +70,7 @@ class RedirectServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function buildResponseIfApplicableReturnsSilentlyIfRedirectionRepositoryThrowsException()
+    public function buildResponseIfApplicableReturnsSilentlyIfRedirectRepositoryThrowsException()
     {
         $this->mockRedirectStorage
             ->expects($this->atLeastOnce())
