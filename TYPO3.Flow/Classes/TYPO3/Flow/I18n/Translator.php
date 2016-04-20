@@ -113,7 +113,7 @@ class Translator
      *
      * @param string $originalLabel Untranslated message
      * @param array $arguments An array of values to replace placeholders with
-     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
@@ -122,12 +122,7 @@ class Translator
      */
     public function translateByOriginalLabel($originalLabel, array $arguments = array(), $quantity = null, \TYPO3\Flow\I18n\Locale $locale = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
-
-        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
+        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $quantity, $sourceName, $packageKey);
 
         if ($translatedMessage === false) {
             $translatedMessage = $originalLabel;
@@ -155,7 +150,7 @@ class Translator
      *
      * @param string $labelId Key to use for finding translation
      * @param array $arguments An array of values to replace placeholders with
-     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
@@ -165,12 +160,7 @@ class Translator
      */
     public function translateById($labelId, array $arguments = array(), $quantity = null, \TYPO3\Flow\I18n\Locale $locale = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
-
-        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
+        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $quantity, $sourceName, $packageKey);
 
         if ($translatedMessage === false) {
             return $labelId;
@@ -178,26 +168,5 @@ class Translator
             return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
         }
         return $translatedMessage;
-    }
-
-    /**
-     * Get the plural form to be used.
-     *
-     * If $quantity is numeric and non-NULL, the plural form for provided $locale will be
-     * chosen according to it.
-     *
-     * In all other cases, NULL is returned.
-     *
-     * @param mixed $quantity
-     * @param \TYPO3\Flow\I18n\Locale $locale
-     * @return string
-     */
-    protected function getPluralForm($quantity, Locale $locale)
-    {
-        if (!is_numeric($quantity)) {
-            return null;
-        } else {
-            return $this->pluralsReader->getPluralForm($quantity, $locale);
-        }
     }
 }
