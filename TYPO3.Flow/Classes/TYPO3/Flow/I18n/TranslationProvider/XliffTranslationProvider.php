@@ -67,35 +67,65 @@ class XliffTranslationProvider implements \TYPO3\Flow\I18n\TranslationProvider\T
     }
 
     /**
+     * Returns translated $stringToTranslate from a file defined by $sourceName using the function $functionName of the XliffModel.
+     *
+     * Chooses particular form of label if available and defined in $pluralForm.
+     *
+     * @param string $functionName The name of the function in the XliffModel to get the translation from
+     * @param string $stringToTranslate String passed to function in order to find translation
+     * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
+     * @param string $sourceName A relative path to the filename with translations (labels' catalog)
+     * @param string $packageKey Key of the package containing the source file
+     * @return mixed Translated label or FALSE on failure
+     * @throws \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException
+     */
+    protected function getTranslationByFunction($functionName, $stringToTranslate, \TYPO3\Flow\I18n\Locale $locale = null, $quantity = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
+    {
+        if ($locale === null) {
+            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
+        }
+
+        $translation = false;
+
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $model = $this->getModel($packageKey, $sourceName, $localeInChain);
+
+            if ($quantity !== null) {
+                $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($localeInChain);
+                $pluralForm = $this->pluralsReader->getPluralForm($quantity, $localeInChain);
+
+                // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
+                $pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
+            } else {
+                $pluralFormIndex = 0;
+            }
+            //if we find a valid translation, we don't have to search in the remaining locale chain
+            if (($translation = $model->$functionName($stringToTranslate, $pluralFormIndex)) !== false) {
+                break;
+            }
+        }
+
+        return $translation;
+    }
+
+    /**
      * Returns translated label of $originalLabel from a file defined by $sourceName.
      *
      * Chooses particular form of label if available and defined in $pluralForm.
      *
      * @param string $originalLabel Label used as a key in order to find translation
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
-     * @param string $pluralForm One of RULE constants of PluralsReader
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
+     *
      * @return mixed Translated label or FALSE on failure
      * @throws \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException
      */
-    public function getTranslationByOriginalLabel($originalLabel, \TYPO3\Flow\I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
+    public function getTranslationByOriginalLabel($originalLabel, \TYPO3\Flow\I18n\Locale $locale = null, $quantity = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        $model = $this->getModel($packageKey, $sourceName, $locale);
-
-        if ($pluralForm !== null) {
-            $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
-
-            if (!is_array($pluralFormsForProvidedLocale) || !in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-                throw new \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
-            }
-            // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
-            $pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
-        } else {
-            $pluralFormIndex = 0;
-        }
-
-        return $model->getTargetBySource($originalLabel, $pluralFormIndex);
+        return $this->getTranslationByFunction('getTargetBySource', $originalLabel, $locale, $quantity, $sourceName, $packageKey);
     }
 
     /**
@@ -105,29 +135,15 @@ class XliffTranslationProvider implements \TYPO3\Flow\I18n\TranslationProvider\T
      *
      * @param string $labelId Key used to find translated label
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
-     * @param string $pluralForm One of RULE constants of PluralsReader
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
      * @return mixed Translated label or FALSE on failure
      * @throws \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException
      */
-    public function getTranslationById($labelId, \TYPO3\Flow\I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
+    public function getTranslationById($labelId, \TYPO3\Flow\I18n\Locale $locale = null, $quantity = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        $model = $this->getModel($packageKey, $sourceName, $locale);
-
-        if ($pluralForm !== null) {
-            $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
-
-            if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-                throw new \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
-            }
-            // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
-            $pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
-        } else {
-            $pluralFormIndex = 0;
-        }
-
-        return $model->getTargetByTransUnitId($labelId, $pluralFormIndex);
+        return $this->getTranslationByFunction('getTargetByTransUnitId', $labelId, $locale, $quantity, $sourceName, $packageKey);
     }
 
     /**
