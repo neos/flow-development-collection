@@ -116,7 +116,15 @@ class RedirectCommandController extends CommandController
             $this->outputWarningForLeagueCsvPackage();
         }
         $writer = Writer::createFromFileObject(new \SplTempFileObject());
-        $redirects = $this->redirectStorage->getAll($host);
+        if ($host !== null) {
+            $redirects = $this->redirectStorage->getAll($host);
+        } else {
+            $redirects = new \AppendIterator();
+            $redirects->append($this->redirectStorage->getAll(null));
+            foreach ($this->redirectStorage->getDistinctHosts() as $host) {
+                $redirects->append($this->redirectStorage->getAll($host));
+            }
+        }
         /** @var $redirect RedirectInterface */
         foreach ($redirects as $redirect) {
             $writer->insertOne([
@@ -274,7 +282,7 @@ class RedirectCommandController extends CommandController
     public function removeAllCommand()
     {
         $this->redirectStorage->removeAll();
-        $this->outputLine('Removed all redirects matching all hosts');
+        $this->outputLine('Removed all redirects');
     }
 
     /**
