@@ -125,16 +125,21 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
+        $localeInChain = $locale;
+        $translatedMessage = $originalLabel;
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $pluralForm = $this->getPluralForm($quantity, $localeInChain);
 
-        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
+            $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $localeInChain, $pluralForm, $sourceName, $packageKey);
 
-        if ($translatedMessage === false) {
-            $translatedMessage = $originalLabel;
+            if ($translatedMessage === false) {
+                $translatedMessage = $originalLabel;
+            } else {
+                break;
+            }
         }
-
         if (!empty($arguments)) {
-            $translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
+            $translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $localeInChain);
         }
 
         return $translatedMessage;
@@ -168,14 +173,19 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
+        $translatedMessage = $labelId;
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $pluralForm = $this->getPluralForm($quantity, $localeInChain);
 
-        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
+            $translatedMessage = $this->translationProvider->getTranslationById($labelId, $localeInChain, $pluralForm, $sourceName, $packageKey);
 
-        if ($translatedMessage === false) {
-            return $labelId;
-        } elseif (!empty($arguments)) {
-            return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
+            if ($translatedMessage === false) {
+                $translatedMessage = $labelId;
+            } elseif (!empty($arguments)) {
+                return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $localeInChain);
+            } else {
+                break;
+            }
         }
         return $translatedMessage;
     }
