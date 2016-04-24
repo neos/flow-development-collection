@@ -185,9 +185,8 @@ class RedirectRepository extends Repository
     public function incrementHitCount(RedirectInterface $redirect)
     {
         /** @var Query $query */
-        $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1 WHERE r.sourceUriPath = :sourceUriPath and r.host = :host');
-        $query->setParameter('host', $redirect->getHost())
-            ->setParameters([
+        $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1 WHERE r.sourceUriPath = :sourceUriPath and (r.host = :host or r.host IS NULL)');
+        $query->setParameters([
                 'sourceUriPath' => $redirect->getSourceUriPath(),
                 'host' => $redirect->getHost()
             ])
