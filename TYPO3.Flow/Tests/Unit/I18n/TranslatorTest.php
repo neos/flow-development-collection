@@ -33,9 +33,14 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->defaultLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+        $localeChain = array(
+            'en_GB' => $this->defaultLocale,
+            'en'    => new \TYPO3\Flow\I18n\Locale('en')
+        );
 
         $mockLocalizationService = $this->getMock('TYPO3\Flow\I18n\Service');
         $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new \TYPO3\Flow\I18n\Configuration('en_GB')));
+        $mockLocalizationService->expects($this->any())->method('getLocaleChain')->with($this->defaultLocale)->will($this->returnValue($localeChain));
 
         $this->translator = new \TYPO3\Flow\I18n\Translator();
         $this->translator->injectLocalizationService($mockLocalizationService);
@@ -69,7 +74,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function returnsOriginalLabelWhenTranslationNotAvailable()
     {
         $mockTranslationProvider = $this->getMock('TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider');
-        $mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel')->with('original label', $this->defaultLocale, null, 'source', 'packageKey')->will($this->returnValue(false));
+        $mockTranslationProvider->expects($this->atLeastOnce())->method('getTranslationByOriginalLabel')->with('original label', $this->isInstanceOf('TYPO3\Flow\I18n\Locale'), null, 'source', 'packageKey')->will($this->returnValue(false));
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
@@ -97,7 +102,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function translateByIdReturnsTranslationWhenNoArgumentsAreGiven()
     {
         $mockTranslationProvider = $this->getMock('TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider');
-        $mockTranslationProvider->expects($this->once())->method('getTranslationById')->with('id', $this->defaultLocale, null, 'source', 'packageKey')->will($this->returnValue(false));
+        $mockTranslationProvider->expects($this->atLeastOnce())->method('getTranslationById')->with('id', $this->isInstanceOf('TYPO3\Flow\I18n\Locale'), null, 'source', 'packageKey')->will($this->returnValue(false));
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
