@@ -472,6 +472,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService->expects($this->at(4))->method('getPropertyTagsValues')->with($modelClassName, 'otherProperty')->will($this->returnValue(array('var' => array($otherClassName))));
         $mockReflectionService->expects($this->at(5))->method('isPropertyAnnotatedWith')->will($this->returnValue(false));
         $mockReflectionService->expects($this->at(6))->method('getPropertyAnnotations')->with($modelClassName, 'otherProperty', \TYPO3\Flow\Annotations\Validate::class)->will($this->returnValue(array()));
+        $mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue(null));
 
         $mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Reflection\ReflectionService::class)->will($this->returnValue($mockReflectionService));
         $validatorResolver = $this->getAccessibleMock(\TYPO3\Flow\Validation\ValidatorResolver::class, array('resolveValidatorObjectName', 'createValidator', 'getBaseValidatorConjunction'));

@@ -40,7 +40,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             if (!is_object($value)) {
                 $this->addError('Object expected, %1$s given.', 1241099149, array(gettype($value)));
-            } elseif ($value instanceof Proxy) {
+            } elseif ($value instanceof Proxy && !$value->__isInitialized()) {
                 return $this->result;
             } elseif ($this->isValidatedAlready($value) === false) {
                 $this->isValid($value);
