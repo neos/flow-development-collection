@@ -276,7 +276,7 @@ class ValidatorResolver
         if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
             // Model based validator
             $classSchema = $this->reflectionService->getClassSchema($targetClassName);
-            if ($classSchema->isAggregateRoot()) {
+            if ($classSchema !== null && $classSchema->isAggregateRoot()) {
                 $objectValidator = new AggregateBoundaryValidator(array());
             } else {
                 $objectValidator = new GenericObjectValidator(array());
