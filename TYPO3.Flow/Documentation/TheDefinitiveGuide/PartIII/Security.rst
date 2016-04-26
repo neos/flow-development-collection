@@ -1062,6 +1062,10 @@ entities. The following examples, taken from the functional tests, show some mor
     'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
       matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
 
+.. warning:: When using class inheritance for your entities, entity privileges will only work with the root entity type.
+   For example, if your entity ``Acme\MyPackage\EntityB`` extends ``Acme\MyPackage\EntityA``, the expression
+   ``isType("Acme\MyPackage\EntityB")`` will never match. This is a limitation of the underlying Doctrine filter API.
+
 
 Internal workings of entity restrictions (EntityPrivilege)
 ----------------------------------------------------------------------
