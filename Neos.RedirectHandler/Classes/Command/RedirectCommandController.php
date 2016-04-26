@@ -97,7 +97,7 @@ class RedirectCommandController extends CommandController
         if ($host !== null) {
             $outputByHost($host);
         } else {
-            $hosts = array_merge([null], $this->redirectStorage->getDistinctHosts());
+            $hosts = $this->redirectStorage->getDistinctHosts();
             array_map($outputByHost, $hosts);
         }
         $this->outputLine();
