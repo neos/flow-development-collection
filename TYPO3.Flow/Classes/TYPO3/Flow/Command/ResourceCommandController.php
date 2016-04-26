@@ -13,11 +13,13 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
+use TYPO3\Flow\Resource\Publishing\MessageCollector;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\ResourceRepository;
 
@@ -59,6 +61,12 @@ class ResourceCommandController extends CommandController
     protected $objectManager;
 
     /**
+     * @Flow\Inject
+     * @var MessageCollector
+     */
+    protected $messageCollector;
+
+    /**
      * Publish resources
      *
      * This command publishes the resources of the given or - if none was specified, all - resource collections
@@ -87,6 +95,14 @@ class ResourceCommandController extends CommandController
                 $target = $collection->getTarget();
                 $target->publishCollection($collection, function ($iteration) {
                     $this->clearState($iteration);
+                });
+            }
+
+            if ($this->messageCollector->hasMessages()) {
+                $this->outputLine();
+                $this->outputLine('The resources were published, but a few inconsistencies were detected. You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
+                $this->messageCollector->flush(function (Message $notification) {
+                    $this->outputLine($notification->getSeverity() . ': ' . $notification->getMessage());
                 });
             }
         } catch (Exception $exception) {
