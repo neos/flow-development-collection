@@ -396,7 +396,7 @@ in a POST request or set in an HTTP Basic authentication header.
 	    providers:
 	      DefaultProvider:
 	        provider: PersistedUsernamePasswordProvider
-	        tokenClass: UsernamePasswordHttpBasic
+	        token: TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic
 
 .. _Request Patterns:
 
