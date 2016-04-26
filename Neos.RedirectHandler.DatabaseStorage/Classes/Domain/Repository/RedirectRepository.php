@@ -187,9 +187,9 @@ class RedirectRepository extends Repository
         $host = $redirect->getHost();
         /** @var Query $query */
         if ($host === null) {
-            $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1 WHERE r.sourceUriPath = :sourceUriPath and r.host IS NULL');
+            $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1, r.lastHit = CURRENT_TIMESTAMP() WHERE r.sourceUriPath = :sourceUriPath and r.host IS NULL');
         } else {
-            $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1 WHERE r.sourceUriPath = :sourceUriPath and r.host = :host');
+            $query = $this->entityManager->createQuery('UPDATE Neos\RedirectHandler\DatabaseStorage\Domain\Model\Redirect r SET r.hitCounter = r.hitCounter + 1, r.lastHit = CURRENT_TIMESTAMP() WHERE r.sourceUriPath = :sourceUriPath and r.host = :host');
             $query->setParameter('host', $host);
         }
         $query->setParameter('sourceUriPath', $redirect->getSourceUriPath())
