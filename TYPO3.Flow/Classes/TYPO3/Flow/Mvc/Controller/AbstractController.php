@@ -196,8 +196,6 @@ abstract class AbstractController implements ControllerInterface
         }
         if ($packageKey !== null) {
             $nextRequest->setControllerPackageKey($packageKey);
-        }
-        if ($subpackageKey !== null) {
             $nextRequest->setControllerSubpackageKey($subpackageKey);
         }
 
