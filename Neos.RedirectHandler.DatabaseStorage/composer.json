@@ -1,0 +1,15 @@
+{
+    "name": "neos/redirecthandler-databasestorage",
+    "type": "neos-package",
+    "description": "A plugin for neos/redirecthandler to store redirects in the database",
+    "license": "MIT",
+    "require": {
+        "typo3/flow": "*",
+        "neos/redirecthandler": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\DatabaseStorage\\": "Classes"
+        }
+    }
+}
