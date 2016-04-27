@@ -1,0 +1,17 @@
+{
+    "name": "neos/redirecthandler",
+    "type": "neos-package",
+    "description": "Basic API to handle HTTP redirects with the Flow Framework",
+    "license": "MIT",
+    "require": {
+        "typo3/flow": "*"
+    },
+    "suggest": {
+        "league/csv": "Allows import/export based on CSV files"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\": "Classes"
+        }
+    }
+}

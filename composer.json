@@ -24,6 +24,8 @@
     },
     "replace": {
         "neos/error-messages": "self.version",
+        "neos/redirecthandler-databasestorage": "self.version",
+        "neos/redirecthandler": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -39,12 +41,24 @@
         "typo3/kickstart": "self.version"
     },
     "suggest": {
+        "league/csv": "Allows import/export based on CSV files",
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "typo3/party": "To make use of basic user handling",
         "php-uuid": "For fast generation of UUIDs used in the persistence."
     },
     "autoload": {
+        "psr-4": {
+            "Neos\\RedirectHandler\\DatabaseStorage\\": [
+                "Neos.RedirectHandler.DatabaseStorage/Classes"
+            ],
+            "Neos\\RedirectHandler\\": [
+                "Neos.RedirectHandler/Classes"
+            ],
+            "TYPO3\\Flow\\Core\\Migrations\\": [
+                "TYPO3.Flow/Scripts/Migrations"
+            ]
+        },
         "psr-0": {
             "TYPO3\\Flow\\Error": [
                 "Neos.Error.Messages/Classes"
@@ -79,11 +93,6 @@
             "TYPO3\\Kickstart": [
                 "TYPO3.Kickstart/Classes"
             ]
-        },
-        "psr-4": {
-            "TYPO3\\Flow\\Core\\Migrations\\": [
-                "TYPO3.Flow/Scripts/Migrations"
-            ]
         }
     },
     "extra": {
@@ -93,8 +102,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8 || ~5.2.0",
         "mikey179/vfsstream": "~1.6",
+        "phpunit/phpunit": "~4.8 || ~5.2.0",
         "doctrine/orm": "~2.4.0"
     },
     "autoload-dev": {
