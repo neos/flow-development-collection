@@ -2,7 +2,7 @@
 namespace TYPO3\Flow\Error;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Error.Messages package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -402,7 +402,6 @@ class Result
     }
 
     /**
-     * Only use internally!
      * Flatten a tree of Result objects, based on a certain property.
      *
      * @param string $propertyName
@@ -411,7 +410,7 @@ class Result
      * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
      * @return void
      */
-    public function flattenTree($propertyName, array &$result, array $level = array(), $messageTypeFilter = null)
+    protected function flattenTree($propertyName, array &$result, array $level = array(), $messageTypeFilter = null)
     {
         if (count($this->$propertyName) > 0) {
             $propertyPath = implode('.', $level);

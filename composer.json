@@ -23,6 +23,7 @@
         "neos/composer-plugin": "^1.0.1"
     },
     "replace": {
+        "neos/error-messages": "self.version",
         "neos/redirecthandler-databasestorage": "self.version",
         "neos/redirecthandler": "self.version",
         "neos/utility-arrays": "self.version",
@@ -59,6 +60,9 @@
             ]
         },
         "psr-0": {
+            "TYPO3\\Flow\\Error": [
+                "Neos.Error.Messages/Classes"
+            ],
             "TYPO3\\Flow\\Utility": [
                 "Neos.Utility.Arrays/Classes",
                 "Neos.Utility.Files/Classes",
@@ -104,6 +108,9 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Neos\\Error\\Messages\\Tests\\": [
+                "Neos.Error.Messages/Tests"
+            ],
             "Neos\\Utility\\Arrays\\Tests\\": [
                 "Neos.Utility.Arrays/Tests"
             ],

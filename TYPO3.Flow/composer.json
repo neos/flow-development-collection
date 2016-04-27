@@ -22,6 +22,7 @@
         "neos/utility-pdo": "*",
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
+        "neos/error-messages": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
