@@ -23,7 +23,7 @@ commands that may be available, use::
 Package *Neos.RedirectHandler*
 ------------------------------
 
-``Neos.RedirectHandler:redirection:add``
+``Neos.RedirectHandler:redirect:add``
 ****************************************
 
 **Adding custom redirects**
@@ -52,7 +52,7 @@ Options
 
 
 
-``Neos.RedirectHandler:redirection:remove``
+``Neos.RedirectHandler:redirect:remove``
 *******************************************
 
 **Removing redirects**
@@ -74,25 +74,36 @@ Options
 
 
 
-``Neos.RedirectHandler:redirection:removeAll``
+``Neos.RedirectHandler:redirect:removeAll``
 **********************************************
 
 **Removing all redirects**
 
-If only redirects for a certain domain should be deleted it is possible to add ``host`` as an optional argument.
+Removes all redirects for all hosts.
+
+
+
+
+``Neos.RedirectHandler:redirect:removebyhost``
+**********************************************
+
+**Removing all redirects**
+
+Only removes redirects for a specified host.
+If redirects valid for all hosts should be removed, pass the string ``all`` as ``host`` argument.
 
 
 
 Options
 ^^^^^^^
 
-``--host`` (optional)
+``--host``
   Only remove redirects that use this host
 
 
 
 
-``Neos.RedirectHandler:redirection:list``
+``Neos.RedirectHandler:redirect:list``
 *******************************************
 
 **List all redirects**
@@ -112,7 +123,7 @@ Options
 
 
 
-``Neos.RedirectHandler:redirection:export``
+``Neos.RedirectHandler:redirect:export``
 *******************************************
 
 **Exporting redirects**
@@ -132,7 +143,7 @@ Options
 
 
 
-``Neos.RedirectHandler:redirection:import``
+``Neos.RedirectHandler:redirect:import``
 *******************************************
 
 **Importing redirects**
@@ -162,5 +173,5 @@ So the structure per line is:
 
 After a successful import a report will be shown. While `++` marks newly created redirects, `~~` marks already existing redirect source paths along with the used status code and ``source``.
 
-.. note:: `redirection:import` will not delete pre-existing redirects. To do this run ``./flow redirection:removeall`` before the import.
+.. note:: `redirect:import` will not delete pre-existing redirects. To do this run ``./flow redirect:removeall`` before the import.
 **WARNING**: This will also delete all automatically generated redirects.
