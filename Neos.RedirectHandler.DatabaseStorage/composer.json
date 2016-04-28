@@ -4,7 +4,6 @@
     "description": "A plugin for neos/redirecthandler to store redirects in the database",
     "license": "MIT",
     "require": {
-        "typo3/flow": "*",
         "neos/redirecthandler": "*"
     },
     "autoload": {
