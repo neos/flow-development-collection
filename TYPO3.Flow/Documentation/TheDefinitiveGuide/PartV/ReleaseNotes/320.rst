@@ -116,7 +116,7 @@ Redirects can be managed via new commands::
     ./flow redirect:removeall
     ./flow redirect:removebyhost hostname.tld
 
-In addition redirects can be imported and exported using::
+In addition redirects can be imported and exported as ``CSV`` using::
 
     ./flow redirect:export
     ./flow redirect:import
