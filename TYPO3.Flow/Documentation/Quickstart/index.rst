@@ -62,7 +62,7 @@ Then use Composer in a directory which will be accessible by your web server to 
 and install all packages of the Flow Base Distribution. The following command will
 clone the latest version, include development dependencies and keep git metadata for future use::
 
- composer create-project --dev --keep-vcs typo3/flow-base-distribution Quickstart
+ composer create-project --dev --keep-vcs neos/flow-base-distribution Quickstart
 
 You will end up with a directory structure like this:
 

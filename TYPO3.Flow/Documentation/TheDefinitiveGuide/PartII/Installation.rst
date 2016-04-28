@@ -24,7 +24,7 @@ clone the 3.0.0 version, include development dependencies and keep git metadata 
 
 .. code-block:: none
 
- composer create-project --keep-vcs typo3/flow-base-distribution tutorial 3.0.0
+ composer create-project --keep-vcs neos/flow-base-distribution tutorial 3.0.0
 
 .. note::
 	Throughout this tutorial we assume that you installed the Flow distribution in
