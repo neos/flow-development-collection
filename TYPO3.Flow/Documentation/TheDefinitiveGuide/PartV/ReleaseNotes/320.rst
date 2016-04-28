@@ -101,6 +101,35 @@ The following example would introduce the trait ``\Vendor\Package\Service\Traits
     pointcutExpression="class(TYPO3\Flow\Mvc\Controller\ActionController)"
   )
 
+Redirect handling
+^^^^^^^^^^^^^^^^^
+
+A new **optional** Flow package called ``Neos.RedirectHandler`` makes working with redirects easy.
+
+The package introduces a ``Redirect`` entity along with a ``RedirectService`` helper class.
+
+Redirects can be managed via new commands::
+
+    ./flow redirect:list
+    ./flow redirect:add source/path target/path 307
+    ./flow redirect:remove source/path
+    ./flow redirect:removeall
+    ./flow redirect:removebyhost hostname.tld
+
+In addition redirects can be imported and exported using::
+
+    ./flow redirect:export
+    ./flow redirect:import
+
+The service will be triggered before the Routing Framework kicks in and redirects returns any configured
+target URI if applicable. It is however only invoked when no cached route matches the current request.
+Thus, if a redirection is added, depending route cache entries are flushed automatically.
+
+The package can be installed using composer with ``composer require "neos/redirecthandler"``.
+
+Additionally a storage package needs to be installed. A default one for storing redirects in the
+database can be installed using composer with ``composer require "neos/redirecthandler-databasestorage"``.
+
 Several Flow parts moved to sepetrate packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
