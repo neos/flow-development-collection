@@ -49,8 +49,13 @@ class RedirectCommandController extends CommandController
     protected $logger;
 
     /**
-     * @param string $host Filter redirects by the given hostname
-     * @param string $match Match source or target URI by a regular expression
+     * List all redirects
+     *
+     * Lists all saved redirects. Optionally it is possible to filter by ``host`` and to use the argument ``match`` to
+     * look for certain ``source`` or ``target`` paths.
+     *
+     * @param string $host (optional) Filter redirects by the given hostname
+     * @param string $match (optional) A string to match for the ``source`` or the ``target``
      * @return void
      */
     public function listCommand($host = null, $match = null)
@@ -104,10 +109,15 @@ class RedirectCommandController extends CommandController
     }
 
     /**
-     * Save all redirectection to a CSV file
+     * Export redirects to CSV
      *
-     * @param string $filename CSV file path, if null use standard output
-     * @param string $host Optional full qualified host name
+     * This command will export all redirects in CSV format. You can set a preferred
+     * filename before the export with the optional ``filename`` argument. If no ``filename`` argument is supplied, the
+     * export will be returned within the CLI. This operation requires the package ``league/csv``. Install it by running
+     * ``composer require league/csv``.
+     *
+     * @param string $filename (optional) The filename for the CSV file
+     * @param string $host (optional) Only export hosts for a specified host
      * @return void
      */
     public function exportCommand($filename = null, $host = null)
@@ -141,7 +151,17 @@ class RedirectCommandController extends CommandController
     }
 
     /**
-     * Import redirects from a CSV file
+     * Import redirects from CSV file
+     *
+     * This command is used to (re)import CSV files containing redirects.
+     * The argument ``filename`` is the name of the file you uploaded to the root folder.
+     * This operation requires the package ``league/csv``. Install it by running ``composer require league/csv``.
+     * Structure per line is:
+     * ``sourcePath``,``targetPath``,``statusCode``,``host`` (optional)
+     * After a successful import a report will be shown. While `++` marks newly created redirects, `~~` marks already
+     * existing redirect source paths along with the used status code and ``source``.
+     * ``redirect:import`` will not delete pre-existing redirects. To do this run ``redirect:removeall`` before
+     * the import. Be aware that this will also delete all automatically generated redirects.
      *
      * @param string $filename CSV file path
      * @return void
@@ -252,12 +272,13 @@ class RedirectCommandController extends CommandController
     }
 
     /**
-     * Removes a redirect
+     * Remove a single redirect
      *
-     * This command deletes a redirect from the RedirectRepository
+     * This command is used the delete a single redirect. The redirect is identified by the ``source`` argument.
+     * When using multiple domains for redirects the ``host`` argument is necessary to identify the correct one.
      *
-     * @param string $source The source URI path of the redirect to remove, as given by redirect:list
-     * @param string $host Full qualified host name
+     * @param string $source The source URI path of the redirect to remove, as given by ``redirect:list``
+     * @param string $host (optional) Only remove redirects that use this host
      * @return void
      */
     public function removeCommand($source, $host = null)
@@ -285,7 +306,7 @@ class RedirectCommandController extends CommandController
     }
 
     /**
-     * Removes all redirects by host
+     * Remove all redirects by host
      *
      * This command deletes all redirects from the RedirectRepository by host value.
      * If ``all`` is entered the redirects valid for all hosts are deleted.
@@ -305,14 +326,17 @@ class RedirectCommandController extends CommandController
     }
 
     /**
-     * Adds a redirect
+     * Add a redirect
      *
-     * This command adds a new redirect to the RedirectRepository using the RedirectService
+     * Creates a new custom redirect. The optional argument ``host`` is used to define a specific redirect only valid
+     * for a certain domain If no ``host`` argument is supplied, the redirect will act as a fallback redirect for all
+     * domains in use. If any redirect exists with the same ``source`` property, it will be replaced if the ``force``
+     * property has been set.
      *
      * @param string $source The relative URI path that should trigger the redirect
-     * @param string $target The relative URI path that should be redirected to
+     * @param string $target The relative URI path that the redirect should point to
      * @param integer $statusCode The status code of the redirect header
-     * @param string $host Full qualified host name
+     * @param string $host (optional) The host the redirect is valid for. If none is set, the redirect is valid for all
      * @param boolean $force Replace existing redirect (based on the source URI)
      * @return void
      */
