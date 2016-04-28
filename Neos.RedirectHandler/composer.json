@@ -7,6 +7,7 @@
         "typo3/flow": "*"
     },
     "suggest": {
+        "neos/redirecthandler-databasestorage": "Supports storing redirects in the database",
         "league/csv": "Allows import/export based on CSV files"
     },
     "autoload": {
