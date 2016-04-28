@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Composer;
 
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
-use Composer\Script\CommandEvent;
-use Composer\Script\PackageEvent;
+use Composer\Script\Event;
+use Composer\Installer\PackageEvent;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Utility\Files;
 
@@ -27,10 +27,10 @@ class InstallerScripts
      * Make sure required paths and files are available outside of Package
      * Run on every Composer install or update - must be configured in root manifest
      *
-     * @param CommandEvent $event
+     * @param Event $event
      * @return void
      */
-    public static function postUpdateAndInstall(CommandEvent $event)
+    public static function postUpdateAndInstall(Event $event)
     {
         if (!defined('FLOW_PATH_ROOT')) {
             define('FLOW_PATH_ROOT', getcwd() . '/');
@@ -58,7 +58,7 @@ class InstallerScripts
     /**
      * Calls actions and install scripts provided by installed packages.
      *
-     * @param \Composer\Script\PackageEvent $event
+     * @param PackageEvent $event
      * @return void
      * @throws Exception\UnexpectedOperationException
      */
