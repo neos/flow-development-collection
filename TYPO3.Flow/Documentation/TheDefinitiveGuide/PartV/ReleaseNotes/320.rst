@@ -130,8 +130,8 @@ The package can be installed using composer with ``composer require "neos/redire
 Additionally a storage package needs to be installed. A default one for storing redirects in the
 database can be installed using composer with ``composer require "neos/redirecthandler-databasestorage"``.
 
-Several Flow parts moved to sepetrate packages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Several Flow parts moved to seperate packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A numbr of packages have been created for functionality that used to be an integrated part of Flow. This allows to use those packages independently from Flow and defines clear scope for them.
 
