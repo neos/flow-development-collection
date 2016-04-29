@@ -95,7 +95,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IfViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * Renders <f:then> child if $condition is true, otherwise renders <f:else> child.
+     * renders <f:then> child if $condition is true, otherwise renders <f:else> child.
      *
      * @param boolean $condition View helper condition
      * @return string the rendered string
@@ -103,10 +103,6 @@ class IfViewHelper extends AbstractConditionViewHelper
      */
     public function render($condition)
     {
-        if ($condition) {
-            return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
-        }
+        return $this->renderInternal();
     }
 }

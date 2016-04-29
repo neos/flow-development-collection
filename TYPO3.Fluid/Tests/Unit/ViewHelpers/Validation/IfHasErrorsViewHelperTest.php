@@ -13,6 +13,7 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Security;
 
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Result;
+use TYPO3\Fluid\Core\Rendering\RenderingContext;
 use TYPO3\Fluid\ViewHelpers\Validation\IfHasErrorsViewHelper;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -33,8 +34,12 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Validation\IfHasErrorsViewHelper::class, array('renderThenChild', 'renderElseChild'));
+
+        $renderingContextMock = $this->getMock(RenderingContext::class);
+        $renderingContextMock->expects(self::any())->method('getControllerContext')->willReturn($this->controllerContext);
+        $this->viewHelper->setRenderingContext($renderingContextMock);
+
         $this->inject($this->viewHelper, 'controllerContext', $this->controllerContext);
-        //$this->inject($this->ifAccessViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
     }
 
     /**
@@ -73,6 +78,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
         /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */
         $requestMock = $this->request;
         $requestMock->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($resultMock));
+        $this->viewHelper->_set('arguments', ['for' => 'foo.bar.baz']);
 
         $this->viewHelper->render('foo.bar.baz');
     }

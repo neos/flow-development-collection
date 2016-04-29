@@ -15,8 +15,11 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
+use TYPO3\Fluid\ViewHelpers\ElseViewHelper;
+use TYPO3\Fluid\ViewHelpers\ThenViewHelper;
 
 /**
  * This view helper is an abstract ViewHelper which implements an if/else condition.
@@ -73,6 +76,21 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
     }
 
     /**
+     * Renders <f:then> child if $condition is true, otherwise renders <f:else> child.
+     *
+     * @return string the rendered string
+     * @api
+     */
+    protected function renderInternal()
+    {
+        if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
+
+    /**
      * Returns value of "then" attribute.
      * If then attribute is not set, iterates through child nodes and renders ThenViewHelper.
      * If then attribute is not set and no ThenViewHelper and no ElseViewHelper is found, all child nodes are rendered
@@ -82,25 +100,23 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
      */
     protected function renderThenChild()
     {
-        if ($this->hasArgument('then')) {
-            return $this->arguments['then'];
-        }
-        if ($this->hasArgument('__thenClosure')) {
-            $thenClosure = $this->arguments['__thenClosure'];
-            return $thenClosure();
-        } elseif ($this->hasArgument('__elseClosure')) {
-            return '';
+        $hasEvaluated = true;
+        $result = static::renderStaticThenChild($this->arguments, $hasEvaluated);
+        if ($hasEvaluated) {
+            return $result;
         }
 
         $elseViewHelperEncountered = false;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
+                && $childNode->getViewHelperClassName() === ThenViewHelper::class
+            ) {
                 $data = $childNode->evaluate($this->renderingContext);
                 return $data;
             }
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
+                && $childNode->getViewHelperClassName() === ElseViewHelper::class
+            ) {
                 $elseViewHelperEncountered = true;
             }
         }
@@ -113,6 +129,29 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
     }
 
     /**
+     * Statically evalute "then" children.
+     * The "$hasEvaluated" argument is there to distinguish the case that "then" returned NULL or was not evaluated.
+     *
+     * @param array $arguments ViewHelper arguments
+     * @param boolean $hasEvaluated Can be used to check if the "then" child was actually evaluated by this method.
+     * @return string
+     */
+    protected static function renderStaticThenChild($arguments, &$hasEvaluated)
+    {
+        if (isset($arguments['then'])) {
+            return $arguments['then'];
+        }
+        if (isset($arguments['__thenClosure'])) {
+            $thenClosure = $arguments['__thenClosure'];
+            return $thenClosure();
+        } elseif (isset($arguments['__elseClosure'])) {
+            return '';
+        }
+
+        $hasEvaluated = false;
+    }
+
+    /**
      * Returns value of "else" attribute.
      * If else attribute is not set, iterates through child nodes and renders ElseViewHelper.
      * If else attribute is not set and no ElseViewHelper is found, an empty string will be returned.
@@ -122,21 +161,44 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
      */
     protected function renderElseChild()
     {
-        if ($this->hasArgument('else')) {
-            return $this->arguments['else'];
+        $hasEvaluated = true;
+        $result = static::renderStaticElseChild($this->arguments, $hasEvaluated);
+        if ($hasEvaluated) {
+            return $result;
         }
-        if ($this->hasArgument('__elseClosure')) {
-            $elseClosure = $this->arguments['__elseClosure'];
-            return $elseClosure();
-        }
+
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
+                && $childNode->getViewHelperClassName() === ElseViewHelper::class
+            ) {
                 return $childNode->evaluate($this->renderingContext);
             }
         }
 
         return '';
+    }
+
+
+    /**
+     * Statically evalute "else" children.
+     * The "$hasEvaluated" argument is there to distinguish the case that "else" returned NULL or was not evaluated.
+     *
+     * @param array $arguments ViewHelper arguments
+     * @param bool $hasEvaluated Can be used to check if the "else" child was actually evaluated by this method.
+     * @return string
+     */
+    protected static function renderStaticElseChild($arguments, &$hasEvaluated)
+    {
+        if (isset($arguments['else'])) {
+            return $arguments['else'];
+        }
+
+        if (isset($arguments['__elseClosure'])) {
+            $elseClosure = $arguments['__elseClosure'];
+            return $elseClosure();
+        }
+
+        $hasEvaluated = false;
     }
 
     /**
@@ -149,22 +211,66 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
      * @param AbstractNode $syntaxTreeNode
      * @param TemplateCompiler $templateCompiler
      * @return string
-     * @Flow\Internal
      */
     public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler)
     {
         foreach ($syntaxTreeNode->getChildNodes() as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
+                && $childNode->getViewHelperClassName() === ThenViewHelper::class
+            ) {
                 $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
                 $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
             }
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
+                && $childNode->getViewHelperClassName() === ElseViewHelper::class
+            ) {
                 $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
                 $initializationPhpCode .= sprintf('%s[\'__elseClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
             }
         }
-        return TemplateCompiler::SHOULD_GENERATE_VIEWHELPER_INVOCATION;
+        return sprintf('%s::renderStatic(%s, %s, $renderingContext)',
+            get_class($this), $argumentsVariableName, $renderChildrenClosureVariableName);
+    }
+
+    /**
+     * Default implementation for CompilableInterface. See CompilableInterface
+     * for a detailed description of this method.
+     *
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     * @see CompilableInterface
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $hasEvaluated = true;
+        if (static::evaluateCondition($arguments, $renderingContext)) {
+            $result = static::renderStaticThenChild($arguments, $hasEvaluated);
+            if ($hasEvaluated) {
+                return $result;
+            }
+
+            return $renderChildrenClosure();
+        } else {
+            $result = static::renderStaticElseChild($arguments, $hasEvaluated);
+            if ($hasEvaluated) {
+                return $result;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * This method decides if the condition is TRUE or FALSE. It can be overriden in extending viewhelpers to adjust functionality.
+     *
+     * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+        return (isset($arguments['condition']) && $arguments['condition']);
     }
 }

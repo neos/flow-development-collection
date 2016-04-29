@@ -15,6 +15,7 @@ namespace TYPO3\Fluid\ViewHelpers\Validation;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -52,18 +53,29 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
      */
     public function render($for = null)
     {
+        return $this->renderInternal();
+    }
+
+    /**
+     * @param array $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
         /** @var $request ActionRequest */
-        $request = $this->controllerContext->getRequest();
+        $request = $renderingContext->getControllerContext()->getRequest();
         /** @var $validationResults Result */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
         if ($validationResults !== null) {
-            // if $for is not set, ->forProperty will return the initial Result object untouched
-            $validationResults = $validationResults->forProperty($for);
+            // if $for is null, ->forProperty will return the initial Result object untouched
+            $validationResults = $validationResults->forProperty(isset($arguments['for']) ? $arguments['for'] : null);
             if ($validationResults->hasErrors()) {
-                return $this->renderThenChild();
+                return true;
             }
         }
-        return $this->renderElseChild();
+
+        return false;
     }
 }
