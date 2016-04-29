@@ -631,7 +631,6 @@ TYPO3:
           - 'TYPO3.Fluid'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
-          - 'Neos.RedirectHandler'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
@@ -659,7 +658,7 @@ TYPO3:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/SignalsReference.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
-          classNamePattern: '/^(TYPO3\\Flow|Neos\\RedirectHandler)\\.*$/i'
+          classNamePattern: '/^TYPO3\\Flow\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
