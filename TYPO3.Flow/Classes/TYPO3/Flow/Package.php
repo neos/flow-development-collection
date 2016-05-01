@@ -125,6 +125,21 @@ class Package extends BasePackage
             }
         });
 
+        $dispatcher->connect(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', function ($monitorIdentifier, $changedFiles) use ($bootstrap) {
+            if ($monitorIdentifier !== 'Flow_ClassFiles') {
+                return;
+            }
+            $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+            $packagePhpReversed = strrev('Package.php');
+            foreach ($changedFiles as $pathAndFilename => $status) {
+                if (strpos(strrev($pathAndFilename), $packagePhpReversed) === 0) {
+                    $packageManager->rescanPackages();
+                    $packageManager->initialize($bootstrap);
+                    return;
+                }
+            }
+        });
+
         $dispatcher->connect(\TYPO3\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher) {
             $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Cache\CacheManager::class, 'flushCaches');
         });

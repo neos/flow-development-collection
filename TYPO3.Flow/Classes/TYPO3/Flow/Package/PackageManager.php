@@ -16,6 +16,7 @@ use TYPO3\Flow\Composer\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Composer\Exception\MissingPackageManifestException;
 use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Package\Exception\PackageClassMissingException;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Utility\Files;
@@ -135,10 +136,14 @@ class PackageManager implements PackageManagerInterface
     {
         $this->bootstrap = $bootstrap;
         $this->packageStatesConfiguration = $this->getCurrentPackageStates();
-        $this->activePackages = [];
-        $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
-        /** @var PackageInterface $package */
+        try {
+            $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
+        } catch (PackageClassMissingException $packageClassMissing) {
+            $this->packageStatesConfiguration = $this->rescanPackages();
+            $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
+        }
 
+        /** @var PackageInterface $package */
         foreach ($this->activePackages as $package) {
             $package->boot($bootstrap);
         }
@@ -424,11 +429,17 @@ class PackageManager implements PackageManagerInterface
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
+        $packagePath = str_replace($this->packagesBasePath, '', $packagePath);
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $manifest['name'], (isset($manifest['autoload']) ? $manifest['autoload'] : []), null);
+
         $refreshedPackageStatesConfiguration = $this->rescanPackages(false);
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
+        $this->packages[$packageKey] = $package;
+        $this->activePackages[$packageKey] = $package;
+        $this->packageKeys[strtolower($packageKey)] = $packageKey;
 
-        return $this->packages[$packageKey];
+        return $package;
     }
 
     /**
