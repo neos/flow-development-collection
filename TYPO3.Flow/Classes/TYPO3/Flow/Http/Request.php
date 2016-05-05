@@ -429,7 +429,7 @@ class Request extends AbstractMessage
      * If the argument is the string '*', all proxies are trusted.
      *
      * This is primarily useful for testing. If you want to set trusted headers, use the configuration setting
-     * "TYPO3.Flow.http.trustedProxies.headers" instead.
+     * "TYPO3.Flow.http.trustedProxies.proxies" instead.
      *
      * @param array|string $trustedProxies
      * @return void
@@ -507,7 +507,7 @@ class Request extends AbstractMessage
      * If no proxies are trusted or no client IP header is trusted, this is the remote address of the machine
      * directly connected to the server.
      *
-     * @return string The most trusted client's IP address
+     * @return string|bool The most trusted client's IP address or FALSE if no remote address can be found
      * @api
      */
     public function getTrustedClientIpAddress()
