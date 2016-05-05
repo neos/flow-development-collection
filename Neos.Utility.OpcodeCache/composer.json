@@ -11,5 +11,10 @@
     "psr-0": {
       "TYPO3\\Flow\\Utility": "Classes"
     }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Neos.Utility.OpcodeCache"
+    }
   }
 }
