@@ -93,7 +93,12 @@ class PackageOrderResolver
         $unsortedPackages[$packageKey] = -1;
         $packageComposerManifest = $this->manifestData[$packageKey];
         $packageRequirements = isset($packageComposerManifest['require']) ? array_keys($packageComposerManifest['require']) : [];
-        // HINT: at this point, we do not support require-dev dependencies yet (but we could).
+        if (isset($packageComposerManifest['require-dev'])) {
+            $packageRequirements = array_merge($packageRequirements, array_keys($packageComposerManifest['require-dev']));
+        }
+        if (isset($packageComposerManifest['suggest'])) {
+            $packageRequirements = array_merge($packageRequirements, array_keys($packageComposerManifest['suggest']));
+        }
         $unresolvedDependencies = 0;
 
         foreach ($packageRequirements as $requiredComposerName) {

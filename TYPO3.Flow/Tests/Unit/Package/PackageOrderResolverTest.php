@@ -31,13 +31,10 @@ class PackageOrderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
                         'name' => 'doctrine/orm',
                         'require' => ['doctrine/dbal' => 'dev-master'],
                     ],
-                    'symfony/component-yaml' => [
-                        'name' => 'symfony/component-yaml',
-                        'require' => [],
-                    ],
                     'typo3/flow' => [
                         'name' => 'typo3/flow',
-                        'require' => ['symfony/component-yaml' => 'dev-master', 'doctrine/orm' => 'dev-master'],
+                        'require' => ['doctrine/orm' => 'dev-master'],
+                        'require-dev' => ['symfony/component-yaml' => 'dev-master'],
                     ],
                     'doctrine/common' => [
                         'name' => 'doctrine/common',
@@ -46,10 +43,19 @@ class PackageOrderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'doctrine/dbal' => [
                         'name' => 'doctrine/dbal',
                         'require' => ['doctrine/common' => 'dev-master'],
+                        'suggest' => ['my/package' => 'dev-master'],
+                    ],
+                    'my/package' => [
+                        'name' => 'my/package'
+                    ],
+                    'symfony/component-yaml' => [
+                        'name' => 'symfony/component-yaml',
+                        'require' => [],
                     ],
                 ],
                 [
                     'doctrine/common',
+                    'my/package',
                     'doctrine/dbal',
                     'doctrine/orm',
                     'symfony/component-yaml',
