@@ -96,13 +96,7 @@ class ObjectAccessorNode extends AbstractNode
                 if (is_object($subject)
                     && preg_match('/^(is|has)([A-Z].*)/', $propertyName, $matches) > 0
                     && is_callable([$subject, $propertyName])) {
-                    try {
-                        $subject = $subject->$propertyName();
-                    } catch (\Throwable $exception) {
-                        $subject = null;
-                    } catch (\Exception $exception) {
-                        $subject = null;
-                    }
+                    $subject = $subject->$propertyName();
                 } else {
                     $subject = null;
                 }
