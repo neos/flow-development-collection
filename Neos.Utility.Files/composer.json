@@ -20,5 +20,10 @@
     "psr-4": {
       "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Tests"
     }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Neos.Utility.Files"
+    }
   }
 }
