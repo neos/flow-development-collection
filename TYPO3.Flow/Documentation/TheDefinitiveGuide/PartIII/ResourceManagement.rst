@@ -81,6 +81,22 @@ publishing the resources and providing public URIs to it. From the name you can 
 symlinks to the resources stored on the local filesystem to save space. Other ``Target`` implementations
 could publish the resources to CDNs or other external locations that are publicly accessible.
 
+If you have lots of Resources in your project you might run into problems when executing ./flow resource:publish since the number of folders can be limited depending on the file system you're using. An error that might occur in this case is "Could not create directory".
+To circumvent this error you can tell Flow to split the resources into multiple subfolders in the _Resources/Persistent folder of your Web root. The option for your Target you need to set in this case is subdivideHashPathSegment: TRUE.
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      resource:
+        targets:
+          localWebDirectoryPersistentResourcesTarget:
+            target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+            targetOptions:
+              path: '%FLOW_PATH_WEB%_Resources/Persistent/'
+              baseUri: '_Resources/Persistent/'
+              subdivideHashPathSegment: TRUE
+
 Collections
 ===========
 
