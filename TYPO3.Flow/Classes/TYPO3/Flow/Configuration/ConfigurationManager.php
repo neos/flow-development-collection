@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 use TYPO3\Flow\Utility\PositionalArraySorter;

@@ -17,7 +17,6 @@ use TYPO3\Flow\Http\Uri;
 use TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Fluid\Tests\Functional\View\Fixtures\View\StandaloneView;
-use TYPO3\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**
  * Testcase for Parser, checking whether basic parsing features work

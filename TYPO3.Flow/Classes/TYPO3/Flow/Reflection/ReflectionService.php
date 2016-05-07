@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Reflection;
  */
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\PhpParser;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;

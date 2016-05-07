@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Persistence;
  * source code.
  */
 
-use TYPO3\Flow\Core\ApplicationContext;
-
 /**
  * The Flow Persistence Manager base class
  *
