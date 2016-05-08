@@ -13,8 +13,6 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Security;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
