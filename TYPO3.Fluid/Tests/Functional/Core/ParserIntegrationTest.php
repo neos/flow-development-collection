@@ -150,7 +150,7 @@ class ParserIntegrationTest extends FunctionalTestCase
         $post = new Post();
         $post->setPrivate(true);
         $this->view->assignMultiple(array('post' => $post));
-        $this->view->setTemplateSource('{post.isNonExisting}');
+        $this->view->setTemplateSource('<f:if condition="{post.isNonExisting}">Wrong!</f:if>');
 
         $actual = $this->view->render();
         $this->assertSame('', $actual);
