@@ -140,4 +140,18 @@ class ParserIntegrationTest extends FunctionalTestCase
         $actual = $this->view->render();
         $this->assertSame('', $actual);
     }
+
+    /**
+     * @test
+     */
+    public function nonExistingIsMethodWillNotThrowError()
+    {
+        $post = new Post();
+        $post->setPrivate(true);
+        $this->view->assignMultiple(array('post' => $post));
+        $this->view->setTemplateSource('<f:if condition="{post.isNonExisting}">Wrong!</f:if>');
+
+        $actual = $this->view->render();
+        $this->assertSame('', $actual);
+    }
 }

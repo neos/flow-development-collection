@@ -21,5 +21,10 @@
     "psr-4": {
       "TYPO3\\Flow\\Utility\\Schema\\Tests\\": "Tests"
     }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Neos.Utility.Schema"
+    }
   }
 }
