@@ -1,0 +1,42 @@
+`3.2.1 (2016-05-09) <https://github.com/neos/flow-development-collection/releases/tag/3.2.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix ObjectAccessorNode::getPropertyPath for is/has access in PHP7 <https://github.com/neos/flow-development-collection/pull/350>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the try/catch for undefined Fluid variables which start with "is" or "has".
+Currently, exceptions here are not being caught because an `\\Error` is being thrown.
+Since non-callable method call should not be attempted in the first place, this change
+adds a is_callable check. Therefore a try/catch block is no longer necessary, as any exception thrown inside the callable method should bubble up.
+
+Specific example: a fluid section/partial with an optional argument called "isSomething"
+
+- if rendered while defining isSomething in the arguments, there's no problem
+- if rendered without isSomething in the arguments (implicit falsy), we then get
+  `Call to undefined method TYPO3\\Fluid\\Core\\ViewHelper\\TemplateVariableContainer::isSomething()`
+
+Related to: #108, #343, #348, whythecode/flow-development-collection#1
+
+* Packages: ``Fluid``
+
+`BUGFIX: Class loading errors because library packageKeys are incorrect <https://github.com/neos/flow-development-collection/pull/345>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+The package manager derives the packageKey from the class loader configuration
+if the package type is ``library``. This leads to problems with the split
+libraries that share the namespace ``TYPO3\\\Flow\\\Utility`` because the
+package state configuration for is overwritten.
+
+Depending on the dependency order of the packages this will lead to symptoms
+like class loading errors for the ``Neos.Utility.Schema`` package.
+
+This change adds the specific packageKey to use to the composer.json to
+load the libraries correctly.
+
+* Packages: ``Arrays`` ``Files`` ``Flow`` ``MediaTypes`` ``ObjectHandling`` ``OpcodeCache`` ``Pdo`` ``Schema``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.0...3.2.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
