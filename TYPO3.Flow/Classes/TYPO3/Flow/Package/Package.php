@@ -456,7 +456,7 @@ class Package implements PackageInterface
     }
 
     /**
-     * Get the installed package version (from composer)
+     * Get the installed package version (from composer) and as fallback the version given by package meta data.
      *
      * @return string
      * @api
@@ -464,7 +464,8 @@ class Package implements PackageInterface
      */
     public function getInstalledVersion()
     {
-        return PackageManager::getPackageVersion($this->composerName);
+        $installedVersion = PackageManager::getPackageVersion($this->composerName);
+        return  $installedVersion === '' ? $installedVersion : $this->getPackageMetaData()->getVersion();
     }
 
     /**
