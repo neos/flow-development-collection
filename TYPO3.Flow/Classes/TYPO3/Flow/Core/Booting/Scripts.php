@@ -490,16 +490,17 @@ class Scripts
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
+
+            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
+            self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
+
             if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
                 continue;
             }
-
             foreach ($package->getAutoloadPaths() as $autoloadPath) {
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
             }
 
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
             if ($context->isTesting() && $package instanceof Package) {
                 /** @var Package $package */
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
