@@ -42,7 +42,13 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
 
         try {
             if (isset($this->renderingOptions['templatePathAndFilename'])) {
-                echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+                try {
+                    echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+                } catch (\Throwable $throwable) {
+                    $this->renderStatically($statusCode, $throwable);
+                } catch (\Exception $exception) {
+                    $this->renderStatically($statusCode, $exception);
+                }
             } else {
                 echo $this->renderStatically($statusCode, $referenceCode);
             }
