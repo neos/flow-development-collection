@@ -42,7 +42,13 @@ class DebugExceptionHandler extends AbstractExceptionHandler
         }
 
         if (isset($this->renderingOptions['templatePathAndFilename'])) {
-            echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+            try {
+                echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+            } catch (\Throwable $throwable) {
+                $this->renderStatically($statusCode, $throwable);
+            } catch (\Exception $exception) {
+                $this->renderStatically($statusCode, $exception);
+            }
         } else {
             $this->renderStatically($statusCode, $exception);
         }
