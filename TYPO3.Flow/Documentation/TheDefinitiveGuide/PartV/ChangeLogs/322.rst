@@ -1,0 +1,27 @@
+`3.2.2 (2016-05-13) <https://github.com/neos/flow-development-collection/releases/tag/3.2.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fallback if custom exception rendering fails <https://github.com/neos/flow-development-collection/pull/354>`_
+----------------------------------------------------------------------------------------------------------------------
+
+If a custom exception rendering fails, the exception would not be
+caught and thus difficult to debug. Instead as a fallback exceptions
+thrown during rendering will be rendered statically.
+
+* Packages: ``Flow``
+
+`BUGFIX: Packages without classes should still monitor configuration and xliff <https://github.com/neos/flow-development-collection/pull/352>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Packages without configured class files were exempted from monitoring to reduce
+the amount of monitored files. This is fine for class files but monitoring of
+configuration and xliff files should happen for all packages regardless if they
+have configured class files or not.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.1...3.2.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
