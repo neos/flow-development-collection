@@ -464,7 +464,7 @@ class Package implements PackageInterface
      */
     public function getInstalledVersion()
     {
-        return PackageManager::getPackageVersion($this->composerName) ?: $this->getPackageMetaData()->getVersion();
+        return PackageManager::getPackageVersion($this->composerName) ?: $this->getComposerManifest('version');
     }
 
     /**
