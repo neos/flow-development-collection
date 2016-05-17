@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\Command;
 use TYPO3\Flow\Cli\CommandArgumentDefinition;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use TYPO3\Flow\Mvc\Exception\CommandException;
@@ -51,12 +50,6 @@ class HelpCommandController extends CommandController
      * @var string
      */
     protected $applicationName;
-
-    /**
-     * @Flow\Inject
-     * @var CommandManager
-     */
-    protected $commandManager;
 
     /**
      * Displays a short, general help message
