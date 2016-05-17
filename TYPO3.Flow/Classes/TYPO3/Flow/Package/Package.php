@@ -456,7 +456,7 @@ class Package implements PackageInterface
     }
 
     /**
-     * Get the installed package version (from composer) and as fallback the version given by package meta data.
+     * Get the installed package version (from composer) and as fallback the version given by composer manifest.
      *
      * @return string
      * @api
