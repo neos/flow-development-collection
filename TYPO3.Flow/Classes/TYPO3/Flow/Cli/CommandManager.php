@@ -261,7 +261,7 @@ class CommandManager
 
         $commandControllerMethodArgumentMap = [];
         foreach ($reflectionService->getAllSubClassNamesForClass(CommandController::class) as $className) {
-            if (!class_exists($className)) {
+            if (!class_exists($className) || $reflectionService->isClassAbstract($className)) {
                 continue;
             }
             $controllerObjectName = $objectManager->getObjectNameByClassName($className);
