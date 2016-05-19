@@ -52,12 +52,6 @@ class HelpCommandController extends CommandController
     protected $applicationName;
 
     /**
-     * @Flow\Inject
-     * @var CommandManager
-     */
-    protected $commandManager;
-
-    /**
      * Displays a short, general help message
      *
      * This only outputs the Flow version number, context and some hint about how to
