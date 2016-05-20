@@ -117,30 +117,30 @@
 			<target xml:lang="pl">Długość tego tekstu musi być pomiędzy {0,number} a {1,number} znaków</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This field must contain at least {0,number} character</source>
+          <target xml:lang="pl" state="needs-translation">This field must contain at least {0,number} character</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This field must contain at least {0,number} characters</target>
         </trans-unit>
         <trans-unit id="1238108068[2]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This field must contain at least {0,number} characters</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This text may not exceed {0,number} character</source>
+          <target xml:lang="pl" state="needs-translation">This text may not exceed {0,number} character</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This text may not exceed {0,number} characters</target>
         </trans-unit>
         <trans-unit id="1238108069[2]">
-          <source/>
-          <target xml:lang="pl"/>
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This text may not exceed {0,number} characters</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
