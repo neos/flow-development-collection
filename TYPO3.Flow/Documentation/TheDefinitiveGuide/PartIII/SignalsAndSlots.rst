@@ -126,3 +126,7 @@ There is one more parameter available: ``$passSignalInformation``. It controls
 whether or not the signal information (class name and method name of the signal
 emitter, separated by ``::``) should be passed to the slot as last parameter.
 ``$passSignalInformation`` is ``TRUE`` by default.
+
+.. note::
+
+After the creation of a ``Package`` class you need to manually invoke the command ``./flow flow:package:scan`` since the bootstrap behaviour is cached in the distributions PackageStates.php and needs to be rebuild.
