@@ -17,6 +17,7 @@ use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -261,6 +262,8 @@ class Scripts
 
         // The compile sub command will only be run if the code cache is completely empty:
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
+            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
             self::executeCommand('typo3.flow:core:compile', $settings);
             if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
                 self::compileDoctrineProxies($bootstrap);
