@@ -68,6 +68,12 @@ class TestEntity
     protected $arrayProperty = array();
 
     /**
+     * @var string
+     * @Flow\Validate(type="\TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator")
+     */
+    protected $validatedProperty = '';
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -199,5 +205,21 @@ class TestEntity
     public function getRelatedValueObject()
     {
         return $this->relatedValueObject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidatedProperty()
+    {
+        return $this->validatedProperty;
+    }
+
+    /**
+     * @param string $validatedProperty
+     */
+    public function setValidatedProperty($validatedProperty)
+    {
+        $this->validatedProperty = $validatedProperty;
     }
 }

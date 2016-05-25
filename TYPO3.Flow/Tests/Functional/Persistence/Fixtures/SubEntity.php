@@ -28,6 +28,12 @@ class SubEntity extends SuperEntity
     protected $parentEntity;
 
     /**
+     * @var string
+     * @Flow\Validate(type="\TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator")
+     */
+    protected $validatedProperty = '';
+
+    /**
      * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity
      * @return void
      */
@@ -42,5 +48,21 @@ class SubEntity extends SuperEntity
     public function getParentEntity()
     {
         return $this->parentEntity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidatedProperty()
+    {
+        return $this->validatedProperty;
+    }
+
+    /**
+     * @param string $validatedProperty
+     */
+    public function setValidatedProperty($validatedProperty)
+    {
+        $this->validatedProperty = $validatedProperty;
     }
 }

@@ -188,10 +188,16 @@ class PersistentObjectConverter extends ObjectConverter
 
         $objectConstructorArguments = $this->getConstructorArgumentsForClass(TypeHandling::getTypeForValue($object));
 
+        $validateObject = false;
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
+            $currentPropertyValue = ObjectAccess::getProperty($object, $propertyName);
+            if (!$validateObject) {
+                if ($currentPropertyValue !== $propertyValue) {
+                    $validateObject = true;
+                }
+            }
             // We need to check for "immutable" constructor arguments that have no setter and remove them.
             if (isset($objectConstructorArguments[$propertyName]) && !ObjectAccess::isPropertySettable($object, $propertyName)) {
-                $currentPropertyValue = ObjectAccess::getProperty($object, $propertyName);
                 if ($currentPropertyValue === $propertyValue) {
                     continue;
                 } else {
@@ -216,6 +222,9 @@ class PersistentObjectConverter extends ObjectConverter
             }
         }
 
+        if ($validateObject) {
+            // TODO: Mark $object to be (re)considered for Controller validation
+        }
         return $object;
     }
 
@@ -254,6 +263,9 @@ class PersistentObjectConverter extends ObjectConverter
             }
         }
 
+        if ($object !== null) {
+            // TODO: Mark $object to skip Controller validation
+        }
         return $object;
     }
 

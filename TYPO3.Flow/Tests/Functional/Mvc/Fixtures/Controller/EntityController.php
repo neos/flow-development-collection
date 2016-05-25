@@ -74,4 +74,58 @@ class EntityController extends ActionController
 
         return $message;
     }
+
+    /**
+     * @return void
+     */
+    protected function initializeValidateAction()
+    {
+        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+            ->allowAllProperties()
+            ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+            ->forProperty('subEntities.*')
+            ->allowAllProperties()
+            ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+    }
+
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $entity
+     * @return string
+     */
+    public function validateAction(TestEntity $entity)
+    {
+        /* @var \TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator $spyValidator */
+        $spyValidator = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator');
+        return sprintf('SpyValidator was executed %d times.', $spyValidator->executionCount());
+    }
+
+    /**
+     * @return void
+     */
+    protected function initializeValidatePersistenceAction()
+    {
+        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+            ->allowAllProperties()
+            ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+            ->forProperty('subEntities.*')
+            ->allowAllProperties()
+            ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+    }
+
+    /**
+     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $entity
+     * @return string
+     */
+    public function validatePersistenceAction(TestEntity $entity)
+    {
+        $entity->setValidatedProperty('Some value set inside Action');
+        $this->testEntityRepository->update($entity);
+        $this->persistenceManager->persistAll();
+
+        /* @var \TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator $spyValidator */
+        $spyValidator = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Validation\Fixtures\SpyValidator');
+        return sprintf('SpyValidator was executed %d times.', $spyValidator->executionCount());
+    }
 }
