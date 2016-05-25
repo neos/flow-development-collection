@@ -43,7 +43,6 @@ use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\Lock\LockManager;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -316,8 +315,6 @@ class Scripts
 
         // The compile sub command will only be run if the code cache is completely empty:
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
             self::executeCommand('typo3.flow:core:compile', $settings);
             if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
                 self::compileDoctrineProxies($bootstrap);
