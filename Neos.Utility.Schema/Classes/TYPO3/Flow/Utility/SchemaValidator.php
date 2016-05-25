@@ -75,7 +75,7 @@ class SchemaValidator
                 }
             }
             if ($isValid === false) {
-                $result->addError($this->createError('None of the given schemas matched ' . $value));
+                $result->addError($this->createError('None of the given schemas matched ' . $this->getValueInfo($value)));
             }
         } elseif ($this->isSchema($schema)) {
             if (isset($schema['type'])) {
@@ -89,7 +89,7 @@ class SchemaValidator
             if (isset($schema['disallow'])) {
                 $subresult = $this->validate($value, array('type' => $schema['disallow']));
                 if ($subresult->hasErrors() === false) {
-                    $result->addError($this->createError('Disallow rule matched for "' . $value . '"'));
+                    $result->addError($this->createError('Disallow rule matched for "' . $this->getValueInfo($value) . '"'));
                 }
             }
 
@@ -102,7 +102,7 @@ class SchemaValidator
                     }
                 }
                 if ($isValid === false) {
-                    $result->addError($this->createError('"' . $value . '" is not in enum-rule "' . implode(', ', $schema['enum']) . '"'));
+                    $result->addError($this->createError('"' . $this->getValueInfo($value) . '" is not in enum-rule "' . implode(', ', $schema['enum']) . '"'));
                 }
             }
         }
@@ -155,7 +155,7 @@ class SchemaValidator
                     $result->merge($this->validateAnyType($value, $schema));
                     break;
                 default:
-                    $result->addError($this->createError('Type "' . $schema['type'] . '" is unknown'));
+                    $result->addError($this->createError('Type "' . $this->getSchemaTypeInfo($schema['type']) . '" is unknown'));
                     break;
             }
         } else {
@@ -183,7 +183,7 @@ class SchemaValidator
             }
         }
         if ($isValid === false) {
-            $result->addError($this->createError('type=' . (is_array($schema['type']) ? implode(', ', $schema['type']) : $schema['type']), 'type=' . gettype($value)));
+            $result->addError($this->createError('None of the given schemas ' . $this->getSchemaTypeInfo($schema['type']) . ' matched ' . $this->getValueInfo($value)));
         }
         return $result;
     }
@@ -206,7 +206,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_numeric($value) === false) {
-            $result->addError($this->createError('type=number', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=number', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
 
@@ -257,7 +257,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_integer($value) === false) {
-            $result->addError($this->createError('type=integer', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=integer', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
         $result->merge($this->validateNumberType($value, $schema));
@@ -275,7 +275,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_bool($value) === false) {
-            $result->addError($this->createError('type=boolean', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=boolean', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
         return $result;
@@ -298,7 +298,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_array($value) === false || $this->isNumericallyIndexedArray($value) === false) {
-            $result->addError($this->createError('type=array', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=array', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
 
@@ -352,7 +352,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_array($value) === false || $this->isDictionary($value) === false) {
-            $result->addError($this->createError('type=dictionary', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=dictionary', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
 
@@ -443,7 +443,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if (is_string($value) === false) {
-            $result->addError($this->createError('type=string', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=string', 'type=' . $this->getValueInfo($value)));
             return $result;
         }
 
@@ -550,7 +550,7 @@ class SchemaValidator
     {
         $result = new \TYPO3\Flow\Error\Result();
         if ($value !== null) {
-            $result->addError($this->createError('type=NULL', 'type=' . gettype($value)));
+            $result->addError($this->createError('type=NULL', 'type=' . $this->getValueInfo($value)));
         }
         return $result;
     }
@@ -577,7 +577,8 @@ class SchemaValidator
     protected function createError($expectation, $value = null)
     {
         if ($value !== null) {
-            $error = new \TYPO3\Flow\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $value), 'Validation Error');
+            $valueInfo = $this->getValueInfo($value);
+            $error = new \TYPO3\Flow\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $valueInfo), 'Validation Error');
         } else {
             $error = new \TYPO3\Flow\Error\Error($expectation, 1328557141, array(), 'Validation Error');
         }
@@ -623,5 +624,46 @@ class SchemaValidator
     protected function isDictionary(array $phpArray)
     {
         return array_keys($phpArray) !== range(0, count($phpArray) - 1);
+    }
+
+    /**
+     * Generate a short description for the given schema-type to be used in error-messages
+     *
+     * @param mixed $type
+     * @return string
+     */
+    protected function getSchemaTypeInfo($type) {
+        if (is_scalar($type)) {
+            return (string)$type;
+        } else if (is_array($type)) {
+            if ($this->isSchema($type) && array_key_exists('type', $type)) {
+                return $this->getSchemaTypeInfo($type['type']);
+            } else if ($this->isNumericallyIndexedArray($type)) {
+                $subTypeInfos = [];
+                foreach ($type as $subType) {
+                    $subTypeInfos[] = $this->getSchemaTypeInfo($subType);
+                }
+                return '[' . implode(', ', $subTypeInfos) . ']';
+            } else {
+                return 'dictionary';
+            }
+        }
+        return gettype($type);
+    }
+
+    /**
+     * Generate a short description for the given value to be used in error-messages
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function getValueInfo($value) {
+        if (is_scalar($value)) {
+            return (string)$value;
+        } else if (is_array($value)) {
+            return $this->isNumericallyIndexedArray($value) ? 'array' : 'dictionary';
+        } else {
+            return gettype($value);
+        }
     }
 }
