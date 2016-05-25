@@ -1,0 +1,191 @@
+========
+Flow 3.1
+========
+
+Today, December 22nd 2015, we’re happy to announce **Flow 3.1**.
+
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 3.0 based applications to Flow 3.1.
+
+What has changed
+----------------
+
+Flow 3.1 comes with numerous fixes and improvements. Here's a list of changes that might need special attention when
+upgrading.
+
+In general make sure to run the commands::
+
+ ./flow flow:cache:flush --force
+ ./flow core:migrate
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+when upgrading (see below).
+
+Support for PHP 7
+^^^^^^^^^^^^^^^^^
+
+With Flow 3.0 the minimum PHP version requirement has been increased
+from `5.3.2` to `5.5.0`. The current releases also support PHP 7.
+
+Routes via Settings
+^^^^^^^^^^^^^^^^^^^
+
+This change allows routes to be defined via `Settings.yaml` like follows:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      mvc:
+        routes:
+          'Some.Package': TRUE
+
+This would append the main `Routes.yaml` from the package
+``Some.Package`` (including it's subroutes, if any) to existing
+route definitions.
+
+It's also possible to specify the order in relation to other packages:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      mvc:
+        routes:
+          'SomeOther.Package':
+            position: 'before Some.Package'
+
+This will add the ``SomeOther.Package`` routes *before* the routes
+of ``Some.Package`` (if those are included).
+
+.. note::
+  Routes included via main `Configuration/Routes.yaml` will
+  *always* be included first, it's not possible to add routes before or
+  in between those via the new setting.
+
+  Thus it's recommended to remove the main `Routes.yaml` and include
+  routes via `Settings.yaml` instead.
+
+For the Flow Routes this could look like:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      mvc:
+        routes:
+          'TYPO3.Flow':
+            position: 'start'
+
+Setting for application name
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This change introduces a new setting which allows developers to display
+a custom application name and version in the ``./flow help`` commands and
+potentially elsewhere. For example, ``./flow`` will display "Neos" and the
+version number of the Neos package, when the command is run in a Neos
+distribution.
+
+The setting does not refer to the application name directly, but to a
+package key. The specified package's meta data (Composer manifest) is
+used to determine the application name and version. Since it is best
+practice to use the "description" property of the Composer manifest for
+specifying the application name, that field is used as the application
+name in ./flow too (see also comments by Jordi at
+https://github.com/composer/composer/issues/1140).
+
+Flow resources can be copied from one collection to another
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Introduces a new command ``./flow resource:copy currentCollection newCollection``
+that can copy all resources from one collection to the other.
+
+This can be used to switch the underlying storage and publication target.
+Also the documentation has been enhanced to provide information of
+how to use CDN target or move your resources to a remote storage.
+
+``!instanceof`` filter operations in Eel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks if the value is not an instance of the operand.
+
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There haven't been API changes in Flow 3.1 which require your code to be adjusted. However, if you are upgrading from Flow
+versions earlier than 3.0, you need to migrate your code. As with earlier changes to Flow that required code changes on
+the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*" or "Neos.*") - for the first run you might want to limit things a little to keep the overview,
+though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+Upgrading the database schema
+-----------------------------
+
+Upgrading the schema is done by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema.
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrationgenerate
+
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
+
+If it does not and you have no idea what to do next, please get in touch
+with us.

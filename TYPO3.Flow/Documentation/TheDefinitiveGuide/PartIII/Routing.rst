@@ -4,9 +4,9 @@
 Routing
 =======
 
-.. sectionauthor:: Bastian Waidelich <bastian@typo3.org>
+.. sectionauthor:: Bastian Waidelich <bastian@neos.io>
 
-As explained in the Model View Controller chapter, in TYPO3 Flow the dispatcher passes the
+As explained in the Model View Controller chapter, in Flow the dispatcher passes the
 request to a controller which then calls the respective action. But how to tell, what
 controller of what package is the right one for the current request? This is were the
 Routing Framework comes into play.
@@ -62,7 +62,7 @@ But let's start with an easy example:
 
 If you insert these lines at the beginning of the file ``Configurations/Routes.yaml``,
 the ``indexAction`` of the ``StandardController`` in your *My.Demo* package will be called
-when you open up the homepage of your TYPO3 Flow installation (``http://localhost/``).
+when you open up the homepage of your Flow installation (``http://localhost/``).
 
 URI patterns
 ============
@@ -416,7 +416,7 @@ Now route values that are neither defined in the ``uriPattern`` nor specified in
 appended to the resulting URI: ``http://localhost/foo/dynamicValue?someOtherArgument=argumentValue``
 
 This setting is mostly useful for *fallback routes* and it is enabled for the default action route provided
-with TYPO3 Flow, so that most links will work out of the box.
+with Flow, so that most links will work out of the box.
 
 .. note::
 
@@ -758,8 +758,8 @@ specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 		                                          TYPO3 :: Fallback rule – for when no site has been defined yet
 
 
-Route Loading Order and the TYPO3 Flow Application Context
-==========================================================
+Route Loading Order and the Flow Application Context
+====================================================
 
 - routes inside more specific contexts are loaded *first*
 - and *after* that, global ones, so you can specify context-specific routes

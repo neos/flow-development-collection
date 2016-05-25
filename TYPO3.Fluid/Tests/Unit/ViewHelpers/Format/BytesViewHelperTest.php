@@ -13,7 +13,6 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 
 /**

@@ -27,9 +27,20 @@ class ClassWithSettersAndConstructor
      */
     protected $property2;
 
-    public function __construct($property1)
+
+    /**
+     * @var string
+     */
+    protected $property3;
+
+    /**
+     * @param mixed $property1
+     * @param string $anotherProperty
+     */
+    public function __construct($property1, $anotherProperty = '')
     {
         $this->property1 = $property1;
+        $this->property3 = $anotherProperty;
     }
 
     public function getProperty1()

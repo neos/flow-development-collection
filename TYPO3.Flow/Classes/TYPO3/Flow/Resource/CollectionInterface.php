@@ -79,10 +79,9 @@ interface CollectionInterface
     /**
      * Returns all internal data objects of the storage attached to this collection.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
     public function getObjects();
-
 
     /**
      * Returns a stream handle of the given persistent resource which allows for opening / copying the resource's

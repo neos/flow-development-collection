@@ -112,9 +112,6 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);
 
-        $this->mockPropertyMappingConfiguration = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->ajaxWidgetComponent, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
-
         $this->mockPropertyMapper = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->getMock();
         $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
         $this->inject($this->ajaxWidgetComponent, 'propertyMapper', $this->mockPropertyMapper);

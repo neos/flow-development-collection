@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="ja" state="needs-translation">Authentication required</target></trans-unit>
+			<target xml:lang="ja" state="translated">認証が必要です</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
@@ -13,19 +13,19 @@
 			<target xml:lang="ja" state="needs-translation">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="ja" state="needs-translation">New password</target></trans-unit>
+			<target xml:lang="ja" state="translated">新しいパスワード</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="ja" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="ja" state="translated">ログイン</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="ja" state="needs-translation">Logout</target></trans-unit>
+			<target xml:lang="ja" state="translated">ログアウト</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="ja" state="needs-translation">Update</target></trans-unit>
+			<target xml:lang="ja" state="translated">アップデート</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="ja" state="needs-translation">Submit</target></trans-unit>
+			<target xml:lang="ja" state="translated">送信</target></trans-unit>
     </body>
   </file>
 </xliff>

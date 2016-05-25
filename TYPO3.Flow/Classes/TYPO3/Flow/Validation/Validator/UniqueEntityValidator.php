@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Validation\Validator;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
 
 /**
@@ -56,7 +57,7 @@ class UniqueEntityValidator extends AbstractValidator
             throw new InvalidValidationOptionsException('The value supplied for the UniqueEntityValidator must be an object.', 1358454270);
         }
 
-        $classSchema = $this->reflectionService->getClassSchema($value);
+        $classSchema = $this->reflectionService->getClassSchema(TypeHandling::getTypeForValue($value));
         if ($classSchema === null || $classSchema->getModelType() !== \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
             throw new InvalidValidationOptionsException('The object supplied for the UniqueEntityValidator must be an entity.', 1358454284);
         }

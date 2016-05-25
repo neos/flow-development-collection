@@ -12,6 +12,12 @@ namespace TYPO3\Flow\Cli;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
+use TYPO3\Flow\Mvc\Exception\CommandException;
+use TYPO3\Flow\Mvc\Exception\NoSuchCommandException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * A helper for CLI Commands
@@ -31,26 +37,26 @@ class CommandManager
     protected $shortCommandIdentifiers = null;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
-     */
-    protected $reflectionService;
-
-    /**
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
     /**
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
-        $this->reflectionService = $reflectionService;
+        $this->objectManager = $objectManager;
     }
 
     /**
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+     * @param Bootstrap $bootstrap
      * @return void
      */
     public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap)
@@ -67,20 +73,15 @@ class CommandManager
     public function getAvailableCommands()
     {
         if ($this->availableCommands === null) {
-            $this->availableCommands = array();
+            $this->availableCommands = [];
 
-            $commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass(\TYPO3\Flow\Cli\CommandController::class);
-            foreach ($commandControllerClassNames as $className) {
-                if (!class_exists($className)) {
-                    continue;
-                }
-                foreach (get_class_methods($className) as $methodName) {
-                    if (substr($methodName, -7, 7) === 'Command') {
-                        $this->availableCommands[] = new Command($className, substr($methodName, 0, -7));
-                    }
+            foreach (static::getCommandControllerMethodArguments($this->objectManager) as $className => $methods) {
+                foreach (array_keys($methods) as $methodName) {
+                    $this->availableCommands[] = new Command($className, substr($methodName, 0, -7));
                 }
             }
         }
+
         return $this->availableCommands;
     }
 
@@ -90,9 +91,9 @@ class CommandManager
      * If more than one Command matches an AmbiguousCommandIdentifierException is thrown that contains the matched Commands
      *
      * @param string $commandIdentifier command identifier in the format foo:bar:baz
-     * @return \TYPO3\Flow\Cli\Command
-     * @throws \TYPO3\Flow\Mvc\Exception\NoSuchCommandException if no matching command is available
-     * @throws \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
+     * @return Command
+     * @throws NoSuchCommandException if no matching command is available
+     * @throws AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
      * @api
      */
     public function getCommandByIdentifier($commandIdentifier)
@@ -107,11 +108,12 @@ class CommandManager
 
         $matchedCommands = $this->getCommandsByIdentifier($commandIdentifier);
         if (count($matchedCommands) === 0) {
-            throw new \TYPO3\Flow\Mvc\Exception\NoSuchCommandException('No command could be found that matches the command identifier "' . $commandIdentifier . '".', 1310556663);
+            throw new NoSuchCommandException('No command could be found that matches the command identifier "' . $commandIdentifier . '".', 1310556663);
         }
         if (count($matchedCommands) > 1) {
-            throw new \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, null, $matchedCommands);
+            throw new AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, null, $matchedCommands);
         }
+
         return current($matchedCommands);
     }
 
@@ -126,12 +128,13 @@ class CommandManager
     public function getCommandsByIdentifier($commandIdentifier)
     {
         $availableCommands = $this->getAvailableCommands();
-        $matchedCommands = array();
+        $matchedCommands = [];
         foreach ($availableCommands as $command) {
             if ($this->commandMatchesIdentifier($command, $commandIdentifier)) {
                 $matchedCommands[] = $command;
             }
         }
+
         return $matchedCommands;
     }
 
@@ -151,6 +154,7 @@ class CommandManager
         if (!isset($shortCommandIdentifiers[$command->getCommandIdentifier()])) {
             return $command->getCommandIdentifier();
         }
+
         return $shortCommandIdentifiers[$command->getCommandIdentifier()];
     }
 
@@ -162,14 +166,15 @@ class CommandManager
     protected function getShortCommandIdentifiers()
     {
         if ($this->shortCommandIdentifiers === null) {
-            $commandsByCommandName = array();
+            $commandsByCommandName = [];
+            /** @var Command $availableCommand */
             foreach ($this->getAvailableCommands() as $availableCommand) {
                 list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
                 if (!isset($commandsByCommandName[$commandName])) {
-                    $commandsByCommandName[$commandName] = array();
+                    $commandsByCommandName[$commandName] = [];
                 }
                 if (!isset($commandsByCommandName[$commandName][$controllerName])) {
-                    $commandsByCommandName[$commandName][$controllerName] = array();
+                    $commandsByCommandName[$commandName][$controllerName] = [];
                 }
                 $commandsByCommandName[$commandName][$controllerName][] = $packageKey;
             }
@@ -178,12 +183,12 @@ class CommandManager
                 if (count($commandsByCommandName[$commandName][$controllerName]) > 1 || $this->bootstrap->isCompiletimeCommand($availableCommand->getCommandIdentifier())) {
                     $packageKeyParts = array_reverse(explode('.', $packageKey));
                     for ($i = 1; $i <= count($packageKeyParts); $i++) {
-                        $shortCommandIdentifier = implode('.', array_slice($packageKeyParts, 0, $i)) .  ':' . $controllerName . ':' . $commandName;
+                        $shortCommandIdentifier = implode('.', array_slice($packageKeyParts, 0, $i)) . ':' . $controllerName . ':' . $commandName;
                         try {
                             $this->getCommandByIdentifier($shortCommandIdentifier);
                             $this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = $shortCommandIdentifier;
                             break;
-                        } catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
+                        } catch (CommandException $exception) {
                         }
                     }
                 } else {
@@ -191,6 +196,7 @@ class CommandManager
                 }
             }
         }
+
         return $this->shortCommandIdentifiers;
     }
 
@@ -215,7 +221,8 @@ class CommandManager
         if ($searchedCommandIdentifierPartsCount === 3 || $searchedCommandIdentifierPartsCount === 1) {
             $searchedPackageKey = array_shift($searchedCommandIdentifierParts);
             if ($searchedPackageKey !== $packageKey
-                    && substr($packageKey, - (strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey) {
+                && substr($packageKey, -(strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey
+            ) {
                 return false;
             }
         }
@@ -224,6 +231,48 @@ class CommandManager
         } elseif (count($searchedCommandIdentifierParts) !== 2) {
             return false;
         }
+
         return $searchedCommandIdentifierParts === $commandIdentifierParts;
+    }
+
+    /**
+     * Get the possible parameters for the command specified by CommandController and method name.
+     *
+     * @param string $controllerObjectName
+     * @param string $commandMethodName
+     * @return array
+     */
+    public function getCommandMethodParameters($controllerObjectName, $commandMethodName)
+    {
+        $commandControllerMethodArgumentMap = static::getCommandControllerMethodArguments($this->objectManager);
+
+        return isset($commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName]) ? $commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName] : [];
+    }
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @return array Array of method arguments per controller and method.
+     * @Flow\CompileStatic
+     */
+    public static function getCommandControllerMethodArguments($objectManager)
+    {
+        /** @var ReflectionService $reflectionService */
+        $reflectionService = $objectManager->get(ReflectionService::class);
+
+        $commandControllerMethodArgumentMap = [];
+        foreach ($reflectionService->getAllSubClassNamesForClass(CommandController::class) as $className) {
+            if (!class_exists($className) || $reflectionService->isClassAbstract($className)) {
+                continue;
+            }
+            $controllerObjectName = $objectManager->getObjectNameByClassName($className);
+            $commandControllerMethodArgumentMap[$controllerObjectName] = [];
+            foreach (get_class_methods($className) as $methodName) {
+                if (substr($methodName, -7, 7) === 'Command') {
+                    $commandControllerMethodArgumentMap[$className][$methodName] = $reflectionService->getMethodParameters($controllerObjectName, $methodName);
+                }
+            }
+        }
+
+        return $commandControllerMethodArgumentMap;
     }
 }

@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Resource\Target;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
+use TYPO3\Flow\Resource\Publishing\MessageCollector;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceMetaDataInterface;
 use TYPO3\Flow\Utility\Files;
@@ -102,6 +103,12 @@ class FileSystemTarget implements TargetInterface
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var MessageCollector
+     */
+    protected $messageCollector;
+
+    /**
      * Constructor
      *
      * @param string $name Name of this target instance, according to the resource settings
@@ -152,17 +159,19 @@ class FileSystemTarget implements TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\CollectionInterface $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
+     * @param callable $callback Function called after each resource publishing
      * @return void
      * @throws Exception
      */
-    public function publishCollection(CollectionInterface $collection)
+    public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
-        foreach ($collection->getObjects() as $object) {
+        foreach ($collection->getObjects($callback) as $object) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
-                throw new Exception(sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $object->getFilename(), $object->getSha1(), $collection->getName()), 1417168142);
+                $this->handleMissingData($object, $collection);
+                continue;
             }
             $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
             fclose($sourceStream);
@@ -181,10 +190,23 @@ class FileSystemTarget implements TargetInterface
     {
         $sourceStream = $resource->getStream();
         if ($sourceStream === false) {
-            throw new Exception(sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName()), 1375258146);
+            $this->handleMissingData($resource, $collection);
+            return;
         }
         $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($resource));
         fclose($sourceStream);
+    }
+
+    /**
+     * Handle missing data notification
+     *
+     * @param CollectionInterface $collection
+     * @param ResourceMetaDataInterface $resource
+     */
+    protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection)
+    {
+        $message = sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName());
+        $this->messageCollector->append($message);
     }
 
     /**

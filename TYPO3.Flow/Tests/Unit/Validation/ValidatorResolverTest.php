@@ -597,6 +597,67 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * @test
      */
+    public function buildBaseValidatorConjunctionBuildsCorrectValidationChainForCyclicRelations()
+    {
+        $fooMockObject = $this->getMock(\stdClass::class, array(), array(), 'FooMock');
+        $fooClassName = get_class($fooMockObject);
+        $barMockObject = $this->getMock(\stdClass::class, array(), array(), 'BarMock');
+        $barClassName = get_class($barMockObject);
+
+        $fooPropertyTagsValues = array(
+            'bar' => array(
+                'var' => array($barClassName),
+            )
+        );
+        $barPropertyTagsValues = array(
+            'foo' => array(
+                'var' => array($fooClassName),
+            )
+        );
+
+        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', false);
+        $mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(\TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface::class)->will($this->returnValue(array()));
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValueMap(array(
+            array($fooClassName, array('bar')),
+            array($barClassName, array('foo'))
+        )));
+        $mockReflectionService->expects($this->any())->method('getPropertyTagsValues')->will($this->returnValueMap(array(
+            array($fooClassName, 'bar', $fooPropertyTagsValues['bar']),
+            array($barClassName, 'foo', $barPropertyTagsValues['foo'])
+        )));
+        $mockReflectionService->expects($this->any())->method('isPropertyAnnotatedWith')->will($this->returnValue(false));
+        $mockReflectionService->expects($this->any())->method('getPropertyAnnotations')->will($this->returnValue(array()));
+
+        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(true));
+        $mockObjectManager->expects($this->any())->method('getScope')->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
+        $mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Reflection\ReflectionService::class)->will($this->returnValue($mockReflectionService));
+
+        $validatorResolver = $this->getAccessibleMock(\TYPO3\Flow\Validation\ValidatorResolver::class, array('resolveValidatorObjectName', 'createValidator'));
+        $validatorResolver->_set('reflectionService', $mockReflectionService);
+        $validatorResolver->_set('objectManager', $mockObjectManager);
+
+        /* @var $validatorChain \TYPO3\Flow\Validation\Validator\ConjunctionValidator */
+        $validatorChain = $validatorResolver->getBaseValidatorConjunction($fooClassName);
+        $fooValidators = $validatorChain->getValidators();
+        $this->assertGreaterThan(0, $fooValidators->count());
+
+        // ugh, it's so cumbersome to work with SplObjectStorage outside of iterations...
+        $fooValidators->rewind();
+        $barValidators = $fooValidators->current()->getPropertyValidators('bar');
+        $this->assertGreaterThan(0, $barValidators->count());
+
+        $barValidators->rewind();
+        $barValidators = $barValidators->current()->getValidators();
+        $this->assertGreaterThan(0, $barValidators->count());
+        $barValidators->rewind();
+
+        $this->assertGreaterThan(0, $barValidators->current()->getPropertyValidators('foo')->count());
+    }
+
+    /**
+     * @test
+     */
     public function getValidatorTypeCorrectlyRenamesPhpDataTypes()
     {
         $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);

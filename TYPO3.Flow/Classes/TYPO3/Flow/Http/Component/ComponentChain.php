@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Http\Component;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Response;
 
 /**
  * The HTTP component chain
@@ -27,6 +28,11 @@ class ComponentChain implements ComponentInterface
      * @var array
      */
     protected $options;
+
+    /**
+     * @var Response
+     */
+    protected $response;
 
     /**
      * @param array $options
@@ -53,10 +59,19 @@ class ComponentChain implements ComponentInterface
                 continue;
             }
             $component->handle($componentContext);
-            if ($componentContext->getParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel') === true) {
-                $componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', null);
+            $this->response = $componentContext->getHttpResponse();
+            if ($componentContext->getParameter(ComponentChain::class, 'cancel') === true) {
+                $componentContext->setParameter(ComponentChain::class, 'cancel', null);
                 return;
             }
         }
+    }
+
+    /**
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

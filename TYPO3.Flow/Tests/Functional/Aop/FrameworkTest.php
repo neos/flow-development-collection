@@ -191,6 +191,27 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function traitWithNewMethodCanBeIntroduced()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+
+        $this->assertEquals('I\'m the traitor', call_user_func(array($targetClass, 'introducedTraitMethod')));
+    }
+
+    /**
+     * @test
+     */
+    public function introducedTraitMethodWontOverrideExistingMethods()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+
+        $this->assertNotEquals('Hello from trait', $targetClass->sayHello());
+        $this->assertEquals('Hello World', $targetClass->sayHello());
+    }
+
+    /**
      * Public and protected properties can be introduced.
      *
      * @test

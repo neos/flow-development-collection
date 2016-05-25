@@ -47,7 +47,7 @@ unimportant ones.
 In the following sections, some core components of Domain-Driven
 Design are explained. It starts with an approach to create a ubiquitous
 language, and then focuses on the technical realization of the domain
-model. After that, it is quickly explained how TYPO3 Flow enables
+model. After that, it is quickly explained how Flow enables
 Domain-Driven Design, such that the reader gets a more practical
 understanding of it.
 
@@ -383,12 +383,12 @@ For each *aggregate*, there is exactly one
 repository responsible which can be used to fetch the
 *aggregate root* object.
 
-How TYPO3 Flow enables Domain-Driven Design
---------------------------------------------
+How Flow enables Domain-Driven Design
+-------------------------------------
 
-TYPO3 Flow is a web development framework written in PHP, with
+Flow is a web development framework written in PHP, with
 Domain-Driven Design as its core principle. We will now show in what
-areas TYPO3 Flow supports Domain-Driven Design.
+areas Flow supports Domain-Driven Design.
 
 First, the developer can directly focus on creating the domain
 model, using unit testing to implement the use-cases needed. While he
@@ -398,7 +398,7 @@ creates just consists of plain PHP objects, with no base class or
 other magic functionality involved. Thus, he can fully concentrate on
 domain modelling, without thinking about infrastructure yet.
 
-This is a core principle of TYPO3 Flow: All parts of it strive for
+This is a core principle of Flow: All parts of it strive for
 maximum focus and cleanness of the domain model, keeping the developer
 focused on the correct implementation of it.
 
@@ -407,13 +407,13 @@ attach metadata to classes, methods or properties. This functionality
 can be used to mark objects as entity or value object, and to add
 validation rules to properties. In the domain object below,
 a sample of such an annotated class is given. As PHP does not have a
-language construct for annotations, this is emulated by TYPO3 Flow by
+language construct for annotations, this is emulated by Flow by
 parsing the source code comments.
 
 In order to mark a domain object as *aggregate
 root*, only a repository has to be created for it, based on
 a certain naming convention. Repositories are the easiest way to make domain
-objects persistent, and TYPO3 Flow provides a base class containing generic
+objects persistent, and Flow provides a base class containing generic
 ``findBy*`` methods. Furthermore, it supports a
 domain-specific language for building queries which can be used for
 more complex queries, as shown in below in the ``AccountRepository``.
@@ -468,7 +468,7 @@ A simple repository::
 		}
 	}
 
-From the infrastructure perspective, TYPO3 Flow is structured as MVC
+From the infrastructure perspective, Flow is structured as MVC
 framework, with the model being the Domain-Driven Design techniques.
 However, also in the controller and the view layer, the system has a
 strong support for domain objects: It can transparently convert
@@ -477,7 +477,7 @@ browser. It also works the other way around: Simple types will be
 converted to objects whenever possible, so the developer can deal with
 objects in an end-to-end fashion.
 
-Furthermore, TYPO3 Flow has an Aspect-Oriented Programming framework
+Furthermore, Flow has an Aspect-Oriented Programming framework
 at its core, which makes it easy to separate cross-cutting concerns.
 There is a security framework in place (built upon AOP) where the
 developer can declaratively define access rules for his domain

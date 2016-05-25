@@ -10,7 +10,6 @@ namespace TYPO3\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\LocaleTypeConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
 

@@ -45,6 +45,7 @@ class Package extends BasePackage
 
         $bootstrap->registerCompiletimeCommand('typo3.flow:core:*');
         $bootstrap->registerCompiletimeCommand('typo3.flow:cache:flush');
+        $bootstrap->registerCompiletimeCommand('typo3.flow:package:rescan');
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(\TYPO3\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {

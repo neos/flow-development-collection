@@ -36,8 +36,12 @@ TYPO3:
       context: ''
 
       # Key of the "main" package of the application. This package's meta data is used for displaying the application
-      # name, version etc. in the ./flow command line help and where else needed.
+      # version and possibly other metadata in the X-Flow-Powered HTTP header, ./flow command line help and where else needed.
       applicationPackageKey: 'TYPO3.Flow'
+
+      # Human-readable name of the "main" package of the application. This name is displayed in the X-Flow-Powered
+      # HTTP header, in the ./flow command line help and where else needed.
+      applicationName: 'Flow'
 
       # Path and filename of the PHP binary
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
@@ -136,6 +140,18 @@ TYPO3:
       routes: []
 
     http:
+
+      # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
+      #
+      # The value can be one of:
+      #
+      # - "Off" (no application token header is sent)
+      # - "ApplicationName" (the application name only, determined via the TYPO3.Flow.core.applicationKey setting)
+      # - "MajorVersion" (the application name + major version, e.g. "Neos/2"
+      # - "MinorVersion" (the application name + minor version, e.g. "Neos/2.1"
+      #
+      applicationToken: 'MinorVersion'
+
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
       # "Http\Request->getBaseUri()".
@@ -254,14 +270,16 @@ TYPO3:
       # Option for the PackageManager::Create to map the packagesPath by package type
       packagesPathByType:
         'typo3-flow-package': 'Application'
+        'neos-package': 'Application'
         'typo3-flow-framework': 'Framework'
+        'neos-framework': 'Framework'
 
     persistence:
 
       # Options for the default Doctrine persistence
       backendOptions:
         driver: 'pdo_mysql'
-        host: '127.0.0.1'
+        host: NULL
         dbname: NULL
         user: NULL
         password: NULL
@@ -546,8 +564,6 @@ TYPO3:
       # A specific name for the session, used in the session cookie.
       # The session name must be alphanumerical and must contain at least one
       # character – not only numbers.
-      #
-      # If left empty, the session name will be determined from the base URL.
       name: 'TYPO3_Flow_Session'
 
       # Configuration for handling of expired sessions

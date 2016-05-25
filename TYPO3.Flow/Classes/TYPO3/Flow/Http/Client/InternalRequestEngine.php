@@ -20,6 +20,7 @@ use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
 use TYPO3\Flow\Validation\ValidatorResolver;
@@ -74,6 +75,12 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $settings;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -108,23 +115,18 @@ class InternalRequestEngine implements RequestEngineInterface
         $baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
         $componentContext = new ComponentContext($httpRequest, $response);
 
-        if (version_compare(PHP_VERSION, '6.0.0') >= 0) {
-            try {
-                $baseComponentChain->handle($componentContext);
-            } catch (\Throwable $throwable) {
-                $this->prepareErrorResponse($throwable, $response);
-            }
-        } else {
-            try {
-                $baseComponentChain->handle($componentContext);
-            } catch (\Exception $exception) {
-                $this->prepareErrorResponse($exception, $response);
-            }
+        try {
+            $baseComponentChain->handle($componentContext);
+        } catch (\Throwable $throwable) {
+            $this->prepareErrorResponse($throwable, $response);
+        } catch (\Exception $exception) {
+            $this->prepareErrorResponse($exception, $response);
         }
         $session = $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
+        $this->persistenceManager->clearState();
         return $response;
     }
 
@@ -141,7 +143,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Prepare a response in case an error occurred.
      *
-     * @param \Throwable $exception
+     * @param object $exception \Exception or \Throwable
      * @param Http\Response $response
      * @return void
      */

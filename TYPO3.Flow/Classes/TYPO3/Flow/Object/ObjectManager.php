@@ -464,6 +464,17 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Returns all current object configurations.
+     * For internal use in bootstrap only. Can change anytime.
+     *
+     * @return array
+     */
+    public function getAllObjectConfigurations()
+    {
+        return $this->objects;
+    }
+
+    /**
      * Invokes the Factory defined in the object configuration of the specified object in order
      * to build an instance. Arguments which were defined in the object configuration are
      * passed to the factory method.
@@ -479,14 +490,14 @@ class ObjectManager implements ObjectManagerInterface
         $factoryMethodArguments = array();
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
                     $settingPath = explode('.', $argumentInformation['v']);
                     $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                     $factoryMethodArguments[$index] = $this->get($argumentInformation['v']);
                 break;
             }

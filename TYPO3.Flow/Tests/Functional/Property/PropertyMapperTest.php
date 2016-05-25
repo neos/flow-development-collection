@@ -127,7 +127,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'age' => '42'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity::class, $configuration);
@@ -145,7 +145,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'name' => 'A horse'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity::class, $configuration);
@@ -161,7 +161,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'name' => 'Tower of Pisa'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class, $configuration);
@@ -179,7 +179,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'name' => 'A horse'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class, $configuration);
@@ -297,7 +297,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'testField' => 'A horse'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $theHorse = $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity::class, $configuration);
@@ -349,7 +349,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'testField' => 'A horse'
         );
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity::class, $configuration);
@@ -371,7 +371,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $expectedRoleIdentifiers = array('TYPO3.Flow:Customer', 'TYPO3.Flow:Administrator');
 
-        $configuration = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->forProperty('roles.*')->allowProperties();
 
         $account = $this->propertyMapper->convert($source, \TYPO3\Flow\Security\Account::class, $configuration);
@@ -402,5 +402,18 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->propertyMapper->convert($source, 'string');
 
         $this->assertSame($entityIdentifier, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration()
+    {
+        $defaultConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
+        $this->assertTrue($defaultConfiguration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        $this->assertTrue($defaultConfiguration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+
+        $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 }
