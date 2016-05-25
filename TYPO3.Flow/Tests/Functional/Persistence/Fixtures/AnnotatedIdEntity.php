@@ -24,6 +24,7 @@ class AnnotatedIdEntity
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @ORM\SequenceGenerator(sequenceName="annotatedidentity_seq")
      * @var string
      */
     protected $id;

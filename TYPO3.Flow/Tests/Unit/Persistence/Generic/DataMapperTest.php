@@ -229,14 +229,11 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * @test
      * @see http://forge.typo3.org/issues/9684
-     * @todo check for correct order again, somehow...
      */
     public function thawPropertiesFollowsOrderOfGivenObjectData()
     {
-        $this->markTestSkipped('The test needs to check for the correct order again, somehow....');
-
         $className = 'Class' . md5(uniqid(mt_rand(), true));
-        eval('class ' . $className . ' { public $firstProperty; public $secondProperty; public $thirdProperty; }');
+        eval('class ' . $className . ' { protected $properties = []; public function __set($name, $value) { $this->properties[] = [$name => $value]; } }');
         $object = new $className();
 
         $objectData = array(
@@ -271,12 +268,11 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
         $dataMapper->injectReflectionService($mockReflectionService);
-        $dataMapper->_call('thawProperties', $object, 1234, $objectData);
+        $dataMapper->_call('thawProperties', $object, '1234', $objectData);
 
         // the order of setting those is important, but cannot be tested for now (static setProperty)
-        $this->assertAttributeEquals('secondValue', 'secondProperty', $object);
-        $this->assertAttributeEquals('firstValue', 'firstProperty', $object);
-        $this->assertAttributeEquals('thirdValue', 'thirdProperty', $object);
+        $expected = [['secondProperty' => 'secondValue'],['firstProperty' => 'firstValue'],['thirdProperty' => 'thirdValue'],['Persistence_Object_Identifier' => '1234']];
+        $this->assertAttributeSame($expected, 'properties', $object);
     }
 
     /**

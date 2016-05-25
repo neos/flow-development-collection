@@ -53,10 +53,11 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
     /**
      * Renders the password input field.
      *
+     * @param boolean $required If the field is required or not
      * @return string
      * @api
      */
-    public function render()
+    public function render($required = false)
     {
         $name = $this->getName();
         $this->registerFieldNameForFormTokenGeneration($name);
@@ -64,6 +65,10 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('type', 'password');
         $this->tag->addAttribute('name', $name);
         $this->tag->addAttribute('value', $this->getValueAttribute());
+
+        if ($required === true) {
+            $this->tag->addAttribute('required', 'required');
+        }
 
         $this->addAdditionalIdentityPropertiesIfNeeded();
         $this->setErrorClassAttribute();

@@ -17,6 +17,8 @@ use TYPO3\Flow\Core\ApplicationContext;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Object Manager
@@ -74,6 +76,14 @@ class ObjectManager implements ObjectManagerInterface
     protected $shutdownObjects;
 
     /**
+     * A SplObjectStorage containing only those shutdown objects which have been registered for Flow.
+     * These shutdown method will be called after all other shutdown methods have been called.
+     *
+     * @var \SplObjectStorage
+     */
+    protected $internalShutdownObjects;
+
+    /**
      * Constructor for this Object Container
      *
      * @param \TYPO3\Flow\Core\ApplicationContext $context The configuration context for this Flow run
@@ -82,6 +92,7 @@ class ObjectManager implements ObjectManagerInterface
     {
         $this->context = $context;
         $this->shutdownObjects = new \SplObjectStorage;
+        $this->internalShutdownObjects = new \SplObjectStorage;
     }
 
     /**
@@ -149,7 +160,11 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName)
     {
-        $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
+        if (strpos(get_class($object), 'TYPO3\Flow\\') === 0) {
+            $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
+        } else {
+            $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
+        }
     }
 
     /**
@@ -424,9 +439,16 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function shutdown()
     {
-        foreach ($this->shutdownObjects as $object) {
-            $methodName = $this->shutdownObjects[$object];
-            $object->$methodName();
+        $this->callShutdownMethods($this->shutdownObjects);
+
+        $securityContext = $this->get(Context::class);
+        /** @var Context $securityContext */
+        if ($securityContext->isInitialized()) {
+            $this->get(Context::class)->withoutAuthorizationChecks(function () {
+                $this->callShutdownMethods($this->internalShutdownObjects);
+            });
+        } else {
+            $this->callShutdownMethods($this->internalShutdownObjects);
         }
     }
 
@@ -438,7 +460,18 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getSettingsByPath(array $settingsPath)
     {
-        return \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, $settingsPath);
+        return Arrays::getValueByPath($this->allSettings, $settingsPath);
+    }
+
+    /**
+     * Returns all current object configurations.
+     * For internal use in bootstrap only. Can change anytime.
+     *
+     * @return array
+     */
+    public function getAllObjectConfigurations()
+    {
+        return $this->objects;
     }
 
     /**
@@ -457,14 +490,14 @@ class ObjectManager implements ObjectManagerInterface
         $factoryMethodArguments = array();
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
                     $settingPath = explode('.', $argumentInformation['v']);
-                    $factoryMethodArguments[$index] = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, $settingPath);
+                    $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
                 break;
-                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT :
+                case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                     $factoryMethodArguments[$index] = $this->get($argumentInformation['v']);
                 break;
             }
@@ -510,6 +543,20 @@ class ObjectManager implements ObjectManagerInterface
         } catch (\Exception $exception) {
             unset($this->classesBeingInstantiated[$className]);
             throw $exception;
+        }
+    }
+
+    /**
+     * Executes the methods of the provided objects.
+     *
+     * @param \SplObjectStorage $shutdownObjects
+     * @return void
+     */
+    protected function callShutdownMethods(\SplObjectStorage $shutdownObjects)
+    {
+        foreach ($shutdownObjects as $object) {
+            $methodName = $shutdownObjects[$object];
+            $object->$methodName();
         }
     }
 }

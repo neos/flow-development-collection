@@ -16,7 +16,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 /**
  * Testcase for the cache to memcached backend
  *
- * @requires extension memcache
+ * @requires extension memcached
  */
 class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 {

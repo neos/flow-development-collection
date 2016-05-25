@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-
 /**
  * Testcase for the IP request pattern
  */

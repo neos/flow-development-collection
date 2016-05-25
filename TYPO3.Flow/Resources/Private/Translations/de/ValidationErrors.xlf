@@ -68,7 +68,7 @@
 			<target xml:lang="de">Eine gültige Ganzzahl wird erwartet</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve" approved="yes">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="de">"{0}" ist keine Ganzahl</target></trans-unit>
+			<target xml:lang="de">"{0}" ist keine Ganzahl</target><alt-trans><target xml:lang="de">"{0}" ist keine Ganzzahl.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -104,7 +104,7 @@
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="de">Der Wert entspricht nicht den Muster. Erhalten: {0}</target></trans-unit>
+			<target xml:lang="de">Der Wert entspricht nicht den Muster. Erhalten: {0}</target><alt-trans><target xml:lang="de">Der Wert entspricht nicht dem Muster. Erhalten: {0}</target></alt-trans></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve" approved="yes">
 				<source>The given object could not be converted to a string</source>
@@ -116,21 +116,21 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="de">Die Länge des Textes muss zwischen {0,number} und {1,number} Zeichen liegen</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]" approved="yes">
+        <trans-unit id="1238108068[0]">
           <source/>
           <target xml:lang="de"/>
         </trans-unit>
-        <trans-unit id="1238108068[1]" approved="yes">
+        <trans-unit id="1238108068[1]">
           <source/>
           <target xml:lang="de"/>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]" approved="yes">
+        <trans-unit id="1238108069[0]">
           <source/>
           <target xml:lang="de"/>
         </trans-unit>
-        <trans-unit id="1238108069[1]" approved="yes">
+        <trans-unit id="1238108069[1]">
           <source/>
           <target xml:lang="de"/>
         </trans-unit>

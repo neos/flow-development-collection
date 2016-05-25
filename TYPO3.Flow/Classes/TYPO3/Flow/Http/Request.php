@@ -98,6 +98,8 @@ class Request extends AbstractMessage
 
         if ($this->headers->has('X-Forwarded-Port')) {
             $this->uri->setPort($this->headers->get('X-Forwarded-Port'));
+        } elseif ($this->headers->has('X-Forwarded-Proto')) {
+            $this->uri->setPort($protocol === 'https' ? 443 : 80);
         } elseif (isset($server['SERVER_PORT'])) {
             $this->uri->setPort($server['SERVER_PORT']);
         }
@@ -146,7 +148,7 @@ class Request extends AbstractMessage
             $defaultServerEnvironment['HTTP_CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         }
 
-        $query = $uri->getQuery();
+        $query = (string)$uri->getQuery();
         $fragment = $uri->getFragment();
         $overrideValues = array(
             'REQUEST_URI' => $uri->getPath() . ($query !== '' ? '?' . $query : '') . ($fragment !== '' ? '#' . $fragment : ''),
@@ -168,7 +170,9 @@ class Request extends AbstractMessage
      */
     public static function createFromEnvironment()
     {
-        return new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request = new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request->setContent(null);
+        return $request;
     }
 
     /**

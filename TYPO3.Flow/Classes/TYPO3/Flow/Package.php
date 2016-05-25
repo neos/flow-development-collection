@@ -45,13 +45,16 @@ class Package extends BasePackage
 
         $bootstrap->registerCompiletimeCommand('typo3.flow:core:*');
         $bootstrap->registerCompiletimeCommand('typo3.flow:cache:flush');
+        $bootstrap->registerCompiletimeCommand('typo3.flow:package:rescan');
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(\TYPO3\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
-                $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
-            } elseif ($request->getHttpRequest()->isMethodSafe()) {
-                $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll(true);
+            if ($bootstrap->getObjectManager()->hasInstance(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)) {
+                if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
+                    $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+                } elseif ($request->getHttpRequest()->isMethodSafe()) {
+                    $bootstrap->getObjectManager()->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->persistAll(true);
+                }
             }
         });
         $dispatcher->connect(\TYPO3\Flow\Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', \TYPO3\Flow\Persistence\PersistenceManagerInterface::class, 'persistAll');
@@ -95,6 +98,7 @@ class Package extends BasePackage
         $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Reflection\ReflectionService::class, 'saveToCache');
 
         $dispatcher->connect(\TYPO3\Flow\Command\CoreCommandController::class, 'finishedCompilationRun', \TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
+        $dispatcher->connect(\TYPO3\Flow\Command\CoreCommandController::class, 'finishedCompilationRun', \TYPO3\Flow\Aop\Pointcut\RuntimeExpressionEvaluator::class, 'saveRuntimeExpressions');
 
         $dispatcher->connect(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function () use ($bootstrap) {
             $session = $bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);

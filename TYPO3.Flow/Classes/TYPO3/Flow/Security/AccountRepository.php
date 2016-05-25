@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
-use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\Session\SessionManagerInterface;
 
 /**

@@ -84,14 +84,14 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Format is remembered in this classes cache and won't be parsed again for
      * some time.
      *
-     * @param \DateTime $dateTime PHP object representing particular point in time
+     * @param \DateTimeInterface $dateTime PHP object representing particular point in time
      * @param string $format Format string
      * @param \TYPO3\Flow\I18n\Locale $locale A locale used for finding literals array
      * @return string Formatted date / time. Unimplemented subformats in format string will be silently ignored
      * @api
      * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
      */
-    public function formatDateTimeWithCustomPattern(\DateTime $dateTime, $format, \TYPO3\Flow\I18n\Locale $locale)
+    public function formatDateTimeWithCustomPattern(\DateTimeInterface $dateTime, $format, \TYPO3\Flow\I18n\Locale $locale)
     {
         return $this->doFormattingWithParsedFormat($dateTime, $this->datesReader->parseCustomFormat($format), $this->datesReader->getLocalizedLiteralsForLocale($locale));
     }
@@ -100,13 +100,13 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Formats date with format string for date defined in CLDR for particular
      * locale.
      *
-     * @param \DateTime $date PHP object representing particular point in time
+     * @param \DateTimeInterface $date PHP object representing particular point in time
      * @param \TYPO3\Flow\I18n\Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date
      * @api
      */
-    public function formatDate(\DateTime $date, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
+    public function formatDate(\DateTimeInterface $date, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
     {
         \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
         return $this->doFormattingWithParsedFormat($date, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
@@ -116,13 +116,13 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Formats time with format string for time defined in CLDR for particular
      * locale.
      *
-     * @param \DateTime $time PHP object representing particular point in time
+     * @param \DateTimeInterface $time PHP object representing particular point in time
      * @param \TYPO3\Flow\I18n\Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted time
      * @api
      */
-    public function formatTime(\DateTime $time, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
+    public function formatTime(\DateTimeInterface $time, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
     {
         \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
         return $this->doFormattingWithParsedFormat($time, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
@@ -135,13 +135,13 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * First date and time are formatted separately, and then dateTime format
      * from CLDR is used to place date and time in correct order.
      *
-     * @param \DateTime $dateTime PHP object representing particular point in time
+     * @param \DateTimeInterface $dateTime PHP object representing particular point in time
      * @param \TYPO3\Flow\I18n\Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date and time
      * @api
      */
-    public function formatDateTime(\DateTime $dateTime, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
+    public function formatDateTime(\DateTimeInterface $dateTime, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)
     {
         \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
         return $this->doFormattingWithParsedFormat($dateTime, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
@@ -153,12 +153,12 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Format rules defined in $parsedFormat array are used. Localizable literals
      * are replaced with elements from $localizedLiterals array.
      *
-     * @param \DateTime $dateTime PHP object representing particular point in time
+     * @param \DateTimeInterface $dateTime PHP object representing particular point in time
      * @param array $parsedFormat An array describing format (as in $parsedFormats property)
      * @param array $localizedLiterals An array with literals to use (as in $localizedLiterals property)
      * @return string Formatted date / time
      */
-    protected function doFormattingWithParsedFormat(\DateTime $dateTime, array $parsedFormat, array $localizedLiterals)
+    protected function doFormattingWithParsedFormat(\DateTimeInterface $dateTime, array $parsedFormat, array $localizedLiterals)
     {
         $formattedDateTime = '';
 
@@ -186,14 +186,14 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Cases in the code are ordered in such way that probably mostly used are
      * on the top (but they are also grouped by similarity).
      *
-     * @param \DateTime $dateTime PHP object representing particular point in time
+     * @param \DateTimeInterface $dateTime PHP object representing particular point in time
      * @param string $subformat One element of format string (e.g., 'yyyy', 'mm', etc)
      * @param array $localizedLiterals Array of date / time literals from CLDR
      * @return string Formatted part of date / time
      * @throws \TYPO3\Flow\I18n\Exception\InvalidArgumentException When $subformat use symbol that is not recognized
      * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
      */
-    protected function doFormattingForSubpattern(\DateTime $dateTime, $subformat, array $localizedLiterals)
+    protected function doFormattingForSubpattern(\DateTimeInterface $dateTime, $subformat, array $localizedLiterals)
     {
         $formatLengthOfSubformat = strlen($subformat);
 

@@ -139,7 +139,7 @@ class GroupedForViewHelper extends AbstractViewHelper
                 throw new ViewHelper\Exception('GroupedForViewHelper only supports multi-dimensional arrays and objects', 1253120365);
             }
             $currentGroupKeyValue = $currentGroupIndex;
-            if ($currentGroupIndex instanceof \DateTime) {
+            if ($currentGroupIndex instanceof \DateTimeInterface) {
                 $currentGroupIndex = $currentGroupIndex->format(\DateTime::RFC850);
             } elseif (is_object($currentGroupIndex)) {
                 $currentGroupIndex = spl_object_hash($currentGroupIndex);

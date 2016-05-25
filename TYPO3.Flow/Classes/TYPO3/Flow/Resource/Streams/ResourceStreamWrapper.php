@@ -48,7 +48,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     protected $packageManager;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject
      * @var \TYPO3\Flow\Resource\ResourceManager
      */
     protected $resourceManager;
@@ -302,7 +302,8 @@ class ResourceStreamWrapper implements StreamWrapperInterface
         }
 
         if (is_resource($resourceUriOrStream)) {
-            return $resourceUriOrStream;
+            $this->handle = $resourceUriOrStream;
+            return true;
         }
 
         $handle = ($resourceUriOrStream !== false) ? fopen($resourceUriOrStream, $mode) : false;

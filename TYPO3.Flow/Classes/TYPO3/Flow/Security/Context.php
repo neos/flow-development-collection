@@ -208,7 +208,7 @@ class Context
      * Lets you switch off authorization checks (CSRF token, policies, content security, ...) for the runtime of $callback
      *
      * Usage:
-     * $this->securityContext->withoutAuthorizationChecks(function ($accountRepository, $username, $providerName, &$account) {
+     * $this->securityContext->withoutAuthorizationChecks(function () use ($accountRepository, $username, $providerName, &$account) {
      *   // this will disable the PersistenceQueryRewritingAspect for this one call
      *   $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName)
      * });
@@ -778,6 +778,19 @@ class Context
         }
 
         $this->updateTokens($this->activeTokens);
+    }
+
+    /**
+     * Refreshes the currently effective roles. In fact the roles first level cache
+     * is reset and the effective roles get recalculated by calling getRoles().
+     *
+     * @return void
+     */
+    public function refreshRoles()
+    {
+        $this->roles = null;
+        $this->contextHash = null;
+        $this->getRoles();
     }
 
     /**

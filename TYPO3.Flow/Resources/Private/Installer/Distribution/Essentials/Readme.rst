@@ -1,11 +1,11 @@
---------------
-TYPO3 Flow 3.x
---------------
+------------------
+Flow Framework 3.x
+------------------
 
 Welcome to Flow!
 
 There are a few things you need to know to get started.
-All necessary steps are explained in the `Getting Started tutorial <http://flowframework.readthedocs.org/en/stable/Quickstart/index.html>`_.
+All necessary steps are explained in the `Getting Started tutorial <http://flowframework.readthedocs.io/en/stable/Quickstart/index.html>`_.
 
 In short here's what you need to do:
 

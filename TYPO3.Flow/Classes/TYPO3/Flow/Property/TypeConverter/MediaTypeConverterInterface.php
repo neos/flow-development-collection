@@ -12,10 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverterInterface;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\MediaTypes;
 
 /**
  * A marker interface for type converters that are used to decode the content of a HTTP request

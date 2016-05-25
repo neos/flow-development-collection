@@ -50,7 +50,7 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="fr">S'il vous plaît, indiquer une adresse email valide</target><alt-trans><target xml:lang="fr">Veuillez entrer une adresse e-mail valide</target></alt-trans></trans-unit>
+			<target xml:lang="fr">S'il vous plaît, indiquer une adresse email valide</target><alt-trans><target xml:lang="fr">S'il vous plaît, indiquer une adresse e-mail valide</target></alt-trans><alt-trans><target xml:lang="fr">Veuillez entrer une adresse e-mail valide</target></alt-trans></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
@@ -72,7 +72,7 @@
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus</target></trans-unit>
+			<target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus</target><alt-trans><target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attendus</target></alt-trans></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve" approved="yes">
 				<source>Value is no valid I18n locale identifier</source>
@@ -116,21 +116,21 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="fr">La longueur de ce texte doit être comprise entre {0, number} et {1, number} caractères</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]" approved="yes">
+        <trans-unit id="1238108068[0]">
           <source/>
           <target xml:lang="fr"/>
         </trans-unit>
-        <trans-unit id="1238108068[1]" approved="yes">
+        <trans-unit id="1238108068[1]">
           <source/>
           <target xml:lang="fr"/>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]" approved="yes">
+        <trans-unit id="1238108069[0]">
           <source/>
           <target xml:lang="fr"/>
         </trans-unit>
-        <trans-unit id="1238108069[1]" approved="yes">
+        <trans-unit id="1238108069[1]">
           <source/>
           <target xml:lang="fr"/>
         </trans-unit>

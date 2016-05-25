@@ -99,7 +99,7 @@ class StringConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($source instanceof \DateTime) {
+        if ($source instanceof \DateTimeInterface) {
             $dateFormat = $this->getDateFormat($configuration);
 
             return $source->format($dateFormat);

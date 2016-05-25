@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Configuration;
  */
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Core\ApplicationContext;
 use org\bovigo\vfs\vfsStream;
 
@@ -345,25 +346,25 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Settings' : return $settingsFlow;
-            case 'Flow/Configuration/SomeContext/Settings' : return array();
-            case 'Flow/Configuration/Testing/Settings' : return $settingsFlowTesting;
-            case 'Flow/Configuration/Testing/System1/Settings' : return $settingsFlowTestingSystem1;
+            case 'Flow/Configuration/Settings': return $settingsFlow;
+            case 'Flow/Configuration/SomeContext/Settings': return array();
+            case 'Flow/Configuration/Testing/Settings': return $settingsFlowTesting;
+            case 'Flow/Configuration/Testing/System1/Settings': return $settingsFlowTestingSystem1;
 
-            case 'PackageA/Configuration/Settings' : return $settingsA;
-            case 'PackageA/Configuration/SomeContext/Settings' : return array();
-            case 'PackageA/Configuration/Testing/Settings' : return $settingsATesting;
-            case 'PackageB/Configuration/Settings' : return $settingsB;
-            case 'PackageB/Configuration/SomeContext/Settings' : return array();
-            case 'PackageB/Configuration/Testing/Settings' : return array();
-            case 'PackageC/Configuration/Settings' : return $settingsC;
-            case 'PackageC/Configuration/SomeContext/Settings' : return array();
-            case 'PackageC/Configuration/Testing/Settings' : return array();
+            case 'PackageA/Configuration/Settings': return $settingsA;
+            case 'PackageA/Configuration/SomeContext/Settings': return array();
+            case 'PackageA/Configuration/Testing/Settings': return $settingsATesting;
+            case 'PackageB/Configuration/Settings': return $settingsB;
+            case 'PackageB/Configuration/SomeContext/Settings': return array();
+            case 'PackageB/Configuration/Testing/Settings': return array();
+            case 'PackageC/Configuration/Settings': return $settingsC;
+            case 'PackageC/Configuration/SomeContext/Settings': return array();
+            case 'PackageC/Configuration/Testing/Settings': return array();
 
-            case FLOW_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
-            case FLOW_PATH_CONFIGURATION . 'SomeContext/Settings' : return array();
-            case FLOW_PATH_CONFIGURATION . 'Testing/Settings' : return array();
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings' : return array();
+            case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'SomeContext/Settings': return array();
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return array();
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings': return array();
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -471,12 +472,12 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Objects' : return $packageObjects;
-            case 'Flow/Configuration/Testing/Objects' : return $packageContextObjects;
-            case 'Flow/Configuration/Testing/System1/Objects' : return $packageSubContextObjects;
-            case FLOW_PATH_CONFIGURATION . 'Objects' : return $globalObjects;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Objects' : return $globalContextObjects;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects' : return $globalSubContextObjects;
+            case 'Flow/Configuration/Objects': return $packageObjects;
+            case 'Flow/Configuration/Testing/Objects': return $packageContextObjects;
+            case 'Flow/Configuration/Testing/System1/Objects': return $packageSubContextObjects;
+            case FLOW_PATH_CONFIGURATION . 'Objects': return $globalObjects;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Objects': return $globalContextObjects;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects': return $globalSubContextObjects;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -579,12 +580,12 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Caches' : return $packageCaches;
-            case 'Flow/Configuration/Testing/Caches' : return $packageContextCaches;
-            case 'Flow/Configuration/Testing/System1/Caches' : return $packageSubContextCaches;
-            case FLOW_PATH_CONFIGURATION . 'Caches' : return $globalCaches;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Caches' : return $globalContextCaches;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches' : return $globalSubContextCaches;
+            case 'Flow/Configuration/Caches': return $packageCaches;
+            case 'Flow/Configuration/Testing/Caches': return $packageContextCaches;
+            case 'Flow/Configuration/Testing/System1/Caches': return $packageSubContextCaches;
+            case FLOW_PATH_CONFIGURATION . 'Caches': return $globalCaches;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Caches': return $globalContextCaches;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches': return $globalSubContextCaches;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -660,22 +661,33 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
         );
 
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array('getPathToTemporaryDirectory'), array(), '', false);
-        $mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
-
         $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration'), array(), '', false);
-        $configurationManager->injectEnvironment($mockEnvironment);
+        $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
         $this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
         $configurationManager->_set('context', $this->mockContext);
         $configurationManager->_set('configurations', $mockConfigurations);
+        $configurationManager->_set('configurationTypes', [
+            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_CACHES => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+                'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+                'allowSplitSource' => false
+            ),
+        ]);
 
         $configurationManager->_call('saveConfigurationCache');
 
         $expectedInclusionCode = <<< "EOD"
 <?php
 if (FLOW_PATH_ROOT !== 'XXX' || !file_exists('vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
-	unlink(__FILE__);
+	@unlink(__FILE__);
 	return array();
 }
 return require 'vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php';
@@ -907,12 +919,12 @@ EOD;
         );
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Routes' : return $packageRoutes;
-            case 'Flow/Configuration/Testing/Routes' : return $packageContextRoutes;
-            case 'Flow/Configuration/Testing/System1/Routes' : return $packageSubContextRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Routes' : return $globalContextRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes' : return $globalSubContextRoutes;
+            case 'Flow/Configuration/Routes': return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes': return $packageContextRoutes;
+            case 'Flow/Configuration/Testing/System1/Routes': return $packageSubContextRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Routes': return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return $globalContextRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes': return $globalSubContextRoutes;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -1037,18 +1049,123 @@ EOD;
         );
 
         switch ($filenameAndPath) {
-            case FLOW_PATH_CONFIGURATION . 'Routes' :
+            case FLOW_PATH_CONFIGURATION . 'Routes':
                 return $globalRoutes;
-            case 'Flow/Configuration/Routes.b' :
+            case 'Flow/Configuration/Routes.b':
                 return $subRoutesB;
-            case 'Flow/Configuration/Routes.c' :
+            case 'Flow/Configuration/Routes.c':
                 return $subRoutesC;
-            case 'Flow/Configuration/Routes.d' :
+            case 'Flow/Configuration/Routes.d':
                 return $subRoutesD;
-            case 'Flow/Configuration/Routes.e' :
+            case 'Flow/Configuration/Routes.e':
                 return $subRoutesE;
             default:
                 return array();
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function loadConfigurationForRoutesIncludesSubRoutesFromSettings()
+    {
+        $mockConfigurationSource = $this->getMock(YamlSource::class, array('load', 'save'));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageRoutesAndSettingsCallback')));
+
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
+        $configurationManager->_set('configurationSource', $mockConfigurationSource);
+
+        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
+
+        $mockPackages = $this->getMockPackages();
+        $configurationManager->setPackages($mockPackages);
+        $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
+
+        $actualConfigurations = $configurationManager->_get('configurations');
+        $expectedRoutesConfiguration = array(
+            // ROUTES DEFINED IN ROUTES.YAML ALWAYS COME FIRST:
+            array(
+                'name' => 'GlobalRoute1',
+                'uriPattern' => 'globalRoute1'
+            ),
+            array(
+                'name' => 'GlobalRoute2',
+                'uriPattern' => 'globalRoute2'
+            ),
+            // MERGED SUBROUTES FROM SETTINGS
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute1',
+                'uriPattern' => 'packageRoute1/some-value'
+            ),
+            array(
+                'name' => 'TYPO3.Flow :: PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ),
+        );
+
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+    }
+
+    /**
+     * Callback for the above test.
+     * @param string $filenameAndPath
+     * @return array
+     * @throws \Exception
+     */
+    public function packageRoutesAndSettingsCallback($filenameAndPath)
+    {
+        $packageRoutes = [
+            [
+                'name' => 'PackageRoute1',
+                'uriPattern' => 'packageRoute1/<variable>'
+            ],
+            [
+                'name' => 'PackageRoute2',
+                'uriPattern' => 'packageRoute2'
+            ]
+        ];
+
+        $globalRoutes = [
+            [
+                'name' => 'GlobalRoute1',
+                'uriPattern' => 'globalRoute1'
+            ],
+            [
+                'name' => 'GlobalRoute2',
+                'uriPattern' => 'globalRoute2'
+            ]
+        ];
+
+        $globalSettings = [
+            'TYPO3' => [
+                'Flow' => [
+                    'mvc' => [
+                        'routes' => [
+                            'TYPO3.Flow' => [
+                                'position' => 'start',
+                                'suffix' => 'SomeSuffix',
+                                'variables' => [
+                                    'variable' => 'some-value'
+                                 ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        switch ($filenameAndPath) {
+            case 'Flow/Configuration/Routes.SomeSuffix': return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes.SomeSuffix': return [];
+            case FLOW_PATH_CONFIGURATION . 'Routes': return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return [];
+
+            case 'Flow/Configuration/Settings': return [];
+            case 'Flow/Configuration/Testing/Settings': return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
+            default:
+                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
     }
 
@@ -1377,31 +1494,26 @@ EOD;
         );
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Views' : return $packageViewConfigurations;
-            case 'Flow/Configuration/Testing/Views' : return $packageContextViewConfigurations;
-            case 'Flow/Configuration/Testing/System1/Views' : return $packageSubContextViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Views' : return $globalViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Views' : return $globalContextViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views' : return $globalSubContextViewConfigurations;
+            case 'Flow/Configuration/Views': return $packageViewConfigurations;
+            case 'Flow/Configuration/Testing/Views': return $packageContextViewConfigurations;
+            case 'Flow/Configuration/Testing/System1/Views': return $packageSubContextViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Views': return $globalViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Views': return $globalContextViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views': return $globalSubContextViewConfigurations;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
     }
 
-    /**
-     * @param string $configurationSourceCallbackName
-     * @param string $contextName
-     * @return ConfigurationManager
-     */
     protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName)
     {
         $mockConfigurationSource = $this->getMock(\TYPO3\Flow\Configuration\Source\YamlSource::class, array('load', 'save'));
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, $configurationSourceCallbackName)));
 
-        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration'), array(new ApplicationContext($contextName)));
+        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('postProcessConfiguration', 'includeSubRoutesFromSettings'), array(new ApplicationContext($contextName)));
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
 
-        $configurationManager->expects($this->once())->method('postProcessConfiguration');
+        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
 
         return $configurationManager;
     }

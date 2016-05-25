@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\Command;
 use TYPO3\Flow\Cli\CommandArgumentDefinition;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use TYPO3\Flow\Mvc\Exception\CommandException;
@@ -41,10 +40,16 @@ class HelpCommandController extends CommandController
     protected $bootstrap;
 
     /**
-     * @Flow\Inject
-     * @var CommandManager
+     * @Flow\InjectConfiguration(path = "core.applicationPackageKey")
+     * @var string
      */
-    protected $commandManager;
+    protected $applicationPackageKey;
+
+    /**
+     * @Flow\InjectConfiguration(path = "core.applicationName")
+     * @var string
+     */
+    protected $applicationName;
 
     /**
      * Displays a short, general help message
@@ -58,8 +63,8 @@ class HelpCommandController extends CommandController
     public function helpStubCommand()
     {
         $context = $this->bootstrap->getContext();
-
-        $this->outputLine('<b>TYPO3 Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion() ?: FLOW_VERSION_BRANCH, $context));
+        $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($this->applicationName, $applicationPackage->getInstalledVersion() ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));
@@ -105,7 +110,8 @@ class HelpCommandController extends CommandController
     {
         $context = $this->bootstrap->getContext();
 
-        $this->outputLine('<b>TYPO3 Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion() ?: FLOW_VERSION_BRANCH, $context));
+        $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($applicationPackage->getComposerManifest('description'), $applicationPackage->getInstalledVersion() ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('The following commands are currently available:');

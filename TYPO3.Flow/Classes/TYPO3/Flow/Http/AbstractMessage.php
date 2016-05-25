@@ -38,7 +38,7 @@ abstract class AbstractMessage
      *
      * @var string
      */
-    protected $content;
+    protected $content = '';
 
     /**
      * @var string
@@ -108,12 +108,19 @@ abstract class AbstractMessage
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
      * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
      * @return self This message, for method chaining
+     * @throws \InvalidArgumentException
      * @api
      */
     public function setHeader($name, $values, $replaceExistingHeader = true)
     {
         switch ($name) {
-            case 'Content-Type' :
+            case 'Content-Type':
+                if (is_array($values)) {
+                    if (count($values) !== 1) {
+                        throw new \InvalidArgumentException('The "Content-Type" header must be unique and thus only one field value may be specified.', 1454949291);
+                    }
+                    $values = (string) $values[0];
+                }
                 if (stripos($values, 'charset') === false && stripos($values, 'text/') === 0) {
                     $values .= '; charset=' . $this->charset;
                 }

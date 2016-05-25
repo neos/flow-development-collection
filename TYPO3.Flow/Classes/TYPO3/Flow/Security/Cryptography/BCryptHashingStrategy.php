@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Algorithms as UtilityAlgorithms;
+
 /**
  * Hashing passwords using BCrypt
  */
@@ -46,7 +49,7 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
      */
     public function hashPassword($password, $staticSalt = null)
     {
-        $dynamicSalt = \TYPO3\Flow\Utility\Algorithms::generateRandomString(22, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
+        $dynamicSalt = UtilityAlgorithms::generateRandomString(22, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
         return crypt($password, '$2a$' . $this->cost . '$' . $dynamicSalt);
     }
 

@@ -226,6 +226,8 @@ Doctrine\Common\Persistence\ObjectManager:
 
 TYPO3\Flow\Persistence\PersistenceManagerInterface:
   className: TYPO3\Flow\Persistence\Doctrine\PersistenceManager
+  factoryObjectName: TYPO3\Flow\Core\Bootstrap
+  factoryMethodName: initializePersistenceManager
 
 TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger:
   properties:
@@ -241,6 +243,20 @@ TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger:
             value: 'TYPO3\Flow\Log\Backend\FileBackend'
           4:
             setting: TYPO3.Flow.log.sqlLogger.backendOptions
+
+#
+# Property
+#
+
+TYPO3\Flow\Property\PropertyMapper:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_PropertyMapper
 
 #                                                                          #
 # Resource                                                                 #

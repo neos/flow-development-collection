@@ -14,6 +14,8 @@ namespace TYPO3\Flow\Security;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
@@ -60,10 +62,23 @@ class Account
     protected $expirationDate;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(nullable=true)
+     */
+    protected $lastSuccessfulAuthenticationDate;
+
+    /**
+     * @var integer
+     * @ORM\Column(nullable=true)
+     */
+    protected $failedAuthenticationCount;
+
+
+    /**
      * @var array of strings
      * @ORM\Column(type="simple_array", nullable=true)
      */
-    protected $roleIdentifiers = array();
+    protected $roleIdentifiers = [];
 
     /**
      * @Flow\Transient
@@ -344,6 +359,43 @@ class Account
     public function setExpirationDate(\DateTime $expirationDate = null)
     {
         $this->expirationDate = $expirationDate;
+    }
+
+    /**
+     * @return integer
+     * @api
+     */
+    public function getFailedAuthenticationCount()
+    {
+        return $this->failedAuthenticationCount;
+    }
+
+    /**
+     * @return \DateTime
+     * @api
+     */
+    public function getLastSuccessfulAuthenticationDate()
+    {
+        return $this->lastSuccessfulAuthenticationDate;
+    }
+
+    /**
+     * Sets the authentication status. Usually called by the responsible \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+     *
+     * @param integer $authenticationStatus One of WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
+     * @return void
+     * @throws InvalidAuthenticationStatusException
+     */
+    public function authenticationAttempted($authenticationStatus)
+    {
+        if ($authenticationStatus === TokenInterface::WRONG_CREDENTIALS) {
+            $this->failedAuthenticationCount++;
+        } elseif ($authenticationStatus === TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+            $this->lastSuccessfulAuthenticationDate = new \DateTime();
+            $this->failedAuthenticationCount = 0;
+        } else {
+            throw new InvalidAuthenticationStatusException('Invalid authentication status.', 1449151375);
+        }
     }
 
     /**

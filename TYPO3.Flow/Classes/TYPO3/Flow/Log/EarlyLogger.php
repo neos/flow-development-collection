@@ -15,9 +15,9 @@ namespace TYPO3\Flow\Log;
  * Early logger for logging things that happens earlier in the bootstrap than setup of system logger and dependency
  * injection
  *
- * @api
+ * @deprecated Will be removed in Flow 4.0
  */
-class EarlyLogger implements SystemLoggerInterface
+class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
 {
     /**
      * @var array
@@ -30,11 +30,15 @@ class EarlyLogger implements SystemLoggerInterface
     protected $exceptions = array();
 
     /**
+     * @var array
+     */
+    protected $throwables = array();
+
+    /**
      * Adds a backend to which the logger sends the logging data
      *
      * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
      * @return void
-     * @api
      */
     public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
     {
@@ -47,7 +51,6 @@ class EarlyLogger implements SystemLoggerInterface
      *
      * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
      * @return void
-     * @api
      */
     public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
     {
@@ -63,6 +66,7 @@ class EarlyLogger implements SystemLoggerInterface
     {
         $this->logEntries = array();
         $this->exceptions = array();
+        $this->throwables = array();
     }
 
     /**
@@ -75,7 +79,6 @@ class EarlyLogger implements SystemLoggerInterface
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
      * @return void
-     * @api
      */
     public function log($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
     {
@@ -88,7 +91,6 @@ class EarlyLogger implements SystemLoggerInterface
      * @param \Exception $exception The exception to log
      * @param array $additionalData Additional data to log
      * @return void
-     * @api
      */
     public function logException(\Exception $exception, array $additionalData = array())
     {
@@ -96,9 +98,20 @@ class EarlyLogger implements SystemLoggerInterface
     }
 
     /**
-     * Replays internal logs on provided logger. Use to transfer early logs to real logger when available.
+     * Writes information about the given exception into the log.
      *
-     * @see \TYPO3\Flow\Package\PackageManager
+     * @param \Throwable $throwable The exception to log
+     * @param array $additionalData Additional data to log
+     * @return void
+     * @api
+     */
+    public function logThrowable(\Throwable $throwable, array $additionalData = array())
+    {
+        $this->throwables[] = func_get_args();
+    }
+
+    /**
+     * Replays internal logs on provided logger. Use to transfer early logs to real logger when available.
      *
      * @param SystemLoggerInterface $logger
      * @param boolean $resetLogs
@@ -114,8 +127,13 @@ class EarlyLogger implements SystemLoggerInterface
             $logger->log('[Done replaying logs from instance of EarlyLogger.]');
         }
         if (count($this->exceptions) > 0) {
-            foreach ($this->logEntries as $logEntry) {
-                call_user_func_array(array($logger, 'logException'), $logEntry);
+            foreach ($this->exceptions as $exception) {
+                call_user_func_array(array($logger, 'logException'), $exception);
+            }
+        }
+        if (count($this->throwables) > 0 && $logger instanceof ThrowableLoggerInterface) {
+            foreach ($this->throwables as $throwable) {
+                call_user_func_array(array($logger, 'logThrowable'), $throwable);
             }
         }
         if ($resetLogs === true) {

@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
 
 use TYPO3\Flow\Cli\CommandRequestHandler;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;

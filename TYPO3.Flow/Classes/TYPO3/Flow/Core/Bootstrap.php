@@ -11,15 +11,8 @@ namespace TYPO3\Flow\Core;
  * source code.
  */
 
-// Those are needed before the autoloader is active
-require_once(__DIR__ . '/ApplicationContext.php');
-require_once(__DIR__ . '/../Exception.php');
-require_once(__DIR__ . '/../Utility/Files.php');
-require_once(__DIR__ . '/../Package/PackageInterface.php');
-require_once(__DIR__ . '/../Package/Package.php');
-require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
-require_once(__DIR__ . '/../Package/PackageManager.php');
-require_once(__DIR__ . '/Booting/Scripts.php');
+// Load the composer autoloader first
+require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
@@ -27,6 +20,7 @@ use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -54,7 +48,7 @@ class Bootstrap
     /**
      * @var array
      */
-    protected $requestHandlers;
+    protected $requestHandlers = array();
 
     /**
      * @var string
@@ -90,11 +84,11 @@ class Bootstrap
      */
     public function __construct($context)
     {
-        $this->defineConstants();
-        $this->ensureRequiredEnvironment();
-
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
+
+        $this->defineConstants();
+        $this->ensureRequiredEnvironment();
     }
 
     /**
@@ -330,8 +324,7 @@ class Bootstrap
         }
 
         $sequence->addStep(new Step('typo3.flow:reflectionservice', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('typo3.flow:persistence', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializePersistence')), 'typo3.flow:reflectionservice');
-        $sequence->addStep(new Step('typo3.flow:resources', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeResources')), 'typo3.flow:persistence');
+        $sequence->addStep(new Step('typo3.flow:resources', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeResources')), 'typo3.flow:reflectionservice');
         $sequence->addStep(new Step('typo3.flow:session', array(\TYPO3\Flow\Core\Booting\Scripts::class, 'initializeSession')), 'typo3.flow:resources');
         return $sequence;
     }
@@ -401,6 +394,24 @@ class Bootstrap
             throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
         }
         return $this->earlyInstances[\TYPO3\Flow\Object\ObjectManagerInterface::class];
+    }
+
+    /**
+     * @return PersistenceManagerInterface
+     * @throws FlowException
+     * @internal This method is a workaround for not creating an additional factory until PersistenceManagerInterface::initialize is no longer supported.
+     * TODO: Remove when PersistenceManagerInterface::initialize is not supported anymore.
+     */
+    public function initializePersistenceManager()
+    {
+        $persistenceManagerImplementation = $this->getObjectManager()->getClassNameByObjectName(PersistenceManagerInterface::class);
+        /** @var PersistenceManagerInterface $persistenceManager */
+        $persistenceManager = new $persistenceManagerImplementation();
+        if (is_callable([$persistenceManager, 'initialize'])) {
+            $persistenceManager->initialize();
+        }
+
+        return $persistenceManager;
     }
 
     /**
@@ -534,6 +545,12 @@ class Bootstrap
         define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
+            $temporaryDirectoryPath = Files::concatenatePaths(array(FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context))) . '/';
+            define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
+        }
+
         define('FLOW_VERSION_BRANCH', 'dev-master');
     }
 
@@ -584,6 +601,15 @@ class Bootstrap
                 echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
                 exit(1);
             }
+        }
+        if (!is_dir(FLOW_PATH_TEMPORARY) && !is_link(FLOW_PATH_TEMPORARY)) {
+            // We can't use Files::createDirectoryRecursively() because mkdir() without shutup operator will lead to a PHP warning
+            $oldMask = umask(000);
+            if (!@mkdir(FLOW_PATH_TEMPORARY, 0777, true)) {
+                echo('Flow could not create the directory "' . FLOW_PATH_TEMPORARY . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1441354578)');
+                exit(1);
+            }
+            umask($oldMask);
         }
     }
 

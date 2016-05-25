@@ -339,6 +339,7 @@ abstract class AbstractTemplateView extends AbstractView
         if ($this->templateCompiler->has($partialIdentifier)) {
             $parsedPartial = $this->templateCompiler->get($partialIdentifier);
         } else {
+            $this->templateParser->setConfiguration($this->buildParserConfiguration());
             $parsedPartial = $this->templateParser->parse($this->getPartialSource($partialName));
             if ($parsedPartial->isCompilable()) {
                 $this->templateCompiler->store($partialIdentifier, $parsedPartial);

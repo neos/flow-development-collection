@@ -15,6 +15,7 @@ use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Log\ThrowableLoggerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Fluid\View\StandaloneView;
 
@@ -75,10 +76,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Handles the given exception
      *
-     * @param \Exception $exception The exception object
+     * @param object $exception The exception object - can be \Exception, or some type of \Throwable in PHP 7
      * @return void
      */
-    public function handleException(\Exception $exception)
+    public function handleException($exception)
     {
         // Ignore if the error is suppressed by using the shut-up operator @
         if (error_reporting() === 0) {
@@ -88,14 +89,23 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
 
         if (is_object($this->systemLogger) && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
-            $this->systemLogger->logException($exception);
+            if ($exception instanceof \Throwable) {
+                if ($this->systemLogger instanceof ThrowableLoggerInterface) {
+                    $this->systemLogger->logThrowable($exception);
+                } else {
+                    // Convert \Throwable to \Exception for non-supporting logger implementations
+                    $this->systemLogger->logException(new \Exception($exception->getMessage(), $exception->getCode()));
+                }
+            } elseif ($exception instanceof \Exception) {
+                $this->systemLogger->logException($exception);
+            }
         }
 
         switch (PHP_SAPI) {
-            case 'cli' :
+            case 'cli':
                 $this->echoExceptionCli($exception);
                 break;
-            default :
+            default:
                 $this->echoExceptionWeb($exception);
         }
     }
@@ -103,20 +113,20 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Echoes an exception for the web.
      *
-     * @param \Exception $exception The exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    abstract protected function echoExceptionWeb(\Exception $exception);
+    abstract protected function echoExceptionWeb($exception);
 
 
     /**
      * Prepares a Fluid view for rendering the custom error page.
      *
-     * @param \Exception $exception
+     * @param object $exception \Exception or \Throwable
      * @param array $renderingOptions Rendering options as defined in the settings
      * @return StandaloneView
      */
-    protected function buildCustomFluidView(\Exception $exception, array $renderingOptions)
+    protected function buildCustomFluidView($exception, array $renderingOptions)
     {
         $statusCode = 500;
         $referenceCode = null;
@@ -154,10 +164,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Checks if custom rendering rules apply to the given $exception and returns those.
      *
-     * @param \Exception $exception
+     * @param object $exception \Exception or \Throwable
      * @return array the custom rendering options, or NULL if no custom rendering is defined for this exception
      */
-    protected function resolveCustomRenderingOptions(\Exception $exception)
+    protected function resolveCustomRenderingOptions($exception)
     {
         $renderingOptions = array();
         if (isset($this->options['defaultRenderingOptions'])) {
@@ -172,10 +182,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * @param \Exception $exception
+     * @param object $exception \Exception or \Throwable
      * @return string name of the resolved renderingGroup or NULL if no group could be resolved
      */
-    protected function resolveRenderingGroup(\Exception $exception)
+    protected function resolveRenderingGroup($exception)
     {
         if (!isset($this->options['renderingGroups'])) {
             return null;
@@ -199,10 +209,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
-     * @param \Exception $exception The exception object
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionCli(\Exception $exception)
+    protected function echoExceptionCli($exception)
     {
         $response = new CliResponse();
 
@@ -220,10 +230,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Renders a single exception including message, code and affected file
      *
-     * @param \Exception $exception
+     * @param object $exception \Exception or \Throwable
      * @return string
      */
-    protected function renderSingleExceptionCli(\Exception $exception)
+    protected function renderSingleExceptionCli($exception)
     {
         $exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
         $exceptionMessage = '<error><b>' . $exceptionMessageParts['subject'] . '</b></error>' . PHP_EOL;

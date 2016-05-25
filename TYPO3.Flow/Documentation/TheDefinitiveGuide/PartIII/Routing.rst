@@ -4,9 +4,9 @@
 Routing
 =======
 
-.. sectionauthor:: Bastian Waidelich <bastian@typo3.org>
+.. sectionauthor:: Bastian Waidelich <bastian@neos.io>
 
-As explained in the Model View Controller chapter, in TYPO3 Flow the dispatcher passes the
+As explained in the Model View Controller chapter, in Flow the dispatcher passes the
 request to a controller which then calls the respective action. But how to tell, what
 controller of what package is the right one for the current request? This is were the
 Routing Framework comes into play.
@@ -62,7 +62,7 @@ But let's start with an easy example:
 
 If you insert these lines at the beginning of the file ``Configurations/Routes.yaml``,
 the ``indexAction`` of the ``StandardController`` in your *My.Demo* package will be called
-when you open up the homepage of your TYPO3 Flow installation (``http://localhost/``).
+when you open up the homepage of your Flow installation (``http://localhost/``).
 
 URI patterns
 ============
@@ -416,7 +416,7 @@ Now route values that are neither defined in the ``uriPattern`` nor specified in
 appended to the resulting URI: ``http://localhost/foo/dynamicValue?someOtherArgument=argumentValue``
 
 This setting is mostly useful for *fallback routes* and it is enabled for the default action route provided
-with TYPO3 Flow, so that most links will work out of the box.
+with Flow, so that most links will work out of the box.
 
 .. note::
 
@@ -461,9 +461,8 @@ Given the above routes a *GET* request to ``http://localhost/some/path`` would i
 Subroutes
 =========
 
-For security reasons and to avoid confusion, only routes configured in your global
-configuration folder are active. But TYPO3 Flow supports what we call *SubRoutes* enabling you to
-provide custom routes with your package and reference them in the global routing setup.
+Flow supports what we call *SubRoutes* enabling you to provide custom routes with your package and
+reference them in the global routing setup.
 
 Imagine following routes in the ``Routes.yaml`` file inside your demo package:
 
@@ -502,6 +501,8 @@ And in your global ``Routes.yaml``:
 As you can see, you can reference SubRoutes by putting parts of the URI pattern in angle
 brackets (like ``<subRoutes>``). With the subRoutes setting you specify where to load the
 SubRoutes from.
+
+Instead of adjusting the global ``Routes.yaml`` you can also include sub routes via ``Settings.yaml`` - see `Subroutes from Settings`_.
 
 Internally the ConfigurationManager merges together the main route with its SubRoutes, resulting
 in the following routing configuration:
@@ -549,7 +550,8 @@ This will load the SubRoutes from a file ``Routes.Foo.yaml`` in the ``My.Demo`` 
 With that feature you can include multiple Routes with your package (for example providing different URI styles).
 Furthermore you can nest routes in order to minimize duplication in your configuration. You nest SubRoutes by including
 different SubRoutes from within a SubRoute, using the same syntax as before.
-Additionally you can specify a set of ``variables`` that will be replaced in ``name`` and ``uriPattern`` of merged routes:
+Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern`` and ``defaults``
+of merged routes:
 
 Imagine the following setup:
 
@@ -669,6 +671,73 @@ This will result in a merged configuration like this:
 	    '@controller': 'Category'
 	    '@action':     'edit'
 
+Subroutes from Settings
+-----------------------
+
+Having to adjust the main ``Routes.yaml`` whenever you want to include SubRoutes can be cumbersome and error prone,
+especially when working with 3rd party packages that come with their own routes.
+Therefore Flow allows you to include SubRoutes via settings, too:
+
+Settings.yaml (``Configuration/Settings.yaml``):
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    mvc:
+	      routes:
+	        'Some.Package': TRUE
+
+This will include all routes from the main ``Routes.yaml`` file of the ``Some.Package`` (and all its nested SubRoutes
+if it defines any).
+
+You can also adjust the position of the included SubRoutes:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    mvc:
+	      routes:
+	        'Some.Package':
+	          position: 'start'
+
+Internally Flow uses the ``PositionalArraySorter`` to resolve the order of SubRoutes loaded from Settings.
+Following values are supported for the ``position`` option:
+
+- start (<weight>)
+- end (<weight>)
+- before <key> (<weight>)
+- after <key> (<weight>)
+- <numerical-order>
+
+``<weight>`` defines the priority in case of conflicting configurations. ``<key>`` refers to another package key allowing
+you to set order depending on other SubRoutes.
+
+.. note::
+
+	SubRoutes that are loaded via Settings will always be appended **after** Routes loaded via ``Routes.yaml``
+	Therefore you should consider getting rid of the main ``Routes.yaml`` and only use settings to include routes
+	for greater flexibility.
+
+It's not possible to adjust route defaults or the ``UriPattern`` when including SubRoutes via Settings, but there are
+two more options you can use:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    mvc:
+	      routes:
+	        'Some.Package':
+	          suffix: 'Backend'
+	          variables:
+	            'variable1': 'some value'
+	            'variable2': 'some other value'
+
+With ``suffix`` you can specify a custom filename suffix for the SubRoute. The ``variables`` option allows you to
+specify placeholders in the SubRoutes (see `Nested Subroutes`_).
+
 .. tip::
 
 	You can use the ``flow:routing:list`` command to list all routes which are currently active:
@@ -689,8 +758,8 @@ This will result in a merged configuration like this:
 		                                          TYPO3 :: Fallback rule – for when no site has been defined yet
 
 
-Route Loading Order and the TYPO3 Flow Application Context
-==========================================================
+Route Loading Order and the Flow Application Context
+====================================================
 
 - routes inside more specific contexts are loaded *first*
 - and *after* that, global ones, so you can specify context-specific routes

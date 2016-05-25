@@ -24,10 +24,10 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
-			class ' . $className . ' {
-				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
-			}
-		');
+            class ' . $className . ' {
+                public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
+            }
+        ');
         $methodParameters = array(
             'arg1' => array(
                 'position' => 0,
@@ -77,15 +77,15 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
         $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
 
         $expectedCode = "
-					\$methodArguments = array();
+                \$methodArguments = [];
 
-				\$methodArguments['arg1'] = \$arg1;
-				\$methodArguments['arg2'] = \$arg2;
-				\$methodArguments['arg3'] = \$arg3;
-				\$methodArguments['arg4'] = &\$arg4;
-				\$methodArguments['arg5'] = \$arg5;
-				\$methodArguments['arg6'] = \$arg6;
-			";
+                \$methodArguments['arg1'] = \$arg1;
+                \$methodArguments['arg2'] = \$arg2;
+                \$methodArguments['arg3'] = \$arg3;
+                \$methodArguments['arg4'] = &\$arg4;
+                \$methodArguments['arg5'] = \$arg5;
+                \$methodArguments['arg6'] = \$arg6;
+            ";
 
         $builder = $this->getAccessibleMock(\TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder::class, array('build'), array(), '', false);
         $builder->injectReflectionService($mockReflectionService);
@@ -112,10 +112,10 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
-			class ' . $className . ' {
-				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
-			}
-		');
+            class ' . $className . ' {
+                public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
+            }
+        ');
         $methodParameters = array(
             'arg1' => array(
                 'position' => 0,

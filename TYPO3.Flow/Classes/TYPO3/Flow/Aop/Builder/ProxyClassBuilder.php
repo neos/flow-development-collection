@@ -12,9 +12,11 @@ namespace TYPO3\Flow\Aop\Builder;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
+use TYPO3\Flow\Aop\TraitIntroduction;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -315,42 +317,42 @@ class ProxyClassBuilder
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
                 $annotationClass = get_class($annotation);
                 switch ($annotationClass) {
-                    case \TYPO3\Flow\Annotations\Around::class :
+                    case \TYPO3\Flow\Annotations\Around::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\Before::class :
+                    case \TYPO3\Flow\Annotations\Before::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\BeforeAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\AfterReturning::class :
+                    case \TYPO3\Flow\Annotations\AfterReturning::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterReturningAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\AfterThrowing::class :
+                    case \TYPO3\Flow\Annotations\AfterThrowing::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterThrowingAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\After::class :
+                    case \TYPO3\Flow\Annotations\After::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $advice = new \TYPO3\Flow\Aop\Advice\AfterAdvice($aspectClassName, $methodName);
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
                         $advisor = new \TYPO3\Flow\Aop\Advisor($advice, $pointcut);
                         $aspectContainer->addAdvisor($advisor);
                     break;
-                    case \TYPO3\Flow\Annotations\Pointcut::class :
+                    case \TYPO3\Flow\Annotations\Pointcut::class:
                         $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->expression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
                         $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($annotation->expression, $pointcutFilterComposite, $aspectClassName, $methodName);
                         $aspectContainer->addPointcut($pointcut);
@@ -360,13 +362,21 @@ class ProxyClassBuilder
         }
         $introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, \TYPO3\Flow\Annotations\Introduce::class);
         if ($introduceAnnotation !== null) {
-            if ($introduceAnnotation->interfaceName === null) {
-                throw new \TYPO3\Flow\Aop\Exception('The interface introduction in class "' . $aspectClassName . '" does not contain the required interface name).', 1172694761);
+            if ($introduceAnnotation->interfaceName === null && $introduceAnnotation->traitName === null) {
+                throw new \TYPO3\Flow\Aop\Exception('The introduction in class "' . $aspectClassName . '" does neither contain an interface name nor a trait name, at least one is required.', 1172694761);
             }
             $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, \TYPO3\Flow\Annotations\Introduce::class));
             $pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-            $introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
-            $aspectContainer->addInterfaceIntroduction($introduction);
+
+            if ($introduceAnnotation->interfaceName !== null) {
+                $introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
+                $aspectContainer->addInterfaceIntroduction($introduction);
+            }
+
+            if ($introduceAnnotation->traitName !== null) {
+                $introduction = new \TYPO3\Flow\Aop\TraitIntroduction($aspectClassName, $introduceAnnotation->traitName, $pointcut);
+                $aspectContainer->addTraitIntroduction($introduction);
+            }
         }
 
         foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
@@ -381,6 +391,7 @@ class ProxyClassBuilder
         if (count($aspectContainer->getAdvisors()) < 1 &&
             count($aspectContainer->getPointcuts()) < 1 &&
             count($aspectContainer->getInterfaceIntroductions()) < 1 &&
+            count($aspectContainer->getTraitIntroductions()) < 1 &&
             count($aspectContainer->getPropertyIntroductions()) < 1) {
             throw new \TYPO3\Flow\Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
         }
@@ -398,6 +409,7 @@ class ProxyClassBuilder
     {
         $interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
         $introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
+        $introducedTraits = $this->getMatchingTraitNamesFromIntroductions($aspectContainers, $targetClassName);
 
         $propertyIntroductions = $this->getMatchingPropertyIntroductions($aspectContainers, $targetClassName);
 
@@ -418,7 +430,9 @@ class ProxyClassBuilder
         }
 
         $proxyClass->addInterfaces($introducedInterfaces);
+        $proxyClass->addTraits($introducedTraits);
 
+        /** @var $propertyIntroduction PropertyIntroduction */
         foreach ($propertyIntroductions as $propertyIntroduction) {
             $propertyName = $propertyIntroduction->getPropertyName();
             $declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();
@@ -436,25 +450,20 @@ class ProxyClassBuilder
             $proxyClass->addProperty($propertyName, var_export($propertyIntroduction->getInitialValue(), true), $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
         }
 
-        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
+        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('protected');
 
-        $callBuildMethodsAndAdvicesArrayCode = "\n\t\t\$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $callBuildMethodsAndAdvicesArrayCode = "\n        \$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
-            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
+            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
         }
 
-        // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-        $proxyClass->getMethod('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')->addPreParentCallCode($this->fixMethodsAndAdvicesArrayForDoctrineProxiesCode());
-        // FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-        $proxyClass->getMethod('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies')->addPreParentCallCode($this->fixInjectedPropertiesForDoctrineProxiesCode());
+        $proxyClass->addTraits(['\TYPO3\Flow\Object\Proxy\DoctrineProxyFixingTrait', '\TYPO3\Flow\Aop\AdvicesTrait']);
 
-        $this->buildGetAdviceChainsMethodCode($targetClassName);
-        $this->buildInvokeJoinPointMethodCode($targetClassName);
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
         $proxyClass->addProperty('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'array()');
@@ -512,64 +521,22 @@ class ProxyClassBuilder
             return '';
         }
 
-        $methodsAndAdvicesArrayCode = "\n\t\t\$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
-        $methodsAndAdvicesArrayCode .= "\t\t\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
+        $methodsAndAdvicesArrayCode = "\n        \$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
+        $methodsAndAdvicesArrayCode .= "        \$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
         foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
-            $methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
+            $methodsAndAdvicesArrayCode .= "            '" . $methodName . "' => array(\n";
             foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $adviceConfigurations) {
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
+                $methodsAndAdvicesArrayCode .= "                '" . $adviceType . "' => array(\n";
                 foreach ($adviceConfigurations as $adviceConfiguration) {
                     $advice = $adviceConfiguration['advice'];
-                    $methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
+                    $methodsAndAdvicesArrayCode .= "                    new \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
                 }
-                $methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
+                $methodsAndAdvicesArrayCode .= "                ),\n";
             }
-            $methodsAndAdvicesArrayCode .= "\t\t\t),\n";
+            $methodsAndAdvicesArrayCode .= "            ),\n";
         }
-        $methodsAndAdvicesArrayCode .= "\t\t);\n";
+        $methodsAndAdvicesArrayCode .= "        );\n";
         return  $methodsAndAdvicesArrayCode;
-    }
-
-    /**
-     * Creates code that builds the targetMethodsAndGroupedAdvices array if it does not exist. This happens when a Doctrine
-     * lazy loading proxy for an object is created for some specific purpose, but filled afterwards "on the fly" if this object
-     * is part of a wide range "findBy" query.
-     *
-     * @todo Remove once doctrine is fixed
-     * @return string
-     */
-    protected function fixMethodsAndAdvicesArrayForDoctrineProxiesCode()
-    {
-        $code = <<<EOT
-		if (!isset(\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices) || empty(\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices)) {
-			\$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();
-			if (is_callable('parent::Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')) parent::Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies();
-		}
-EOT;
-        return $code;
-    }
-
-    /**
-     * Creates code that reinjects dependencies if they do not exist. This is necessary because in certain circumstances
-     * Doctrine loads a proxy in UnitOfWork->createEntity() without calling __wakeup and thus does not initialize DI.
-     * This happens when a Doctrine lazy loading proxy for an object is created for some specific purpose, but filled
-     * afterwards "on the fly" if this object is part of a wide range "findBy" query.
-     *
-     * @todo Remove once doctrine is fixed
-     * @return string
-     */
-    protected function fixInjectedPropertiesForDoctrineProxiesCode()
-    {
-        $code = <<<EOT
-		if (!\$this instanceof \Doctrine\ORM\Proxy\Proxy || isset(\$this->Flow_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies)) {
-			return;
-		}
-		\$this->Flow_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies = TRUE;
-		if (is_callable(array(\$this, 'Flow_Proxy_injectProperties'))) {
-			\$this->Flow_Proxy_injectProperties();
-		}
-EOT;
-        return $code;
     }
 
     /**
@@ -710,6 +677,34 @@ EOT;
     }
 
     /**
+     * Traverses all aspect containers and returns an array of trait
+     * introductions which match the target class.
+     *
+     * @param array &$aspectContainers All aspects to take into consideration
+     * @param string $targetClassName Name of the class the pointcut should match with
+     * @return array array of trait names
+     */
+    protected function getMatchingTraitNamesFromIntroductions(array &$aspectContainers, $targetClassName)
+    {
+        $introductions = [];
+        /** @var AspectContainer $aspectContainer */
+        foreach ($aspectContainers as $aspectContainer) {
+            if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
+                continue;
+            }
+            /** @var TraitIntroduction $introduction */
+            foreach ($aspectContainer->getTraitIntroductions() as $introduction) {
+                $pointcut = $introduction->getPointcut();
+                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                    $introductions[] = '\\' . $introduction->getTraitName();
+                }
+            }
+        }
+
+        return $introductions;
+    }
+
+    /**
      * Returns an array of interface names introduced by the given introductions
      *
      * @param array $interfaceIntroductions An array of interface introductions
@@ -749,57 +744,6 @@ EOT;
             }
         }
         return $methods;
-    }
-
-    /**
-     * Adds a "getAdviceChains()" method to the current proxy class.
-     *
-     * @param string $targetClassName
-     * @return void
-     */
-    protected function buildGetAdviceChainsMethodCode($targetClassName)
-    {
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('Flow_Aop_Proxy_getAdviceChains');
-        $proxyMethod->setMethodParametersCode('$methodName');
-        $proxyMethod->overrideMethodVisibility('private');
-
-        $code = <<<'EOT'
-		$adviceChains = array();
-		if (isset($this->Flow_Aop_Proxy_groupedAdviceChains[$methodName])) {
-			$adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-		} else {
-			if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
-				$groupedAdvices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
-				if (isset($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice'])) {
-					$this->Flow_Aop_Proxy_groupedAdviceChains[$methodName]['TYPO3\Flow\Aop\Advice\AroundAdvice'] = new \TYPO3\Flow\Aop\Advice\AdviceChain($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice']);
-					$adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-				}
-			}
-		}
-		return $adviceChains;
-
-EOT;
-        $proxyMethod->addPreParentCallCode($code);
-    }
-
-    /**
-     * Adds a "invokeJoinPoint()" method to the current proxy class.
-     *
-     * @param string $targetClassName
-     * @return void
-     */
-    protected function buildInvokeJoinPointMethodCode($targetClassName)
-    {
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('Flow_Aop_Proxy_invokeJoinPoint');
-        $proxyMethod->setMethodParametersCode('\TYPO3\Flow\Aop\JoinPointInterface $joinPoint');
-        $code = <<<'EOT'
-		if (__CLASS__ !== $joinPoint->getClassName()) return parent::Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
-		if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-			return call_user_func_array(array('self', $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
-		}
-
-EOT;
-        $proxyMethod->addPreParentCallCode($code);
     }
 
     /**

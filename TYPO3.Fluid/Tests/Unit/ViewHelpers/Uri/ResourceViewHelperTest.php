@@ -12,6 +12,7 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Resource\Resource;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
@@ -108,7 +109,16 @@ class ResourceViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTest
      */
     public function renderLocalizesResourceGivenAsResourceUri()
     {
-        $this->mockI18nService->expects($this->once())->method('getLocalizedFilename')->with('resource://ThePackageKey/Public/Styles/Main.css')->will($this->returnValue(array('resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de'))));
+        $this->mockResourceManager
+            ->expects($this->once())
+            ->method('getPackageAndPathByPublicPath')
+            ->with('resource://ThePackageKey/Public/Styles/Main.css')
+            ->will($this->returnValue(['ThePackageKey', 'Styles/Main.css']));
+        $this->mockI18nService
+            ->expects($this->once())
+            ->method('getLocalizedFilename')
+            ->with('resource://ThePackageKey/Public/Styles/Main.css')
+            ->will($this->returnValue(array('resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de'))));
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.de.css')->will($this->returnValue('TheCorrectResourceUri'));
         $resourceUri = $this->viewHelper->render('resource://ThePackageKey/Public/Styles/Main.css');
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
@@ -147,6 +157,11 @@ class ResourceViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTest
      */
     public function renderThrowsExceptionIfResourceUriNotPointingToPublicWasGivenAsPath()
     {
+        $this->mockResourceManager
+            ->expects($this->once())
+            ->method('getPackageAndPathByPublicPath')
+            ->with('resource://Some.Package/Private/foobar.txt')
+            ->willThrowException(new Exception());
         $this->viewHelper->render('resource://Some.Package/Private/foobar.txt', 'SomePackage');
     }
 }

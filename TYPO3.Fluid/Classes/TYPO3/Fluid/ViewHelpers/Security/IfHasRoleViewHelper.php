@@ -16,7 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
-use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**

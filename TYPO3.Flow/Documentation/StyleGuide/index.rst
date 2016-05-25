@@ -1,6 +1,6 @@
-==============================
-TYPO3 Publications Style Guide
-==============================
+========================
+Publications Style Guide
+========================
 
 .. toctree::
 	:titlesonly:

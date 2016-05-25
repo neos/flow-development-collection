@@ -28,19 +28,19 @@ use TYPO3\Flow\Utility\Arrays;
 class DispatchComponent implements ComponentInterface
 {
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var Dispatcher
      */
     protected $dispatcher;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var Context
      */
     protected $securityContext;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var ObjectManagerInterface
      */
     protected $objectManager;
@@ -50,13 +50,6 @@ class DispatchComponent implements ComponentInterface
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    /**
-     * PropertyMapping configuration set in injectMediaTypeConverter()
-     *
-     * @var PropertyMappingConfiguration
-     */
-    protected $propertyMappingConfiguration;
 
     /**
      * Options of this component
@@ -74,16 +67,6 @@ class DispatchComponent implements ComponentInterface
     }
 
     /**
-     * @param MediaTypeConverterInterface $mediaTypeConverter
-     * @return void
-     */
-    public function injectMediaTypeConverter(MediaTypeConverterInterface $mediaTypeConverter)
-    {
-        $this->propertyMappingConfiguration = new PropertyMappingConfiguration();
-        $this->propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
-    }
-
-    /**
      * Create an action request from stored route match values and dispatch to that
      *
      * @param ComponentContext $componentContext
@@ -93,15 +76,15 @@ class DispatchComponent implements ComponentInterface
     {
         $httpRequest = $componentContext->getHttpRequest();
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
         $this->securityContext->setRequest($actionRequest);
 
-        $routingMatchResults = $componentContext->getParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults');
+        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
 
         $actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-        $componentContext->setParameter(\TYPO3\Flow\Mvc\DispatchComponent::class, 'actionRequest', $actionRequest);
+        $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
     }
 
@@ -112,9 +95,7 @@ class DispatchComponent implements ComponentInterface
      */
     protected function mergeArguments(HttpRequest $httpRequest, array $routingMatchResults = null)
     {
-        // HTTP body arguments
-        $this->propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
-        $arguments = $this->propertyMapper->convert($httpRequest->getContent(), 'array', $this->propertyMappingConfiguration);
+        $arguments = $this->parseRequestBody($httpRequest);
 
         // HTTP arguments (e.g. GET parameters)
         $arguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $arguments);
@@ -123,6 +104,28 @@ class DispatchComponent implements ComponentInterface
         if ($routingMatchResults !== null) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $routingMatchResults);
         }
+        return $arguments;
+    }
+
+    /**
+     * Parses the request body according to the media type.
+     *
+     * @param HttpRequest $httpRequest
+     * @return array
+     */
+    protected function parseRequestBody(HttpRequest $httpRequest)
+    {
+        $requestBody = $httpRequest->getContent();
+        if ($requestBody === null || $requestBody === '') {
+            return [];
+        }
+
+        $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
+        $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+        $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
+
         return $arguments;
     }
 

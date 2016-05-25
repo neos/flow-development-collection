@@ -3,13 +3,13 @@
 Model View Controller
 =====================
 
-TYPO3 Flow promotes the use of the `Model View Controller <http://en.wikipedia.org/wiki/Model–view–controller>`_
+Flow promotes the use of the `Model View Controller <http://en.wikipedia.org/wiki/Model–view–controller>`_
 pattern which clearly separates the information, representation and mediation into
 separated building blocks. Although the design pattern and its naïve implementation
 are relatively simple, a capable MVC framework also takes care of more complex tasks
 such as input sanitizing, validation, form and upload handling and much more.
 
-This chapter puts TYPO3 Flow's MVC framework into context with the HTTP request / response
+This chapter puts Flow's MVC framework into context with the HTTP request / response
 mechanism, explains how to develop controllers and describes various features of
 the framework.
 
@@ -18,13 +18,13 @@ HTTP
 
 All action starts with an HTTP request sent from a client. The request contains
 information about the resource to retrieve or process, the action to take and various
-various parameters and headers. TYPO3 Flow converts the raw HTTP request into an HTTP
+various parameters and headers. Flow converts the raw HTTP request into an HTTP
 Request object and, by invoking the :doc:`Routing` mechanism, determines which
 controller is responsible for processing the request and creating a matching
 response. A dispatcher then passes an internal to the controller and gets a response
 in return which can be sent to back to the client.
 
-If you haven't done already, we recommend that you read the chapter about TYPO3 Flow's
+If you haven't done already, we recommend that you read the chapter about Flow's
 :doc:`Http`. It contains more detailed information about the application flow and
 the specific parts of the HTTP API.
 
@@ -33,7 +33,7 @@ Action Request
 
 A typical application contains controllers providing one or more *actions*. While
 HTTP requests and responses are fine for communication between clients and servers,
-TYPO3 Flow uses a different kind of request internally to communicate with a controller,
+Flow uses a different kind of request internally to communicate with a controller,
 called ``Action Request``. The default HTTP request handler asks the router to
 extract some information from the HTTP request and build an Action Request.
 
@@ -143,7 +143,7 @@ implemented by *domain services*. This allows for a clear separation of applicat
 flow and business logic and enables other parts of the application (for example
 web services) to execute these operations through a well-defined API.
 
-A controller suitable for being used in TYPO3 Flow needs to implement the
+A controller suitable for being used in Flow needs to implement the
 ``Mvc\Controller\ControllerInterface``. At the bare minimum it must provide a
 ``processRequest()`` method which accepts a request and response.
 
@@ -155,7 +155,7 @@ Action Controller
 -----------------
 
 Most web applications will interact with the client through execution of specific
-*actions* provided by an Action Controller. TYPO3 Flow provides a base class which
+*actions* provided by an Action Controller. Flow provides a base class which
 contains all the logic to map and validate arguments found in the raw request to
 method arguments of an action. It also provides various convenience methods which
 are typically needed in Action Controller implementations.
@@ -217,7 +217,7 @@ Declaring arguments in an action controller is very simple::
 		return $message
 	}
 
-The first argument ``$name`` is mandatory. The ``@param`` annotation gives TYPO3 Flow
+The first argument ``$name`` is mandatory. The ``@param`` annotation gives Flow
 a hint of the expected type, in this case a string.
 
 The second argument ``$boolean`` is optional because a default value has been
@@ -232,7 +232,7 @@ a URL::
 .. note::
 
 	Please note that the documentation block of the action method is mandatory – the
-	annotations (tags) you see in the example are important for TYPO3 Flow to recognize
+	annotations (tags) you see in the example are important for Flow to recognize
 	the correct type of each argument.
 
 Additionally to passing the arguments to the action method, all registered arguments
@@ -314,7 +314,7 @@ later sources replace earlier ones
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
 
-In some situations TYPO3 Flow needs to set special arguments in order to simplify
+In some situations Flow needs to set special arguments in order to simplify
 handling of objects, widgets or other complex operations. In order to avoid
 name clashes with arguments declared by a package author, a special prefix
 consisting of two underscores ``__`` is used. Two examples of internal arguments
@@ -336,7 +336,7 @@ You should not use or rely on these arguments in your own applications.
 Plugin Arguments
 ~~~~~~~~~~~~~~~~
 
-Besides internal arguments, TYPO3 Flow stores arguments being used by recursive controller
+Besides internal arguments, Flow stores arguments being used by recursive controller
 invocations, like plugins, in a separate namespace, the so called ``pluginArguments``.
 
 They are prefixed with two dashes ``--`` and normally, you do not interact with them.
@@ -405,7 +405,7 @@ The media types listed in ``$supportedMediaTypes`` don't need to be in any
 particular order.
 
 The Abstract Controller determines the preferred format through `Content Negotiation`_.
-More specifically, TYPO3 Flow will check if any specific format was defined in the route
+More specifically, Flow will check if any specific format was defined in the route
 which matched the request (see chapter :doc:`Routing`). If no particular format was
 defined, the ``Accept`` header of the HTTP Request is consulted for a weighted list
 of preferred media types. This list is then matched with the list of supported media
@@ -431,7 +431,7 @@ returned by the action method. However, this approach is not very flexible and
 ignores the separation of concerns as laid out by the Model View Controller pattern.
 Instead of rendering an output itself, a controller delegates this task to a view.
 
-TYPO3 Flow uses the Fluid template engine as the default view for action controllers. By
+Flow uses the Fluid template engine as the default view for action controllers. By
 following a naming convention for directories and template files, developers of a
 concrete controller don't need to configure the view or paths to the respective
 templates – they are resolved automatically by converting the combination of
@@ -466,7 +466,7 @@ become an often used format which is very light-weight and easy to parse. Althou
 it is theoretically possible to render a JSON response through a Fluid Template
 View, a specialized view does a much better job in a more convenient way.
 
-The JSON View provided by TYPO3 Flow can be used by declaring it as the default view
+The JSON View provided by Flow can be used by declaring it as the default view
 in the concrete Action Controller implementation::
 
 	class FooController extends ActionController {
@@ -795,7 +795,7 @@ Generating Links
 ----------------
 
 Links to other controller and their actions should not be rendered manually because
-hardcoded or manually rendered links circumvent many of TYPO3 Flow's features.
+hardcoded or manually rendered links circumvent many of Flow's features.
 
 For generating links to other controllers, the ``UriBuilder`` which is available
 as ``$this->uriBuilder`` can be used. However, in most cases, the user does not
@@ -807,7 +807,7 @@ forward() and redirect()
 ------------------------
 
 Often, controllers need to defer execution to other controllers or actions. For
-that to happen, TYPO3 Flow supports both, internal and external redirects:
+that to happen, Flow supports both, internal and external redirects:
 
 * in an internal redirect which is triggered by ``forward()``, the URI does not
   change.

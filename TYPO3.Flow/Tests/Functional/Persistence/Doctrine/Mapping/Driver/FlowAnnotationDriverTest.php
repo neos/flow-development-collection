@@ -88,6 +88,19 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function compositePrimaryKeyOverEntityRelationIsRegistered()
+    {
+        $classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity');
+        $driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+        $driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity', $classMetadata);
+        $this->assertTrue($classMetadata->isIdentifierComposite);
+        $this->assertTrue($classMetadata->containsForeignIdentifier);
+        $this->assertEquals($classMetadata->identifier, array('name', 'relatedEntity'));
+    }
+
+    /**
      * Makes sure that
      * - thumbnail and image (same type) do get distinct column names
      * - simple properties get mapped to their name

@@ -31,15 +31,15 @@ the *Acme.Blog* package:
 
 .. table:: Directory structure of a Flow package
 
-	======================	============================================================
-	Directory				Description
-	======================	============================================================
-	*Classes/*				All the .php class files of your package
-	*Documentation/*		The package's manual and other documentation
-	*Resources/*			Top folder for resources
-	*Resources/Public/*		Public resources - will be mirrored to the *Web* directory
-	*Resources/Private/*	Private resources - won't be mirrored to the *Web* directory
-	======================	============================================================
+    ====================== ============================================================
+    Directory              Description
+    ====================== ============================================================
+    *Classes/*             All the .php class files of your package
+    *Documentation/*       The package's manual and other documentation
+    *Resources/*           Top folder for resources
+    *Resources/Public/*    Public resources - will be mirrored to the *Web* directory
+    *Resources/Private/*   Private resources - won't be mirrored to the *Web* directory
+    ====================== ============================================================
 
 
 No matter what files and directories you create below ``Resources/Public/`` - all
@@ -47,15 +47,15 @@ of them will, by default, be symlinked to ``Web/_Resources/Static/Packages/Acme.
 the next hit.
 
 .. tip::
-	There are more possible directories in a package and we do have some
-	conventions for naming certain sub directories. All that is explained in
-	fine detail in :doc:`Part III <../Part-III/index>`.
+    There are more possible directories in a package and we do have some
+    conventions for naming certain sub directories. All that is explained in
+    fine detail in :doc:`Part III <../PartIII/index>`.
 
 .. important::
-	For the blog example in this tutorial we created some style sheet to make it more appealing.
-	If you'd like the examples to use those styles, then it's time to copy ``Resources/Public/``
-	from the git repository (https://github.com/neos/Acme.Blog)
-	to your blog's public resources folder (``Packages/Application/Acme.Blog/Resources/Public/``).
+    For the blog example in this tutorial we created some style sheet to make it more appealing.
+    If you'd like the examples to use those styles, then it's time to copy ``Resources/Public/``
+    from the git repository (https://github.com/neos/Acme.Blog)
+    to your blog's public resources folder (``Packages/Application/Acme.Blog/Resources/Public/``).
 
 Layouts
 =======
@@ -66,10 +66,10 @@ template view. The following figure illustrates the use of layout, template and
 partials in our blog example:
 
 .. figure:: Images/LayoutTemplatePartial.png
-	:alt: Layout, Template and Partial
-	:class: screenshot-fullsize
+    :alt: Layout, Template and Partial
+    :class: screenshot-fullsize
 
-	Layout, Template and Partial
+    Layout, Template and Partial
 
 
 A Fluid layout provides the basic layout of the output which is supposed to be
@@ -86,44 +86,44 @@ the following code:
 
 .. code-block:: html
 
-	<!DOCTYPE html>
-	<html>
-	<head lang="en">
-		<meta charset="utf-8">
-		<title>{blog.title} - Flow Blog Example</title>
-		<link rel="stylesheet" href="../../Public/Styles/App.css" type="text/css" />
-	</head>
-	<body>
+    <!DOCTYPE html>
+    <html>
+    <head lang="en">
+        <meta charset="utf-8">
+        <title>{blog.title} - Flow Blog Example</title>
+        <link rel="stylesheet" href="../../Public/Styles/App.css" type="text/css" />
+    </head>
+    <body>
 
-		<header>
-			<f:if condition="{blog}">
-				<f:link.action action="index" controller="Post">
-					<h1>{blog.title}</h1>
-				</f:link.action>
-				<p class="description">{blog.description -> f:format.crop(maxCharacters: 80)}</p>
-			</f:if>
-		</header>
+        <header>
+            <f:if condition="{blog}">
+                <f:link.action action="index" controller="Post">
+                    <h1>{blog.title}</h1>
+                </f:link.action>
+                <p class="description">{blog.description -> f:format.crop(maxCharacters: 80)}</p>
+            </f:if>
+        </header>
 
-		<div id="content">
-			<f:flashMessages class="flashmessages" />
-			<f:render section="MainContent" />
-		</div>
+        <div id="content">
+            <f:flashMessages class="flashmessages" />
+            <f:render section="MainContent" />
+        </div>
 
-		<footer>
-			<a href="http://flow.typo3.org">
-				Powered by Flow
-			</a>
-		</footer>
+        <footer>
+            <a href="http://flow.typo3.org">
+                Powered by Flow
+            </a>
+        </footer>
 
-	</body>
-	</html>
+    </body>
+    </html>
 
 .. tip::
-	If you don't want to download the stylesheet mentioned above, you can import it directly from the
-	github repository, replacing `../../Public/Styles./App.css`` with
-	``https://raw.githubusercontent.com/neos/Acme.Blog/master/Resources/Public/Styles/App.css``
-	Of course you can also just remove the whole ``<link rel="stylesheet" ...`` line if you don't care
-	about style.
+    If you don't want to download the stylesheet mentioned above, you can import it directly from the
+    github repository, replacing `../../Public/Styles./App.css`` with
+    ``https://raw.githubusercontent.com/neos/Acme.Blog/master/Resources/Public/Styles/App.css``
+    Of course you can also just remove the whole ``<link rel="stylesheet" ...`` line if you don't care
+    about style.
 
 On first sight this looks like plain HTML code, but you'll surely notice the
 various ``<f: ... >`` tags. Fluid provides a range of view helpers which are
@@ -143,7 +143,7 @@ accessor. It is very similar to some Fluid markup that we skipped over in ``<hea
 
 .. code-block:: html
 
-	<title>{blog.title} - Flow Blog Example</title>
+    <title>{blog.title} - Flow Blog Example</title>
 
 As you will see in a minute, Fluid allows your controller to define variables
 for the template view. In order to display the blog's name, you'll need to make
@@ -164,7 +164,7 @@ alternative way to address view helpers, the **view helper shorthand syntax**:
 
 .. code-block:: html
 
-	{blog.description -> f:format.crop(maxCharacters: 80)}
+    {blog.description -> f:format.crop(maxCharacters: 80)}
 
 ``{f:format.crop(...)}``` instructs Fluid to crop the given value (in this case the
 Blog's description). With the ``maxCharacters`` argument the description will be
@@ -175,14 +175,14 @@ will look something like this:
 
 .. code-block:: html
 
-	This is a very long description that will be cropped if it exceeds eighty charac...
+    This is a very long description that will be cropped if it exceeds eighty charac...
 
 If you look at the remaining markup of the layout you'll find more uses of view
 helpers, including ``flashMessages``. It generates an unordered list with
 all flash messages. Well, maybe you remember this line in the ``createAction``
 of our ``PostController``::
 
-	$this->addFlashMessage('Created a new post.');
+    $this->addFlashMessage('Created a new post.');
 
 Flash messages are a great way to display success or error messages to
 the user beyond a single request. And because they are so useful, Flow provides a
@@ -197,7 +197,7 @@ the **render** view helper:
 
 .. code-block:: html
 
-	<f:render section="MainContent" />
+    <f:render section="MainContent" />
 
 This tag tells Fluid to insert the section ``MainContent`` defined in the current
 template at this place. For this to work there must be a section with the
@@ -220,31 +220,31 @@ meaningful HTML:
 
 .. code-block:: html
 
-	<f:layout name="Default" />
+    <f:layout name="Default" />
 
-	<f:section name="MainContent">
-		<f:if condition="{blog.posts}">
-			<f:then>
-				<ul>
-					<f:for each="{blog.posts}" as="post">
-						<li class="post">
-							<f:render partial="PostActions" arguments="{post: post}"/>
-							<h2>
-								<f:link.action action="show" arguments="{post: post}">{post.subject}</f:link.action>
-							</h2>
-							<f:render partial="PostMetaData" arguments="{post: post}"/>
-						</li>
-					</f:for>
-				</ul>
-			</f:then>
-			<f:else>
-				<p>No posts created yet.</p>
-			</f:else>
-		</f:if>
-		<p>
-			<f:link.action action="new">Create a new post</f:link.action><
-		/p>
-	</f:section>
+    <f:section name="MainContent">
+        <f:if condition="{blog.posts}">
+            <f:then>
+                <ul>
+                    <f:for each="{blog.posts}" as="post">
+                        <li class="post">
+                            <f:render partial="PostActions" arguments="{post: post}"/>
+                            <h2>
+                                <f:link.action action="show" arguments="{post: post}">{post.subject}</f:link.action>
+                            </h2>
+                            <f:render partial="PostMetaData" arguments="{post: post}"/>
+                        </li>
+                    </f:for>
+                </ul>
+            </f:then>
+            <f:else>
+                <p>No posts created yet.</p>
+            </f:else>
+        </f:if>
+        <p>
+            <f:link.action action="new">Create a new post</f:link.action><
+        /p>
+    </f:section>
 
 There you have it: In the first line of your template there's a reference to
 the "Default" layout. All HTML code is wrapped in a ``<f:section>`` tag. Even
@@ -261,20 +261,20 @@ about a blog - you need to adapt the the ``PostController`` to assign the curren
 
 .. code-block:: php
 
-	/**
-	 * @return void
-	 */
-	public function indexAction() {
-		$blog = $this->blogRepository->findActive();
-		$this->view->assign('blog', $blog);
-	}
+    /**
+     * @return void
+     */
+    public function indexAction() {
+        $blog = $this->blogRepository->findActive();
+        $this->view->assign('blog', $blog);
+    }
 
 To fully understand the above code you need to know two facts:
 
--	``$this->view`` is automatically set by the action controller and
-	points to a Fluid template view.
--	if an action method returns ``NULL``, the controller will automatically
-	call ``$this->view->render()`` after executing the action.
+-   ``$this->view`` is automatically set by the action controller and
+    points to a Fluid template view.
+-   if an action method returns ``NULL``, the controller will automatically
+    call ``$this->view->render()`` after executing the action.
 
 But soon you'll see that we need the current Blog in all of our actions, so how to assign it
 to the view without repeating the same code over and over again?
@@ -284,20 +284,20 @@ With ease: We just assign it as soon as the view is initialized::
 
 .. code-block:: php
 
-	/**
-	 * @param ViewInterface $view
-	 * @return void
-	 */
-	protected function initializeView(ViewInterface $view) {
-		$blog = $this->blogRepository->findActive();
-		$this->view->assign('blog', $blog);
-	}
+    /**
+     * @param ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view) {
+        $blog = $this->blogRepository->findActive();
+        $this->view->assign('blog', $blog);
+    }
 
-	/**
-	 * @return void
-	 */
-	public function indexAction() {
-	}
+    /**
+     * @return void
+     */
+    public function indexAction() {
+    }
 
 The ``initializeView`` method is called before each action, so it provides a good opportunity
 to assign values to the view that should be accessible from all actions.
@@ -309,24 +309,24 @@ After creating the folder ``Resources/Private/Partials/`` add the following two 
 
 .. code-block:: html
 
-	<p class="metadata">
-		Published on {post.date -> f:format.date(format: 'Y-m-d')} by {post.author}
-	</p>
+    <p class="metadata">
+        Published on {post.date -> f:format.date(format: 'Y-m-d')} by {post.author}
+    </p>
 
 *Resources/Private/Partials/PostActions.html*:
 
 .. code-block:: html
 
-	<ul class="actions">
-		<li>
-			<f:link.action action="edit" arguments="{post: post}">Edit</f:link.action>
-		</li>
-		<li>
-			<f:form action="delete" arguments="{post: post}">
-				<f:form.submit name="delete" value="Delete" />
-			</f:form>
-		</li>
-	</ul>
+    <ul class="actions">
+        <li>
+            <f:link.action action="edit" arguments="{post: post}">Edit</f:link.action>
+        </li>
+        <li>
+            <f:form action="delete" arguments="{post: post}">
+                <f:form.submit name="delete" value="Delete" />
+            </f:form>
+        </li>
+    </ul>
 
 The ``PostMetaData`` partial renders date and author of a post. The ``PostActions`` partial an *edit* link
 and a button to *delete* the current post. Both are used as well in the list view (``indexAction``) as well
@@ -336,10 +336,10 @@ having to duplicate markup.
 Now you should now see the list of recent posts by accessing http://dev.tutorial.local/acme.blog/post:
 
 .. figure:: Images/PostIndex.png
-	:alt: The list of blog posts
-	:class: screenshot-fullsize
+    :alt: The list of blog posts
+    :class: screenshot-fullsize
 
-	The list of blog posts
+    The list of blog posts
 
 To create new posts and edit existing ones from the web browser, we need to create Forms:
 
@@ -357,13 +357,13 @@ displaying the form:
 
 .. code-block:: php
 
-	/**
-	 * Displays the "Create Post" form
-	 *
-	 * @return void
-	 */
-	public function newAction() {
-	}
+    /**
+     * Displays the "Create Post" form
+     *
+     * @return void
+     */
+    public function newAction() {
+    }
 
 No code? What will happen is this: the action controller selects the
 ``New.html`` template and assigns it to ``$this->view`` which will automatically
@@ -379,25 +379,25 @@ the ``Resources/Private/Templates/Post/`` folder:
 
 .. code-block:: html
 
-	<f:layout name="Default" />
+    <f:layout name="Default" />
 
-	<f:section name="MainContent">
-		<h2>Create new post</h2>
-		<f:form action="create" objectName="newPost">
-			<f:form.hidden property="blog" value="{blog}" />
+    <f:section name="MainContent">
+        <h2>Create new post</h2>
+        <f:form action="create" objectName="newPost">
+            <f:form.hidden property="blog" value="{blog}" />
 
-			<label for="post-author">Author</label>
-			<f:form.textfield property="author" id="post-author" />
+            <label for="post-author">Author</label>
+            <f:form.textfield property="author" id="post-author" />
 
-			<label for="post-subject">Subject</label>
-			<f:form.textfield property="subject" id="post-subject" />
+            <label for="post-subject">Subject</label>
+            <f:form.textfield property="subject" id="post-subject" />
 
-			<label for="post-content">Content</label>
-			<f:form.textarea property="content" rows="5" cols="30" id="post-content" />
+            <label for="post-content">Content</label>
+            <f:form.textarea property="content" rows="5" cols="30" id="post-content" />
 
-			<f:form.submit name="submit" value="Publish Post" />
-		</f:form>
-	</f:section>
+            <f:form.submit name="submit" value="Publish Post" />
+        </f:form>
+    </f:section>
 
 Here is how it works: The ``<f:form>`` view helper renders a form tag. Its
 attributes are similar to the action link view helper you might have seen in
@@ -417,28 +417,28 @@ Let's look at the ``createAction`` again:
 
 .. note::
 
-	Mind that ``newPost`` is not assigned to the view in this example. Assigning
-	this object is only needed if you have set default values to your model
-	properties. So if you for example have a ``protected $hidden = TRUE``
-	definition in your model, a ``<f:form.checkbox property="hidden" />`` will not
-	be checked by default, unless you instantiate ``$newPost`` in your index
-	action and assign it to the view.
+    Mind that ``newPost`` is not assigned to the view in this example. Assigning
+    this object is only needed if you have set default values to your model
+    properties. So if you for example have a ``protected $hidden = TRUE``
+    definition in your model, a ``<f:form.checkbox property="hidden" />`` will not
+    be checked by default, unless you instantiate ``$newPost`` in your index
+    action and assign it to the view.
 
 *Classes/Acme/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
-	/**
-	 * Creates a new post
-	 *
-	 * @param Post $newPost
-	 * @return void
-	 */
-	public function createAction(Post $newPost) {
-		$this->postRepository->add($newPost);
-		$this->addFlashMessage('Created a new post.');
-		$this->redirect('index');
-	}
+    /**
+     * Creates a new post
+     *
+     * @param Post $newPost
+     * @return void
+     */
+    public function createAction(Post $newPost) {
+        $this->postRepository->add($newPost);
+        $this->addFlashMessage('Created a new post.');
+        $this->redirect('index');
+    }
 
 It's important that the ``createAction`` uses the type hint
 ``Post`` (which expands to ``\Acme\Blog\Domain\Model\Post``) and that it comes with a proper
@@ -450,18 +450,18 @@ Time to test your new ``newAction`` and its template – click on the little plu
 sign above the first post lets the ``newAction`` render this form:
 
 .. figure:: Images/CreateNewPost.png
-	:alt: Form to create a new post
-	:class: screenshot-detail
+    :alt: Form to create a new post
+    :class: screenshot-detail
 
-	Form to create a new post
+    Form to create a new post
 
 Enter some data and click the submit button:
 
 .. figure:: Images/CreatedNewPost.png
-	:alt: A new post has been created
-	:class: screenshot-fullsize
+    :alt: A new post has been created
+    :class: screenshot-fullsize
 
-	A new post has been created
+    A new post has been created
 
 You should now find your new post in the list of posts.
 
@@ -478,27 +478,27 @@ partial::
 
 .. code-block:: html
 
-	<ul class="actions">
-		<li>
-			<f:link.action action="edit" arguments="{post: post}">Edit</f:link.action>
-		</li>
-		<li>
-			<f:form action="delete" arguments="{post: post}">
-				<f:form.submit name="delete" value="Delete" />
-			</f:form>
-		</li>
-	</ul>
+    <ul class="actions">
+        <li>
+            <f:link.action action="edit" arguments="{post: post}">Edit</f:link.action>
+        </li>
+        <li>
+            <f:form action="delete" arguments="{post: post}">
+                <f:form.submit name="delete" value="Delete" />
+            </f:form>
+        </li>
+    </ul>
 
 This renders an "Edit" link that points to the ``editAction`` of the PostController.
 Below is a little form with just one button that triggers the ``deleteAction()``.
 
 .. note::
 
-	The reason why the ``deleteAction()`` is invoked via a form instead of a link is
-	because Flow follows the HTTP 1.1 specification that suggests that called "safe
-	request methods" (usually GET or HEAD requests) should not change the server state.
-	See :doc:`Part III - Validation <../PartIII/Validation>` for more details.
-	The ``editAction()`` just displays the Post edit form, so it can be called via GET requests.
+    The reason why the ``deleteAction()`` is invoked via a form instead of a link is
+    because Flow follows the HTTP 1.1 specification that suggests that called "safe
+    request methods" (usually GET or HEAD requests) should not change the server state.
+    See :doc:`Part III - Validation <../PartIII/Validation>` for more details.
+    The ``editAction()`` just displays the Post edit form, so it can be called via GET requests.
 
 Adjust the template ``Templates/Post/Edit.html`` and insert the following HTML code:
 
@@ -506,23 +506,23 @@ Adjust the template ``Templates/Post/Edit.html`` and insert the following HTML c
 
 .. code-block:: html
 
-	<f:layout name="Default" />
+    <f:layout name="Default" />
 
-	<f:section name="MainContent">
-		<h2>Edit post "{post.subject}"</h2>
-		<f:form action="update" object="{post}" objectName="post">
-			<label for="post-author">Author</label>
-			<f:form.textfield property="author" id="post-author" />
+    <f:section name="MainContent">
+        <h2>Edit post "{post.subject}"</h2>
+        <f:form action="update" object="{post}" objectName="post">
+            <label for="post-author">Author</label>
+            <f:form.textfield property="author" id="post-author" />
 
-			<label for="post-subject">Subject</label>
-			<f:form.textfield property="subject" id="post-subject" />
+            <label for="post-subject">Subject</label>
+            <f:form.textfield property="subject" id="post-subject" />
 
-			<label for="post-content">Content</label>
-			<f:form.textarea property="content" rows="5" cols="30" id="post-content" />
+            <label for="post-content">Content</label>
+            <f:form.textarea property="content" rows="5" cols="30" id="post-content" />
 
-			<f:form.submit name="submit" value="Update Post" />
-		</f:form>
-	</f:section>
+            <f:form.submit name="submit" value="Update Post" />
+        </f:form>
+    </f:section>
 
 Most of this should already look familiar. However, there is a tiny difference
 to the ``new`` form you created earlier: in this edit form you added
@@ -545,24 +545,24 @@ What's missing now is a small adjustment to the PHP code displaying the edit for
 
 .. code-block:: php
 
-	/**
-	 * Displays the "Edit Post" form
-	 *
-	 * @param Post $post
-	 * @return void
-	 */
-	public function editAction(Post $post) {
-		$this->view->assign('post', $post);
-	}
+    /**
+     * Displays the "Edit Post" form
+     *
+     * @param Post $post
+     * @return void
+     */
+    public function editAction(Post $post) {
+        $this->view->assign('post', $post);
+    }
 
 Enough theory, let's try out the edit form in practice. A click on the edit
 link of your list of posts should result in a screen similar to this:
 
 .. figure:: Images/EditPost.png
-	:alt: The edit form for a post
-	:class: screenshot-fullsize
+    :alt: The edit form for a post
+    :class: screenshot-fullsize
 
-	The edit form for a post
+    The edit form for a post
 
 When you submit the form you call the ``updateAction``:
 
@@ -570,17 +570,17 @@ When you submit the form you call the ``updateAction``:
 
 .. code-block:: php
 
-	/**
-	 * Updates a post
-	 *
-	 * @param Post $post
-	 * @return void
-	 */
-	public function updateAction(Post $post) {
-		$this->postRepository->update($post);
-		$this->addFlashMessage('Updated the post.');
-		$this->redirect('index');
-	}
+    /**
+     * Updates a post
+     *
+     * @param Post $post
+     * @return void
+     */
+    public function updateAction(Post $post) {
+        $this->postRepository->update($post);
+        $this->addFlashMessage('Updated the post.');
+        $this->redirect('index');
+    }
 
 Quite easy as well, isn't it? The ``updateAction`` expects the edited post as
 its argument and passes it to the repository's ``update`` method (note that we
@@ -588,10 +588,10 @@ used the ``PostRepository``!). Before we disclose the secret how this magic
 actually works behind the scenes try out if updating the post really works:
 
 .. figure:: Images/UpdatedPost.png
-	:alt: The post has been edited
-	:class: screenshot-detail
+    :alt: The post has been edited
+    :class: screenshot-detail
 
-	The post has been edited
+    The post has been edited
 
 A Closer Look on Updates
 ------------------------
@@ -617,11 +617,11 @@ by Fluid's form view helper:
 
 .. code-block:: html
 
-	<form action="/acme.blog/post/update" method="post">
-		...
-		<input type="hidden" name="post[__identity]" value="7825fe4b-33d9-0522-a3f2-02833f9084ab" />
-		...
-	</form>
+    <form action="/acme.blog/post/update" method="post">
+        ...
+        <input type="hidden" name="post[__identity]" value="7825fe4b-33d9-0522-a3f2-02833f9084ab" />
+        ...
+    </form>
 
 Fluid automatically renders a hidden field containing information about the
 technical identity of the form's object, if the object is an original, previously
@@ -633,18 +633,18 @@ submitted. This results in three different cases:
 
 .. table:: Create, Show, Update detection
 
-	+-------------------+---------------+---------------------------------------+
-	| Situation         | Case          | Consequence                           |
-	+===================+===============+=======================================+
-	| identity missing, | New /         | Create a completely new object and    |
-	| properties present| Create        | set the given properties              |
-	+-------------------+---------------+---------------------------------------+
-	| identity present, | Show /        | Retrieve original object with         |
-	| properties missing| Delete / ...  | given identifier                      |
-	+-------------------+---------------+---------------------------------------+
-	| identity present, | Edit /        | Retrieve original object, and set the |
-	| properties present| Update        | given properties                      |
-	+-------------------+---------------+---------------------------------------+
+    +-------------------+---------------+---------------------------------------+
+    | Situation         | Case          | Consequence                           |
+    +===================+===============+=======================================+
+    | identity missing, | New /         | Create a completely new object and    |
+    | properties present| Create        | set the given properties              |
+    +-------------------+---------------+---------------------------------------+
+    | identity present, | Show /        | Retrieve original object with         |
+    | properties missing| Delete / ...  | given identifier                      |
+    +-------------------+---------------+---------------------------------------+
+    | identity present, | Edit /        | Retrieve original object, and set the |
+    | properties present| Update        | given properties                      |
+    +-------------------+---------------+---------------------------------------+
 
 Because the edit form contained both identity and properties, Flow prepared an
 instance with the given properties for our ``updateAction``.

@@ -230,7 +230,13 @@ class PersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function updateSchedulesAnObjectForPersistence()
     {
-        $this->markTestIncomplete('Needs to be tested and coded');
+        $object = new \ArrayObject(array('val' => '1'));
+        $persistenceManager = $this->getMock(\TYPO3\Flow\Persistence\Generic\PersistenceManager::class, array('isNewObject'));
+        $persistenceManager->expects($this->any())->method('isNewObject')->willReturn(false);
+
+        $this->assertAttributeNotContains($object, 'changedObjects', $persistenceManager);
+        $persistenceManager->update($object);
+        $this->assertAttributeContains($object, 'changedObjects', $persistenceManager);
     }
 
     /**
@@ -255,20 +261,6 @@ class PersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $object = $persistenceManager->getObjectByIdentifier('abcdefg');
         $this->assertNull($object);
-    }
-
-    /**
-     * @test
-     */
-    public function tearDownWithBackendNotSupportingTearDownDoesNothing()
-    {
-        $mockBackend = $this->getMock(\TYPO3\Flow\Persistence\Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->never())->method('tearDown');
-
-        $persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
-        $persistenceManager->injectBackend($mockBackend);
-
-        $persistenceManager->tearDown();
     }
 
     /**

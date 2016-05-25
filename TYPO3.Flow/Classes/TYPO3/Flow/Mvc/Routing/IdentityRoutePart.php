@@ -273,7 +273,7 @@ class IdentityRoutePart extends DynamicRoutePart
                 $propertyPath = $dynamicPathSegmentParts[0];
                 $dynamicPathSegment = ObjectAccess::getPropertyPath($object, $propertyPath);
                 if (is_object($dynamicPathSegment)) {
-                    if ($dynamicPathSegment instanceof \DateTime) {
+                    if ($dynamicPathSegment instanceof \DateTimeInterface) {
                         $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
                         $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
                     } else {
