@@ -674,18 +674,16 @@ class Scripts
 
     /**
      * @param array $settings The TYPO3.Flow settings
-     * @return string A command line command for PHP, which can be extended and then exec()uted
+     * @return string A command line command for PHP, which can be extended and then executed
      */
     public static function buildPhpCommand(array $settings)
     {
-        $command = '';
-
         if (DIRECTORY_SEPARATOR === '/') {
-            $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+            $command = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
         } else {
-            $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+            $command = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
         }
-        $command .= $phpBinaryPathAndFilename;
+
         if (!isset($settings['core']['subRequestPhpIniPathAndFilename']) || $settings['core']['subRequestPhpIniPathAndFilename'] !== false) {
             if (!isset($settings['core']['subRequestPhpIniPathAndFilename'])) {
                 $useIniFile = php_ini_loaded_file();
