@@ -293,4 +293,16 @@ class PackageTest extends UnitTestCase
         $package = new Package('Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []);
         $package->getComposerManifest();
     }
+
+    /**
+     * @test
+     */
+    public function getInstalledVersionReturnsFallback()
+    {
+        /** @var Package|\PHPUnit_Framework_MockObject_MockObject $package */
+        $package = $this->getMock(\TYPO3\Flow\Package\Package::class, ['getComposerManifest'], ['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []]);
+        $package->method('getComposerManifest')->willReturn('1.2.3');
+
+        $this->assertEquals('1.2.3', $package->getInstalledVersion('some/package'));
+    }
 }
