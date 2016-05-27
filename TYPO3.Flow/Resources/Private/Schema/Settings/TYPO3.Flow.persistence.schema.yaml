@@ -128,6 +128,10 @@ properties:
             type: dictionary
             required: TRUE
             patternProperties: { '/.*/': { type: boolean } }
+      'cacheImplementation':
+        type:
+          - { type: 'null' }
+          - { type: string, format: class-name }
   'cacheAllQueryResults':
     type: boolean
     required: TRUE
