@@ -15,10 +15,12 @@ properties:
         -
           type: string
           format: ip-address
+        -
+          type: null
       'charset': { type: string }
-      'dbname': { type: string }
-      'user': { type: string }
-      'password':  { type: string }
+      'dbname': { type: ['string','null'] }
+      'user': { type: ['string','null'] }
+      'password':  { type: ['string','null'] }
       'path': { type: string }
       'wrapperClass': { type: string, format: class-name }
       'master':
@@ -60,7 +62,9 @@ properties:
     properties:
       'enable': { type: boolean, required: TRUE }
       'sqlLogger': { type: [string, 'null'], required: TRUE }
-      'eventSubscribers': { type: array, items: { type: string, format: class-name } }
+      'eventSubscribers':
+        type: dictionary
+        additionalProperties: { type: string, format: class-name }
       'eventListeners':
         type: dictionary
         additionalProperties:
