@@ -15,3 +15,5 @@ roles:
 
   'TYPO3.Flow:AuthenticatedUser':
     abstract: TRUE
+
+privilegeTargets: []
