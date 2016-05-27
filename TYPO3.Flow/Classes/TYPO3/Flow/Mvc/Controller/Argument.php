@@ -29,12 +29,14 @@ class Argument
     /**
      * Short name of this argument
      * @var string
+     * @deprecated Will be removed for next major Flow version.
      */
     protected $shortName = null;
 
     /**
      * Short help message for this argument
      * @var string
+     * @deprecated Will be removed for next major Flow version.
      */
     protected $shortHelpMessage = null;
 
@@ -123,6 +125,7 @@ class Argument
      * @return \TYPO3\Flow\Mvc\Controller\Argument $this
      * @throws \InvalidArgumentException if $shortName is not a character
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function setShortName($shortName)
     {
@@ -138,6 +141,7 @@ class Argument
      *
      * @return string This argument's short name
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function getShortName()
     {
@@ -148,6 +152,7 @@ class Argument
      * Sets the data type of this argument that is also used for property mapping.
      * @param string $dataType
      * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @deprecated Will be removed for next major Flow version. Set the DataType via constructor.
      */
     public function setDataType($dataType)
     {
@@ -198,6 +203,7 @@ class Argument
      * @return \TYPO3\Flow\Mvc\Controller\Argument $this
      * @throws \InvalidArgumentException
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function setShortHelpMessage($message)
     {
@@ -213,6 +219,7 @@ class Argument
      *
      * @return string The short help message
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function getShortHelpMessage()
     {
@@ -321,6 +328,7 @@ class Argument
     /**
      * @return boolean TRUE if the argument is valid, FALSE otherwise
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function isValid()
     {
