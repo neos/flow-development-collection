@@ -1,0 +1,71 @@
+`3.2.3 (2016-05-29) <https://github.com/neos/flow-development-collection/releases/tag/3.2.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: After creating a package all packages should be sorted <https://github.com/neos/flow-development-collection/pull/365>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+After creating a package only a rescan of existing packages was triggered
+but not a resorting. That would lead to arbitrary package loading order
+which only depended on the way the filesystem would find the packages.
+This has been changed to trigger a full rescan including sorting of packages.
+
+* Packages: ``Flow``
+
+`BUGFIX: Clear opcode cache before compiling proxy classes <https://github.com/neos/flow-development-collection/pull/361>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug with statcaches that would lead to Flow trying to delete
+configuration files that no longer existed.
+
+* Packages: ``Flow``
+
+`TASK: Allow wildcard propertymapping configuration to set defaults for trustedProperties configuration <https://github.com/neos/flow-development-collection/pull/333>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Before, when specifying a PropertyMappingConfiguration with a wildcard inside the initializeAction() of
+a controller, this configuration would not be taken into account when a Fluid form was submitted, that
+set configuration for specific properties.
+
+This change makes the trustedProperties configuration happen *after* the user configuration, which in turn
+will lead to trustedProperties always only extend the user configuration and wildcard configurations to
+be used as the template configuration for the following specific trustedProperties configurations.
+
+* Packages: ``Flow``
+
+`TASK: Use version of composer.json as fallback for installed version of packages <https://github.com/neos/flow-development-collection/pull/351>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+In case of missing the installed version of a package, we provide the given version out of the composer.json of the package.
+
+FLOW-455 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: Ignore abstract command-controllers <https://github.com/neos/flow-development-collection/pull/359>`_
+-------------------------------------------------------------------------------------------------------------
+
+If a command controller is declared abstract the cli ignores this class because it cannot be instantiated.
+The commands from derived classes will of course be available.
+
+* Packages: ``Flow``
+
+`TASK: Don't override CommandManager in HelpCommandController <https://github.com/neos/flow-development-collection/pull/358>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This change remove the property ``commandManager`` from the
+``HelpCommandController``, because it already defined in the parent class.
+
+* Packages: ``Flow``
+
+`BUGFIX: Missing use statement in HelpCommandController <https://github.com/neos/flow-development-collection/pull/356>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This fix a regression introduced in 3.2, the use statement for the CommandManager is missing
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.2...3.2.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
