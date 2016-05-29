@@ -1,0 +1,38 @@
+`3.0.8 (2016-05-29) <https://github.com/neos/flow-development-collection/releases/tag/3.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Clear opcode cache before compiling proxy classes <https://github.com/neos/flow-development-collection/pull/361>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug with statcaches that would lead to Flow trying to delete
+configuration files that no longer existed.
+
+* Packages: ``Flow``
+
+`TASK: Allow wildcard propertymapping configuration to set defaults for trustedProperties configuration <https://github.com/neos/flow-development-collection/pull/333>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Before, when specifying a PropertyMappingConfiguration with a wildcard inside the initializeAction() of
+a controller, this configuration would not be taken into account when a Fluid form was submitted, that
+set configuration for specific properties.
+
+This change makes the trustedProperties configuration happen *after* the user configuration, which in turn
+will lead to trustedProperties always only extend the user configuration and wildcard configurations to
+be used as the template configuration for the following specific trustedProperties configurations.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fallback if custom exception rendering fails <https://github.com/neos/flow-development-collection/pull/354>`_
+----------------------------------------------------------------------------------------------------------------------
+
+If a custom exception rendering fails, the exception would not be
+caught and thus difficult to debug. Instead as a fallback exceptions
+thrown during rendering will be rendered statically.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.7...3.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
