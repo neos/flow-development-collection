@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Property\TypeConverter\DateTimeConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 
@@ -41,17 +42,21 @@ class EntityController extends ActionController
      */
     protected function initializeUpdateAction()
     {
-        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+        $propertyMappingConfiguration = $this->arguments->getArgument('entity')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration
             ->allowAllProperties()
             ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
-        $this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+        $propertyMappingConfiguration
             ->forProperty('subEntities.*')
             ->allowAllProperties()
             ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $propertyMappingConfiguration
+            ->forProperty('subEntities.*.date')
+            ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $entity
+     * @param TestEntity $entity
      * @return string
      */
     public function updateAction(TestEntity $entity)
