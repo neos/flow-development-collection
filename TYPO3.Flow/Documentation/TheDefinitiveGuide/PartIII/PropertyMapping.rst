@@ -225,6 +225,17 @@ the path syntax supports an asterisk as a placeholder::
 			TRUE
 		);
 
+This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
+on large collections::
+
+	$propertyMappingConfiguration
+		->forProperty('persons.*.birthDate')
+		->setTypeConvertOption(
+			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+			'Y-m-d'
+		);
+
 .. admonition:: Property Mapping Configuration in the MVC stack
 
 	The most common use-case where you will want to adjust the Property Mapping Configuration
