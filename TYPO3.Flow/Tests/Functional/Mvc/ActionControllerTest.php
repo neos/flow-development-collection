@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 
 /**
  * Functional tests for the ActionController
@@ -46,12 +47,17 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             '@format' =>'html'
         ));
 
-        $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}', array(
+        $route = $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}(/{@action})', array(
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'Entity',
             '@action' => 'show',
             '@format' =>'html'
+        ));
+        $route->setRoutePartsConfiguration(array(
+            'entity' => array(
+                'objectType' => 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity'
+            )
         ));
     }
 
@@ -341,5 +347,40 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
         $response = $this->browser->request($uri, 'POST', $arguments);
         $this->assertTrue(strpos(trim($response->getContent()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getContent()));
+    }
+
+    /**
+     * @test
+     */
+    public function trustedPropertiesConfigurationDoesNotIgnoreWildcardConfigurationInController()
+    {
+        $entity = new TestEntity();
+        $entity->setName('Foo');
+        $this->persistenceManager->add($entity);
+        $identifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+        $trustedPropertiesService = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService();
+        $trustedProperties = $trustedPropertiesService->generateTrustedPropertiesToken(array('entity[__identity]', 'entity[subEntities][0][content]', 'entity[subEntities][0][date]', 'entity[subEntities][1][content]', 'entity[subEntities][1][date]'));
+
+        $form = array(
+            'entity' => array(
+                '__identity' => $identifier,
+                'subEntities' => array(
+                    array(
+                        'content' => 'Bar',
+                        'date' => '1.1.2016'
+                    ),
+                    array(
+                        'content' => 'Baz',
+                        'date' => '30.12.2016'
+                    )
+                )
+            ),
+            '__trustedProperties' => $trustedProperties
+        );
+        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST', $form);
+
+        $response = $this->browser->sendRequest($request);
+        $this->assertSame('Entity "Foo" updated', $response->getContent());
     }
 }

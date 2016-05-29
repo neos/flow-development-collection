@@ -155,13 +155,13 @@ class ActionController extends AbstractController
 
         $this->initializeActionMethodArguments();
         $this->initializeActionMethodValidators();
-        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
         if (method_exists($this, $actionInitializationMethodName)) {
             call_user_func(array($this, $actionInitializationMethodName));
         }
+        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
         $this->mapRequestArgumentsToControllerArguments();
 
