@@ -42,7 +42,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * @var array
      */
-    protected $cacheEntryIdentifiers = array();
+    protected $cacheEntryIdentifiers = [];
 
     /**
      * @var boolean
@@ -152,7 +152,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!is_string($data)) {
             throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
@@ -259,7 +259,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function findIdentifiersByTag($searchedTag)
     {
-        $entryIdentifiers = array();
+        $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
         $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {

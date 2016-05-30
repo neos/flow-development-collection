@@ -115,7 +115,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
      * @throws InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1232986818);
@@ -192,7 +192,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
         $success = false;
         $identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
         if ($success === false) {
-            return array();
+            return [];
         } else {
             return (array) $identifiers;
         }
@@ -209,7 +209,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
     {
         $success = false;
         $tags = apc_fetch($this->identifierPrefix . 'ident_' . $identifier, $success);
-        return ($success ? (array)$tags : array());
+        return ($success ? (array)$tags : []);
     }
 
     /**

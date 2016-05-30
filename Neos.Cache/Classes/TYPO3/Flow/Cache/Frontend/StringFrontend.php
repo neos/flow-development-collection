@@ -31,7 +31,7 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $string, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $string, array $tags = [], $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
@@ -79,7 +79,7 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
             throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
         }
 
-        $entries = array();
+        $entries = [];
         $identifiers = $this->backend->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
             $entries[$identifier] = $this->backend->get($identifier);

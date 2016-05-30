@@ -58,7 +58,7 @@ class RedisBackendTest extends BaseTestCase
             $this->markTestSkipped('redis server not reachable');
         }
         $this->backend = new RedisBackend(
-            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), array('hostname' => '127.0.0.1', 'database' => 0)
+            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), ['hostname' => '127.0.0.1', 'database' => 0]
         );
         $this->cache = $this->getMock(FrontendInterface::class);
         $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
@@ -91,11 +91,11 @@ class RedisBackendTest extends BaseTestCase
      */
     public function setAddsTags()
     {
-        $this->backend->set('some_entry', 'foo', array('tag1', 'tag2'));
-        $this->backend->set('some_other_entry', 'foo', array('tag2', 'tag3'));
+        $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
+        $this->backend->set('some_other_entry', 'foo', ['tag2', 'tag3']);
 
-        $this->assertEquals(array('some_entry'), $this->backend->findIdentifiersByTag('tag1'));
-        $expected = array('some_entry', 'some_other_entry');
+        $this->assertEquals(['some_entry'], $this->backend->findIdentifiersByTag('tag1'));
+        $expected = ['some_entry', 'some_other_entry'];
         $actual = $this->backend->findIdentifiersByTag('tag2');
 
         // since Redis does not garantuee the order of values in sets, manually sort the array for comparison
@@ -103,7 +103,7 @@ class RedisBackendTest extends BaseTestCase
         $actual = array_values($actual);
 
         $this->assertEquals($expected, $actual);
-        $this->assertEquals(array('some_other_entry'), $this->backend->findIdentifiersByTag('tag3'));
+        $this->assertEquals(['some_other_entry'], $this->backend->findIdentifiersByTag('tag3'));
     }
 
     /**
@@ -114,7 +114,7 @@ class RedisBackendTest extends BaseTestCase
         for ($i = 0; $i < 100; $i++) {
             $this->backend->set('entry_' . $i, 'foo');
         }
-        $actualEntries = array();
+        $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }
@@ -145,10 +145,10 @@ class RedisBackendTest extends BaseTestCase
     public function flushByTagFlushesEntryByTag()
     {
         for ($i = 0; $i < 10; $i++) {
-            $this->backend->set('entry_' . $i, 'foo', array('tag1', 'tag2'));
+            $this->backend->set('entry_' . $i, 'foo', ['tag1', 'tag2']);
         }
         for ($i = 10; $i < 20; $i++) {
-            $this->backend->set('entry_' . $i, 'foo', array('tag2'));
+            $this->backend->set('entry_' . $i, 'foo', ['tag2']);
         }
         $this->assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
         $this->assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
@@ -165,7 +165,7 @@ class RedisBackendTest extends BaseTestCase
     public function flushFlushesCache()
     {
         for ($i = 0; $i < 10; $i++) {
-            $this->backend->set('entry_' . $i, 'foo', array('tag1'));
+            $this->backend->set('entry_' . $i, 'foo', ['tag1']);
         }
         $this->assertTrue($this->backend->has('entry_5'));
         $this->backend->flush();
@@ -178,11 +178,11 @@ class RedisBackendTest extends BaseTestCase
     public function removeRemovesEntryFromCache()
     {
         for ($i = 0; $i < 10; $i++) {
-            $this->backend->set('entry_' . $i, 'foo', array('tag1'));
+            $this->backend->set('entry_' . $i, 'foo', ['tag1']);
         }
         $this->assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
         $this->assertEquals('foo', $this->backend->get('entry_1'));
-        $actualEntries = array();
+        $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }
@@ -191,7 +191,7 @@ class RedisBackendTest extends BaseTestCase
         $this->backend->remove('entry_3');
         $this->assertCount(9, $this->backend->findIdentifiersByTag('tag1'));
         $this->assertFalse($this->backend->get('entry_3'));
-        $actualEntries = array();
+        $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }

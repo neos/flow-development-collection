@@ -64,7 +64,7 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
      *
      * @var array
      */
-    protected $servers = array();
+    protected $servers = [];
 
     /**
      * Indicates whether the memcache uses compression or not (requires zlib),
@@ -193,7 +193,7 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
      * @throws InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (strlen($this->identifierPrefix . $entryIdentifier) > 250) {
             throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
@@ -314,7 +314,7 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
         if ($identifiers !== false) {
             return (array) $identifiers;
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -328,7 +328,7 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
     protected function findTagsByIdentifier($identifier)
     {
         $tags = $this->memcache->get($this->identifierPrefix . 'ident_' . $identifier);
-        return ($tags === false ? array() : (array)$tags);
+        return ($tags === false ? [] : (array)$tags);
     }
 
     /**

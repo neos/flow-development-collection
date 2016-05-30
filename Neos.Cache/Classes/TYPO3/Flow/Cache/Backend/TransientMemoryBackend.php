@@ -26,12 +26,12 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
     /**
      * @var array
      */
-    protected $entries = array();
+    protected $entries = [];
 
     /**
      * @var array
      */
-    protected $tagsAndEntries = array();
+    protected $tagsAndEntries = [];
 
     /**
      * Saves data in the cache.
@@ -45,7 +45,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
      * @throws Exception if no cache frontend has been set.
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
@@ -118,7 +118,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
         if (isset($this->tagsAndEntries[$tag])) {
             return array_keys($this->tagsAndEntries[$tag]);
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -130,8 +130,8 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
      */
     public function flush()
     {
-        $this->entries = array();
-        $this->tagsAndEntries = array();
+        $this->entries = [];
+        $this->tagsAndEntries = [];
     }
 
     /**

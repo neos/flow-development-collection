@@ -50,7 +50,7 @@ class GenericCacheFactory implements CacheFactoryInterface
      * @throws Exception\InvalidCacheException
      * @api
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array())
+    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [])
     {
         $backend = $this->instanciateBackend($backendObjectName, $backendOptions);
         $cache = $this->instanciateCache($cacheIdentifier, $cacheObjectName, $backend);

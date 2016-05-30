@@ -52,7 +52,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @param array $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = array())
+    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
 

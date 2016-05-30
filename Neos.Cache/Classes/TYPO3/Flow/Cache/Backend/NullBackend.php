@@ -32,7 +32,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
     }
 
@@ -81,7 +81,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      */
     public function findIdentifiersByTag($tag)
     {
-        return array();
+        return [];
     }
 
     /**

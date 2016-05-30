@@ -107,7 +107,7 @@ class PdoBackendTest extends BaseTestCase
 
         $data = 'Some data';
         $entryIdentifier = 'MyIdentifier';
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($entryIdentifier, $retrieved[0]);
@@ -125,11 +125,11 @@ class PdoBackendTest extends BaseTestCase
 
         $data = 'Some data';
         $entryIdentifier = 'MyIdentifier';
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag3'));
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals(array(), $retrieved);
+        $this->assertEquals([], $retrieved);
     }
 
     /**
@@ -160,9 +160,9 @@ class PdoBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('PdoBackendTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('PdoBackendTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('PdoBackendTest3', $data, array('UnitTestTag%test'));
+        $backend->set('PdoBackendTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('PdoBackendTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('PdoBackendTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
@@ -195,12 +195,12 @@ class PdoBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, [], [], '', false);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, [], [], '', false);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);

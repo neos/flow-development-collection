@@ -58,7 +58,7 @@ class SimpleFileBackendTest extends BaseTestCase
      * @param FrontendInterface $mockCacheFrontend
      * @return SimpleFileBackend
      */
-    protected function getSimpleFileBackend(array $options = array(), FrontendInterface $mockCacheFrontend = null)
+    protected function getSimpleFileBackend(array $options = [], FrontendInterface $mockCacheFrontend = null)
     {
         $simpleFileBackend = new SimpleFileBackend($this->mockEnvironmentConfiguration, $options);
 
@@ -102,7 +102,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $entryIdentifier = 'BackendFileTest';
 
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\SimpleFileBackend::class, array('setTag', 'writeCacheFile'), array(), '', false);
+        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\SimpleFileBackend::class, ['setTag', 'writeCacheFile'], [], '', false);
         $backend->expects($this->once())->method('writeCacheFile')->willReturn(false);
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
 
@@ -153,7 +153,7 @@ class SimpleFileBackendTest extends BaseTestCase
         // createDirectoryRecursively() in the setCache method.
         mkdir('vfs://Temporary/Directory/Cache');
 
-        $simpleFileBackend = $this->getSimpleFileBackend(array(), $mockPhpCacheFrontend);
+        $simpleFileBackend = $this->getSimpleFileBackend([], $mockPhpCacheFrontend);
         $this->assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
     }
 
@@ -164,7 +164,7 @@ class SimpleFileBackendTest extends BaseTestCase
     public function setThrowsExceptionIfDataIsNotAString()
     {
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set('SomeIdentifier', array('not a string'));
+        $simpleFileBackend->set('SomeIdentifier', ['not a string']);
     }
 
     /**
@@ -294,20 +294,20 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function invalidEntryIdentifiers()
     {
-        return array(
-            'trailing slash' => array('/myIdentifer'),
-            'trailing dot and slash' => array('./myIdentifer'),
-            'trailing two dots and slash' => array('../myIdentifier'),
-            'trailing with multiple dots and slashes' => array('.././../myIdentifier'),
-            'slash in middle part' => array('my/Identifier'),
-            'dot and slash in middle part' => array('my./Identifier'),
-            'two dots and slash in middle part' => array('my../Identifier'),
-            'multiple dots and slashes in middle part' => array('my.././../Identifier'),
-            'pending slash' => array('myIdentifier/'),
-            'pending dot and slash' => array('myIdentifier./'),
-            'pending dots and slash' => array('myIdentifier../'),
-            'pending multiple dots and slashes' => array('myIdentifier.././../'),
-        );
+        return [
+            'trailing slash' => ['/myIdentifer'],
+            'trailing dot and slash' => ['./myIdentifer'],
+            'trailing two dots and slash' => ['../myIdentifier'],
+            'trailing with multiple dots and slashes' => ['.././../myIdentifier'],
+            'slash in middle part' => ['my/Identifier'],
+            'dot and slash in middle part' => ['my./Identifier'],
+            'two dots and slash in middle part' => ['my../Identifier'],
+            'multiple dots and slashes in middle part' => ['my.././../Identifier'],
+            'pending slash' => ['myIdentifier/'],
+            'pending dot and slash' => ['myIdentifier./'],
+            'pending dots and slash' => ['myIdentifier../'],
+            'pending multiple dots and slashes' => ['myIdentifier.././../'],
+        ];
     }
 
     /**
@@ -467,7 +467,7 @@ class SimpleFileBackendTest extends BaseTestCase
             $simpleFileBackend->set($entryIdentifier, $data);
         }
 
-        $entries = array();
+        $entries = [];
         foreach ($simpleFileBackend as $entryIdentifier => $data) {
             $entries[$entryIdentifier] = $data;
         }

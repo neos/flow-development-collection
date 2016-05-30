@@ -84,7 +84,7 @@ class PhpFrontend extends StringFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $sourceCode, array $tags = [], $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);

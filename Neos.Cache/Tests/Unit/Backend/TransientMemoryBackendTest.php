@@ -115,7 +115,7 @@ class TransientMemoryBackendTest extends BaseTestCase
 
         $data = 'Some data';
         $entryIdentifier = 'MyIdentifier';
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($entryIdentifier, $retrieved[0]);
@@ -162,9 +162,9 @@ class TransientMemoryBackendTest extends BaseTestCase
         $backend->setCache($cache);
 
         $data = 'some data' . microtime();
-        $backend->set('TransientMemoryBackendTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('TransientMemoryBackendTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('TransientMemoryBackendTest3', $data, array('UnitTestTag%test'));
+        $backend->set('TransientMemoryBackendTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('TransientMemoryBackendTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('TransientMemoryBackendTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 

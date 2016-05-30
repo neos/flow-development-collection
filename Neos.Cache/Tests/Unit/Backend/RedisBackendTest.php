@@ -61,7 +61,7 @@ class RedisBackendTest extends BaseTestCase
             255
         ], '');
 
-        $this->backend = new RedisBackend($mockEnvironmentConfiguration, array(), $this->redis);
+        $this->backend = new RedisBackend($mockEnvironmentConfiguration, [], $this->redis);
         $this->backend->setCache($this->cache);
     }
 
@@ -73,9 +73,9 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->expects($this->once())
             ->method('sMembers')
             ->with('Foo_Cache:tag:some_tag')
-            ->will($this->returnValue(array('entry_1', 'entry_2')));
+            ->will($this->returnValue(['entry_1', 'entry_2']));
 
-        $this->assertEquals(array('entry_1', 'entry_2'), $this->backend->findIdentifiersByTag('some_tag'));
+        $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
     /**
@@ -86,7 +86,7 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->expects($this->once())
             ->method('lRange')
             ->with('Foo_Cache:entries', 0, -1)
-            ->will($this->returnValue(array('entry_1', 'entry_2')));
+            ->will($this->returnValue(['entry_1', 'entry_2']));
 
         $this->redis->expects($this->exactly(2))
             ->method('persist');
@@ -105,7 +105,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = rand(1, 9999);
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = array('ex' => $defaultLifetime);
+        $expected = ['ex' => $defaultLifetime];
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -126,7 +126,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = 3600;
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = array('ex' => 1600);
+        $expected = ['ex' => 1600];
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -137,7 +137,7 @@ class RedisBackendTest extends BaseTestCase
             ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
 
-        $this->backend->set('foo', 'bar', array(), 1600);
+        $this->backend->set('foo', 'bar', [], 1600);
     }
 
     /**
@@ -203,11 +203,11 @@ class RedisBackendTest extends BaseTestCase
      */
     public static function writingOperationsProvider()
     {
-        return array(
-            array('set'),
-            array('remove'),
-            array('flushByTag'),
-            array('freeze')
-        );
+        return [
+            ['set'],
+            ['remove'],
+            ['flushByTag'],
+            ['freeze']
+        ];
     }
 }

@@ -117,7 +117,7 @@ class ApcBackendTest extends BaseTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
@@ -135,11 +135,11 @@ class ApcBackendTest extends BaseTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
-        $backend->set($identifier, $data, array('UnitTestTag%tag3'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tagX']);
+        $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
-        $this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
+        $this->assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
     /**
@@ -172,9 +172,9 @@ class ApcBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('BackendAPCTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('BackendAPCTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('BackendAPCTest3', $data, array('UnitTestTag%test'));
+        $backend->set('BackendAPCTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('BackendAPCTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('BackendAPCTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
@@ -207,12 +207,12 @@ class ApcBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
+        $thisCache = $this->getMock(FrontendInterface::class, [], [], '', false);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
+        $thatCache = $this->getMock(FrontendInterface::class, [], [], '', false);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
@@ -258,7 +258,7 @@ class ApcBackendTest extends BaseTestCase
             $cache->set($entryIdentifier, $data);
         }
 
-        $entries = array();
+        $entries = [];
         foreach ($cache->getIterator() as $entryIdentifier => $data) {
             $entries[$entryIdentifier] = $data;
         }
@@ -279,7 +279,7 @@ class ApcBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
+        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
         $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         return $backend;

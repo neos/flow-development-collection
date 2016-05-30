@@ -52,7 +52,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     /**
      * @var array
      */
-    protected $cacheEntryIdentifiers = array();
+    protected $cacheEntryIdentifiers = [];
 
     /**
      * @var boolean
@@ -141,7 +141,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!is_string($data)) {
             throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
@@ -284,7 +284,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     protected function findCacheFilesByIdentifier($entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        return (file_exists($pathAndFilename) ? array($pathAndFilename) : false);
+        return (file_exists($pathAndFilename) ? [$pathAndFilename] : false);
     }
 
     /**

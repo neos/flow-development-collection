@@ -36,7 +36,7 @@ class AbstractBackendTest extends BaseTestCase
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
 			class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
-				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
+				public function set($entryIdentifier, $data, array $tags = [], $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}
 				public function remove($entryIdentifier) {}
@@ -61,7 +61,7 @@ class AbstractBackendTest extends BaseTestCase
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = get_class($this->backend);
-        $backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN), array('someOption' => 'someValue'));
+        $backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN), ['someOption' => 'someValue']);
         $this->assertSame('someValue', $backend->getSomeOption());
     }
 }
