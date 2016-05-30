@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -44,7 +44,7 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class MemcachedBackend extends AbstractBackend implements TaggableBackendInterface
+class MemcachedBackend extends IndependentAbstractBackend implements TaggableBackendInterface
 {
     /**
      * Max bucket size, (1024*1024)-42 bytes

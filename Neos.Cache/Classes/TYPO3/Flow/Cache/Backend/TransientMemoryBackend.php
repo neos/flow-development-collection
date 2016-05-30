@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
@@ -21,7 +21,7 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class TransientMemoryBackend extends AbstractBackend implements TaggableBackendInterface
+class TransientMemoryBackend extends IndependentAbstractBackend implements TaggableBackendInterface
 {
     /**
      * @var array

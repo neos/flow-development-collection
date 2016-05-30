@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
@@ -22,7 +22,7 @@ use TYPO3\Flow\Utility\PdoHelper;
  *
  * @api
  */
-class PdoBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface
 {
     /**
      * @var string

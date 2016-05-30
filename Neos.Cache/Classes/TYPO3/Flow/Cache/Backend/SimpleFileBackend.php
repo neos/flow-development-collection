@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -26,7 +26,7 @@ use TYPO3\Flow\Utility\OpcodeCacheHelper;
  *
  * @api
  */
-class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
+class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
 {
     const SEPARATOR = '^';
 
