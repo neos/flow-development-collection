@@ -39,7 +39,7 @@ class PdoBackendTest extends BaseTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new EnvironmentConfiguration('SomeApplication', 'Testing', '/some/path', PHP_MAXPATHLEN));
+        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
@@ -225,8 +225,7 @@ class PdoBackendTest extends BaseTestCase
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
         $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Backend\AbstractBackend;
+use TYPO3\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
 use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -38,7 +38,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     /**
      * A reference to the cache manager
      *
-     * @var \TYPO3\Flow\Cache\CacheManager
+     * @var CacheManager
      */
     protected $cacheManager;
 
@@ -56,7 +56,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
      * @param CacheManager $cacheManager
      * @Flow\Autowiring(enabled=false)
      */
-    public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager)
+    public function injectCacheManager(CacheManager $cacheManager)
     {
         $this->cacheManager = $cacheManager;
     }
@@ -81,6 +81,14 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     {
         $this->context = $context;
         $this->environment = $environment;
+
+        $environmentConfiguration = new EnvironmentConfiguration(
+            FLOW_PATH_ROOT . '~' . (string)$environment->getContext(),
+            $environment->getPathToTemporaryDirectory(),
+            PHP_MAXPATHLEN
+        );
+
+        parent::__construct($environmentConfiguration);
     }
 
     /**
@@ -118,7 +126,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
      * @param string $backendObjectName
      * @param array $backendOptions
      * @param boolean $persistent
-     * @return AbstractBackend|Backend\BackendInterface
+     * @return FlowAbstractBackend|Backend\BackendInterface
      * @throws Exception\InvalidBackendException
      */
     protected function instanciateBackend($backendObjectName, $backendOptions, $persistent = false)
@@ -132,7 +140,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
             $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
         }
 
-        if (is_a($backendObjectName, AbstractBackend::class, true)) {
+        if (is_a($backendObjectName, FlowAbstractBackend::class, true)) {
             return $this->instanciateFlowSpecificBackend($backendObjectName, $backendOptions);
         }
 
@@ -142,7 +150,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     /**
      * @param string $backendObjectName
      * @param array $backendOptions
-     * @return AbstractBackend
+     * @return FlowAbstractBackend
      * @throws Exception\InvalidBackendException
      */
     protected function instanciateFlowSpecificBackend($backendObjectName, $backendOptions)
@@ -153,7 +161,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
             throw new Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
         }
 
-        /** @var AbstractBackend $backend */
+        /** @var FlowAbstractBackend $backend */
         $backend->injectEnvironment($this->environment);
 
         if (is_callable([$backend, 'injectCacheManager'])) {

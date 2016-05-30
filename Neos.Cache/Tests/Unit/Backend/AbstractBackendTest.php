@@ -52,7 +52,7 @@ class AbstractBackendTest extends BaseTestCase
 				}
 			}
 		');
-        $this->backend = new $className(new EnvironmentConfiguration('Ultraman Neos', 'Testing', '/some/path', PHP_MAXPATHLEN));
+        $this->backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN));
     }
 
     /**
@@ -61,7 +61,7 @@ class AbstractBackendTest extends BaseTestCase
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = get_class($this->backend);
-        $backend = new $className(new EnvironmentConfiguration('Ultraman Neos', 'Testing', '/some/path', PHP_MAXPATHLEN), array('someOption' => 'someValue'));
+        $backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN), array('someOption' => 'someValue'));
         $this->assertSame('someValue', $backend->getSomeOption());
     }
 }

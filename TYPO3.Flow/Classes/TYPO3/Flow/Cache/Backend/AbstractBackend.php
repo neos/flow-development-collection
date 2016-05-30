@@ -17,8 +17,8 @@ use TYPO3\Flow\Cache\EnvironmentConfiguration;
  * An abstract caching backend
  *
  * @api
- * @deprecated This is replaced by AbstractBackend which has a different constructor, you need to adapt any custom cache backend to that.
- * @see AbstractBackendBase
+ * @deprecated This is replaced by \Neos\Cache\Backend\AbstractBackend which has a different constructor, you need to adapt any custom cache backend to that.
+ * @see \Neos\Cache\Backend\AbstractBackend
  */
 abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend implements BackendInterface
 {

@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use TYPO3\Flow\Cache\Backend\RedisBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -35,7 +36,7 @@ class RedisBackendTest extends BaseTestCase
     private $backend;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendInterface
      */
     private $cache;
 
@@ -57,9 +58,9 @@ class RedisBackendTest extends BaseTestCase
             $this->markTestSkipped('redis server not reachable');
         }
         $this->backend = new RedisBackend(
-            new EnvironmentConfiguration('Redis a wonderful color', 'Testing', '/some/path', PHP_MAXPATHLEN), array('hostname' => '127.0.0.1', 'database' => 0)
+            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), array('hostname' => '127.0.0.1', 'database' => 0)
         );
-        $this->cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $this->cache = $this->getMock(FrontendInterface::class);
         $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
         $this->backend->setCache($this->cache);
         $this->backend->flush();

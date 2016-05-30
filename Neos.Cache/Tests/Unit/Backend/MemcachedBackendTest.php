@@ -290,8 +290,7 @@ class MemcachedBackendTest extends BaseTestCase
     public function getEnvironmentConfiguration()
     {
         return new EnvironmentConfiguration(
-            __DIR__,
-            'Testing',
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         );

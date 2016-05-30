@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
+use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
@@ -38,7 +39,7 @@ class FileBackendTest extends BaseTestCase
     {
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, array(__DIR__, 'Testing', 'http://localhost/', PHP_MAXPATHLEN), '');
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [__DIR__ . '~Testing', 'http://localhost/', PHP_MAXPATHLEN], '');
 
         $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\FileBackend::class, array('dummy'), array(), '', false);
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
@@ -54,9 +55,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             1024
         ], '');
@@ -196,9 +196,8 @@ class FileBackendTest extends BaseTestCase
     {
         $cachePath = 'vfs://Foo';
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             5
         ], '');
@@ -221,9 +220,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -257,9 +255,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -288,9 +285,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -311,9 +307,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -370,9 +365,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -457,9 +451,8 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -737,9 +730,8 @@ class FileBackendTest extends BaseTestCase
      */
     public function backendAllowsForIteratingOverEntries()
     {
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');
@@ -775,9 +767,8 @@ class FileBackendTest extends BaseTestCase
      */
     protected function prepareDefaultBackend($backendMockMethods = ['dummy'])
     {
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ], '');

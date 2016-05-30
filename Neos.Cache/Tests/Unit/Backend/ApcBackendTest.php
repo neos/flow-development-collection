@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use TYPO3\Flow\Cache\Backend\ApcBackend;
 use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -206,12 +207,12 @@ class ApcBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $thisCache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $thatCache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
@@ -278,7 +279,7 @@ class ApcBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $cache = $this->getMock(FrontendInterface::class, array(), array(), '', false);
         $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         return $backend;
@@ -290,8 +291,7 @@ class ApcBackendTest extends BaseTestCase
     public function getEnvironmentConfiguration()
     {
         return new EnvironmentConfiguration(
-            __DIR__,
-            'Testing',
+            __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         );

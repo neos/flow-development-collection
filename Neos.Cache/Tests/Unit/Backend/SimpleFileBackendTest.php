@@ -43,8 +43,7 @@ class SimpleFileBackendTest extends BaseTestCase
         vfsStream::setup('Temporary/Directory/');
 
         $this->mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+            __DIR__ . '~Testing',
             'vfs://Temporary/Directory/',
             1024
         ], '');
@@ -79,8 +78,7 @@ class SimpleFileBackendTest extends BaseTestCase
     {
 
         $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__,
-            'Testing',
+            __DIR__ . '~Testing',
             'vfs://Some/NonExisting/Directory/',
             1024
         ], '');
@@ -97,8 +95,8 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
     {
-        $mockEnvironmentConfiguration = new EnvironmentConfiguration(__DIR__,
-            'Testing',
+        $mockEnvironmentConfiguration = new EnvironmentConfiguration(
+            __DIR__ . '~Testing',
             'vfs://Temporary/Directory/',
             5);
 

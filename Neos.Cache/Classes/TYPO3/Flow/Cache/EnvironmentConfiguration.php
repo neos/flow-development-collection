@@ -35,32 +35,23 @@ class EnvironmentConfiguration
      * all applications with the same identifier would share entries
      * of caches that are used by multiple installations.
      * The installations path would be a good identifier.
+     * If your application supports different contexts that shouldn't
+     * share caches an identifier for that should also be included.
      *
      * @var string
      */
     protected $applicationIdentifier;
 
     /**
-     * The application context is also used to separate cache
-     * entries, this allows you to use the same cache for "Testing" purposes
-     * without having those entries bleed in your "Production" environment.
-     *
-     * @var string
-     */
-    protected $applicationContext;
-
-    /**
      * EnvironmentConfiguration constructor.
      *
      * @param string $applicationIdentifier
-     * @param string $applicationContext
      * @param string $fileCacheBasePath
      * @param integer $maximumPathLength
      */
-    public function __construct($applicationIdentifier, $applicationContext, $fileCacheBasePath, $maximumPathLength)
+    public function __construct($applicationIdentifier, $fileCacheBasePath, $maximumPathLength)
     {
         $this->applicationIdentifier = $applicationIdentifier;
-        $this->applicationContext = $applicationContext;
         $this->fileCacheBasePath = $fileCacheBasePath;
         $this->maximumPathLength = $maximumPathLength;
     }
@@ -87,13 +78,5 @@ class EnvironmentConfiguration
     public function getApplicationIdentifier()
     {
         return $this->applicationIdentifier;
-    }
-
-    /**
-     * @return string
-     */
-    public function getApplicationContext()
-    {
-        return $this->applicationContext;
     }
 }

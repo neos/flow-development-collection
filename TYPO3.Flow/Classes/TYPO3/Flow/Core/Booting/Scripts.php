@@ -16,7 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\EnvironmentConfiguration as CacheEnvironmentConfiguration;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\FlowCacheEnvironmentConfiguration;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Core\Bootstrap;
@@ -289,18 +288,11 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheEnvironmentConfiguration = new CacheEnvironmentConfiguration(
-            FLOW_PATH_ROOT,
-            (string)$environment->getContext(),
-            $environment->getPathToTemporaryDirectory(),
-            PHP_MAXPATHLEN
-        );
-
         $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'TYPO3\Flow\Cache\CacheFactoryInterface');
-        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : \TYPO3\Flow\Cache\CacheFactory::class;
+        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
 
+        /** @var CacheFactory $cacheFactory */
         $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment);
-        $cacheFactory->injectEnvironmentConfiguration($cacheEnvironmentConfiguration);
 
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));

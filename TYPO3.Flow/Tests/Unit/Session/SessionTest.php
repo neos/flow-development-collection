@@ -17,7 +17,6 @@ use TYPO3\Flow\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
-use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
@@ -1234,7 +1233,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function createCache($name)
     {
-        $backend = new FileBackend(new EnvironmentConfiguration('Session', 'Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
+        $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new VariableFrontend($name, $backend);
         $cache->initializeObject();
         $backend->setCache($cache);
