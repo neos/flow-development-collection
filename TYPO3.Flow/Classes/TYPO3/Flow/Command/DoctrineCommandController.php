@@ -419,6 +419,16 @@ class DoctrineCommandController extends CommandController
      *
      * would only create a migration touching tables starting with "acme_com".
      *
+     * It is also possible to set a default filter expression within the settings.
+     *
+     * TYPO3:
+     *   Flow:
+     *     persistence:
+     *       doctrine:
+     *         migrations:
+     *           generate:
+     *             defaultFilterExpression: '/^acme_com/'
+     *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
      * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
      * @return void
