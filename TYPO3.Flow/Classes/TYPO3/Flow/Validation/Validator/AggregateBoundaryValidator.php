@@ -10,25 +10,20 @@ namespace TYPO3\Flow\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Doctrine\ORM\Proxy\Proxy;
 
 /**
- * A validator which will only validate up to the Aggregate boundary, or if an Aggregate relation
- * is specifically annotated to be cascade validated.
+ * A validator which will not validate Aggregates that are lazy loaded and uninitialized.
+ * Validation over Aggregate Boundaries can hence be forced by making the relation to
+ * other Aggregate Roots eager loaded.
  *
  * @api
  */
 class AggregateBoundaryValidator extends GenericObjectValidator
 {
     /**
-     * @var array
-     */
-    protected $supportedOptions = array(
-    );
-
-    /**
      * Checks if the given value is valid according to the validator, and returns
-     * the Error Messages object which occurred.
+     * the Error Messages object which occurred. Will skip validation if value is
+     * an uninitialized lazy loading proxy.
      *
      * @param mixed $value The value that should be validated
      * @return \TYPO3\Flow\Error\Result
@@ -40,7 +35,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             if (!is_object($value)) {
                 $this->addError('Object expected, %1$s given.', 1241099149, array(gettype($value)));
-            } elseif ($value instanceof Proxy && !$value->__isInitialized()) {
+            } elseif ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
                 return $this->result;
             } elseif ($this->isValidatedAlready($value) === false) {
                 $this->isValid($value);
