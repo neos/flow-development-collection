@@ -308,6 +308,12 @@ TYPO3:
         eventSubscribers: []
         eventListeners: []
 
+        # Use default filter expression to ignore other packages when generating migrations
+        # E.g. '/^acme_package/'
+        migrations:
+          generate:
+            defaultFilterExpression:
+
     reflection:
 
       # A list of tags to be ignored during reflection

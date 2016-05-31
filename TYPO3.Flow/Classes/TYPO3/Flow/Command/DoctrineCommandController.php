@@ -436,6 +436,11 @@ class DoctrineCommandController extends CommandController
             $this->quit(1);
         }
 
+        // use default filter expression from settings
+        if (isset($this->settings['doctrine']['migrations']['generate']['defaultFilterExpression']) && $filterExpression === null) {
+            $filterExpression = $this->settings['doctrine']['migrations']['generate']['defaultFilterExpression'];
+        }
+
         list($status, $migrationClassPathAndFilename) = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression);
 
         $this->outputLine('<info>%s</info>', [$status]);
