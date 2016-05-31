@@ -10,7 +10,6 @@ namespace TYPO3\Flow\Cache\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -19,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-class PdoBackend extends AbstractBackend implements TaggableBackendInterface
+class PdoBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface
 {
     /**
      * @var string
@@ -45,6 +44,11 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
      * @var string
      */
     protected $pdoDriver;
+
+    /**
+     * @var \ArrayIterator
+     */
+    protected $cacheEntriesIterator = null;
 
     /**
      * Sets the DSN to use
@@ -118,6 +122,12 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
 
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
+        // Convert binary data into hexadecimal representation,
+        // because it is not allowed to store null bytes in PostgreSQL.
+        if ($this->pdoDriver === 'pgsql') {
+            $data = bin2hex($data);
+        }
+
         $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
         $result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data));
         if ($result === false) {
@@ -144,7 +154,15 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     {
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
-        return $statementHandle->fetchColumn();
+        $fetchedColumn = $statementHandle->fetchColumn();
+
+        // Convert hexadecimal data into binary string,
+        // because it is not allowed to store null bytes in PostgreSQL.
+        if($fetchedColumn !== false && $this->pdoDriver === 'pgsql') {
+            $fetchedColumn = hex2bin($fetchedColumn);
+        }
+
+        return $fetchedColumn;
     }
 
     /**
@@ -295,6 +313,96 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
             \TYPO3\Flow\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
         } catch (\PDOException $exception) {
             throw new \TYPO3\Flow\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
+        }
+    }
+
+    /**
+     * Returns the data of the current cache entry pointed to by the cache entry
+     * iterator.
+     *
+     * @return mixed
+     * @api
+     */
+    public function current()
+    {
+        if ($this->cacheEntriesIterator === null) {
+            $this->rewind();
+        }
+        return $this->cacheEntriesIterator->current();
+    }
+
+    /**
+     * Move forward to the next cache entry.
+     *
+     * @return void
+     * @api
+     */
+    public function next()
+    {
+        if ($this->cacheEntriesIterator === null) {
+            $this->rewind();
+        }
+        $this->cacheEntriesIterator->next();
+    }
+
+    /**
+     * Returns the identifier of the current cache entry pointed to by the cache
+     * entry iterator.
+     *
+     * @return string
+     * @api
+     */
+    public function key()
+    {
+        if ($this->cacheEntriesIterator === null) {
+            $this->rewind();
+        }
+        return $this->cacheEntriesIterator->key();
+    }
+
+    /**
+     * Checks if the current position of the cache entry iterator is valid.
+     *
+     * @return boolean TRUE if the current position is valid, otherwise FALSE
+     * @api
+     */
+    public function valid()
+    {
+        if ($this->cacheEntriesIterator === null) {
+            $this->rewind();
+        }
+        return $this->cacheEntriesIterator->valid();
+    }
+
+    /**
+     * Rewinds the cache entry iterator to the first element
+     * and fetches cacheEntries.
+     *
+     * @return void
+     * @api
+     */
+    public function rewind()
+    {
+        if ($this->cacheEntriesIterator === null) {
+            $cacheEntries = [];
+
+            $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "cache" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+            $statementHandle->execute(array($this->context, $this->cacheIdentifier));
+            $fetchedColumns = $statementHandle->fetchAll();
+
+            foreach ($fetchedColumns as $fetchedColumn) {
+                // Convert hexadecimal data into binary string,
+                // because it is not allowed to store null bytes in PostgreSQL.
+                if ($this->pdoDriver === 'pgsql') {
+                    $fetchedColumn['content'] = hex2bin($fetchedColumn['content']);
+                }
+
+                $cacheEntries[$fetchedColumn['identifier']] = $fetchedColumn['content'];
+            }
+
+            $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
+        } else {
+            $this->cacheEntriesIterator->rewind();
         }
     }
 }
