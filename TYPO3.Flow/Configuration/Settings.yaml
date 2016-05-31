@@ -312,7 +312,7 @@ TYPO3:
         # E.g. '/^acme_package/'
         migrations:
           generate:
-            defaultFilterExpression:
+            defaultFilterExpression: ~
 
     reflection:
 
