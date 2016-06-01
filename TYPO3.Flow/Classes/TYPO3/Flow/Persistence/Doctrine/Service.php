@@ -36,7 +36,6 @@ use TYPO3\Flow\Utility\Files;
  */
 class Service
 {
-
     const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
 
     /**

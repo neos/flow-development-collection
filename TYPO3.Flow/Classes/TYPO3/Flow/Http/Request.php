@@ -634,8 +634,8 @@ class Request extends AbstractMessage
     {
         $acceptedTypes = array_map(
             function ($acceptType) {
-                    $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
-                    return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
+                $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
+                return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
             }, preg_split('/,\s*/', $rawValues)
         );
 

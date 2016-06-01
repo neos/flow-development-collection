@@ -30,7 +30,8 @@ class DebuggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderingClosuresWorksWithoutThrowingException()
     {
-        Debugger::renderDump(function () {}, 0);
+        Debugger::renderDump(function () {
+        }, 0);
         // dummy assertion to avoid PHPUnit warning
         $this->assertTrue(true);
     }
