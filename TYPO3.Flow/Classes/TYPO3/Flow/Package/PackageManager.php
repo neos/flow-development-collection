@@ -424,18 +424,11 @@ class PackageManager implements PackageManagerInterface
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
-        $packagePath = str_replace($this->packagesBasePath, '', $packagePath);
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $manifest['name'], (isset($manifest['autoload']) ? $manifest['autoload'] : []), null);
-
-        $refreshedPackageStatesConfiguration = $this->scanAvailablePackages($this->packageStatesConfiguration);
-        $this->savePackageStates($refreshedPackageStatesConfiguration);
+        $refreshedPackageStatesConfiguration = $this->rescanPackages(false);
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
+        $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
 
-        $this->packages[$packageKey] = $package;
-        $this->activePackages[$packageKey] = $package;
-        $this->packageKeys[strtolower($packageKey)] = $packageKey;
-
-        return $package;
+        return $this->packages[$packageKey];
     }
 
     /**
