@@ -57,7 +57,9 @@ class RouteTest extends UnitTestCase
         $this->route->_set('objectManager', $this->mockObjectManager);
 
         $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-        $this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) { return $array; }));
+        $this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) {
+            return $array;
+        }));
         $this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
     }
 

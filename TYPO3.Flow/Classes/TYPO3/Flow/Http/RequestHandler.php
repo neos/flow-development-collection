@@ -64,7 +64,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     public function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
-        $this->exit = function () { exit(); };
+        $this->exit = function () {
+            exit();
+        };
     }
 
     /**
