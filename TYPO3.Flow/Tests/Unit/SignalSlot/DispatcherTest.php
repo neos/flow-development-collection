@@ -58,7 +58,8 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function connectAlsoAcceptsClosuresActingAsASlot()
     {
         $mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
-        $mockSlot = function () { };
+        $mockSlot = function () {
+        };
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'foo', false);
@@ -75,7 +76,9 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function dispatchPassesTheSignalArgumentsToTheSlotMethod()
     {
         $arguments = array();
-        $mockSlot = function () use (&$arguments) { $arguments =  func_get_args(); };
+        $mockSlot = function () use (&$arguments) {
+            $arguments =  func_get_args();
+        };
 
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 
@@ -195,7 +198,9 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function dispatchPassesArgumentContainingSlotInformationLastIfTheConnectionStatesSo()
     {
         $arguments = array();
-        $mockSlot = function () use (&$arguments) { $arguments =  func_get_args(); };
+        $mockSlot = function () use (&$arguments) {
+            $arguments =  func_get_args();
+        };
 
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 

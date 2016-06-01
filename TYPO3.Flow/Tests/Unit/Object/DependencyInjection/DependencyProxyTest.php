@@ -23,7 +23,8 @@ class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getClassNameReturnsTheNameOfTheProxiedDependencyClass()
     {
-        $proxy = new DependencyProxy('SomeClass', function () {});
+        $proxy = new DependencyProxy('SomeClass', function () {
+        });
         $this->assertSame('SomeClass', $proxy->_getClassName());
     }
 }

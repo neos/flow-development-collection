@@ -889,7 +889,8 @@ class ContextTest extends UnitTestCase
     public function withoutAuthorizationChecksReactivatesAuthorizationChecksAfterClosureInvocation()
     {
         $securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
-        $securityContext->withoutAuthorizationChecks(function () {});
+        $securityContext->withoutAuthorizationChecks(function () {
+        });
         $this->assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
 
