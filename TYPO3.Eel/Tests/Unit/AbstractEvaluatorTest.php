@@ -302,7 +302,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
             },
             'funcs' => array(
                 'dup' => function ($array) {
-                    return array_map(function ($item) { return $item * 2; }, $array);
+                    return array_map(function ($item) {
+                        return $item * 2;
+                    }, $array);
                 }
             ),
             'foo' => function () {
