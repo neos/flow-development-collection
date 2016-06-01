@@ -17,7 +17,6 @@ require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Beha
  */
 class FeatureContext extends BehatContext
 {
-
     protected static $testingPolicyPathAndFilename;
 
     /**

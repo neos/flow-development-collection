@@ -33,9 +33,11 @@ class AbstractAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
 
-        $advice = new \TYPO3\Flow\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== null) {
-     return true;
- } });
+        $advice = new \TYPO3\Flow\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return true;
+            }
+        });
         $this->inject($advice, 'dispatcher', $mockDispatcher);
 
         $advice->invoke($mockJoinPoint);
@@ -57,9 +59,11 @@ class AbstractAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
 
-        $advice = new \TYPO3\Flow\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== null) {
-     return false;
- } });
+        $advice = new \TYPO3\Flow\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return false;
+            }
+        });
         $this->inject($advice, 'dispatcher', $mockDispatcher);
 
         $advice->invoke($mockJoinPoint);

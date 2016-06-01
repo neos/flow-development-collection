@@ -31,9 +31,11 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', false);
         $mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
-        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== null) {
-     return true;
- } });
+        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return true;
+            }
+        });
         $result = $advice->invoke($mockJoinPoint);
 
         $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
@@ -57,9 +59,11 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', false);
         $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
-        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== null) {
-     return false;
- } });
+        $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+            if ($joinPoint !== null) {
+                return false;
+            }
+        });
         $result = $advice->invoke($mockJoinPoint);
 
         $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
