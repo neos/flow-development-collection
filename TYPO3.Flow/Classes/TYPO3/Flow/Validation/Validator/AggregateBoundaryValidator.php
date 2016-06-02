@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * Validation over Aggregate Boundaries can hence be forced by making the relation to
  * other Aggregate Roots eager loaded.
  *
- * @api
+ * Note that this validator is not part of the public API and you should not use it manually.
  */
 class AggregateBoundaryValidator extends GenericObjectValidator
 {
@@ -31,17 +31,17 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      */
     public function validate($value)
     {
-        $this->result = new \TYPO3\Flow\Error\Result();
-        if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
-            if (!is_object($value)) {
-                $this->addError('Object expected, %1$s given.', 1241099149, array(gettype($value)));
-            } elseif ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
-                return $this->result;
-            } elseif ($this->isValidatedAlready($value) === false) {
-                $this->isValid($value);
-            }
+        /**
+         * The idea is that Aggregates form a consistency boundary, and an Aggregate only needs to be
+         * validated if it changed state. Also since all entity relations are lazy loaded by default,
+         * and the relation will only be initialized when it gets accessed (e.g. during property mapping),
+         * we can just skip validation of an uninitialized aggregate.
+         * This greatly improves validation performance for domain models with lots of small aggregate
+         * relations. Therefore proper Aggregate Design becomes a performance optimization.
+         */
+        if ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
+            return $this->result;
         }
-
-        return $this->result;
+        return parent::validate($value);
     }
 }
