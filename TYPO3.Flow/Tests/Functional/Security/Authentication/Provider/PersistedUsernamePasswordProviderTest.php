@@ -20,7 +20,6 @@ use TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvide
  */
 class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 {
-
     protected $testableSecurityEnabled = true;
 
     /**
