@@ -101,7 +101,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         return array(
             array('string', true),
-            array(123, false)
+            array(123, false),
+            array(array(1,2,3), false)
         );
     }
 
@@ -112,7 +113,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function validateHandlesDisallowProperty($value, $expectSuccess)
     {
         $schema = array(
-            'disallow' => 'integer'
+            'disallow' => array('integer','array')
         );
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
@@ -126,7 +127,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
             array(1, true),
             array(2, true),
             array(null, false),
-            array(4, false)
+            array(4, false),
+            array(array(1,2,3), false)
         );
     }
 
@@ -185,9 +187,49 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function validateHandlesMultipleTypes()
+    public function validateHandlesMultipleTypesDataProvider()
+    {
+        return array(
+            [['property' => 'value'], true],
+            ['value', true],
+            [false, false],
+            [123, false],
+            [array(1,2,3), false]
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider validateHandlesMultipleTypesDataProvider
+     */
+    public function validateHandlesMultipleTypes($value, $expectSuccess)
+    {
+        $schema = array('dictionary', 'string');
+
+        $result = $this->configurationValidator->validate($value, $schema);
+        $this->assertSuccess($result, $expectSuccess);
+    }
+
+    /**
+     * @test
+     * @dataProvider validateHandlesMultipleTypesDataProvider
+     */
+    public function validateHandlesMultipleTypesInSchemaType($value, $expectSuccess)
+    {
+        $schema = array(
+            'type' => array('dictionary', 'string')
+        );
+        $result = $this->configurationValidator->validate($value, $schema);
+        $this->assertSuccess($result, $expectSuccess);
+    }
+
+    /**
+     * @test
+     * @dataProvider validateHandlesMultipleTypesDataProvider
+     */
+    public function validateHandlesMultipleTypesInSubProperty($value, $expectSuccess)
     {
         $schema = array(
             'type' => 'dictionary',
@@ -197,23 +239,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-
-        $result = $this->configurationValidator->validate(array(
-            'foo' => array(
-                'property' => 'value'
-            )
-        ), $schema);
-        $this->assertSuccess($result);
-
-        $result = $this->configurationValidator->validate(array(
-            'foo' => 'value'
-        ), $schema);
-        $this->assertSuccess($result);
-
-        $result = $this->configurationValidator->validate(array(
-            'foo' => false
-        ), $schema);
-        $this->assertError($result);
+        $result = $this->configurationValidator->validate(['foo' => $value], $schema);
+        $this->assertSuccess($result, $expectSuccess);
     }
 
     /// INTEGER ///

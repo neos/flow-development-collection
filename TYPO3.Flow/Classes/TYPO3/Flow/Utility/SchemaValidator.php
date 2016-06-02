@@ -78,7 +78,7 @@ class SchemaValidator
                 }
             }
             if ($isValid === false) {
-                $result->addError($this->createError('None of the given schemas matched ' . $value));
+                $result->addError($this->createError('None of the given schemas matched ' . $this->renderValue($value)));
             }
         } elseif ($this->isSchema($schema)) {
             if (isset($schema['type'])) {
@@ -92,7 +92,7 @@ class SchemaValidator
             if (isset($schema['disallow'])) {
                 $subresult = $this->validate($value, array('type' => $schema['disallow']));
                 if ($subresult->hasErrors() === false) {
-                    $result->addError($this->createError('Disallow rule matched for "' . $value . '"'));
+                    $result->addError($this->createError('Disallow rule matched for "' . $this->renderValue($value) . '"'));
                 }
             }
 
@@ -105,7 +105,7 @@ class SchemaValidator
                     }
                 }
                 if ($isValid === false) {
-                    $result->addError($this->createError('"' . $value . '" is not in enum-rule "' . implode(', ', $schema['enum']) . '"'));
+                    $result->addError($this->createError('"' . $this->renderValue($value) . '" is not in enum-rule "' . implode(', ', $schema['enum']) . '"'));
                 }
             }
         }
@@ -571,6 +571,17 @@ class SchemaValidator
     }
 
     /**
+     * Create a string information for the given value
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function renderValue($value)
+    {
+        return is_scalar($value) ? (string)$value : 'type=' . gettype($value);
+    }
+
+    /**
      * Create Error Object
      *
      * @param string $expectation
@@ -580,7 +591,8 @@ class SchemaValidator
     protected function createError($expectation, $value = null)
     {
         if ($value !== null) {
-            $error = new \TYPO3\Flow\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $value), 'Validation Error');
+            $error = new \TYPO3\Flow\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $this->renderValue($value)),
+                'Validation Error');
         } else {
             $error = new \TYPO3\Flow\Error\Error($expectation, 1328557141, array(), 'Validation Error');
         }
