@@ -91,7 +91,9 @@ class PackageStorage extends FileSystemStorage
                         list(, $path) = explode('/', str_replace($packages[$packageKey]->getResourcesPath(), '', $pathInfo['dirname']), 2);
                         $object->setRelativePublicationPath($packageKey . '/' . $path . '/');
                     }
-                    $object->setStream(function () use ($resourcePathAndFilename) { return fopen($resourcePathAndFilename, 'r'); });
+                    $object->setStream(function () use ($resourcePathAndFilename) {
+                        return fopen($resourcePathAndFilename, 'r');
+                    });
                     $objects[] = $object;
                 }
             }
