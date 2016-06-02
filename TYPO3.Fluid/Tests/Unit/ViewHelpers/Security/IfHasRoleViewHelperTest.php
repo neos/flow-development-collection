@@ -81,7 +81,6 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
                 case 'TYPO3.Fluid:User':
                     return false;
             }
-
         }));
 
         $mockViewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Security\IfHasRoleViewHelper', array('renderThenChild', 'renderElseChild', 'hasAccessToPrivilege'));

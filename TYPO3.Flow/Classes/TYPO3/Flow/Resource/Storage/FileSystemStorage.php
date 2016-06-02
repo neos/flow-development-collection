@@ -156,7 +156,9 @@ class FileSystemStorage implements StorageInterface
             $object->setSha1($resource->getSha1());
             $object->setMd5($resource->getMd5());
             $object->setFileSize($resource->getFileSize());
-            $object->setStream(function () use ($that, $resource) { return $that->getStreamByResource($resource); });
+            $object->setStream(function () use ($that, $resource) {
+                return $that->getStreamByResource($resource);
+            });
             $objects[] = $object;
         }
         return $objects;
