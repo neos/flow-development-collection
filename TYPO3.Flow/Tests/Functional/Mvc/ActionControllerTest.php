@@ -56,7 +56,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         ));
         $route->setRoutePartsConfiguration(array(
             'entity' => array(
-                'objectType' => 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity'
+                'objectType' => TestEntity::class
             )
         ));
     }

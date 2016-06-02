@@ -320,7 +320,7 @@ Or you can define it in your property mapping configuration like this::
 	$propertyMappingConfiguration
 		->forProperty('originalResource')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Resource\ResourceTypeConverter',
+			\TYPO3\Flow\Resource\ResourceTypeConverter::class,
 			\TYPO3\Flow\Resource\ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
 			'images'
 		);

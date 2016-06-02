@@ -45,14 +45,14 @@ class EntityController extends ActionController
         $propertyMappingConfiguration = $this->arguments->getArgument('entity')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration
             ->allowAllProperties()
-            ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         $propertyMappingConfiguration
             ->forProperty('subEntities.*')
             ->allowAllProperties()
-            ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         $propertyMappingConfiguration
             ->forProperty('subEntities.*.date')
-            ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
+            ->setTypeConverterOption(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
     }
 
     /**
