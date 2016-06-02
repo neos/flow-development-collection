@@ -176,7 +176,7 @@ The following configuration options exist:
   date format::
 
 	$propertyMappingConfiguration->setTypeConverterOption(
-		'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 		'Y-m-d'
 	);
@@ -206,7 +206,7 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 	$propertyMappingConfiguration
 		->forProperty('birthDate')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 			'Y-m-d'
 		);
@@ -220,7 +220,7 @@ the path syntax supports an asterisk as a placeholder::
 	$propertyMappingConfiguration
 		->forProperty('items.*')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 			TRUE
 		);
@@ -231,7 +231,7 @@ on large collections::
 	$propertyMappingConfiguration
 		->forProperty('persons.*.birthDate')
 		->setTypeConvertOption(
-			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 			'Y-m-d'
 		);
@@ -254,7 +254,7 @@ on large collections::
 			$commentConfiguration->allowAllProperties();
 			$commentConfiguration
 				->setTypeConverterOption(
-				'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 				TRUE
 			);
