@@ -613,7 +613,7 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
 
         $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
         if ($by === 'label') {
-            $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->will($this->returnCallback(function($label) use ($translatedLabel) {
+            $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->will($this->returnCallback(function ($label) use ($translatedLabel) {
                 return $translatedLabel !== null ? $translatedLabel : $label;
             }));
         } else {
