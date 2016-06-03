@@ -178,10 +178,8 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
         }
 
         $translation = $this->translator->translateById($id, $arguments, $quantity, $locale, $source, $package);
-        if ($translation === $id) {
-            if ($value) {
-                return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
-            }
+        if ($translation === null && $value !== null) {
+            return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
         }
 
         return $translation;
