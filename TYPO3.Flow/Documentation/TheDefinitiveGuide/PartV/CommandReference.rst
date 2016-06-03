@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-08-11
+The following reference was automatically generated from code on 2016-06-03
 
 
 .. _`Flow Command Reference: TYPO3.FLOW`:
@@ -1124,6 +1124,20 @@ Arguments
 Read a PEM formatted private key from stdin and import it into the
 RSAWalletService. The public key will be automatically extracted and stored
 together with the private key as a key pair.
+
+You can generate the same fingerprint returned from this using these commands:
+
+ssh-keygen -yf my-key.pem > my-key.pub
+ssh-keygen -lf my-key.pub
+
+To create a private key to import using this method, you can use:
+
+ssh-keygen -t rsa -f my-key
+./flow security:importprivatekey < my-key
+
+Again, the fingerprint can also be generated using:
+
+ssh-keygen -lf my-key.pub
 
 
 
