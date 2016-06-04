@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Error\Result;
 
 /**
  * A validator which will not validate Aggregates that are lazy loaded and uninitialized.
@@ -31,6 +32,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      */
     public function validate($value)
     {
+        $this->result = new Result();
         /**
          * The idea is that Aggregates form a consistency boundary, and an Aggregate only needs to be
          * validated if it changed state. Also since all entity relations are lazy loaded by default,
