@@ -80,10 +80,10 @@
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="pl">Ta właściwość jest wymagana</target></trans-unit>
+			<target xml:lang="pl">To pole jest wymagane</target><alt-trans><target xml:lang="pl">Ta właściwość jest wymagana</target></alt-trans></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="pl">Ta właściwość jest wymagana</target></trans-unit>
+			<target xml:lang="pl">To pole jest wymagane</target><alt-trans><target xml:lang="pl">Ta właściwość jest wymagana</target></alt-trans></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>
