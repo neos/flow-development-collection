@@ -47,7 +47,7 @@ class AccountTest extends UnitTestCase
         $customerRole = new Role('TYPO3.Flow:Customer');
         $this->customerRole = $customerRole;
 
-        $mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
+        $mockPolicyService = $this->createMock('TYPO3\Flow\Security\Policy\PolicyService');
         $mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'TYPO3.Flow:Administrator':
@@ -224,10 +224,10 @@ class AccountTest extends UnitTestCase
     public function callingGetPartyInvokesPartyDomainServiceWithAccountAndReturnsItsValue()
     {
         $account = new Account();
-        $partyService = $this->getMock('TYPO3\Party\Domain\Service\PartyService', array('getAssignedPartyOfAccount'));
+        $partyService = $this->getMockBuilder('TYPO3\Party\Domain\Service\PartyService')->setMethods(array('getAssignedPartyOfAccount'))->getMock();
         $partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
 
-        $objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $objectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(true));
         $objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
 
@@ -246,8 +246,7 @@ class AccountTest extends UnitTestCase
     {
         $account = new Account();
 
-        $mockParty = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty');
-        $account->setParty($mockParty);
+        $account->setParty(new \stdClass());
     }
 
     /**
@@ -255,12 +254,12 @@ class AccountTest extends UnitTestCase
      */
     public function callingSetPartyInvokesPartyDomainServiceWithAccountIdentifier()
     {
-        $partyMock = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty');
+        $partyMock = new \stdClass();
         $account = new Account();
-        $partyService = $this->getMock('DummyService', array('assignAccountToParty'));
+        $partyService = $this->getMockBuilder('DummyService')->setMethods(array('assignAccountToParty'))->getMock();
         $partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
 
-        $objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $objectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $objectManager->expects($this->once())->method('isRegistered')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue(true));
         $objectManager->expects($this->once())->method('get')->with('TYPO3\Party\Domain\Service\PartyService')->will($this->returnValue($partyService));
 

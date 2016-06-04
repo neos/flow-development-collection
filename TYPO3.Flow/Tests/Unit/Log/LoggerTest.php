@@ -22,7 +22,7 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function logPassesItsArgumentsToTheBackendsAppendMethod()
     {
-        $mockBackend = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
         $logger = new \TYPO3\Flow\Log\Logger();
@@ -35,10 +35,10 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addBackendAllowsForAddingMultipleBackends()
     {
-        $mockBackend1 = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend1 = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
-        $mockBackend2 = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend2 = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
         $logger = new \TYPO3\Flow\Log\Logger();
@@ -52,7 +52,7 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addBackendRunsTheBackendsOpenMethod()
     {
-        $mockBackend = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend->expects($this->once())->method('open');
 
         $logger = new \TYPO3\Flow\Log\Logger();
@@ -64,7 +64,7 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger()
     {
-        $mockBackend = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend->expects($this->once())->method('close');
         $mockBackend->expects($this->once())->method('append');
 
@@ -82,7 +82,7 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded()
     {
-        $mockBackend = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
 
         $logger = new \TYPO3\Flow\Log\Logger();
         $logger->removeBackend($mockBackend);
@@ -93,10 +93,10 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theShutdownMethodRunsCloseOnAllRegisteredBackends()
     {
-        $mockBackend1 = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend1 = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend1->expects($this->once())->method('close');
 
-        $mockBackend2 = $this->getMock('TYPO3\Flow\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+        $mockBackend2 = $this->getMockBuilder('TYPO3\Flow\Log\Backend\BackendInterface')->setMethods(array('open', 'append', 'close'))->getMock();
         $mockBackend2->expects($this->once())->method('close');
 
         $logger = new \TYPO3\Flow\Log\Logger();

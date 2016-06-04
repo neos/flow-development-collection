@@ -59,9 +59,9 @@ class ParsingStateTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderCallsTheRightMethodsOnTheRootNode()
     {
-        $renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $renderingContext = $this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
 
-        $rootNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
+        $rootNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
         $rootNode->expects($this->once())->method('evaluate')->with($renderingContext)->will($this->returnValue('T3DD09 Rock!'));
         $this->parsingState->setRootNode($rootNode);
         $renderedValue = $this->parsingState->render($renderingContext);

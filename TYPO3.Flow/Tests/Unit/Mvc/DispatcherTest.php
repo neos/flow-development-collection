@@ -91,7 +91,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->dispatcher = $this->getMock('TYPO3\Flow\Mvc\Dispatcher', array('resolveController'), array(), '', false);
+        $this->dispatcher = $this->getMockBuilder('TYPO3\Flow\Mvc\Dispatcher')->disableOriginalConstructor()->setMethods(array('resolveController'))->getMock();
 
         $this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
@@ -107,7 +107,7 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->disableOriginalConstructor()->getMock();
 
-        $this->mockController = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerInterface', array('processRequest'));
+        $this->mockController = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerInterface')->setMethods(array('processRequest'))->getMock();
         $this->dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($this->mockController));
 
         $this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->disableOriginalConstructor()->getMock();
@@ -351,13 +351,13 @@ class DispatcherTest extends UnitTestCase
      */
     public function resolveControllerReturnsTheControllerSpecifiedInTheRequest()
     {
-        $mockController = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerInterface');
+        $mockController = $this->createMock('TYPO3\Flow\Mvc\Controller\ControllerInterface');
 
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\SomeController'))->will($this->returnValue($mockController));
 
-        $mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerPackageKey', 'getControllerObjectName'), array(), '', false);
+        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('getControllerPackageKey', 'getControllerObjectName'))->getMock();
         $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('TYPO3\TestPackage\SomeController'));
 
         /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
@@ -373,13 +373,13 @@ class DispatcherTest extends UnitTestCase
      */
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotImplementTheControllerInterface()
     {
-        $mockController = $this->getMock('stdClass');
+        $mockController = $this->createMock('stdClass');
 
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\SomeController'))->will($this->returnValue($mockController));
 
-        $mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerPackageKey', 'getControllerObjectName'), array(), '', false);
+        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('getControllerPackageKey', 'getControllerObjectName'))->getMock();
         $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('TYPO3\TestPackage\SomeController'));
 
         /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
@@ -395,8 +395,8 @@ class DispatcherTest extends UnitTestCase
      */
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotExist()
     {
-        $mockHttpRequest = $this->getMock('TYPO3\Flow\Http\Request', array(), array(), '', false);
-        $mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName', 'getHttpRequest'), array(), '', false);
+        $mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+        $mockRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('getControllerObjectName', 'getHttpRequest'))->getMock();
         $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 

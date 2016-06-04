@@ -23,7 +23,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable()
     {
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManager')->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
         $requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);
@@ -46,7 +46,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
             return false;
         };
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManager')->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
         $requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);
@@ -60,7 +60,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName()
     {
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManager')->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingRequestPatternClass')->will($this->returnValue('ExistingRequestPatternClass'));
 
         $requestPatternResolver = new \TYPO3\Flow\Security\RequestPatternResolver($mockObjectManager);

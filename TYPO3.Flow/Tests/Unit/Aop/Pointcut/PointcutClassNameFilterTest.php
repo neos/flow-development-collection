@@ -27,7 +27,7 @@ class PointcutClassNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenClassName()
     {
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
 
         $classFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
         $classFilter->injectReflectionService($mockReflectionService);

@@ -67,7 +67,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
-        $resultMock = $this->getMock('TYPO3\Flow\Error\Result');
+        $resultMock = $this->createMock('TYPO3\Flow\Error\Result');
         $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->will($this->returnValue(new Result()));
 
         /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */

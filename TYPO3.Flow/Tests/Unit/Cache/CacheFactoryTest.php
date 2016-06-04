@@ -41,11 +41,11 @@ class CacheFactoryTest extends UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
+        $this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
-        $this->mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array('registerCache', 'isCachePersistent'), array(), '', false);
+        $this->mockCacheManager = $this->getMockBuilder('TYPO3\Flow\Cache\CacheManager')->disableOriginalConstructor()->setMethods(array('registerCache', 'isCachePersistent'))->getMock();
         $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
     }
 

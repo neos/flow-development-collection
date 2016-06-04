@@ -38,7 +38,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Format\IdentifierViewHelper', array('renderChildren'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $this->viewHelper->_set('persistenceManager', $this->mockPersistenceManager);
     }
 

@@ -91,7 +91,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function convertFromUsesDefaultDateFormatIfItIsNotConfigured()
     {
         $expectedResult = '1980-12-13T20:15:07+01:23';
-        $mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
+        $mockMappingConfiguration = $this->createMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
         $mockMappingConfiguration
                 ->expects($this->atLeastOnce())
                 ->method('getConfigurationValue')
@@ -140,7 +140,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function convertFromStringTests($source, $dateFormat, $isValid)
     {
         if ($dateFormat !== null) {
-            $mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
+            $mockMappingConfiguration = $this->createMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
             $mockMappingConfiguration
                     ->expects($this->atLeastOnce())
                     ->method('getConfigurationValue')
@@ -380,7 +380,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $dateFormat = isset($source['dateFormat']) && strlen($source['dateFormat']) > 0 ? $source['dateFormat'] : null;
         if ($dateFormat !== null) {
-            $mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
+            $mockMappingConfiguration = $this->createMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
             $mockMappingConfiguration
                     ->expects($this->atLeastOnce())
                     ->method('getConfigurationValue')

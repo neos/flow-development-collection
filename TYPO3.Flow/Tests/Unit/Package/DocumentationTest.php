@@ -35,7 +35,7 @@ class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $documentationPath = vfsStream::url('testDirectory') . '/';
 
-        $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+        $mockPackage = $this->createMock('TYPO3\Flow\Package\PackageInterface');
 
         $documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
 
@@ -51,7 +51,7 @@ class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $documentationPath = vfsStream::url('testDirectory') . '/';
 
-        $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+        $mockPackage = $this->createMock('TYPO3\Flow\Package\PackageInterface');
 
         \TYPO3\Flow\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
 

@@ -62,13 +62,13 @@ class NumbersReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function formatIsCorrectlyReadFromCldr()
     {
-        $mockModel = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrModel', array(), array(array()));
+        $mockModel = $this->createMock('TYPO3\Flow\I18n\Cldr\CldrModel', array(), array(array()));
         $mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->will($this->returnValue('mockFormatString'));
 
-        $mockRepository = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
+        $mockRepository = $this->createMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
         $mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
-        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', false);
+        $mockCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\VariableFrontend')->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(true));
         $mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(true));
         $mockCache->expects($this->at(2))->method('has')->with('localizedSymbols')->will($this->returnValue(true));

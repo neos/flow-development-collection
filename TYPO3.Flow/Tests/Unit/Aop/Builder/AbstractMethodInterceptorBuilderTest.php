@@ -73,7 +73,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
             ),
         );
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
 
         $expectedCode = "
@@ -154,7 +154,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
             ),
         );
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->will($this->returnValue($methodParameters));
 
         $builder = $this->getAccessibleMock('TYPO3\Flow\Aop\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', false);

@@ -32,10 +32,10 @@ class CldrModelTest extends \TYPO3\Flow\Tests\UnitTestCase
         $sampleParsedFile2 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile2.php');
         $sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
-        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', false);
+        $mockCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\VariableFrontend')->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->will($this->returnValue(false));
 
-        $mockCldrParser = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrParser');
+        $mockCldrParser = $this->createMock('TYPO3\Flow\I18n\Cldr\CldrParser');
         $mockCldrParser->expects($this->at(0))->method('getParsedData')->with('foo')->will($this->returnValue($sampleParsedFile1));
         $mockCldrParser->expects($this->at(1))->method('getParsedData')->with('bar')->will($this->returnValue($sampleParsedFile2));
         $mockCldrParser->expects($this->at(2))->method('getParsedData')->with('baz')->will($this->returnValue($sampleParsedFile3));

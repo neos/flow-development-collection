@@ -22,9 +22,9 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resourcesInCssUrlsAreReplacedCorrectly()
     {
-        $mockDummyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPathNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
+        $mockDummyNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
+        $mockPathNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
+        $mockViewHelper = $this->createMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
 
         $originalText1 = '<style type="text/css">
 			#loginscreen {
@@ -36,10 +36,10 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
 				background-repeat: no-repeat;
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
-        $mockTextNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', array('evaluateChildNodes'), array($originalText));
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
+        $mockTextNode = $this->getMockBuilder('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode')->setMethods(array('evaluateChildNodes'))->setConstructorArgs(array($originalText))->getMock();
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->at(0))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode')->will($this->returnValue($mockDummyNode));
         $mockObjectManager->expects($this->at(1))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $originalText1)->will($this->returnValue($mockDummyNode));
         $mockObjectManager->expects($this->at(2))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $path)->will($this->returnValue($mockPathNode));
@@ -49,7 +49,7 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $interceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
         $interceptor->injectObjectManager($mockObjectManager);
-        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock('TYPO3\Fluid\Core\Parser\ParsingState'));
+        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->createMock('TYPO3\Fluid\Core\Parser\ParsingState'));
     }
 
     /**
@@ -105,16 +105,16 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function supportedUrlsAreDetected($part1, $part2, $part3, $expectedPath, $expectedPackageKey)
     {
-        $mockDummyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPathNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockPackageKeyNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
+        $mockDummyNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
+        $mockPathNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
+        $mockPackageKeyNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface');
+        $mockViewHelper = $this->createMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
 
         $originalText = $part1 . $part2 . $part3;
-        $mockTextNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', array('evaluateChildNodes'), array($originalText));
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
+        $mockTextNode = $this->getMockBuilder('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode')->setMethods(array('evaluateChildNodes'))->setConstructorArgs(array($originalText))->getMock();
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface')));
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->at(0))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode')->will($this->returnValue($mockDummyNode));
         $mockObjectManager->expects($this->at(1))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $part1)->will($this->returnValue($mockDummyNode));
         $mockObjectManager->expects($this->at(2))->method('get')->with('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', $expectedPath)->will($this->returnValue($mockPathNode));
@@ -126,6 +126,6 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $interceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
         $interceptor->injectObjectManager($mockObjectManager);
         $interceptor->setDefaultPackageKey('Acme.Demo');
-        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->getMock('TYPO3\Fluid\Core\Parser\ParsingState'));
+        $interceptor->process($mockTextNode, \TYPO3\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_TEXT, $this->createMock('TYPO3\Fluid\Core\Parser\ParsingState'));
     }
 }

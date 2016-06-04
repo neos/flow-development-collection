@@ -40,11 +40,11 @@ class FlashMessagesViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBas
      */
     public function setUp()
     {
-        $this->mockFlashMessageContainer = $this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer');
-        $mockControllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', false);
+        $this->mockFlashMessageContainer = $this->createMock('TYPO3\Flow\Mvc\FlashMessageContainer');
+        $mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getFlashMessageContainer')->will($this->returnValue($this->mockFlashMessageContainer));
 
-        $this->mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
+        $this->mockTagBuilder = $this->createMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
         $this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FlashMessagesViewHelper', array('dummy'));
         $this->viewHelper->_set('controllerContext', $mockControllerContext);
         $this->viewHelper->_set('tag', $this->mockTagBuilder);

@@ -1241,5 +1241,7 @@ class RequestTest extends UnitTestCase
             'HTTP_HTTPS' => '1',
         );
         new Request(array(), array(), array(), $server);
+
+        $this->assertTrue(true, 'dummy assertion');
     }
 }

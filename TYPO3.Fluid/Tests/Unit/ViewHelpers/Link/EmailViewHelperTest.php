@@ -35,7 +35,7 @@ class EmailViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
      */
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
-        $mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'mailto:some@email.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -52,7 +52,7 @@ class EmailViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
      */
     public function renderSetsTagContentToEmailIfRenderChildrenReturnNull()
     {
-        $mockTagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some@email.tld');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 

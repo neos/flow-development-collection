@@ -31,7 +31,7 @@ class LoggingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testSessionId = $testSession->getId();
 
         $mockJoinPoint = new JoinPoint($testSession, 'TYPO3\Flow\Session\TransientSession', 'destroy', array('reason' => 'session timed out'));
-        $mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+        $mockSystemLogger = $this->createMock('TYPO3\Flow\Log\SystemLoggerInterface');
         $mockSystemLogger
             ->expects($this->once())
             ->method('log')
@@ -54,7 +54,7 @@ class LoggingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testSessionId = $testSession->getId();
 
         $mockJoinPoint = new JoinPoint($testSession, 'TYPO3\Flow\Session\TransientSession', 'destroy', array());
-        $mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+        $mockSystemLogger = $this->createMock('TYPO3\Flow\Log\SystemLoggerInterface');
         $mockSystemLogger
             ->expects($this->once())
             ->method('log')

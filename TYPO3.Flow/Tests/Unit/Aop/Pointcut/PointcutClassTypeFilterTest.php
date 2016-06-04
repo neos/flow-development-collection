@@ -35,7 +35,7 @@ class PointcutClassTypeFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with($interfaceName)->will($this->returnValue(array('TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass')));
 
         $classTypeFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutClassTypeFilter($interfaceName);
@@ -73,7 +73,7 @@ class PointcutClassTypeFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getAllSubClassNamesForClass')->with($testClassName)->will($this->returnValue(array('TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass')));
 
         $classTypeFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutClassTypeFilter($testClassName);

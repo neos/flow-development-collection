@@ -22,7 +22,7 @@ class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function normalizeFieldDefinitionsConvertsBoolTypeToBoolean()
     {
-        $service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
+        $service = $this->getAccessibleMock('TYPO3\Kickstart\Service\GeneratorService', array('dummy'));
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'bool'
@@ -37,7 +37,7 @@ class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function normalizeFieldDefinitionsPrefixesGlobalClassesWithBackslash()
     {
-        $service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
+        $service = $this->getAccessibleMock('TYPO3\Kickstart\Service\GeneratorService', array('dummy'));
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'DateTime'
@@ -53,7 +53,7 @@ class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespaceIfNeeded()
     {
         $uniqueClassName = uniqid('Class');
-        $service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
+        $service = $this->getAccessibleMock('TYPO3\Kickstart\Service\GeneratorService', array('dummy'));
         $fieldDefinitions = array(
             'field' => array(
                 'type' => $uniqueClassName
