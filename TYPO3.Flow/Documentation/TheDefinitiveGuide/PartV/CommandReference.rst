@@ -564,6 +564,16 @@ The use of
 
 would only create a migration touching tables starting with "acme_com".
 
+It is also possible to set a default filter expression within the settings.
+
+TYPO3:
+Flow:
+persistence:
+doctrine:
+migrations:
+generate:
+defaultFilterExpression: '/^acme_com/'
+
 
 
 Options
