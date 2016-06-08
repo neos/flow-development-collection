@@ -44,6 +44,9 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', array(1, 2), $this->sampleLocale);
         $this->assertEquals('Foo 1.0, bar 200%', $result);
+
+        $result = $formatResolver->resolvePlaceHolders('Foo {0}, bar {1}', array('}', '{'), $this->sampleLocale);
+        $this->assertEquals('Foo }, bar {', $result);
     }
 
     /**
