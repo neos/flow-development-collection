@@ -100,8 +100,9 @@ class FormatResolver
             $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
         }
 
-        while (($startOfPlaceholder = strpos($textWithPlaceholders, '{')) !== false) {
-            $endOfPlaceholder = strpos($textWithPlaceholders, '}');
+        $lastPlaceHolderAt = 0;
+        while ($lastPlaceHolderAt < strlen($textWithPlaceholders) && ($startOfPlaceholder = strpos($textWithPlaceholders, '{', $lastPlaceHolderAt)) !== false) {
+            $endOfPlaceholder = strpos($textWithPlaceholders, '}', $lastPlaceHolderAt);
             $startOfNextPlaceholder = strpos($textWithPlaceholders, '{', $startOfPlaceholder + 1);
 
             if ($endOfPlaceholder === false || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== false && $startOfNextPlaceholder < $endOfPlaceholder)) {
@@ -127,6 +128,7 @@ class FormatResolver
             }
 
             $textWithPlaceholders = str_replace('{' . $contentBetweenBrackets . '}', $formattedPlaceholder, $textWithPlaceholders);
+            $lastPlaceHolderAt = $startOfPlaceholder + strlen($formattedPlaceholder);
         }
 
         return $textWithPlaceholders;
