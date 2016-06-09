@@ -17,7 +17,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Flow\Security\RequestPattern\Ip as IpPattern;
+use TYPO3\Flow\Utility\Ip as IpUtility;
 
 /**
  * Represents an HTTP request
@@ -486,9 +486,8 @@ class Request extends AbstractMessage
         if (self::$trustedProxiesSettings['proxies'] === '*') {
             return true;
         }
-        $ipMatcher = new IpPattern();
         foreach (self::$trustedProxiesSettings['proxies'] as $ipPattern) {
-            if ($ipMatcher->cidrMatch($ipAddress, $ipPattern)) {
+            if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
                 return true;
             }
         }
