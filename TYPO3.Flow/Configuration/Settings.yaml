@@ -193,6 +193,8 @@ TYPO3:
         'doctrine.*': ['.*']
         'symfony.*': ['.*']
         'phpunit.*': ['.*']
+        'sebastian.*': ['.*']
+        'phpdocumentor.*': ['.*']
         'mikey179.vfsStream': ['.*']
         # workaround, should rather be deactivated
         'neos.composerplugin': ['.*']
