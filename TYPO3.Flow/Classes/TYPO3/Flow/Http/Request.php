@@ -92,8 +92,19 @@ class Request extends AbstractMessage
     public function __construct(array $get, array $post, array $files, array $server)
     {
         if (self::$trustedProxiesSettings === null) {
-            $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
-            self::$trustedProxiesSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.http.trustedProxies');
+            self::$trustedProxiesSettings = [
+                'proxies' => '*',
+                'headers' => [
+                    self::HEADER_CLIENT_IP => 'X-Forwarded-For',
+                    self::HEADER_HOST => 'X-Forwarded-Host',
+                    self::HEADER_PORT => 'X-Forwarded-Port',
+                    self::HEADER_PROTOCOL => 'X-Forwarded-Proto'
+                ]
+            ];
+            if (Bootstrap::$staticObjectManager !== null) {
+                $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
+                self::$trustedProxiesSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.http.trustedProxies');
+            }
         }
 
         $this->headers = Headers::createFromServer($server);
