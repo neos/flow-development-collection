@@ -132,6 +132,17 @@ properties:
         type:
           - { type: 'null' }
           - { type: string, format: class-name }
+      'migrations':
+        type: dictionary
+        properties:
+          'generate':
+            type: dictionary
+            properties:
+              'defaultFilterExpression':
+                type:
+                  - { type: 'null' }
+                  - { type: string }
+
   'cacheAllQueryResults':
     type: boolean
     required: TRUE
