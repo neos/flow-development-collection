@@ -91,21 +91,7 @@ class Request extends AbstractMessage
      */
     public function __construct(array $get, array $post, array $files, array $server)
     {
-        if (self::$trustedProxiesSettings === null) {
-            self::$trustedProxiesSettings = [
-                'proxies' => '*',
-                'headers' => [
-                    self::HEADER_CLIENT_IP => 'X-Forwarded-For',
-                    self::HEADER_HOST => 'X-Forwarded-Host',
-                    self::HEADER_PORT => 'X-Forwarded-Port',
-                    self::HEADER_PROTOCOL => 'X-Forwarded-Proto'
-                ]
-            ];
-            if (Bootstrap::$staticObjectManager !== null) {
-                $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
-                self::$trustedProxiesSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.http.trustedProxies');
-            }
-        }
+        $this->initializeTrustedProxiesConfiguration();
 
         $this->headers = Headers::createFromServer($server);
         $this->server = $server;
@@ -230,6 +216,18 @@ class Request extends AbstractMessage
     {
         $actionRequest = new ActionRequest($this);
         return $actionRequest;
+    }
+
+    /**
+     * Initialize the static trustedProxiesSettings property from ConfigurationManager if not yet set.
+     * @return void
+     */
+    protected function initializeTrustedProxiesConfiguration()
+    {
+        if (self::$trustedProxiesSettings === null) {
+            $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
+            self::$trustedProxiesSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.http.trustedProxies');
+        }
     }
 
     /**
@@ -414,46 +412,6 @@ class Request extends AbstractMessage
             $this->content = file_get_contents($this->inputStreamUri);
         }
         return $this->content;
-    }
-
-    /**
-     * Set a trusted proxy header.
-     *
-     * This is primarily useful for testing. If you want to set trusted headers, use the configuration setting
-     * "TYPO3.Flow.http.trustedProxies.headers" instead.
-     *
-     * @param string $type One of the HEADER_* constants
-     * @param string $name The header name to trust or an empty string to not trust this header
-     * @return void
-     */
-    public static function setTrustedProxyHeader($type, $name)
-    {
-        if (!in_array($type, array(self::HEADER_CLIENT_IP, self::HEADER_HOST, self::HEADER_PORT, self::HEADER_PROTOCOL))) {
-            return;
-        }
-        self::$trustedProxiesSettings['headers'][$type] = strval($name);
-    }
-
-    /**
-     * Set the trusted proxies IP addresses.
-     * If the argument is an empty array, no proxies are trusted.
-     * If the argument is the string '*', all proxies are trusted.
-     *
-     * This is primarily useful for testing. If you want to set trusted headers, use the configuration setting
-     * "TYPO3.Flow.http.trustedProxies.proxies" instead.
-     *
-     * @param array|string $trustedProxies
-     * @return void
-     */
-    public static function setTrustedProxies($trustedProxies)
-    {
-        if (is_string($trustedProxies) && $trustedProxies !== '*' && $trustedProxies !== '') {
-            $trustedProxies = [$trustedProxies];
-        }
-        if (!is_array($trustedProxies) && $trustedProxies !== '*') {
-            $trustedProxies = [];
-        }
-        self::$trustedProxiesSettings['proxies'] = $trustedProxies;
     }
 
     /**

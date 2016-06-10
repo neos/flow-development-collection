@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
 
@@ -31,6 +32,18 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         parent::setUp();
         $this->browser = new \TYPO3\Flow\Http\Client\Browser();
+        $requestReflection = new \ReflectionClass(Request::class);
+        $trustedProxiesSettings = $requestReflection->getProperty('trustedProxiesSettings');
+        $trustedProxiesSettings->setAccessible(true);
+        $trustedProxiesSettings->setValue([
+            'proxies' => '*',
+            'headers' => [
+                Request::HEADER_CLIENT_IP => 'X-Forwarded-For',
+                Request::HEADER_HOST => 'X-Forwarded-Host',
+                Request::HEADER_PORT => 'X-Forwarded-Port',
+                Request::HEADER_PROTOCOL => 'X-Forwarded-Proto'
+            ]
+        ]);
     }
 
     /**
