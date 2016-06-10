@@ -24,6 +24,11 @@ use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 class FileSystemSymlinkTarget extends FileSystemTarget
 {
     /**
+     * @var boolean
+     */
+    protected $relativeSymlinks = false;
+
+    /**
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
@@ -78,10 +83,14 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if (Files::is_link($targetPathAndFilename)) {
                 Files::unlink($targetPathAndFilename);
             }
-
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
-            symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
-            $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            
+            if ($this->relativeSymlinks) {
+                $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
+            } else {
+                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
+                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            }
         } catch (\Exception $exception) {
             $result = false;
         }
@@ -116,10 +125,13 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if (Files::is_link($targetPathAndFilename)) {
                 Files::unlink($targetPathAndFilename);
             }
-
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
-            symlink($sourcePath, $temporaryTargetPathAndFilename);
-            $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            if ($this->relativeSymlinks) {
+                $result = Files::createRelativeSymlink($sourcePath, $targetPathAndFilename);
+            } else {
+                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                symlink($sourcePath, $temporaryTargetPathAndFilename);
+                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            }
         } catch (\Exception $exception) {
             $result = false;
         }
@@ -128,5 +140,22 @@ class FileSystemSymlinkTarget extends FileSystemTarget
         }
 
         $this->systemLogger->log(sprintf('FileSystemSymlinkTarget: Published directory. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+    }
+
+    /**
+     * Set an option value and return if it was set.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function setOption($key, $value)
+    {
+        if ($key === 'relativeSymlinks') {
+            $this->relativeSymlinks = (boolean)$value;
+            return true;
+        }
+
+        return parent::setOption($key, $value);
     }
 }

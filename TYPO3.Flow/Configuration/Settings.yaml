@@ -416,6 +416,9 @@ TYPO3:
             baseUri: '_Resources/Static/Packages/'
             extensionBlacklist: *uploadExtensionBlacklist
 
+            # If the symlinks should be relative instead of absolute
+            relativeSymlinks: false
+
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
           target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
@@ -426,6 +429,9 @@ TYPO3:
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: false
+
+            # If the symlinks should be relative instead of absolute
+            relativeSymlinks: false
 
     security:
 
