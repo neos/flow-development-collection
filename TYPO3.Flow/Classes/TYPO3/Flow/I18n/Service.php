@@ -281,7 +281,7 @@ class Service
             $directories = array(Files::getNormalizedPath($packageResourcesPath));
             while ($directories !== array()) {
                 $currentDirectory = array_pop($directories);
-                if ($blacklistPattern !== '' && preg_match('#' . str_replace('#', '\#', $blacklistPattern) . '#', $currentDirectory) > 0) {
+                if ($blacklistPattern !== '' && preg_match('#' . str_replace('#', '\#', $blacklistPattern) . '#', $currentDirectory) === 1) {
                     continue;
                 }
                 if ($handle = opendir($currentDirectory)) {
