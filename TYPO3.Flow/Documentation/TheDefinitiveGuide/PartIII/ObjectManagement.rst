@@ -104,7 +104,9 @@ The scope of an object is determined from its configuration (see also :ref:`sect
 The recommended way to specify the scope is the ``@scope`` annotation::
 
 	namespace MyCompany\MyPackage;
-
+	
+  use TYPO3\Flow\Annotations as Flow;
+  
 	/**
 	 * A sample class
 	 *
@@ -547,6 +549,8 @@ For these cases Flow provides support for *Property Injection*:
 *Example: Example for Property Injection* ::
 
 	namespace MyCompany\MyPackage;
+  
+  use TYPO3\Flow\Annotations as Flow;
 
 	class Foo {
 
@@ -603,7 +607,9 @@ dependencies to other objects:
 *Example: Passing a dependency around* ::
 
 	namespace MyCompany\MyPackage;
-
+  
+  use TYPO3\Flow\Annotations as Flow;
+  
 	class Foo {
 
 		/**
@@ -644,6 +650,8 @@ There are two ways to solve this:
 
 	namespace MyCompany\MyPackage;
 
+  use TYPO3\Flow\Annotations as Flow;
+
 	class Foo {
 
 		/**
@@ -672,6 +680,8 @@ calling ``_activateDependency()`` will fail.
 *Example: Turning off lazy dependency injection* ::
 
 	namespace MyCompany\MyPackage;
+
+  use TYPO3\Flow\Annotations as Flow;
 
 	class Foo {
 
@@ -729,6 +739,8 @@ setting value into a class property:
 .. code-block:: php
 
 	namespace Acme\Demo;
+
+  use TYPO3\Flow\Annotations as Flow;
 
 	class SomeClass {
 
