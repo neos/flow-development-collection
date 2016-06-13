@@ -37,7 +37,7 @@ class DateTimeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
         $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
         $this->mockObjectManagerReturnValues[\TYPO3\Flow\I18n\Locale::class] = $this->sampleLocale;
 
-        $this->mockDatetimeParser = $this->getMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class);
+        $this->mockDatetimeParser = $this->createMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class);
     }
 
     /**

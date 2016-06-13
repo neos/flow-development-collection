@@ -23,7 +23,7 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
         $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);
@@ -46,7 +46,7 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
             return false;
         };
 
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
         $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);
@@ -60,7 +60,7 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
 
         $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);

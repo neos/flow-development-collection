@@ -23,7 +23,7 @@ class CsrfTokenViewHelperTest extends UnitTestCase
      */
     public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext()
     {
-        $mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
 
         $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Security\CsrfTokenViewHelper::class, array('dummy'));

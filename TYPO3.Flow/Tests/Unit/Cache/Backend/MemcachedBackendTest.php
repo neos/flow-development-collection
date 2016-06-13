@@ -40,7 +40,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->markTestSkipped('memcached not reachable');
         }
 
-        $this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
+        $this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -236,14 +236,14 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $backendOptions = array('servers' => array('localhost:11211'));
 
-        $thisCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
+        $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
         $thisBackend->injectEnvironment($this->mockEnvironment);
         $thisBackend->setCache($thisCache);
         $thisBackend->initializeObject();
 
-        $thatCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class, array(), array(), '', false);
+        $thatCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
         $thatBackend->injectEnvironment($this->mockEnvironment);
@@ -283,7 +283,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend(array $backendOptions = array())
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class, array(), array(), '', false);
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         if ($backendOptions == array()) {
             $backendOptions = array('servers' => array('localhost:11211'));
         }

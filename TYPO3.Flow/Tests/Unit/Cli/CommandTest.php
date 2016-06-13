@@ -34,7 +34,7 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->command = $this->getAccessibleMock(\TYPO3\Flow\Cli\Command::class, array('getCommandMethodReflection'), array(), '', false);
-        $this->methodReflection = $this->getMock(\TYPO3\Flow\Reflection\MethodReflection::class, array(), array(__CLASS__, 'dummyMethod'));
+        $this->methodReflection = $this->createMock(\TYPO3\Flow\Reflection\MethodReflection::class);
         $this->command->expects($this->any())->method('getCommandMethodReflection')->will($this->returnValue($this->methodReflection));
     }
 
@@ -82,7 +82,7 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasArgumentsReturnsTrueIfCommandExpectsArguments()
     {
-        $parameterReflection = $this->getMock(\TYPO3\Flow\Reflection\ParameterReflection::class, array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
+        $parameterReflection = $this->createMock(\TYPO3\Flow\Reflection\ParameterReflection::class, array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
         $this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($parameterReflection)));
         $this->assertTrue($this->command->hasArguments());
     }
@@ -101,8 +101,8 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments()
     {
-        $parameterReflection = $this->getMock(\TYPO3\Flow\Reflection\ParameterReflection::class, array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $parameterReflection = $this->createMock(\TYPO3\Flow\Reflection\ParameterReflection::class, array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockMethodParameters = array('argument1' => array('optional' => false), 'argument2' => array('optional' => true));
         $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($mockMethodParameters));
         $this->command->injectReflectionService($mockReflectionService);

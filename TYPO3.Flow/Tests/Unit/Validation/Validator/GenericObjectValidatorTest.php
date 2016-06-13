@@ -81,10 +81,10 @@ class GenericObjectValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
      */
     public function validateChecksAllPropertiesForWhichAPropertyValidatorExists($mockObject, $validationResultForFoo, $validationResultForBar, $errors)
     {
-        $validatorForFoo = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $validatorForFoo = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $validatorForFoo->expects($this->once())->method('validate')->with('foovalue')->will($this->returnValue($validationResultForFoo));
 
-        $validatorForBar = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $validatorForBar = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $validatorForBar->expects($this->once())->method('validate')->with('barvalue')->will($this->returnValue($validationResultForBar));
 
         $this->validator->addPropertyValidator('foo', $validatorForFoo);
@@ -137,7 +137,7 @@ class GenericObjectValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
         $error = new \TYPO3\Flow\Error\Error('error1', 123);
         $result = new \TYPO3\Flow\Error\Result();
         $result->addError($error);
-        $mockUuidValidator = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockUuidValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result));
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
@@ -167,7 +167,7 @@ class GenericObjectValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
         $error1 = new \TYPO3\Flow\Error\Error('error1', 123);
         $result1 = new \TYPO3\Flow\Error\Result();
         $result1->addError($error1);
-        $mockUuidValidator = $this->getMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockUuidValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result1));
         $aValidator->addPropertyValidator('uuid', $mockUuidValidator);
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);

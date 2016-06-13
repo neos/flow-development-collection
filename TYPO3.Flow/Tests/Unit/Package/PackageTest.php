@@ -385,7 +385,7 @@ class PackageTest extends UnitTestCase
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
 
-        $package = new Package($this->getMock(\TYPO3\Flow\Package\PackageManager::class), 'Acme.MyPackage', $packagePath, 'Classes');
+        $package = new Package($this->createMock(\TYPO3\Flow\Package\PackageManager::class), 'Acme.MyPackage', $packagePath, 'Classes');
 
         $metaData = $package->getPackageMetaData();
         $this->assertEquals('flow-test', $metaData->getPackageType());

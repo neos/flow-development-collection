@@ -31,7 +31,7 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->dynamicRoutPart = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\DynamicRoutePart::class, array('dummy'));
 
-        $this->mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->dynamicRoutPart->_set('persistenceManager', $this->mockPersistenceManager);
     }
 

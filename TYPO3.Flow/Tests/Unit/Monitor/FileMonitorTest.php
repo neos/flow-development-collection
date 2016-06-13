@@ -90,9 +90,9 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangesDetectsChangesInMonitoredFiles()
     {
-        $mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 
-        $mockMonitor = $this->getMock(\TYPO3\Flow\Monitor\FileMonitor::class, array('loadDetectedDirectoriesAndFiles', 'detectChangedFiles'), array('Flow_Test'), '', true, true);
+        $mockMonitor = $this->getMockBuilder(\TYPO3\Flow\Monitor\FileMonitor::class)->setMethods(array('loadDetectedDirectoriesAndFiles', 'detectChangedFiles'))->setConstructorArgs(array('Flow_Test'))->getMock();
         $mockMonitor->expects($this->once())->method('detectChangedFiles')->with(array($this->unixStylePathAndFilename))->will($this->returnValue(array()));
 
         $mockMonitor->injectSystemLogger($mockSystemLogger);
@@ -106,7 +106,7 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangesEmitsFilesHaveChangedSignalIfFilesHaveChanged()
     {
-        $mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 
         $monitoredFiles = array(__FILE__ . '1', __FILE__ . '2', __FILE__ . '3');
 
@@ -129,7 +129,7 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus()
     {
-        $mockStrategy = $this->getMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
+        $mockStrategy = $this->createMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
         $mockStrategy->expects($this->exactly(2))->method('getFileStatus')->will($this->onConsecutiveCalls(ChangeDetectionStrategyInterface::STATUS_CREATED, ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
 
         $mockMonitor = $this->getAccessibleMock(\TYPO3\Flow\Monitor\FileMonitor::class, array('dummy'), array('Flow_Test'), '', true, true);
@@ -276,7 +276,7 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpFileMonitorForDetection(array $changeDetectionResult, array $expectedEmittedChanges, array $knownDirectoriesAndFiles)
     {
-        $mockChangeDetectionStrategy = $this->getMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
+        $mockChangeDetectionStrategy = $this->createMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
         $mockChangeDetectionStrategy->expects($this->any())->method('getFileStatus')->will($this->returnCallback(function ($pathAndFilename) use ($changeDetectionResult) {
             if (isset($changeDetectionResult[$pathAndFilename])) {
                 return $changeDetectionResult[$pathAndFilename];
@@ -289,10 +289,10 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->inject($fileMonitor, 'changeDetectionStrategy', $mockChangeDetectionStrategy);
         $fileMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedEmittedChanges);
 
-        $mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $fileMonitor->injectSystemLogger($mockSystemLogger);
 
-        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array(), array(), '', false);
+        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('get')->will($this->returnValue(json_encode($knownDirectoriesAndFiles)));
         $fileMonitor->injectCache($mockCache);
 
