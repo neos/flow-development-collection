@@ -66,6 +66,19 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
+    public function multipleCheckboxRendersCorrectFieldNameForEntities()
+    {
+        $postIdentifier = $this->setupDummyPost(true);
+
+        $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
+        $form = $this->browser->getForm();
+        $this->assertFalse(isset($form['post']['tags']['__identity']));
+        $this->assertFalse(isset($form['tags']['__identity']));
+    }
+
+    /**
+     * @test
+     */
     public function formIsRedisplayedIfValidationErrorsOccur()
     {
         $this->browser->request('http://localhost/test/fluid/formobjects');
@@ -333,9 +346,10 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @param boolean $withTags
      * @return string UUID of the dummy post
      */
-    protected function setupDummyPost()
+    protected function setupDummyPost($withTags = false)
     {
         $author = new Fixtures\Domain\Model\User();
         $author->setEmailAddress('foo@bar.org');
@@ -343,6 +357,10 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $post->setAuthor($author);
         $post->setName('myName');
         $post->setPrivate(true);
+        if ($withTags === true) {
+            $post->addTag(new Fixtures\Domain\Model\Tag('Tag1'));
+            $post->addTag(new Fixtures\Domain\Model\Tag('Tag2'));
+        }
         $this->persistenceManager->add($post);
         $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
         $this->persistenceManager->persistAll();

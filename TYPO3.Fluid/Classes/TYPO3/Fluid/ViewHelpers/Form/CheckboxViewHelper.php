@@ -112,4 +112,18 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         $this->renderHiddenFieldForEmptyValue();
         return $this->tag->render();
     }
+
+    /**
+     * Get the name of this form element, without prefix.
+     *
+     * This is done to prevent the extra __identity being added for objects
+     * since it leading to property mapping errors and it works without it.
+     *
+     * @return string name
+     */
+    protected function getNameWithoutPrefix()
+    {
+        $name = parent::getNameWithoutPrefix();
+        return str_replace('[__identity]', '', $name);
+    }
 }
