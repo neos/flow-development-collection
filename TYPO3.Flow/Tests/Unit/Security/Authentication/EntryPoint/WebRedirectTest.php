@@ -102,7 +102,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
         $entryPoint->setOptions(array('routeValues' => $routeValues));
 
-        $mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+        $mockUriBuilder = $this->createMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
         $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(true)->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('otherArguments' => array('foo' => 'bar'), '@format' => 'someFormat'), 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
         $entryPoint->_set('uriBuilder', $mockUriBuilder);

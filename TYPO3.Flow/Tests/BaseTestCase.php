@@ -21,6 +21,7 @@ namespace TYPO3\Flow\Tests;
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var array
      */
@@ -28,6 +29,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * Enable or disable the backup and restoration of static attributes.
+     *
      * @var boolean
      */
     protected $backupStaticAttributes = false;
@@ -43,12 +45,30 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
      * @param boolean $callAutoload
+     * @param boolean $cloneArguments
+     * @param boolean $callOriginalMethods
+     * @param object $proxyTarget
      * @return \PHPUnit_Framework_MockObject_MockObject
      * @api
      */
-    protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true)
+    protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
-        return $this->getMock($this->buildAccessibleProxy($originalClassName), $methods, $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload);
+        $mockObject = $this->getMockObjectGenerator()->getMock(
+            $this->buildAccessibleProxy($originalClassName),
+            $methods,
+            $arguments,
+            $mockClassName,
+            $callOriginalConstructor,
+            $callOriginalClone,
+            $callAutoload,
+            $cloneArguments,
+            $callOriginalMethods,
+            $proxyTarget
+        );
+
+        $this->registerMockObject($mockObject);
+
+        return $mockObject;
     }
 
     /**
@@ -61,12 +81,14 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
      * @param boolean $callAutoload
+     * @param array $mockedMethods
+     * @param boolean $cloneArguments
      * @return \PHPUnit_Framework_MockObject_MockObject
      * @api
      */
-    protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true)
+    protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
-        return $this->getMockForAbstractClass($this->buildAccessibleProxy($originalClassName), $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload);
+        return $this->getMockForAbstractClass($this->buildAccessibleProxy($originalClassName), $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload, $mockedMethods, $cloneArguments);
     }
 
     /**
@@ -112,6 +134,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 				}
 			}
 		');
+
         return $accessibleClassName;
     }
 
@@ -123,7 +146,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      *
      * @param object $target The instance which needs the dependency
      * @param string $name Name of the property to be injected
-     * @param object $dependency The dependency to inject – usually an object but can also be any other type
+     * @param mixed $dependency The dependency to inject – usually an object but can also be any other type
      * @return void
      * @throws \RuntimeException
      * @throws \InvalidArgumentException

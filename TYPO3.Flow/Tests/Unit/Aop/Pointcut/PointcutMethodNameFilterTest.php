@@ -29,7 +29,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}"
         );
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('isMethodFinal'), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->setMethods(array('isMethodFinal'))->getMock();
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
 
         $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
@@ -52,7 +52,7 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}"
         );
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->will($this->returnValue(false));
@@ -87,14 +87,14 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}"
         );
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
                 array('arg1' => array()),
                 array('arg1' => array(), 'arg2' => array()),
                 array('arg1' => array(), 'arg2' => array(), 'arg3' => array())
         ));
 
-        $mockSystemLogger = $this->getMock('TYPO3\Flow\Log\Logger', array('log'));
+        $mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\Logger')->setMethods(array('log'))->getMock();
         $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));

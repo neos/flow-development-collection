@@ -160,7 +160,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->createMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
         $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
@@ -177,7 +177,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->createMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
         $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 

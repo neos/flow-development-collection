@@ -39,7 +39,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->simpleValueArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'string');
         $this->objectArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'DateTime');
 
-        $this->mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
+        $this->mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
@@ -156,7 +156,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator()
     {
-        $mockValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $mockValidator = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
         $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         $this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
@@ -223,7 +223,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $error = new \TYPO3\Flow\Error\Error('Some Error', 1234);
 
-        $mockValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $mockValidator = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $validationMessages = new \TYPO3\Flow\Error\Result();
         $validationMessages->addError($error);
         $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));

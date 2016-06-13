@@ -109,7 +109,7 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
      */
     public function generateTrustedPropertiesTokenGeneratesTheCorrectHashesInNormalOperation($input, $expected)
     {
-        $requestHashService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
+        $requestHashService = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService')->setMethods(array('serializeAndHashFormFieldArray'))->getMock();
         $requestHashService->expects($this->once())->method('serializeAndHashFormFieldArray')->with($expected);
         $requestHashService->generateTrustedPropertiesToken($input);
     }
@@ -121,7 +121,7 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
      */
     public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input)
     {
-        $requestHashService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
+        $requestHashService = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService')->setMethods(array('serializeAndHashFormFieldArray'))->getMock();
         $requestHashService->generateTrustedPropertiesToken($input);
     }
 
@@ -138,10 +138,10 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
         );
         $mockHash = '12345';
 
-        $hashService = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('appendHmac'));
+        $hashService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('appendHmac'));
         $hashService->expects($this->once())->method('appendHmac')->with(serialize($formFieldArray))->will($this->returnValue(serialize($formFieldArray) . $mockHash));
 
-        $requestHashService = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('dummy'));
+        $requestHashService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('dummy'));
         $requestHashService->_set('hashService', $hashService);
 
         $expected = serialize($formFieldArray) . $mockHash;
@@ -280,7 +280,7 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
         $request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->setMethods(array('getInternalArgument'))->disableOriginalConstructor()->getMock();
         $request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will($this->returnValue('fooTrustedProperties'));
         $arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();
-        $mockHashService = $this->getMock('TYPO3\Flow\Security\Cryptography\HashService', array('validateAndStripHmac'));
+        $mockHashService = $this->getMockBuilder('TYPO3\Flow\Security\Cryptography\HashService')->setMethods(array('validateAndStripHmac'))->getMock();
         $mockHashService->expects($this->once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will($this->returnValue(serialize($trustedProperties)));
 
         $arguments->addNewArgument('foo', 'something');

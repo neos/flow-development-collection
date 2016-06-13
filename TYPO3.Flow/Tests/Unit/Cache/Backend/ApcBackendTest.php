@@ -40,7 +40,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         if (ini_get('apc.slam_defense') == 1) {
             $this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
         }
-        $this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', false);
+        $this->mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -210,13 +210,13 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', false);
+        $thisCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thisBackend->injectEnvironment($this->mockEnvironment);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', false);
+        $thatCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thatBackend->injectEnvironment($this->mockEnvironment);
@@ -284,7 +284,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', false);
+        $cache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
         $backend = new ApcBackend(new ApplicationContext('Testing'));
         $backend->injectEnvironment($this->mockEnvironment);
         $backend->setCache($cache);

@@ -70,7 +70,7 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getConfigurationForTypeSettingsLoadsConfigurationIfNecessary()
     {
-        $packages = array('SomePackage' => $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', false));
+        $packages = array('SomePackage' => $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock());
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', false);
         $configurationManager->_set('configurations', array(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array()));
@@ -85,7 +85,7 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getConfigurationForTypeObjectLoadsConfiguration()
     {
-        $packages = array('SomePackage' => $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', false));
+        $packages = array('SomePackage' => $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock());
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', false);
         $configurationManager->_set('configurations', array(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => array()));
@@ -206,10 +206,10 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function loadConfigurationOverridesSettingsByContext()
     {
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMockBuilder('TYPO3\Flow\Configuration\Source\YamlSource')->setMethods(array('load', 'save'))->getMock();
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
-        $mockPackageA = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', false);
+        $mockPackageA = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
         $mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
         $mockPackageA->expects($this->any())->method('getPackageKey')->will($this->returnValue('PackageA'));
 
@@ -623,7 +623,7 @@ EOD;
      */
     public function loadConfigurationCorrectlyMergesSettings()
     {
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMockBuilder('TYPO3\Flow\Configuration\Source\YamlSource')->setMethods(array('load', 'save'))->getMock();
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
@@ -660,7 +660,7 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
         );
 
-        $mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array('getPathToTemporaryDirectory'), array(), '', false);
+        $mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->setMethods(array('getPathToTemporaryDirectory'))->getMock();
         $mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', false);
@@ -1068,7 +1068,7 @@ EOD;
                     )
                 ),
             );
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMockBuilder('TYPO3\Flow\Configuration\Source\YamlSource')->setMethods(array('load', 'save'))->getMock();
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue(array($mockSubRouteConfiguration)));
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Production')));
@@ -1119,7 +1119,7 @@ EOD;
                 ),
             )
         );
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMockBuilder('TYPO3\Flow\Configuration\Source\YamlSource')->setMethods(array('load', 'save'))->getMock();
         $mockConfigurationSource->expects($this->at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will($this->returnValue(array()));
         $mockConfigurationSource->expects($this->at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will($this->returnValue(array()));
         $mockConfigurationSource->expects($this->at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will($this->returnValue(array()));
@@ -1397,7 +1397,7 @@ EOD;
      */
     protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName)
     {
-        $mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+        $mockConfigurationSource = $this->getMockBuilder('TYPO3\Flow\Configuration\Source\YamlSource')->setMethods(array('load', 'save'))->getMock();
         $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, $configurationSourceCallbackName)));
 
         $configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext($contextName)));
@@ -1413,7 +1413,7 @@ EOD;
      */
     protected function getMockPackages()
     {
-        $mockPackageFlow = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', false);
+        $mockPackageFlow = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
         $mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
         $mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
 

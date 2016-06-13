@@ -23,8 +23,8 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function connectAllowsForConnectingASlotWithASignal()
     {
-        $mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
-        $mockSlot = $this->getMock('ClassB', array('someSlotMethod'));
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(array('emitSomeSignal'))->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(array('someSlotMethod'))->getMock();
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -40,8 +40,8 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function connectAlsoAcceptsObjectsInPlaceOfTheClassName()
     {
-        $mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
-        $mockSlot = $this->getMock('ClassB', array('someSlotMethod'));
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(array('emitSomeSignal'))->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(array('someSlotMethod'))->getMock();
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
@@ -57,7 +57,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function connectAlsoAcceptsClosuresActingAsASlot()
     {
-        $mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(array('emitSomeSignal'))->getMock();
         $mockSlot = function () {
         };
 
@@ -80,7 +80,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
             $arguments =  func_get_args();
         };
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect('Foo', 'bar', $mockSlot, null, false);
@@ -95,7 +95,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod()
     {
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('TYPO3\Flow\Tests\Unit\SignalSlot\DispatcherTest')->will($this->returnValue('TYPO3\Flow\Tests\Unit\SignalSlot\DispatcherTest'));
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
@@ -143,7 +143,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
         $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
@@ -161,7 +161,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown()
     {
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(false));
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
@@ -180,7 +180,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
         $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
@@ -202,7 +202,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
             $arguments =  func_get_args();
         };
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect('SignalClassName', 'methodName', $mockSlot, null, true);
@@ -218,8 +218,8 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed()
     {
-        $mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
-        $mockSlot = $this->getMock('ClassB', array('someSlotMethod'));
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(array('emitSomeSignal'))->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(array('someSlotMethod'))->getMock();
 
         $dispatcher = new \TYPO3\Flow\SignalSlot\Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', false);

@@ -88,7 +88,7 @@ class StringConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
             $configurationValueMap[] = array('TYPO3\Flow\Property\TypeConverter\StringConverter', $setting, $value);
         }
 
-        $propertyMappingConfiguration = $this->getMock('\TYPO3\Flow\Property\PropertyMappingConfiguration');
+        $propertyMappingConfiguration = $this->createMock('\TYPO3\Flow\Property\PropertyMappingConfiguration');
         $propertyMappingConfiguration
             ->expects($this->any())
             ->method('getConfigurationValue')

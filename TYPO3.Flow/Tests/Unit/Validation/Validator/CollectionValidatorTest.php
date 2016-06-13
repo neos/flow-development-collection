@@ -26,7 +26,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
     public function setUp()
     {
         parent::setUp();
-        $this->mockValidatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array('createValidator', 'buildBaseValidatorConjunction'), array(), '', false);
+        $this->mockValidatorResolver = $this->getMockBuilder('TYPO3\Flow\Validation\ValidatorResolver')->setMethods(array('createValidator', 'buildBaseValidatorConjunction'))->getMock();
         $this->validator->_set('validatorResolver', $this->mockValidatorResolver);
     }
 
@@ -103,9 +103,8 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
      */
     public function collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrinePersistenceCollections()
     {
-        $entityManager = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', false);
-        $collection = new \Doctrine\Common\Collections\ArrayCollection(array());
-        $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, '', $collection);
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, new \Doctrine\ORM\Mapping\ClassMetadata(''), array());
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($persistentCollection, 'initialized', false, true);
 
         $this->mockValidatorResolver->expects($this->never())->method('createValidator');

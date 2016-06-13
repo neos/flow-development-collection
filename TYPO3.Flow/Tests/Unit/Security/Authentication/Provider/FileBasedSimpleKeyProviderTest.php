@@ -165,7 +165,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
-        $someInvalidToken = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+        $someInvalidToken = $this->createMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 
         $authenticationProvider = new FileBasedSimpleKeyProvider('myProvider');
 
@@ -177,9 +177,9 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet()
     {
-        $mockToken1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+        $mockToken1 = $this->createMock('TYPO3\Flow\Security\Authentication\TokenInterface');
         $mockToken1->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('myProvider'));
-        $mockToken2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
+        $mockToken2 = $this->createMock('TYPO3\Flow\Security\Authentication\TokenInterface');
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
         $authenticationProvider = new FileBasedSimpleKeyProvider('myProvider');

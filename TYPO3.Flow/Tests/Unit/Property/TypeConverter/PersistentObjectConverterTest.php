@@ -53,13 +53,13 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function setUp()
     {
         $this->converter = new PersistentObjectConverter();
-        $this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
@@ -296,15 +296,15 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
     {
-        $mockClassSchema = $this->getMock('TYPO3\Flow\Reflection\ClassSchema', array(), array('Dummy'));
+        $mockClassSchema = $this->createMock('TYPO3\Flow\Reflection\ClassSchema', array(), array('Dummy'));
         $mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
         $this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->will($this->returnValue($mockClassSchema));
 
         $mockConstraint = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Qom\Comparison')->disableOriginalConstructor()->getMock();
 
         $mockObject = new \stdClass();
-        $mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
-        $mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
+        $mockQuery = $this->createMock('TYPO3\Flow\Persistence\QueryInterface');
+        $mockQueryResult = $this->createMock('TYPO3\Flow\Persistence\QueryResultInterface');
         $mockQueryResult->expects($this->once())->method('count')->will($this->returnValue($numberOfResults));
         $mockQueryResult->expects($howOftenIsGetFirstCalled)->method('getFirst')->will($this->returnValue($mockObject));
         $mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->will($this->returnValue($mockConstraint));

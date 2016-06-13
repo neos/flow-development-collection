@@ -82,9 +82,9 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockDatabasePlatform = $this->getMockForAbstractClass('Doctrine\DBAL\Platforms\AbstractPlatform', array(), '', true, true, true, array('getMaxIdentifierLength'));
         $mockDatabasePlatform->expects($this->atLeastOnce())->method('getMaxIdentifierLength')->will($this->returnValue(2048));
-        $mockConnection = $this->getMock('Doctrine\DBAL\Connection', array(), array(), '', false);
+        $mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
         $mockConnection->expects($this->atLeastOnce())->method('getDatabasePlatform')->will($this->returnValue($mockDatabasePlatform));
-        $mockEntityManager = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', false);
+        $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $mockEntityManager->expects($this->atLeastOnce())->method('getConnection')->will($this->returnValue($mockConnection));
 
         $driver = $this->getAccessibleMock('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver', array('dummy'));

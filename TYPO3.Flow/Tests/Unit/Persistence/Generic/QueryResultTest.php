@@ -54,10 +54,10 @@ class QueryResultTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->persistenceManager = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array(), array(), '', false);
+        $this->persistenceManager = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\PersistenceManager')->disableOriginalConstructor()->getMock();
         $this->persistenceManager->expects($this->any())->method('getObjectDataByQuery')->will($this->returnValue(array('one', 'two')));
-        $this->dataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
-        $this->query = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+        $this->dataMapper = $this->createMock('TYPO3\Flow\Persistence\Generic\DataMapper');
+        $this->query = $this->createMock('TYPO3\Flow\Persistence\QueryInterface');
         $this->queryResult = new QueryResult($this->query);
         $this->queryResult->injectPersistenceManager($this->persistenceManager);
         $this->queryResult->injectDataMapper($this->dataMapper);
@@ -124,7 +124,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function countDoesNotInitializeProxy()
     {
-        $queryResult = $this->getMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
+        $queryResult = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\QueryResult')->setMethods(array('initialize'))->setConstructorArgs(array($this->query))->getMock();
         $queryResult->injectPersistenceManager($this->persistenceManager);
         $queryResult->expects($this->never())->method('initialize');
         $queryResult->count();
@@ -236,7 +236,7 @@ class QueryResultTest extends UnitTestCase
 
         $queryResult->injectPersistenceManager($this->persistenceManager);
 
-        $mockDataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
+        $mockDataMapper = $this->createMock('TYPO3\Flow\Persistence\Generic\DataMapper');
         $mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
         $queryResult->injectDataMapper($mockDataMapper);
 
@@ -256,7 +256,7 @@ class QueryResultTest extends UnitTestCase
 
         $queryResult->injectPersistenceManager($this->persistenceManager);
 
-        $mockDataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
+        $mockDataMapper = $this->createMock('TYPO3\Flow\Persistence\Generic\DataMapper');
         $mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
         $queryResult->injectDataMapper($mockDataMapper);
 

@@ -101,10 +101,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
-        $mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
@@ -143,10 +143,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->denyPrivilege)));
 
-        $mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
@@ -162,10 +162,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role1ClassName, false);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->grantPrivilege)));
 
-        $mockRoleCustomer = $this->getMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock('TYPO3\Flow\Security\Policy\Role', array(), array(), $role2ClassName, false);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));

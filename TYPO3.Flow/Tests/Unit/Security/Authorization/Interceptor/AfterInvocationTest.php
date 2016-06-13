@@ -22,8 +22,8 @@ class AfterInvocationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invokeReturnsTheResultPreviouslySetBySetResultIfTheMethodIsNotIntercepted()
     {
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
-        $mockAfterInvocationManager = $this->getMock('TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockAfterInvocationManager = $this->createMock('TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface');
 
         $theResult = new \ArrayObject(array('some' => 'stuff'));
 

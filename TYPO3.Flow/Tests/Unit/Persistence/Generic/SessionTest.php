@@ -133,7 +133,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isDirtyReturnsTrueForUnregisteredReconstitutedEntities()
     {
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('isReconstitutedEntity'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('isReconstitutedEntity'))->getMock();
         $session->expects($this->once())->method('isReconstitutedEntity')->will($this->returnValue(false));
         $this->assertTrue($session->isDirty(new \stdClass(), 'foo'));
     }
@@ -147,7 +147,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         eval('class ' . $className . ' { public $foo; }');
         $object = new $className();
 
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject'))->getMock();
         $session->registerReconstitutedEntity($object, array('identifier' => 'fakeUuid'));
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
@@ -174,7 +174,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject', 'isSingleValuedPropertyDirty'))->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('string', 'bar', 'different')->will($this->returnValue(true));
@@ -192,7 +192,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $object = new $className();
         $object->Flow_Persistence_LazyLoadingObject_thawProperties = 'dummy';
 
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('dummy'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('dummy'))->getMock();
         $session->registerReconstitutedEntity($object, array('identifier' => 'fakeUuid'));
         $this->assertFalse($session->isDirty($object, 'foo'));
     }
@@ -217,7 +217,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject'))->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
@@ -251,7 +251,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject'))->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
@@ -286,7 +286,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject'))->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->atLeastOnce())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
@@ -323,7 +323,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject', 'isSingleValuedPropertyDirty'))->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(true));
@@ -361,7 +361,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject', 'isSingleValuedPropertyDirty'))->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('Some\Object', array('identifier' => 'cleanHash'), $object)->will($this->returnValue(false));
@@ -404,7 +404,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject', 'isSingleValuedPropertyDirty'))->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(false));
@@ -442,7 +442,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
                 )
             )
         );
-        $session = $this->getMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
+        $session = $this->getMockBuilder('TYPO3\Flow\Persistence\Generic\Session')->setMethods(array('getIdentifierByObject'))->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
@@ -483,7 +483,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isSingleValuedPropertyDirtyWorksAsExpected($type, $current, $clean, $expected)
     {
-        $session = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Persistence\Generic\Session'), array('getIdentifierByObject'));
+        $session = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Session', array('getIdentifierByObject'));
         $this->assertEquals($session->_call('isSingleValuedPropertyDirty', $type, $clean, $current), $expected);
     }
 
@@ -559,7 +559,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierByObjectReturnsUUIDForKnownObject()
     {
-        $knownObject = $this->getMock('TYPO3\Flow\Aop\ProxyInterface');
+        $knownObject = $this->createMock('TYPO3\Flow\Aop\ProxyInterface');
         $fakeUUID = '123-456';
 
         $session = new \TYPO3\Flow\Persistence\Generic\Session();
@@ -576,11 +576,11 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy()
     {
-        $knownObject = $this->getMock('TYPO3\Flow\Aop\ProxyInterface');
+        $knownObject = $this->createMock('TYPO3\Flow\Aop\ProxyInterface');
         $knownObject->Persistence_Object_Identifier = 'fakeUuid';
 
         $session = new \TYPO3\Flow\Persistence\Generic\Session();
-        $session->injectReflectionService($this->getMock('TYPO3\Flow\Reflection\ReflectionService'));
+        $session->injectReflectionService($this->createMock('TYPO3\Flow\Reflection\ReflectionService'));
 
         $this->assertEquals('fakeUuid', $session->getIdentifierByObject($knownObject));
     }
@@ -593,11 +593,11 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy()
     {
-        $knownObject = $this->getMock('TYPO3\Flow\Aop\ProxyInterface');
+        $knownObject = $this->createMock('TYPO3\Flow\Aop\ProxyInterface');
         $knownObject->Persistence_Object_Identifier = 'fakeHash';
 
         $session = new \TYPO3\Flow\Persistence\Generic\Session();
-        $session->injectReflectionService($this->getMock('TYPO3\Flow\Reflection\ReflectionService'));
+        $session->injectReflectionService($this->createMock('TYPO3\Flow\Reflection\ReflectionService'));
 
         $this->assertEquals('fakeHash', $session->getIdentifierByObject($knownObject));
     }
@@ -610,10 +610,10 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy()
     {
-        $unknownObject = $this->getMock('TYPO3\Flow\Aop\ProxyInterface');
+        $unknownObject = $this->createMock('TYPO3\Flow\Aop\ProxyInterface');
 
         $session = new \TYPO3\Flow\Persistence\Generic\Session();
-        $session->injectReflectionService($this->getMock('TYPO3\Flow\Reflection\ReflectionService'));
+        $session->injectReflectionService($this->createMock('TYPO3\Flow\Reflection\ReflectionService'));
 
         $this->assertNull($session->getIdentifierByObject($unknownObject));
     }
@@ -623,11 +623,11 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierByObjectReturnsValueOfPropertyTaggedWithId()
     {
-        $object = $this->getMock('TYPO3\Flow\Aop\ProxyInterface');
+        $object = $this->createMock('TYPO3\Flow\Aop\ProxyInterface');
         $object->Persistence_Object_Identifier = 'randomlyGeneratedUuid';
         $object->customId = 'customId';
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array('customId')));
 
         $session = new \TYPO3\Flow\Persistence\Generic\Session();

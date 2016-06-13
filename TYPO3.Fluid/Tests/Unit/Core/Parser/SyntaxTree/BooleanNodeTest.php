@@ -31,7 +31,7 @@ class BooleanNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $this->renderingContext = $this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
     }
 
     /**
@@ -40,7 +40,7 @@ class BooleanNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function havingMoreThanThreeElementsInTheSyntaxTreeThrowsException()
     {
-        $rootNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
+        $rootNode = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
         $rootNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array(1, 2, 3, 4)));
 
         new \TYPO3\Fluid\Core\Parser\SyntaxTree\BooleanNode($rootNode);
@@ -378,10 +378,10 @@ class BooleanNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $rootNode = new \TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode();
 
-        $object1Node = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
+        $object1Node = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
         $object1Node->expects($this->any())->method('evaluate')->will($this->returnValue($object1));
 
-        $object2Node = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
+        $object2Node = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
         $object2Node->expects($this->any())->method('evaluate')->will($this->returnValue($object2));
 
         $rootNode->addChildNode($object1Node);
@@ -402,10 +402,10 @@ class BooleanNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $rootNode = new \TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode();
 
-        $object1Node = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
+        $object1Node = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
         $object1Node->expects($this->any())->method('evaluate')->will($this->returnValue($object1));
 
-        $object2Node = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
+        $object2Node = $this->createMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode', array('evaluate'), array('foo'));
         $object2Node->expects($this->any())->method('evaluate')->will($this->returnValue($object2));
 
         $rootNode->addChildNode($object1Node);

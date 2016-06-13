@@ -35,9 +35,9 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->classSchema = $this->getMock('TYPO3\Flow\Reflection\ClassSchema', array(), array(), '', false);
+        $this->classSchema = $this->getMockBuilder('TYPO3\Flow\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
 
-        $this->reflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->reflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $this->reflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }

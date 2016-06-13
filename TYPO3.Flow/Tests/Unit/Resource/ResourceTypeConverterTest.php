@@ -181,7 +181,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 
         $source = array(
             'tmp_name' => 'SomeFilename',

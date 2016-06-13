@@ -23,13 +23,13 @@ class DisjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function validateReturnsNoErrorsIfOneValidatorReturnsNoError()
     {
         $validatorDisjunction = new \TYPO3\Flow\Validation\Validator\DisjunctionValidator(array());
-        $validatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $validatorObject = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \TYPO3\Flow\Error\Result()));
 
         $errors = new \TYPO3\Flow\Error\Result();
         $errors->addError(new \TYPO3\Flow\Error\Error('Error', 123));
 
-        $secondValidatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $secondValidatorObject = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
 
         $validatorDisjunction->addValidator($validatorObject);
@@ -50,12 +50,12 @@ class DisjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $errors1 = new \TYPO3\Flow\Error\Result();
         $errors1->addError($error1);
-        $validatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $validatorObject = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors1));
 
         $errors2 = new \TYPO3\Flow\Error\Result();
         $errors2->addError($error2);
-        $secondValidatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+        $secondValidatorObject = $this->createMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
         $secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors2));
 
         $validatorDisjunction->addValidator($validatorObject);

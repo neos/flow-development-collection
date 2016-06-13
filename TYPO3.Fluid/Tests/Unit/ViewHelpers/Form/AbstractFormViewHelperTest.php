@@ -29,9 +29,9 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
         eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
-        $object = $this->getMock($fullClassName);
+        $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
@@ -54,9 +54,9 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
         eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
-        $object = $this->getMock($fullClassName);
+        $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
@@ -79,9 +79,9 @@ class AbstractFormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBase
         eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
-        $object = $this->getMock($fullClassName);
+        $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(null));
 
         $expectedResult = chr(10) . '<!-- Object of type ' . get_class($object) . ' is without identity -->' . chr(10);

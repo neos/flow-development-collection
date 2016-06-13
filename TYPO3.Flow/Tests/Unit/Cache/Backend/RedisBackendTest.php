@@ -48,7 +48,7 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         }
 
         $this->redis = $this->getMockBuilder('\Redis')->disableOriginalConstructor()->getMock();
-        $this->cache = $this->getMock('\TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $this->cache = $this->createMock('\TYPO3\Flow\Cache\Frontend\FrontendInterface');
         $this->cache->expects($this->any())
             ->method('getIdentifier')
             ->will($this->returnValue('Foo_Cache'));

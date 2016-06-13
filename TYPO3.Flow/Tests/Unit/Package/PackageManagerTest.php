@@ -51,14 +51,14 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         vfsStream::setup('Test');
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\Flow\SignalSlot\Dispatcher')));
+        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->createMock('TYPO3\Flow\SignalSlot\Dispatcher')));
 
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
         $this->mockBootstrap->expects($this->any())->method('getContext')->will($this->returnValue($this->mockApplicationContext));
 
-        $mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function ($object) {
             if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
                 return get_parent_class($object);
@@ -71,7 +71,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
 
-        $mockClassLoader = $this->getMock('TYPO3\Flow\Core\ClassLoader');
+        $mockClassLoader = $this->createMock('TYPO3\Flow\Core\ClassLoader');
 
         $composerNameToPackageKeyMap = array(
             'typo3/flow' => 'TYPO3.Flow'
@@ -520,9 +520,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
             foreach ($package['dependencies'] as $dependency) {
                 $mockPackageConstraints[] = new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', $dependency);
             }
-            $mockMetaData = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
+            $mockMetaData = $this->createMock('TYPO3\Flow\Package\MetaDataInterface');
             $mockMetaData->expects($this->any())->method('getConstraintsByType')->will($this->returnValue($mockPackageConstraints));
-            $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+            $mockPackage = $this->createMock('TYPO3\Flow\Package\PackageInterface');
             $mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue($packageKey));
             $mockPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockMetaData));
             $unsortedPackages[$packageKey] = $mockPackage;

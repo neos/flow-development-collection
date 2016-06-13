@@ -22,7 +22,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCa
      */
     public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation()
     {
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('getMethodAnnotations'), array(), '', false, true);
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService', array('getMethodAnnotations'), array(), '', false, true);
         $mockReflectionService->expects($this->any())->method('getMethodAnnotations')->with(__CLASS__, __FUNCTION__, 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(array('SomeAnnotation'), array()));
 
         $filter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
@@ -37,7 +37,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCa
      */
     public function matchesReturnsFalseIfMethodDoesNotExistOrDeclardingClassHasNotBeenSpecified()
     {
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false, true);
+        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false, true);
 
         $filter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
@@ -61,7 +61,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCa
         $availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getClassesContainingMethodsAnnotatedWith')->with('SomeAnnotationClass')->will($this->returnValue(array('TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass')));
 
         $methodAnnotatedWithFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('SomeAnnotationClass');

@@ -438,7 +438,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $flowQuery = $this->getAccessibleMock('TYPO3\Eel\FlowQuery\FlowQuery', array('dummy'), array($elements));
 
             // Set up mock persistence manager to return dummy object identifiers
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {
                 return $object->__identity;
@@ -446,7 +446,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         }));
 
         $mockPersistenceManager = $this->mockPersistenceManager;
-        $objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $objectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $objectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation

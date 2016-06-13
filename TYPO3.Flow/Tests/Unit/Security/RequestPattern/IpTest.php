@@ -45,9 +45,9 @@ class IpTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
     {
-        $requestMock = $this->getMock('\TYPO3\Flow\Http\Request', array('getClientIpAddress'), array(), '', false);
+        $requestMock = $this->getMockBuilder('\TYPO3\Flow\Http\Request')->disableOriginalConstructor()->setMethods(array('getClientIpAddress'))->getMock();
         $requestMock->expects($this->once())->method('getClientIpAddress')->will($this->returnValue($ip));
-        $actionRequestMock = $this->getMock('\TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', false);
+        $actionRequestMock = $this->getMockBuilder('\TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
         $actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
 
         $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Ip();
