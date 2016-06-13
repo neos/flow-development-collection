@@ -238,6 +238,20 @@ TYPO3:
         # The locales identifiers to use in their desired order
         order: []
 
+      scan:
+        # You can list any path regular expression patterns that you want to exclude from scanning for locales
+        #
+        # Example:
+        # '/node_modules': TRUE
+        # '/src/.*/test': TRUE
+        #
+        # Note: Setting a pattern to FALSE will not whitelist it, but is an option for packages to remove patterns
+        #       from this blacklist again.
+        excludePaths:
+          '/CLDR/Sources': TRUE
+          '/node_modules': TRUE
+          '/\.git': TRUE
+
     object:
 
       # If enabled, the Object Manager will - additionally to the class files found

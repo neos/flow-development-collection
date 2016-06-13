@@ -268,6 +268,8 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
+        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePaths'])));
+
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
             $packageResourcesPath = $activePackage->getResourcesPath();
@@ -279,6 +281,9 @@ class Service
             $directories = array(Files::getNormalizedPath($packageResourcesPath));
             while ($directories !== array()) {
                 $currentDirectory = array_pop($directories);
+                if ($blacklistPattern !== '' && preg_match('#' . str_replace('#', '\#', $blacklistPattern) . '#', $currentDirectory) > 0) {
+                    continue;
+                }
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
                         if ($filename[0] === '.') {
