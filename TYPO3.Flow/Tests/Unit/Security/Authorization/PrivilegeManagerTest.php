@@ -66,7 +66,7 @@ class PrivilegeManagerTest extends UnitTestCase
     public function setUp()
     {
         $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockJoinPoint = $this->getMockBuilder(\TYPO3\Flow\Aop\JoinPoint::class)->disableOriginalConstructor()->getMock();
 
         $this->privilegeManager = new PrivilegeManager($this->mockObjectManager, $this->mockSecurityContext);

@@ -210,13 +210,13 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thisBackend->injectEnvironment($this->mockEnvironment);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thatBackend->injectEnvironment($this->mockEnvironment);
@@ -284,7 +284,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $backend = new ApcBackend(new ApplicationContext('Testing'));
         $backend->injectEnvironment($this->mockEnvironment);
         $backend->setCache($cache);

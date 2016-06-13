@@ -560,7 +560,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('authenticationManager', $mockAuthenticationManager);
 
         $result = $securityContext->getRoles();
-        $this->assertInstanceOf('TYPO3\Flow\Security\Policy\Role', $result['TYPO3.Flow:AuthenticatedUser']);
+        $this->assertInstanceOf(\TYPO3\Flow\Security\Policy\Role::class, $result['TYPO3.Flow:AuthenticatedUser']);
         $this->assertEquals('TYPO3.Flow:AuthenticatedUser', (string)($result['TYPO3.Flow:AuthenticatedUser']));
     }
 

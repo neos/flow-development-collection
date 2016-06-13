@@ -22,8 +22,7 @@ class ConjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addingValidatorsToAJunctionValidatorWorks()
     {
-        $proxyClassName = $this->buildAccessibleProxy(\TYPO3\Flow\Validation\Validator\ConjunctionValidator::class);
-        $conjunctionValidator = new $proxyClassName(array());
+        $conjunctionValidator = $this->getAccessibleMock(\TYPO3\Flow\Validation\Validator\ConjunctionValidator::class, array('dummy'), array(array()));
 
         $mockValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $conjunctionValidator->addValidator($mockValidator);

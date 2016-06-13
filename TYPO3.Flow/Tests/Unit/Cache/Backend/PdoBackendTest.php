@@ -198,12 +198,12 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -225,7 +225,7 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
         $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));

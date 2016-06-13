@@ -288,11 +288,11 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodParameters));
         $mockReflectionService->expects($this->once())->method('getMethodAnnotations')->with(get_class($mockObject), 'fooAction', \TYPO3\Flow\Annotations\Validate::class)->will($this->returnValue($validateAnnotations));
 
-        $mockStringValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
-        $mockArrayValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
-        $mockFooValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
-        $mockBarValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
-        $mockQuuxValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
+        $mockStringValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockArrayValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockFooValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockBarValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockQuuxValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
 
         $conjunction1 = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ConjunctionValidator::class)->disableOriginalConstructor()->getMock();
         $conjunction1->expects($this->at(0))->method('addValidator')->with($mockStringValidator);
@@ -370,8 +370,8 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService->expects($this->once())->method('getMethodAnnotations')->with(get_class($mockObject), 'fooAction', \TYPO3\Flow\Annotations\Validate::class)->will($this->returnValue($validateAnnotations));
         $mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodParameters));
 
-        $mockStringValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
-        $mockQuuxValidator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class)->disableOriginalConstructor()->getMock();
+        $mockStringValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockQuuxValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
         $conjunction1 = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\ConjunctionValidator::class)->disableOriginalConstructor()->getMock();
         $conjunction1->expects($this->at(0))->method('addValidator')->with($mockStringValidator);
 
@@ -458,7 +458,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
         $modelClassName = 'Model' . md5(uniqid(mt_rand(), true));
         eval('class ' . $modelClassName . '{}');
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(true));
         $mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue(Configuration::SCOPE_PROTOTYPE));
         $mockObjectManager->expects($this->at(3))->method('getScope')->with($otherClassName)->will($this->returnValue(null));

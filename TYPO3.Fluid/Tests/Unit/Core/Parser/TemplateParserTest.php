@@ -535,7 +535,7 @@ class TemplateParserTest extends UnitTestCase
      */
     public function closingViewHelperTagHandlerThrowsExceptionBecauseOfClosingTagWhichWasNeverOpened()
     {
-        $mockNodeOnStack = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $mockNodeOnStack = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface::class);
         $mockState = $this->createMock(\TYPO3\Fluid\Core\Parser\ParsingState::class);
         $mockState->expects($this->once())->method('popNodeFromStack')->will($this->returnValue($mockNodeOnStack));
 

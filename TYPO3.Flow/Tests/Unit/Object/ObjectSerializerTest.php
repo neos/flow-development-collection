@@ -32,7 +32,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('privateProperty', 'protectedProperty', 'publicProperty')));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->disableOriginalConstructor()->getMock());
+        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $someObject = new $className();
@@ -500,8 +500,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(false));
 
-        $objectSerializerClassName = $this->buildAccessibleProxy(\TYPO3\Flow\Object\ObjectSerializer::class);
-        $objectSerializer = new $objectSerializerClassName($this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->disableOriginalConstructor()->getMock());
+        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
         $objectSerializer->injectObjectManager($mockObjectManager);
 
         $objectSerializer->deserializeObjectsArray($someDataArray);
@@ -568,8 +567,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function buildStorageArrayCreatesTheCorrectArrayForAnArrayProperty()
     {
-        $objectSerializerClassName = $this->buildAccessibleProxy(\TYPO3\Flow\Object\ObjectSerializer::class);
-        $objectSerializer = new $objectSerializerClassName($this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->disableOriginalConstructor()->getMock());
+        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
 
         $expectedArray = array(
             'key1' => array(
@@ -673,7 +671,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue(array()));
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with($className, 'SplObjectProperty', 'transient')->will($this->returnValue(false));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->disableOriginalConstructor()->getMock());
+        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $objectHash1 = spl_object_hash($propertyClass1);
@@ -1021,7 +1019,7 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue(array()));
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with($className, 'collectionProperty', 'transient')->will($this->returnValue(false));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->getMockBuilder(\TYPO3\Flow\Session\SessionInterface::class)->disableOriginalConstructor()->getMock());
+        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $objectHash1 = spl_object_hash($propertyClass1);

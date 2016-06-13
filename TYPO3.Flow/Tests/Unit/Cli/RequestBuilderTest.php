@@ -48,7 +48,7 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
         $this->mockCommand = $this->getMockBuilder(\TYPO3\Flow\Cli\Command::class)->disableOriginalConstructor()->getMock();

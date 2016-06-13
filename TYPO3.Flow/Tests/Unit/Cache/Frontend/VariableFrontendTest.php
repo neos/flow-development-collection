@@ -168,7 +168,7 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getByTagRejectsInvalidTags()
     {
-        $backend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\TaggableBackendInterface::class)->disableOriginalConstructor()->getMock();
+        $backend = $this->createMock(\TYPO3\Flow\Cache\Backend\TaggableBackendInterface::class);
         $backend->expects($this->never())->method('findIdentifiersByTag');
 
         $cache = new \TYPO3\Flow\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);

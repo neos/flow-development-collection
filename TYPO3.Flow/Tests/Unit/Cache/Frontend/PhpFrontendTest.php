@@ -36,7 +36,7 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $originalSourceCode = 'return "hello world!";';
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class)->disableOriginalConstructor()->getMock();
+        $mockBackend = $this->createMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class);
         $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
 
         $cache = $this->getAccessibleMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);
@@ -59,7 +59,7 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class)->disableOriginalConstructor()->getMock();
+        $mockBackend = $this->createMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class);
         $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
         $cache = $this->getAccessibleMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, array('dummy'), array(), '', false);

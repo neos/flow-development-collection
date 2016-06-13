@@ -88,7 +88,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
 
         $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();

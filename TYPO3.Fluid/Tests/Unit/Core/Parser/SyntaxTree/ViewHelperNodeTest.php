@@ -63,7 +63,7 @@ class ViewHelperNodeTest extends UnitTestCase
     {
         $this->renderingContext = new RenderingContext();
 
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->renderingContext, 'objectManager', $this->mockObjectManager);
 
         $this->templateVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class)->disableOriginalConstructor()->getMock();

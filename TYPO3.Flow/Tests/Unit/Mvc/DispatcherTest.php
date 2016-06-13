@@ -112,11 +112,11 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockFirewall = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\FirewallInterface::class)->getMock();
+        $this->mockFirewall = $this->createMock(\TYPO3\Flow\Security\Authorization\FirewallInterface::class);
 
-        $this->mockSecurityLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SecurityLoggerInterface::class)->getMock();
+        $this->mockSecurityLogger = $this->createMock(\TYPO3\Flow\Log\SecurityLoggerInterface::class);
 
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) {
             if ($className === \TYPO3\Flow\Security\Context::class) {
                 return $this->mockSecurityContext;
@@ -268,7 +268,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockAuthenticationToken = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\TokenInterface::class)->getMock();
+        $mockAuthenticationToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
         $mockAuthenticationToken->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue(null));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken)));
 
@@ -289,9 +289,9 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockEntryPoint = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class)->getMock();
+        $mockEntryPoint = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
 
-        $mockAuthenticationToken = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\TokenInterface::class)->getMock();
+        $mockAuthenticationToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
         $mockAuthenticationToken->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken)));
 
@@ -312,12 +312,12 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockAuthenticationToken1 = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\TokenInterface::class)->getMock();
-        $mockEntryPoint1 = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class)->getMock();
+        $mockAuthenticationToken1 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockEntryPoint1 = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
         $mockAuthenticationToken1->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint1));
 
-        $mockAuthenticationToken2 = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\TokenInterface::class)->getMock();
-        $mockEntryPoint2 = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class)->getMock();
+        $mockAuthenticationToken2 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockEntryPoint2 = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
         $mockAuthenticationToken2->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint2));
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken1, $mockAuthenticationToken2)));

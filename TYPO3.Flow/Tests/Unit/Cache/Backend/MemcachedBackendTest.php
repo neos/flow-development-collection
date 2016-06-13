@@ -283,7 +283,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend(array $backendOptions = array())
     {
-        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         if ($backendOptions == array()) {
             $backendOptions = array('servers' => array('localhost:11211'));
         }

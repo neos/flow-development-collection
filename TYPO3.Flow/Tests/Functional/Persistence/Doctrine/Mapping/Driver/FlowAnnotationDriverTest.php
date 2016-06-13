@@ -92,9 +92,9 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function compositePrimaryKeyOverEntityRelationIsRegistered()
     {
-        $classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity');
-        $driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
-        $driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity', $classMetadata);
+        $classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity::class);
+        $driver = $this->objectManager->get(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CompositeKeyTestEntity::class, $classMetadata);
         $this->assertTrue($classMetadata->isIdentifierComposite);
         $this->assertTrue($classMetadata->containsForeignIdentifier);
         $this->assertEquals($classMetadata->identifier, array('name', 'relatedEntity'));

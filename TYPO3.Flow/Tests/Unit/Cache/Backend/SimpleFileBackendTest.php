@@ -60,7 +60,7 @@ class SimpleFileBackendTest extends UnitTestCase
 
         $this->mockCacheManager = $this->getMockBuilder(\TYPO3\Flow\Cache\CacheManager::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockCacheFrontend = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->getMock();
+        $this->mockCacheFrontend = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
     }
 
     /**

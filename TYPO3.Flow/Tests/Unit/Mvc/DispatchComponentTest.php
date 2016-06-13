@@ -98,7 +98,7 @@ class DispatchComponentTest extends UnitTestCase
 
         $this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class, $this->mockHttpRequest)->will($this->returnValue($this->mockActionRequest));
         $this->inject($this->dispatchComponent, 'objectManager', $this->mockObjectManager);
 

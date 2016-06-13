@@ -85,13 +85,13 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockResolveCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->routerCachingService, 'resolveCache', $this->mockResolveCache);
 
-        $this->mockPersistenceManager  = $this->getMockBuilder(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->getMock();
+        $this->mockPersistenceManager  = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->inject($this->routerCachingService, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockSystemLogger  = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $this->mockSystemLogger  = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $this->inject($this->routerCachingService, 'systemLogger', $this->mockSystemLogger);
 
-        $this->mockObjectManager  = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager  = $this->createMock(ObjectManagerInterface::class);
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
         $this->mockObjectManager->expects($this->any())->method('getContext')->will($this->returnValue($this->mockApplicationContext));
         $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);

@@ -58,7 +58,7 @@ class RouterTest extends UnitTestCase
     {
         $this->router = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\Router::class, array('dummy'));
 
-        $this->mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $this->mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
 
         $this->mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();

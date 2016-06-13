@@ -23,12 +23,12 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue()
     {
-        $mockJoinPoint = $this->getMockBuilder(\TYPO3\Flow\Aop\JoinPointInterface::class)->disableOriginalConstructor()->getMock();
+        $mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
         $mockAspect = $this->getMockBuilder('MockClass' . md5(uniqid(mt_rand(), true)))->setMethods(array('someMethod'))->getMock();
         $mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint)->will($this->returnValue('result'));
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
         $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
@@ -50,13 +50,13 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockAdviceChain = $this->getMockBuilder(\TYPO3\Flow\Aop\Advice\AdviceChain::class)->disableOriginalConstructor()->getMock();
         $mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('result'));
 
-        $mockJoinPoint = $this->getMockBuilder(\TYPO3\Flow\Aop\JoinPointInterface::class)->disableOriginalConstructor()->getMock();
+        $mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
         $mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
         $mockAspect = $this->getMockBuilder('MockClass' . md5(uniqid(mt_rand(), true)))->setMethods(array('someMethod'))->getMock();
         $mockAspect->expects($this->never())->method('someMethod');
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
         $advice = new \TYPO3\Flow\Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
