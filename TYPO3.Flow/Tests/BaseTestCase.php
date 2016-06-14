@@ -35,6 +35,27 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     protected $backupStaticAttributes = false;
 
     /**
+     * Returns a test double for the specified class.
+     *
+     * This can be removed as soon as we drop support for PHPUnit 4.8
+     *
+     * @param string $originalClassName
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    public function createMock($originalClassName)
+    {
+        if (is_callable('parent::createMock')) {
+            return parent::createMock($originalClassName);
+        } else {
+            return $this->getMockBuilder($originalClassName)
+                ->disableOriginalConstructor()
+                ->disableOriginalClone()
+                ->disableArgumentCloning()
+                ->getMock();
+        }
+    }
+
+    /**
      * Returns a mock object which allows for calling protected methods and access
      * of protected properties.
      *
@@ -53,22 +74,27 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
-        $mockObject = $this->getMockObjectGenerator()->getMock(
-            $this->buildAccessibleProxy($originalClassName),
-            $methods,
-            $arguments,
-            $mockClassName,
-            $callOriginalConstructor,
-            $callOriginalClone,
-            $callAutoload,
-            $cloneArguments,
-            $callOriginalMethods,
-            $proxyTarget
-        );
+        if (is_callable('this::registerMockObject')) {
+            $mockObject = $this->getMockObjectGenerator()->getMock(
+                $this->buildAccessibleProxy($originalClassName),
+                $methods,
+                $arguments,
+                $mockClassName,
+                $callOriginalConstructor,
+                $callOriginalClone,
+                $callAutoload,
+                $cloneArguments,
+                $callOriginalMethods,
+                $proxyTarget
+            );
 
-        $this->registerMockObject($mockObject);
+            $this->registerMockObject($mockObject);
 
-        return $mockObject;
+            return $mockObject;
+        } else {
+            // This clause can be removed as soon as we drop support for PHPUnit 4.8
+            return $this->getMock($this->buildAccessibleProxy($originalClassName), $methods, $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload);
+        }
     }
 
     /**
