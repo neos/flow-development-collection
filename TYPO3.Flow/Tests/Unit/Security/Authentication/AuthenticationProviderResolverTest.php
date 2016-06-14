@@ -19,7 +19,7 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException
+     * @expectedException \TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException
      */
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {

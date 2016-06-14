@@ -35,7 +35,7 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks if setProperties accepts only valid values
      *
      * @test
-     * @expectedException TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setPropertiesOnlyAcceptsValidValues()
     {

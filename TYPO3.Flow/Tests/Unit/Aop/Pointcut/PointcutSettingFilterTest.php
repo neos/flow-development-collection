@@ -49,7 +49,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
+     * @expectedException \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function filterThrowsAnExceptionForNotExistingConfigurationSetting()
     {
@@ -139,7 +139,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
+     * @expectedException \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function filterThrowsAnExceptionForAnIncorectCondition()
     {

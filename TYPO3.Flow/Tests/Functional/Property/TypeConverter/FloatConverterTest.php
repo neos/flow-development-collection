@@ -77,7 +77,7 @@ class FloatConverterTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException
+     * @expectedException \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function convertFromThrowsExceptionIfLocaleIsInvalid()
     {

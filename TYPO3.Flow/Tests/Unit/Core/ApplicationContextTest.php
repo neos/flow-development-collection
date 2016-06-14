@@ -64,7 +64,7 @@ class ApplicationContextTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * @test
      * @dataProvider forbiddenContexts
-     * @expectedException TYPO3\Flow\Exception
+     * @expectedException \TYPO3\Flow\Exception
      */
     public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext)
     {
