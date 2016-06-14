@@ -194,7 +194,7 @@ itself! So complying with the walkthrough, the following approach is possible::
 
 	$classAnnotation = $this->reflectionService->getClassAnnotation(
 		'Magrathea\Erp\Domain\Model\CustomizedGoodsOrder',
-		'Magrathea\Erp\Annotations\Reportable')
+		'Magrathea\Erp\Annotations\Reportable'
 	);
 	$classAnnotation instanceof \Magrathea\Erp\Annotations\Reportable;
 	$classAnnotation->reportName === 'OrderReport';

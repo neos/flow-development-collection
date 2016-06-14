@@ -80,10 +80,10 @@
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="pl">Ta właściwość jest wymagana</target></trans-unit>
+			<target xml:lang="pl">To pole jest wymagane</target><alt-trans><target xml:lang="pl">Ta właściwość jest wymagana</target></alt-trans></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target xml:lang="pl">Ta właściwość jest wymagana</target></trans-unit>
+			<target xml:lang="pl">To pole jest wymagane</target><alt-trans><target xml:lang="pl">Ta właściwość jest wymagana</target></alt-trans></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>
@@ -116,17 +116,17 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="pl">Długość tego tekstu musi być pomiędzy {0,number} a {1,number} znaków</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]">
+        <trans-unit id="1238108068[0]" approved="yes">
           <source>This field must contain at least {0,number} character</source>
-          <target xml:lang="pl" state="translated">To pole musi zawierać co najmniej {0,number} znak</target>
+          <target xml:lang="pl">To pole musi zawierać co najmniej {0,number} znak</target>
         </trans-unit>
-        <trans-unit id="1238108068[1]">
+        <trans-unit id="1238108068[1]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="pl" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="pl">To pole musi zawierać co najmniej {0,number} znaki</target>
         </trans-unit>
-        <trans-unit id="1238108068[2]">
+        <trans-unit id="1238108068[2]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="pl" state="translated">To pole musi zawierać co najmniej {0,number} znaków</target>
+          <target xml:lang="pl">To pole musi zawierać co najmniej {0,number} znaków</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
@@ -134,9 +134,9 @@
           <source>This text may not exceed {0,number} character</source>
           <target xml:lang="pl">Ten tekst nie może przekraczać {0,number} znaku</target>
         </trans-unit>
-        <trans-unit id="1238108069[1]">
+        <trans-unit id="1238108069[1]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="pl" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="pl">Ten tekst nie może przekraczać {0,number} znaków</target>
         </trans-unit>
         <trans-unit id="1238108069[2]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>

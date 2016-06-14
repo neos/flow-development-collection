@@ -28,27 +28,27 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $runtimeEvaluations4 = array('methodArgumentConstraint' => array('arg4' => 'eval4'));
         $runtimeEvaluations5 = array('methodArgumentConstraint' => array('arg5' => 'eval5', 'arg6' => 'eval6'));
 
-        $mockPointcutFilter1 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter1 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter1->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations1));
         $mockPointcutFilter1->expects($this->any())->method('matches')->will($this->returnValue(true));
         $mockPointcutFilter1->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
 
-        $mockPointcutFilter2 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter2 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter2->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations2));
         $mockPointcutFilter2->expects($this->any())->method('matches')->will($this->returnValue(false));
         $mockPointcutFilter2->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
 
-        $mockPointcutFilter3 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter3 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter3->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations3));
         $mockPointcutFilter3->expects($this->any())->method('matches')->will($this->returnValue(true));
         $mockPointcutFilter3->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
 
-        $mockPointcutFilter4 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter4 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter4->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations4));
         $mockPointcutFilter4->expects($this->any())->method('matches')->will($this->returnValue(true));
         $mockPointcutFilter4->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
 
-        $mockPointcutFilter5 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter5 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter5->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations5));
         $mockPointcutFilter5->expects($this->any())->method('matches')->will($this->returnValue(true));
         $mockPointcutFilter5->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
@@ -82,19 +82,19 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function matchesReturnsTrueForNegatedSubfiltersWithRuntimeEvaluations()
     {
-        $mockPointcutFilter1 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter1 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
 
-        $mockPointcutFilter2 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter2 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter2->expects($this->once())->method('matches')->will($this->returnValue(true));
 
-        $mockPointcutFilter3 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter3 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter3->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter3->expects($this->any())->method('matches')->will($this->returnValue(true));
 
-        $mockPointcutFilter4 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter4 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter4->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter4->expects($this->once())->method('matches')->will($this->returnValue(true));
 
@@ -112,11 +112,11 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function matchesReturnsTrueForNegatedSubfilter()
     {
-        $mockPointcutFilter1 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter1 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
 
-        $mockPointcutFilter2 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter2 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter2->expects($this->once())->method('matches')->will($this->returnValue(false));
 
@@ -132,11 +132,11 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function matchesReturnsFalseEarlyForAndedSubfilters()
     {
-        $mockPointcutFilter1 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter1 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(false));
 
-        $mockPointcutFilter2 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter2 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(false));
 
@@ -152,11 +152,11 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function matchesReturnsFalseEarlyForAndedNegatedSubfilters()
     {
-        $mockPointcutFilter1 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter1 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
 
-        $mockPointcutFilter2 = $this->getMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class, array(), array(), '', false);
+        $mockPointcutFilter2 = $this->createMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface::class);
         $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
         $mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(true));
 
@@ -185,7 +185,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                                 )
                                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $existingRuntimeEvaluationsDefintion);
 
         $newRuntimeEvaluationsDefinition = array(
@@ -266,7 +266,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 "\t\t\t\t\t\t\treturn (((\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
                                 "\t\t\t\t\t\t}";
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -316,7 +316,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 "\t\t\t\t\t\t\treturn (((\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
                                 "\t\t\t\t\t\t}";
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -332,7 +332,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $expectedResult = 'NULL';
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', array());
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -359,7 +359,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
@@ -394,7 +394,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
@@ -419,7 +419,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
@@ -446,7 +446,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
@@ -473,7 +473,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                             )
                         );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
@@ -495,7 +495,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
@@ -522,7 +522,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
                                 )
                             );
 
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
@@ -536,7 +536,7 @@ class PointcutFilterCompositeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasRuntimeEvaluationsDefinitionConsidersGlobalAndFilterRuntimeEvaluationsDefinitions()
     {
-        $pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class), array('dummy'), array(), '', false);
+        $pointcutFilterComposite = $this->getAccessibleMock(\TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite::class, array('dummy'), array(), '', false);
         $this->assertFalse($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
 
         $pointcutFilterComposite->_set('globalRuntimeEvaluationsDefinition', array('foo', 'bar'));

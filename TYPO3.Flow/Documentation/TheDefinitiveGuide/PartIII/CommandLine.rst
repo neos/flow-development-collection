@@ -276,7 +276,8 @@ is rendered by using the information provided by the method code and DocComment:
 * the type specified in the @param annotations is used for validation and to
   determine if the argument is a flag (boolean) or not
 * the parameters declared in the method set the parameter names and tell if they
-  are arguments (mandatory) or options (optional)
+  are arguments (mandatory) or options (optional). All arguments must be placed in front
+  of the options.
 
 The above example will result in a help screen similar to this:
 

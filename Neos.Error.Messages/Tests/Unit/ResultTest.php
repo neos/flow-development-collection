@@ -39,7 +39,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 
     protected function getMockMessage($type)
     {
-        return $this->getMock('TYPO3\Flow\Error\\' . $type, array(), array(), '', false);
+        return $this->getMockBuilder('TYPO3\Flow\Error\\' . $type)->disableOriginalConstructor()->getMock();
     }
 
     /**

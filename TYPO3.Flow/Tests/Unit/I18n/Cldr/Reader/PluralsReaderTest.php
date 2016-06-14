@@ -39,10 +39,10 @@ class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockModel = $this->getAccessibleMock(\TYPO3\Flow\I18n\Cldr\CldrModel::class, array('getRawArray'), array(array('fake/path')));
         $mockModel->expects($this->once())->method('getRawArray')->with('plurals')->will($this->returnValue($samplePluralRulesData));
 
-        $mockRepository = $this->getMock(\TYPO3\Flow\I18n\Cldr\CldrRepository::class);
+        $mockRepository = $this->createMock(\TYPO3\Flow\I18n\Cldr\CldrRepository::class);
         $mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));
 
-        $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, array(), array(), '', false);
+        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->at(0))->method('has')->with('rulesets')->will($this->returnValue(false));
         $mockCache->expects($this->at(1))->method('set')->with('rulesets');
         $mockCache->expects($this->at(2))->method('set')->with('rulesetsIndices');

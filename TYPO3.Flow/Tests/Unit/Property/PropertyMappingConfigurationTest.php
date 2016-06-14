@@ -168,7 +168,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTypeConverterReturnsTypeConverterIfItHasBeenSet()
     {
-        $mockTypeConverter = $this->getMock(\TYPO3\Flow\Property\TypeConverterInterface::class);
+        $mockTypeConverter = $this->createMock(\TYPO3\Flow\Property\TypeConverterInterface::class);
         $this->propertyMappingConfiguration->setTypeConverter($mockTypeConverter);
         $this->assertSame($mockTypeConverter, $this->propertyMappingConfiguration->getTypeConverter());
     }
@@ -208,7 +208,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
             array('setMapping', array('k1', 'k1a')),
             array('setTypeConverterOptions', array($mockTypeConverterClass, array('k1' => 'v1', 'k2' => 'v2'))),
             array('setTypeConverterOption', array($mockTypeConverterClass, 'k1', 'v3')),
-            array('setTypeConverter', array($this->getMock(\TYPO3\Flow\Property\TypeConverterInterface::class))),
+            array('setTypeConverter', array($this->createMock(\TYPO3\Flow\Property\TypeConverterInterface::class))),
         );
     }
 

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Annotations\ValueObject;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\DuplicateObjectException;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
@@ -232,7 +233,12 @@ class PersistentObjectConverter extends ObjectConverter
     protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, PropertyMappingConfigurationInterface $configuration = null)
     {
         if (!isset($source['__identity'])) {
-            if ($configuration === null || $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) !== true) {
+            if ($this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class) === true) {
+                // Allow creation for ValueObjects by default, but prevent if explicitly disallowed
+                if ($configuration !== null && $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) === false) {
+                    throw new InvalidPropertyMappingConfigurationException('Creation of value objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
+                }
+            } elseif ($configuration === null || $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) !== true) {
                 throw new InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
             }
             $object = $this->buildObject($convertedChildProperties, $targetType);

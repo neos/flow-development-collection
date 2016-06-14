@@ -24,11 +24,11 @@ class AbstractNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->renderingContext = $this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContext::class, array(), array(), '', false);
+        $this->renderingContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Rendering\RenderingContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->abstractNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class, array('evaluate'));
+        $this->abstractNode = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class)->setMethods(array('evaluate'))->getMock();
 
-        $this->childNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
+        $this->childNode = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
         $this->abstractNode->addChildNode($this->childNode);
     }
 
