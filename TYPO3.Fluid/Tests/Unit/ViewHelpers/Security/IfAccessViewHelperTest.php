@@ -35,7 +35,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
 
     public function setUp()
     {
-        $this->mockPrivilegeManager = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class)->getMock();
+        $this->mockPrivilegeManager = $this->createMock(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
 
         $this->ifAccessViewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Security\IfAccessViewHelper::class, array('renderThenChild', 'renderElseChild'));
         $this->inject($this->ifAccessViewHelper, 'privilegeManager', $this->mockPrivilegeManager);

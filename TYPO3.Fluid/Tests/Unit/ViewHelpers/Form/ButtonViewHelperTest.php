@@ -37,7 +37,7 @@ class ButtonViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(array('setTagName', 'addAttribute', 'setContent'))->getMock();
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('button');
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'submit');
         $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', '');

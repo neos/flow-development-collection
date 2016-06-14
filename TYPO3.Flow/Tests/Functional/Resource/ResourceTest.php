@@ -40,7 +40,7 @@ class ResourceTest extends FunctionalTestCase
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
+        $this->resourceManager = $this->objectManager->get(\TYPO3\Flow\Resource\ResourceManager::class);
     }
 
     /**

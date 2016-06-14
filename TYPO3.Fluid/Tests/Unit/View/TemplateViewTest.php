@@ -40,7 +40,7 @@ class TemplateViewTest extends UnitTestCase
         $controllerObjectName = 'TYPO3\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
 
         $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
-        $mockRequest = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($httpRequest));
+        $mockRequest = $this->createMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($httpRequest));
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
         $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
         $mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
@@ -48,7 +48,7 @@ class TemplateViewTest extends UnitTestCase
         $mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
 
         /** @var $mockControllerContext ControllerContext */
-        $mockControllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array('getRequest'), array(), '', false);
+        $mockControllerContext = $this->createMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array('getRequest'), array(), '', false);
         $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
         return $mockControllerContext;

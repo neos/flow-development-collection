@@ -42,7 +42,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Form\UploadViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration', 'getMappingResultsForProperty'));
-        $this->mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class);
+        $this->mockPropertyMapper = $this->createMock(\TYPO3\Flow\Property\PropertyMapper::class);
         $this->viewHelper->_set('propertyMapper', $this->mockPropertyMapper);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -65,7 +65,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
-        $mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute', 'setContent', 'render'), array(), '', false);
+        $mockTagBuilder = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(array('setContent', 'render', 'addAttribute'))->getMock();
         $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'file');
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'someName');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('someName');
@@ -109,7 +109,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     {
         $resource = new Resource();
 
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($resource)->will($this->returnValue('79ecda60-1a27-69ca-17bf-a5d9e80e6c39'));
 
         $this->viewHelper->_set('persistenceManager', $mockPersistenceManager);
@@ -149,7 +149,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
 
         /** @var Resource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
         $mockResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockResource)->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
@@ -187,7 +187,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         );
         $mockValueResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
 
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockValueResource))->will($this->returnValue($mockValueResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
@@ -220,7 +220,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
             'formObject' => $mockFormObject
         );
 
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockPropertyResource))->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 

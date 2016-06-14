@@ -51,8 +51,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
         $this->accountFactory = new \TYPO3\Flow\Security\AccountFactory();
         $this->accountRepository = new \TYPO3\Flow\Security\AccountRepository();
 
-        $authenticationTokenProxyClass = $this->buildAccessibleProxy(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class);
-        $this->authenticationToken = new $authenticationTokenProxyClass();
+        $this->authenticationToken = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, array('dummy'));
 
         $account = $this->accountFactory->createAccountWithPassword('username', 'password', array(), 'myTestProvider');
         $this->accountRepository->add($account);

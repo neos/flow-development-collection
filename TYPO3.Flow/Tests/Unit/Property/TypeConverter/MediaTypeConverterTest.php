@@ -38,7 +38,7 @@ class MediaTypeConverterTest extends UnitTestCase
     {
         $this->mediaTypeConverter = new MediaTypeConverter();
 
-        $this->mockPropertyMappingConfiguration = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)->getMock();
+        $this->mockPropertyMappingConfiguration = $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class);
     }
 
     /**
