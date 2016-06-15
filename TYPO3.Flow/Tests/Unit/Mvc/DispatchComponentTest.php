@@ -99,7 +99,7 @@ class DispatchComponentTest extends UnitTestCase
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockMediaTypeConverter = $this->getMock(MediaTypeConverterInterface::class);
+        $mockMediaTypeConverter = $this->createMock(MediaTypeConverterInterface::class);
         $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('get')->willReturnMap([
             [ActionRequest::class, $this->mockHttpRequest, $this->mockActionRequest],

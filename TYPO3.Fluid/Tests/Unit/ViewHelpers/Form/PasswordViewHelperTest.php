@@ -76,7 +76,7 @@ class PasswordViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Fo
      */
     public function renderCorrectlySetsRequiredAttribute()
     {
-        $mockTagBuilder = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('addAttribute', 'setContent', 'render'), array(), '', false);
+        $mockTagBuilder = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(array('addAttribute', 'setContent', 'render'))->disableOriginalConstructor()->getMock();
         $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'password');
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
