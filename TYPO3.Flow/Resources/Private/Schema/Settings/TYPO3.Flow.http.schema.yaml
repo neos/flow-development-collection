@@ -26,22 +26,3 @@ properties:
               'componentOptions': { type: dictionary }
               'chain':
                 type: dictionary
-  'trustedProxies':
-    type: [dictionary]
-    required: true
-    additionalProperties: false
-    properties:
-      'proxies':
-        type: [string, dictionary]
-        required: true
-        additionalProperties:
-          type: string
-      'headers':
-        type: [dictionary]
-        required: true
-        additionalProperties: false
-        properties:
-          'clientIp': { type: string, required: true }
-          'host': { type: string, required: true }
-          'port': { type: string, required: true }
-          'proto': { type: string, required: true }
