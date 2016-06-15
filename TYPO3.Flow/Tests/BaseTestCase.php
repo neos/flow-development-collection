@@ -74,7 +74,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
-        if (is_callable('this::registerMockObject')) {
+        if (is_callable(array($this, 'registerMockObject'))) {
             $mockObject = $this->getMockObjectGenerator()->getMock(
                 $this->buildAccessibleProxy($originalClassName),
                 $methods,

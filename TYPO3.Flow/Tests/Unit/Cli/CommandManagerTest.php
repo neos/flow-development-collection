@@ -54,7 +54,7 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $commandManager = new CommandManager();
         $mockCommandControllerClassNames = array(\TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController::class, \TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController::class);
         $this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with(\TYPO3\Flow\Cli\CommandController::class)->will($this->returnValue($mockCommandControllerClassNames));
-        $mockObjectManager = $this->getMock(ObjectManagerInterface::class);
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
         $commandManager->injectObjectManager($mockObjectManager);
 

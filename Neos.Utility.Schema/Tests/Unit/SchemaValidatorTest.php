@@ -26,7 +26,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->configurationValidator = $this->getMock(SchemaValidator::class, array('getError'));
+        $this->configurationValidator = $this->getMockBuilder(SchemaValidator::class)->setMethods(array('getError'))->getMock();
     }
 
     /**
