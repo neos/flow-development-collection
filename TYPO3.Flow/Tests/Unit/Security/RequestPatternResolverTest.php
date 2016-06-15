@@ -19,7 +19,7 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\NoRequestPatternFoundException
+     * @expectedException \TYPO3\Flow\Security\Exception\NoRequestPatternFoundException
      */
     public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable()
     {

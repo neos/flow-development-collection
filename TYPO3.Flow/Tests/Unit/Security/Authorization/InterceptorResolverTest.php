@@ -19,7 +19,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\NoInterceptorFoundException
+     * @expectedException \TYPO3\Flow\Security\Exception\NoInterceptorFoundException
      */
     public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable()
     {

@@ -111,7 +111,7 @@ class ConjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Validation\Exception\NoSuchValidatorException
+     * @expectedException \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
      */
     public function removingANotExistingValidatorIndexThrowsException()
     {

@@ -244,7 +244,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function addChecksObjectType()
     {
@@ -256,7 +256,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function removeChecksObjectType()
     {
@@ -267,7 +267,7 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
     }
     /**
      * @test
-     * @expectedException TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @expectedException \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function updateChecksObjectType()
     {

@@ -154,7 +154,7 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Fluid\Core\Widget\Exception\MissingControllerException
+     * @expectedException \TYPO3\Fluid\Core\Widget\Exception\MissingControllerException
      */
     public function initiateSubRequestThrowsExceptionIfControllerIsNoWidgetController()
     {

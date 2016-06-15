@@ -23,7 +23,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing()
     {
@@ -71,7 +71,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid()
     {
