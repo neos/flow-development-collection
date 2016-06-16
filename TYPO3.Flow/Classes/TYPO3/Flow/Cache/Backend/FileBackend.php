@@ -42,7 +42,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * @var array
      */
-    protected $cacheEntryIdentifiers = array();
+    protected $cacheEntryIdentifiers = [];
 
     /**
      * @var boolean
@@ -152,7 +152,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!is_string($data)) {
             throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
@@ -259,7 +259,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function findIdentifiersByTag($searchedTag)
     {
-        $entryIdentifiers = array();
+        $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
         $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
@@ -338,12 +338,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return true;
         }
 
+        $cacheData = null;
+        $get = function ($cacheEntryPathAndFilename) {
+            return file_get_contents($cacheEntryPathAndFilename);
+        };
         if ($acquireLock) {
-            $lock = LockFactory::acquire($cacheEntryPathAndFilename, false);
-        }
-        $cacheData = file_get_contents($cacheEntryPathAndFilename);
-        if ($acquireLock) {
-            $lock->release();
+            LockFactory::acquireCallback($cacheEntryPathAndFilename, false, function () use ($cacheEntryPathAndFilename, $get, &$cacheData) {
+                $cacheData = $get($cacheEntryPathAndFilename);
+            });
+        } else {
+            $cacheData = $get($cacheEntryPathAndFilename);
         }
         $index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
         $expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
@@ -434,12 +438,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         if ($this->frozen === true) {
+            $result = null;
+            $get = function ($entryIdentifier) {
+                return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
+            };
             if ($acquireLock) {
-                $lock = LockFactory::acquire($pathAndFilename, false);
-            }
-            $result = (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
-            if ($acquireLock) {
-                $lock->release();
+                LockFactory::acquireCallback($pathAndFilename, false, function () use ($entryIdentifier, $get, &$result) {
+                    $result = $get($entryIdentifier);
+                });
+            } else {
+                $result = $get($entryIdentifier);
             }
             return $result;
         }
@@ -447,12 +455,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
             return false;
         }
+        $cacheData = null;
+        $get = function ($pathAndFilename) {
+            return file_get_contents($pathAndFilename);
+        };
         if ($acquireLock) {
-            $lock = LockFactory::acquire($pathAndFilename, false);
-        }
-        $cacheData = file_get_contents($pathAndFilename);
-        if ($acquireLock) {
-            $lock->release();
+            LockFactory::acquireCallback($pathAndFilename, false, function () use ($pathAndFilename, $get, &$cacheData) {
+                $cacheData = $get($pathAndFilename);
+            });
+        } else {
+            $cacheData = $get($pathAndFilename);
         }
 
         $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
