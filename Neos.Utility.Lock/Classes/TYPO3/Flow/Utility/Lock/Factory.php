@@ -42,10 +42,8 @@ class Factory
         $lock = self::acquire($subject, $exclusiveLock);
         try {
             $callback();
+        } finally {
             $lock->release();
-        } catch (\Exception $exception) {
-            $lock->release();
-            throw $exception;
         }
     }
 }
