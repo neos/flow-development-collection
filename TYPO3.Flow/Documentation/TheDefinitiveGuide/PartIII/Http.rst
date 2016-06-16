@@ -278,44 +278,6 @@ By sending a ``POST`` request and specifying the ``__method`` argument, the requ
 
 Additionally Flow respects the ``X-HTTP-Method`` respectively ``X-HTTP-Method-Override`` header.
 
-Trusted Proxies
-~~~~~~~~~~~~~~~
-
-If your server is behind a reverse proxy or a CDN, some of the request informations like the the host name, the port,
-the protocol and the original client IP address are provided via additional request headers.
-Since those headers can also easily be sent by an adversary, possibly bypassing security measurements, you should make
-sure that those headers are only accepted from trusted proxies.
-
-For this, you can configure a list of proxy IP address ranges in CIDR notation that are allowed to provide such headers,
-and which headers specifically are accepted for overriding those request informations::
-
-	TYPO3:
-	  Flow:
-	    http:
-	      trustedProxies:
-	        proxies:
-	          - '216.246.40.0/24'
-	          - '216.246.100.0/24'
-
-	        headers:
-	          clientIp: 'X-Forwarded-For'
-	          host: 'X-Forwarded-Host'
-	          port: 'X-Forwarded-Port'
-	          proto: 'X-Forwarded-Proto'
-
-This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
-IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``.
-By default, all proxies are trusted (``trustedProxies.proxies`` set to ``'*'``) and only the ``X-Forwarded-*`` headers
-are accepted. If you know that your installation will not run behind a proxy server, you should change settings to this::
-
-	TYPO3:
-	  Flow:
-	    http:
-	      trustedProxies:
-	        proxies: []
-
-With this, no headers will be trusted and only the direct request informations will be used.
-
 Response
 --------
 

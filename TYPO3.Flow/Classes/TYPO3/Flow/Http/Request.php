@@ -12,12 +12,9 @@ namespace TYPO3\Flow\Http;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Flow\Utility\Ip as IpUtility;
 
 /**
  * Represents an HTTP request
@@ -27,11 +24,6 @@ use TYPO3\Flow\Utility\Ip as IpUtility;
  */
 class Request extends AbstractMessage
 {
-    const HEADER_CLIENT_IP = 'clientIp';
-    const HEADER_HOST = 'host';
-    const HEADER_PORT = 'port';
-    const HEADER_PROTOCOL = 'proto';
-
     /**
      * @var string
      */
@@ -67,18 +59,6 @@ class Request extends AbstractMessage
     protected $inputStreamUri = 'php://input';
 
     /**
-     * @var bool
-     */
-    protected $trustedProxy;
-
-    /**
-     * The "Trusted Proxies" settings from configuration.
-     *
-     * @var array
-     */
-    protected static $trustedProxiesSettings;
-
-    /**
      * Constructs a new Request object based on the given environment data.
      *
      * @param array $get Data similar to that which is typically provided by $_GET
@@ -91,10 +71,7 @@ class Request extends AbstractMessage
      */
     public function __construct(array $get, array $post, array $files, array $server)
     {
-        $this->initializeTrustedProxiesConfiguration();
-
         $this->headers = Headers::createFromServer($server);
-        $this->server = $server;
         $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
         if ($method === 'POST') {
             if (isset($post['__method'])) {
@@ -107,34 +84,27 @@ class Request extends AbstractMessage
         }
         $this->setMethod($method);
 
-        $protocolHeader = $this->getTrustedProxyHeaderValues(self::HEADER_PROTOCOL);
-        if ($protocolHeader !== null) {
-            $protocol = reset($protocolHeader);
+        if ($this->headers->has('X-Forwarded-Proto')) {
+            $protocol = $this->headers->get('X-Forwarded-Proto');
         } else {
             $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
         }
-        $hostHeader = $this->getTrustedProxyHeaderValues(self::HEADER_HOST);
-        if ($hostHeader !== null) {
-            $host = reset($hostHeader);
-        } else {
-            $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
-        }
+        $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
         $requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
         if (substr($requestUri, 0, 10) === '/index.php') {
             $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
         }
         $this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
-        $portHeader = $this->getTrustedProxyHeaderValues(self::HEADER_PORT);
-        if ($portHeader !== null) {
-            $port = reset($portHeader);
-            $this->uri->setPort($port);
-        } elseif ($protocolHeader !== null) {
+        if ($this->headers->has('X-Forwarded-Port')) {
+            $this->uri->setPort($this->headers->get('X-Forwarded-Port'));
+        } elseif ($this->headers->has('X-Forwarded-Proto')) {
             $this->uri->setPort($protocol === 'https' ? 443 : 80);
         } elseif (isset($server['SERVER_PORT'])) {
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
+        $this->server = $server;
         $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
     }
 
@@ -216,18 +186,6 @@ class Request extends AbstractMessage
     {
         $actionRequest = new ActionRequest($this);
         return $actionRequest;
-    }
-
-    /**
-     * Initialize the static trustedProxiesSettings property from ConfigurationManager if not yet set.
-     * @return void
-     */
-    protected function initializeTrustedProxiesConfiguration()
-    {
-        if (self::$trustedProxiesSettings === null) {
-            $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
-            self::$trustedProxiesSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.http.trustedProxies');
-        }
     }
 
     /**
@@ -412,96 +370,6 @@ class Request extends AbstractMessage
             $this->content = file_get_contents($this->inputStreamUri);
         }
         return $this->content;
-    }
-
-    /**
-     * Get the values of trusted proxy header.
-     *
-     * @param string $type One of the HEADER_* constants
-     * @return array|null An array of the values for this header type or NULL if this header type should not be trusted
-     */
-    protected function getTrustedProxyHeaderValues($type)
-    {
-        $trustedHeader = isset(self::$trustedProxiesSettings['headers'][$type]) ? self::$trustedProxiesSettings['headers'][$type] : '';
-
-        if ($trustedHeader !== '' && $this->isFromTrustedProxy() && $this->headers->has($trustedHeader)) {
-            return array_map('trim', explode(',', $this->headers->get($trustedHeader)));
-        }
-        return null;
-    }
-
-    /**
-     * Check if the given IP address is from a trusted proxy.
-     *
-     * @param string $ipAddress
-     * @return bool
-     */
-    protected function ipIsTrustedProxy($ipAddress)
-    {
-        if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
-            return false;
-        }
-        if (self::$trustedProxiesSettings['proxies'] === '*') {
-            return true;
-        }
-        foreach (self::$trustedProxiesSettings['proxies'] as $ipPattern) {
-            if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if this request is coming from a trusted Proxy.
-     *
-     * @return bool
-     * @api
-     */
-    public function isFromTrustedProxy()
-    {
-        if ($this->trustedProxy === null) {
-            $remoteAddress = isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : '0.0.0.0';
-            $this->trustedProxy = $this->ipIsTrustedProxy($remoteAddress);
-        }
-        return $this->trustedProxy;
-    }
-
-    /**
-     * Get the most trusted client's IP address.
-     *
-     * This is the right-most address in the trusted client IP header, that is not a trusted proxy address.
-     * If all proxies are trusted, this is the left-most address in the header.
-     * If no proxies are trusted or no client IP header is trusted, this is the remote address of the machine
-     * directly connected to the server.
-     *
-     * @return string|bool The most trusted client's IP address or FALSE if no remote address can be found
-     * @api
-     */
-    public function getTrustedClientIpAddress()
-    {
-        if (!isset($this->server['REMOTE_ADDR'])) {
-            return false;
-        }
-
-        $trustedIpHeader = $this->getTrustedProxyHeaderValues(self::HEADER_CLIENT_IP);
-        if ($trustedIpHeader === null || self::$trustedProxiesSettings['proxies'] === []) {
-            return $this->server['REMOTE_ADDR'];
-        }
-
-        if (self::$trustedProxiesSettings['proxies'] === '*') {
-            return reset($trustedIpHeader);
-        }
-
-        foreach (array_reverse($trustedIpHeader) as $headerIpAddress) {
-            $portPosition = strpos($headerIpAddress, ':');
-            $ipAddress = $portPosition !== false ? substr($headerIpAddress, 0, $portPosition) : $headerIpAddress;
-            if (!$this->ipIsTrustedProxy($ipAddress)) {
-                break;
-            }
-        }
-
-        return $ipAddress;
     }
 
     /**
