@@ -34,13 +34,18 @@ class Factory
     /**
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
-     * @param callable $callback A callback executed before the relase of the lock
+     * @param \Closure $callback A callback executed before the relase of the lock
      * @return void
      */
-    public static function acquireCallback($subject, $exclusiveLock, $callback)
+    public static function acquireCallback($subject, $exclusiveLock, \Closure $callback)
     {
         $lock = self::acquire($subject, $exclusiveLock);
-        $callback();
-        $lock->release();
+        try {
+            $callback();
+            $lock->release();
+        } catch (\Exception $exception) {
+            $lock->release();
+            throw $exception;
+        }
     }
 }
