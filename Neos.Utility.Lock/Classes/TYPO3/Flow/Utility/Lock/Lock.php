@@ -76,7 +76,7 @@ class Lock
     }
 
     /**
-     * Releases the lock
+     * Acquire the lock
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
      * @return void
      */
