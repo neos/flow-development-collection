@@ -24,6 +24,7 @@ class Factory
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
      * @return Lock
+     * @deprecated Use Factory::acquireCallback, deprecated in Flow 3.3
      */
     public static function acquire($subject, $exclusiveLock = true)
     {
