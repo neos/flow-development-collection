@@ -136,7 +136,7 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
         $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
         $dummyObjectConfiguration = array($configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__));
 
-        $reflectionServiceMock = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $reflectionServiceMock = $this->createMock('\TYPO3\Flow\Reflection\ReflectionService');
         $reflectionServiceMock
                 ->expects($this->once())
                 ->method('getPropertyNamesByAnnotation')

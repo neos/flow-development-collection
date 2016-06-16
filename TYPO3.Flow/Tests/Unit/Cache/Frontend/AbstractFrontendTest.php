@@ -17,14 +17,20 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Frontend;
  */
 class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->mockBackend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\AbstractBackend::class)->setMethods(array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'))->disableOriginalConstructor()->getMock();
+    }
+
     /**
      * @test
      */
     public function theConstructorAcceptsValidIdentifiers()
     {
-        $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', false);
         foreach (array('x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('resource://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
-            $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+            $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $this->mockBackend))->getMock();
         }
         // dummy assertion to silence PHPUnit warning
         $this->assertTrue(true);
@@ -35,10 +41,9 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theConstructorRejectsInvalidIdentifiers()
     {
-        $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', false);
         foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $identifier) {
             try {
-                $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+                $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $this->mockBackend))->getMock();
                 $this->fail('Identifier "' . $identifier . '" was not rejected.');
             } catch (\InvalidArgumentException $exception) {
             }
@@ -53,10 +58,9 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function flushCallsBackend()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', false);
-        $backend->expects($this->once())->method('flush');
+        $this->mockBackend->expects($this->once())->method('flush');
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $this->mockBackend))->getMock();
         $cache->flush();
     }
 
@@ -68,10 +72,9 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function flushByTagRejectsInvalidTags()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\BackendInterface::class);
-        $backend->expects($this->never())->method('flushByTag');
+        $this->mockBackend->expects($this->never())->method('flushByTag');
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $this->mockBackend))->getMock();
         $cache->flushByTag('SomeInvalid\Tag');
     }
 
@@ -82,10 +85,10 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $tag = 'sometag';
         $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\TaggableBackendInterface::class);
+        $backend = $this->createMock(\TYPO3\Flow\Cache\Backend\TaggableBackendInterface::class);
         $backend->expects($this->once())->method('flushByTag')->with($tag);
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $backend))->getMock();
         $cache->flushByTag($tag);
     }
 
@@ -95,10 +98,9 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function collectGarbageCallsBackend()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', false);
-        $backend->expects($this->once())->method('collectGarbage');
+        $this->mockBackend->expects($this->once())->method('collectGarbage');
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->setConstructorArgs(array($identifier, $this->mockBackend))->getMock();
         $cache->collectGarbage();
     }
 
@@ -107,10 +109,6 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getClassTagRendersTagWhichCanBeUsedToTagACacheEntryWithACertainClass()
     {
-        $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', false);
-
-        $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
         $this->assertEquals('%CLASS%TYPO3_Foo_Bar_Baz', \TYPO3\Flow\Cache\CacheManager::getClassTag('TYPO3\Foo\Bar\Baz'));
     }
 
@@ -119,9 +117,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidEntryIdentifiersAreRecognizedAsInvalid()
     {
-        $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array(), array(), '', false);
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->disableOriginalConstructor()->getMock();
         foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $entryIdentifier) {
             $this->assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
         }
@@ -132,9 +128,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function validEntryIdentifiersAreRecognizedAsValid()
     {
-        $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array(), array(), '', false);
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->disableOriginalConstructor()->getMock();
         foreach (array('_', 'abc-def', 'foo', 'bar123', '3some', '_bl_a', 'some&', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
             $this->assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
         }
@@ -145,9 +139,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidTagsAreRecognizedAsInvalid()
     {
-        $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array(), array(), '', false);
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->disableOriginalConstructor()->getMock();
         foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $tag) {
             $this->assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
         }
@@ -158,9 +150,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function validTagsAreRecognizedAsValid()
     {
-        $identifier = 'someCacheIdentifier';
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\AbstractBackend::class, array(), array(), '', false);
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->setMethods(array('dummy'))->disableOriginalConstructor()->getMock();
         foreach (array('abcdef', 'foo-bar', 'foo_baar', 'bar123', '3some', 'file%Thing', 'some&', '%x%', str_repeat('x', 250)) as $tag) {
             $this->assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
         }

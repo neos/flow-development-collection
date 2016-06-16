@@ -3,12 +3,12 @@ JavaScript Coding Guidelines
 ============================
 
 Here, you will find an explanation of the JavaScript Coding Guidelines we use.
-Generally, we strive to follow the TYPO3 Flow Coding Guidelines as closely as
+Generally, we strive to follow the Flow Coding Guidelines as closely as
 possible, with exceptions which make sense in the JavaScript context.
 
 This guideline explains mostly how we want JavaScript code to be formatted;
-and it does **not** deal with the TYPO3 Neos User
-Interface structure. If you want to know more about the TYPO3 Neos User
+and it does **not** deal with the Neos User
+Interface structure. If you want to know more about the Neos User
 Interface architecture, have a look into the "Neos User Interface
 Development" book.
 
@@ -16,12 +16,12 @@ Development" book.
 Naming Conventions
 ==================
 
-- one class per file, with the same naming convention as TYPO3 Flow.
+- one class per file, with the same naming convention as Flow.
 - This means all classes are built like this:
   ``<PackageKey>.<SubNamespace>.<ClassName>``, and this class is
   implemented in a JavaScript file located at
   ``<Package>/.../JavaScript/<SubNamespace>/<ClassName>.js``
-- Right now, the base directory for JavaScript in TYPO3 Flow packages
+- Right now, the base directory for JavaScript in Flow packages
   ``Resources/Public/JavaScript``, but this might still change.
 - We suggest that the base directory for JavaScript files is *JavaScript*.
 - Files have to be encoded in UTF-8 without byte order mark (BOM).
@@ -270,7 +270,7 @@ Methods should be documented the following way, with a blank line between method
 	}
 	...
 
-Contrary to what is defined in the TYPO3 Flow PHP Coding Guidelines, methods which are public
+Contrary to what is defined in the Flow PHP Coding Guidelines, methods which are public
 **automatically belong to the public API**, without an ``@api`` annotation. Contrary,
 methods which do **not belong to the public API** need to begin with an underscore and
 have the ``@private`` annotation.
@@ -363,7 +363,7 @@ Code Style
 	}
 
 - Whitespace around control structures like ``if``, ``else``, ... should be inserted like
-  in the TYPO3 Flow CGLs::
+  in the Flow CGLs::
 
 	if (myExpression) {
 		// if part
@@ -455,7 +455,7 @@ It is also possible to adjust the validation rules JSLint uses. At the end of fi
 options' value. By default, the options are taken over the book "JavaScript: The Good
 Parts" which is written by the same author of JSlint.
 
-Below are the options we use for TYPO3 v5::
+Below are the options we use for Neos::
 
 	bitwise: true, eqeqeq: true, immed: true,newcap: true, nomen: false,
 	onevar: true, plusplus: false, regexp: true, rhino: true, undef: false,

@@ -53,9 +53,9 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleProcessesConfiguredComponents()
     {
-        $mockComponent1 = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
         $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
-        $mockComponent2 = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $mockComponent2 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
         $mockComponent2->expects($this->once())->method('handle')->with($this->mockComponentContext);
 
         $options = array('components' => array($mockComponent1, $mockComponent2));
@@ -68,9 +68,9 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleStopsProcessingIfAComponentCancelsTheCurrentChain()
     {
-        $mockComponent1 = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
         $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
-        $mockComponent2 = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $mockComponent2 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
         $mockComponent2->expects($this->never())->method('handle');
 
         $this->mockComponentContext->expects($this->once())->method('getParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
@@ -85,10 +85,10 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleResetsTheCancelParameterIfItWasTrue()
     {
-        $mockComponent1 = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
 
-        $this->mockComponentContext->expects($this->at(0))->method('getParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
-        $this->mockComponentContext->expects($this->at(1))->method('setParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', null);
+        $this->mockComponentContext->expects($this->at(1))->method('getParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
+        $this->mockComponentContext->expects($this->at(2))->method('setParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', null);
 
         $options = array('components' => array($mockComponent1));
         $this->componentChain = new ComponentChain($options);

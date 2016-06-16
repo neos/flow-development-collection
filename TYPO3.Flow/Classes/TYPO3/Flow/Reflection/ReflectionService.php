@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Reflection;
  */
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\PhpParser;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
@@ -341,7 +340,7 @@ class ReflectionService
     {
         $this->context = $this->environment->getContext();
 
-        if ($this->context->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen()) {
+        if ($this->hasFrozenCacheInProduction()) {
             $this->classReflectionData = $this->reflectionDataRuntimeCache->get('__classNames');
             $this->annotatedClasses = $this->reflectionDataRuntimeCache->get('__annotatedClasses');
             $this->loadFromClassSchemaRuntimeCache = true;
@@ -359,7 +358,6 @@ class ReflectionService
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }
         }
-        AnnotationRegistry::registerLoader([$this->classLoader, 'loadClass']);
 
         $this->initialized = true;
     }
@@ -2043,6 +2041,9 @@ class ReflectionService
      */
     public function saveToCache()
     {
+        if ($this->hasFrozenCacheInProduction()) {
+            return;
+        }
         if (!$this->initialized) {
             $this->initialize();
         }
@@ -2176,5 +2177,13 @@ class ReflectionService
     protected function getPrecompiledReflectionStoragePath()
     {
         return Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'PrecompiledReflectionData/')) . '/';
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function hasFrozenCacheInProduction()
+    {
+        return $this->environment->getContext()->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
     }
 }

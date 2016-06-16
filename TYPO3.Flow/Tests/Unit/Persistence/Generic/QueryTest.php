@@ -38,8 +38,8 @@ class QueryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->reflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
-        $this->objectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->reflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $this->objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->query = new \TYPO3\Flow\Persistence\Generic\Query('someType', $this->reflectionService);
         $this->query->injectObjectManager($this->objectManager);
     }

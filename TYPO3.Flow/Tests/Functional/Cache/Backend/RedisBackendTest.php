@@ -56,7 +56,7 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->backend = new RedisBackend(
             new ApplicationContext('Testing'), array('hostname' => '127.0.0.1', 'database' => 0)
         );
-        $this->cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $this->cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
         $this->backend->setCache($this->cache);
         $this->backend->flush();

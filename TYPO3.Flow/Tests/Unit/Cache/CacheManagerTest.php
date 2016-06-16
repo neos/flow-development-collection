@@ -50,7 +50,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
-        $this->mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $this->mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $this->cacheManager->injectSystemLogger($this->mockSystemLogger);
         $this->mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);
@@ -64,7 +64,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function registerCache($cacheIdentifier)
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $cache->expects($this->any())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
         $this->cacheManager->registerCache($cache);
 

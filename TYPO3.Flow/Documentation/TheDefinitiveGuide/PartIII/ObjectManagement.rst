@@ -4,12 +4,12 @@
 Object Framework
 ================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 The lifecycle of objects are managed centrally by the object framework. It offers
 convenient support for Dependency Injection and provides some additional features such as
 a caching mechanism for objects. Because all packages are built on this foundation it is
-important to understand the general concept of objects in TYPO3 Flow.
+important to understand the general concept of objects in Flow.
 Note, the object management features of Flow are by default only enabled for classes in
 packages belonging to one of the `typo3-flow-*`` package types. All other classes are not
 considered by default. If you need that (see :ref:`sect-enabling-non-flow-packages`).
@@ -43,7 +43,7 @@ only through the object framework.
 
 .. important::
 
-	As a general rule of thumb for those not developing the TYPO3 Flow core itself but your very
+	As a general rule of thumb for those not developing the Flow core itself but your very
 	own packages:
 
 	**Use Dependency Injection whenever possible for retrieving singletons.**
@@ -98,13 +98,15 @@ Objects live in a specific scope. The most commonly used are *prototype* and *si
 	Although this way of implementing the singleton will possibly not conflict with the Object
 	Manager, it is counterproductive to the integrity of the system and might raise problems
 	with unit testing (sometimes Singleton is referred to as an *Anti Pattern*).
-	The above examples are *not recommended* for the use within TYPO3 Flow applications.
+	The above examples are *not recommended* for the use within Flow applications.
 
 The scope of an object is determined from its configuration (see also :ref:`sect-configuring-objects`).
 The recommended way to specify the scope is the ``@scope`` annotation::
 
 	namespace MyCompany\MyPackage;
-
+	
+  use TYPO3\Flow\Annotations as Flow;
+  
 	/**
 	 * A sample class
 	 *
@@ -132,7 +134,7 @@ into the object, lifecycle callbacks are fired, and you can use Aspect-Oriented 
 	In order to provide the functionality that you can just use ``new`` to create new
 	prototype objects, a lot of advanced things happen behind the scenes.
 
-	TYPO3 Flow internally copies all classes to another file, and appends ``_Original`` to their
+	Flow internally copies all classes to another file, and appends ``_Original`` to their
 	class name. Then, it creates a new class under the original name where all the magic is
 	happening.
 
@@ -279,7 +281,7 @@ Object Framework API
 --------------------
 
 The object framework provides a lean API for registering, configuring and retrieving
-instances of objects. Some of the methods provided are exclusively used within TYPO3 Flow
+instances of objects. Some of the methods provided are exclusively used within Flow
 package or in test cases and should possibly not be used elsewhere. By offering
 Dependency Injection, the object framework helps you to avoid creating rigid
 interdependencies between objects and allows for writing code which is hardly or even not
@@ -334,7 +336,7 @@ a clean separation of domains which are realized by dedicated objects. The less 
 object knows about the internals of another object, the easier it is to modify or replace
 one of them, which in turn makes the whole system flexible. In a perfect world, each of
 the objects could be reused in a variety of contexts, for example independently from
-certain packages and maybe even outside the TYPO3 Flow framework.
+certain packages and maybe even outside the Flow framework.
 
 Dependency Injection
 --------------------
@@ -372,7 +374,7 @@ inject it to the authentication object.
 	with polymorphism. He doesn't mention dependency injection though ...
 
 Dependencies on other objects can be declared in the object's configuration (see :ref:`sect-configuring-objects`) or they can be solved automatically (so called autowiring).
-Generally there are two modes of dependency injection supported by TYPO3 Flow:
+Generally there are two modes of dependency injection supported by Flow:
 *Constructor Injection* and *Setter Injection*.
 
 .. note::
@@ -413,7 +415,7 @@ However, this is already a quite flexible approach because the type of ``$bar`` 
 determined from outside by just passing one or the another implementation to the
 constructor.
 
-Now the TYPO3 Flow Object Manager does some magic: By a mechanism called *Autowiring* all
+Now the Flow Object Manager does some magic: By a mechanism called *Autowiring* all
 dependencies which were declared in a constructor will be injected automagically if the
 constructor argument provides a type definition (i.e.
 ``\MyCompany\MyPackage\BarInterface`` in the above example). Autowiring is activated by
@@ -479,7 +481,7 @@ Unlike constructor injection, setter injection like in the above example does no
 the autowiring feature. All dependencies have to be declared explicitly in the object
 configuration.
 
-To save you from writing large configuration files, TYPO3 Flow supports a second
+To save you from writing large configuration files, Flow supports a second
 type of setter methods: By convention all methods whose name start with ``inject`` are
 considered as setters for setter injection. For those methods no further configuration is
 necessary, dependencies will be autowired (if autowiring is not disabled):
@@ -503,7 +505,7 @@ necessary, dependencies will be autowired (if autowiring is not disabled):
 
 Note the new method name ``injectBar`` - for the above example no further configuration is
 required. Using ``inject*`` methods is the preferred way for setter
-injection in TYPO3 Flow.
+injection in Flow.
 
 .. note::
 
@@ -542,11 +544,13 @@ Property Injection
 
 Setter injection is the academic, clean way to set dependencies from outside. However,
 writing these setters can become quite tiresome if all they do is setting the property.
-For these cases TYPO3 Flow provides support for *Property Injection*:
+For these cases Flow provides support for *Property Injection*:
 
 *Example: Example for Property Injection* ::
 
 	namespace MyCompany\MyPackage;
+  
+  use TYPO3\Flow\Annotations as Flow;
 
 	class Foo {
 
@@ -580,7 +584,7 @@ set. And if thousands of users (or only five) use your API, it's hard to change 
 design decision in favor of a setter method.
 
 However, we don't consider injection methods as part of the public API. As you've seen,
-TYPO3 Flow takes care of all the object dependencies and the only other code working with
+Flow takes care of all the object dependencies and the only other code working with
 injection methods directly are unit tests. Therefore we consider it safe to say that you
 can still switch back from property injection to setter injection without problems if it
 turns out that you really need it.
@@ -603,7 +607,9 @@ dependencies to other objects:
 *Example: Passing a dependency around* ::
 
 	namespace MyCompany\MyPackage;
-
+  
+  use TYPO3\Flow\Annotations as Flow;
+  
 	class Foo {
 
 		/**
@@ -644,6 +650,8 @@ There are two ways to solve this:
 
 	namespace MyCompany\MyPackage;
 
+  use TYPO3\Flow\Annotations as Flow;
+
 	class Foo {
 
 		/**
@@ -673,6 +681,8 @@ calling ``_activateDependency()`` will fail.
 
 	namespace MyCompany\MyPackage;
 
+  use TYPO3\Flow\Annotations as Flow;
+
 	class Foo {
 
 		/**
@@ -698,7 +708,7 @@ benefit from the speed optimizations.
 Settings Injection
 ------------------
 
-No, this headline is not misspelled. TYPO3 Flow offers some convenient feature which allows for
+No, this headline is not misspelled. Flow offers some convenient feature which allows for
 automagically injecting the settings of the current package without the need to configure
 the injection. If a class contains a method called ``injectSettings`` and autowiring is
 not disabled for that object, the Object Builder will retrieve the settings of the package
@@ -729,6 +739,8 @@ setting value into a class property:
 .. code-block:: php
 
 	namespace Acme\Demo;
+
+  use TYPO3\Flow\Annotations as Flow;
 
 	class SomeClass {
 
@@ -773,7 +785,7 @@ Required Dependencies
 ---------------------
 
 All dependencies defined in a constructor are, by its nature, required. If a dependency
-can't be solved by autowiring or by configuration, TYPO3 Flow's object builder will throw an
+can't be solved by autowiring or by configuration, Flow's object builder will throw an
 exception.
 
 Also *autowired setter-injected dependencies* are, by default, required. If the object
@@ -792,7 +804,7 @@ During the resolution of dependencies it might happen that circular dependencies
 an object ``A`` requires an object ``B`` to be injected to its constructor and then again object ``B``
 requires an object ``A`` likewise passed as a constructor argument, none of the two classes can
 be instantiated due to the mutual dependency. Although it is technically possible (albeit
-quite complex) to solve this type of reference, TYPO3 Flow's policy is not to allow circular
+quite complex) to solve this type of reference, Flow's policy is not to allow circular
 constructor dependencies at all. As a workaround you can use setter injection instead
 for either one or both of the objects causing the trouble.
 
@@ -824,7 +836,7 @@ Configuring Objects Through Objects.yaml
 
 If a file named *Objects.yaml* exists in the *Configuration* directory
 of a package, it will be included during the configuration process. The YAML file should
-stick to TYPO3 Flow's general rules for YAML-based configuration.
+stick to Flow's general rules for YAML-based configuration.
 
 *Example: Sample Objects.yaml file*
 
@@ -1132,7 +1144,7 @@ While autowiring and automatic dependency injection offers a great deal of conve
 is sometimes necessary to have a fine grained control over which objects are injected with
 which third objects injected.
 
-Consider a TYPO3 Flow cache object, a ``VariableCache`` for example: the cache itself depends
+Consider a Flow cache object, a ``VariableCache`` for example: the cache itself depends
 on a cache backend which on its part requires a few settings passed to its constructor -
 this readily prepared cache should now be injected into another object. Sounds complex?
 With the objects configuration it is however possible to configure even that nested object
@@ -1160,7 +1172,7 @@ structure:
 Disabling Autowiring
 ~~~~~~~~~~~~~~~~~~~~
 
-Injecting dependencies is a common task. Because TYPO3 Flow can detect the type of dependencies
+Injecting dependencies is a common task. Because Flow can detect the type of dependencies
 a constructor needs, it automatically configures the object to ensure that the necessary
 objects are injected. This automation is called *autowiring* and is enabled by default for
 every object. As long as autowiring is in effect, the Object Builder will try to autowire
@@ -1347,7 +1359,7 @@ classes of the ``Acme.Objects`` package::
 	management by specifying a non-matching expression or an empty array.
 
 .. note::
-	The static method must except exactly one argument which is the TYPO3 Flow
+	The static method must except exactly one argument which is the Flow
 	Object Manager. You cannot use a type hint at this point (for the ``$objectManager``
 	argument) because the argument passed could actually be a ``DependencyProxy`` and
 	not the real ObjectManager. Please refer to the section about Lazy Dependency

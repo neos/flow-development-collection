@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Do
  * source code.
  */
 
-use TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;

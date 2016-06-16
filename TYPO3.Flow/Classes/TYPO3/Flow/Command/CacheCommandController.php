@@ -21,7 +21,6 @@ use TYPO3\Flow\Object\ObjectManager;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
 
 /**
  * Command controller for managing caches

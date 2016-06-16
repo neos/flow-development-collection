@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-08-18
+The following reference was automatically generated from code on 2016-06-14
 
 
 .. _`Flow Command Reference: TYPO3.FLOW`:
@@ -449,6 +449,8 @@ Options
 
 ``--dump-mapping-data``
   If set, the mapping data will be output
+``--entity-class-name``
+  If given, the mapping data for just this class will be output
 
 
 
@@ -496,7 +498,7 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
@@ -539,7 +541,7 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
@@ -552,8 +554,25 @@ Related commands
 
 If $diffAgainstCurrent is TRUE (the default), it generates a migration file
 with the diff between current DB structure and the found mapping metadata.
-
 Otherwise an empty migration skeleton is generated.
+
+Only includes tables/sequences matching the $filterExpression regexp when
+diffing models and existing schema. Include delimiters in the expression!
+The use of
+
+--filter-expression '/^acme_com/'
+
+would only create a migration touching tables starting with "acme_com".
+
+It is also possible to set a default filter expression within the settings.
+
+TYPO3:
+Flow:
+persistence:
+doctrine:
+migrations:
+generate:
+defaultFilterExpression: '/^acme_com/'
 
 
 
@@ -562,6 +581,8 @@ Options
 
 ``--diff-against-current``
   Whether to base the migration on the current schema structure
+``--filter-expression``
+  Only include tables/sequences matching the filter expression regexp
 
 
 
@@ -575,7 +596,7 @@ Related commands
 ``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
@@ -591,6 +612,14 @@ available, executed and pending migrations.
 
 
 
+Options
+^^^^^^^
+
+``--show-migrations``
+  Output a list of all migrations and their status
+``--show-descriptions``
+  Show descriptions for the migrations (enables versions display)
+
 
 
 Related commands
@@ -603,7 +632,7 @@ Related commands
 ``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 ``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+  Mark/unmark migrations as migrated
 
 
 
@@ -612,7 +641,7 @@ Related commands
 ``typo3.flow:doctrine:migrationversion``
 ****************************************
 
-**Mark/unmark a migration as migrated**
+**Mark/unmark migrations as migrated**
 
 If *all* is given as version, all available migrations are marked
 as requested.
@@ -938,6 +967,21 @@ Related commands
 
 
 
+.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:rescan`:
+
+``typo3.flow:package:rescan``
+*****************************
+
+**Rescan package availability and recreates the PackageStates configuration.**
+
+
+
+
+
+
+
+
+
 .. _`Flow Command Reference: TYPO3.FLOW typo3.flow:package:unfreeze`:
 
 ``typo3.flow:package:unfreeze``
@@ -989,6 +1033,41 @@ and will remove the respective Asset object from the database when the broken re
 This command will ask you interactively what to do before deleting anything.
 
 
+
+
+
+
+
+.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:resource:copy`:
+
+``typo3.flow:resource:copy``
+****************************
+
+**Copy resources**
+
+This command copies all resources from one collection to another storage identified by name.
+The target storage must be empty and must not be identical to the current storage of the collection.
+
+This command merely copies the binary data from one storage to another, it does not change the related
+Resource objects in the database in any way. Since the Resource objects in the database refer to a
+collection name, you can use this command for migrating from one storage to another my configuring
+the new storage with the name of the old storage collection after the resources have been copied.
+
+Arguments
+^^^^^^^^^
+
+``--source-collection``
+  The name of the collection you want to copy the assets from
+``--target-collection``
+  The name of the collection you want to copy the assets to
+
+
+
+Options
+^^^^^^^
+
+``--publish``
+  If enabled, the target collection will be published after the resources have been copied
 
 
 
@@ -1114,6 +1193,33 @@ Arguments
 
 
 
+.. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:generatekeypair`:
+
+``typo3.flow:security:generatekeypair``
+***************************************
+
+**Generate a public/private key pair and add it to the RSAWalletService**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--used-for-passwords``
+  If the private key should be used for passwords
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:security:importprivatekey``
+  Import a private key
+
+
+
 .. _`Flow Command Reference: TYPO3.FLOW typo3.flow:security:importprivatekey`:
 
 ``typo3.flow:security:importprivatekey``
@@ -1124,6 +1230,20 @@ Arguments
 Read a PEM formatted private key from stdin and import it into the
 RSAWalletService. The public key will be automatically extracted and stored
 together with the private key as a key pair.
+
+You can generate the same fingerprint returned from this using these commands:
+
+ssh-keygen -yf my-key.pem > my-key.pub
+ssh-keygen -lf my-key.pub
+
+To create a private key to import using this method, you can use:
+
+ssh-keygen -t rsa -f my-key
+./flow security:importprivatekey < my-key
+
+Again, the fingerprint can also be generated using:
+
+ssh-keygen -lf my-key.pub
 
 
 
@@ -1140,6 +1260,8 @@ Related commands
 
 ``typo3.flow:security:importpublickey``
   Import a public key
+``typo3.flow:security:generatekeypair``
+  Generate a public/private key pair and add it to the RSAWalletService
 
 
 

@@ -2,24 +2,24 @@
 Persistence
 ===========
 
-.. sectionauthor:: Karsten Dambekalns <karsten@typo3.org>
+.. sectionauthor:: Karsten Dambekalns <karsten@dambekalns.de>
 
-This chapter explains how to use object persistence in TYPO3 Flow. To do this, it focuses on
+This chapter explains how to use object persistence in Flow. To do this, it focuses on
 the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
 called *Generic* persistence, which can be used to add your own persistence backends to
-TYPO3 Flow. It is explained separately later in the chapter.
+Flow. It is explained separately later in the chapter.
 
 .. tip::
 
 	If you have experience with Doctrine 2 already, your knowledge can
-	be applied fully in TYPO3 Flow. If you have not worked with Doctrine 2 in the
+	be applied fully in Flow. If you have not worked with Doctrine 2 in the
 	past, it might be helpful to learn more about it, as that might clear up
 	questions this documentation might leave open.
 
 Introductory Example
 ====================
 
-Let's look at the following example as an introduction to how TYPO3 Flow handles persistence.
+Let's look at the following example as an introduction to how Flow handles persistence.
 We have a domain model of a Blog, consisting of Blog, Post, Comment and Tag objects:
 
 .. figure:: Images/Persistence_BlogDomainModel.png
@@ -121,7 +121,7 @@ Let's conclude by taking a look at the BlogRepository code:
 	class BlogRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
-As you can see we get away with very little code by simply extending the TYPO3 Flow-provided
+As you can see we get away with very little code by simply extending the Flow-provided
 repository class, and still we already have methods like ``findAll()`` and even magic
 calls like ``findOneBy<PropertyName>()`` available. If we need some specialized find
 methods in our repository, we can make use of the query building API:
@@ -160,8 +160,8 @@ If you like to do things the hard way you can get away with implementing
 ``\TYPO3\Flow\Persistence\RepositoryInterface`` yourself, though that is
 something the normal developer never has to do.
 
-Basics of Persistence in TYPO3 Flow
-===================================
+Basics of Persistence in Flow
+=============================
 
 On the Principles of DDD
 ------------------------
@@ -208,7 +208,7 @@ changes to already persisted objects? As we have seen, those changes are only pe
 the changed object is given to ``update`` on the corresponding repository.
 
 Now, for objects that have no corresponding repository, how are changes persisted? In the
-same way you fetch those objects from their parent - by traversal. TYPO3 Flow follows references
+same way you fetch those objects from their parent - by traversal. Flow follows references
 from objects managed in a repository (aggregate roots) for all persistence operations,
 unless the referenced object itself is an aggregate root.
 
@@ -251,7 +251,7 @@ not active during "safe" request methods.
 Conventions for File and Class Names
 ====================================
 
-To allow TYPO3 Flow to detect the object type a repository is responsible for, certain
+To allow Flow to detect the object type a repository is responsible for, certain
 conventions need to be followed:
 
 * Domain models should reside in a *Domain/Model* directory
@@ -285,7 +285,7 @@ Lazy Loading
 ============
 
 Lazy Loading is a feature that can be equally helpful and dangerous when it comes to
-optimizing your application. TYPO3 Flow defaults to lazy loading when using Doctrine, i.e. it
+optimizing your application. Flow defaults to lazy loading when using Doctrine, i.e. it
 loads all the data in an object as soon as you fetch the object from the persistence layer
 but does not fetch data of associated objects. This avoids massive amounts of objects
 being reconstituted if you have a large object tree. Instead it defers property thawing in
@@ -300,22 +300,22 @@ operations in DQL or specifying the fetch mode in the mapping configuration.
 Doctrine Persistence
 ====================
 
-Doctrine 2 ORM is used by default in TYPO3 Flow. Aside from very few internal changes it
+Doctrine 2 ORM is used by default in Flow. Aside from very few internal changes it
 consists of the regular Doctrine ORM, DBAL, Migrations and Common libraries and is tied
-into TYPO3 Flow by some glue code and (most important) a custom annotation driver for metadata
+into Flow by some glue code and (most important) a custom annotation driver for metadata
 consumption.
 
 Requirements and restrictions
 -----------------------------
 
-There are some rules imposed by Doctrine (and/or TYPO3 Flow) you need to follow for your
+There are some rules imposed by Doctrine (and/or Flow) you need to follow for your
 entities (and value objects). Most of them are good practice anyway, and thus are not
 really restrictions.
 
 * Entity classes must not be ``final`` or contain ``final`` methods.
 * Persistent properties of any entity class should always be ``protected``, not ``public``,
   otherwise lazy-loading might not work as expected.
-* Implementing ``__clone()`` or ``__wakeup()`` is not a problem with TYPO3 Flow, as the
+* Implementing ``__clone()`` or ``__wakeup()`` is not a problem with Flow, as the
   instances always have an identity. If using your own identity properties, you must
   wrap any code you intend to run in those methods in an identity check.
 * Entity classes in a class hierarchy that inherit directly or indirectly from one another
@@ -339,7 +339,7 @@ Metadata mapping
 
 The Doctrine 2 ORM needs to know a lot about your code to be able to persist it. Natively
 Doctrine 2 supports the use of annotations, XML, YAML and PHP to supply that information.
-In TYPO3 Flow, only annotations are supported, as this aligns with the philosophy behind the
+In Flow, only annotations are supported, as this aligns with the philosophy behind the
 framework.
 
 Annotations for the Doctrine Persistence
@@ -445,7 +445,7 @@ On the Doctrine Event System
 Doctrine provides a flexible event system to allow extensions to plug into different parts
 of the persistence. Therefore two methods to get notification of doctrine events are
 possible - through the EventSubscriber interface and registering EventListeners.
-TYPO3 Flow allows for easily registering both with Doctrine through the configuration settings
+Flow allows for easily registering both with Doctrine through the configuration settings
 ``TYPO3.Flow.persistence.doctrine.eventSubscribers`` and ``TYPO3.Flow.persistence.doctrine.eventListeners``
 respectively. EventSubscribers need to implement the ``Doctrine\Common\EventSubscriber`` Interface
 and provide a list of the events they want to subscribe to. EventListeners need to be configured
@@ -474,7 +474,7 @@ Doctrine provides a filter system that allows developers to add SQL
 to the conditional clauses of queries, regardless the place where the SQL
 is generated (e.g. from a DQL query, or by loading).
 
-TYPO3 Flow allows for easily registering Filters with Doctrine through the
+Flow allows for easily registering Filters with Doctrine through the
 configuration setting ``TYPO3.Flow.persistence.doctrine.filters``.
 
 *Example: Configuration for Doctrine Filters*:
@@ -522,10 +522,10 @@ functions.
 
 .. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
 
-Differences between TYPO3 Flow and plain Doctrine
--------------------------------------------------
+Differences between Flow and plain Doctrine
+-------------------------------------------
 
-The custom annotation driver used by TYPO3 Flow to collect mapping information from the code
+The custom annotation driver used by Flow to collect mapping information from the code
 makes a number of things easier, compared to plain Doctrine 2.
 
 ``Entity``
@@ -557,7 +557,7 @@ makes a number of things easier, compared to plain Doctrine 2.
 
 ``JoinTable``, ``JoinColumn``
   Can usually be left out completely, the needed information is gathered automatically
-  But *when using a self-referencing association*, you will need to help TYPO3 Flow a
+  But *when using a self-referencing association*, you will need to help Flow a
   little, so it doesn't generate a join table with only one column.
 
   *Example: JoinTable annotation for a self-referencing annotation* ::
@@ -586,11 +586,11 @@ we feel the gain when developing outweighs this easily.
 	of database tables to models.
 
 Here is an example to illustrate the things you can omit, due to the automatisms in the
-TYPO3 Flow annotation driver.
+Flow annotation driver.
 
-*Example: Annotation equivalents in TYPO3 Flow and plain Doctrine 2*
+*Example: Annotation equivalents in Flow and plain Doctrine 2*
 
-An entity with only the annotations needed in TYPO3 Flow::
+An entity with only the annotations needed in Flow::
 
 	/**
 	 * @Flow\Entity
@@ -671,7 +671,7 @@ metadata::
 	  /**
 	   * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Blog\Domain\Model\Comment>
 	   * @ORM\OneToMany(targetEntity="TYPO3\Blog\Domain\Model\Comment", mappedBy="post",
-	    cascade={"all"}, orphanRemoval="true")
+	    cascade={"all"}, orphanRemoval=true)
 	   * @ORM\OrderBy({"date" = "DESC"})
 	   */
 	  protected $comments;
@@ -681,7 +681,7 @@ Schema management
 
 Doctrine offers a *Migrations* system as an add-on part of its DBAL for versioning of
 database schemas and easy deployment of changes to them. There exist a number of commands
-in the TYPO3 Flow CLI toolchain to create and deploy migrations.
+in the Flow CLI toolchain to create and deploy migrations.
 
 A Migration is a set of commands that bring the schema from one version to the next. In
 the simplest form that means creating a new table, but it can be as complex as renaming a
@@ -1032,7 +1032,7 @@ Known issues
 Generic Persistence
 ===================
 
-What is now called *Generic* Persistence, used to be the only persistence layer in TYPO3 Flow.
+What is now called *Generic* Persistence, used to be the only persistence layer in Flow.
 Back in those days there was no ORM available that fit our needs. That being said, with
 the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
 home-brewn ORM.
@@ -1045,7 +1045,7 @@ target a RDBMS is still possible, but probably only useful for rare edge cases.
 Switching to Generic Persistence
 --------------------------------
 
-To switch to Generic persistence you need to configure TYPO3 Flow like this.
+To switch to Generic persistence you need to configure Flow like this.
 
 *Objects.yaml*:
 
@@ -1075,7 +1075,7 @@ Metadata mapping
 ----------------
 
 The persistence layer needs to know a lot about your code to be able to persist it. In
-TYPO3 Flow, the needed data is given in the source code through annotations, as this aligns
+Flow, the needed data is given in the source code through annotations, as this aligns
 with the philosophy behind the framework.
 
 Annotations for the Generic Persistence
@@ -1166,13 +1166,13 @@ problems and develop more efficient client code.
 Persisting a Domain Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After an object has been added to a repository it will be seen when TYPO3 Flow calls
+After an object has been added to a repository it will be seen when Flow calls
 ``persistAll()`` at the end of a script run. Internally all instances implementing the
 ``\TYPO3\Flow\Persistence\RepositoryInterface`` will be fetched and asked for the objects
 they hold. Those will then be handed to the persistence backend in use and processed by
 it.
 
-TYPO3 Flow defines interfaces for persistence backends and queries, the details of how objects
+Flow defines interfaces for persistence backends and queries, the details of how objects
 are persisted and queried are up to the persistence backend implementation. Have a look at
 the documentation of the respective package for more information. The following diagram
 shows (most of) the way an object takes from creation until it is persisted when using the

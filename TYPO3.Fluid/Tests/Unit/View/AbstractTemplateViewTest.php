@@ -43,12 +43,12 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->templateVariableContainer = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class, array('exists', 'remove', 'add'));
-        $this->viewHelperVariableContainer = $this->getMock(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class, array('setView'));
-        $this->renderingContext = $this->getMock(\TYPO3\Fluid\Core\Rendering\RenderingContext::class, array('getViewHelperVariableContainer', 'getTemplateVariableContainer'));
+        $this->templateVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
+        $this->viewHelperVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class)->setMethods(array('setView'))->getMock();
+        $this->renderingContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Rendering\RenderingContext::class)->setMethods(array('getViewHelperVariableContainer', 'getTemplateVariableContainer'))->getMock();
         $this->renderingContext->expects($this->any())->method('getViewHelperVariableContainer')->will($this->returnValue($this->viewHelperVariableContainer));
         $this->renderingContext->expects($this->any())->method('getTemplateVariableContainer')->will($this->returnValue($this->templateVariableContainer));
-        $this->view = $this->getMock(\TYPO3\Fluid\View\AbstractTemplateView::class, array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'));
+        $this->view = $this->getMockBuilder(\TYPO3\Fluid\View\AbstractTemplateView::class)->setMethods(array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'))->getMock();
         $this->view->setRenderingContext($this->renderingContext);
     }
 

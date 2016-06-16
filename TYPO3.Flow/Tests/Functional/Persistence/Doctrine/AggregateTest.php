@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Annotations\After;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment;

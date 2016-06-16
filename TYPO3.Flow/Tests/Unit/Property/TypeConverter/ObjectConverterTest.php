@@ -35,8 +35,8 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
-        $this->mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
 
         $this->converter = new \TYPO3\Flow\Property\TypeConverter\ObjectConverter();
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);

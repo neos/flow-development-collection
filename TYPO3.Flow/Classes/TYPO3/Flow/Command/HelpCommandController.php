@@ -46,10 +46,10 @@ class HelpCommandController extends CommandController
     protected $applicationPackageKey;
 
     /**
-     * @Flow\Inject
-     * @var CommandManager
+     * @Flow\InjectConfiguration(path = "core.applicationName")
+     * @var string
      */
-    protected $commandManager;
+    protected $applicationName;
 
     /**
      * Displays a short, general help message
@@ -64,7 +64,7 @@ class HelpCommandController extends CommandController
     {
         $context = $this->bootstrap->getContext();
         $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
-        $this->outputLine('<b>%s %s ("%s" context)</b>', array($applicationPackage->getComposerManifest('description'), $applicationPackage->getInstalledVersion() ?: 'dev', $context));
+        $this->outputLine('<b>%s %s ("%s" context)</b>', array($this->applicationName, $applicationPackage->getInstalledVersion() ?: 'dev', $context));
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));

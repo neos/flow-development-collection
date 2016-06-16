@@ -128,3 +128,8 @@ Flow_Session_Storage:
 Flow_Aop_RuntimeExpressions:
   frontend: TYPO3\Flow\Cache\Frontend\PhpFrontend
   backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+
+# Caches the map of possible PropertyMappers for source and target types
+Flow_PropertyMapper:
+  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend

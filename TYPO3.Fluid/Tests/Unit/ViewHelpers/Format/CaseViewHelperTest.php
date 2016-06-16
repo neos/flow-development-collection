@@ -34,7 +34,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\CaseViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getMockBuilder(\TYPO3\Fluid\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
     }
 

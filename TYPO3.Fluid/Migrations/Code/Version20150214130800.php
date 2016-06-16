@@ -14,8 +14,6 @@ namespace TYPO3\Flow\Core\Migrations;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
-use TYPO3\Neos\ViewHelpers\Backend\JavascriptConfigurationViewHelper;
-use TYPO3\Neos\ViewHelpers\Link\NodeViewHelper;
 
 /**
  * Add "escapeOutput" property to existing ViewHelpers to ensure backwards-compatibility

@@ -23,7 +23,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable()
     {
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
         $interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -46,7 +46,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
             return false;
         };
 
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
         $interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -60,7 +60,7 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName()
     {
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManager::class, array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
 
         $interceptorResolver = new \TYPO3\Flow\Security\Authorization\InterceptorResolver($mockObjectManager);
