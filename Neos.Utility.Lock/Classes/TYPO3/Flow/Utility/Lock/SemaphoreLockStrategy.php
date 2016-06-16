@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Exception\LockNotAcquiredException;
 
 /**
  * A Semaphore based lock strategy.
