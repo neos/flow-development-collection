@@ -76,18 +76,6 @@ class Lock
     }
 
     /**
-     * Acquire the lock
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
-     * @return void
-     */
-    public function acquire($exclusiveLock)
-    {
-        if ($this->lockStrategy instanceof LockStrategyInterface) {
-            $this->lockStrategy->acquire($this->subject, $exclusiveLock);
-        }
-    }
-
-    /**
      * Releases the lock
      * @return boolean TRUE on success, FALSE otherwise
      */
