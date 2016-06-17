@@ -1,0 +1,125 @@
+`3.0.9 (2016-06-17) <https://github.com/neos/flow-development-collection/releases/tag/3.0.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGIX: Remove temporary file in importTemporaryFile() <https://github.com/neos/flow-development-collection/pull/389>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The temporary file used to be gone after importing, but since it only is
+moved when the target does not yet exist, this changed. Now the file is
+unlinked in that case.
+
+FLOW-378 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: Improving argument handling of FormatResolver::resolvePlaceholders <https://github.com/neos/flow-development-collection/pull/383>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+If placeholders will be replaced by arguments containing chars "{}",
+replacing led to an exception.
+
+This fix solves this behaviour by not visiting replaced content again.
+This helps a lot translating error messages from Validators which give
+their content back to their error messages - and can contain literally
+anything.
+
+* Packages: ``Flow``
+
+`TASK: Make expected exception class name fully qualified <https://github.com/neos/flow-development-collection/pull/387>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This is rather cosmetic, it fixes IDE navigation and error detection.
+
+* Packages: ``Flow`` ``Fluid``
+
+`TASK: Adjust tests to PHPUnit 5.4 <https://github.com/neos/flow-development-collection/pull/378>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``Fluid`` ``Kickstart``
+
+`Complete code examples with necessary use statement <https://github.com/neos/flow-development-collection/pull/382>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The examples contain namespace and full class body, so they seem to be complete and executable. But for usage of `@Flow` the use statement is necessary.
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude sebastian.* and phpdocumentor.* from reflection <https://github.com/neos/flow-development-collection/pull/381>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This fixes reflection failures caused by some classes in those libraries:
+
+phpunit/phpunit depends on phpspec/prophecy, which depends on phpdocumentor/reflection-docblock.
+Now prophecy changed that dependency from `~2.0` to `^2.0|^3.0.2` when going from 1.6.0 to 1.6.1.
+reflection-docblock 3.x includes (new) code which fails reflection (namespace does not match file path).
+
+* Packages: ``Flow``
+
+`TASK: Clarify positioning of arguments and options in CommandController <https://github.com/neos/flow-development-collection/pull/379>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+In the method signature, all (mandatory) arguments must be placed in front of the options. If not, all options placed in front of the last argument become mandatory, too in the command line prompt. This should be stated explicitely in the documentation.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow creation of value objects during property mapping by default <https://github.com/neos/flow-development-collection/pull/206>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is impossible to edit value objects without explicitly
+allowing creation. This is because value objects are always
+created, never loaded from persistence.
+
+This change alters the PersistentObjectConverter to allow creation
+of value objects by default.
+
+FLOW-373 #close
+
+* Packages: ``Flow``
+
+`TASK: Provide proper error message when no request handler can be resolved <https://github.com/neos/flow-development-collection/pull/376>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously Flow would just fail with an error message:
+`Warning: ksort() expects parameter 1 to be array, null given`
+when for some reason no suitable request handler can be found for the current request.
+This change will instead throw a useful exception and hint the user at a setup problem.
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid type-casting errors if the validation of complex types fails <https://github.com/neos/flow-development-collection/pull/362>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+If an error is created in some cases the value was added to the result-message without checking for the type beforehand, that could lead to php errors if the value could not be casted to a string.
+
+This change centralizes the rendering of the value in a  'renderValue' - method.
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/372>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/XprgBk
+
+* Packages: ``Flow`` ``Fluid``
+
+`TASK: Remove incorrect parenthesis in Reflection code example <https://github.com/neos/flow-development-collection/pull/368>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/371>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/zEPDxA
+
+* Packages: ``Eel`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.8...3.0.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
