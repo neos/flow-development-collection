@@ -40,10 +40,10 @@ class ComponentChainFactoryTest extends UnitTestCase
     {
         $this->componentChainFactory = new ComponentChainFactory();
 
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->componentChainFactory, 'objectManager', $this->mockObjectManager);
 
-        $this->mockComponent = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentInterface::class)->getMock();
+        $this->mockComponent = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
     }
 
     /**

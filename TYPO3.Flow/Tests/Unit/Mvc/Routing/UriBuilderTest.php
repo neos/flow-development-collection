@@ -61,29 +61,29 @@ class UriBuilderTest extends UnitTestCase
     {
         $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockRouter = $this->getMock(\TYPO3\Flow\Mvc\Routing\RouterInterface::class);
+        $this->mockRouter = $this->createMock(\TYPO3\Flow\Mvc\Routing\RouterInterface::class);
 
-        $this->mockMainRequest = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockHttpRequest));
+        $this->mockMainRequest = $this->createMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockHttpRequest));
         $this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
         $this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockHttpRequest));
         $this->mockMainRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
         $this->mockMainRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
         $this->mockMainRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
 
-        $this->mockSubRequest = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockMainRequest));
+        $this->mockSubRequest = $this->createMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockMainRequest));
         $this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
         $this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
         $this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
         $this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
         $this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubNamespace'));
 
-        $this->mockSubSubRequest = $this->getMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockSubRequest));
+        $this->mockSubSubRequest = $this->createMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array($this->mockSubRequest));
         $this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
         $this->mockSubSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
         $this->mockSubSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
         $this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
 
-        $environment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array('isRewriteEnabled'), array(), '', false);
+        $environment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->setMethods(array('isRewriteEnabled'))->getMock();
         $environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(true));
 
         $this->uriBuilder = new UriBuilder();
@@ -771,7 +771,7 @@ class UriBuilderTest extends UnitTestCase
     public function buildPrependsIndexFileIfRewriteUrlsIsOff()
     {
         $this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
-        $mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array('isRewriteEnabled'), array(), '', false);
+        $mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->setMethods(array('isRewriteEnabled'))->getMock();
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
         $expectedResult = 'index.php/resolvedUri';

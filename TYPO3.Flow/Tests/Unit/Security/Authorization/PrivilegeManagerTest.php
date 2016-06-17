@@ -66,7 +66,7 @@ class PrivilegeManagerTest extends UnitTestCase
     public function setUp()
     {
         $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->mockJoinPoint = $this->getMockBuilder(\TYPO3\Flow\Aop\JoinPoint::class)->disableOriginalConstructor()->getMock();
 
         $this->privilegeManager = new PrivilegeManager($this->mockObjectManager, $this->mockSecurityContext);
@@ -101,10 +101,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
-        $mockRoleCustomer = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
@@ -143,10 +143,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->denyPrivilege)));
 
-        $mockRoleCustomer = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
@@ -162,10 +162,10 @@ class PrivilegeManagerTest extends UnitTestCase
         $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
         $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
 
-        $mockRoleAdministrator = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role1ClassName, false);
+        $mockRoleAdministrator = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleAdministrator->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array($this->grantPrivilege)));
 
-        $mockRoleCustomer = $this->getMock(\TYPO3\Flow\Security\Policy\Role::class, array(), array(), $role2ClassName, false);
+        $mockRoleCustomer = $this->createMock(\TYPO3\Flow\Security\Policy\Role::class);
         $mockRoleCustomer->expects($this->any())->method('getPrivilegesByType')->will($this->returnValue(array()));
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));

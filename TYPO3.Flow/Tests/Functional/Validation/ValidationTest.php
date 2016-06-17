@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Functional\Validation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use TYPO3\Flow\Tests\FunctionalTestCase;
@@ -131,5 +132,42 @@ class ValidationTest extends FunctionalTestCase
         );
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
         $this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validationIsStoppedAtAggregateBoundaries()
+    {
+        $relatedEntity = new TestEntity();
+        $relatedEntity->setName('Spy');
+        $this->testEntityRepository->add($relatedEntity);
+
+        $entity = new TestEntity();
+        $entity->setName('Some Name');
+        $entity->setRelatedEntity($relatedEntity);
+        $this->testEntityRepository->add($entity);
+
+        $this->persistenceManager->persistAll();
+
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($relatedEntity);
+        /* @var $entityManager \Doctrine\ORM\EntityManagerInterface */
+        $entityManager = ObjectAccess::getProperty($this->persistenceManager, 'entityManager', true);
+        $dql = 'UPDATE ' . TestEntity::class . " e SET e.name = 'xx' WHERE e.Persistence_Object_Identifier = '$entityIdentifier'";
+        $query = $entityManager->createQuery($dql);
+        $query->getScalarResult();
+        $this->persistenceManager->clearState();
+
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+        $invalidArguments = array(
+            'entity' => array(
+                '__identity' => $entityIdentifier,
+                'name' => 'Some other Name'
+            )
+        );
+        $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
+        $this->assertNotSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.relatedEntity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

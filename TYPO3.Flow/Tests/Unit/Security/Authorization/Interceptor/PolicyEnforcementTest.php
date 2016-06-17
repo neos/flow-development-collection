@@ -24,10 +24,10 @@ class PolicyEnforcementTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invokeCallsTheAuthenticationManager()
     {
-        $securityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
-        $authenticationManager = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
-        $privilegeManager = $this->getMock(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
-        $joinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
+        $securityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $authenticationManager = $this->createMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $privilegeManager = $this->createMock(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $joinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
         $authenticationManager->expects($this->once())->method('authenticate');
 
@@ -42,10 +42,10 @@ class PolicyEnforcementTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invokeCallsThePrivilegeManagerToDecideOnTheCurrentJoinPoint()
     {
-        $securityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
-        $authenticationManager = $this->getMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
-        $privilegeManager = $this->getMock(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
-        $joinPoint = $this->getMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
+        $securityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $authenticationManager = $this->createMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $privilegeManager = $this->createMock(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $joinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
         $privilegeManager->expects($this->once())->method('isGranted')->with(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class);
 

@@ -45,7 +45,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->resourceStreamWrapper = new ResourceStreamWrapper();
 
-        $this->mockPackageManager = $this->getMockBuilder(PackageManagerInterface::class)->getMock();
+        $this->mockPackageManager = $this->createMock(PackageManagerInterface::class);
         $this->inject($this->resourceStreamWrapper, 'packageManager', $this->mockPackageManager);
 
         $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
@@ -121,7 +121,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage = $this->createMock(PackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
@@ -141,7 +141,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->getMockBuilder(PackageInterface::class)->getMock();
+        $mockPackage = $this->createMock(PackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 

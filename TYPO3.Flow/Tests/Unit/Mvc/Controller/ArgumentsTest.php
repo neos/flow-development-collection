@@ -197,10 +197,10 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
         $results2 = new \TYPO3\Flow\Error\Result();
         $results2->addError($error2);
 
-        $argument1 = $this->getMock(\TYPO3\Flow\Mvc\Controller\Argument::class, array('getValidationResults'), array('name1', 'string'));
+        $argument1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Argument::class)->setMethods(array('getValidationResults'))->setConstructorArgs(array('name1', 'string'))->getMock();
         $argument1->expects($this->once())->method('getValidationResults')->will($this->returnValue($results1));
 
-        $argument2 = $this->getMock(\TYPO3\Flow\Mvc\Controller\Argument::class, array('getValidationResults'), array('name2', 'string'));
+        $argument2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Argument::class)->setMethods(array('getValidationResults'))->setConstructorArgs(array('name2', 'string'))->getMock();
         $argument2->expects($this->once())->method('getValidationResults')->will($this->returnValue($results2));
 
         $arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();

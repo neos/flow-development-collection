@@ -300,7 +300,7 @@ class PackageTest extends UnitTestCase
     public function getInstalledVersionReturnsFallback()
     {
         /** @var Package|\PHPUnit_Framework_MockObject_MockObject $package */
-        $package = $this->getMock(\TYPO3\Flow\Package\Package::class, ['getComposerManifest'], ['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []]);
+        $package = $this->getMockBuilder(\TYPO3\Flow\Package\Package::class)->setMethods(['getComposerManifest'])->setConstructorArgs(['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []])->getMock();
         $package->method('getComposerManifest')->willReturn('1.2.3');
 
         $this->assertEquals('1.2.3', $package->getInstalledVersion('some/package'));

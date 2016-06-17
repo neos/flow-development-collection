@@ -39,7 +39,7 @@ class ResourceTypeConverterTest extends UnitTestCase
     {
         $this->resourceTypeConverter = $this->getAccessibleMock(\TYPO3\Flow\Resource\ResourceTypeConverter::class, array('dummy'));
 
-        $this->mockPersistenceManager = $this->getMockBuilder(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->getMock();
+        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->resourceTypeConverter->_set('persistenceManager', $this->mockPersistenceManager);
 
         $this->mockResourceManager = $this->getMockBuilder(\TYPO3\Flow\Resource\ResourceManager::class)->getMock();
@@ -153,7 +153,7 @@ class ResourceTypeConverterTest extends UnitTestCase
             'error' => \UPLOAD_ERR_CANT_WRITE
         );
 
-        $mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $mockSystemLogger->expects($this->once())->method('log');
         $this->resourceTypeConverter->_set('systemLogger', $mockSystemLogger);
 
@@ -181,7 +181,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
 
         $source = array(
             'tmp_name' => 'SomeFilename',

@@ -27,7 +27,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
             array('SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'),
             array(\TYPO3\Flow\Security\Policy\Role::class, 'typo3_flow_security_policy_role'),
             array(\TYPO3\Flow\Security\Account::class, 'typo3_flow_security_account'),
-            array('TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'typo3_flow_security_authorization_resource_securitypublish_861cb')
+            array(\TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'typo3_flow_security_authorization_resource_securitypublish_861cb')
         );
     }
 
@@ -54,9 +54,9 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
             array(64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'),
             array(64, \TYPO3\Flow\Security\Policy\Role::class, 'propertyName', 'typo3_flow_security_policy_role_propertyname_join'),
             array(64, \TYPO3\Flow\Security\Account::class, 'propertyName', 'typo3_flow_security_account_propertyname_join'),
-            array(64, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'),
-            array(30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3__861cb_propertyname_join'),
-            array(30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0')
+            array(64, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'),
+            array(30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3__861cb_propertyname_join'),
+            array(30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0')
         );
     }
 
@@ -81,9 +81,9 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockDatabasePlatform = $this->getMockForAbstractClass(\Doctrine\DBAL\Platforms\AbstractPlatform::class, array(), '', true, true, true, array('getMaxIdentifierLength'));
         $mockDatabasePlatform->expects($this->atLeastOnce())->method('getMaxIdentifierLength')->will($this->returnValue(2048));
-        $mockConnection = $this->getMock(\Doctrine\DBAL\Connection::class, array(), array(), '', false);
+        $mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
         $mockConnection->expects($this->atLeastOnce())->method('getDatabasePlatform')->will($this->returnValue($mockDatabasePlatform));
-        $mockEntityManager = $this->getMock(\Doctrine\ORM\EntityManager::class, array(), array(), '', false);
+        $mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $mockEntityManager->expects($this->atLeastOnce())->method('getConnection')->will($this->returnValue($mockConnection));
 
         $driver = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class, array('dummy'));

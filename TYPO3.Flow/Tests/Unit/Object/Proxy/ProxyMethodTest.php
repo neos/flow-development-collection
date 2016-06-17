@@ -24,7 +24,7 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
         $validateFoo1 = new \TYPO3\Flow\Annotations\Validate(array('value' => 'foo1', 'type' => 'bar1'));
         $validateFoo2 = new \TYPO3\Flow\Annotations\Validate(array('value' => 'foo2', 'type' => 'bar2'));
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(true));
         $mockReflectionService->expects($this->any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will($this->returnValue(array(
             'param' => array('string $name')
@@ -118,12 +118,12 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
             ),
         );
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($methodParameters));
 
         $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 
-        $builder = $this->getMock(\TYPO3\Flow\Object\Proxy\ProxyMethod::class, array('dummy'), array(), '', false);
+        $builder = $this->getMockBuilder(\TYPO3\Flow\Object\Proxy\ProxyMethod::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
@@ -142,7 +142,7 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         ');
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue(array(
             'arg1' => array(),
             'arg2' => array(),
@@ -153,7 +153,7 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
 
-        $builder = $this->getMock(\TYPO3\Flow\Object\Proxy\ProxyMethod::class, array('dummy'), array(), '', false);
+        $builder = $this->getMockBuilder(\TYPO3\Flow\Object\Proxy\ProxyMethod::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', false);
@@ -165,7 +165,7 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL()
     {
-        $builder = $this->getMock(\TYPO3\Flow\Object\Proxy\ProxyMethod::class, array('dummy'), array(), '', false);
+        $builder = $this->getMockBuilder(\TYPO3\Flow\Object\Proxy\ProxyMethod::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
 
         $actualCode = $builder->buildMethodParametersCode(null, 'foo', true);
         $this->assertSame('', $actualCode);

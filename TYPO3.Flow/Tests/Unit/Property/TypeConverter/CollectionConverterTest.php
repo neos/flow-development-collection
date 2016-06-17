@@ -42,7 +42,7 @@ class CollectionConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTypeOfChildPropertyReturnsElementTypeFromTargetTypeIfGiven()
     {
-        $this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->getMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)));
+        $this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)));
     }
 
     /**
@@ -50,6 +50,6 @@ class CollectionConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType()
     {
-        $this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->getMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)));
+        $this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class)));
     }
 }
