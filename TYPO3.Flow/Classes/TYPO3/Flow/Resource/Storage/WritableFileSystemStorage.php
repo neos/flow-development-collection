@@ -133,6 +133,8 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
 
         if (!is_file($finalTargetPathAndFilename)) {
             $this->moveTemporaryFileToFinalDestination($temporaryFile, $finalTargetPathAndFilename);
+        } else {
+            unlink($temporaryPathAndFileName);
         }
 
         $resource = new Resource();
