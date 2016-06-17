@@ -75,7 +75,6 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
     {
         $this->tag->addAttribute('type', 'checkbox');
 
-        $nameAttribute = $this->getName();
         $valueAttribute = $this->getValueAttribute(true);
         $propertyValue = null;
         if ($this->hasMappingErrorOccurred()) {
@@ -92,11 +91,14 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             if ($checked === null) {
                 $checked = in_array($valueAttribute, $propertyValue);
             }
-            $nameAttribute .= '[]';
-        } elseif ($multiple === true) {
-            $nameAttribute .= '[]';
-        } elseif ($propertyValue !== null) {
+            $this->arguments['multiple'] = true;
+        } elseif (!$multiple && $propertyValue !== null) {
             $checked = (boolean)$propertyValue === (boolean)$valueAttribute;
+        }
+
+        $nameAttribute = $this->getName();
+        if ($this->arguments['multiple']) {
+            $nameAttribute .= '[]';
         }
 
         $this->registerFieldNameForFormTokenGeneration($nameAttribute);
@@ -111,19 +113,5 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
 
         $this->renderHiddenFieldForEmptyValue();
         return $this->tag->render();
-    }
-
-    /**
-     * Get the name of this form element, without prefix.
-     *
-     * This is done to prevent the extra __identity being added for objects
-     * since it leading to property mapping errors and it works without it.
-     *
-     * @return string name
-     */
-    protected function getNameWithoutPrefix()
-    {
-        $name = parent::getNameWithoutPrefix();
-        return str_replace('[__identity]', '', $name);
     }
 }
