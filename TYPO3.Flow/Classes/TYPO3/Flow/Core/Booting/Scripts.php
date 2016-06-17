@@ -653,7 +653,7 @@ class Scripts
         if (DIRECTORY_SEPARATOR === '/') {
             exec($command . ' > /dev/null 2>/dev/null &');
         } else {
-            pclose(popen('START /B CMD /S /C "' . $command . '" > NUL 2 > NUL &', 'r'));
+            pclose(popen('START /B CMD /S /C "' . $command . '" > NUL 2> NUL &', 'r'));
         }
     }
 
