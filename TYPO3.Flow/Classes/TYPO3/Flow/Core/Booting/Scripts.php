@@ -638,7 +638,7 @@ class Scripts
 
     /**
      * Executes the given command as a sub-request to the Flow CLI system without waiting for the output.
-     * 
+     *
      * Note: As the command execution is done in a separate thread potential exceptions or failures will *not* be reported
      *
      * @param string $commandIdentifier E.g. typo3.flow:cache:flush
