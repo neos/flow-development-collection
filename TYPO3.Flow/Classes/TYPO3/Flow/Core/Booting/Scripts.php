@@ -637,6 +637,27 @@ class Scripts
     }
 
     /**
+     * Executes the given command as a sub-request to the Flow CLI system without waiting for the output.
+     * 
+     * Note: As the command execution is done in a separate thread potential exceptions or failures will *not* be reported
+     *
+     * @param string $commandIdentifier E.g. typo3.flow:cache:flush
+     * @param array $settings The TYPO3.Flow settings
+     * @param array $commandArguments Command arguments
+     * @return void
+     * @api
+     */
+    public static function executeCommandAsync($commandIdentifier, array $settings, array $commandArguments = array())
+    {
+        $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
+        if (DIRECTORY_SEPARATOR === '/') {
+            exec($command . ' > /dev/null 2>/dev/null &');
+        } else {
+            pclose(popen('START /B CMD /S /C "' . $command . '" > NUL 2 > NUL &', 'r'));
+        }
+    }
+
+    /**
      * @param string $commandIdentifier E.g. typo3.flow:cache:flush
      * @param array $settings The TYPO3.Flow settings
      * @param array $commandArguments Command arguments
