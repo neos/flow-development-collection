@@ -26,6 +26,7 @@ use TYPO3\Flow\Core\Booting\Step;
 use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * General purpose central core hyper Flow bootstrap class
