@@ -97,7 +97,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         }
 
         $nameAttribute = $this->getName();
-        if ($this->arguments['multiple']) {
+        if (isset($this->arguments['multiple']) && $this->arguments['multiple'] === true) {
             $nameAttribute .= '[]';
         }
 
