@@ -49,4 +49,14 @@ class BootstrapTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
     }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Exception
+     */
+    public function resolveRequestHandlerThrowsUsefulExceptionIfNoRequestHandlerFound()
+    {
+        $bootstrap = $this->getAccessibleMock(Bootstrap::class, array('dummy'), array(), '', false);
+        $bootstrap->_call('resolveRequestHandler');
+    }
 }
