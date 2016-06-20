@@ -541,6 +541,92 @@ class SelectViewHelperTest extends \TYPO3\Fluid\Tests\Unit\ViewHelpers\Form\Form
 
     /**
      * @test
+     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     */
+    public function getTranslatedLabelThrowsExceptionForInvalidLocales()
+    {
+        $this->arguments['translate'] = array('locale' => 'invalid-locale');
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     */
+    public function getTranslatedLabelThrowsExceptionForUnknownTranslateBy()
+    {
+        $this->arguments['translate'] = array('by' => 'foo');
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
+    }
+
+    public function getTranslatedLabelDataProvider()
+    {
+        return [
+
+            ## translate by id
+
+            # using value
+            ['by' => 'id', 'using' => 'value', 'translatedId' => 'Translated id', 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated id'],
+            ['by' => 'id', 'using' => 'value', 'translatedId' => 'Translated id', 'translatedLabel' => null, 'expectedResult' => 'Translated id'],
+            ['by' => 'id', 'using' => 'value', 'translatedId' => null, 'translatedLabel' => 'Translated label', 'expectedResult' => 'Some label'],
+            ['by' => 'id', 'using' => 'value', 'translatedId' => null, 'translatedLabel' => null, 'expectedResult' => 'Some label'],
+
+            # using label
+            ['by' => 'id', 'using' => 'label', 'translatedId' => 'Translated id', 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated id'],
+            ['by' => 'id', 'using' => 'label', 'translatedId' => 'Translated id', 'translatedLabel' => null, 'expectedResult' => 'Translated id'],
+            ['by' => 'id', 'using' => 'label', 'translatedId' => null, 'translatedLabel' => 'Translated label', 'expectedResult' => 'Some label'],
+            ['by' => 'id', 'using' => 'label', 'translatedId' => null, 'translatedLabel' => null, 'expectedResult' => 'Some label'],
+
+            ## translate by label
+
+            # using value
+            ['by' => 'label', 'using' => 'value', 'translatedId' => 'Translated id', 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated label'],
+            ['by' => 'label', 'using' => 'value', 'translatedId' => 'Translated id', 'translatedLabel' => null, 'expectedResult' => 'someValue'],
+            ['by' => 'label', 'using' => 'value', 'translatedId' => null, 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated label'],
+            ['by' => 'label', 'using' => 'value', 'translatedId' => null, 'translatedLabel' => null, 'expectedResult' => 'someValue'],
+
+            # using label
+            ['by' => 'label', 'using' => 'label', 'translatedId' => 'Translated id', 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated label'],
+            ['by' => 'label', 'using' => 'label', 'translatedId' => 'Translated id', 'translatedLabel' => null, 'expectedResult' => 'Some label'],
+            ['by' => 'label', 'using' => 'label', 'translatedId' => null, 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated label'],
+            ['by' => 'label', 'using' => 'label', 'translatedId' => null, 'translatedLabel' => null, 'expectedResult' => 'Some label'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider getTranslatedLabelDataProvider
+     * @param string $by
+     * @param string $using
+     * @param string $translatedId
+     * @param string $translatedLabel
+     * @param string $expectedResult
+     */
+    public function getTranslatedLabelTests($by, $using, $translatedId, $translatedLabel, $expectedResult)
+    {
+        $this->arguments['translate'] = ['by' => $by, 'using' => $using, 'prefix' => 'somePrefix.'];
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $mockTranslator = $this->getMock(\TYPO3\Flow\I18n\Translator::class);
+        if ($by === 'label') {
+            $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->will($this->returnCallback(function ($label) use ($translatedLabel) {
+                return $translatedLabel !== null ? $translatedLabel : $label;
+            }));
+        } else {
+            $mockTranslator->expects($this->once())->method('translateById')->will($this->returnValue($translatedId));
+        }
+        $this->inject($this->viewHelper, 'translator', $mockTranslator);
+
+        $actualResult = $this->viewHelper->_call('getTranslatedLabel', 'someValue', 'Some label');
+        $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
      */
     public function optionsContainPrependedItemWithEmptyValueIfPrependOptionLabelIsSet()
     {
