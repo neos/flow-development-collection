@@ -56,7 +56,7 @@ class BootstrapTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveRequestHandlerThrowsUsefulExceptionIfNoRequestHandlerFound()
     {
-        $bootstrap = $this->getAccessibleMock(Bootstrap::class, array('dummy'), array(), '', false);
+        $bootstrap = $this->getAccessibleMock('\TYPO3\Flow\Core\Bootstrap', array('dummy'), array(), '', false);
         $bootstrap->_call('resolveRequestHandler');
     }
 }
