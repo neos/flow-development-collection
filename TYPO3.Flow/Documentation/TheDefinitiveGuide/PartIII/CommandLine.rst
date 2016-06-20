@@ -585,16 +585,34 @@ class and can be used as follows:
 
 .. code-block:: php
 
+	use TYPO3\Flow\Annotations as Flow;
+	use TYPO3\Flow\Core\Booting\Scripts;
+
 	/**
-	 * Some command
-	 *
-	 * This example command runs another command
-	 *
-	 * @return string
+	 * @Flow\InjectConfiguration(package="TYPO3.Flow")
+	 * @var array
 	 */
-	public function runCommand($packageKey) {
-		\TYPO3\Flow\Core\Booting\Scripts::executeCommand('acme.foo:bar:baz', $this->settings);
+	protected $flowSettings;
+
+	public function runCommand() {
+		$success = Scripts::executeCommand('acme.foo:bar:baz', $this->flowSettings);
 	}
+
+Sometimes it can be useful to execute commands *asynchronously*, for example when triggering time-consuming
+tasks where the result is not instantly required (like sending confirmation emails, converting files, ...).
+This can be done with the ``Scripts::executeCommandAsync()*`` method:
+
+.. code-block:: php
+
+	public function runCommand() {
+		$commandArguments = ['some-argument' => 'some value'];
+		Scripts::executeCommandAsync('acme.foo:bar:baz', $this->flowSettings, $commandArguments);
+	}
+
+.. Note::
+	Because asynchronous commands are invoked in a separate thread, potential exceptions or failures will
+	*not* be reported. While this can be desired, it might require additional monitoring on the command-side
+	(e.g. a failure log).
 
 Quitting and Exit Code
 ----------------------
