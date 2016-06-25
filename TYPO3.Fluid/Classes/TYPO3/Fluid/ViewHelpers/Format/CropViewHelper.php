@@ -11,10 +11,9 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeUtilityFunctions;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Use this view helper to crop the text between its opening and closing tags.
@@ -47,7 +46,7 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class CropViewHelper extends AbstractViewHelper implements CompilableInterface
+class CropViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -71,7 +70,7 @@ class CropViewHelper extends AbstractViewHelper implements CompilableInterface
     /**
      * @param array $arguments
      * @param callable $renderChildrenClosure
-     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)

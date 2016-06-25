@@ -14,6 +14,7 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Format;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Fluid\ViewHelpers\Format\UrlencodeViewHelper;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
@@ -22,14 +23,14 @@ use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \TYPO3\Fluid\ViewHelpers\Format\UrlencodeViewHelper
+     * @var UrlencodeViewHelper
      */
     protected $viewHelper;
 
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\TYPO3\Fluid\ViewHelpers\Format\UrlencodeViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

@@ -1,6 +1,6 @@
 {
 	"name": "typo3/fluid",
-	"type": "typo3-flow-framework",
+	"type": "neos-framework",
 	"description": "Next-Generation Templating Framework for Flow and Neos",
 	"license": ["MIT"],
 	"require": {
@@ -9,6 +9,9 @@
 	"autoload": {
 		"psr-0": {
 			"TYPO3\\Fluid": "Classes"
+		},
+		"psr-4": {
+			"Neos\\Fluid\\": "Classes/"
 		}
 	}
 }

@@ -16,7 +16,6 @@ use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 
@@ -70,13 +69,20 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  * </output>
  *
  */
-class TranslateViewHelper extends AbstractViewHelper
+class TranslateViewHelper extends ViewHelper\AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var Translator
      */
     protected $translator;
+
+    /**
+     * @param Translator $translator
+     */
+    public function injectTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * Renders the translated label.
@@ -105,7 +111,7 @@ class TranslateViewHelper extends AbstractViewHelper
             }
         }
         if ($package === null) {
-            $request = $this->controllerContext->getRequest();
+            $request = $this->renderingContext->getControllerContext()->getRequest();
             if ($request instanceof ActionRequest) {
                 $package = $request->getControllerPackageKey();
             }

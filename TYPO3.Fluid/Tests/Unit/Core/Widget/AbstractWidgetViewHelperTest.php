@@ -11,6 +11,10 @@ namespace TYPO3\Fluid\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
+
 /**
  * Testcase for AbstractWidgetViewHelper
  */
@@ -105,11 +109,6 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function callViewHelper()
     {
-        $viewHelperVariableContainer = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
-        $renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
-        $renderingContext->injectViewHelperVariableContainer($viewHelperVariableContainer);
-        $this->viewHelper->setRenderingContext($renderingContext);
-
         $this->viewHelper->expects($this->any())->method('getWidgetConfiguration')->will($this->returnValue(array('Some Widget Configuration')));
         $this->widgetContext->expects($this->once())->method('setNonAjaxWidgetConfiguration')->with(array('Some Widget Configuration'));
 
@@ -133,16 +132,14 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->widgetContext = new \TYPO3\Fluid\Core\Widget\WidgetContext();
         $this->viewHelper->injectWidgetContext($this->widgetContext);
 
-        $node1 = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
-        $node2 = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class)->disableOriginalConstructor()->getMock();
-        $node3 = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode::class);
+        $node1 = $this->createMock(AbstractNode::class);
+        $node2 = $this->getMockBuilder(TextNode::class)->disableOriginalConstructor()->getMock();
+        $node3 = $this->createMock(AbstractNode::class);
 
-        $rootNode = new \TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode();
+        $rootNode = new RootNode();
         $rootNode->addChildNode($node1);
         $rootNode->addChildNode($node2);
         $rootNode->addChildNode($node3);
-
-        $this->objectManager->expects($this->once())->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class)->will($this->returnValue($rootNode));
 
         $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
         $this->viewHelper->_set('renderingContext', $renderingContext);

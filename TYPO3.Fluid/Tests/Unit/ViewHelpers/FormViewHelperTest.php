@@ -15,6 +15,7 @@ use TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\ViewHelpers\FormViewHelper;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -68,9 +69,9 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     }
 
     /**
-     * @param \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper $viewHelper
+     * @param AbstractViewHelper $viewHelper
      */
-    protected function injectDependenciesIntoViewHelper(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper $viewHelper)
+    protected function injectDependenciesIntoViewHelper(AbstractViewHelper $viewHelper)
     {
         $this->hashService = $this->createMock(\TYPO3\Flow\Security\Cryptography\HashService::class);
         $this->inject($viewHelper, 'hashService', $this->hashService);
@@ -467,7 +468,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, array('getFormActionUri', 'renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
         $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->once())->method('getRequest')->will($this->returnValue($mockSubRequest));
+        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(false));
@@ -567,7 +568,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->arguments['useParentRequest'] = true;
 
         $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->once())->method('getRequest')->will($this->returnValue($mockSubRequest));
+        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->controllerContext->expects($this->once())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
         $this->renderingContext->setControllerContext($this->controllerContext);
 

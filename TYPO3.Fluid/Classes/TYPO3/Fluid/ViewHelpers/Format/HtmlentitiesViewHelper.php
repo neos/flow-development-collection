@@ -11,10 +11,9 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Applies htmlentities() escaping to a value
@@ -38,7 +37,7 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class HtmlentitiesViewHelper extends AbstractViewHelper implements CompilableInterface
+class HtmlentitiesViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -73,7 +72,7 @@ class HtmlentitiesViewHelper extends AbstractViewHelper implements CompilableInt
      *
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
-     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)

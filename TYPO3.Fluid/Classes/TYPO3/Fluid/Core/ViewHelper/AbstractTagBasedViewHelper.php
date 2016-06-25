@@ -37,7 +37,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     /**
      * Tag builder instance
      *
-     * @var TagBuilder
+     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder
      * @api
      */
     protected $tag = null;

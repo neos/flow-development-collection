@@ -11,6 +11,7 @@ namespace TYPO3\Fluid;
  * source code.
  */
 
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
 
@@ -23,7 +24,7 @@ class Package extends BasePackage
     /**
      * @var boolean
      */
-    protected $protected = true;
+    protected $protected = false;
 
     /**
      * Invokes custom PHP code directly after the package manager has been initialized.
@@ -63,15 +64,16 @@ class Package extends BasePackage
 
             // Use a closure to invoke the TemplateCompiler, since the object is not registered during compiletime
         $flushTemplates = function ($identifier, $changedFiles) use ($bootstrap) {
-            if ($identifier !== 'Flow_ClassFiles') {
+            if ($identifier !== 'Fluid_TemplateFiles') {
                 return;
             }
 
-            $objectManager = $bootstrap->getObjectManager();
-            if ($objectManager->isRegistered(\TYPO3\Fluid\Core\Compiler\TemplateCompiler::class)) {
-                $templateCompiler = $objectManager->get(\TYPO3\Fluid\Core\Compiler\TemplateCompiler::class);
-                $templateCompiler->flushTemplatesOnViewHelperChanges($changedFiles);
+            if ($changedFiles === []) {
+                return;
             }
+
+            $templateCache = $bootstrap->getObjectManager()->get(CacheManager::class)->getCache('Fluid_TemplateCache');
+            $templateCache->flush();
         };
         $dispatcher->connect(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', $flushTemplates);
     }

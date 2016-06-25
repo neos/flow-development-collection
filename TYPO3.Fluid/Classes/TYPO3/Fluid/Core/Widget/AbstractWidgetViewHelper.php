@@ -143,8 +143,8 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      */
     public function setChildNodes(array $childNodes)
     {
-        /** @var $rootNode RootNode */
-        $rootNode = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
+        $rootNode = new \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode();
+
         foreach ($childNodes as $childNode) {
             $rootNode->addChildNode($childNode);
         }

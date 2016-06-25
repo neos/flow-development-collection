@@ -47,7 +47,6 @@ abstract class AbstractGenerator
      */
     public function __construct()
     {
-        Fluid::$debugMode = true; // We want ViewHelper argument documentation
         $this->abstractViewHelperReflectionClass = new ClassReflection(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class);
     }
 

@@ -9,8 +9,8 @@ namespace TYPO3\Fluid\Core\Widget;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 
 /**
  * The WidgetContext stores all information a widget needs to know about the

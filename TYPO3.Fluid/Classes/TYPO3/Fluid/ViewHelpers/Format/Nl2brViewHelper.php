@@ -11,9 +11,8 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
 
 /**
  * Wrapper for PHPs nl2br function.
@@ -38,7 +37,7 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class Nl2brViewHelper extends AbstractViewHelper implements CompilableInterface
+class Nl2brViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -62,7 +61,7 @@ class Nl2brViewHelper extends AbstractViewHelper implements CompilableInterface
      *
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
-     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)

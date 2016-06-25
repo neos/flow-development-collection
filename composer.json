@@ -83,6 +83,9 @@
         "psr-4": {
             "TYPO3\\Flow\\Core\\Migrations\\": [
                 "TYPO3.Flow/Scripts/Migrations"
+            ],
+            "Neos\\Fluid\\": [
+                "TYPO3.Fluid/Classes/"
             ]
         }
     },

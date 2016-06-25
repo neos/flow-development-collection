@@ -12,11 +12,9 @@ namespace TYPO3\Fluid\Core\ViewHelper;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\Compiler\TemplateCompiler;
-use TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode;
-use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper is an abstract ViewHelper which implements an if/else condition.
@@ -38,38 +36,91 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-abstract class AbstractConditionViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface, CompilableInterface
+abstract class AbstractConditionViewHelper extends AbstractViewHelper
 {
+
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
 
     /**
-     * An array containing child nodes
-     *
-     * @var array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode>
-     */
-    private $childNodes = array();
-
-    /**
-     * Setter for ChildNodes - as defined in ChildNodeAccessInterface
-     *
-     * @param array $childNodes Child nodes of this syntax tree node
-     * @return void
-     */
-    public function setChildNodes(array $childNodes)
-    {
-        $this->childNodes = $childNodes;
-    }
-
-    /**
      * Initializes the "then" and "else" arguments
      */
-    public function __construct()
+    public function initializeArguments()
     {
         $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
         $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
+        $this->registerArgument('condition', 'boolean', 'Condition expression conforming to Fluid boolean rules', false, false);
+    }
+
+    /**
+     * Static method which can be overridden by subclasses. If a subclass
+     * requires a different (or faster) decision then this method is the one
+     * to override and implement.
+     *
+     * Note: method signature does not type-hint that an array is desired,
+     * and as such, *appears* to accept any input type. There is no type hint
+     * here for legacy reasons - the signature is kept compatible with third
+     * party packages which depending on PHP version would error out if this
+     * signature was not compatible with that of existing and in-production
+     * subclasses that will be using this base class in the future. Let this
+     * be a warning if someone considers changing this method signature!
+     *
+     * @param array|NULL $arguments
+     * @return boolean
+     * @api
+     */
+    protected static function evaluateCondition($arguments = null)
+    {
+        return (boolean)$arguments['condition'];
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        if (static::evaluateCondition($arguments)) {
+            if (isset($arguments['then'])) {
+                return $arguments['then'];
+            }
+            if (isset($arguments['__thenClosure'])) {
+                return $arguments['__thenClosure']();
+            }
+        } elseif (!empty($arguments['__elseClosures'])) {
+            $elseIfClosures = isset($arguments['__elseifClosures']) ? $arguments['__elseifClosures'] : [];
+
+            return static::evaluateElseClosures($arguments['__elseClosures'], $elseIfClosures, $renderingContext);
+        } elseif (array_key_exists('else', $arguments)) {
+            return $arguments['else'];
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $closures
+     * @param array $conditionClosures
+     * @param RenderingContextInterface $renderingContext
+     * @return string
+     */
+    private static function evaluateElseClosures(array $closures, array $conditionClosures, RenderingContextInterface $renderingContext)
+    {
+        foreach ($closures as $elseNodeIndex => $elseNodeClosure) {
+            if (!isset($conditionClosures[$elseNodeIndex])) {
+                return $elseNodeClosure();
+            } else {
+                if ($conditionClosures[$elseNodeIndex]()) {
+                    return $elseNodeClosure();
+                }
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -77,7 +128,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
      * If then attribute is not set, iterates through child nodes and renders ThenViewHelper.
      * If then attribute is not set and no ThenViewHelper and no ElseViewHelper is found, all child nodes are rendered
      *
-     * @return string rendered ThenViewHelper or contents of <f:if> if no ThenViewHelper was found
+     * @return mixed rendered ThenViewHelper or contents of <f:if> if no ThenViewHelper was found
      * @api
      */
     protected function renderThenChild()
@@ -85,22 +136,19 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
         if ($this->hasArgument('then')) {
             return $this->arguments['then'];
         }
-        if ($this->hasArgument('__thenClosure')) {
-            $thenClosure = $this->arguments['__thenClosure'];
-            return $thenClosure();
-        } elseif ($this->hasArgument('__elseClosure')) {
-            return '';
-        }
 
         $elseViewHelperEncountered = false;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
+                && substr($childNode->getViewHelperClassName(), -14) === 'ThenViewHelper'
+            ) {
                 $data = $childNode->evaluate($this->renderingContext);
+
                 return $data;
             }
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
+                && substr($childNode->getViewHelperClassName(), -14) === 'ElseViewHelper'
+            ) {
                 $elseViewHelperEncountered = true;
             }
         }
@@ -122,49 +170,68 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
      */
     protected function renderElseChild()
     {
+
         if ($this->hasArgument('else')) {
             return $this->arguments['else'];
         }
-        if ($this->hasArgument('__elseClosure')) {
-            $elseClosure = $this->arguments['__elseClosure'];
-            return $elseClosure();
-        }
+
+        /** @var ViewHelperNode|NULL $elseNode */
+        $elseNode = null;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
-                return $childNode->evaluate($this->renderingContext);
+                && substr($childNode->getViewHelperClassName(), -14) === 'ElseViewHelper'
+            ) {
+                $arguments = $childNode->getArguments();
+                if (isset($arguments['if']) && $arguments['if']->evaluate($this->renderingContext)) {
+                    return $childNode->evaluate($this->renderingContext);
+                } else {
+                    $elseNode = $childNode;
+                }
             }
         }
 
-        return '';
+        return $elseNode instanceof ViewHelperNode ? $elseNode->evaluate($this->renderingContext) : '';
     }
 
     /**
      * The compiled ViewHelper adds two new ViewHelper arguments: __thenClosure and __elseClosure.
      * These contain closures which are be executed to render the then(), respectively else() case.
      *
-     * @param string $argumentsVariableName
-     * @param string $renderChildrenClosureVariableName
+     * @param string $argumentsName
+     * @param string $closureName
      * @param string $initializationPhpCode
-     * @param AbstractNode $syntaxTreeNode
-     * @param TemplateCompiler $templateCompiler
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
      * @return string
-     * @Flow\Internal
      */
-    public function compile($argumentsVariableName, $renderChildrenClosureVariableName, &$initializationPhpCode, AbstractNode $syntaxTreeNode, TemplateCompiler $templateCompiler)
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
     {
-        foreach ($syntaxTreeNode->getChildNodes() as $childNode) {
-            if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
-                $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
-                $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
-            }
-            if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
-                $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
-                $initializationPhpCode .= sprintf('%s[\'__elseClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
+        $thenViewHelperEncountered = $elseViewHelperEncountered = false;
+        foreach ($node->getChildNodes() as $childNode) {
+            if ($childNode instanceof ViewHelperNode) {
+                $viewHelperClassName = $childNode->getViewHelperClassName();
+                if (substr($viewHelperClassName, -14) === 'ThenViewHelper') {
+                    $thenViewHelperEncountered = true;
+                    $childNodesAsClosure = $compiler->wrapChildNodesInClosure($childNode);
+                    $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsName, $childNodesAsClosure) . chr(10);
+                } elseif (substr($viewHelperClassName, -14) === 'ElseViewHelper') {
+                    $elseViewHelperEncountered = true;
+                    $childNodesAsClosure = $compiler->wrapChildNodesInClosure($childNode);
+                    $initializationPhpCode .= sprintf('%s[\'__elseClosures\'][] = %s;', $argumentsName, $childNodesAsClosure) . chr(10);
+                    $arguments = $childNode->getArguments();
+                    if (isset($arguments['if'])) {
+                        // The "else" has an argument, indicating it has a secondary (elseif) condition.
+                        // Compile a closure which will evaluate the condition.
+                        $elseIfConditionAsClosure = $compiler->wrapViewHelperNodeArgumentEvaluationInClosure($childNode, 'if');
+                        $initializationPhpCode .= sprintf('%s[\'__elseifClosures\'][] = %s;', $argumentsName, $elseIfConditionAsClosure) . chr(10);
+                    }
+                }
             }
         }
-        return TemplateCompiler::SHOULD_GENERATE_VIEWHELPER_INVOCATION;
+        if (!$thenViewHelperEncountered && !$elseViewHelperEncountered && !isset($node->getArguments()['then'])) {
+            $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsName, $closureName) . chr(10);
+        }
+
+        return parent::compile($argumentsName, $closureName, $initializationPhpCode, $node, $compiler);
     }
 }

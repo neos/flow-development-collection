@@ -11,100 +11,71 @@ namespace TYPO3\Fluid\Core\Rendering;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
-use TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
+use TYPO3\Fluid\Core\Parser\Interceptor\ResourceInterceptor;
+use TYPO3\Fluid\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
+use TYPO3\Fluid\Core\Variables\VariableProvider;
+use TYPO3\Fluid\Core\ViewHelper\ViewHelperResolver;
+use TYPO3\Fluid\View\TemplatePaths;
+use TYPO3Fluid\Fluid\Core\Parser\Configuration;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
- * The rendering context that contains useful information during rendering time of a Fluid template
+ *
  */
-class RenderingContext implements RenderingContextInterface
+class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext implements RenderingContextInterface
 {
     /**
-     * Template Variable Container. Contains all variables available through object accessors in the template
+     * List of class names implementing ExpressionNodeInterface
+     * which will be consulted when an expression does not match
+     * any built-in parser expression types.
      *
-     * @var TemplateVariableContainer
+     * @var array
      */
-    protected $templateVariableContainer;
+    protected $expressionNodeTypes = [
+        LegacyNamespaceExpressionNode::class,
+        CastingExpressionNode::class,
+        MathExpressionNode::class,
+        TernaryExpressionNode::class,
+    ];
 
     /**
-     * Object manager which is bubbled through. The ViewHelperNode cannot get an ObjectManager injected because
-     * the whole syntax tree should be cacheable
-     *
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * Controller context being passed to the ViewHelper
-     *
      * @var ControllerContext
      */
     protected $controllerContext;
 
     /**
-     * ViewHelper Variable Container
-     *
-     * @var ViewHelperVariableContainer
+     * @Flow\Inject
+     * @var ViewHelperResolver
      */
-    protected $viewHelperVariableContainer;
+    protected $viewHelperResolver;
 
     /**
-     * Inject the object manager
-     *
-     * @param ObjectManagerInterface $objectManager
+     * @Flow\Inject
+     * @var \TYPO3\Fluid\Core\Cache\CacheAdaptor
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    protected $cache;
+
+    /**
+     * RenderingContext constructor.
+     *
+     * @param ViewInterface $view
+     * @param array $options
+     */
+    public function __construct(ViewInterface $view, array $options = [])
     {
-        $this->objectManager = $objectManager;
+        parent::__construct($view);
+        $this->setTemplatePaths(new TemplatePaths($options));
+        $this->setVariableProvider(new VariableProvider());
     }
 
     /**
-     * Returns the object manager. Only the ViewHelperNode should do this.
-     *
-     * @return ObjectManagerInterface
-     */
-    public function getObjectManager()
-    {
-        return $this->objectManager;
-    }
-
-    /**
-     * Injects the template variable container containing all variables available through ObjectAccessors
-     * in the template
-     *
-     * @param TemplateVariableContainer $templateVariableContainer The template variable container to set
-     */
-    public function injectTemplateVariableContainer(TemplateVariableContainer $templateVariableContainer)
-    {
-        $this->templateVariableContainer = $templateVariableContainer;
-    }
-
-    /**
-     * Get the template variable container
-     *
-     * @return TemplateVariableContainer The Template Variable Container
-     */
-    public function getTemplateVariableContainer()
-    {
-        return $this->templateVariableContainer;
-    }
-
-    /**
-     * Set the controller context which will be passed to the ViewHelper
-     *
-     * @param ControllerContext $controllerContext The controller context to set
-     */
-    public function setControllerContext(ControllerContext $controllerContext)
-    {
-        $this->controllerContext = $controllerContext;
-    }
-
-    /**
-     * Get the controller context which will be passed to the ViewHelper
-     *
-     * @return ControllerContext The controller context to set
+     * @return ControllerContext
      */
     public function getControllerContext()
     {
@@ -112,23 +83,58 @@ class RenderingContext implements RenderingContextInterface
     }
 
     /**
-     * Set the ViewHelperVariableContainer
-     *
-     * @param ViewHelperVariableContainer $viewHelperVariableContainer
-     * @return void
+     * @param ControllerContext $controllerContext
      */
-    public function injectViewHelperVariableContainer(ViewHelperVariableContainer $viewHelperVariableContainer)
+    public function setControllerContext($controllerContext)
     {
-        $this->viewHelperVariableContainer = $viewHelperVariableContainer;
+        $this->controllerContext = $controllerContext;
+        $request = $controllerContext->getRequest();
+        if (!$this->templatePaths instanceof TemplatePaths || !$request instanceof ActionRequest) {
+            return;
+        }
+
+        $this->templatePaths->setPatternReplacementVariables([
+            'packageKey' => $request->getControllerPackageKey(),
+            'subPackageKey' => $request->getControllerSubpackageKey(),
+            'controllerName' => $request->getControllerName(),
+            'action' => $request->getControllerActionName(),
+            'format' => $request->getFormat()
+        ]);
     }
 
     /**
-     * Get the ViewHelperVariableContainer
-     *
-     * @return ViewHelperVariableContainer
+     * @return \TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface
+     * @deprecated use "getVariableProvider"
      */
-    public function getViewHelperVariableContainer()
+    public function getTemplateVariableContainer()
     {
-        return $this->viewHelperVariableContainer;
+        return $this->getVariableProvider();
+    }
+
+    /**
+     * Build parser configuration
+     *
+     * @return Configuration
+     */
+    public function buildParserConfiguration()
+    {
+        $parserConfiguration = parent::buildParserConfiguration();
+        $parserConfiguration->addInterceptor(new ResourceInterceptor());
+        return $parserConfiguration;
+    }
+
+    /**
+     * Set a specific option of this View
+     *
+     * @param string $optionName
+     * @param mixed $value
+     * @return void
+     * @throws \TYPO3\Flow\Mvc\Exception
+     */
+    public function setOption($optionName, $value)
+    {
+        if ($this->templatePaths instanceof TemplatePaths) {
+            $this->templatePaths->setOption($optionName, $value);
+        }
     }
 }

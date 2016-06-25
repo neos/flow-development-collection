@@ -11,9 +11,8 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
 
 /**
  * Formats a string using PHPs str_pad function.
@@ -45,7 +44,7 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class PaddingViewHelper extends AbstractViewHelper implements CompilableInterface
+class PaddingViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -72,7 +71,7 @@ class PaddingViewHelper extends AbstractViewHelper implements CompilableInterfac
      *
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
-     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)

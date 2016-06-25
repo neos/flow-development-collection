@@ -23,7 +23,6 @@ use TYPO3\Flow\I18n;
 abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var \TYPO3\Flow\I18n\Service
      */
     protected $localizationService;
@@ -36,6 +35,14 @@ abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
     public function __construct()
     {
         $this->registerArgument('forceLocale', 'mixed', 'Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale', false);
+    }
+
+    /**
+     * @param I18n\Service $localizationService
+     */
+    public function injectLocalizationService(I18n\Service $localizationService)
+    {
+        $this->localizationService = $localizationService;
     }
 
     /**

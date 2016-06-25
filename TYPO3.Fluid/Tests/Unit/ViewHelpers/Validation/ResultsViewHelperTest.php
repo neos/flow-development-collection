@@ -11,7 +11,6 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Validation;
  * source code.
  */
 
-include_once(__DIR__ . '/../Fixtures/ConstraintSyntaxTreeNode.php');
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**

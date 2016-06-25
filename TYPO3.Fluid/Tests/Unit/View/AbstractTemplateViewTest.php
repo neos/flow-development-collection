@@ -10,6 +10,10 @@ namespace TYPO3\Fluid\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Fluid\Core\Rendering\RenderingContext;
+use TYPO3\Fluid\Core\Variables\VariableProvider;
+use TYPO3\Fluid\View\AbstractTemplateView;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 /**
  * Testcase for the TemplateView
@@ -17,12 +21,12 @@ namespace TYPO3\Fluid\Tests\Unit\View;
 class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \TYPO3\Fluid\View\AbstractTemplateView
+     * @var AbstractTemplateView
      */
     protected $view;
 
     /**
-     * @var \TYPO3\Fluid\Core\Rendering\RenderingContext
+     * @var RenderingContext
      */
     protected $renderingContext;
 
@@ -43,12 +47,12 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->templateVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
-        $this->viewHelperVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class)->setMethods(array('setView'))->getMock();
-        $this->renderingContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Rendering\RenderingContext::class)->setMethods(array('getViewHelperVariableContainer', 'getTemplateVariableContainer'))->getMock();
+        $this->templateVariableContainer = $this->getMockBuilder(VariableProvider::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
+        $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(array('setView'))->getMock();
+        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->setMethods(array('getViewHelperVariableContainer', 'getVariableProvider'))->disableOriginalConstructor()->getMock();
         $this->renderingContext->expects($this->any())->method('getViewHelperVariableContainer')->will($this->returnValue($this->viewHelperVariableContainer));
-        $this->renderingContext->expects($this->any())->method('getTemplateVariableContainer')->will($this->returnValue($this->templateVariableContainer));
-        $this->view = $this->getMockBuilder(\TYPO3\Fluid\View\AbstractTemplateView::class)->setMethods(array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'))->getMock();
+        $this->renderingContext->expects($this->any())->method('getVariableProvider')->will($this->returnValue($this->templateVariableContainer));
+        $this->view = $this->getMockBuilder(AbstractTemplateView::class)->setMethods(array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'))->getMock();
         $this->view->setRenderingContext($this->renderingContext);
     }
 
@@ -66,10 +70,8 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function assignAddsValueToTemplateVariableContainer()
     {
-        $this->templateVariableContainer->expects($this->at(0))->method('exists')->with('foo')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValue');
-        $this->templateVariableContainer->expects($this->at(2))->method('exists')->with('bar')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(3))->method('add')->with('bar', 'BarValue');
+        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('foo', 'FooValue');
+        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('bar', 'BarValue');
 
         $this->view
             ->assign('foo', 'FooValue')
@@ -81,11 +83,8 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function assignCanOverridePreviouslyAssignedValues()
     {
-        $this->templateVariableContainer->expects($this->at(0))->method('exists')->with('foo')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValue');
-        $this->templateVariableContainer->expects($this->at(2))->method('exists')->with('foo')->will($this->returnValue(true));
-        $this->templateVariableContainer->expects($this->at(3))->method('remove')->with('foo');
-        $this->templateVariableContainer->expects($this->at(4))->method('add')->with('foo', 'FooValueOverridden');
+        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('foo', 'FooValue');
+        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValueOverridden');
 
         $this->view->assign('foo', 'FooValue');
         $this->view->assign('foo', 'FooValueOverridden');
@@ -96,12 +95,9 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function assignMultipleAddsValuesToTemplateVariableContainer()
     {
-        $this->templateVariableContainer->expects($this->at(0))->method('exists')->with('foo')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValue');
-        $this->templateVariableContainer->expects($this->at(2))->method('exists')->with('bar')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(3))->method('add')->with('bar', 'BarValue');
-        $this->templateVariableContainer->expects($this->at(4))->method('exists')->with('baz')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(5))->method('add')->with('baz', 'BazValue');
+        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('foo', 'FooValue');
+        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('bar', 'BarValue');
+        $this->templateVariableContainer->expects($this->at(2))->method('add')->with('baz', 'BazValue');
 
         $this->view
             ->assignMultiple(array('foo' => 'FooValue', 'bar' => 'BarValue'))
@@ -113,13 +109,9 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function assignMultipleCanOverridePreviouslyAssignedValues()
     {
-        $this->templateVariableContainer->expects($this->at(0))->method('exists')->with('foo')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValue');
-        $this->templateVariableContainer->expects($this->at(2))->method('exists')->with('foo')->will($this->returnValue(true));
-        $this->templateVariableContainer->expects($this->at(3))->method('remove')->with('foo');
-        $this->templateVariableContainer->expects($this->at(4))->method('add')->with('foo', 'FooValueOverridden');
-        $this->templateVariableContainer->expects($this->at(5))->method('exists')->with('bar')->will($this->returnValue(false));
-        $this->templateVariableContainer->expects($this->at(6))->method('add')->with('bar', 'BarValue');
+        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('foo', 'FooValue');
+        $this->templateVariableContainer->expects($this->at(1))->method('add')->with('foo', 'FooValueOverridden');
+        $this->templateVariableContainer->expects($this->at(2))->method('add')->with('bar', 'BarValue');
 
         $this->view->assign('foo', 'FooValue');
         $this->view->assignMultiple(array('foo' => 'FooValueOverridden', 'bar' => 'BarValue'));

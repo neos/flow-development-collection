@@ -11,8 +11,10 @@ namespace TYPO3\Fluid\ViewHelpers;
  * source code.
  */
 
+use TYPO3\Fluid\Core\Variables\VariableProvider;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Fluid\View\StandaloneView;
 
 /**
  * Base test class for testing view helpers
@@ -74,10 +76,10 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->viewHelperVariableContainer = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
+        $this->viewHelperVariableContainer = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
         $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(array($this, 'viewHelperVariableContainerExistsCallback')));
         $this->viewHelperVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'viewHelperVariableContainerGetCallback')));
-        $this->templateVariableContainer = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class);
+        $this->templateVariableContainer = $this->createMock(VariableProvider::class);
         $this->uriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
         $this->uriBuilder->expects($this->any())->method('reset')->will($this->returnValue($this->uriBuilder));
         $this->uriBuilder->expects($this->any())->method('setArguments')->will($this->returnValue($this->uriBuilder));
@@ -95,9 +97,9 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
         $this->tagBuilder = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class);
         $this->arguments = array();
-        $this->renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
-        $this->renderingContext->injectTemplateVariableContainer($this->templateVariableContainer);
-        $this->renderingContext->injectViewHelperVariableContainer($this->viewHelperVariableContainer);
+        $this->renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext(new StandaloneView(), []);
+        $this->renderingContext->setVariableProvider($this->templateVariableContainer);
+        $this->renderingContext->setViewHelperVariableContainer($this->viewHelperVariableContainer);
         $this->renderingContext->setControllerContext($this->controllerContext);
     }
 
@@ -123,7 +125,6 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @param AbstractViewHelper $viewHelper
-     * @return void
      */
     protected function injectDependenciesIntoViewHelper(AbstractViewHelper $viewHelper)
     {

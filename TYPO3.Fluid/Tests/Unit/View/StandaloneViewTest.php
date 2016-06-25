@@ -52,33 +52,13 @@ class StandaloneViewTest extends UnitTestCase
      * @test
      * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
      */
-    public function getTemplateSourceThrowsExceptionIfSpecifiedTemplatePathAndFilenameDoesNotExist()
-    {
-        $this->standaloneView->setTemplatePathAndFilename(__DIR__ . '/NonExistingTemplate.txt');
-        $this->standaloneView->_call('getTemplateSource');
-    }
-
-    /**
-     * @test
-     * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
-     */
-    public function getTemplateSourceThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
-    {
-        $this->standaloneView->setTemplatePathAndFilename(__DIR__);
-        $this->standaloneView->_call('getTemplateSource');
-    }
-
-    /**
-     * @test
-     * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
-     */
     public function getLayoutPathAndFilenameThrowsExceptionIfSpecifiedLayoutRootPathIsNoDirectory()
     {
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts');
         \file_put_contents('vfs://MyLayouts/NotAFolder', 'foo');
         $this->standaloneView->setLayoutRootPath('vfs://MyLayouts/NotAFolder');
-        $this->standaloneView->_call('getLayoutPathAndFilename');
+        $this->standaloneView->getTemplatePaths()->getLayoutSource();
     }
 
     /**
@@ -90,7 +70,7 @@ class StandaloneViewTest extends UnitTestCase
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts/NotAFile');
         $this->standaloneView->setLayoutRootPath('vfs://MyLayouts');
-        $this->standaloneView->_call('getLayoutPathAndFilename', 'NotAFile');
+        $this->standaloneView->getTemplatePaths()->getLayoutSource('NotAFile');
     }
 
     /**
@@ -103,7 +83,7 @@ class StandaloneViewTest extends UnitTestCase
         mkdir('vfs://MyPartials');
         \file_put_contents('vfs://MyPartials/NotAFolder', 'foo');
         $this->standaloneView->setPartialRootPath('vfs://MyPartials/NotAFolder');
-        $this->standaloneView->_call('getPartialPathAndFilename', 'SomePartial');
+        $this->standaloneView->getTemplatePaths()->getPartialSource('SomePartial');
     }
 
     /**
@@ -115,6 +95,6 @@ class StandaloneViewTest extends UnitTestCase
         vfsStreamWrapper::register();
         mkdir('vfs://MyPartials/NotAFile');
         $this->standaloneView->setPartialRootPath('vfs://MyPartials');
-        $this->standaloneView->_call('getPartialPathAndFilename', 'NotAFile');
+        $this->standaloneView->getTemplatePaths()->getPartialSource('NotAFile');
     }
 }

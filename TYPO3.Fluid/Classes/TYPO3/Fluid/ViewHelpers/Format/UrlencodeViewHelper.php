@@ -11,11 +11,10 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
 
 /**
  * Encodes the given string according to http://www.faqs.org/rfcs/rfc3986.html (applying PHPs rawurlencode() function)
@@ -40,7 +39,7 @@ use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
  *
  * @api
  */
-class UrlencodeViewHelper extends AbstractViewHelper implements CompilableInterface
+class UrlencodeViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -66,7 +65,7 @@ class UrlencodeViewHelper extends AbstractViewHelper implements CompilableInterf
      *
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
-     * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      * @return string
      * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
      */
