@@ -202,4 +202,14 @@ class BaseFunctionalityTestingAspect
     {
         return 'Implemented';
     }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticTypeDeclarations())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticTypeDeclarationsAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return 'This is so NaN';
+    }
 }

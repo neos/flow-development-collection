@@ -95,6 +95,18 @@ class MethodReflection extends \ReflectionMethod
     }
 
     /**
+     * @return string The name of a type (e.g. string, \stdClass) if it was declared as a return type, null otherwise
+     */
+    public function getDeclaredReturnType()
+    {
+        if (!is_callable(array($this, 'getReturnType'))) {
+            return null;
+        }
+        $type = $this->getReturnType();
+        return $type !== null ? (string)$type : null;
+    }
+
+    /**
      * Returns an instance of the doc comment parser and
      * runs the parse() method.
      *
