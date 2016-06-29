@@ -27,6 +27,7 @@ Part III: Manual
 	LoggingAndDebugging
 	SignalsAndSlots
 	Reflection
+	Eel
 	FileMonitoring
 	Testing
 	UtilityFunctions
