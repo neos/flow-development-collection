@@ -94,4 +94,54 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, array());
         $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
     }
+
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyShouldRemoveLeadingBackslashesForConstructorParameters()
+    {
+        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(false));
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will($this->returnValue(array(
+            'thePropertyName' => array(
+                'type' => '\TheTypeOfSubObject',
+                'elementType' => null
+            )
+        )));
+        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, array());
+        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+    }
+
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyShouldRemoveLeadingBackslashesForSetterParameters()
+    {
+        $this->mockReflectionService->expects($this->at(0))->method('getMethodParameters')->with('TheTargetType', '__construct')->will($this->returnValue(array()));
+        $this->mockReflectionService->expects($this->at(1))->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(true));
+        $this->mockReflectionService->expects($this->at(2))->method('getMethodParameters')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(array(
+            array('type' => '\TheTypeOfSubObject'),
+        )));
+        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, array());
+        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+    }
+
+    /**
+     * @test
+     */
+    public function getTypeOfChildPropertyShouldRemoveLeadingBackslashesForAnnotationParameters()
+    {
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will($this->returnValue(array()));
+        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(false));
+        $this->mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with('TheTargetType')->will($this->returnValue(array(
+            'thePropertyName'
+        )));
+        $this->mockReflectionService->expects($this->any())->method('getPropertyTagValues')->with('TheTargetType', 'thePropertyName')->will($this->returnValue(array(
+            '\TheTypeOfSubObject'
+        )));
+        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, array());
+        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+    }
 }
