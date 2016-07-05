@@ -16,7 +16,10 @@ use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Exception\InvalidTypeException;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.
@@ -126,26 +129,30 @@ class ObjectConverter extends AbstractTypeConverter
 
         $methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
         if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
-            // This ensures that FQDNs are returned without leading backslashes. Otherwise, something like @var \DateTime
-            // would not find a property mapper. It is needed because the ObjectConverter doesn't use class schemata,
-            // but reads the annotations directly.
-            return ltrim($methodParameters[$propertyName]['type'], '\\');
+            return $methodParameters[$propertyName]['type'];
         } elseif ($this->reflectionService->hasMethod($targetType, ObjectAccess::buildSetterMethodName($propertyName))) {
             $methodParameters = $this->reflectionService->getMethodParameters($targetType, ObjectAccess::buildSetterMethodName($propertyName));
             $methodParameter = current($methodParameters);
             if (!isset($methodParameter['type'])) {
                 throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
             } else {
-                // ltrim: see comment above
-                return ltrim($methodParameter['type'], '\\');
+                return $methodParameter['type'];
             }
         } else {
             $targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
             if (in_array($propertyName, $targetPropertyNames)) {
-                $values = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
-                if (count($values) > 0) {
-                    // ltrim: see comment above
-                    return ltrim(current($values), '\\');
+                $varTagValues = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
+                if (count($varTagValues) > 0) {
+                    // This ensures that FQCNs are returned without leading backslashes. Otherwise, something like @var \DateTime
+                    // would not find a property mapper. It is needed because the ObjectConverter doesn't use class schemata,
+                    // but reads the annotations directly.
+                    $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+                    try {
+                        $parsedType = TypeHandling::parseType($declaredType);
+                    } catch (InvalidTypeException $exception) {
+                        throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $targetType . '" for property "' . $propertyName . '"'), 1467699674);
+                    }
+                    return $parsedType['type'];
                 } else {
                     throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
                 }
