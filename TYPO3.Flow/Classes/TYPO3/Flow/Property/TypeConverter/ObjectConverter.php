@@ -152,7 +152,7 @@ class ObjectConverter extends AbstractTypeConverter
                     } catch (InvalidTypeException $exception) {
                         throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $targetType . '" for property "' . $propertyName . '"'), 1467699674);
                     }
-                    return $parsedType['type'];
+                    return $parsedType['type'] . ($parsedType['elementType'] !== null ? '<' . $parsedType['elementType'] . '>' : '');
                 } else {
                     throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
                 }
