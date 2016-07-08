@@ -118,13 +118,12 @@ class JsonArrayType extends DoctrineJsonArrayType
      */
     public function convertToDatabaseValue($array, AbstractPlatform $platform)
     {
-        $this->initializeDependencies();
-
-        $this->encodeObjectReferences($array);
-
         if ($array === null) {
             return null;
         }
+
+        $this->initializeDependencies();
+        $this->encodeObjectReferences($array);
 
         return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
     }
