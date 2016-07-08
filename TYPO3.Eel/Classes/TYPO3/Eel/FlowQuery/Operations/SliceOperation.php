@@ -39,7 +39,7 @@ class SliceOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
-        if (is_object($context) && $context instanceof \Iterator) {
+        if ($context instanceof \Iterator) {
             $context = iterator_to_array($context);
         }
         if (isset($arguments[0]) && isset($arguments[1])) {
