@@ -218,7 +218,7 @@ class PackageCommandController extends CommandController
         /** @var PackageInterface $package */
         foreach ($activePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-            $this->outputLine('git  ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
+            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
         }
 
         if (count($inactivePackages) > 0) {
