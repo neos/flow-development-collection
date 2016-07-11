@@ -27,7 +27,7 @@ class ControllerObjectNameTest extends UnitTestCase
      */
     public function matchRequestReturnsTrueIfTheCurrentRequestMatchesTheControllerObjectNamePattern()
     {
-        $request = $this->getMock(ActionRequest::class, array('getControllerObjectName'), array(), '', false);
+        $request = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->setMethods(array('getControllerObjectName'))->getMock();
         $request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\Security\Controller\LoginController'));
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'TYPO3\Flow\Security\.*']);

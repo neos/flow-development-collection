@@ -32,7 +32,7 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(\TYPO3\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
         $this->compileTimeObjectManager = $this->getAccessibleMock(\TYPO3\Flow\Object\CompileTimeObjectManager::class, array('dummy'), array(), '', false);
-        $this->compileTimeObjectManager->_set('systemLogger', $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $this->compileTimeObjectManager->_set('systemLogger', $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
         $configurations = array(
             'TYPO3' => array(
                 'Flow' => array(
@@ -59,10 +59,10 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $packagePath = 'vfs://Packages/Vendor.TestPackage/';
         mkdir($packagePath . 'Classes/', 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "typo3-flow"}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "typo3-flow-package"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-        $testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'Vendor.TestPackage', $packagePath, 'Classes');
+        $testPackage = new \TYPO3\Flow\Package\Package('Vendor.TestPackage', 'vendor/testpackage', $packagePath, ['psr-4' => ['Vendor\\TestPackage' => 'Classes/']]);
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('Vendor.TestPackage' => $testPackage));
         // Count is at least 1 as '' => 'DateTime' is hardcoded
@@ -80,7 +80,7 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "some-non-flow-package-type"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-        $testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'NonFlow.TestPackage', $packagePath, 'Classes');
+        $testPackage = new \TYPO3\Flow\Package\Package('NonFlow.TestPackage', 'vendor/testpackage', $packagePath, ['psr-0' => ['NonFlow\\TestPackage' => 'Classes/']]);
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('NonFlow.TestPackage' => $testPackage));
         // Count is at least 1 as '' => 'DateTime' is hardcoded
@@ -97,7 +97,7 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "nonflow/includeallclasses", "type": "some-non-flow-package-type"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-        $testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'NonFlow.IncludeAllClasses', $packagePath, 'Classes');
+        $testPackage = new \TYPO3\Flow\Package\Package('NonFlow.IncludeAllClasses', 'nonflow/includeallclasses', $packagePath, ['psr-4' => ['NonFlow\\IncludeAllClasses' => 'Classes/']]);
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('NonFlow.IncludeAllClasses' => $testPackage));
         // Count is at least 1 as '' => 'DateTime' is hardcoded
@@ -115,7 +115,7 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "nonflow/includeandexclude", "type": "some-non-flow-package-type"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-        $testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'NonFlow.IncludeAndExclude', $packagePath, 'Classes');
+        $testPackage = new \TYPO3\Flow\Package\Package('NonFlow.IncludeAndExclude', 'nonflow/includeandexclude', $packagePath, ['psr-0' => ['NonFlow\\IncludeAndExclude' => 'Classes/']]);
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('NonFlow.IncludeAndExclude' => $testPackage));
         // Count is at least 1 as '' => 'DateTime' is hardcoded
@@ -132,7 +132,7 @@ class CompileTimeObjectManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "vendor/anotherpackage", "type": "typo3-flow"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
-        $testPackage = new \TYPO3\Flow\Package\Package($this->mockPackageManager, 'Vendor.AnotherPackage', $packagePath, 'Classes');
+        $testPackage = new \TYPO3\Flow\Package\Package('Vendor.AnotherPackage', 'vendor/anotherpackage', $packagePath, ['psr-0' => ['Vendor\\AnotherPackage' => 'Classes/']]);
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', array('Vendor.AnotherPackage' => $testPackage));
         // Count is at least 1 as '' => 'DateTime' is hardcoded

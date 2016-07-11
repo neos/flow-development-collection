@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Security\Aspect;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
 use TYPO3\Flow\Security\Context;
 

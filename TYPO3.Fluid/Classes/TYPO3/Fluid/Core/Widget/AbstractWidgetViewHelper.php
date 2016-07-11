@@ -21,8 +21,6 @@ use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
-use TYPO3\Fluid\Core\Widget\Exception\InvalidControllerException;
-use TYPO3\Fluid\Core\Widget\Exception\MissingControllerException;
 
 /**
  * @api

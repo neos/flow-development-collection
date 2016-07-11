@@ -37,7 +37,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objectData = array(array('identifier' => '1234'));
         $object = new \stdClass();
 
-        $dataMapper = $this->getMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('mapToObject'));
+        $dataMapper = $this->getMockBuilder(\TYPO3\Flow\Persistence\Generic\DataMapper::class)->setMethods(array('mapToObject'))->getMock();
         $dataMapper->expects($this->once())->method('mapToObject')->with($objectData[0])->will($this->returnValue($object));
 
         $dataMapper->mapToObjects($objectData);
@@ -51,7 +51,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objectData = array('identifier' => '1234');
         $object = new \stdClass();
 
-        $mockSession = $this->getMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
         $mockSession->expects($this->once())->method('hasIdentifier')->with('1234')->will($this->returnValue(true));
         $mockSession->expects($this->once())->method('getObjectByIdentifier')->with('1234')->will($this->returnValue($object));
 
@@ -69,15 +69,15 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentityMapToObjects()
     {
         $mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), true));
-        $mockEntity = $this->getMock(\TYPO3\Flow\Aop\ProxyInterface::class, array('Flow_Aop_Proxy_invokeJoinPoint', '__wakeup'), array(), $mockEntityClassName);
+        $mockEntity = $this->createMock(\TYPO3\Flow\Aop\ProxyInterface::class, array('Flow_Aop_Proxy_invokeJoinPoint', '__wakeup'), array(), $mockEntityClassName);
 
         $objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
 
-        $mockClassSchema = $this->getMock(\TYPO3\Flow\Reflection\ClassSchema::class, array(), array(), '', false);
+        $mockClassSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
         $mockClassSchema->expects($this->any())->method('getModelType')->will($this->returnValue(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY));
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class, array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
-        $mockSession = $this->getMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
         $mockSession->expects($this->once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
         $mockSession->expects($this->once())->method('registerObject')->with($mockEntity, '1234');
 
@@ -99,7 +99,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => '1234',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array(
                 'firstProperty' => array(
                     'type' => 'string',
@@ -124,13 +124,13 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
             )
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
         $classSchema->addProperty('firstProperty', 'string');
         $classSchema->addProperty('secondProperty', 'integer');
         $classSchema->addProperty('thirdProperty', 'float');
         $classSchema->addProperty('fourthProperty', 'boolean');
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
@@ -156,13 +156,13 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array()
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
@@ -183,7 +183,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => '1234',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array(
                 'firstProperty' => array(
                     'type' => 'array',
@@ -201,20 +201,20 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'value' => 'theUnixtime'
                 ),
                 'fourthProperty' => array(
-                    'type' => 'TYPO3\Some\Domain\Model',
+                    'type' => \TYPO3\Some\Domain\Model::class,
                     'multivalue' => false,
                     'value' => array('identifier' => 'theMappedObjectIdentifier')
                 )
             )
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
         $classSchema->addProperty('firstProperty', 'array');
         $classSchema->addProperty('secondProperty', 'SplObjectStorage');
         $classSchema->addProperty('thirdProperty', 'DateTime');
-        $classSchema->addProperty('fourthProperty', 'TYPO3\Some\Domain\Model');
+        $classSchema->addProperty('fourthProperty', \TYPO3\Some\Domain\Model::class);
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('mapDateTime', 'mapArray', 'mapSplObjectStorage', 'mapToObject'));
@@ -238,7 +238,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => '1234',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array(
                 'secondProperty' => array(
                     'type' => 'string',
@@ -258,12 +258,12 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
             )
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
         $classSchema->addProperty('firstProperty', 'string');
         $classSchema->addProperty('secondProperty', 'string');
         $classSchema->addProperty('thirdProperty', 'string');
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
@@ -289,7 +289,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => '1234',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array(
                 'firstProperty' => array(
                     'type' => 'string',
@@ -309,11 +309,11 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
             )
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
         $classSchema->addProperty('firstProperty', 'string');
         $classSchema->addProperty('thirdProperty', 'string');
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
@@ -337,14 +337,14 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $objectData = array(
             'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-            'classname' => 'TYPO3\Post',
+            'classname' => \TYPO3\Post::class,
             'properties' => array(),
             'metadata' => array('My_Metadata' => 'Test')
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
 
-        $mockReflectionService = $this->getMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('dummy'));
@@ -364,7 +364,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
             array('value' => array('mappedObject2'))
         );
 
-        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema('TYPO3\Post');
+        $classSchema = new \TYPO3\Flow\Reflection\ClassSchema(\TYPO3\Post::class);
         $classSchema->addProperty('firstProperty', 'SplObjectStorage');
 
         $dataMapper = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\DataMapper::class, array('mapToObject'));

@@ -1,7 +1,7 @@
 {
     "name": "typo3/flow",
     "type": "typo3-flow-framework",
-    "description": "Flow",
+    "description": "Flow Application Framework",
     "homepage": "http://flow.typo3.org",
     "license": ["MIT"],
 
@@ -11,20 +11,32 @@
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
-        "ext-mbstring": "*",
         "ext-reflection": "*",
+
+        "neos/utility-lock": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-files": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/utility-opcodecache": "*",
+        "neos/utility-pdo": "*",
+        "neos/utility-schema": "*",
+        "neos/utility-unicode": "*",
+        "neos/error-messages": "*",
 
         "typo3/fluid": "*",
         "typo3/eel": "*",
 
         "ramsey/uuid": "^3.0.0",
+        "paragonie/random_compat": "^1.0",
 
-        "doctrine/orm": "2.4.*",
-        "doctrine/migrations": "1.0.*",
+        "doctrine/orm": "~2.4.0",
+        "doctrine/migrations": "~1.3.0",
+        "doctrine/dbal": "~2.5.0",
 
-        "symfony/yaml": "2.5.*",
-        "symfony/dom-crawler": "2.5.*",
-        "symfony/console": "2.*",
+        "symfony/yaml": "~2.5.0",
+        "symfony/dom-crawler": "~2.5.0",
+        "symfony/console": "~2.0",
 
         "neos/composer-plugin": "^1.0.1"
     },
@@ -37,6 +49,9 @@
     "autoload": {
         "psr-0": {
             "TYPO3\\Flow": "Classes"
+        },
+        "psr-4": {
+            "TYPO3\\Flow\\Core\\Migrations\\": "Scripts/Migrations"
         }
     }
 }

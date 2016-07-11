@@ -2,7 +2,7 @@
 Aspect-Oriented Programming
 ===========================
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@neos.io>
 
 Aspect-Oriented Programming (AOP) is a programming paradigm which complements
 Object-Oriented Programming (OOP) by separating *concerns* of a software
@@ -23,7 +23,7 @@ implementing any security themselves.
 
 Aspect-Oriented Programming has been around in other programming languages for
 quite some time now and sophisticated solutions taking advantage of AOP exist.
-TYPO3 Flow's AOP framework allows you to use of the most popular AOP techniques in
+Flow's AOP framework allows you to use of the most popular AOP techniques in
 your own PHP application. In contrast to other approaches it doesn't require any
 special PHP extensions or manual compile steps – and it's a breeze to configure.
 
@@ -140,13 +140,13 @@ developers. Here they are:
 
 Aspect
 	An aspect is the part of the application which cross-cuts the core concerns
-	of multiple objects. In TYPO3 Flow, aspects are implemented as regular classes
+	of multiple objects. In Flow, aspects are implemented as regular classes
 	which are tagged by the ``@aspect`` annotation. The methods of an aspect class
 	represent advices, the properties may be used for introductions.
 
 Join point
 	A join point is a point in the flow of a program. Examples are the execution
-	of a method or the throw of an exception. In TYPO3 Flow, join points are
+	of a method or the throw of an exception. In Flow, join points are
 	represented by the ``TYPO3\Flow\AOP\JoinPoint`` object which contains more
 	information about the circumstances like name of the called method, the
 	passed arguments or type of the exception thrown. A join point is an event
@@ -161,7 +161,7 @@ Advice
 Pointcut
 	The pointcut defines a set of join points which need to be matched before
 	running an advice. The pointcut is configured by a *pointcut expression*
-	which defines when and where an advice should be executed. TYPO3 Flow uses
+	which defines when and where an advice should be executed. Flow uses
 	methods in an aspect class as anchors for pointcut declarations.
 
 Pointcut expression
@@ -219,21 +219,21 @@ Advice chain
 	returns the result to the initiator of the method call. Any around advice
 	may decide to proceed or break the chain and modify results if necessary.
 
-TYPO3 Flow AOP concepts
------------------------
+Flow AOP concepts
+-----------------
 
 Aspect-Oriented Programming was, of course, not invented by us [#]_. Since the
 initial release of the concept, dozens of implementations for various
 programming languages evolved. Although a few PHP-based AOP frameworks do exist,
-they followed concepts which did not match the goals of TYPO3 Flow (to provide a
-powerful, yet developer-friendly solution) when the development of TYPO3 5.0
+they followed concepts which did not match the goals of Flow (to provide a
+powerful, yet developer-friendly solution) when the development of Neos
 began. We therefore decided to create a sophisticated but pragmatic
 implementation which adopts the concepts of AOP but takes PHP's specialties and
-the requirements of typical TYPO3 Flow applications into account. In a few cases this
+the requirements of typical Flow applications into account. In a few cases this
 even lead to new features or simplifications because they were easier to
 implement in PHP compared to Java.
 
-TYPO3 Flow pragmatically implements a reduced subset of AOP, which satisfies most
+Flow pragmatically implements a reduced subset of AOP, which satisfies most
 needs of web applications. The join point model allows for intercepting method
 executions but provides no special support for advising field access [#]_.
 Pointcut expressions are based on well-known regular expressions instead of
@@ -244,12 +244,12 @@ requirements should arise in the future.
 Implementation overview
 =======================
 
-TYPO3 Flow's AOP framework does not require a pre-processor or an aspect-aware PHP
+Flow's AOP framework does not require a pre-processor or an aspect-aware PHP
 interpreter to weave in advices. It is implemented and based on pure PHP and
 doesn't need any specific PHP extension. However, it does require the Object
 Manager to fulfill its task.
 
-TYPO3 Flow uses PHP's reflection capabilities to analyze declarations of aspects,
+Flow uses PHP's reflection capabilities to analyze declarations of aspects,
 pointcuts and advices and implements method interceptors as a dynamic proxy. In
 accordance to the GoF patterns [#]_, the proxy classes act as a placeholders for
 the target object. They are true subclasses of the original and override adviced
@@ -266,7 +266,7 @@ Aspects
 =======
 
 Aspects are abstract containers which accommodate pointcut-, introduction- and
-advice declarations. In most frameworks, including TYPO3 Flow, aspects are defined as
+advice declarations. In most frameworks, including Flow, aspects are defined as
 plain classes which are tagged (annotated) as an aspect. The following example
 shows the definition of a hypothetical ``FooSecurity`` aspect:
 
@@ -331,7 +331,7 @@ the pointcut matches and advices which refer to this pointcut become active.
 
 .. Note::
 	The AOP framework AspectJ provides a complete pointcut language with dozens
-	of pointcut types and expression constructs. TYPO3 Flow makes do with only a
+	of pointcut types and expression constructs. Flow makes do with only a
 	small subset of that language, which we think already suffice for even
 	complex enterprise applications. If you're interested in the original
 	feature set, it doesn't hurt throwing a glance at the AspectJ Programming
@@ -341,7 +341,7 @@ Pointcut designators
 --------------------
 
 A pointcut expression always consists of two parts: The poincut designator and
-its parameter(s). The following designators are supported by TYPO3 Flow:
+its parameter(s). The following designators are supported by Flow:
 
 method()
 ^^^^^^^^
@@ -384,7 +384,7 @@ Matches all methods except injectors in class ``Example\MyPackage\MyObject``:
 .. Note::
 	In other AOP frameworks, including AspectJ™ and Spring™, the method
 	designator does not exist. They rather use a more fine grained approach
-	with designators such as execution, call and cflow. As TYPO3 Flow only supports
+	with designators such as execution, call and cflow. As Flow only supports
 	matching to method execution join points anyway, we decided to simplify
 	things by allowing only a more general method designator.
 
@@ -475,7 +475,7 @@ arguments of the annotation cannot be specified:
 
 -----
 
-Matches all classes which are tagged with TYPO3 Flow's ``Entity`` annotation:
+Matches all classes which are tagged with Flow's ``Entity`` annotation:
 
 ``classAnnotatedWith(TYPO3\Flow\Annotations\Entity)``
 
@@ -511,7 +511,7 @@ setting()
 The setting() designator matches if the given configuration option is set to
 TRUE, or if an optional given comparison value equals to its configured value.
 This is helpful to make advices configurable and switch them off in a
-specific TYPO3 Flow context or just for testing. You can use this designator
+specific Flow context or just for testing. You can use this designator
 as follows:
 
 *Example: setting() pointcut designator*
@@ -581,7 +581,7 @@ Matches if at least one of the entries in the first array exists in the second o
 
 .. note::
 	It is possible to register arbitrary singletons to be available as global
-	objects with the TYPO3 Flow configuration setting ``TYPO3.Flow.aop.globalObjects``.
+	objects with the Flow configuration setting ``TYPO3.Flow.aop.globalObjects``.
 
 filter()
 ^^^^^^^^
@@ -782,7 +782,7 @@ Implementing advice
 The final step after declaring aspects, pointcuts and advices is to fill the
 advices with life. The implementation of an advice is located in the same
 method it has been declared. In that regard, an aspect class behaves like any
-other object in TYPO3 Flow – you therefore can take advantage of dependency
+other object in Flow – you therefore can take advantage of dependency
 injection in case you need other objects to fulfill the task of your advice.
 
 Accessing join points

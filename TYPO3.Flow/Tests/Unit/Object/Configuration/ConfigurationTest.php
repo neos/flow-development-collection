@@ -35,7 +35,7 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks if setProperties accepts only valid values
      *
      * @test
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setPropertiesOnlyAcceptsValidValues()
     {
@@ -67,7 +67,7 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks if setArguments accepts only valid values
      *
      * @test
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setArgumentsOnlyAcceptsValidValues()
     {

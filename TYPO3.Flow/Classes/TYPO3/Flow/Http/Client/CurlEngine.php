@@ -80,7 +80,7 @@ class CurlEngine implements RequestEngineInterface
         }
 
         switch ($request->getMethod()) {
-            case 'GET' :
+            case 'GET':
                 if ($request->getContent()) {
                     // workaround because else the request would implicitly fall into POST:
                     curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'GET');
@@ -89,14 +89,14 @@ class CurlEngine implements RequestEngineInterface
                     }
                 }
             break;
-            case 'POST' :
+            case 'POST':
                 curl_setopt($curlHandle, CURLOPT_POST, true);
                 if (!is_resource($content)) {
                     $body = $content !== '' ? $content : http_build_query($request->getArguments());
                     curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
                 }
             break;
-            case 'PUT' :
+            case 'PUT':
                 curl_setopt($curlHandle, CURLOPT_PUT, true);
                 if (!is_resource($content) && $content !== '') {
                     $inFileHandler = fopen('php://temp', 'r+');

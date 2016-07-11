@@ -11,15 +11,8 @@ namespace TYPO3\Flow\Core;
  * source code.
  */
 
-// Those are needed before the autoloader is active
-require_once(__DIR__ . '/ApplicationContext.php');
-require_once(__DIR__ . '/../Exception.php');
-require_once(__DIR__ . '/../Utility/Files.php');
-require_once(__DIR__ . '/../Package/PackageInterface.php');
-require_once(__DIR__ . '/../Package/Package.php');
-require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
-require_once(__DIR__ . '/../Package/PackageManager.php');
-require_once(__DIR__ . '/Booting/Scripts.php');
+// Load the composer autoloader first
+require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
@@ -55,7 +48,7 @@ class Bootstrap
     /**
      * @var array
      */
-    protected $requestHandlers;
+    protected $requestHandlers = array();
 
     /**
      * @var string
@@ -91,11 +84,11 @@ class Bootstrap
      */
     public function __construct($context)
     {
-        $this->defineConstants();
-        $this->ensureRequiredEnvironment();
-
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
+
+        $this->defineConstants();
+        $this->ensureRequiredEnvironment();
     }
 
     /**
@@ -447,6 +440,9 @@ class Bootstrap
                 $suitableRequestHandlers[$priority] = $requestHandler;
             }
         }
+        if (empty($suitableRequestHandlers)) {
+            throw new FlowException('No suitable request handler could be found for the current request. This is most likely a setup-problem, so please check your package.json and/or try removing Configuration/PackageStates.php', 1464882543);
+        }
         ksort($suitableRequestHandlers);
         return array_pop($suitableRequestHandlers);
     }
@@ -552,6 +548,12 @@ class Bootstrap
         define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
+            $temporaryDirectoryPath = Files::concatenatePaths(array(FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context))) . '/';
+            define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
+        }
+
         define('FLOW_VERSION_BRANCH', 'dev-master');
     }
 
@@ -602,6 +604,15 @@ class Bootstrap
                 echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
                 exit(1);
             }
+        }
+        if (!is_dir(FLOW_PATH_TEMPORARY) && !is_link(FLOW_PATH_TEMPORARY)) {
+            // We can't use Files::createDirectoryRecursively() because mkdir() without shutup operator will lead to a PHP warning
+            $oldMask = umask(000);
+            if (!@mkdir(FLOW_PATH_TEMPORARY, 0777, true)) {
+                echo('Flow could not create the directory "' . FLOW_PATH_TEMPORARY . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1441354578)');
+                exit(1);
+            }
+            umask($oldMask);
         }
     }
 

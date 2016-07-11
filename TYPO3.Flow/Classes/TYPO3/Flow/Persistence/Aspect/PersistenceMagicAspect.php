@@ -106,11 +106,11 @@ class PersistenceMagicAspect
         $proxyClassName = get_class($proxy);
         $hashSourceParts = array();
 
-        $properties = $this->reflectionService->getClassPropertyNames($proxyClassName);
-        foreach ($properties as $property) {
+        $classSchema = $this->reflectionService->getClassSchema($proxyClassName);
+        foreach ($classSchema->getProperties() as $property => $propertySchema) {
             // Currently, private properties are transient. Should this behaviour change, they need to be included
             // in the value hash generation
-            if ($this->reflectionService->isPropertyAnnotatedWith($proxyClassName, $property, \TYPO3\Flow\Annotations\Transient::class)
+            if ($classSchema->isPropertyTransient($property)
                 || $this->reflectionService->isPropertyPrivate($proxyClassName, $property)) {
                 continue;
             }

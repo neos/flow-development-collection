@@ -33,6 +33,11 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
     protected $mockAccountRepository;
 
     /**
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $mockPersistenceManager;
+
+    /**
      * @var \TYPO3\Flow\Security\Authentication\Token\UsernamePassword
      */
     protected $mockToken;
@@ -50,12 +55,13 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
 
     public function setUp()
     {
-        $this->mockHashService = $this->getMock(\TYPO3\Flow\Security\Cryptography\HashService::class);
-        $this->mockAccount = $this->getMock(\TYPO3\Flow\Security\Account::class, array(), array(), '', false);
-        $this->mockAccountRepository = $this->getMock(\TYPO3\Flow\Security\AccountRepository::class, array(), array(), '', false);
-        $this->mockToken = $this->getMock(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, array(), array(), '', false);
+        $this->mockHashService = $this->createMock(\TYPO3\Flow\Security\Cryptography\HashService::class);
+        $this->mockAccount = $this->getMockBuilder(\TYPO3\Flow\Security\Account::class)->disableOriginalConstructor()->getMock();
+        $this->mockAccountRepository = $this->getMockBuilder(\TYPO3\Flow\Security\AccountRepository::class)->disableOriginalConstructor()->getMock();
+        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockToken = $this->getMockBuilder(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockSecurityContext = $this->getMock(\TYPO3\Flow\Security\Context::class);
+        $this->mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will($this->returnCallback(function ($callback) {
             return $callback->__invoke();
         }));
@@ -63,6 +69,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
         $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), array('myProvider', array()));
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
+        $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
     }
 
@@ -117,7 +124,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
-        $someNiceToken = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $someNiceToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
 
         $usernamePasswordProvider = new \TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
 
@@ -129,9 +136,9 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
      */
     public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet()
     {
-        $mockToken1 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockToken1 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
         $mockToken1->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('myProvider'));
-        $mockToken2 = $this->getMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockToken2 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
         $usernamePasswordProvider = new \TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());

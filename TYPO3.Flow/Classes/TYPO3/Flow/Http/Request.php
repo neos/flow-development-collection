@@ -148,7 +148,7 @@ class Request extends AbstractMessage
             $defaultServerEnvironment['HTTP_CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         }
 
-        $query = $uri->getQuery();
+        $query = (string)$uri->getQuery();
         $fragment = $uri->getFragment();
         $overrideValues = array(
             'REQUEST_URI' => $uri->getPath() . ($query !== '' ? '?' . $query : '') . ($fragment !== '' ? '#' . $fragment : ''),
@@ -170,7 +170,9 @@ class Request extends AbstractMessage
      */
     public static function createFromEnvironment()
     {
-        return new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request = new static($_GET, $_POST, $_FILES, $_SERVER);
+        $request->setContent(null);
+        return $request;
     }
 
     /**
@@ -632,8 +634,8 @@ class Request extends AbstractMessage
     {
         $acceptedTypes = array_map(
             function ($acceptType) {
-                    $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
-                    return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
+                $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
+                return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
             }, preg_split('/,\s*/', $rawValues)
         );
 

@@ -19,6 +19,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
  */
 class ResourceTypeConverterTest extends UnitTestCase
 {
+
     /**
      * @var \TYPO3\Flow\Resource\ResourceTypeConverter
      */
@@ -38,7 +39,7 @@ class ResourceTypeConverterTest extends UnitTestCase
     {
         $this->resourceTypeConverter = $this->getAccessibleMock(\TYPO3\Flow\Resource\ResourceTypeConverter::class, array('dummy'));
 
-        $this->mockPersistenceManager = $this->getMockBuilder(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class)->getMock();
+        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->resourceTypeConverter->_set('persistenceManager', $this->mockPersistenceManager);
 
         $this->mockResourceManager = $this->getMockBuilder(\TYPO3\Flow\Resource\ResourceManager::class)->getMock();
@@ -118,7 +119,7 @@ class ResourceTypeConverterTest extends UnitTestCase
         $source = array(
             'error' => \UPLOAD_ERR_NO_FILE,
             'originallySubmittedResource' => array(
-                    '__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
+                '__identity' => '79ecda60-1a27-69ca-17bf-a5d9e80e6c39'
             )
         );
 
@@ -152,13 +153,12 @@ class ResourceTypeConverterTest extends UnitTestCase
             'error' => \UPLOAD_ERR_CANT_WRITE
         );
 
-        $mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $mockSystemLogger->expects($this->once())->method('log');
         $this->resourceTypeConverter->_set('systemLogger', $mockSystemLogger);
 
         $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
     }
-
 
     /**
      * @test
@@ -181,11 +181,13 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
+        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+
         $source = array(
             'tmp_name' => 'SomeFilename',
             'error' => \UPLOAD_ERR_OK
         );
-        $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->returnValue(false));
+        $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->throwException(new \TYPO3\Flow\Resource\Exception()));
 
         $actualResult = $this->resourceTypeConverter->convertFrom($source, \TYPO3\Flow\Resource\Resource::class);
         $this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $actualResult);

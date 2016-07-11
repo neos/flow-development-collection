@@ -33,8 +33,8 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->mockConfigurationBuilder = $this->getMock(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class);
-        $this->mockConfiguration = $this->getMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class);
+        $this->mockConfigurationBuilder = $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder::class);
+        $this->mockConfiguration = $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class);
     }
 
     /**
@@ -92,7 +92,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function getMockTypeConverter($name = '', $canConvertFrom = true, array $properties = array(), $typeOfSubObject = '')
     {
-        $mockTypeConverter = $this->getMock(\TYPO3\Flow\Property\TypeConverterInterface::class);
+        $mockTypeConverter = $this->createMock(\TYPO3\Flow\Property\TypeConverterInterface::class);
         $mockTypeConverter->_name = $name;
         $mockTypeConverter->expects($this->any())->method('canConvertFrom')->will($this->returnValue($canConvertFrom));
         $mockTypeConverter->expects($this->any())->method('convertFrom')->will($this->returnValue($name));
@@ -326,9 +326,6 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function convertShouldAskConfigurationBuilderForDefaultConfiguration()
     {
         $propertyMapper = $this->getAccessibleMock(\TYPO3\Flow\Property\PropertyMapper::class, array('dummy'));
-        $this->inject($propertyMapper, 'configurationBuilder', $this->mockConfigurationBuilder);
-
-        $this->mockConfigurationBuilder->expects($this->once())->method('build')->will($this->returnValue($this->mockConfiguration));
 
         $converter = $this->getMockTypeConverter('string2string');
         $typeConverters = array(

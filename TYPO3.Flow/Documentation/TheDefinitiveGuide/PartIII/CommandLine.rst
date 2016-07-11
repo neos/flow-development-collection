@@ -3,10 +3,10 @@
 Command Line
 ============
 
-TYPO3 Flow features a clean and powerful interface for the command line which allows
+Flow features a clean and powerful interface for the command line which allows
 for automated and manual execution of low-level or application-specific tasks.
 The command line support is available on all platforms generally supported by
-TYPO3 Flow.
+Flow.
 
 This chapter describes how to use the help system, how to run existing
 commands and how to implement your own custom commands.
@@ -14,13 +14,13 @@ commands and how to implement your own custom commands.
 Wrapper Script
 --------------
 
-TYPO3 Flow uses two platform specific wrapper scripts for running the actual
+Flow uses two platform specific wrapper scripts for running the actual
 commands:
 
 * *flow.bat* is used on Windows machines
 * *flow* is used on all other platforms
 
-Both files are located and must be run from the main directory of the TYPO3 Flow
+Both files are located and must be run from the main directory of the Flow
 installation. The command and further options are passed as arguments to the
 respective wrapper script.
 
@@ -42,19 +42,19 @@ the current version number and the current context:
 .. code-block:: none
 
 	$ ./flow
-	TYPO3 Flow 2.x.x ("Development" context)
+	Flow 2.x.x ("Development" context)
 	usage: ./flow <command identifier>
 
 	See "./flow help" for a list of all available commands.
 
-In addition to the packages delivered with the TYPO3 Flow core, third-party packages
+In addition to the packages delivered with the Flow core, third-party packages
 may provide any number of custom commands. A list of all currently available
 commands can be obtained with the *help* command:
 
 .. code-block:: none
 
 	$ ./flow help
-	TYPO3 Flow 2.x.x ("Development" context)
+	Flow 2.x.x ("Development" context)
 	usage: ./flow <command identifier>
 
 	The following commands are currently available:
@@ -109,7 +109,7 @@ respective command identifier:
 	                       "TYPO3.Flow
 
 	DESCRIPTION:
-	  The command shows the configuration of the current context as it is used by TYPO3 Flow itself.
+	  The command shows the configuration of the current context as it is used by Flow itself.
 	  You can specify the configuration type and path if you want to show parts of the configuration.
 
 	  ./flow configuration:show --type Settings --path TYPO3.Flow.persistence
@@ -276,7 +276,8 @@ is rendered by using the information provided by the method code and DocComment:
 * the type specified in the @param annotations is used for validation and to
   determine if the argument is a flag (boolean) or not
 * the parameters declared in the method set the parameter names and tell if they
-  are arguments (mandatory) or options (optional)
+  are arguments (mandatory) or options (optional). All arguments must be placed in front
+  of the options.
 
 The above example will result in a help screen similar to this:
 
@@ -304,7 +305,7 @@ Handling Exceeding Arguments
 
 Any arguments which are passed additionally to the mandatory arguments
 are considered to be *exceeding arguments*. These arguments are not
-parsed nor validated by TYPO3 Flow.
+parsed nor validated by Flow.
 
 A command may use exceeding arguments in order to process an
 variable amount of parameters. The exceeding arguments can be retrieved
@@ -426,12 +427,12 @@ The respective styles are only rendered correctly if the console
 supports ANSI styles. You can check ANSI support by calling the
 response's *hasColorSupport()* method. Contrary to what that method
 name suggests, at the time of this writing colored output is not
-directly supported by TYPO3 Flow. However, such a feature is planned
+directly supported by Flow. However, such a feature is planned
 for the future.
 
 .. tip::
 
-	The tags supported by TYPO3 Flow can also be used to style the
+	The tags supported by Flow can also be used to style the
 	description of a command in its DocComment.
 
 .. _Runtime and Compile Time:
@@ -517,7 +518,7 @@ Here's an example showing of some of those functions:
 Runtime and Compile Time
 ------------------------
 
-The majority of the commands are run at point when TYPO3 Flow is fully
+The majority of the commands are run at point when Flow is fully
 initialized and all of the framework features are available. However,
 for certain low-level operations it is desirable to execute code
 much earlier in the boot process – during *compile time*. Commands
@@ -565,7 +566,7 @@ in the *boot()* method of your package's *Package* class:
 	}
 
 For more details you are encouraged to study the implementation of
-TYPO3 Flow's own compile time commands.
+Flow's own compile time commands.
 
 Executing Sub Commands
 ----------------------
@@ -584,33 +585,52 @@ class and can be used as follows:
 
 .. code-block:: php
 
+	use TYPO3\Flow\Annotations as Flow;
+	use TYPO3\Flow\Core\Booting\Scripts;
+
 	/**
-	 * Some command
-	 *
-	 * This example command runs another command
-	 *
-	 * @return string
+	 * @Flow\InjectConfiguration(package="TYPO3.Flow")
+	 * @var array
 	 */
-	public function runCommand($packageKey) {
-		\TYPO3\Flow\Core\Booting\Scripts::executeCommand('acme.foo:bar:baz', $this->settings);
+	protected $flowSettings;
+
+	public function runCommand() {
+		$success = Scripts::executeCommand('acme.foo:bar:baz', $this->flowSettings);
 	}
+
+Sometimes it can be useful to execute commands *asynchronously*, for example when triggering time-consuming
+tasks where the result is not instantly required (like sending confirmation emails, converting files, ...).
+This can be done with the ``Scripts::executeCommandAsync()*`` method:
+
+.. code-block:: php
+
+	public function runCommand() {
+		$commandArguments = ['some-argument' => 'some value'];
+		Scripts::executeCommandAsync('acme.foo:bar:baz', $this->flowSettings, $commandArguments);
+	}
+
+.. Note::
+	Because asynchronous commands are invoked in a separate thread, potential exceptions or failures will
+	*not* be reported. While this can be desired, it might require additional monitoring on the command-side
+	(e.g. a failure log).
 
 Quitting and Exit Code
 ----------------------
 
 Commands should not use PHP's *exit()* or *die()* method but rather let
-TYPO3 Flow's bootstrap perform a clean shutdown of the framework. The base
+Flow's bootstrap perform a clean shutdown of the framework. The base
 *CommandController* provides two API methods for initiating a shutdown
 and optionally passing an exit code to the console:
 
-* *quit($exitCode)* stops execution right after this command, performs a clean shutdown of TYPO3 Flow.
-* *sendAndExit($exitCode)* sends any output buffered in the *Response* object and exits immediately, without shutting down TYPO3 Flow.
+* *quit($exitCode)* stops execution right after this command, performs a clean shutdown of Flow.
+* *sendAndExit($exitCode)* sends any output buffered in the *Response* object and exits immediately,
+  without shutting down Flow.
 
-The *quit()* method is the recommended way to exit TYPO3 Flow. The other
-command, *sendAndExit()*, is reserved for special cases where TYPO3 Flow
+The *quit()* method is the recommended way to exit Flow. The other
+command, *sendAndExit()*, is reserved for special cases where Flow
 is not stable enough to continue even with the shutdown procedure. An
 example for such a case is the *typo3.flow:cache:flush* command which
 removes all cache entries which requires an immediate exit because
-TYPO3 Flow relies on caches being intact.
+Flow relies on caches being intact.
 
 .. _msysGit: http://msysgit.github.io

@@ -32,7 +32,7 @@ class SessionObjectMethodsPointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestC
         $availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockCompileTimeObjectManager = $this->getMock(\TYPO3\Flow\Object\CompileTimeObjectManager::class, array(), array(), '', false);
+        $mockCompileTimeObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\CompileTimeObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockCompileTimeObjectManager->expects($this->any())->method('getClassNamesByScope')->with(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION)->will($this->returnValue(array('TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass')));
 
         $sessionObjectMethodsPointcutFilter = new \TYPO3\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter();

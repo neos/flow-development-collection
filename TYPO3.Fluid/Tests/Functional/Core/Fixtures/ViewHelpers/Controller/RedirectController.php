@@ -46,7 +46,7 @@ class RedirectController extends AbstractWidgetController
      */
     public function redirectTestAction($delay = 0, $parameter = null, $otherController = false)
     {
-        $this->addFlashMessage('Redirection triggered!');
+        $this->addFlashMessage('Redirect triggered!');
         $arguments = array();
         if ($parameter !== null) {
             $arguments['parameter'] = $parameter . ', via redirect';

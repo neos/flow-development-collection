@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="no">
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="no" state="translated">Bare vanlige tegn (a til å, omlyder, m.fl.) og tallen er tillatt.</target></trans-unit>
+			<target xml:lang="no" state="translated">Bare vanlige tegn (a til å, omlyder, m. fl.) og tall er tillatt.</target><alt-trans><target xml:lang="no">Bare vanlige tegn (a til å, omlyder, m.fl.) og tallen er tillatt.</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -17,7 +17,7 @@
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="no" state="translated">Det angitte emnet kan ikke telles</target></trans-unit>
+			<target xml:lang="no" state="translated">Det angitte emnet er ikke tellbart</target><alt-trans><target xml:lang="no">Det angitte emnet kan ikke telles</target></alt-trans></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
 			<target xml:lang="no" state="translated">Antallet må være mellom {0,number} og {1,number}</target></trans-unit>
@@ -117,22 +117,22 @@
 			<target xml:lang="no" state="translated">Lengden på denne teksten må være mellom {0,number} og {1,number}</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
-          <source/>
-          <target xml:lang="no" state="translated"/>
+          <source>This field must contain at least {0,number} character</source>
+          <target xml:lang="no" state="needs-translation">This field must contain at least {0,number} character</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
-          <source/>
-          <target xml:lang="no" state="translated"/>
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="no" state="needs-translation">This field must contain at least {0,number} characters</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
-          <source/>
-          <target xml:lang="no" state="translated"/>
+          <source>This text may not exceed {0,number} character</source>
+          <target xml:lang="no" state="needs-translation">This text may not exceed {0,number} character</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
-          <source/>
-          <target xml:lang="no" state="translated"/>
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="no" state="needs-translation">This text may not exceed {0,number} characters</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
@@ -142,7 +142,7 @@
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="no" state="translated">Teksten må være uten XML-koder</target></trans-unit>
+			<target xml:lang="no" state="translated">Teksten må være uten XML-tagger</target><alt-trans><target xml:lang="no">Teksten må være uten XML-koder</target></alt-trans></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>

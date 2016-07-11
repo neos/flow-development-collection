@@ -128,38 +128,43 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @param callable $callback Function called after each iteration
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
-    public function getObjects()
+    public function getObjects(callable $callback = null)
     {
-        $objects = array();
         foreach ($this->resourceManager->getCollectionsByStorage($this) as $collection) {
-            $objects = array_merge($objects, $this->getObjectsByCollection($collection));
+            yield $this->getObjectsByCollection($collection, $callback);
         }
-        return $objects;
     }
 
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
+     * @param callable $callback Function called after each iteration
      * @param CollectionInterface $collection
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
-    public function getObjectsByCollection(CollectionInterface $collection)
+    public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null)
     {
-        $objects = array();
-        $that = $this;
-        foreach ($this->resourceRepository->findByCollectionName($collection->getName()) as $resource) {
+        $iterator = $this->resourceRepository->findByCollectionNameIterator($collection->getName());
+        $iteration = 0;
+        foreach ($this->resourceRepository->iterate($iterator, $callback) as $resource) {
             /** @var \TYPO3\Flow\Resource\Resource $resource */
             $object = new Object();
             $object->setFilename($resource->getFilename());
             $object->setSha1($resource->getSha1());
             $object->setMd5($resource->getMd5());
             $object->setFileSize($resource->getFileSize());
-            $object->setStream(function () use ($that, $resource) { return $that->getStreamByResource($resource); });
-            $objects[] = $object;
+            $object->setStream(function () use ($resource) {
+                return $this->getStreamByResource($resource);
+            });
+            yield $object;
+            if (is_callable($callback)) {
+                call_user_func($callback, $iteration, $object);
+            }
+            $iteration++;
         }
-        return $objects;
     }
 
     /**

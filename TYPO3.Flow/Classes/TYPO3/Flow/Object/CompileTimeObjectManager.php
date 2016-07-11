@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Object;
  * source code.
  */
 
+use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty as Property;
 use Doctrine\ORM\Mapping as ORM;
@@ -206,17 +207,20 @@ class CompileTimeObjectManager extends ObjectManager
         $availableClassNames = array('' => array('DateTime'));
         /** @var \TYPO3\Flow\Package\Package $package */
         foreach ($packages as $packageKey => $package) {
-            if ($package->isObjectManagementEnabled() && (strpos($package->getComposerManifest('type'), 'typo3-flow') === 0 || isset($includeClassesConfiguration[$packageKey]))) {
-                $classFiles = $package->getClassFiles();
-                if (count($classFiles) > 0) {
-                    if (isset($this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses'] === true) {
-                        $classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
+            if ($package->isObjectManagementEnabled() && (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey]))) {
+                foreach ($package->getClassFiles() as $fullClassName => $path) {
+                    if (substr($fullClassName, -9, 9) !== 'Exception') {
+                        $availableClassNames[$packageKey][] = $fullClassName;
                     }
-                    foreach (array_keys($classFiles) as $fullClassName) {
+                }
+                if (isset($this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses'] === true) {
+                    foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
                         if (substr($fullClassName, -9, 9) !== 'Exception') {
                             $availableClassNames[$packageKey][] = $fullClassName;
                         }
                     }
+                }
+                if (isset($availableClassNames[$packageKey]) && is_array($availableClassNames[$packageKey])) {
                     $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
                 }
             }
@@ -456,5 +460,17 @@ class CompileTimeObjectManager extends ObjectManager
 
         array_pop($this->objectNameBuildStack);
         return $object;
+    }
+
+    /**
+     * Shuts down this Object Container by calling the shutdown methods of all
+     * object instances which were configured to be shut down.
+     *
+     * @return void
+     */
+    public function shutdown()
+    {
+        $this->callShutdownMethods($this->shutdownObjects);
+        $this->callShutdownMethods($this->internalShutdownObjects);
     }
 }

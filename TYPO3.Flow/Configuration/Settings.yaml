@@ -36,8 +36,12 @@ TYPO3:
       context: ''
 
       # Key of the "main" package of the application. This package's meta data is used for displaying the application
-      # name, version etc. in the ./flow command line help and where else needed.
+      # version and possibly other metadata in the X-Flow-Powered HTTP header, ./flow command line help and where else needed.
       applicationPackageKey: 'TYPO3.Flow'
+
+      # Human-readable name of the "main" package of the application. This name is displayed in the X-Flow-Powered
+      # HTTP header, in the ./flow command line help and where else needed.
+      applicationName: 'Flow'
 
       # Path and filename of the PHP binary
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
@@ -124,7 +128,30 @@ TYPO3:
           '.+Repository$': TRUE
           'PHPUnit_Framework_MockObject_InvocationMocker': TRUE
 
+    mvc:
+      # Defines routes that should be included after existing routes defined in the main Routes.yaml (if any)
+      # Note: This only allows to include existing Routes.yaml files from other packages, you can't adjust the routes via Settings.
+      #
+      # Syntax:
+      # 'Some.Package': TRUE
+      # 'SomeOther.Package':
+      #   position: 'after Some.Package'
+      #
+      routes: []
+
     http:
+
+      # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
+      #
+      # The value can be one of:
+      #
+      # - "Off" (no application token header is sent)
+      # - "ApplicationName" (the application name only, determined via the TYPO3.Flow.core.applicationKey setting)
+      # - "MajorVersion" (the application name + major version, e.g. "Neos/2"
+      # - "MinorVersion" (the application name + minor version, e.g. "Neos/2.1"
+      #
+      applicationToken: 'MinorVersion'
+
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
       # "Http\Request->getBaseUri()".
@@ -243,14 +270,16 @@ TYPO3:
       # Option for the PackageManager::Create to map the packagesPath by package type
       packagesPathByType:
         'typo3-flow-package': 'Application'
+        'neos-package': 'Application'
         'typo3-flow-framework': 'Framework'
+        'neos-framework': 'Framework'
 
     persistence:
 
       # Options for the default Doctrine persistence
       backendOptions:
         driver: 'pdo_mysql'
-        host: '127.0.0.1'
+        host: NULL
         dbname: NULL
         user: NULL
         password: NULL
@@ -278,6 +307,12 @@ TYPO3:
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
         eventListeners: []
+
+        # Use default filter expression to ignore other packages when generating migrations
+        # E.g. '/^acme_package/'
+        migrations:
+          generate:
+            defaultFilterExpression: ~
 
     reflection:
 
@@ -323,6 +358,22 @@ TYPO3:
 
     resource:
 
+      # A list of filename extensions that must not be uploaded through the resource
+      # management.
+      uploadExtensionBlacklist: &uploadExtensionBlacklist
+        'aspx': TRUE
+        'cgi': TRUE
+        'php3': TRUE
+        'php4': TRUE
+        'php5': TRUE
+        'phtml': TRUE
+        'php': TRUE
+        'pl': TRUE
+        'py': TRUE
+        'pyc': TRUE
+        'pyo': TRUE
+        'rb': TRUE
+
       # Definition of resource storages provided by the Flow core.
       # Storages are used for storing and retrieving resources.
       storages:
@@ -356,12 +407,17 @@ TYPO3:
 
       # Definition of the basic resource publication targets.
       targets:
+
         # Target for publishing static resources to the local web directory
         localWebDirectoryStaticResourcesTarget:
           target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
             baseUri: '_Resources/Static/Packages/'
+            extensionBlacklist: *uploadExtensionBlacklist
+
+            # If the symlinks should be relative instead of absolute
+            relativeSymlinks: false
 
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
@@ -369,9 +425,13 @@ TYPO3:
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Persistent/'
             baseUri: '_Resources/Persistent/'
+            extensionBlacklist: *uploadExtensionBlacklist
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: false
+
+            # If the symlinks should be relative instead of absolute
+            relativeSymlinks: false
 
     security:
 
@@ -520,8 +580,6 @@ TYPO3:
       # A specific name for the session, used in the session cookie.
       # The session name must be alphanumerical and must contain at least one
       # character – not only numbers.
-      #
-      # If left empty, the session name will be determined from the base URL.
       name: 'TYPO3_Flow_Session'
 
       # Configuration for handling of expired sessions
@@ -564,14 +622,6 @@ TYPO3:
         domain: NULL
 
     utility:
-      environment:
-
-        # Defines the base directory which Flow may use for storing different kinds
-        # of temporary files.
-        # The directory must be writable and Flow will automatically create a sub
-        # directory (named after the context) which will contain the actual temporary files.
-        temporaryDirectoryBase: '%FLOW_PATH_DATA%Temporary/'
-
       lockStrategyClassName: 'TYPO3\Flow\Utility\Lock\FlockLockStrategy'
 
   # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.

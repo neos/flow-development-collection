@@ -46,7 +46,7 @@ class TestEntity
 
     /**
      * @var Collection<ImportedSubEntity>
-     * @ORM\OneToMany(mappedBy="parentEntity")
+     * @ORM\OneToMany(mappedBy="parentEntity", cascade={"all"})
      */
     protected $subEntities;
 

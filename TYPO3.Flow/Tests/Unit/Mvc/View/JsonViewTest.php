@@ -40,9 +40,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->view = $this->getMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('loadConfigurationFromYamlFile'));
-        $this->controllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array(), array(), '', false);
-        $this->response = $this->getMock(\TYPO3\Flow\Http\Response::class, array());
+        $this->view = $this->getMockBuilder(\TYPO3\Flow\Mvc\View\JsonView::class)->setMethods(array('loadConfigurationFromYamlFile'))->getMock();
+        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->response = $this->createMock(\TYPO3\Flow\Http\Response::class);
         $this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
         $this->view->setControllerContext($this->controllerContext);
     }
@@ -103,7 +103,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase
         $output[] = array($object, $configuration, $expected, 'array of objects should be serialized');
 
         $properties = array('foo' => 'bar', 'prohibited' => 'xxx');
-        $nestedObject = $this->getMock(\Test::class . md5(uniqid(mt_rand(), true)), array('getName', 'getPath', 'getProperties', 'getOther'));
+        $nestedObject = $this->getMockBuilder('Test' . md5(uniqid(mt_rand(), true)))->setMethods(array('getName', 'getPath', 'getProperties', 'getOther'))->getMock();
         $nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
         $nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
         $nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
@@ -193,7 +193,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description)
     {
-        $persistenceManagerMock = $this->getMock(\TYPO3\Flow\Persistence\Generic\PersistenceManager::class, array('getIdentifierByObject'));
+        $persistenceManagerMock = $this->getMockBuilder(\TYPO3\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(array('getIdentifierByObject'))->getMock();
         $jsonView = $this->getAccessibleMock(\TYPO3\Flow\Mvc\View\JsonView::class, array('dummy'), array(), '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
@@ -433,7 +433,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderTransformsJsonSerializableValues()
     {
-        $value = $this->getMock(\JsonSerializable::class, array('jsonSerialize'));
+        $value = $this->getMockBuilder('JsonSerializable')->setMethods(array('jsonSerialize'))->getMock();
         $value->expects($this->any())->method('jsonSerialize')->will($this->returnValue(array('name' => 'Foo', 'age' => 42)));
 
         $this->view->assign('value', $value);

@@ -175,7 +175,7 @@ class Debugger
         $scope = '';
         $additionalAttributes = '';
 
-        if ($object instanceof \Doctrine\Common\Collections\Collection) {
+        if ($object instanceof \Doctrine\Common\Collections\Collection || $object instanceof \ArrayObject) {
             return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
         }
 
@@ -195,13 +195,13 @@ class Debugger
             $objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
             if ($objectName !== false) {
                 switch (self::$objectManager->getScope($objectName)) {
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE:
                         $scope = 'prototype';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON:
                         $scope = 'singleton';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION :
+                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION:
                         $scope = 'session';
                         break;
                 }
@@ -259,8 +259,8 @@ class Debugger
                     $dump .= self::renderObjectDump($value, 0, false, $plaintext, $ansiColors);
                 }
             } else {
-                $classReflection = new \ReflectionClass($className);
-                $properties = $classReflection->getProperties();
+                $objectReflection = new \ReflectionObject($object);
+                $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
                     if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
                         continue;

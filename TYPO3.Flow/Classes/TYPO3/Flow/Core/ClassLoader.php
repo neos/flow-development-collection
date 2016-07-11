@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Core;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Class Loader implementation which loads .php files found in the classes
@@ -26,12 +27,22 @@ class ClassLoader
     /**
      * @var string
      */
-    const MAPPING_TYPE_PSR0 = 'Psr0';
+    const MAPPING_TYPE_PSR0 = 'psr-0';
 
     /**
      * @var string
      */
-    const MAPPING_TYPE_PSR4 = 'Psr4';
+    const MAPPING_TYPE_PSR4 = 'psr-4';
+
+    /**
+     * @var string
+     */
+    const MAPPING_TYPE_CLASSMAP = 'classmap';
+
+    /**
+     * @var string
+     */
+    const MAPPING_TYPE_FILES = 'files';
 
     /**
      * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
@@ -80,13 +91,6 @@ class ClassLoader
     );
 
     /**
-     * Map of FQ classname to include path.
-     *
-     * @var array
-     */
-    protected $classMap;
-
-    /**
      * @var array
      */
     protected $fallbackClassPaths = array();
@@ -108,13 +112,18 @@ class ClassLoader
 
     /**
      * @param ApplicationContext $context
+     * @param array $defaultPackageEntries Adds default entries for packages that should be available for very early loading
      */
-    public function __construct(ApplicationContext $context = null)
+    public function __construct(ApplicationContext $context = null, $defaultPackageEntries = [])
     {
         $distributionComposerManifest = json_decode(file_get_contents(FLOW_PATH_ROOT . 'composer.json'));
         $this->defaultVendorDirectory = $distributionComposerManifest->config->{'vendor-dir'};
-        $composerPath = FLOW_PATH_ROOT . $this->defaultVendorDirectory . '/composer/';
-        $this->initializeAutoloadInformation($composerPath, $context);
+
+        foreach ($defaultPackageEntries as $entry) {
+            $this->createNamespaceMapEntry($entry['namespace'], $entry['classPath'], $entry['mappingType']);
+        }
+
+        $this->initializeAvailableProxyClasses($context);
     }
 
     /**
@@ -153,26 +162,10 @@ class ClassLoader
             return true;
         }
 
-        if (isset($this->classMap[$className])) {
-            include($this->classMap[$className]);
-
-            return true;
-        }
-
         $classNamePart = array_pop($namespaceParts);
         $classNameParts = explode('_', $classNamePart);
         $namespaceParts = array_merge($namespaceParts, $classNameParts);
         $namespacePartCount = count($namespaceParts);
-
-        // Load classes from the Flow package at a very early stage where no packages have been registered yet:
-        if ($this->packageNamespaces === array()) {
-            if ($namespaceParts[0] === 'TYPO3' && $namespaceParts[1] === 'Flow') {
-                require(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/' . implode('/', array_slice($namespaceParts, 2)) . '.php');
-                return true;
-            } else {
-                return false;
-            }
-        }
 
         $currentPackageArray = $this->packageNamespaces;
         $packagenamespacePartCount = 0;
@@ -208,7 +201,9 @@ class ClassLoader
     }
 
     /**
-     * Tries to load a class from a list of possible paths
+     * Tries to load a class from a list of possible paths. This is needed because packages are not prefix-free; i.e.
+     * there may exist a package "Neos" and a package "Neos.NodeTypes" -- so a class Neos\NodeTypes\Foo must be first
+     * loaded (if it exists) from Neos.NodeTypes, falling back to Neos afterwards.
      *
      * @param array $possiblePaths
      * @param array $namespaceParts
@@ -218,8 +213,14 @@ class ClassLoader
     protected function loadClassFromPossiblePaths(array $possiblePaths, array $namespaceParts, $packageNamespacePartCount)
     {
         foreach ($possiblePaths as $possiblePathData) {
-            $pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
-            $possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
+            $possibleFilePath = '';
+            if ($possiblePathData['mappingType'] === self::MAPPING_TYPE_PSR0) {
+                $possibleFilePath = $this->buildClassPathWithPsr0($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
+            }
+            if ($possiblePathData['mappingType'] === self::MAPPING_TYPE_PSR4) {
+                $possibleFilePath = $this->buildClassPathWithPsr4($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
+            }
+
             if (is_file($possibleFilePath)) {
                 $result = include_once($possibleFilePath);
                 if ($result !== false) {
@@ -234,33 +235,19 @@ class ClassLoader
     /**
      * Sets the available packages
      *
-     * @param array $allPackages An array of \TYPO3\Flow\Package\Package objects
      * @param array $activePackages An array of \TYPO3\Flow\Package\Package objects
      * @return void
      */
-    public function setPackages(array $allPackages, array $activePackages)
+    public function setPackages(array $activePackages)
     {
         /** @var Package $package */
-        foreach ($allPackages as $packageKey => $package) {
-            if (isset($activePackages[$packageKey])) {
-                if ($package->getAutoloadType() === Package::AUTOLOADER_TYPE_PSR4) {
-                    $this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath(), self::MAPPING_TYPE_PSR4);
-                } else {
-                    $this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
-                }
-                if ($this->considerTestsNamespace) {
-                    $this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
-                }
-            } else {
-                // Remove entries coming from composer for inactive packages.
-                if ($package->getAutoloadType() === Package::AUTOLOADER_TYPE_PSR4) {
-                    $this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath(), self::MAPPING_TYPE_PSR4);
-                } else {
-                    $this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
-                }
-                if ($this->considerTestsNamespace) {
-                    $this->removeNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
-                }
+        foreach ($activePackages as $packageKey => $package) {
+            foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
+                $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
+            }
+            // TODO: Replace with "autoload-dev" usage
+            if ($this->considerTestsNamespace) {
+                $this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
             }
         }
     }
@@ -275,7 +262,8 @@ class ClassLoader
      */
     protected function createNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0)
     {
-        $unifiedClassPath = ((substr($classPath, -1, 1) === '/') ? $classPath : $classPath . '/');
+        $unifiedClassPath = Files::getNormalizedPath($classPath);
+        $entryIdentifier = md5($unifiedClassPath . '-' . $mappingType);
 
         $currentArray = & $this->packageNamespaces;
         foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
@@ -288,7 +276,7 @@ class ClassLoader
             $currentArray['_pathData'] = array();
         }
 
-        $currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)] = array(
+        $currentArray['_pathData'][$entryIdentifier] = array(
             'mappingType' => $mappingType,
             'path' => $unifiedClassPath
         );
@@ -321,7 +309,8 @@ class ClassLoader
      */
     protected function removeNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0)
     {
-        $unifiedClassPath = ((substr($classPath, -1, 1) === '/') ? $classPath : $classPath . '/');
+        $unifiedClassPath = Files::getNormalizedPath($classPath);
+        $entryIdentifier = md5($unifiedClassPath . '-' . $mappingType);
 
         $currentArray = & $this->packageNamespaces;
         foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
@@ -334,8 +323,8 @@ class ClassLoader
             return;
         }
 
-        if (isset($currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)])) {
-            unset($currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)]);
+        if (isset($currentArray['_pathData'][$entryIdentifier])) {
+            unset($currentArray['_pathData'][$entryIdentifier]);
             if (empty($currentArray['_pathData'])) {
                 unset($currentArray['_pathData']);
             }
@@ -372,85 +361,17 @@ class ClassLoader
     }
 
     /**
-     * @param string $composerPath Path to the composer directory (with trailing slash).
-     * @param ApplicationContext $context
-     * @return void
-     */
-    protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = null)
-    {
-        if (is_file($composerPath . 'autoload_classmap.php')) {
-            $classMap = include($composerPath . 'autoload_classmap.php');
-            if ($classMap !== false) {
-                $this->classMap = $classMap;
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_namespaces.php')) {
-            $namespaceMap = include($composerPath . 'autoload_namespaces.php');
-            if ($namespaceMap !== false) {
-                foreach ($namespaceMap as $namespace => $paths) {
-                    if (!is_array($paths)) {
-                        $paths = array($paths);
-                    }
-                    foreach ($paths as $path) {
-                        if ($namespace === '') {
-                            $this->createFallbackPathEntry($path);
-                        } else {
-                            $this->createNamespaceMapEntry($namespace, $path);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_psr4.php')) {
-            $psr4Map = include($composerPath . 'autoload_psr4.php');
-            if ($psr4Map !== false) {
-                foreach ($psr4Map as $namespace => $possibleClassPaths) {
-                    if (!is_array($possibleClassPaths)) {
-                        $possibleClassPaths = array($possibleClassPaths);
-                    }
-                    foreach ($possibleClassPaths as $possibleClassPath) {
-                        if ($namespace === '') {
-                            $this->createFallbackPathEntry($possibleClassPath);
-                        } else {
-                            $this->createNamespaceMapEntry($namespace, $possibleClassPath, self::MAPPING_TYPE_PSR4);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (is_file($composerPath . 'include_paths.php')) {
-            $includePaths = include($composerPath . 'include_paths.php');
-            if ($includePaths !== false) {
-                array_push($includePaths, get_include_path());
-                set_include_path(join(PATH_SEPARATOR, $includePaths));
-            }
-        }
-
-        if (is_file($composerPath . 'autoload_files.php')) {
-            $includeFiles = include($composerPath . 'autoload_files.php');
-            if ($includeFiles !== false) {
-                foreach ($includeFiles as $file) {
-                    require_once($file);
-                }
-            }
-        }
-
-        if ($context !== null) {
-            $this->initializeAvailableProxyClasses($context);
-        }
-    }
-
-    /**
      * Initialize available proxy classes from the cached list.
      *
      * @param ApplicationContext $context
      * @return void
      */
-    public function initializeAvailableProxyClasses(ApplicationContext $context)
+    public function initializeAvailableProxyClasses(ApplicationContext $context = null)
     {
+        if ($context === null) {
+            return;
+        }
+
         $proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
@@ -467,5 +388,16 @@ class ClassLoader
     public function setConsiderTestsNamespace($flag)
     {
         $this->considerTestsNamespace = $flag;
+    }
+
+    /**
+     * Is the given mapping type predictable in terms of path to class name
+     *
+     * @param string $mappingType
+     * @return boolean
+     */
+    public static function isAutoloadTypeWithPredictableClassPath($mappingType)
+    {
+        return ($mappingType === static::MAPPING_TYPE_PSR0 || $mappingType === static::MAPPING_TYPE_PSR4);
     }
 }

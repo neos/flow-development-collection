@@ -25,10 +25,10 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Echoes an exception for the web.
      *
-     * @param \Exception $exception The exception
+     * @param object $exception \Exception or \Throwable
      * @return void
      */
-    protected function echoExceptionWeb(\Exception $exception)
+    protected function echoExceptionWeb($exception)
     {
         $statusCode = 500;
         if ($exception instanceof FlowException) {
@@ -42,7 +42,13 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
 
         try {
             if (isset($this->renderingOptions['templatePathAndFilename'])) {
-                echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+                try {
+                    echo $this->buildCustomFluidView($exception, $this->renderingOptions)->render();
+                } catch (\Throwable $throwable) {
+                    $this->renderStatically($statusCode, $throwable);
+                } catch (\Exception $exception) {
+                    $this->renderStatically($statusCode, $exception);
+                }
             } else {
                 echo $this->renderStatically($statusCode, $referenceCode);
             }

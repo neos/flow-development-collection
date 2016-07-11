@@ -32,7 +32,7 @@ use TYPO3\Flow\Reflection\ReflectionService;
 class PointcutExpressionParser
 {
     const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-    const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|methodTaggedWith|method|within|filter|setting|evaluate)/';
+    const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|method|within|filter|setting|evaluate)/';
     const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
     const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
@@ -150,20 +150,19 @@ class PointcutExpressionParser
                 $signaturePattern = $this->getSubstringBetweenParentheses($expression);
                 switch ($pointcutDesignator) {
                     case 'classAnnotatedWith':
-                    case 'class' :
+                    case 'class':
                     case 'methodAnnotatedWith':
-                    case 'methodTaggedWith' :
-                    case 'method' :
-                    case 'within' :
-                    case 'filter' :
-                    case 'setting' :
+                    case 'method':
+                    case 'within':
+                    case 'filter':
+                    case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
                     break;
-                    case 'evaluate' :
+                    case 'evaluate':
                         $this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
                     break;
-                    default :
+                    default:
                         throw new AopException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet), defined in ' . $this->sourceHint, 1168874740);
                 }
             }

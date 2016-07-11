@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-require_once(FLOW_PATH_FLOW . 'Resources/PHP/iSecurity/Security_Randomizer.php');
-
 use Ramsey\Uuid\Uuid;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -49,7 +47,7 @@ class Algorithms
      */
     public static function generateRandomBytes($count)
     {
-        return \Security_Randomizer::getRandomBytes($count);
+        return random_bytes($count);
     }
 
     /**
@@ -60,7 +58,7 @@ class Algorithms
      */
     public static function generateRandomToken($count)
     {
-        return \Security_Randomizer::getRandomToken($count);
+        return bin2hex(random_bytes($count));
     }
 
     /**
@@ -72,6 +70,12 @@ class Algorithms
      */
     public static function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     {
-        return \Security_Randomizer::getRandomString($count, $characters);
+        $characterCount = \TYPO3\Flow\Utility\Unicode\Functions::strlen($characters);
+        $string = '';
+        for ($i = 0; $i < $count; $i++) {
+            $string .= \TYPO3\Flow\Utility\Unicode\Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
+        }
+
+        return $string;
     }
 }

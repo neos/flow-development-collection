@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Validation;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Validation\Validator\AggregateBoundaryValidator;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 use TYPO3\Flow\Validation\Validator\GenericObjectValidator;
 use TYPO3\Flow\Validation\Validator\ConjunctionValidator;
@@ -274,7 +275,13 @@ class ValidatorResolver
         $this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
         if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
             // Model based validator
-            $objectValidator = new GenericObjectValidator(array());
+            $classSchema = $this->reflectionService->getClassSchema($targetClassName);
+            if ($classSchema !== null && $classSchema->isAggregateRoot()) {
+                $objectValidator = new AggregateBoundaryValidator(array());
+            } else {
+                $objectValidator = new GenericObjectValidator(array());
+            }
+            $conjunctionValidator->addValidator($objectValidator);
             foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
                 $classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
@@ -315,8 +322,8 @@ class ValidatorResolver
                     $objectValidator->addPropertyValidator($classPropertyName, $newValidator);
                 }
             }
-            if (count($objectValidator->getPropertyValidators()) > 0) {
-                $conjunctionValidator->addValidator($objectValidator);
+            if (count($objectValidator->getPropertyValidators()) === 0) {
+                $conjunctionValidator->removeValidator($objectValidator);
             }
         }
 

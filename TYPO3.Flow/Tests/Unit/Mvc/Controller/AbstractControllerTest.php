@@ -143,7 +143,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified()
     {
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
         $controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
@@ -170,7 +170,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function forwardResetsControllerArguments()
     {
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
         $controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
@@ -194,9 +194,9 @@ class AbstractControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function forwardSetsAndResetsSubpackageKeyIfNeeded()
+    public function forwardSetsSubpackageKeyIfNeeded()
     {
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
 
         $controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
@@ -212,11 +212,24 @@ class AbstractControllerTest extends UnitTestCase
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', array('foo' => 'bar'));
         } catch (\TYPO3\Flow\Mvc\Exception\ForwardException $exception) {
         }
+    }
+
+    /**
+     * @test
+     */
+    public function forwardResetsSubpackageKeyIfNotSetInPackageKey()
+    {
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
+
+        $controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
+        $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects($this->never())->method('setControllerSubpackageKey');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with(null);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', array('foo' => 'bar'));
@@ -232,7 +245,7 @@ class AbstractControllerTest extends UnitTestCase
         $originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
         $convertedArguments = array('foo' => 'bar', 'bar' => array('someObject' => array('__identity' => 'x')));
 
-        $mockPersistenceManager = $this->getMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->will($this->returnValue($convertedArguments));
 
         $controller = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Controller\AbstractController::class, array('processRequest'));
@@ -254,7 +267,7 @@ class AbstractControllerTest extends UnitTestCase
     {
         $arguments = array('foo' => 'bar');
 
-        $mockUriBuilder = $this->getMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
+        $mockUriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
         $mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('setFormat')->with('doc')->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
@@ -278,7 +291,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getFormat')->will($this->returnValue('json'));
 
-        $mockUriBuilder = $this->getMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
+        $mockUriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
         $mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
@@ -410,7 +423,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function mapRequestArgumentsToControllerArgumentsDoesJustThat()
     {
-        $mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class, array('convert'), array(), '', false);
+        $mockPropertyMapper = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->setMethods(array('convert'))->getMock();
         $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();
@@ -441,7 +454,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
     {
-        $mockPropertyMapper = $this->getMock(\TYPO3\Flow\Property\PropertyMapper::class, array('convert'), array(), '', false);
+        $mockPropertyMapper = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->setMethods(array('convert'))->getMock();
         $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();

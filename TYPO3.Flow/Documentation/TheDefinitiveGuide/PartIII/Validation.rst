@@ -12,7 +12,7 @@ needs some well-readable information on what data he should enter.
 
 This chapter explains:
 
-* how to use the validators being part of TYPO3 Flow
+* how to use the validators being part of Flow
 * how to write your own validators
 * how to use validation in your own code
 * how validation is embedded in the model, the persistence and the MVC layer
@@ -20,7 +20,7 @@ This chapter explains:
 Automatic Validation Throughout The Framework
 =============================================
 
-Inside TYPO3 Flow, validation is triggered automatically at two places: When an object is *persisted*, its
+Inside Flow, validation is triggered automatically at two places: When an object is *persisted*, its
 *base validators* are checked as explained in the last section. Furthermore, validation happens in
 the MVC layer when a Domain Model is used as a controller argument, directly after Property Mapping.
 
@@ -131,10 +131,10 @@ reference in the appendix for the configuration options of the built-in validato
 Default Validators
 ------------------
 
-TYPO3 Flow is shipped with a big list of validators which are ready to use -- see the appendix for the full
+Flow is shipped with a big list of validators which are ready to use -- see the appendix for the full
 list. Here, we just want to highlight some more special validators.
 
-Additional to the simple validators for strings, numbers and other basic types, TYPO3 Flow has a few powerful
+Additional to the simple validators for strings, numbers and other basic types, Flow has a few powerful
 validators shipped:
 
 * ``GenericObjectValidator`` validates an object by validating all of its properties. This validator
@@ -191,6 +191,27 @@ The returned validator checks the following things:
 
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
+
+Validation on Aggregates
+------------------------
+
+In Domain Driven Design, the ``Aggregate`` is to be considered a *consistency boundary*, meaning that the whole
+``Aggregate`` needs to preserve it's invariants at all times. For that reason, validation inside an ``Aggregate`` will
+cascade into all entities and force relations to be loaded. So if you have designed large ``Aggregates`` with a deep
+hierarchy of many n-ToMany relations, validation can easily become a performance bottleneck.
+
+It is therefore, but not limited to this reason, highly recommended to keep your ``Aggregates`` small. The validation
+will stop at an ``Aggregate Root``, if the relation to it is lazy and not yet loaded. Entity relations are lazy by default,
+and as long as you don't also submit parts of the related ``Aggregate``, it will not get loaded before the validation
+kicks in.
+
+.. tip:: Be careful though, that loading the related Aggregate in your Controller will still make it get validated
+		 during persistence. That is another good reason why you should try to minimize relations between Aggregates and if
+		 possible, try to stick to a simple identifier instead of an object relation.
+
+For a good read on designing Aggregates, you are highly encouraged to take a read on Vaughn Vernon's essay series
+`Effective Aggregate Design`_.
+
 
 Advanced Feature: Partial Validation
 ====================================
@@ -273,7 +294,7 @@ To avoid this the ``GenericObjectValidator`` as well as anything extending ``Abs
 keep track of instances that have already been validated. The container to keep track of these instances
 can be (re-)set using ``setValidatedInstancesContainer`` defined in the ``ObjectValidatorInterface``.
 
-TYPO3 Flow resets this container before doing validation automatically. If you use validation directly in
+Flow resets this container before doing validation automatically. If you use validation directly in
 your controller, you should reset the container directly before validation, after any changes have been
 done.
 
@@ -348,3 +369,5 @@ In case you do further checks on the options and any of them is invalid, an
          If you do not want to accept empty values, you need to set the class property
          $acceptsEmptyValues to FALSE.
 
+
+.. _Effective Aggregate Design: https://vaughnvernon.co/?p=838

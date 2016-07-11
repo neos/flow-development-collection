@@ -19,7 +19,6 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
-use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -36,6 +35,8 @@ class ResourceManager
      */
     const DEFAULT_STATIC_COLLECTION_NAME = 'static';
     const DEFAULT_PERSISTENT_COLLECTION_NAME = 'persistent';
+
+    const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
 
     /**
      * @Flow\Inject
@@ -220,7 +221,7 @@ class ResourceManager
      *
      * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
      * @param string $collectionName Name of the collection this uploaded resource should be added to
-     * @return Resource A resource object representing the imported resource or FALSE if an error occurred.
+     * @return Resource A resource object representing the imported resource
      * @throws Exception
      */
     public function importUploadedResource(array $uploadInfo, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
@@ -412,6 +413,39 @@ class ResourceManager
     }
 
     /**
+     * Returns the public URI for a static resource provided by the public package
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return string
+     * @api
+     */
+    public function getPublicPackageResourceUriByPath($path)
+    {
+        $this->initialize();
+        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
+    }
+
+    /**
+     * Return the package key and the relative path and filename from the given resource path
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return array The array contains two value, first the packageKey followed by the relativePathAndFilename
+     * @throws Exception
+     * @api
+     */
+    public function getPackageAndPathByPublicPath($path)
+    {
+        if (preg_match(self::PUBLIC_RESSOURCE_REGEXP, $path, $matches) !== 1) {
+            throw new Exception(sprintf('The path "%s" which was given must point to a public resource.', $path), 1450358448);
+        }
+        return [
+            0 => $matches['packageKey'],
+            1 => $matches['relativePathAndFilename']
+        ];
+    }
+
+    /**
      * Returns a Storage instance by the given name
      *
      * @param string $storageName Name of the storage as defined in the settings
@@ -570,6 +604,10 @@ class ResourceManager
 
         if (!is_uploaded_file($temporaryTargetPathAndFilename)) {
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
+        }
+
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['resource']['uploadExtensionBlacklist']) && $this->settings['resource']['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
+            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
         if ($openBasedirEnabled === true) {

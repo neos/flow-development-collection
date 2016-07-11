@@ -1,0 +1,16 @@
+# Disable unwanted options
+Options -Indexes -ExecCGI -Includes -MultiViews
+
+# Prevent execution of script files
+SetHandler default-handler
+<Files *>
+  # Override again if executed later in the evaluation list
+  SetHandler default-handler
+</Files>
+
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>

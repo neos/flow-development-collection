@@ -12,9 +12,11 @@ namespace TYPO3\Flow\Resource\Target;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\Collection;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A target which publishes resources by creating symlinks.
@@ -22,12 +24,18 @@ use TYPO3\Flow\Utility\Files;
 class FileSystemSymlinkTarget extends FileSystemTarget
 {
     /**
+     * @var boolean
+     */
+    protected $relativeSymlinks = false;
+
+    /**
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
+     * @param callable $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(CollectionInterface $collection)
+    public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
@@ -35,7 +43,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
                 $this->publishDirectory($path, $packageKey);
             }
         } else {
-            parent::publishCollection($collection);
+            parent::publishCollection($collection, $callback);
         }
     }
 
@@ -49,6 +57,11 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      */
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
+        $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
+            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447152230);
+        }
+
         $streamMetaData = stream_get_meta_data($sourceStream);
 
         if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO') {
@@ -70,10 +83,14 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if (Files::is_link($targetPathAndFilename)) {
                 Files::unlink($targetPathAndFilename);
             }
-
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
-            symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
-            $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            
+            if ($this->relativeSymlinks) {
+                $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
+            } else {
+                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
+                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            }
         } catch (\Exception $exception) {
             $result = false;
         }
@@ -108,10 +125,13 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if (Files::is_link($targetPathAndFilename)) {
                 Files::unlink($targetPathAndFilename);
             }
-
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
-            symlink($sourcePath, $temporaryTargetPathAndFilename);
-            $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            if ($this->relativeSymlinks) {
+                $result = Files::createRelativeSymlink($sourcePath, $targetPathAndFilename);
+            } else {
+                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                symlink($sourcePath, $temporaryTargetPathAndFilename);
+                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            }
         } catch (\Exception $exception) {
             $result = false;
         }
@@ -120,5 +140,22 @@ class FileSystemSymlinkTarget extends FileSystemTarget
         }
 
         $this->systemLogger->log(sprintf('FileSystemSymlinkTarget: Published directory. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+    }
+
+    /**
+     * Set an option value and return if it was set.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function setOption($key, $value)
+    {
+        if ($key === 'relativeSymlinks') {
+            $this->relativeSymlinks = (boolean)$value;
+            return true;
+        }
+
+        return parent::setOption($key, $value);
     }
 }

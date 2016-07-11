@@ -11,7 +11,9 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
-use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
+use TYPO3\Flow\Composer\ComposerUtility;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Package\Exception\InvalidPackagePathException;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
@@ -21,101 +23,87 @@ use TYPO3\Flow\Utility\PhpAnalyzer;
 class PackageFactory
 {
     /**
-     * @var PackageManagerInterface
-     */
-    protected $packageManager;
-
-    /**
-     * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
-     */
-    public function __construct(PackageManagerInterface $packageManager)
-    {
-        $this->packageManager = $packageManager;
-    }
-
-    /**
      * Returns a package instance.
      *
      * @param string $packagesBasePath the base install path of packages,
      * @param string $packagePath path to package, relative to base path
      * @param string $packageKey key / name of the package
-     * @param string $classesPath path to the classes directory, relative to the package path
-     * @param string $manifestPath path to the package's Composer manifest, relative to package path, defaults to same path
-     * @return \TYPO3\Flow\Package\PackageInterface
+     * @param string $composerName
+     * @param array $autoloadConfiguration Autoload configuration as defined in composer.json
+     * @param array $packageClassInformation
+     * @return PackageInterface
      * @throws Exception\CorruptPackageException
      */
-    public function create($packagesBasePath, $packagePath, $packageKey, $classesPath = null, $manifestPath = null)
+    public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], array $packageClassInformation = null)
     {
         $absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
-        $absoluteManifestPath = $manifestPath === null ? $absolutePackagePath : Files::concatenatePaths(array($absolutePackagePath, $manifestPath)) . '/';
-        $autoLoadDirectives = array();
-        try {
-            $autoLoadDirectives = (array)PackageManager::getComposerManifest($absoluteManifestPath, 'autoload');
-        } catch (MissingPackageManifestException $exception) {
+
+        if ($packageClassInformation === null) {
+            $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
         }
-        if (isset($autoLoadDirectives[Package::AUTOLOADER_TYPE_PSR4])) {
-            $packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', 'Package.php'));
-        } else {
-            $packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php'));
+
+        $packageClassName = Package::class;
+        if (!empty($packageClassInformation)) {
+            $packageClassName = $packageClassInformation['className'];
+            $packageClassPath = Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename']));
+            require_once($packageClassPath);
         }
-        $package = null;
-        if (file_exists($packageClassPathAndFilename)) {
-            require_once($packageClassPathAndFilename);
-            $packageClassContents = file_get_contents($packageClassPathAndFilename);
-            $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
-            if ($packageClassName === null) {
-                throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey, $packageClassPathAndFilename), 1327587091);
-            }
-            $package = new $packageClassName($this->packageManager, $packageKey, $absolutePackagePath, $classesPath, $manifestPath);
-            if (!$package instanceof PackageInterface) {
-                throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".', $packageKey, $packageClassPathAndFilename), 1427193370);
-            }
-            return $package;
+
+        $package = new $packageClassName($packageKey, $composerName, $absolutePackagePath, $autoloadConfiguration);
+        if (!$package instanceof PackageInterface) {
+            throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".', $packageKey, $packageClassInformation['pathAndFilename']), 1427193370);
         }
-        return new Package($this->packageManager, $packageKey, $absolutePackagePath, $classesPath, $manifestPath);
+
+        return $package;
     }
 
     /**
-     * Resolves package key from Composer manifest
+     * Detects if the package contains a package file and returns the path and classname.
      *
-     * If it is a Flow package the name of the containing directory will be used.
-     *
-     * Else if the composer name of the package matches the first part of the lowercased namespace of the package, the mixed
-     * case version of the composer name / namespace will be used, with backslashes replaced by dots.
-     *
-     * Else the composer name will be used with the slash replaced by a dot
-     *
-     * @param object $manifest
-     * @param string $packagePath
-     * @param string $packagesBasePath
-     * @return string
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException
+     * @param string $packageKey The package key
+     * @param string $absolutePackagePath Absolute path to the package
+     * @return array The path to the package file and classname for this package or an empty array if none was found.
+     * @throws Exception\CorruptPackageException
+     * @throws InvalidPackagePathException
      */
-    public static function getPackageKeyFromManifest($manifest, $packagePath, $packagesBasePath)
+    public function detectFlowPackageFilePath($packageKey, $absolutePackagePath)
     {
-        if (!is_object($manifest)) {
-            throw new  \TYPO3\Flow\Package\Exception\InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
+        if (!is_dir($absolutePackagePath)) {
+            throw new InvalidPackagePathException(sprintf('The given package path "%s" is not a readable directory.', $absolutePackagePath), 1445904440);
         }
-        if (isset($manifest->type) && substr($manifest->type, 0, 11) === 'typo3-flow-') {
-            $relativePackagePath = substr($packagePath, strlen($packagesBasePath));
-            $packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
-            /**
-             * @todo check that manifest name and directory follows convention
-             */
-        } else {
-            $packageKey = str_replace('/', '.', $manifest->name);
-            if (isset($manifest->autoload) && isset($manifest->autoload->{'psr-0'})) {
-                $namespaces = array_keys(get_object_vars($manifest->autoload->{'psr-0'}));
-                foreach ($namespaces as $namespace) {
-                    $namespaceLead = substr($namespace, 0, strlen($manifest->name));
-                    $dottedNamespaceLead = str_replace('\\', '.', $namespaceLead);
-                    if (strtolower($dottedNamespaceLead) === $packageKey) {
-                        $packageKey = $dottedNamespaceLead;
-                    }
-                }
-            }
+
+        $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);
+        if (!ComposerUtility::isFlowPackageType(isset($composerManifest['type']) ? $composerManifest['type'] : '')) {
+            return [];
         }
-        $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey);
-        return $packageKey;
+
+        $possiblePackageClassPaths = [
+            Files::concatenatePaths(['Classes', 'Package.php']),
+            Files::concatenatePaths(['Classes', str_replace('.', '/', $packageKey), 'Package.php'])
+        ];
+
+        $foundPackageClassPaths = array_filter($possiblePackageClassPaths, function ($packageClassPathAndFilename) use ($absolutePackagePath) {
+            $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
+            return is_file($absolutePackageClassPath);
+        });
+
+        if ($foundPackageClassPaths === []) {
+            return [];
+        }
+
+        if (count($foundPackageClassPaths) > 1) {
+            throw new Exception\CorruptPackageException(sprintf('The package "%s" contains multiple possible "Package.php" files. Please make sure that only one "Package.php" exists in the autoload root(s) of your Flow package.', $packageKey), 1457454840);
+        }
+
+        $packageClassPathAndFilename = reset($foundPackageClassPaths);
+        $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
+
+        $packageClassContents = file_get_contents($absolutePackageClassPath);
+        $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
+        if ($packageClassName === null) {
+            throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey, $packageClassPathAndFilename), 1327587091);
+        }
+
+        return ['className' => $packageClassName, 'pathAndFilename' => $packageClassPathAndFilename];
     }
 }

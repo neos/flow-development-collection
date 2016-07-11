@@ -101,9 +101,9 @@ class EscapeTest extends UnitTestCase
     public function processWrapsCurrentViewHelperInHtmlspecialcharsViewHelperOnObjectAccessor()
     {
         $interceptorPosition = InterceptorInterface::INTERCEPT_OBJECTACCESSOR;
-        $mockNode = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode::class, array(), array(), '', false);
-        $mockEscapeViewHelper = $this->getMock(\TYPO3\Fluid\ViewHelpers\Format\HtmlspecialcharsViewHelper::class);
-        $mockObjectManager = $this->getMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $mockNode = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode::class)->disableOriginalConstructor()->getMock();
+        $mockEscapeViewHelper = $this->createMock(\TYPO3\Fluid\ViewHelpers\Format\HtmlspecialcharsViewHelper::class);
+        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->at(0))->method('get')->with(\TYPO3\Fluid\ViewHelpers\Format\HtmlspecialcharsViewHelper::class)->will($this->returnValue($mockEscapeViewHelper));
         $mockObjectManager->expects($this->at(1))->method('get')->with(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $mockEscapeViewHelper, array('value' => $mockNode))->will($this->returnValue($this->mockNode));
         $this->escapeInterceptor->injectObjectManager($mockObjectManager);

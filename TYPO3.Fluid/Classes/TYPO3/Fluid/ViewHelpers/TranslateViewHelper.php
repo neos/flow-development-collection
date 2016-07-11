@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
@@ -104,7 +105,10 @@ class TranslateViewHelper extends AbstractViewHelper
             }
         }
         if ($package === null) {
-            $package = $this->controllerContext->getRequest()->getControllerPackageKey();
+            $request = $this->controllerContext->getRequest();
+            if ($request instanceof ActionRequest) {
+                $package = $request->getControllerPackageKey();
+            }
             if ($package === null) {
                 throw new ViewHelperException('The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper', 1416832309);
             }
@@ -112,18 +116,16 @@ class TranslateViewHelper extends AbstractViewHelper
         $originalLabel = $value === null ? $this->renderChildren() : $value;
 
         if ($id === null) {
-            return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
-        } else {
-            $translation = $this->translator->translateById($id, $arguments, $quantity, $localeObject, $source, $package);
-            if ($translation === $id) {
-                if ($originalLabel) {
-                    return $this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
-                } else {
-                    return $id;
-                }
-            } else {
-                return $translation;
-            }
+            return (string)$this->translator->translateByOriginalLabel($originalLabel, $arguments, $quantity, $localeObject, $source, $package);
         }
+
+        $translation = $this->translator->translateById($id, $arguments, $quantity, $localeObject, $source, $package);
+        if ($translation !== null) {
+            return (string)$translation;
+        }
+        if ($originalLabel !== null) {
+            return $originalLabel;
+        }
+        return (string)$id;
     }
 }
