@@ -17,7 +17,7 @@ use TYPO3\Flow\Cache\Exception\InvalidDataException;
  *
  * @api
  */
-class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
+class StringFrontend extends AbstractFrontend
 {
     /**
      * Saves the value of a PHP variable in the cache.

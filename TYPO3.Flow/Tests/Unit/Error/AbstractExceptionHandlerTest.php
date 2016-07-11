@@ -36,7 +36,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
 
         $exception = new \Exception('The Message', 12345);
 
-        $mockSystemLogger = $this->getMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
         $exceptionHandler = $this->getMockForAbstractClass(\TYPO3\Flow\Error\AbstractExceptionHandler::class, array(), '', false, true, true, array('echoExceptionCli'));
@@ -75,7 +75,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         $exception = new NoMatchingRouteException();
 
         /** @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject $mockSystemLogger */
-        $mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $mockSystemLogger->expects($this->never())->method('logException');
 
         $exceptionHandler = $this->getMockForAbstractClass(\TYPO3\Flow\Error\AbstractExceptionHandler::class, array(), '', false, true, true, array('echoExceptionCli'));

@@ -321,6 +321,14 @@ must be used to explicitly activate the modification or creation of objects. By
 default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,
 but does not create new ones or modifies existing ones.
 
+.. note::
+
+	The only exception to this rule are Value Objects, which may always be created newly by default,
+	as this makes sense as of their nature. If you have a use case where the user may not
+	create new Value Objects, for example because he may only choose from a fixed list, you can
+	however explicitly disallow creation by setting the appropriate property's
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
+
 
 Default Configuration
 ---------------------

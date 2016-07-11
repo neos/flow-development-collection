@@ -17,6 +17,7 @@ use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
@@ -40,7 +41,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @var string
      */
-    protected $cacheDirectory;
+    protected $cacheDirectory = '';
 
     /**
      * A file extension to use for each cache entry.
@@ -248,7 +249,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     public function flush()
     {
-        \TYPO3\Flow\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
+        Files::emptyDirectoryRecursively($this->cacheDirectory);
     }
 
     /**
@@ -443,7 +444,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected function configureCacheDirectory()
     {
         $cacheDirectory = $this->cacheDirectory;
-        if ($cacheDirectory == '') {
+        if ($cacheDirectory === '') {
             $codeOrData = ($this->cache instanceof PhpFrontend) ? 'Code' : 'Data';
             $baseDirectory = ($this->baseDirectory ?: $this->environmentConfiguration->getFileCacheBasePath());
             $cacheDirectory = $baseDirectory . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
@@ -451,7 +452,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
 
         if (!is_writable($cacheDirectory)) {
             try {
-                \TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);
+                Files::createDirectoryRecursively($cacheDirectory);
             } catch (\TYPO3\Flow\Utility\Exception $exception) {
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }

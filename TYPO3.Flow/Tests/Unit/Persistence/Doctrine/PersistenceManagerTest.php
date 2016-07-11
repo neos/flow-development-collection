@@ -63,7 +63,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
 
-        $this->mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $this->mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
     }
 

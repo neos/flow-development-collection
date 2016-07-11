@@ -42,10 +42,10 @@ class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         };
 
-        $mockLocaleCollection = $this->getMock(\TYPO3\Flow\I18n\LocaleCollection::class);
+        $mockLocaleCollection = $this->createMock(\TYPO3\Flow\I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
-        $mockLocalizationService = $this->getMock(\TYPO3\Flow\I18n\Service::class);
+        $mockLocalizationService = $this->createMock(\TYPO3\Flow\I18n\Service::class);
         $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new \TYPO3\Flow\I18n\Configuration('sv_SE')));
 
         $this->detector = $this->getAccessibleMock(\TYPO3\Flow\I18n\Detector::class, array('dummy'));

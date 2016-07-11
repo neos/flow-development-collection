@@ -333,7 +333,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
         try {
-            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
+            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../../../../Resources/Private/DDL.sql');
         } catch (\PDOException $exception) {
             throw new Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }

@@ -422,6 +422,7 @@ class CacheManager
      * @param string $className The class name
      * @return string Class Tag
      * @api
+     * @deprecated Unused and described functionality does not exist.
      */
     public static function getClassTag($className = '')
     {

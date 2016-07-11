@@ -36,7 +36,7 @@ class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
         parent::setUp();
         $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
 
-        $this->mockNumberParser = $this->getMock(\TYPO3\Flow\I18n\Parser\NumberParser::class);
+        $this->mockNumberParser = $this->createMock(\TYPO3\Flow\I18n\Parser\NumberParser::class);
     }
 
     /**

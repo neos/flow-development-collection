@@ -207,12 +207,12 @@ class ApcBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $thisCache = $this->createMock(FrontendInterface::class);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $thatCache = $this->createMock(FrontendInterface::class);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
@@ -279,7 +279,7 @@ class ApcBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class, [], [], '', false);
         $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         return $backend;

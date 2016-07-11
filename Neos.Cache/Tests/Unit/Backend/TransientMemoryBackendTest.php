@@ -42,7 +42,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function itIsPossibleToSetAndCheckExistenceInCache()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -58,7 +58,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function itIsPossibleToSetAndGetEntry()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -74,7 +74,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function itIsPossibleToRemoveEntryFromCache()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -91,7 +91,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function itIsPossibleToOverwriteAnEntryInTheCache()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -109,7 +109,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -129,7 +129,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function hasReturnsFalseIfTheEntryDoesntExist()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -143,7 +143,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function removeReturnsFalseIfTheEntryDoesntExist()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -157,7 +157,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function flushByTagRemovesCacheEntriesWithSpecifiedTag()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -178,7 +178,7 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function flushRemovesAllCacheEntries()
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
         $backend->setCache($cache);
 
@@ -199,10 +199,10 @@ class TransientMemoryBackendTest extends BaseTestCase
      */
     public function getEnvironmentConfiguration()
     {
-        return $this->getMock(EnvironmentConfiguration::class, null, [
+        return $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
-        ], '');
+        ])->getMock();
     }
 }

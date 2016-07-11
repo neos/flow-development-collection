@@ -50,16 +50,16 @@ class RedisBackendTest extends BaseTestCase
         }
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
-        $this->cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $this->cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $this->cache->expects($this->any())
             ->method('getIdentifier')
             ->will($this->returnValue('Foo_Cache'));
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
+        $mockEnvironmentConfiguration = $this->getMockBuilder(\TYPO3\Flow\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
-        ], '');
+        ])->getMock();
 
         $this->backend = new RedisBackend($mockEnvironmentConfiguration, [], $this->redis);
         $this->backend->setCache($this->cache);

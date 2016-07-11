@@ -159,7 +159,7 @@ class Translator
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return string Translated message or $labelId on failure
+     * @return string Translated message or NULL on failure
      * @api
      * @see \TYPO3\Flow\I18n\Translator::translateByOriginalLabel()
      */
@@ -171,10 +171,11 @@ class Translator
         $pluralForm = $this->getPluralForm($quantity, $locale);
 
         $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
-
         if ($translatedMessage === false) {
-            return $labelId;
-        } elseif (!empty($arguments)) {
+            return null;
+        }
+
+        if (!empty($arguments)) {
             return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
         }
         return $translatedMessage;

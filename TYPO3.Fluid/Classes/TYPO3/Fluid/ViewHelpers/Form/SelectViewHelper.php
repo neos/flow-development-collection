@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Fluid;
 use TYPO3\Fluid\Core\ViewHelper;
@@ -210,7 +211,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                 $label = $this->arguments['prependOptionLabel'];
             }
 
-            $output .= $this->renderOptionTag($value, $label, false) . chr(10);
+            $output .= $this->renderOptionTag($value, $label) . chr(10);
         } elseif (empty($options)) {
             $options = array('' => '');
         }
@@ -374,7 +375,13 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
 
         $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
         $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
-        $packageKey = isset($translationConfiguration['package']) ? $translationConfiguration['package'] : $this->controllerContext->getRequest()->getControllerPackageKey();
+        $request = $this->controllerContext->getRequest();
+        $packageKey = null;
+        if (isset($translationConfiguration['package'])) {
+            $packageKey = $translationConfiguration['package'];
+        } elseif ($request instanceof ActionRequest) {
+            $packageKey = $request->getControllerPackageKey();
+        }
         $prefix = isset($translationConfiguration['prefix']) ? $translationConfiguration['prefix'] : '';
 
         if (isset($translationConfiguration['locale'])) {
@@ -393,9 +400,10 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                 return $this->translator->translateByOriginalLabel($label, array(), null, $localeObject, $sourceName, $packageKey);
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
-                return $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+                $translation = $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+                return ($translation !== null) ? $translation : $label;
             default:
-                throw new Fluid\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
+                throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
         }
     }
 }

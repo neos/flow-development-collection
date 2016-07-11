@@ -24,7 +24,7 @@ class SectionViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $section = new \TYPO3\Fluid\ViewHelpers\SectionViewHelper();
 
-        $viewHelperNodeMock = $this->getMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array(), array(), '', false);
+        $viewHelperNodeMock = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class)->disableOriginalConstructor()->getMock();
         $viewHelperArguments = array(
             'name' => new \TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode('sectionName')
         );

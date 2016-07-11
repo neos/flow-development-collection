@@ -58,7 +58,7 @@ class RouterTest extends UnitTestCase
     {
         $this->router = $this->getAccessibleRouterMock(['dummy']);
 
-        $this->mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\SystemLoggerInterface::class)->getMock();
+        $this->mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
         $this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
 
         $this->mockRouterCachingService = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class)->getMock();
@@ -80,7 +80,7 @@ class RouterTest extends UnitTestCase
 
         // not saying anything, but seems better than to expect the exception we'd get otherwise
         /** @var Route|\PHPUnit_Framework_MockObject_MockObject $mockRoute */
-        $mockRoute = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
+        $mockRoute = $this->createMock(\TYPO3\Flow\Mvc\Routing\Route::class);
         $mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(true));
         $mockRoute->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
 
@@ -158,19 +158,16 @@ class RouterTest extends UnitTestCase
         $router = $this->getAccessibleRouterMock(['createRoutesFromConfiguration']);
         $routeValues = ['foo' => 'bar'];
 
-        $route1 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, ['resolves'], [], '', false);
+        $route1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->disableOriginalConstructor()->setMethods(array('resolves'))->getMock();
         $route1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(false));
 
-        $route2 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, [
-            'resolves',
-            'getResolvedUriPath'
-        ], [], '', false);
+        $route2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->disableOriginalConstructor()->setMethods(array('resolves', 'getResolvedUriPath'))->getMock();
         $route2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(true));
         $route2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('route2'));
 
-        $route3 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class, ['resolves'], [], '', false);
+        $route3 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Route::class)->disableOriginalConstructor()->setMethods(array('resolves'))->getMock();
 
-        $mockRoutes = [$route1, $route2, $route3];
+        $mockRoutes = array($route1, $route2, $route3);
 
         $router->expects($this->once())->method('createRoutesFromConfiguration');
         $router->_set('routes', $mockRoutes);
@@ -187,10 +184,10 @@ class RouterTest extends UnitTestCase
     {
         $router = $this->getAccessibleRouterMock(['createRoutesFromConfiguration']);
 
-        $route1 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
+        $route1 = $this->createMock(\TYPO3\Flow\Mvc\Routing\Route::class);
         $route1->expects($this->once())->method('resolves')->will($this->returnValue(false));
 
-        $route2 = $this->getMock(\TYPO3\Flow\Mvc\Routing\Route::class);
+        $route2 = $this->createMock(\TYPO3\Flow\Mvc\Routing\Route::class);
         $route2->expects($this->once())->method('resolves')->will($this->returnValue(false));
 
         $mockRoutes = [$route1, $route2];

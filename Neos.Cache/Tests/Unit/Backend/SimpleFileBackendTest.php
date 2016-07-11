@@ -42,13 +42,15 @@ class SimpleFileBackendTest extends BaseTestCase
     {
         vfsStream::setup('Temporary/Directory/');
 
-        $this->mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
+        $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
+            ->setMethods(null)
+            ->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Temporary/Directory/',
             1024
-        ], '');
+        ])->getMock();
 
-        $this->mockCacheFrontend = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->getMock();
+        $this->mockCacheFrontend = $this->createMock(FrontendInterface::class);
     }
 
     /**
@@ -77,11 +79,14 @@ class SimpleFileBackendTest extends BaseTestCase
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
 
-        $mockEnvironmentConfiguration = $this->getMock(\TYPO3\Flow\Cache\EnvironmentConfiguration::class, null, [
-            __DIR__ . '~Testing',
-            'vfs://Some/NonExisting/Directory/',
-            1024
-        ], '');
+        $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
+            ->setMethods(null)
+            ->setConstructorArgs([
+                __DIR__ . '~Testing',
+                'vfs://Some/NonExisting/Directory/',
+                1024
+            ])
+            ->getMock();
         $simpleFileBackend = new SimpleFileBackend($mockEnvironmentConfiguration, []);
 
         $simpleFileBackend->setCache($this->mockCacheFrontend);
@@ -98,11 +103,14 @@ class SimpleFileBackendTest extends BaseTestCase
         $mockEnvironmentConfiguration = new EnvironmentConfiguration(
             __DIR__ . '~Testing',
             'vfs://Temporary/Directory/',
-            5);
+            5
+        );
+
+        $mockCacheManager = $this->getMockBuilder(\TYPO3\Flow\Cache\CacheManager::class)->disableOriginalConstructor()->getMock();
 
         $entryIdentifier = 'BackendFileTest';
 
-        $backend = $this->getMock(\TYPO3\Flow\Cache\Backend\SimpleFileBackend::class, ['setTag', 'writeCacheFile'], [], '', false);
+        $backend = $this->getMockBuilder(SimpleFileBackend::class)->setMethods(['setTag', 'writeCacheFile'])->disableOriginalConstructor()->getMock();
         $backend->expects($this->once())->method('writeCacheFile')->willReturn(false);
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
 

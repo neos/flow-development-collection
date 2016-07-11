@@ -23,7 +23,7 @@ class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression()
     {
-        $parser = $this->getMock(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class, array('parseDesignatorMethod'));
+        $parser = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class)->setMethods(array('parseDesignatorMethod'))->getMock();
         $parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
     }
 }

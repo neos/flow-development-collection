@@ -232,12 +232,12 @@ class MemcachedBackendTest extends BaseTestCase
     {
         $backendOptions = ['servers' => ['localhost:11211']];
 
-        $thisCache = $this->getMock(AbstractFrontend::class, [], [], '', false);
+        $thisCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMock(AbstractFrontend::class, [], [], '', false);
+        $thatCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thatBackend->setCache($thatCache);
@@ -275,7 +275,7 @@ class MemcachedBackendTest extends BaseTestCase
      */
     protected function setUpBackend(array $backendOptions = [])
     {
-        $cache = $this->getMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class, [], [], '', false);
         if ($backendOptions == []) {
             $backendOptions = ['servers' => ['localhost:11211']];
         }

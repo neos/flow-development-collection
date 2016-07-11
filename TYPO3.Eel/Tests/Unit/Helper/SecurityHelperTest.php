@@ -17,7 +17,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getAccountReturnsNullIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
@@ -31,7 +31,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getAccountDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
         $mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
 
@@ -55,7 +55,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasRoleReturnsFalseIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
@@ -69,7 +69,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasRoleDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
         $mockSecurityContext->expects($this->atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(true);
 

@@ -12,6 +12,9 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -26,7 +29,10 @@ class PhpFrontendTest extends BaseTestCase
      */
     public function setChecksIfTheIdentifierIsValid()
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\StringFrontend::class, ['isValidEntryIdentifier'], [], '', false);
+        $cache = $this->getMockBuilder(StringFrontend::class)
+            ->setMethods(['isValidEntryIdentifier'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
         $cache->set('foo', 'bar');
     }
@@ -39,10 +45,13 @@ class PhpFrontendTest extends BaseTestCase
         $originalSourceCode = 'return "hello world!";';
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
-        $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class, [], [], '', false);
+        $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
         $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, ['dummy'], [], '', false);
+        $cache = $this->getMockBuilder(PhpFrontend::class)
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->inject($cache, 'backend', $mockBackend);
         $cache->set('Foo-Bar', $originalSourceCode, ['tags'], 1234);
     }
@@ -53,7 +62,10 @@ class PhpFrontendTest extends BaseTestCase
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, ['dummy'], [], '', false);
+        $cache = $this->getMockBuilder(PhpFrontend::class)
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
         $cache->set('Foo-Bar', []);
     }
 
@@ -62,10 +74,13 @@ class PhpFrontendTest extends BaseTestCase
      */
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
-        $mockBackend = $this->getMock(\TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface::class, [], [], '', false);
+        $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
         $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
-        $cache = $this->getMock(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class, ['dummy'], [], '', false);
+        $cache = $this->getMockBuilder(PhpFrontend::class)
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->inject($cache, 'backend', $mockBackend);
 
         $result = $cache->requireOnce('Foo-Bar');

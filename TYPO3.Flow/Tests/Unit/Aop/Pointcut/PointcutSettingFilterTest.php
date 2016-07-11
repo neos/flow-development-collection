@@ -22,7 +22,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterMatchesOnConfigurationSettingSetToTrue()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -37,7 +37,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterMatchesOnConfigurationSettingSetToFalse()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = false;
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -53,7 +53,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterThrowsAnExceptionForNotExistingConfigurationSetting()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -67,7 +67,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterDoesNotMatchOnConfigurationSettingThatIsNotBoolean()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'not boolean';
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -82,7 +82,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterCanHandleMissingSpacesInTheConfigurationSettingPath()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -97,7 +97,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterMatchesOnAConditionSetInSingleQuotes()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -112,7 +112,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterMatchesOnAConditionSetInDoubleQuotes()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -127,7 +127,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterDoesNotMatchOnAFalseCondition()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'some other value';
         $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
@@ -143,7 +143,7 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterThrowsAnExceptionForAnIncorectCondition()
     {
-        $mockConfigurationManager = $this->getMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';
 
