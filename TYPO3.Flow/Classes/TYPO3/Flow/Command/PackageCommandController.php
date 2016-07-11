@@ -182,11 +182,12 @@ class PackageCommandController extends CommandController
      * Lists all locally available packages. Displays the package key, version and
      * package title and its state – active or inactive.
      *
+     * @param boolean $loadingOrder The returned packages are ordered by their loading order.
      * @return string The list of packages
      * @see typo3.flow:package:activate
      * @see typo3.flow:package:deactivate
      */
-    public function listCommand()
+    public function listCommand($loadingOrder = false)
     {
         $activePackages = [];
         $inactivePackages = [];
@@ -208,14 +209,16 @@ class PackageCommandController extends CommandController
             }
         }
 
-        ksort($activePackages);
-        ksort($inactivePackages);
+        if ($loadingOrder === false) {
+            ksort($activePackages);
+            ksort($inactivePackages);
+        }
 
         $this->outputLine('ACTIVE PACKAGES:');
         /** @var PackageInterface $package */
         foreach ($activePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
+            $this->outputLine('git  ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
         }
 
         if (count($inactivePackages) > 0) {
