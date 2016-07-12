@@ -322,6 +322,10 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
                 $requestPatterns = array();
                 foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+                    // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
+                    if ($patternConfiguration === null) {
+                        continue;
+                    }
 
                     // The following check is needed for backwards compatibility:
                     // Previously the request pattern configuration was just a key/value where the value was passed to the setPattern() method

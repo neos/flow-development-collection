@@ -40,7 +40,7 @@ class ControllerObjectName implements RequestPatternInterface
      *
      * @param string $controllerObjectNamePattern The preg_match() styled controller object name pattern
      * @return void
-     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
+     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
      */
     public function setPattern($controllerObjectNamePattern)
     {

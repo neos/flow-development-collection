@@ -53,7 +53,7 @@ class Ip implements RequestPatternInterface
      *
      * @param string $ipPattern The CIDR styled IP pattern
      * @return void
-     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
+     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
      */
     public function setPattern($ipPattern)
     {

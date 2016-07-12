@@ -59,38 +59,40 @@ class Version20151113161300 extends AbstractMigration
                 }
                 switch (strtolower($requestPatternName)) {
                     case 'controllerobjectname':
-                        $providerOptions['requestPatterns'][ControllerObjectName::class] = [
+                        $requestPatternOptions = [
                             'pattern' => 'ControllerObjectName',
                             'patternOptions' => ['controllerObjectNamePattern' => $requestPatternOptions]
                         ];
                         break;
                     case 'csrfprotection':
-                        $providerOptions['requestPatterns'][CsrfProtection::class] = [
+                        $requestPatternOptions = [
                             'pattern' => 'CsrfProtection',
                         ];
                         break;
                     case 'host':
-                        $providerOptions['requestPatterns'][Host::class] = [
+                        $requestPatternOptions = [
                             'pattern' => 'Host',
                             'patternOptions' => ['hostPattern' => $requestPatternOptions]
                         ];
                         break;
                     case 'ip':
-                        $providerOptions['requestPatterns'][Ip::class] = [
+                        $requestPatternOptions = [
                             'pattern' => 'Ip',
                             'patternOptions' => ['cidrPattern' => $requestPatternOptions]
                         ];
                         break;
                     case 'uri':
-                        $providerOptions['requestPatterns'][Uri::class] = [
+                        $requestPatternOptions = [
                             'pattern' => 'Uri',
                             'patternOptions' => ['uriPattern' => $requestPatternOptions]
                         ];
                         break;
                     default:
                         $this->showWarning(sprintf('Could not automatically convert the syntax of the custom request pattern "%s". Please adjust it manually as described in the documentation.', $requestPatternName));
-                        continue;
+                        continue 2;
                 }
+                $patternIdentifier = $this->targetPackageData['packageKey'] . ':' . $this->getShortClassName($requestPatternName);
+                $providerOptions['requestPatterns'][$patternIdentifier] = $requestPatternOptions;
                 unset($providerOptions['requestPatterns'][$requestPatternName]);
                 $this->showNote(sprintf('Adjusted configuration syntax of the "%s" request pattern.', $requestPatternName));
             }
@@ -143,19 +145,32 @@ class Version20151113161300 extends AbstractMigration
                     break;
                 default:
                     $this->showWarning(sprintf('Could not automatically convert the syntax of the custom firewall filter "%s". Please adjust it manually as described in the documentation.', $filterOptions['patternType']));
-                    continue;
+                    $patternClassName = $filterOptions['patternType'];
             }
-            unset($filterOptions['patternType'], $filterOptions['patternValue']);
+            if (isset($filterOptions['pattern'])) {
+                unset($filterOptions['patternType'], $filterOptions['patternValue']);
+            }
             if (is_numeric($filterIndex)) {
-                $uniquePatternClassName = $patternClassName;
+                $patternIdentifier = $this->targetPackageData['packageKey'] . ':' . $this->getShortClassName($patternClassName);
+                $uniquePatternIdentifier = $patternIdentifier;
                 $loopCounter = 1;
-                while (isset($filtersConfiguration[$uniquePatternClassName])) {
-                    $uniquePatternClassName = $patternClassName . '_' . ($loopCounter ++);
+                while (isset($filtersConfiguration[$uniquePatternIdentifier])) {
+                    $uniquePatternIdentifier = $patternIdentifier . '_' . (++ $loopCounter);
                 }
                 unset($filtersConfiguration[$filterIndex]);
-                $filtersConfiguration[$uniquePatternClassName] = $filterOptions;
+                $filtersConfiguration[$uniquePatternIdentifier] = $filterOptions;
             }
             $this->showNote(sprintf('Adjusted configuration syntax of the "%s" firewall filter.', $patternClassName));
         }
+    }
+
+    /**
+     * @param string $fullyQualifiedClassName
+     * @return string
+     */
+    private function getShortClassName($fullyQualifiedClassName)
+    {
+        $classNameParts = explode('\\', $fullyQualifiedClassName);
+        return array_pop($classNameParts);
     }
 }

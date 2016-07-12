@@ -43,7 +43,7 @@ class Host implements RequestPatternInterface
     /**
      * @param string $hostPattern The host pattern
      * @return void
-     * @deprecated since 3.1 this is not used - use options instead (@see __construct())
+     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
      */
     public function setPattern($hostPattern)
     {
