@@ -995,7 +995,7 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 
 	Be careful, the update command might destroy data, as it could drop tables and fields
 	irreversibly.
-	It also ignores any ``ignoredTables`` settings (see previous section).
+	It also doesn't respect the ``ignoredTables`` settings (see previous section).
 
 	Both commands also support ``--output <write/here/the.sql>`` to write the SQL
 	statements to the given file instead of executing it.
