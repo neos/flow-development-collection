@@ -169,7 +169,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function translateByOriginalLabelTests($originalLabel, $translatedLabel, $expectedResult)
     {
-        $mockTranslationProvider = $this->getMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class);
+        $mockTranslationProvider = $this->createMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class);
         $mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel')->with($originalLabel)->will($this->returnValue($translatedLabel));
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
@@ -197,7 +197,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function translateByIdTests($id, $translatedId, $expectedResult)
     {
-        $mockTranslationProvider = $this->getMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class);
+        $mockTranslationProvider = $this->createMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class);
         $mockTranslationProvider->expects($this->once())->method('getTranslationById')->with($id)->will($this->returnValue($translatedId));
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
