@@ -677,7 +677,7 @@ class Context
         /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
         foreach ($this->tokens as $token) {
             if ($this->isTokenActive($token)) {
-                 $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
+                $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
             } else {
                 $this->inactiveTokens[$token->getAuthenticationProviderName()] = $token;
             }
