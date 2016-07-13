@@ -28,6 +28,13 @@ interface AuthenticationManagerInterface
     public function getTokens();
 
     /**
+     * Returns all configured authentication providers
+     *
+     * @return array Array of \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface
+     */
+    public function getProviders();
+
+    /**
      * Sets the security context
      *
      * @param \TYPO3\Flow\Security\Context $securityContext The security context of the current request
