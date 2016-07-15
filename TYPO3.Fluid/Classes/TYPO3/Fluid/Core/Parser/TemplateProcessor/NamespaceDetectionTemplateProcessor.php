@@ -139,9 +139,7 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
         $viewHelperResolver = $this->renderingContext->getViewHelperResolver();
         $splitTemplate = preg_split(static::$EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS, $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         foreach ($splitTemplate as $templateElement) {
-
             if (preg_match(Patterns::$SCAN_PATTERN_TEMPLATE_VIEWHELPERTAG, $templateElement, $matchedVariables) > 0) {
-
                 if (!$viewHelperResolver->isNamespaceValidOrIgnored($matchedVariables['NamespaceIdentifier'])) {
                     throw new UnknownNamespaceException('Unkown Namespace: ' . htmlspecialchars($matchedVariables[0]));
                 }
