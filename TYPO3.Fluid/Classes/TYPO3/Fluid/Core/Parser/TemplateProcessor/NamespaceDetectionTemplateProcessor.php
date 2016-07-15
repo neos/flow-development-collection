@@ -22,7 +22,7 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
     /**
      * Extension of the default pattern for dynamic tags including namespaces with uppercase letters.
      */
-    static public $EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS = '/
+    public static $EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS = '/
 		(
 			(?: <\/?                                      # Start dynamic tags
 					(?:(?:[a-zA-Z0-9\\.]*):[a-zA-Z0-9\\.]+)  # A tag consists of the namespace prefix and word characters

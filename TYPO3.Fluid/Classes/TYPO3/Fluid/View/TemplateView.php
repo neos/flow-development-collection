@@ -14,9 +14,8 @@ namespace TYPO3\Fluid\View;
 use TYPO3\Flow\Mvc\View\ViewInterface;
 
 /**
- *
+ * A standard Flow view based on Fluid.
  */
 class TemplateView extends AbstractTemplateView implements ViewInterface
 {
-
 }

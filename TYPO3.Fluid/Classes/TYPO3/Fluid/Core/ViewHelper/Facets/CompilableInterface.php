@@ -16,5 +16,4 @@ namespace TYPO3\Fluid\Core\ViewHelper\Facets;
  */
 interface CompilableInterface
 {
-
 }

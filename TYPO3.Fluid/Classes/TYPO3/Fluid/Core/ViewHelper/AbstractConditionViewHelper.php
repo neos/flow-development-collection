@@ -38,7 +38,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 abstract class AbstractConditionViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */
@@ -170,7 +169,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      */
     protected function renderElseChild()
     {
-
         if ($this->hasArgument('else')) {
             return $this->arguments['else'];
         }

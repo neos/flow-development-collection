@@ -20,7 +20,6 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Utility\Files;
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**

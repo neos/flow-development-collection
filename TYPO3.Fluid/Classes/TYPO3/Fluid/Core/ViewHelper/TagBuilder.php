@@ -19,5 +19,4 @@ namespace TYPO3\Fluid\Core\ViewHelper;
  */
 class TagBuilder extends \TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder
 {
-
 }

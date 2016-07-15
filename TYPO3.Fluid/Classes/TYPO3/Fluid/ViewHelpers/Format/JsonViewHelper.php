@@ -12,7 +12,6 @@ namespace TYPO3\Fluid\ViewHelpers\Format;
  */
 
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\Core\ViewHelper\Facets\CompilableInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
@@ -44,7 +43,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  *
  * @api
  */
-class JsonViewHelper extends AbstractViewHelper implements CompilableInterface
+class JsonViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean

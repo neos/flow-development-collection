@@ -16,5 +16,4 @@ namespace TYPO3\Fluid\Core\Parser\SyntaxTree;
  */
 class RootNode extends \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode
 {
-
 }
