@@ -1,5 +1,15 @@
 <?php
-namespace TYPO3\Fluid\Core\Variables;
+namespace TYPO3\Fluid\Core\ViewHelper;
+
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -9,9 +19,11 @@ use TYPO3Fluid\Fluid\Core\Variables\StandardVariableProvider;
 use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
 
 /**
+ * Provides the variables inside fluid template. Adds TemplateObjectAccessInterface functionality.
  *
+ * @api
  */
-class VariableProvider extends StandardVariableProvider implements VariableProviderInterface
+class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
 {
     /**
      * Get a variable by dotted path expression, retrieving the

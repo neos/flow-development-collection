@@ -13,17 +13,15 @@ namespace TYPO3\Fluid\Core\Parser\Interceptor;
 
 use TYPO3\Flow\Package\Package;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ResourceUriNode;
-use TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
 /**
  * This interceptor looks for URIs pointing to package resources and in place
- * of those adds ViewHelperNode instances using the ResourceViewHelper to
+ * of those adds ResourceUriNode instances using the ResourceViewHelper to
  * make those URIs work in the rendered template.
  *
  * That means you can build your template so that it can be previewed as is and

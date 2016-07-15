@@ -17,7 +17,7 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Fluid\Core\Parser\Interceptor\ResourceInterceptor;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
 use TYPO3\Fluid\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor;
-use TYPO3\Fluid\Core\Variables\VariableProvider;
+use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3\Fluid\Core\ViewHelper\ViewHelperResolver;
 use TYPO3\Fluid\View\TemplatePaths;
 use TYPO3Fluid\Fluid\Core\Parser\Configuration;
@@ -74,7 +74,7 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
         $this->setViewHelperResolver(new ViewHelperResolver());
         $this->setTemplateProcessors([new NamespaceDetectionTemplateProcessor()]);
         $this->setTemplatePaths(new TemplatePaths($options));
-        $this->setVariableProvider(new VariableProvider());
+        $this->setVariableProvider(new TemplateVariableContainer());
     }
 
     /**

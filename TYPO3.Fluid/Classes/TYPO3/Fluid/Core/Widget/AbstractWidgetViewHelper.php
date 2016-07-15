@@ -11,7 +11,6 @@ namespace TYPO3\Fluid\Core\Widget;
  * source code.
  */
 
-
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\ForwardException;

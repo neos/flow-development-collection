@@ -26,6 +26,9 @@ class CacheAdaptor implements FluidCacheInterface
     protected $flowCache;
 
     /**
+     * Gets an entry from the cache or NULL if the
+     * entry does not exist.
+     *
      * @param string $name
      * @return string
      */
@@ -33,13 +36,15 @@ class CacheAdaptor implements FluidCacheInterface
     {
         if ($this->flowCache->has($name)) {
             $this->flowCache->requireOnce($name);
-
         }
 
         return $this->flowCache->getWrapped($name);
     }
 
     /**
+     * Set or updates an entry identified by $name
+     * into the cache.
+     *
      * @param string $name
      * @param string $value
      */
@@ -50,6 +55,9 @@ class CacheAdaptor implements FluidCacheInterface
     }
 
     /**
+     * Flushes the cache either by entry or flushes
+     * the entire cache if no entry is provided.
+     *
      * @param string|null $name
      * @return bool|void
      */

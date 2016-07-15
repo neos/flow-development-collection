@@ -12,7 +12,8 @@ namespace TYPO3\Fluid\Core\Rendering;
  */
 
 /**
- * Use \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface
+ * @deprecated
+ * @see \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface
  */
 interface RenderingContextInterface extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface
 {

@@ -11,7 +11,7 @@ namespace TYPO3\Fluid\Tests\Unit\View;
  * source code.
  */
 use TYPO3\Fluid\Core\Rendering\RenderingContext;
-use TYPO3\Fluid\Core\Variables\VariableProvider;
+use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3\Fluid\View\AbstractTemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
@@ -47,7 +47,7 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->templateVariableContainer = $this->getMockBuilder(VariableProvider::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
+        $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
         $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(array('setView'))->getMock();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->setMethods(array('getViewHelperVariableContainer', 'getVariableProvider'))->disableOriginalConstructor()->getMock();
         $this->renderingContext->expects($this->any())->method('getViewHelperVariableContainer')->will($this->returnValue($this->viewHelperVariableContainer));

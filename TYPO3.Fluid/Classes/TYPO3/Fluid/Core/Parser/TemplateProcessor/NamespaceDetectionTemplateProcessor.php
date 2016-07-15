@@ -1,6 +1,16 @@
 <?php
 namespace TYPO3\Fluid\Core\Parser\TemplateProcessor;
 
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use TYPO3Fluid\Fluid\Core\Parser\Patterns;
 use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
@@ -42,7 +52,7 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
      */
     public function preProcessSource($templateSource)
     {
-        $templateSource = $this->replaceCdataSectionsByEmptyLines($templateSource);
+        $templateSource = $this->protectCDataSectionsFromParser($templateSource);
         $templateSource = $this->registerNamespacesFromTemplateSource($templateSource);
         $this->throwExceptionsForUnhandledNamespaces($templateSource);
 
@@ -82,10 +92,13 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
     }
 
     /**
+     * Encodes areas enclosed in CDATA to prevent further parsing by the Fluid engine.
+     * CDATA sections will appear as they are in the final rendered result.
+     *
      * @param string $templateSource
      * @return mixed
      */
-    public function replaceCdataSectionsByEmptyLines($templateSource)
+    public function protectCDataSectionsFromParser($templateSource)
     {
         $parts = preg_split('/(\<\!\[CDATA\[|\]\]\>)/', $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE);
         $balance = 0;
@@ -116,7 +129,7 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
 
     /**
      * Throw an UnknownNamespaceException for any unknown and not ignored
-     * namespace inside the template string
+     * namespace inside the template string.
      *
      * @param string $templateSource
      * @return void

@@ -16,7 +16,7 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\ExpressionNodeInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
- * Class LegacyNamespaceExpressionNode
+ * A node representing an additional namespace declaration inside the template.
  */
 class LegacyNamespaceExpressionNode extends AbstractExpressionNode implements ExpressionNodeInterface
 {
@@ -27,6 +27,8 @@ class LegacyNamespaceExpressionNode extends AbstractExpressionNode implements Ex
     public static $detectionExpression = '/{namespace\\s*([a-z0-9]+)\\s*=\\s*([a-z0-9_\\\\]+)\\s*}/i';
 
     /**
+     * Evaluates the expression stored in this node, in the context of $renderingcontext.
+     *
      * @param RenderingContextInterface $renderingContext
      * @param string $expression
      * @param array $matches

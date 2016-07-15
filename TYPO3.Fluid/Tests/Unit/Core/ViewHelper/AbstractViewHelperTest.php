@@ -12,7 +12,7 @@ namespace TYPO3\Fluid\Tests\Unit\Core\ViewHelper;
  */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Fluid\Core\Variables\VariableProvider;
+use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition;
@@ -290,7 +290,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setRenderingContextShouldSetInnerVariables()
     {
-        $templateVariableContainer = $this->createMock(VariableProvider::class);
+        $templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $viewHelperVariableContainer = $this->createMock(ViewHelperVariableContainer::class);
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
