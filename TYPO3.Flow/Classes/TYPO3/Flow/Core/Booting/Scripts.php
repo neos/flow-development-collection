@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
@@ -618,22 +620,25 @@ class Scripts
     public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = array())
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = array();
-        // Output errors in response
-        $command .= ' 2>&1';
-        exec($command, $output, $result);
-        if ($result !== 0) {
-            if (count($output) > 0) {
-                $exceptionMessage = implode(PHP_EOL, $output);
-            } else {
-                $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
+        $environmentVariables = self::buildFlowEnvironmentVariables($settings);
+        $process = new Process($command, FLOW_PATH_ROOT, $environmentVariables);
+        try {
+            $process->mustRun();
+            $output = $process->getOutput();
+        } catch (ProcessFailedException $processException) {
+            $exceptionMessage = $process->getOutput() . PHP_EOL . $process->getErrorOutput();
+            if ($exceptionMessage === PHP_EOL) {
+                $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $process->getExitCode());
             }
+
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
         }
+
         if ($outputResults) {
-            echo implode(PHP_EOL, $output);
+            echo $output;
         }
-        return $result === 0;
+
+        return true;
     }
 
     /**
@@ -693,34 +698,16 @@ class Scripts
 
     /**
      * @param array $settings The TYPO3.Flow settings
-     * @return string A command line command for PHP, which can be extended and then exec()uted
+     * @return string A command line command for PHP, which can be extended and then executed
      */
     public static function buildPhpCommand(array $settings)
     {
-        $subRequestEnvironmentVariables = array(
-            'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
-            'FLOW_PATH_TEMPORARY_BASE' => FLOW_PATH_TEMPORARY_BASE,
-            'FLOW_CONTEXT' => $settings['core']['context']
-        );
-        if (isset($settings['core']['subRequestEnvironmentVariables'])) {
-            $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
+        if (DIRECTORY_SEPARATOR === '/') {
+            $command = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+        } else {
+            $command = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
         }
 
-        $command = '';
-        foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
-            if (DIRECTORY_SEPARATOR === '/') {
-                $command .= sprintf('%s=%s ', $argumentKey, escapeshellarg($argumentValue));
-            } else {
-                // SET does not parse out quotes, hence we need escapeshellcmd here instead
-                $command .= sprintf('SET %s=%s&', $argumentKey, escapeshellcmd($argumentValue));
-            }
-        }
-        if (DIRECTORY_SEPARATOR === '/') {
-            $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
-        } else {
-            $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-        }
-        $command .= $phpBinaryPathAndFilename;
         if (!isset($settings['core']['subRequestPhpIniPathAndFilename']) || $settings['core']['subRequestPhpIniPathAndFilename'] !== false) {
             if (!isset($settings['core']['subRequestPhpIniPathAndFilename'])) {
                 $useIniFile = php_ini_loaded_file();
@@ -731,5 +718,24 @@ class Scripts
         }
 
         return $command;
+    }
+
+    /**
+     * Generates an array with environment variables for Flow rootpath and context and any additionally configured environment variables from settings.
+     *
+     * @param array $settings
+     * @return array
+     */
+    public static function buildFlowEnvironmentVariables(array $settings)
+    {
+        $subRequestEnvironmentVariables = array(
+            'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
+            'FLOW_CONTEXT' => $settings['core']['context']
+        );
+        if (isset($settings['core']['subRequestEnvironmentVariables'])) {
+            $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
+        }
+
+        return $subRequestEnvironmentVariables;
     }
 }

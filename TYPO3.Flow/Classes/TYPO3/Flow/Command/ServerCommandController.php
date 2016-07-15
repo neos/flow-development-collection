@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Command;
  * source code.
  */
 
+use Symfony\Component\Process\Process;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Core\Booting\Scripts;
@@ -44,11 +45,13 @@ class ServerCommandController extends CommandController
     public function runCommand($host = '127.0.0.1', $port = 8081)
     {
         $command = Scripts::buildPhpCommand($this->settings);
+        $environmentVariables = Scripts::buildFlowEnvironmentVariables($this->settings);
 
         $address = sprintf('%s:%s', $host, $port);
         $command .= ' -S ' . escapeshellarg($address) . ' -t ' . escapeshellarg(FLOW_PATH_WEB) . ' ' . escapeshellarg(FLOW_PATH_FLOW . '/Scripts/PhpDevelopmentServerRouter.php');
 
+        $process = new Process($command, FLOW_PATH_ROOT, $environmentVariables, null, null);
         $this->outputLine('Server running. Please go to <b>http://' . $address . '</b> to browse the application.');
-        exec($command);
+        $process->run();
     }
 }
