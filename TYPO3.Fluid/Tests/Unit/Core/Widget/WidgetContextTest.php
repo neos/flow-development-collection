@@ -10,6 +10,7 @@ namespace TYPO3\Fluid\Tests\Unit\Core\Widget;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 
 /**
  * Testcase for WidgetContext
@@ -83,7 +84,7 @@ class WidgetContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function viewHelperChildNodesCanBeReadAgain()
     {
-        $viewHelperChildNodes = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
+        $viewHelperChildNodes = $this->createMock(RootNode::class);
         $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
 
         $this->widgetContext->setViewHelperChildNodes($viewHelperChildNodes, $renderingContext);

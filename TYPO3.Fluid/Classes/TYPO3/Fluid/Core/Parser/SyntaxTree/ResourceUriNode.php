@@ -1,15 +1,16 @@
 <?php
 namespace TYPO3\Fluid\Core\Parser\SyntaxTree;
 
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\ViewHelperResolver;
+use TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  *
  */
-class ResourceUriNode extends AbstractNode
+class ResourceUriNode extends ViewHelperNode
 {
     /**
      * @var array
@@ -17,31 +18,36 @@ class ResourceUriNode extends AbstractNode
     protected $arguments = [];
 
     /**
-     * ResourceUriNode constructor.
-     *
-     * @param array $arguments
+     * @var ViewHelperResolver
      */
-    public function __construct(array $arguments)
+    protected $viewHelperResolver;
+
+    /**
+     * @var string
+     */
+    protected $viewHelperClassName = ResourceViewHelper::class;
+
+    /**
+     * @param ViewHelperResolver $viewHelperResolver
+     */
+    public function injectViewHelperResolver(ViewHelperResolver $viewHelperResolver)
+    {
+        $this->viewHelperResolver = $viewHelperResolver;
+        $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
+        $this->uninitializedViewHelper->setViewHelperNode($this);
+        $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
+        $this->rewriteBooleanNodesInArgumentsObjectTree($this->argumentDefinitions, $this->arguments);
+        $this->validateArguments($this->argumentDefinitions, $this->arguments);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param NodeInterface[] $arguments Arguments of view helper - each value is a RootNode.
+     * @param ParsingState $state
+     */
+    public function __construct(array $arguments, ParsingState $state)
     {
         $this->arguments = $arguments;
-    }
-
-    /**
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     */
-    public function evaluate(RenderingContextInterface $renderingContext)
-    {
-        $dummyState = new ParsingState();
-        $viewHelperNode = new ViewHelperNode($renderingContext, 'f', 'uri.resource', $this->arguments, $dummyState);
-        return $viewHelperNode->evaluate($renderingContext);
-    }
-
-    /**
-     * @return array
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
     }
 }

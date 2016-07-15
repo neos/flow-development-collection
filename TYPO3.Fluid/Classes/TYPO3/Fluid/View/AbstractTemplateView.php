@@ -126,7 +126,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
-
         $this->controllerContext = $controllerContext;
         if ($this->getRenderingContext() instanceof RenderingContext) {
             $this->getRenderingContext()->setControllerContext($controllerContext);
@@ -196,6 +195,8 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         $actionName = $this->baseRenderingContext->getControllerAction();
         $actionName = ucfirst($actionName);
 
+        // Note this is (unfortunately) needed to initialize the template
+        $templatePaths->getTemplateSource($controllerName, $actionName);
         $templateIdentifier = $templatePaths->getTemplateIdentifier($controllerName, $actionName);
         $parsedTemplate = $templateParser->getOrParseAndStoreTemplate(
             $templateIdentifier,

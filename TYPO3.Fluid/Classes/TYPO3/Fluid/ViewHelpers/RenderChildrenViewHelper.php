@@ -8,12 +8,12 @@ namespace TYPO3\Fluid\ViewHelpers;
  * the terms of the MIT license.                                          *
  *                                                                        */
 
-use TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\Widget\Exception\RenderingContextNotFoundException;
 use TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException;
 use TYPO3\Fluid\Core\Widget\WidgetContext;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 
 /**
  * Render the inner parts of a Widget.

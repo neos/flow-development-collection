@@ -23,11 +23,12 @@ class StandaloneView extends \TYPO3\Fluid\View\StandaloneView
      *
      * @param \TYPO3\Flow\Mvc\ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param string $fileIdentifierPrefix
+     * @param array $options
      */
-    public function __construct(\TYPO3\Flow\Mvc\ActionRequest $request = null, $fileIdentifierPrefix = '')
+    public function __construct(\TYPO3\Flow\Mvc\ActionRequest $request = null, $fileIdentifierPrefix = '', array $options = [])
     {
-        $this->request = $request;
         $this->fileIdentifierPrefix = $fileIdentifierPrefix;
+        parent::__construct($request, $options);
     }
 
 

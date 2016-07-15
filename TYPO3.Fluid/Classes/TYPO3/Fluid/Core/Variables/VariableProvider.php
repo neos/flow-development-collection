@@ -27,19 +27,13 @@ class VariableProvider extends StandardVariableProvider implements VariableProvi
     public function getByPath($path, array $accessors = [])
     {
         $subject = $this->variables;
+
         $propertyPathSegments = explode('.', $path);
         foreach ($propertyPathSegments as $propertyName) {
             try {
                 $subject = ObjectAccess::getProperty($subject, $propertyName);
             } catch (PropertyNotAccessibleException $exception) {
-                if (is_object($subject)
-                    && preg_match('/^(is|has)([A-Z].*)/', $propertyName, $matches) > 0
-                    && is_callable([$subject, $propertyName])
-                ) {
-                    $subject = $subject->$propertyName();
-                } else {
-                    $subject = null;
-                }
+                $subject = null;
             }
 
             if ($subject === null) {

@@ -11,6 +11,8 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
 /**
@@ -49,7 +51,7 @@ class RenderChildrenViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBa
         $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
         $renderingContext->expects($this->any())->method('getTemplateVariableContainer')->will($this->returnValue($templateVariableContainer));
 
-        $rootNode = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
+        $rootNode = $this->createMock(RootNode::class);
 
         $widgetContext = $this->createMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class);
         $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));

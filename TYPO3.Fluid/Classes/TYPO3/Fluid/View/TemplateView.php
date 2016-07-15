@@ -1,13 +1,17 @@
 <?php
 namespace TYPO3\Fluid\View;
 
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
+/*
+ * This file is part of the TYPO3.Fluid package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Fluid\Core\Rendering\RenderingContext;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  *
