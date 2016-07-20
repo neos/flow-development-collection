@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-06-14
+The following reference was automatically generated from code on 2016-07-20
 
 
 .. _`Flow Command Reference: TYPO3.FLOW`:
@@ -919,6 +919,12 @@ Lists all locally available packages. Displays the package key, version and
 package title and its state – active or inactive.
 
 
+
+Options
+^^^^^^^
+
+``--loading-order``
+  The returned packages are ordered by their loading order.
 
 
 
