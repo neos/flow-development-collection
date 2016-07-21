@@ -118,13 +118,13 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="km" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="km" state="translated">យ៉ាងហោចណាស់ត្រូវតែមាន {0, ចំនួន} តួអក្សរ</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="km" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="km" state="translated">អត្ថបទនេះមិនអាចលើសពី {0, ចំនួន} តួអក្សរ</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
