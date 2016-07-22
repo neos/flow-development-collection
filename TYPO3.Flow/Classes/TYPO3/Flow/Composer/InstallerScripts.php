@@ -33,15 +33,15 @@ class InstallerScripts
     public static function postUpdateAndInstall(Event $event)
     {
         if (!defined('FLOW_PATH_ROOT')) {
-            define('FLOW_PATH_ROOT', getcwd() . '/');
+            define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
         }
 
         if (!defined('FLOW_PATH_PACKAGES')) {
-            define('FLOW_PATH_PACKAGES', getcwd() . '/Packages/');
+            define('FLOW_PATH_PACKAGES', Files::getUnixStylePath(getcwd()) . '/Packages/');
         }
 
         if (!defined('FLOW_PATH_CONFIGURATION')) {
-            define('FLOW_PATH_CONFIGURATION', getcwd() . '/Configuration/');
+            define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
         }
 
         Files::createDirectoryRecursively('Configuration');

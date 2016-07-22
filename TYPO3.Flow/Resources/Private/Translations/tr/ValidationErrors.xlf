@@ -5,11 +5,11 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="tr" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Sadece normal harfler (a-z, ve noktalı harfler) kullanılabilir.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="tr" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen değerin {0} olması beklenmektedir.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
@@ -17,47 +17,47 @@
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="tr" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen başlık sayılabilir değil</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="tr" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="tr" state="translated">Sayılar {0,number} ile {1,number} arasında olmalıdır</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="tr" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen değer geçerli bir tarih değil</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="tr" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen tarih {0} ile {1} arasında olmalıdır</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="tr" state="needs-translation">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen tarih {0} 'den sonra olmalıdır</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="tr" state="needs-translation">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="tr" state="translated">Verilen tarih {0} 'den önce olmalıdır</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
 			<target xml:lang="tr" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="tr" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="tr" state="translated">Geçerli bir saat bekleniyor</target><alt-trans><target xml:lang="tr">Geçerli bir zaman bekleniyor</target></alt-trans></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="tr" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="tr" state="translated">Geçerli bir saat ve tarih bekleniyor</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="tr" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="tr" state="translated">Geçerli bir tarih bekleniyor</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="tr" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="tr" state="translated">Lütfen geçerli bir e-posta adresi girin</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="tr" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="tr" state="translated">Geçerli bir ondalıklı sayı bekleniyor</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="tr" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" kesirli bir değere dönüştürülemiyor</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
@@ -118,21 +118,21 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target xml:lang="tr" state="needs-translation">This field must contain at least {0,number} character</target>
+          <target xml:lang="tr" state="translated">Bu bölüm en az {0,number} karakter içermeli</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="tr" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="tr" state="translated">Bu bölüm en az {0,number} karakter içermeli</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target xml:lang="tr" state="needs-translation">This text may not exceed {0,number} character</target>
+          <target xml:lang="tr" state="translated">Bu metin {0,number} karakter sınırını geçemez</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="tr" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="tr" state="translated">Bu metin {0,number} karakter sınırını geçemez</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->

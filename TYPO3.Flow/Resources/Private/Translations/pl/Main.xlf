@@ -25,7 +25,7 @@
 			<target xml:lang="pl">Aktualizuj</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target xml:lang="pl">Wyślij</target><alt-trans><target xml:lang="pl">Prześlij</target></alt-trans></trans-unit>
+			<target xml:lang="pl">Wyślij</target></trans-unit>
     </body>
   </file>
 </xliff>
