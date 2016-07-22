@@ -231,7 +231,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($resource === null) {
             $collectionName = $this->getCollectionName($source, $configuration);
             if (isset($source['data'])) {
-                $resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], $collectionName, $givenResourceIdentity);
+                $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
                 if (is_array($source) && isset($source['filename'])) {
