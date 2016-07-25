@@ -771,6 +771,134 @@ class RequestTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function isFromTrustedProxyByDefault()
+    {
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertTrue($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isFromTrustedProxyIfRemoteAddressMatchesRange()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => ['127.0.0.0/24']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertTrue($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isNotFromTrustedProxyIfNoProxiesAreTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => []]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertFalse($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function isNotFromTrustedProxyIfRemoteAddressDoesntMatch()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => ['10.0.0.1/24']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET');
+        $this->assertFalse($request->isFromTrustedProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRemoteAddressIfNoProxiesAreTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => [], 'headers' => [Request::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('127.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRemoteAddressIfHeaderNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => ['127.0.0.1'], 'headers' => []]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('127.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsForwardedForAddressIfProxyTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => ['127.0.0.1'], 'headers' => [Request::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('10.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => '*', 'headers' => [Request::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1, 10.0.0.2, 10.0.0.3'));
+        $this->assertEquals('10.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [Request::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2'));
+        $this->assertEquals('215.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function trustedClientIpAddressIsRemoteAddressIfTheHeaderIsNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => '*', 'headers' => [Request::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_FOR' => '10.0.0.1'));
+        $this->assertEquals('127.0.0.1', $request->getTrustedClientIpAddress());
+    }
+
+    /**
+     * @test
+     */
+    public function portIsNotOverridenIfTheHeaderIsNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => '*', 'headers' => []]);
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_PORT' => '443'));
+        $this->assertEquals(80, $request->getPort());
+    }
+
+    /**
+     * @test
+     */
+    public function protocolIsNotOverridenIfTheHeaderIsNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => '*', 'headers' => []]);
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_PROTO' => 'https'));
+        $this->assertEquals('http', $request->getUri()->getScheme());
+    }
+
+    /**
+     * @test
+     */
+    public function hostIsNotOverridenIfTheHeaderIsNotTrusted()
+    {
+        $this->trustedProxiesSettings->setValue(['proxies' => '*', 'headers' => []]);
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io'));
+        $this->assertEquals('acme.com', $request->getUri()->getHost());
+    }
+    /**
      * @return array
      */
     public function forwardHeaderTestsDataProvider()

@@ -168,7 +168,10 @@ TYPO3:
 
         'preprocess':
           position: 'before process'
-          chain: []
+          chain:
+            'trustedProxies':
+              position: 'start'
+              component: 'TYPO3\Flow\Http\Component\TrustedProxiesComponent'
 
         'process':
           chain:
@@ -183,6 +186,30 @@ TYPO3:
             'standardsCompliance':
               position: 'end'
               component: 'TYPO3\Flow\Http\Component\StandardsComplianceComponent'
+
+      trustedProxies:
+
+        # Defines Proxy servers which are trusted for setting request headers
+        # By default all proxies are trusted ('*')
+        # If you have some reverse proxies or CDN running in front of your server, you should provide
+        # an array list of those servers' addresses or address ranges (in CIDR notation) here.
+        #
+        # If you do definitely not have any reverse proxy or CDN in front of your server, you should not
+        # trust any proxies and set this option to "[]", ie. an empty list.
+        #
+        # proxies:
+        #   - '216.246.40.0/24'
+        #   - '216.246.100.0/24'
+        proxies: '*'
+
+        # Defines request headers which are trusted from proxies to override important request information
+        # Each value can be a single header or a comma separated list of headers
+        headers:
+          # This is a list mainly for backwards-compatibility. You should only set a single header, e.g. 'X-Forwarded-For'
+          clientIp: 'Client-Ip,X-Forwarded-For,X-Forwarded,X-Cluster-Client-Ip,Forwarded-For,Forwarded'
+          host: 'X-Forwarded-Host'
+          port: 'X-Forwarded-Port'
+          proto: 'X-Forwarded-Proto'
 
     log:
 
