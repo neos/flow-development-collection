@@ -239,18 +239,23 @@ TYPO3:
         order: []
 
       scan:
-        # You can list any path regular expression patterns that you want to exclude from scanning for locales
+        # You can list any path regular expression patterns that you want to include in scanning for locales relative
+        # to the "Resources" directory of each package. Setting a pattern to FALSE will blacklist this pattern.
         #
         # Example:
-        # '/node_modules': TRUE
-        # '/src/.*/test': TRUE
+        #   '^/Public/': TRUE
+        #   '^/Private/.*/images/': TRUE
+        #   '/node_modules/': FALSE
         #
-        # Note: Setting a pattern to FALSE will not whitelist it, but is an option for packages to remove patterns
-        #       from this blacklist again.
-        excludePaths:
-          '/CLDR/Sources': TRUE
-          '/node_modules': TRUE
-          '/\.git': TRUE
+        #   This will scan all of the Public Resources folder, as well as any 'images' sub-folder inside the Private
+        #   Resources, except any 'node_modules' sub-folder in either one.
+        paths:
+          '^/Public/': TRUE
+          '^/Private/': TRUE
+          '/node_modules/': FALSE
+          '/bower_components/': FALSE
+          # skip folders starting with a dot (e.g. '.git', '.sass-cache', etc.)
+          '/\..*/': FALSE
 
     object:
 

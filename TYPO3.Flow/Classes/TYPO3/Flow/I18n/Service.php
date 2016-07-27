@@ -268,21 +268,37 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
-        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePaths'])));
+        $whitelistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'])));
+        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], function($value) { return $value === false; })));
+
+        if ($whitelistPattern === '') {
+            return;
+        }
+
+        $whitelistPattern = '#' . str_replace('#', '\#', $whitelistPattern) . '#';
+        if ($blacklistPattern !== '') {
+            $blacklistPattern = '#' . str_replace('#', '\#', $blacklistPattern) . '#';
+        }
 
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
-            $packageResourcesPath = $activePackage->getResourcesPath();
+            $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {
                 continue;
             }
 
-            $directories = array(Files::getNormalizedPath($packageResourcesPath));
+            $directories = array($packageResourcesPath);
             while ($directories !== array()) {
                 $currentDirectory = array_pop($directories);
-                if ($blacklistPattern !== '' && preg_match('#' . str_replace('#', '\#', $blacklistPattern) . '#', $currentDirectory) === 1) {
-                    continue;
+                $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
+                if ($relativeDirectory !== '/') {
+                    if (preg_match($whitelistPattern, $relativeDirectory) !== 1) {
+                        continue;
+                    }
+                    if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                        continue;
+                    }
                 }
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
