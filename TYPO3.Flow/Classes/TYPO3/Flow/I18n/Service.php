@@ -273,7 +273,9 @@ class Service
      *
      * Localized files have a locale identifier added before their extension
      * (or at the end of filename, if no extension exists). For example, a
-     * localized file for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
+     * localized file for foobar.png, can be foobar.en.png, foobar.en_GB.png, etc.
+     *
+     * Also, all folder names inside '/Private/Translations' are scanned for valid locales.
      *
      * Just one localized resource file causes the corresponding locale to be
      * regarded as available (installed, supported).
@@ -313,6 +315,12 @@ class Service
                     continue;
                 }
 
+                if (stripos($currentDirectory, '/Private/Translations/') !== false) {
+                    $localeIdentifier = Utility::extractLocaleTagFromDirectory($currentDirectory);
+                    if ($localeIdentifier !== false) {
+                        $this->localeCollection->addLocale(new Locale($localeIdentifier));
+                    }
+                }
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
                         if ($filename[0] === '.') {
