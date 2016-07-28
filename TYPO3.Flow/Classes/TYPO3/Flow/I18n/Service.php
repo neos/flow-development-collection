@@ -259,8 +259,7 @@ class Service
      */
     protected function getScanPathPattern($whitelist)
     {
-        $filter = function($value) use ($whitelist)
-        {
+        $filter = function($value) use ($whitelist) {
             return $value === $whitelist;
         };
         $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], $filter)));
