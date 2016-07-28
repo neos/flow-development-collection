@@ -142,9 +142,10 @@ class ServiceTest extends UnitTestCase
      */
     public function initializeCorrectlyGeneratesAvailableLocales()
     {
+        mkdir('vfs://Foo/Bar/Public', 0777, true);
         mkdir('vfs://Foo/Bar/Private/Translations', 0777, true);
         foreach (['en', 'sr_Cyrl_RS'] as $localeIdentifier) {
-            file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
+            file_put_contents('vfs://Foo/Bar/Public/foobar.' . $localeIdentifier . '.baz', 'FooBar');
         }
         foreach (['en_GB', 'sr'] as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
@@ -167,7 +168,7 @@ class ServiceTest extends UnitTestCase
                                 'defaultLocale' => 'sv_SE',
                                 'fallbackRule' => ['strict' => false, 'order' => []],
                                 'scan' => [
-                                    'includePaths' => ['/Private/' => true],
+                                    'includePaths' => ['/Private/Translations/' => true],
                                     'excludePatterns' => [],
                                 ]
         ]];
@@ -214,7 +215,7 @@ class ServiceTest extends UnitTestCase
                                 'defaultLocale' => 'sv_SE',
                                 'fallbackRule' => ['strict' => false, 'order' => []],
                                 'scan' => [
-                                    'includePaths' => ['/Private/' => true, '/Public/' => true],
+                                    'includePaths' => ['/Private/Translations/' => true, '/Public/' => true],
                                     'excludePatterns' => ['/node_modules/' => true, '/\..*/' => true]
                                 ]
         ]];
