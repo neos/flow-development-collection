@@ -251,6 +251,26 @@ class Service
     }
 
     /**
+     * Returns a regex pattern including enclosing characters, that matches either the configured
+     * whitelist or blacklist paths inside "TYPO3.Flow.i18n.scan.paths".
+     *
+     * @param bool $whitelist If the whitelist or blacklist patterns should be returned
+     * @return string The regex pattern to match the whitelist or blacklist
+     */
+    protected function getScanPathPattern($whitelist)
+    {
+        $filter = function($value) use ($whitelist)
+        {
+            return $value === $whitelist;
+        };
+        $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], $filter)));
+        if ($pattern !== '') {
+            $pattern = '#' . str_replace('#', '\#', $pattern) . '#';
+        }
+        return $pattern;
+    }
+
+    /**
      * Finds all Locale objects representing locales available in the
      * Flow installation. This is done by scanning all Private and Public
      * resource files of all active packages, in order to find localized files.
@@ -268,19 +288,11 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
-        $whitelistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'])));
-        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], function($value) {
-            return $value === false;
-        })));
-
+        $whitelistPattern = $this->getScanPathPattern(true);
         if ($whitelistPattern === '') {
             return;
         }
-
-        $whitelistPattern = '#' . str_replace('#', '\#', $whitelistPattern) . '#';
-        if ($blacklistPattern !== '') {
-            $blacklistPattern = '#' . str_replace('#', '\#', $blacklistPattern) . '#';
-        }
+        $blacklistPattern = $this->getScanPathPattern(false);
 
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
