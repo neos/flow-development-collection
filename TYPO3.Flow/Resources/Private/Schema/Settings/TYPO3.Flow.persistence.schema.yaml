@@ -104,6 +104,14 @@ properties:
               properties:
                 'dbType': { type: string, required: TRUE }
                 'className': { type: string, format: class-name, required: TRUE }
+      'migrations':
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          'ignoredTables':
+            type: dictionary
+            required: TRUE
+            patternProperties: { '/.*/': { type: boolean } }
   'cacheAllQueryResults':
     type: boolean
     required: TRUE
