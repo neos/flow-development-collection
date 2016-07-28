@@ -120,7 +120,7 @@ class Utility
      */
     public static function extractLocaleTagFromDirectory($directory)
     {
-        $directoryParts = explode('/', $directory);
+        $directoryParts = explode('/', rtrim($directory, '/'));
         $lastDirectoryPart = array_pop($directoryParts);
 
         if ($lastDirectoryPart !== null && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $lastDirectoryPart) === 1) {

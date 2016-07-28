@@ -145,6 +145,10 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         foreach (array('en_GB', 'sr') as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
+        foreach (array('de_DE', 'de_CH') as $localeIdentifier) {
+            mkdir('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier, 0777, true);
+            file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '/Main.xlf', 'FooBar');
+        }
 
         $mockPackage = $this->createMock(\TYPO3\Flow\Package\PackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
@@ -153,7 +157,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
         $mockLocaleCollection = $this->createMock(\TYPO3\Flow\I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
+        $mockLocaleCollection->expects($this->exactly(6))->method('addLocale');
 
         $mockSettings = array('i18n' => array(
                                 'defaultLocale' => 'sv_SE',
