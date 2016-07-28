@@ -99,7 +99,7 @@ class Utility
 
         $filenameParts = explode('.', $filename);
 
-        if (in_array($filenameParts[count($filenameParts) - 2], array('php', 'rss', 'xml'))) {
+        if (in_array($filenameParts[count($filenameParts) - 1], array('php', 'rss', 'xml'))) {
             return false;
         } elseif (count($filenameParts) === 2 && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $filenameParts[0]) === 1) {
             return $filenameParts[0];
