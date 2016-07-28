@@ -17,7 +17,11 @@ properties:
     additionalProperties: FALSE
     required: FALSE
     properties:
-      'paths':
+      'includePaths':
+        type: dictionary
+        required: TRUE
+        patternProperties: { '/.*/': { type: boolean } }
+      'excludePatterns':
         type: dictionary
         required: TRUE
         patternProperties: { '/.*/': { type: boolean } }

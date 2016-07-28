@@ -155,7 +155,14 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockLocaleCollection = $this->getMock(\TYPO3\Flow\I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
-        $mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => false, 'order' => array()), 'scan' => array('paths' => array('^/Private/' => true))));
+        $mockSettings = array('i18n' => array(
+                                'defaultLocale' => 'sv_SE',
+                                'fallbackRule' => array('strict' => false, 'order' => array()),
+                                'scan' => array(
+                                    'includePaths' => array('/Private/' => true),
+                                    'excludePatterns' => array(),
+                                )
+                            ));
 
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(false));
@@ -175,10 +182,13 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function initializeCorrectlySkipsExcludedPathsFromScanningLocales()
     {
         mkdir('vfs://Foo/Bar/Public/node_modules/foo/bar', 0777, true);
+        mkdir('vfs://Foo/Bar/Public/app/.git/refs/heads', 0777, true);
         mkdir('vfs://Foo/Bar/Private/Translations', 0777, true);
         foreach (array('en', 'sr_Cyrl_RS') as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Public/node_modules/foo/bar/foobar.' . $localeIdentifier . '.baz', 'FooBar');
+            file_put_contents('vfs://Foo/Bar/Public/app/.git/refs/heads/' . $localeIdentifier . '.dev', 'FooBar');
         }
+
         foreach (array('en_GB', 'sr') as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
@@ -192,7 +202,14 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockLocaleCollection = $this->getMock(\TYPO3\Flow\I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(2))->method('addLocale');
 
-        $mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => false, 'order' => array()), 'scan' => array('paths' => array('^/Private/' => true, '^/Public/' => true, '/node_modules/' => false))));
+        $mockSettings = array('i18n' => array(
+                                'defaultLocale' => 'sv_SE',
+                                'fallbackRule' => array('strict' => false, 'order' => array()),
+                                'scan' => array(
+                                    'includePaths' => array('/Private/' => true, '/Public/' => true),
+                                    'excludePatterns' => array('/node_modules/' => true, '/\..*/' => true)
+                                )
+                            ));
 
         $mockCache = $this->getMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, array(), array(), '', false);
         $mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(false));

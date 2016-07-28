@@ -251,18 +251,14 @@ class Service
     }
 
     /**
-     * Returns a regex pattern including enclosing characters, that matches either the configured
-     * whitelist or blacklist paths inside "TYPO3.Flow.i18n.scan.paths".
+     * Returns a regex pattern including enclosing characters, that matches any of the configured
+     * blacklist paths inside "TYPO3.Flow.i18n.scan.excludePatterns".
      *
-     * @param bool $whitelist If the whitelist or blacklist patterns should be returned
-     * @return string The regex pattern to match the whitelist or blacklist
+     * @return string The regex pattern matching the configured blacklist
      */
-    protected function getScanPathPattern($whitelist)
+    protected function getScanBlacklistPattern()
     {
-        $filter = function ($value) use ($whitelist) {
-            return $value === $whitelist;
-        };
-        $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], $filter)));
+        $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePatterns'])));
         if ($pattern !== '') {
             $pattern = '#' . str_replace('#', '\#', $pattern) . '#';
         }
@@ -287,11 +283,11 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
-        $whitelistPattern = $this->getScanPathPattern(true);
-        if ($whitelistPattern === '') {
+        $whitelistPaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
+        if ($whitelistPaths === []) {
             return;
         }
-        $blacklistPattern = $this->getScanPathPattern(false);
+        $blacklistPattern = $this->getScanBlacklistPattern();
 
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
@@ -301,18 +297,21 @@ class Service
                 continue;
             }
 
-            $directories = array($packageResourcesPath);
-            while ($directories !== array()) {
+            $directories = [];
+            foreach ($whitelistPaths as $path) {
+                $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
+                if (is_dir($scanPath)) {
+                    array_push($directories, Files::getNormalizedPath($scanPath));
+                }
+            }
+
+            while ($directories !== []) {
                 $currentDirectory = array_pop($directories);
                 $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
                 if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
                     continue;
                 }
 
-                $doScan = true;
-                if (preg_match($whitelistPattern, $relativeDirectory) !== 1) {
-                    $doScan = false;
-                }
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
                         if ($filename[0] === '.') {
@@ -321,7 +320,7 @@ class Service
                         $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
                         if (is_dir($pathAndFilename)) {
                             array_push($directories, Files::getNormalizedPath($pathAndFilename));
-                        } elseif ($doScan) {
+                        } else {
                             $localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
                             if ($localeIdentifier !== false) {
                                 $this->localeCollection->addLocale(new Locale($localeIdentifier));

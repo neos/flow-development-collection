@@ -35,8 +35,9 @@ use the i18n service API to obtain these verified ``Locale`` objects.
 .. note::
 
   You can configure which folders Flow should scan for finding available locales through
-  the ``TYPO3.Flow.i18n.scan.paths`` setting. This is useful to restrict the scanning
+  the ``TYPO3.Flow.i18n.scan.includePaths`` setting. This is useful to restrict the scanning
   to specific paths when you have a big file structure in your package ``Resources``.
+  You can also blacklist folders through ``TYPO3.Flow.i18n.scan.excludePatterns``.
   By default all folders except 'node_modules', 'bower_components' and any folder starting
   with a dot will be scanned.
 
