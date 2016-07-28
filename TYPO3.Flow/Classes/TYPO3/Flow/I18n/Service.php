@@ -269,7 +269,9 @@ class Service
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
         $whitelistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'])));
-        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], function($value) { return $value === false; })));
+        $blacklistPattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['paths'], function($value) {
+            return $value === false;
+        })));
 
         if ($whitelistPattern === '') {
             return;
