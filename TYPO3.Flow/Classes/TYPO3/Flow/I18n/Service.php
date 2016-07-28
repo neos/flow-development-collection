@@ -305,13 +305,13 @@ class Service
             while ($directories !== array()) {
                 $currentDirectory = array_pop($directories);
                 $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
-                if ($relativeDirectory !== '/') {
-                    if (preg_match($whitelistPattern, $relativeDirectory) !== 1) {
-                        continue;
-                    }
-                    if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
-                        continue;
-                    }
+                if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                    continue;
+                }
+
+                $doScan = true;
+                if (preg_match($whitelistPattern, $relativeDirectory) !== 1) {
+                    $doScan = false;
                 }
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
@@ -321,7 +321,7 @@ class Service
                         $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
                         if (is_dir($pathAndFilename)) {
                             array_push($directories, Files::getNormalizedPath($pathAndFilename));
-                        } else {
+                        } elseif ($doScan) {
                             $localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
                             if ($localeIdentifier !== false) {
                                 $this->localeCollection->addLocale(new Locale($localeIdentifier));
