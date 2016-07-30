@@ -57,6 +57,11 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @var ConfigurationManager
      */
+    protected $originalConfigurationManager;
+
+    /**
+     * @var ConfigurationManager
+     */
     protected $mockConfigurationManager;
 
     /**
@@ -93,14 +98,18 @@ class ConfigurationValidationTest extends FunctionalTestCase
         $this->mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($schemaPackages));
 
         //
-        // create mock configurationManager
+        // create mock configurationManager and store the original one
         //
+
+        $this->originalConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
 
         $yamlConfigurationSource = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource::class);
 
-        $this->mockConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $this->mockConfigurationManager = clone ($this->originalConfigurationManager);
         $this->mockConfigurationManager->setPackages($configurationPackages);
         $this->inject($this->mockConfigurationManager, 'configurationSource', $yamlConfigurationSource);
+
+        $this->objectManager->setInstance(ConfigurationManager::class, $this->mockConfigurationManager);
 
         //
         // create the configurationSchemaValidator
@@ -115,6 +124,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
      */
     public function tearDown()
     {
+        $this->objectManager->setInstance(ConfigurationManager::class, $this->originalConfigurationManager);
         $this->injectApplicationContextIntoConfigurationManager($this->objectManager->getContext());
         parent::tearDown();
     }
