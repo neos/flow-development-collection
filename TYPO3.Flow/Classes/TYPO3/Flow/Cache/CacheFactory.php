@@ -102,7 +102,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
     {
         $backend = $this->instanciateBackend($backendObjectName, $backendOptions, $persistent);
-        $cache = $this->instanciateCache($cacheIdentifier, $cacheObjectName, $backend);
+        $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
         return $cache;
@@ -111,9 +111,9 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
     /**
      * {@inheritdoc}
      */
-    protected function instanciateCache($cacheIdentifier, $cacheObjectName, $backend)
+    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
     {
-        $cache = parent::instanciateCache($cacheIdentifier, $cacheObjectName, $backend);
+        $cache = parent::instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
 
         if (is_callable([$cache, 'initializeObject'])) {
             $cache->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
@@ -129,7 +129,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
      * @return FlowAbstractBackend|Backend\BackendInterface
      * @throws Exception\InvalidBackendException
      */
-    protected function instanciateBackend($backendObjectName, $backendOptions, $persistent = false)
+    protected function instantiateBackend($backendObjectName, $backendOptions, $persistent = false)
     {
         if (
             $persistent &&

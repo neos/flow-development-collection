@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache;
  */
 
 use TYPO3\Flow\Cache\Backend\BackendInterface;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -52,8 +53,8 @@ class GenericCacheFactory implements CacheFactoryInterface
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [])
     {
-        $backend = $this->instanciateBackend($backendObjectName, $backendOptions);
-        $cache = $this->instanciateCache($cacheIdentifier, $cacheObjectName, $backend);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions);
+        $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
         return $cache;
@@ -65,7 +66,7 @@ class GenericCacheFactory implements CacheFactoryInterface
      * @return BackendInterface
      * @throws Exception\InvalidBackendException
      */
-    protected function instanciateBackend($backendObjectName, $backendOptions)
+    protected function instantiateBackend($backendObjectName, $backendOptions)
     {
         $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
         if (!$backend instanceof Backend\BackendInterface) {
@@ -79,9 +80,10 @@ class GenericCacheFactory implements CacheFactoryInterface
      * @param string $cacheIdentifier
      * @param string $cacheObjectName
      * @param BackendInterface $backend
+     * @return FrontendInterface
      * @throws Exception\InvalidCacheException
      */
-    protected function instanciateCache($cacheIdentifier, $cacheObjectName, $backend)
+    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
     {
         $cache = new $cacheObjectName($cacheIdentifier, $backend);
         if (!$cache instanceof Frontend\FrontendInterface) {
