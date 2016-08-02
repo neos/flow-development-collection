@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
  * A general lock class.
  *
