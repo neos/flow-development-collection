@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Backend;
+namespace Neos\Cache\Backend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,7 +12,8 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;

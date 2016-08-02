@@ -11,9 +11,13 @@ namespace TYPO3\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\CacheFactoryInterface;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
-use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
+use TYPO3\Flow\Cache\Backend\FlowSpecificBackendInterface;
+use Neos\Cache\Backend\SimpleFileBackend;
+use TYPO3\Flow\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Environment;
@@ -26,7 +30,7 @@ use TYPO3\Flow\Utility\Environment;
  * @Flow\Scope("singleton")
  * @api
  */
-class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
+class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInterface
 {
     /**
      * The current Flow context ("Production", "Development" etc.)
@@ -101,7 +105,7 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
     {
-        $backend = $this->instanciateBackend($backendObjectName, $backendOptions, $persistent);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $persistent);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
@@ -140,11 +144,11 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
             $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
         }
 
-        if (is_a($backendObjectName, FlowAbstractBackend::class, true)) {
-            return $this->instanciateFlowSpecificBackend($backendObjectName, $backendOptions);
+        if (is_a($backendObjectName, FlowSpecificBackendInterface::class, true)) {
+            return $this->instantiateFlowSpecificBackend($backendObjectName, $backendOptions);
         }
 
-        return parent::instanciateBackend($backendObjectName, $backendOptions);
+        return parent::instantiateBackend($backendObjectName, $backendOptions);
     }
 
     /**
@@ -153,12 +157,12 @@ class CacheFactory extends GenericCacheFactory implements CacheFactoryInterface
      * @return FlowAbstractBackend
      * @throws Exception\InvalidBackendException
      */
-    protected function instanciateFlowSpecificBackend($backendObjectName, $backendOptions)
+    protected function instantiateFlowSpecificBackend($backendObjectName, $backendOptions)
     {
-        $backend = new $backendObjectName($this->context, $backendOptions, $this->environmentConfiguration);
+        $backend = new $backendObjectName($this->context, $backendOptions);
 
         if (!$backend instanceof Backend\BackendInterface) {
-            throw new Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
         }
 
         /** @var FlowAbstractBackend $backend */

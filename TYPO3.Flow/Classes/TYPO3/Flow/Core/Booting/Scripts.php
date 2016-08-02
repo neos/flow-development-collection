@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Core\Booting;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
-use TYPO3\Flow\Cache\EnvironmentConfiguration as CacheEnvironmentConfiguration;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\Source\YamlSource;

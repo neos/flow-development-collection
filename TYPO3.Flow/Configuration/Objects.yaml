@@ -15,7 +15,7 @@ DateTime:
 # Cache                                                                    #
 #                                                                          #
 
-TYPO3\Flow\Cache\CacheFactoryInterface:
+Neos\Cache\CacheFactoryInterface:
   className: TYPO3\Flow\Cache\CacheFactory
 
 TYPO3\Flow\Cache\CacheFactory:

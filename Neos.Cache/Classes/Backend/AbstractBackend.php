@@ -11,7 +11,7 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 
 /**
  * An abstract caching backend

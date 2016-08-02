@@ -14,7 +14,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 
 use TYPO3\Flow\Cache\Backend\ApcBackend;
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 

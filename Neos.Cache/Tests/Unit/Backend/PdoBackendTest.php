@@ -13,7 +13,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -224,7 +224,7 @@ class PdoBackendTest extends BaseTestCase
         $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMockBuilder(\TYPO3\Flow\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
+        $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255

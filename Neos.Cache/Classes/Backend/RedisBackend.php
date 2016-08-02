@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Backend;
+namespace Neos\Cache\Backend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
+use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception as CacheException;
 
 /**
@@ -85,15 +88,17 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected $compressionLevel = 0;
 
     /**
-     * {@inheritdoc}
+     * Constructs this backend
+     *
+     * @param EnvironmentConfiguration $environmentConfiguration
+     * @param array $options Configuration options - depends on the actual backend
      */
-    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options, \Redis $redis = null)
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
         parent::__construct($environmentConfiguration, $options);
-        if (null === $redis) {
-            $redis = $this->getRedisClient();
+        if ($this->redis === null) {
+            $this->redis = $this->getRedisClient();
         }
-        $this->redis = $redis;
     }
 
     /**
@@ -187,6 +192,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
             $result = $this->redis->exec();
         } while ($result === false);
+
         return true;
     }
 
@@ -364,6 +370,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (null === $this->frozen) {
             $this->frozen = $this->redis->exists($this->buildKey('frozen'));
         }
+
         return $this->frozen;
     }
 
@@ -420,6 +427,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function setCompressionLevel($compressionLevel)
     {
         $this->compressionLevel = $compressionLevel;
+    }
+
+    /**
+     * @param \Redis $redis
+     */
+    public function setRedis(\Redis $redis = null)
+    {
+        $this->redis = $redis;
     }
 
     /**

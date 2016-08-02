@@ -55,7 +55,7 @@ class RedisBackendTest extends BaseTestCase
             ->method('getIdentifier')
             ->will($this->returnValue('Foo_Cache'));
 
-        $mockEnvironmentConfiguration = $this->getMockBuilder(\TYPO3\Flow\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
+        $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255

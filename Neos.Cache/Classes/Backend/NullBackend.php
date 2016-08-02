@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Backend;
+namespace Neos\Cache\Backend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -14,6 +14,8 @@ namespace TYPO3\Flow\Cache\Backend;
 // @codeCoverageIgnoreStart
 
 use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
+use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 
 /**
  * A caching backend which forgets everything immediately

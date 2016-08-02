@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Session;
 
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;

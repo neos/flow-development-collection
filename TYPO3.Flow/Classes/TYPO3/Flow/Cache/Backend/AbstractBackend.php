@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 
 /**
  * An abstract caching backend
@@ -20,43 +20,19 @@ use TYPO3\Flow\Cache\EnvironmentConfiguration;
  * @deprecated This is replaced by \Neos\Cache\Backend\AbstractBackend which has a different constructor, you need to adapt any custom cache backend to that.
  * @see \Neos\Cache\Backend\AbstractBackend
  */
-abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend implements BackendInterface
+abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend implements BackendInterface, FlowSpecificBackendInterface
 {
-    const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
-    const UNLIMITED_LIFETIME = 0;
-
-    /**
-     * Reference to the cache frontend which uses this backend
-     * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
-     */
-    protected $cache;
-
-    /**
-     * @var string
-     */
-    protected $cacheIdentifier;
-
     /**
      * The current application context
      * @var \TYPO3\Flow\Core\ApplicationContext
      */
     protected $context;
 
-    /**
-     * Default lifetime of a cache entry in seconds
-     * @var integer
-     */
-    protected $defaultLifetime = 3600;
 
     /**
      * @var \TYPO3\Flow\Utility\Environment
      */
     protected $environment;
-
-    /**
-     * @var EnvironmentConfiguration
-     */
-    protected $environmentConfiguration;
 
     /**
      * Constructs this backend

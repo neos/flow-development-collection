@@ -15,7 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\SimpleFileBackend;
-use TYPO3\Flow\Cache\EnvironmentConfiguration;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
