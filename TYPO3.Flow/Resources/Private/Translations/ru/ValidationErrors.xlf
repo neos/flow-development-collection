@@ -5,11 +5,11 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="ru">Разрешены только латинские(a до z, умлауты, ...) малые буквы и цифры.</target><alt-trans><target xml:lang="ru">Разрешены только латинские малые буквы и цифры</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Разрешены только латинские(a до z, умлауты, ...) малые буквы и цифры.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="ru">Заданное значение будет {0}.</target></trans-unit>
+			<target xml:lang="ru">Заданное значение должно быть {0}.</target><alt-trans><target xml:lang="ru">Заданное значение будет {0}.</target></alt-trans></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
@@ -20,7 +20,7 @@
 			<target xml:lang="ru">Содержимое не является исчислимым</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve" approved="yes">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="ru">Число должно быть между {0,number} и {1,number}</target><alt-trans><target xml:lang="ru">Число должен быть между {0,number} и {1,number}</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Число должно быть между {0,number} и {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
@@ -100,7 +100,7 @@
 			<target xml:lang="ru">Ожидается процентное число</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve" approved="yes">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="ru">Ожидается десятичная дробь</target></trans-unit>
+			<target xml:lang="ru">Ожидается вещественное число</target><alt-trans><target xml:lang="ru">Ожидается десятичная дробь</target></alt-trans></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern. Got: {0}</source>
@@ -116,31 +116,31 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="ru">Длинна текста должа быть между {0,number} и {1,number} символами</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]">
+        <trans-unit id="1238108068[0]" approved="yes">
           <source>This field must contain at least {0,number} character</source>
-          <target xml:lang="ru" state="needs-translation">This field must contain at least {0,number} character</target>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символ</target>
         </trans-unit>
-        <trans-unit id="1238108068[1]">
+        <trans-unit id="1238108068[1]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="ru" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символа</target>
         </trans-unit>
-        <trans-unit id="1238108068[2]">
+        <trans-unit id="1238108068[2]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="ru" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символов</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]">
+        <trans-unit id="1238108069[0]" approved="yes">
           <source>This text may not exceed {0,number} character</source>
-          <target xml:lang="ru" state="needs-translation">This text may not exceed {0,number} character</target>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символ</target>
         </trans-unit>
-        <trans-unit id="1238108069[1]">
+        <trans-unit id="1238108069[1]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="ru" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символа</target>
         </trans-unit>
-        <trans-unit id="1238108069[2]">
+        <trans-unit id="1238108069[2]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="ru" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символов</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
@@ -180,7 +180,7 @@
 			<target xml:lang="ru">Данное значение не является изображением</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="ru">Ширина {0,number} данного изображения меньше, чем допустимая минимальная ширина {1,number}</target><alt-trans><target xml:lang="ru">Ширина {0,number} данного изображения меньше, чем допустимые минимальная ширина {1,number}</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Ширина {0,number} данного изображения меньше, чем допустимая минимальная ширина {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
 			<target xml:lang="ru">Ширина {0,number} данного изображения выше, чем допустимая максимальная ширина {1,number}</target></trans-unit>
@@ -202,10 +202,10 @@
 			<target xml:lang="ru">Данное значение не является изображением</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve" approved="yes">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="ru">Ориентация изображения должна быть «{0}»</target></trans-unit>
+			<target xml:lang="ru">Ориентация изображения должна быть "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve" approved="yes">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="ru">Ориентация изображения «{0}» не допускается</target></trans-unit>
+			<target xml:lang="ru">Ориентация изображения "{0}" не допускается</target></trans-unit>
     </body>
   </file>
 </xliff>
