@@ -22,9 +22,6 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class SemaphoreLockStrategy implements LockStrategyInterface
 {
-    const READ_ACCESS = 0;
-    const WRITE_ACCESS = 1;
-
     /**
      * Mutex semaphore
      *
@@ -40,24 +37,9 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     protected $resource;
 
     /**
-     * @var integer
-     */
-    protected $writers = 0;
-
-    /**
-     * @var integer
-     */
-    protected $readers = 0;
-
-    /**
      * @var string
      */
     protected $subject;
-
-    /**
-     * @var boolean
-     */
-    protected $exclusiveLock;
 
     /**
      * @param string $subject
@@ -67,11 +49,8 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     public function acquire($subject, $exclusiveLock)
     {
         $this->initializeSemaphore($subject);
-
         $this->subject = $subject;
-        $this->exclusiveLock = $exclusiveLock;
-
-        $this->requestAccess($this->getAccessMode());
+        sem_acquire($this->resource);
     }
 
     /**
@@ -98,64 +77,11 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     }
 
     /**
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean
      */
     public function release()
     {
-        $this->requestRelease($this->getAccessMode());
-    }
-
-    /**
-     * @return integer
-     */
-    protected function getAccessMode()
-    {
-        return $this->exclusiveLock ? self::WRITE_ACCESS : self::READ_ACCESS;
-    }
-
-    /**
-     * Request acess to the resource
-     *
-     * @param integer $accessType
-     * @return void
-     */
-    protected function requestAccess($accessType = self::READ_ACCESS)
-    {
-        if ($accessType == self::WRITE_ACCESS) {
-            $this->semCallback($this->mutex, function () {
-                $this->writers++;
-            });
-            sem_acquire($this->resource);
-        } else {
-            $this->semCallback($this->mutex, function () {
-                if ($this->writers > 0 || $this->readers=== 0) {
-                    sem_release($this->mutex);
-                    sem_acquire($this->resource);
-                    sem_acquire($this->mutex);
-                }
-                $this->readers++;
-            });
-        }
-    }
-
-    /**
-     * @param integer $accessType
-     */
-    protected function requestRelease($accessType = self::READ_ACCESS)
-    {
-        if ($accessType == self::WRITE_ACCESS) {
-            $this->semCallback($this->mutex, function () {
-                $this->writers--;
-            });
-            @sem_release($this->resource);
-        } else {
-            $this->semCallback($this->mutex, function () {
-                $this->readers--;
-                if ($this->readers === 0) {
-                    @sem_release($this->resource);
-                }
-            });
-        }
+        @sem_release($this->resource);
     }
 
     /**
