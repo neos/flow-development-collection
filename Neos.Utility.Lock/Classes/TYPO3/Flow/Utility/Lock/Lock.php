@@ -13,8 +13,6 @@ namespace TYPO3\Flow\Utility\Lock;
 
 /**
  * A general lock class.
- *
- * @api
  */
 class Lock
 {
