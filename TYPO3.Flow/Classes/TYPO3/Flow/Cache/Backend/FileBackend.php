@@ -82,13 +82,13 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            LockFactory::acquireCallback($cacheEntryPathAndFilename, true, function () use ($cacheEntryPathAndFilename, $entryIdentifier) {
+            LockFactory::acquireCallback($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename, $entryIdentifier) {
                 file_put_contents($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
             });
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-        LockFactory::acquireCallback($cachePathAndFileName, true, function () use ($cachePathAndFileName) {
+        LockFactory::acquireCallback($cachePathAndFileName, function () use ($cachePathAndFileName) {
             if ($this->useIgBinary === true) {
                 $data = igbinary_serialize($this->cacheEntryIdentifiers);
             } else {
@@ -127,7 +127,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if (is_file($this->cacheDirectory . 'FrozenCache.data')) {
             $this->frozen = true;
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-            LockFactory::acquireCallback($cachePathAndFileName, false, function () use (&$data, $cachePathAndFileName) {
+            LockFactory::acquireCallback($cachePathAndFileName, function () use (&$data, $cachePathAndFileName) {
                 $data = file_get_contents($cachePathAndFileName);
             });
             if ($this->useIgBinary === true) {
@@ -268,7 +268,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             }
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
-            LockFactory::acquireCallback($cacheEntryPathAndFilename, false, function () use (&$metaData, $cacheEntryPathAndFilename) {
+            LockFactory::acquireCallback($cacheEntryPathAndFilename, function () use (&$metaData, $cacheEntryPathAndFilename) {
                 $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
                 $metaData = file_get_contents($cacheEntryPathAndFilename, null, null, $index);
             });
@@ -343,7 +343,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return file_get_contents($cacheEntryPathAndFilename);
         };
         if ($acquireLock) {
-            LockFactory::acquireCallback($cacheEntryPathAndFilename, false, function () use ($cacheEntryPathAndFilename, $get, &$cacheData) {
+            LockFactory::acquireCallback($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename, $get, &$cacheData) {
                 $cacheData = $get($cacheEntryPathAndFilename);
             });
         } else {
@@ -443,7 +443,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
                 return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
             };
             if ($acquireLock) {
-                LockFactory::acquireCallback($pathAndFilename, false, function () use ($entryIdentifier, $get, &$result) {
+                LockFactory::acquireCallback($pathAndFilename, function () use ($entryIdentifier, $get, &$result) {
                     $result = $get($entryIdentifier);
                 });
             } else {
@@ -460,7 +460,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return file_get_contents($pathAndFilename);
         };
         if ($acquireLock) {
-            LockFactory::acquireCallback($pathAndFilename, false, function () use ($pathAndFilename, $get, &$cacheData) {
+            LockFactory::acquireCallback($pathAndFilename, function () use ($pathAndFilename, $get, &$cacheData) {
                 $cacheData = $get($pathAndFilename);
             });
         } else {
