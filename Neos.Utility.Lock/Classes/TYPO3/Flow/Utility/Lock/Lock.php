@@ -76,6 +76,7 @@ class Lock
     /**
      * Releases the lock
      * @return boolean TRUE on success, FALSE otherwise
+     * @deprecated Use \TYPO3\Flow\Utility\Lock\Factory::acquireCallback
      */
     public function release()
     {
