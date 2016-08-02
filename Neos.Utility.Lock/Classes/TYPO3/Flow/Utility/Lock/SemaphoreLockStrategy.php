@@ -19,8 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
  * This lock strategy is based on Sempahore.
  *
  * @see http://php.net/manual/fr/ref.sem.php
- *
- * @Flow\Scope("prototype")
  */
 class SemaphoreLockStrategy implements LockStrategyInterface
 {
