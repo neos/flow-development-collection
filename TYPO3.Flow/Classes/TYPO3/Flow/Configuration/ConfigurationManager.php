@@ -656,13 +656,25 @@ EOD;
                 preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
                 if (count($matches[1]) > 0) {
                     foreach ($matches[1] as $match) {
+                        $replace = false;
+                        $replacement = null;
                         if (defined($match)) {
+                            $replace = true;
+                            $replacement = constant($match);
+                        } elseif (strpos($match, 'ENV::') === 0) {
+                            $environmentValue = getenv(substr($match, 5));
+                            if ($environmentValue !== false) {
+                                $replace = true;
+                                $replacement = $environmentValue;
+                            }
+                        }
+                        if ($replace) {
                             if ($configurations[$key] === '%' . $match . '%') {
                                 // the constant expression spans the complete directive, assign directly to keep type
-                                $configurations[$key] = constant($match);
+                                $configurations[$key] = $replacement;
                             } else {
                                 // the constant is only a substring of the directive, replace that part accordingly
-                                $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
+                                $configurations[$key] = str_replace('%' . $match . '%', $replacement, $configurations[$key]);
                             }
                         }
                     }
