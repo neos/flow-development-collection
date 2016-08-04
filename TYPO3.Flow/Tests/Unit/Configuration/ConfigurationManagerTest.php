@@ -771,6 +771,37 @@ EOD;
     }
 
     /**
+     * @test
+     */
+    public function postProcessConfigurationReplacesEnvMarkersWithEnvironmentValues()
+    {
+        $envVarName = 'TYPO3_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR';
+        $envVarValue = 'TYPO3_Flow_Tests_Unit_Configuration_ConfigurationManagerTest_MockEnvValue';
+
+        putenv($envVarName . '=' . $envVarValue);
+
+        $settings = array(
+            'foo' => 'bar',
+            'baz' => '%ENV::' . $envVarName . '%',
+            'inspiring' => array(
+                'people' => array(
+                    'to' => '%ENV::' . $envVarName . '%',
+                    'share' => 'foo %ENV::' . $envVarName . '% bar'
+                )
+            )
+        );
+
+        $configurationManager = $this->getAccessibleMock(\TYPO3\Flow\Configuration\ConfigurationManager::class, array('dummy'), array(), '', false);
+        $configurationManager->_callRef('postProcessConfiguration', $settings);
+
+        $this->assertSame($envVarValue, $settings['baz']);
+        $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
+        $this->assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
+
+        putenv($envVarName);
+    }
+
+    /**
      * We expect that the context specific routes are loaded *first*
      *
      * @test
