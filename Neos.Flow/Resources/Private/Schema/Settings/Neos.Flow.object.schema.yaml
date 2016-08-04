@@ -3,5 +3,5 @@ additionalProperties: FALSE
 properties:
   'registerFunctionalTestClasses': { type: boolean, required: TRUE }
   'includeClasses':
-    type: dictionary
+    type: array
     items: { type: string, required: TRUE }

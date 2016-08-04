@@ -9,23 +9,27 @@ properties:
     type: dictionary
     required: true
     additionalProperties:
-      type: [dictionary, 'null']
-      additionalProperties: false
-      properties:
-        'position': { type: [string, number] }
-        'component': { type: string, format: class-name }
-        'componentOptions': { type: dictionary }
-        'chain':
-          type: [dictionary, 'null']
-          additionalProperties:
-            type: dictionary
-            additionalProperties: false
-            properties:
-              'position': { type: [string, number] }
-              'component': { type: string, format: class-name }
-              'componentOptions': { type: dictionary }
-              'chain':
+      - 'null'
+      -
+        type: dictionary
+        additionalProperties: false
+        properties:
+          'position': [string, number]
+          'component': { type: string, format: class-name }
+          'componentOptions': { type: dictionary }
+          'chain':
+            - 'null'
+            -
+              type: dictionary
+              additionalProperties:
                 type: dictionary
+                additionalProperties: false
+                properties:
+                  'position': [string, number]
+                  'component': { type: string, format: class-name }
+                  'componentOptions': { type: dictionary }
+                  'chain':
+                    type: dictionary
   'trustedProxies':
     type: dictionary
     required: true

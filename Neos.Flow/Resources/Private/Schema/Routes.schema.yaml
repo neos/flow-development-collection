@@ -15,9 +15,9 @@ items:
         '@subpackage': {type: string}
     'routeParts':
       type: dictionary
-      additionalAttributes:
+      additionalProperties:
         type: dictionary
-        additionalAttributes: FALSE
+        additionalProperties: FALSE
         properties:
           'handler': {type: string, required: TRUE, format: class-name}
     'appendExceedingArguments': {type: boolean}
