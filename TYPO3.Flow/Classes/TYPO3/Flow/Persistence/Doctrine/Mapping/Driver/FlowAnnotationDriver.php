@@ -211,6 +211,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         } elseif ($classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
             // also ok... but we make it read-only
             $metadata->markReadOnly();
+        } elseif (isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])) {
+            $metadata->isEmbeddedClass = true;
         } else {
             throw MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
         }
@@ -549,7 +551,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     || $classSchema->isPropertyTransient($property->getName())
                     || $metadata->isMappedSuperclass && !$property->isPrivate()
                     || $metadata->isInheritedField($property->getName())
-                    || $metadata->isInheritedAssociation($property->getName())) {
+                    || $metadata->isInheritedAssociation($property->getName())
+                    || $metadata->isInheritedEmbeddedClass($property->getName())) {
                 continue;
             }
 
@@ -681,6 +684,15 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 }
 
                 $metadata->mapManyToMany($mapping);
+            } elseif ($embeddedAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Embedded')) {
+                if ($embeddedAnnotation->class) {
+                    $mapping['class'] = $embeddedAnnotation->class;
+                } else {
+                    // This will not happen currently, because "class" argument is required. It would be nice if that could be changed though.
+                    $mapping['class'] = $mapping['targetEntity'];
+                }
+                $mapping['columnPrefix'] = $embeddedAnnotation->columnPrefix;
+                $metadata->mapEmbedded($mapping);
             } else {
                 $mapping['nullable'] = false;
 
