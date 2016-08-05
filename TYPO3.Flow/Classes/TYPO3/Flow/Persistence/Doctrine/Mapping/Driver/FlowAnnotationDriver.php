@@ -257,6 +257,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $primaryTable['name'] = $this->inferTableNameFromClassName($className);
         }
 
+        // Evaluate @Cache annotation
+        if (isset($classAnnotations['Doctrine\ORM\Mapping\Cache'])) {
+            $cacheAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Cache'];
+            $cacheMap   = array(
+                'region' => $cacheAnnotation->region,
+                'usage'  => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+            );
+
+            $metadata->enableCache($cacheMap);
+        }
+
         // Evaluate NamedNativeQueries annotation
         if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'])) {
             $namedNativeQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'];
@@ -754,6 +765,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'class' => $customGeneratorAnnotation->class
                     ));
                 }
+            }
+
+            // Evaluate @Cache annotation
+            if (($cacheAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Cache')) !== null) {
+                $metadata->enableAssociationCache($mapping['fieldName'], array(
+                    'usage'         => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+                    'region'        => $cacheAnnotation->region,
+                ));
             }
         }
     }
