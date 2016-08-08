@@ -66,6 +66,16 @@ class Request extends AbstractMessage
     protected $attributes = array();
 
     /**
+     * PSR-7 Attribute containing the resolved trusted client IP address as string
+     */
+    const ATTRIBUTE_CLIENT_IP = 'clientIpAddress';
+
+    /**
+     * PSR-7 Attribute containing a boolean whether the request is from a trusted proxy
+     */
+    const ATTRIBUTE_TRUSTED_PROXY = 'fromTrustedProxy';
+
+    /**
      * Constructs a new Request object based on the given environment data.
      *
      * @param array $get Data similar to that which is typically provided by $_GET
@@ -180,7 +190,9 @@ class Request extends AbstractMessage
     public function __clone()
     {
         $this->uri = clone $this->uri;
-        $this->baseUri = clone $this->baseUri;
+        if ($this->baseUri !== null) {
+            $this->baseUri = clone $this->baseUri;
+        }
         $this->headers = clone $this->headers;
     }
 
@@ -505,33 +517,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * @param string $clientIpAddress
-     * @return Request
-     */
-    public function withClientIpAddress($clientIpAddress)
-    {
-        return $this->withAttribute('clientIpAddress', $clientIpAddress);
-    }
-
-    /**
-     * Check if this request is coming from a trusted proxy.
-     *
-     * @return boolean
-     */
-    public function isFromTrustedProxy()
-    {
-        return $this->getAttribute('fromTrustedProxy', false);
-    }
-
-    /**
-     * @return Request
-     */
-    public function fromTrustedProxy()
-    {
-        return $this->withAttribute('fromTrustedProxy', true);
-    }
-
-    /**
      * Returns the best guess of the client's IP address.
      *
      * Note that, depending on the actual source used, IP addresses can be spoofed
@@ -546,7 +531,7 @@ class Request extends AbstractMessage
      */
     public function getClientIpAddress()
     {
-        return $this->getAttribute('clientIpAddress', isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
+        return $this->getAttribute(self::ATTRIBUTE_CLIENT_IP, isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
     }
 
     /**

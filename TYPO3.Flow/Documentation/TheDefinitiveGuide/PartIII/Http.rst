@@ -281,13 +281,13 @@ Additionally Flow respects the ``X-HTTP-Method`` respectively ``X-HTTP-Method-Ov
 Trusted Proxies
 ~~~~~~~~~~~~~~~
 
-If your server is behind a reverse proxy or a CDN, some of the request informations like the the host name, the port,
+If your server is behind a reverse proxy or a CDN, some of the request information like the the host name, the port,
 the protocol and the original client IP address are provided via additional request headers.
 Since those headers can also easily be sent by an adversary, possibly bypassing security measurements, you should make
 sure that those headers are only accepted from trusted proxies.
 
 For this, you can configure a list of proxy IP address ranges in CIDR notation that are allowed to provide such headers,
-and which headers specifically are accepted for overriding those request informations::
+and which headers specifically are accepted for overriding those request information::
 
 	TYPO3:
 	  Flow:
@@ -306,7 +306,13 @@ and which headers specifically are accepted for overriding those request informa
 This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
 IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``.
 By default, all proxies are trusted (``trustedProxies.proxies`` set to ``'*'``) and only the ``X-Forwarded-*`` headers
-are accepted. If you know that your installation will not run behind a proxy server, you should change settings to this::
+are accepted. Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+
+	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
+
+Those headers will be checked from left to right and the first set header will be used for determining the client address.
+
+If you know that your installation will not run behind a proxy server, you should change settings to this::
 
 	TYPO3:
 	  Flow:
