@@ -120,26 +120,30 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
     /**
      * Imports the given temporary file into the storage and creates the new resource object.
      *
-     * @param string $temporaryFile
+     * Note: the temporary file is (re-)moved by this method.
+     *
+     * @param string $temporaryPathAndFileName
      * @param string $collectionName
      * @return Resource
      * @throws Exception
      */
-    protected function importTemporaryFile($temporaryFile, $collectionName)
+    protected function importTemporaryFile($temporaryPathAndFileName, $collectionName)
     {
-        $this->fixFilePermissions($temporaryFile);
-        $sha1Hash = sha1_file($temporaryFile);
-        $finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
+        $this->fixFilePermissions($temporaryPathAndFileName);
+        $sha1Hash = sha1_file($temporaryPathAndFileName);
+        $targetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
 
-        if (!is_file($finalTargetPathAndFilename)) {
-            $this->moveTemporaryFileToFinalDestination($temporaryFile, $finalTargetPathAndFilename);
+        if (!is_file($targetPathAndFilename)) {
+            $this->moveTemporaryFileToFinalDestination($temporaryPathAndFileName, $targetPathAndFilename);
+        } else {
+            unlink($temporaryPathAndFileName);
         }
 
         $resource = new Resource();
-        $resource->setFileSize(filesize($finalTargetPathAndFilename));
+        $resource->setFileSize(filesize($targetPathAndFilename));
         $resource->setCollectionName($collectionName);
         $resource->setSha1($sha1Hash);
-        $resource->setMd5(md5_file($finalTargetPathAndFilename));
+        $resource->setMd5(md5_file($targetPathAndFilename));
 
         return $resource;
     }

@@ -944,6 +944,9 @@ The following Policy expresses the exact same functionality as above:
 
       'Acme.MyPackage:InvoiceService.ApproveInvoice':
         matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > {amount}))'
+        parameters:
+          amount:
+            className: 'TYPO3\Flow\Security\Authorization\Privilege\Parameter\StringPrivilegeParameter'
 
     roles:
       'Acme.MyPackage:Employee':
@@ -952,12 +955,12 @@ The following Policy expresses the exact same functionality as above:
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
           parameters:
             amount: 100
-            permission: GRANT
+          permission: GRANT
           -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
           parameters:
             amount: 1000
-            permission: DENY
+          permission: DENY
 
       'Acme.MyPackage:CEO':
         privileges:

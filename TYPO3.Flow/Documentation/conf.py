@@ -299,7 +299,9 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+    'neos': ('https://neos.readthedocs.io/en/stable', None),
+}
 
 # load PhpLexer
 from sphinx.highlighting import lexers
