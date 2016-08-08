@@ -60,7 +60,8 @@ abstract class AbstractFrontend implements FrontendInterface
      */
     public function initializeObject()
     {
-        // This method is here for backwards compatibility reasons, the Backend gets the Frontend set in the cache factory now.
+        // FIXME: This can be removed in next major, since the Backend gets the Frontend set in the cache factory now.
+        $this->backend->setCache($this);
     }
 
     /**

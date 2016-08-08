@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
+use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Security\Cryptography\HashService;
