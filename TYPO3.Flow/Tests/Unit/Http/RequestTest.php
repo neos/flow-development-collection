@@ -22,7 +22,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
  * In some tests backupGlobals is disabled, this is to avoid risky test warnings caused by changed globals
  * that are needed to be changed in those tests.
  *
- * Additionally those tests backup/restore the SCRIPT_NAME in the $_SERVER superglobal to avoid a warning
+ * Additionally those tests backup/restore the $_SERVER superglobal to avoid a warning
  * with PHPUnit when it tries to access that in phpunit/phpunit/src/Util/Filter.php on line 29
  */
 class RequestTest extends UnitTestCase
@@ -33,7 +33,7 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $server = $_SERVER;
 
         $_GET = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
         $_POST = array();
@@ -79,7 +79,7 @@ class RequestTest extends UnitTestCase
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
 
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
+        $_SERVER = $server;
     }
 
     /**
@@ -88,7 +88,7 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $server = $_SERVER;
 
         $_GET = array();
         $_POST = array();
@@ -100,7 +100,7 @@ class RequestTest extends UnitTestCase
 
         $this->assertEquals('http://localhost/', (string)$request->getUri());
 
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
+        $_SERVER = $server;
     }
 
     /**
