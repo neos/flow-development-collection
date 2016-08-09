@@ -49,18 +49,24 @@ class CacheFactoryTest extends UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->mockEnvironment = $this->getMock(\TYPO3\Flow\Utility\Environment::class, array(), array(), '', false);
+        $this->mockEnvironment = $this->createMock(\TYPO3\Flow\Utility\Environment::class);
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
+        $this->mockEnvironment->expects($this->any())->method('getContext')->will($this->returnValue(new ApplicationContext('Testing')));
 
-        $this->mockCacheManager = $this->getMock(CacheManager::class, array('registerCache', 'isCachePersistent'), array(), '', false);
+        $this->mockCacheManager = $this->getMockBuilder(CacheManager::class)
+                                        ->setMethods(['registerCache', 'isCachePersistent'])
+                                        ->disableOriginalConstructor()
+                                        ->getMock();
         $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
 
-        $this->mockEnvironmentConfiguration = $this->getMock(EnvironmentConfiguration::class, null, [
-            __DIR__ . '~Testing',
-            'vfs://Foo/',
-            255
-        ], '');
+        $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
+                                            ->setConstructorArgs([
+                                                __DIR__ . '~Testing',
+                                                'vfs://Foo/',
+                                                255
+                                            ])
+                                            ->getMock();
     }
 
     /**
