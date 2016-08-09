@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A utility class for dealing with IP addresses.
  *
