@@ -158,16 +158,17 @@ class TrustedProxiesComponent implements ComponentInterface
 
         $ipAddress = $server['REMOTE_ADDR'];
         $trustedIpHeaders = $this->getTrustedProxyHeaderValues(self::HEADER_CLIENT_IP, $request);
+        $trustedIpHeader = [];
         while ($trustedIpHeaders->valid()) {
             $trustedIpHeader = $trustedIpHeaders->current();
             if ($trustedIpHeader === null || $this->settings['proxies'] === []) {
                 return $server['REMOTE_ADDR'];
             }
             $ipAddress = reset($trustedIpHeader);
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) !== false) {
+            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
                 break;
             }
-            $trustedIpHeader = $trustedIpHeaders->next();
+            $trustedIpHeaders->next();
         }
 
         if ($this->settings['proxies'] === '*') {
