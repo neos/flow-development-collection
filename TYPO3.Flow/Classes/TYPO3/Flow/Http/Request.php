@@ -89,6 +89,7 @@ class Request extends AbstractMessage
     public function __construct(array $get, array $post, array $files, array $server)
     {
         $this->headers = Headers::createFromServer($server);
+        $this->setAttribute(self::ATTRIBUTE_CLIENT_IP, isset($server['REMOTE_ADDR']) ? $server['REMOTE_ADDR'] : null);
         $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
         if ($method === 'POST') {
             if (isset($post['__method'])) {
