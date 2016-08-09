@@ -460,5 +460,4 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals($expectedUri, (string)$trustedRequest->getUri());
     }
-
 }
