@@ -13,7 +13,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\MemcachedBackend;
+use Neos\Cache\Backend\MemcachedBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\AbstractFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;

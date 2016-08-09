@@ -13,6 +13,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
+use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
@@ -39,7 +40,7 @@ class PdoBackendTest extends BaseTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
+        $backend = new PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
@@ -216,7 +217,7 @@ class PdoBackendTest extends BaseTestCase
     /**
      * Sets up the APC backend used for testing
      *
-     * @return \TYPO3\Flow\Cache\Backend\PdoBackend
+     * @return PdoBackend
      */
     protected function setUpBackend()
     {
@@ -230,7 +231,7 @@ class PdoBackendTest extends BaseTestCase
             255
         ])->getMock();
 
-        $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend($mockEnvironmentConfiguration);
+        $backend = new PdoBackend($mockEnvironmentConfiguration);
         $backend->setCache($mockCache);
         $backend->setDataSourceName('sqlite::memory:');
         $backend->initializeObject();

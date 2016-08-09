@@ -12,7 +12,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Cache\Backend\RedisBackend;
+
+use Neos\Cache\Backend\RedisBackend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**

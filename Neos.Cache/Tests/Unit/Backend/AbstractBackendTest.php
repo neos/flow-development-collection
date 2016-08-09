@@ -23,7 +23,7 @@ use TYPO3\Flow\Cache\Tests\BaseTestCase;
 class AbstractBackendTest extends BaseTestCase
 {
     /**
-     * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
+     * @var \Neos\Cache\Backend\AbstractBackend
      */
     protected $backend;
 
