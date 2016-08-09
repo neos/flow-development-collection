@@ -769,8 +769,11 @@ class FileBackendTest extends BaseTestCase
      * @param array $environmentConfiguration
      * @return FileBackend
      */
-    protected function prepareDefaultBackend($backendMockMethods = ['dummy'], array $environmentConfiguration = [__DIR__ . '~Testing', 'vfs://Foo/', 255])
+    protected function prepareDefaultBackend($backendMockMethods = ['dummy'], array $environmentConfiguration = ['~Testing', 'vfs://Foo/', 255])
     {
+        if ($environmentConfiguration[0][0] === '~') {
+            $environmentConfiguration[0] = __DIR__ . $environmentConfiguration[0];
+        }
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock($environmentConfiguration);
 
         $backend = $this->getMockBuilder(FileBackend::class)
