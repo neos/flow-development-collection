@@ -16,7 +16,7 @@ use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Lock\Factory as LockFactory;
+use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
@@ -214,9 +214,9 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        LockFactory::acquireCallback($pathAndFilename, function () use (&$result, $pathAndFilename) {
-            $result = file_get_contents($pathAndFilename);
-        });
+        $lock = new Lock($pathAndFilename, false);
+        $result = file_get_contents($pathAndFilename);
+        $lock->release();
 
         return $result;
     }
@@ -258,9 +258,9 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            LockFactory::acquireCallback($pathAndFilename, function () use ($pathAndFilename) {
-                unlink($pathAndFilename);
-            });
+            $lock = new Lock($pathAndFilename);
+            unlink($pathAndFilename);
+            $lock->release();
         } catch (\Exception $exception) {
             return false;
         }
@@ -351,9 +351,9 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        LockFactory::acquireCallback($pathAndFilename, function () use (&$result, $pathAndFilename) {
-            $result = file_get_contents($pathAndFilename);
-        });
+        $lock = new Lock($pathAndFilename, false);
+        $result = file_get_contents($pathAndFilename);
+        $lock->release();
         return $result;
     }
 
@@ -441,9 +441,9 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        LockFactory::acquireCallback($cacheEntryPathAndFilename, function () use (&$result, $cacheEntryPathAndFilename, $data) {
-            $result = file_put_contents($cacheEntryPathAndFilename, $data);
-        });
+        $lock = new Lock($cacheEntryPathAndFilename);
+        $result = file_put_contents($cacheEntryPathAndFilename, $data);
+        $lock->release();
 
         return $result;
     }

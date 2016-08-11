@@ -16,30 +16,38 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A Semaphore based lock strategy.
  *
- * This lock strategy is based on Sempahore.
+ * This lock strategy is based on Sempahore and only supports exclusive locks.
  *
- * @see http://php.net/manual/fr/ref.sem.php
+ * @see http://php.net/manual/en/ref.sem.php
  */
 class SemaphoreLockStrategy implements LockStrategyInterface
 {
     /**
-     * Mutex semaphore
-     *
-     * @var resource
-     */
-    protected $mutex;
-
-    /**
-     * Read/write semaphore
+     * Semaphore resource
      *
      * @var resource
      */
     protected $resource;
 
     /**
-     * @var string
+     * @var bool
      */
-    protected $subject;
+    protected $isAcquired = false;
+
+    /**
+     * SemaphoreLockStrategy constructor.
+     *
+     * @param array $options
+     */
+    public function __construct(array $options = [])
+    {
+        if (!function_exists('sem_get')) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                throw new UnsupportedStrategyException('The SemaphoreLockStrategy is not supported on Windows, since the PHP Semaphore (sysvsem) extension is not available.', 1455653598);
+            }
+            throw new UnsupportedStrategyException('The SemaphoreLockStrategy needs the PHP Semaphore (sysvsem) extension to be installed.', 1455653599);
+        }
+    }
 
     /**
      * @param string $subject
@@ -49,8 +57,10 @@ class SemaphoreLockStrategy implements LockStrategyInterface
     public function acquire($subject, $exclusiveLock)
     {
         $this->initializeSemaphore($subject);
-        $this->subject = $subject;
-        sem_acquire($this->resource);
+        $this->isAcquired = sem_acquire($this->resource);
+        if ($this->isAcquired === false) {
+            throw new LockNotAcquiredException(sprintf('Could not acquire lock on semaphore for subject "%s".', $subject), 1455653595);
+        }
     }
 
     /**
@@ -59,19 +69,11 @@ class SemaphoreLockStrategy implements LockStrategyInterface
      */
     protected function initializeSemaphore($subject)
     {
-        if ($this->mutex === null) {
-            $mutexKey = crc32($subject . ':mutex');
-            $this->mutex = sem_get($mutexKey, 1);
-            if ($this->mutex === false) {
-                throw new LockNotAcquiredException('Unable to get mutex semaphore', 1455653589);
-            }
-        }
-
         if ($this->resource === null) {
             $resourceKey = crc32($subject . ':resource');
             $this->resource = sem_get($resourceKey, 1);
             if ($this->resource === false) {
-                throw new LockNotAcquiredException('Unable to get resource semaphore', 1455653593);
+                throw new LockNotAcquiredException(sprintf('Unable to get resource semaphore with key 0x%x.', $resourceKey), 1455653593);
             }
         }
     }
@@ -81,17 +83,10 @@ class SemaphoreLockStrategy implements LockStrategyInterface
      */
     public function release()
     {
-        @sem_release($this->resource);
-    }
-
-    /**
-     * @param resource $resource is a semaphore resource, obtained from <b>sem_get</b>
-     * @param callable $callback
-     */
-    protected function semCallback($resource, $callback)
-    {
-        sem_acquire($resource);
-        $callback();
-        sem_release($resource);
+        if ($this->isAcquired === false) {
+            return false;
+        }
+        $this->isAcquired = false;
+        return @sem_release($this->resource);
     }
 }

@@ -39,6 +39,7 @@ class Lock
     /**
      * @param string $subject
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock is the default.
+     * @deprecated Shared locks are deprecated and will be removed in next major. Use Lock::acquire() instead.
      */
     public function __construct($subject, $exclusiveLock = true)
     {
@@ -76,7 +77,7 @@ class Lock
     /**
      * Releases the lock
      * @return boolean TRUE on success, FALSE otherwise
-     * @deprecated Use \TYPO3\Flow\Utility\Lock\Factory::acquireCallback
+     * @deprecated Use Lock::acquire() instead.
      */
     public function release()
     {
@@ -93,5 +94,23 @@ class Lock
     public function __destruct()
     {
         $this->release();
+    }
+
+    /**
+     * Get an (exclusive) lock around a callback.
+     *
+     * @param string $subject The subject to get a lock for
+     * @param \Closure $callback A callback executed after the lock is acquired. The callback will get the subject as parameter.
+     * @return mixed The return value of the callback
+     * @api
+     */
+    public static function acquire($subject, \Closure $callback)
+    {
+        $lock = new Lock($subject, true);
+        try {
+            return $callback($subject);
+        } finally {
+            $lock->release();
+        }
     }
 }
