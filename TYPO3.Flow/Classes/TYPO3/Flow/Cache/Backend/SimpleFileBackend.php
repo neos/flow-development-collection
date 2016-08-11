@@ -19,7 +19,6 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
@@ -217,11 +216,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
-
-        return $result;
+        return $this->readCacheFile($pathAndFilename);
     }
 
     /**
@@ -260,14 +255,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
-        try {
-            $lock = new Lock($pathAndFilename);
-            unlink($pathAndFilename);
-            $lock->release();
-        } catch (\Exception $exception) {
-            return false;
-        }
-        return true;
+        return @unlink($pathAndFilename);
     }
 
     /**
@@ -354,10 +342,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
-        return $result;
+        return $this->readCacheFile($pathAndFilename);
     }
 
     /**
@@ -436,6 +421,32 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     }
 
     /**
+     * Reads the cache data from the given cache file, using locking.
+     *
+     * @param string $cacheEntryPathAndFilename
+     * @param int|null $offset
+     * @param int|null $maxlen
+     * @return boolean|string The contents of the cache file or FALSE on error
+     */
+    protected function readCacheFile($cacheEntryPathAndFilename, $offset = null, $maxlen = null)
+    {
+        $data = false;
+        $file = @fopen($cacheEntryPathAndFilename, 'r');
+        if ($file === false) {
+            return false;
+        }
+        if (flock($file, LOCK_SH) !== false) {
+            if ($offset !== null) {
+                fseek($file, $offset);
+            }
+            $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+            flock($file, LOCK_UN);
+        }
+        fclose($file);
+        return $data;
+    }
+
+    /**
      * Writes the cache data into the given cache file, using locking.
      *
      * @param string $cacheEntryPathAndFilename
@@ -444,10 +455,6 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        $lock = new Lock($cacheEntryPathAndFilename);
-        $result = file_put_contents($cacheEntryPathAndFilename, $data);
-        $lock->release();
-
-        return $result;
+        return file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX);
     }
 }
