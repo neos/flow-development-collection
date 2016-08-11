@@ -166,7 +166,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         $lifetime = $lifetime === null ? $this->defaultLifetime : $lifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
-        $metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
+        $metaData = implode(' ', $tags) . str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . str_pad(strlen($data), self::DATASIZE_DIGITS);
 
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
 
@@ -268,11 +268,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
             $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index);
 
-            $expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
+            $expiryTime = (integer)substr($metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-            if (in_array($searchedTag, explode(' ', substr($metaData, self::EXPIRYTIME_LENGTH, -self::DATASIZE_DIGITS)))) {
+            if (in_array($searchedTag, explode(' ', substr($metaData, 0, -(self::EXPIRYTIME_LENGTH + self::DATASIZE_DIGITS))))) {
                 if ($cacheEntryFileExtensionLength > 0) {
                     $entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
                 } else {
@@ -333,14 +333,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return true;
         }
 
-        $cacheData = null;
+        $expiryTimeOffset = filesize($cacheEntryPathAndFilename) - self::EXPIRYTIME_LENGTH - self::DATASIZE_DIGITS;
         if ($acquireLock) {
-            $cacheData = $this->readCacheFile($cacheEntryPathAndFilename);
+            $expiryTime = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         } else {
-            $cacheData = file_get_contents($cacheEntryPathAndFilename);
+            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         }
-        $index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
-        $expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
 
         return ($expiryTime !== 0 && $expiryTime < time());
     }

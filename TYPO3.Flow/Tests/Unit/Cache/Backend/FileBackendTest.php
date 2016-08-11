@@ -248,7 +248,7 @@ class FileBackendTest extends UnitTestCase
 
         $pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
         $this->assertFileExists($pathAndFilename);
-        $retrievedData = file_get_contents($pathAndFilename, null, null, (strlen($data) + FileBackend::EXPIRYTIME_LENGTH), 9);
+        $retrievedData = file_get_contents($pathAndFilename, null, null, strlen($data), 9);
         $this->assertEquals('Tag1 Tag2', $retrievedData);
     }
 
