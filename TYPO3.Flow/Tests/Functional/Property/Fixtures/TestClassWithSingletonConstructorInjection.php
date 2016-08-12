@@ -40,5 +40,4 @@ class TestClassWithSingletonConstructorInjection
     {
         return $this->singletonClass;
     }
-
 }
