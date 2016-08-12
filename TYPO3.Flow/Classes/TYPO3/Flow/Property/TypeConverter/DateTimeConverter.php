@@ -143,7 +143,8 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($dateAsString === '') {
             return null;
         }
-        if (ctype_digit($dateAsString) && $configuration === null && (!is_array($source) || !isset($source['dateFormat']))) {
+        $configurationForm = $configuration === null ?: $configuration->getConfigurationValue(self::class, self::CONFIGURATION_DATE_FORMAT);
+        if (ctype_digit($dateAsString) && $configurationForm === null && (!is_array($source) || !isset($source['dateFormat']))) {
             $dateFormat = 'U';
         }
         if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
@@ -190,7 +191,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($configuration === null) {
             return self::DEFAULT_DATE_FORMAT;
         }
-        $dateFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, self::CONFIGURATION_DATE_FORMAT);
+        $dateFormat = $configuration->getConfigurationValue(self::class, self::CONFIGURATION_DATE_FORMAT);
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif ($dateFormat !== null && !is_string($dateFormat)) {
