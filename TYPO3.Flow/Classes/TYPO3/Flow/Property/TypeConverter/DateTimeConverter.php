@@ -149,7 +149,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($dateAsString === '') {
             return null;
         }
-        $isFormatConfigured = ($configuration !== null && $configuration->getConfigurationValue(self::class, self::CONFIGURATION_DATE_FORMAT) !== null);
+        $isFormatConfigured = ($configuration !== null && $configuration->getConfigurationValue(DateTimeConverter::class, self::CONFIGURATION_DATE_FORMAT) !== null);
         if (!$isFormatConfigured && !$isFormatSpecified && ctype_digit($dateAsString)) {
             $dateFormat = 'U';
         }
