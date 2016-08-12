@@ -77,7 +77,7 @@ class SchemaValidator
         $result = new ErrorResult();
         if (is_array($schema)) {
             foreach ($schema as $possibleTypeKey => $possibleTypeSchema) {
-                if (preg_match('/^@.*$/', $possibleTypeKey)) {
+                if (substr($possibleTypeKey, 0, 1) === '@') {
                     if (array_key_exists($possibleTypeKey, $types)) {
                         $result->addError($this->createError('CustomType "' . $possibleTypeKey . '" is already defined'));
                         continue;
