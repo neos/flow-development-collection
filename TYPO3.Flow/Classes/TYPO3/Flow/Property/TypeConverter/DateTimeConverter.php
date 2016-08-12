@@ -147,7 +147,8 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($dateAsString === '') {
             return null;
         }
-        if (ctype_digit($dateAsString) && $configuration === null && (!is_array($source) || !isset($source['dateFormat']))) {
+        $configurationForm = $configuration === null ? null : $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
+        if (ctype_digit($dateAsString) && $configurationForm === null && (!is_array($source) || !isset($source['dateFormat']))) {
             $dateFormat = 'U';
         }
         if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {

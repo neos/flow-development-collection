@@ -187,6 +187,38 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->assertSame(strval($source), $date->format('U'));
     }
 
+    /**
+     * @return array
+     * @see convertFromIntegerOrDigitStringWithoutConfigurationTests()
+     * @see convertFromIntegerOrDigitStringInArrayWithoutConfigurationTests()
+     */
+    public function convertFromIntegerOrDigitStringsWithConfigurationWithoutFormatDataProvider()
+    {
+        return array(
+            array('1308174051'),
+            array(1308174051),
+        );
+    }
+
+    /**
+     * @test
+     * @param $source
+     * @dataProvider convertFromIntegerOrDigitStringsWithConfigurationWithoutFormatDataProvider
+     */
+    public function convertFromIntegerOrDigitStringWithConfigurationWithoutFormatTests($source)
+    {
+        $mockMappingConfiguration = $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface::class);
+        $mockMappingConfiguration
+            ->expects($this->atLeastOnce())
+            ->method('getConfigurationValue')
+            ->with(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
+            ->will($this->returnValue(null));
+
+        $date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
+        $this->assertInstanceOf(\DateTime::class, $date);
+        $this->assertSame(strval($source), $date->format('U'));
+    }
+
     /** Array to DateTime testcases  **/
 
     /**
