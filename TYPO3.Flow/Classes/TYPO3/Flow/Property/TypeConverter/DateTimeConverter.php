@@ -123,6 +123,7 @@ class DateTimeConverter extends AbstractTypeConverter
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $dateFormat = $this->getDefaultDateFormat($configuration);
+        $isFormatSpecified = false;
         if (is_string($source)) {
             $dateAsString = $source;
         } elseif (is_integer($source)) {
@@ -142,13 +143,14 @@ class DateTimeConverter extends AbstractTypeConverter
             }
             if (isset($source['dateFormat']) && $source['dateFormat'] !== '') {
                 $dateFormat = $source['dateFormat'];
+                $isFormatSpecified = true;
             }
         }
         if ($dateAsString === '') {
             return null;
         }
-        $configurationForm = $configuration === null ? null : $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
-        if (ctype_digit($dateAsString) && $configurationForm === null && (!is_array($source) || !isset($source['dateFormat']))) {
+        $isFormatConfigured = ($configuration !== null && $configuration->getConfigurationValue(self::class, self::CONFIGURATION_DATE_FORMAT) !== null);
+        if (!$isFormatConfigured && !$isFormatSpecified && ctype_digit($dateAsString)) {
             $dateFormat = 'U';
         }
         if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
