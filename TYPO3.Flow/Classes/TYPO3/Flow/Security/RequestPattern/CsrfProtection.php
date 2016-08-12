@@ -67,25 +67,6 @@ class CsrfProtection implements RequestPatternInterface
     protected $systemLogger;
 
     /**
-     * NULL: This pattern holds no configured pattern value
-     *
-     * @return string The set pattern (always NULL here)
-     */
-    public function getPattern()
-    {
-    }
-
-    /**
-     * Does nothing, as this pattern holds no configured pattern value
-     *
-     * @param string $pattern Not used
-     * @return void
-     */
-    public function setPattern($pattern)
-    {
-    }
-
-    /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
      * searches for invalid csrf tokens. If this returns TRUE, the request is invalid!
      *
@@ -153,7 +134,7 @@ class CsrfProtection implements RequestPatternInterface
      */
     protected function hasPolicyEntryForMethod($className, $methodName)
     {
-        $methodPrivileges = $this->policyService->getAllPrivilegesByType(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class);
+        $methodPrivileges = $this->policyService->getAllPrivilegesByType(MethodPrivilegeInterface::class);
         /** @var MethodPrivilegeInterface $privilege */
         foreach ($methodPrivileges as $privilege) {
             if ($privilege->matchesMethod($className, $methodName)) {

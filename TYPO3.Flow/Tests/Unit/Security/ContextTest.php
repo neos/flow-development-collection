@@ -110,10 +110,10 @@ class ContextTest extends UnitTestCase
         $settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
         $securityContext->injectSettings($settings);
 
-        $matchingRequestPattern = $this->createMock(\TYPO3\Flow\Security\RequestPatternInterface::class);
+        $matchingRequestPattern = $this->getMockBuilder(\TYPO3\Flow\Security\RequestPatternInterface::class)->setMockClassName('SomeRequestPattern')->getMock();
         $matchingRequestPattern->expects($this->any())->method('matchRequest')->will($this->returnValue(true));
 
-        $notMatchingRequestPattern = $this->createMock(\TYPO3\Flow\Security\RequestPatternInterface::class);
+        $notMatchingRequestPattern = $this->getMockBuilder(\TYPO3\Flow\Security\RequestPatternInterface::class)->setMockClassName('SomeOtherRequestPattern')->getMock();
         $notMatchingRequestPattern->expects($this->any())->method('matchRequest')->will($this->returnValue(false));
 
         $token1 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
@@ -168,6 +168,110 @@ class ContextTest extends UnitTestCase
 
         $this->assertEquals(array($token1, $token2, $token4), array_values($securityContext->_get('activeTokens')));
         $this->assertEquals(array($token3, $token5), array_values($securityContext->_get('inactiveTokens')));
+    }
+
+    /**
+     * @return array
+     */
+    public function separateActiveAndInactiveTokensDataProvider()
+    {
+        return [
+            [
+                'patterns' => [
+                ],
+                'expectedActive' => true
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => true],
+                ],
+                'expectedActive' => true
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => false],
+                ],
+                'expectedActive' => false
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => true],
+                    ['type' => 'type2', 'matchesRequest' => true],
+                ],
+                'expectedActive' => true
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => true],
+                    ['type' => 'type2', 'matchesRequest' => false],
+                ],
+                'expectedActive' => false
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => true],
+                    ['type' => 'type2', 'matchesRequest' => false],
+                    ['type' => 'type2', 'matchesRequest' => true],
+                ],
+                'expectedActive' => true
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => false],
+                    ['type' => 'type2', 'matchesRequest' => false],
+                    ['type' => 'type2', 'matchesRequest' => true],
+                    ['type' => 'type1', 'matchesRequest' => true],
+                ],
+                'expectedActive' => true
+            ],
+            [
+                'patterns' => [
+                    ['type' => 'type1', 'matchesRequest' => true],
+                    ['type' => 'type2', 'matchesRequest' => true],
+                    ['type' => 'type1', 'matchesRequest' => false],
+                    ['type' => 'type2', 'matchesRequest' => false],
+                ],
+                'expectedActive' => true
+            ],
+        ];
+    }
+
+    /**
+     * @param array $patterns
+     * @param bool $expectedActive
+     * @test
+     * @dataProvider separateActiveAndInactiveTokensDataProvider
+     */
+    public function separateActiveAndInactiveTokensTests(array $patterns, $expectedActive)
+    {
+        $mockRequestPatterns = [];
+        foreach ($patterns as $pattern) {
+            $mockRequestPattern = $this->getMockBuilder(\TYPO3\Flow\Security\RequestPatternInterface::class)->setMockClassName('RequestPattern_' . $pattern['type'])->getMock();
+            $mockRequestPattern->expects($this->any())->method('matchRequest')->with($this->mockActionRequest)->will($this->returnValue($pattern['matchesRequest']));
+            $mockRequestPatterns[] = $mockRequestPattern;
+        }
+
+        $mockToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockToken->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue($mockRequestPatterns !== []));
+        $mockToken->expects($this->any())->method('getRequestPatterns')->will($this->returnValue($mockRequestPatterns));
+
+        /** @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockAuthenticationManager */
+        $mockAuthenticationManager = $this->createMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue([$mockToken]));
+
+        $this->securityContext = $this->getAccessibleMock(Context::class, ['dummy']);
+        $settings = [];
+        $settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
+        $this->securityContext->injectSettings($settings);
+        $this->securityContext->injectAuthenticationManager($mockAuthenticationManager);
+        $this->securityContext->setRequest($this->mockActionRequest);
+
+        $this->securityContext->initialize();
+        if ($expectedActive) {
+            $this->assertContains($mockToken, $this->securityContext->_get('activeTokens'));
+        } else {
+            $this->assertContains($mockToken, $this->securityContext->_get('inactiveTokens'));
+        }
     }
 
     /**
