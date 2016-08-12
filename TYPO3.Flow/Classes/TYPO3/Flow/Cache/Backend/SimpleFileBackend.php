@@ -455,6 +455,18 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        return file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX);
+        // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
+        // is fixed for file_put_contents with LOCK_EX, see https://github.com/mikey179/vfsStream/wiki/Known-Issues
+        $result = false;
+        $file = @fopen($cacheEntryPathAndFilename, 'w');
+        if ($file === false) {
+            return false;
+        }
+        if (flock($file, LOCK_EX) !== false) {
+            $result = fwrite($file, $data);
+            flock($file, LOCK_UN);
+        }
+        fclose($file);
+        return $result;
     }
 }
