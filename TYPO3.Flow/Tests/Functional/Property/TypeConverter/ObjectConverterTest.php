@@ -123,4 +123,16 @@ class ObjectConverterTest extends FunctionalTestCase
         $this->assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', true));
         $this->assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', true));
     }
+
+    /**
+     * @test
+     */
+    public function convertFromFoo()
+    {
+        $convertedObject = $this->converter->convertFrom(
+            'irrelevant',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection::class
+        );
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
+    }
 }
