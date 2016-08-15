@@ -127,12 +127,24 @@ class ObjectConverterTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function convertFromFoo()
+    public function convertFromAllowsAutomaticInjectionOfSingletonConstructorArguments()
     {
         $convertedObject = $this->converter->convertFrom(
             'irrelevant',
             \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection::class
         );
         $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Property\Exception\InvalidTargetException
+     */
+    public function convertFromThrowsMeaningfulExceptionWhenTheTargetExpectsAnUnknownDependencyThatIsNotSpecifiedInTheSource()
+    {
+        $this->converter->convertFrom(
+            'irrelevant',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithThirdPartyClassConstructorInjection::class
+        );
     }
 }

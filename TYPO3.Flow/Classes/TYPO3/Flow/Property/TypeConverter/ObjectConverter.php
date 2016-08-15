@@ -238,7 +238,7 @@ class ObjectConverter extends AbstractTypeConverter
                     unset($possibleConstructorArgumentValues[$constructorArgumentName]);
                 } elseif ($constructorArgumentReflection['optional'] === true) {
                     $constructorArguments[] = $constructorArgumentReflection['defaultValue'];
-                } elseif ($this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
+                } elseif ($this->objectManager->isRegistered($constructorArgumentReflection['type']) && $this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
                     $constructorArguments[] = $this->objectManager->get($constructorArgumentReflection['type']);
                 } else {
                     throw new InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
