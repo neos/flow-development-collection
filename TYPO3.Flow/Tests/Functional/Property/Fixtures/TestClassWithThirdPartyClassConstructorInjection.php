@@ -24,5 +24,4 @@ class TestClassWithThirdPartyClassConstructorInjection
     public function __construct(\Some\UnknownClass $someDependency)
     {
     }
-
 }
