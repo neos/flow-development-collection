@@ -19,9 +19,9 @@ class TestClassWithThirdPartyClassConstructorInjection
 {
 
     /**
-     * @param \Some\UnknownCLass $someDependency
+     * @param \Some\UnknownClass $someDependency
      */
-    public function __construct(\Some\UnknownCLass $someDependency)
+    public function __construct(\Some\UnknownClass $someDependency)
     {
     }
 
