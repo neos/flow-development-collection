@@ -71,7 +71,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true,
-                'class' => null
+                'class' => null,
+                'scalarDeclaration' => false
             ),
             'arg2' => array(
                 'position' => 1,
@@ -79,7 +80,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'array' => true,
                 'optional' => false,
                 'allowsNull' => true,
-                'class' => null
+                'class' => null,
+                'scalarDeclaration' => false
             ),
             'arg3' => array(
                 'position' => 2,
@@ -87,7 +89,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true,
-                'class' => 'ArrayObject'
+                'class' => 'ArrayObject',
+                'scalarDeclaration' => false
             ),
             'arg4' => array(
                 'position' => 3,
@@ -96,7 +99,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'optional' => true,
                 'allowsNull' => true,
                 'class' => null,
-                'defaultValue' => 'foo'
+                'defaultValue' => 'foo',
+                'scalarDeclaration' => false
             ),
             'arg5' => array(
                 'position' => 4,
@@ -105,7 +109,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'optional' => true,
                 'allowsNull' => true,
                 'class' => null,
-                'defaultValue' => true
+                'defaultValue' => true,
+                'scalarDeclaration' => false
             ),
             'arg6' => array(
                 'position' => 5,
@@ -114,7 +119,8 @@ class ProxyMethodTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'optional' => true,
                 'allowsNull' => true,
                 'class' => null,
-                'defaultValue' => array(0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3)
+                'defaultValue' => array(0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3),
+                'scalarDeclaration' => false
             ),
         );
 

@@ -257,4 +257,18 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->assertSame(null, $targetClass->introducedPublicProperty);
         $this->assertSame('thisIsADefaultValueBelieveItOrNot', $targetClass->introducedProtectedPropertyWithDefaultValue);
     }
+
+    /**
+     * @test
+     */
+    public function methodWithStaticTypeDeclarationsCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+
+        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42));
+    }
 }

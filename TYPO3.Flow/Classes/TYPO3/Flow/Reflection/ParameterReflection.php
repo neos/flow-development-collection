@@ -50,4 +50,19 @@ class ParameterReflection extends \ReflectionParameter
 
         return is_object($class) ? new ClassReflection($class->getName()) : null;
     }
+
+    /**
+     * @return string The name of a builtin type (e.g. string, int) if it was declared for the parameter (scalar type declaration), null otherwise
+     */
+    public function getBuiltinType()
+    {
+        if (!is_callable(array($this, 'getType'))) {
+            return null;
+        }
+        $type = $this->getType();
+        if ($type === null || !$type->isBuiltin()) {
+            return null;
+        }
+        return (string)$type;
+    }
 }
