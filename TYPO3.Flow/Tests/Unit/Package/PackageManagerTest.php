@@ -175,14 +175,15 @@ class PackageManagerTest extends UnitTestCase
      */
     protected function createDummyObjectForPackage(PackageInterface $package)
     {
+        $namespace = trim($package->getNamespace(), '\\');
         $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
-        $fullyQualifiedClassName = '\\' . $package->getNamespace() . '\\' . $dummyClassName;
+        $fullyQualifiedClassName = '\\' . $namespace . '\\' . $dummyClassName;
         $dummyClassFilePath = Files::concatenatePaths([
             $package->getPackagePath(),
             PackageInterface::DIRECTORY_CLASSES,
             $dummyClassName . '.php'
         ]);
-        file_put_contents($dummyClassFilePath, '<?php namespace ' . $package->getNamespace() . '; class ' . $dummyClassName . ' {}');
+        file_put_contents($dummyClassFilePath, '<?php namespace ' . $namespace . '; class ' . $dummyClassName . ' {}');
         require $dummyClassFilePath;
         return new $fullyQualifiedClassName();
     }
