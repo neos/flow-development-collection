@@ -17,6 +17,7 @@ use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
 use TYPO3\Flow\Aop\TraitIntroduction;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -229,6 +230,11 @@ class ProxyClassBuilder
             $hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
             if ($rebuildEverything === true || $hasCacheEntry === false) {
                 $proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
+                if ($proxyBuildResult === false) {
+                    // In case the proxy was not build because there was nothing adviced,
+                    // it might be an advice in the parent and so we need to try to treat this class.
+                    $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($targetClassName, $treatedSubClasses);
+                }
                 $treatedSubClasses = $this->proxySubClassesOfClassToEnsureAdvices($targetClassName, $targetClassNameCandidates, $treatedSubClasses);
                 if ($proxyBuildResult !== false) {
                     if ($isUnproxied) {
@@ -498,21 +504,43 @@ class ProxyClassBuilder
 
         $subClassNames = $this->reflectionService->getAllSubClassNamesForClass($className);
         foreach ($subClassNames as $subClassName) {
-            if ($treatedSubClasses->hasClassName($subClassName)) {
+            if ($targetClassNameCandidates->hasClassName($subClassName)) {
                 continue;
             }
-            if ($this->reflectionService->isClassReflected($subClassName) === false || $targetClassNameCandidates->hasClassName($subClassName)) {
-                continue;
-            }
-            $proxyClass = $this->compiler->getProxyClass($subClassName);
-            if ($proxyClass === false) {
-                continue;
-            }
-            $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
-            $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
-            $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+
+            $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($subClassName, $treatedSubClasses);
         }
-        $treatedSubClasses = $treatedSubClasses->union(new ClassNameIndex($subClassNames));
+
+        return $treatedSubClasses;
+    }
+
+    /**
+     * Adds code to build the methods and advices array in case the parent class has some.
+     *
+     * @param string $className
+     * @param ClassNameIndex $treatedSubClasses
+     * @return ClassNameIndex
+     */
+    protected function addBuildMethodsAndAdvicesCodeToClass($className, ClassNameIndex $treatedSubClasses)
+    {
+        if ($treatedSubClasses->hasClassName($className)) {
+            return $treatedSubClasses;
+        }
+
+        $treatedSubClasses = $treatedSubClasses->union(new ClassNameIndex([$className]));
+        if ($this->reflectionService->isClassReflected($className) === false) {
+            return $treatedSubClasses;
+        }
+
+        $proxyClass = $this->compiler->getProxyClass($className);
+        if ($proxyClass === false) {
+            return $treatedSubClasses;
+        }
+
+        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+        $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+
         return $treatedSubClasses;
     }
 
