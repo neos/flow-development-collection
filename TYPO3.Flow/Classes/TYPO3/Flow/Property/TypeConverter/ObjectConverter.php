@@ -17,6 +17,8 @@ use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Exception\InvalidTypeException;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.
@@ -138,9 +140,18 @@ class ObjectConverter extends AbstractTypeConverter
         } else {
             $targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
             if (in_array($propertyName, $targetPropertyNames)) {
-                $values = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
-                if (count($values) > 0) {
-                    return current($values);
+                $varTagValues = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
+                if (count($varTagValues) > 0) {
+                    // This ensures that FQCNs are returned without leading backslashes. Otherwise, something like @var \DateTime
+                    // would not find a property mapper. It is needed because the ObjectConverter doesn't use class schemata,
+                    // but reads the annotations directly.
+                    $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+                    try {
+                        $parsedType = TypeHandling::parseType($declaredType);
+                    } catch (InvalidTypeException $exception) {
+                        throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $targetType . '" for property "' . $propertyName . '"'), 1467699674);
+                    }
+                    return $parsedType['type'] . ($parsedType['elementType'] !== null ? '<' . $parsedType['elementType'] . '>' : '');
                 } else {
                     throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
                 }

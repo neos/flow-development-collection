@@ -11,6 +11,8 @@ namespace TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -50,6 +52,18 @@ class Post
      * @ORM\Column(nullable=true)
      */
     protected $subCategory;
+
+    /**
+     * @var Collection<Tag>
+     * @ORM\ManyToMany
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+     */
+    protected $tags;
+
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -146,5 +160,29 @@ class Post
     public function getSubCategory()
     {
         return $this->subCategory;
+    }
+
+    /**
+     * @param Tag $tag
+     */
+    public function addTag(Tag $tag)
+    {
+        $this->tags->add($tag);
+    }
+
+    /**
+     * @return Collection<Tag>
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Collection<Tag> $tags
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
     }
 }
