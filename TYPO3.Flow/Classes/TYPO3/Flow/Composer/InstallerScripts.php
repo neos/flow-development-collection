@@ -104,12 +104,12 @@ class InstallerScripts
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
-            Files::copyDirectoryRecursively($essentialsPath, getcwd() . '/', false, true);
+            Files::copyDirectoryRecursively($essentialsPath, Files::getUnixStylePath(getcwd()) . '/', false, true);
         }
 
         $defaultsPath = $installerResourcesDirectory . 'Distribution/Defaults';
         if (is_dir($defaultsPath)) {
-            Files::copyDirectoryRecursively($defaultsPath, getcwd() . '/', true, true);
+            Files::copyDirectoryRecursively($defaultsPath, Files::getUnixStylePath(getcwd()) . '/', true, true);
         }
     }
 

@@ -55,41 +55,40 @@ use TYPO3\Flow\Utility\TypeHandling;
  */
 class ReflectionService
 {
-    const
-        VISIBILITY_PRIVATE = 1,
-        VISIBILITY_PROTECTED = 2,
-        VISIBILITY_PUBLIC = 3,
-        // Implementations of an interface
-        DATA_INTERFACE_IMPLEMENTATIONS = 1,
-        // Implemented interfaces of a class
-        DATA_CLASS_INTERFACES = 2,
-        // Subclasses of a class
-        DATA_CLASS_SUBCLASSES = 3,
-        // Class tag values
-        DATA_CLASS_TAGS_VALUES = 4,
-        // Class annotations
-        DATA_CLASS_ANNOTATIONS = 5,
-        DATA_CLASS_ABSTRACT = 6,
-        DATA_CLASS_FINAL = 7,
-        DATA_CLASS_METHODS = 8,
-        DATA_CLASS_PROPERTIES = 9,
-        DATA_METHOD_FINAL = 10,
-        DATA_METHOD_STATIC = 11,
-        DATA_METHOD_VISIBILITY = 12,
-        DATA_METHOD_PARAMETERS = 13,
-        DATA_METHOD_DECLARED_RETURN_TYPE = 25,
-        DATA_PROPERTY_TAGS_VALUES = 14,
-        DATA_PROPERTY_ANNOTATIONS = 15,
-        DATA_PROPERTY_VISIBILITY = 24,
-        DATA_PARAMETER_POSITION = 16,
-        DATA_PARAMETER_OPTIONAL = 17,
-        DATA_PARAMETER_TYPE = 18,
-        DATA_PARAMETER_ARRAY = 19,
-        DATA_PARAMETER_CLASS = 20,
-        DATA_PARAMETER_ALLOWS_NULL = 21,
-        DATA_PARAMETER_DEFAULT_VALUE = 22,
-        DATA_PARAMETER_BY_REFERENCE = 23,
-        DATA_PARAMETER_SCALAR_DECLARATION = 24;
+    const VISIBILITY_PRIVATE = 1;
+    const VISIBILITY_PROTECTED = 2;
+    const VISIBILITY_PUBLIC = 3;
+    // Implementations of an interface
+    const DATA_INTERFACE_IMPLEMENTATIONS = 1;
+    // Implemented interfaces of a class
+    const DATA_CLASS_INTERFACES = 2;
+    // Subclasses of a class
+    const DATA_CLASS_SUBCLASSES = 3;
+    // Class tag values
+    const DATA_CLASS_TAGS_VALUES = 4;
+    // Class annotations
+    const DATA_CLASS_ANNOTATIONS = 5;
+    const DATA_CLASS_ABSTRACT = 6;
+    const DATA_CLASS_FINAL = 7;
+    const DATA_CLASS_METHODS = 8;
+    const DATA_CLASS_PROPERTIES = 9;
+    const DATA_METHOD_FINAL = 10;
+    const DATA_METHOD_STATIC = 11;
+    const DATA_METHOD_VISIBILITY = 12;
+    const DATA_METHOD_PARAMETERS = 13;
+    const DATA_METHOD_DECLARED_RETURN_TYPE = 25;
+    const DATA_PROPERTY_TAGS_VALUES = 14;
+    const DATA_PROPERTY_ANNOTATIONS = 15;
+    const DATA_PROPERTY_VISIBILITY = 24;
+    const DATA_PARAMETER_POSITION = 16;
+    const DATA_PARAMETER_OPTIONAL = 17;
+    const DATA_PARAMETER_TYPE = 18;
+    const DATA_PARAMETER_ARRAY = 19;
+    const DATA_PARAMETER_CLASS = 20;
+    const DATA_PARAMETER_ALLOWS_NULL = 21;
+    const DATA_PARAMETER_DEFAULT_VALUE = 22;
+    const DATA_PARAMETER_BY_REFERENCE = 23;
+    const DATA_PARAMETER_SCALAR_DECLARATION = 24;
 
     /**
      * @var \Doctrine\Common\Annotations\Reader

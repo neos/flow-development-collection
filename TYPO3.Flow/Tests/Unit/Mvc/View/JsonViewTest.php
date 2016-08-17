@@ -103,7 +103,7 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase
         $output[] = array($object, $configuration, $expected, 'array of objects should be serialized');
 
         $properties = array('foo' => 'bar', 'prohibited' => 'xxx');
-        $nestedObject = $this->getMockBuilder('Test' . md5(uniqid(mt_rand(), true)))->setMethods(array('getName', 'getPath', 'getProperties', 'getOther'))->getMock();
+        $nestedObject = $this->createMock(Fixtures\NestedTestObject::class);
         $nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
         $nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
         $nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
