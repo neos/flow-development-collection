@@ -77,6 +77,7 @@ class ReflectionService
         DATA_METHOD_STATIC = 11,
         DATA_METHOD_VISIBILITY = 12,
         DATA_METHOD_PARAMETERS = 13,
+        DATA_METHOD_DECLARED_RETURN_TYPE = 25,
         DATA_PROPERTY_TAGS_VALUES = 14,
         DATA_PROPERTY_ANNOTATIONS = 15,
         DATA_PROPERTY_VISIBILITY = 24,
@@ -87,7 +88,8 @@ class ReflectionService
         DATA_PARAMETER_CLASS = 20,
         DATA_PARAMETER_ALLOWS_NULL = 21,
         DATA_PARAMETER_DEFAULT_VALUE = 22,
-        DATA_PARAMETER_BY_REFERENCE = 23;
+        DATA_PARAMETER_BY_REFERENCE = 23,
+        DATA_PARAMETER_SCALAR_DECLARATION = 24;
 
     /**
      * @var \Doctrine\Common\Annotations\Reader
@@ -899,6 +901,23 @@ class ReflectionService
     }
 
     /**
+     * Returns the declared return type of a method (for PHP < 7.0 this will always return null)
+     *
+     * @param string $className
+     * @param string $methodName
+     * @return string The declared return type of the method or null if none was declared
+     */
+    public function getMethodDeclaredReturnType($className, $methodName)
+    {
+        $className = $this->prepareClassReflectionForUsage($className);
+        if (!isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE])) {
+            return null;
+        }
+
+        return $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE];
+    }
+
+    /**
      * Searches for and returns all names of class properties which are tagged by the specified tag.
      * If no properties were found, an empty array is returned.
      *
@@ -1359,6 +1378,11 @@ class ReflectionService
             $this->classesByMethodAnnotations[get_class($methodAnnotation)][$className] = $methodName;
         }
 
+        $returnType = $method->getDeclaredReturnType();
+        if ($returnType !== null) {
+            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
+        }
+
         foreach ($method->getParameters() as $parameter) {
             $this->reflectClassMethodParameter($className, $method, $parameter);
         }
@@ -1716,7 +1740,8 @@ class ReflectionService
                 'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
                 'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
-                'defaultValue' => isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE]) ? $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] : null
+                'defaultValue' => isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE]) ? $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] : null,
+                'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION])
             ];
         }
 
@@ -1762,6 +1787,13 @@ class ReflectionService
                 if (count($explodedParameters) >= 2) {
                     $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
                     $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
+                }
+            }
+            if (!$parameter->isArray()) {
+                $builtinType = $parameter->getBuiltinType();
+                if ($builtinType !== null) {
+                    $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+                    $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
                 }
             }
         }

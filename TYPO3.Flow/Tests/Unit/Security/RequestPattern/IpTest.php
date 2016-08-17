@@ -11,10 +11,15 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\RequestPattern\Ip;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the IP request pattern
  */
-class IpTest extends \TYPO3\Flow\Tests\UnitTestCase
+class IpTest extends UnitTestCase
 {
     /**
      * Data provider with valid and invalid IP ranges
@@ -43,14 +48,13 @@ class IpTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
     {
-        $requestMock = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->setMethods(array('getClientIpAddress'))->getMock();
+        $requestMock = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->setMethods(array('getClientIpAddress'))->getMock();
         $requestMock->expects($this->once())->method('getClientIpAddress')->will($this->returnValue($ip));
-        $actionRequestMock = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Ip();
+        $requestPattern = new Ip(['cidrPattern' => $pattern]);
 
-        $requestPattern->setPattern($pattern);
         $this->assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
     }
 }

@@ -485,7 +485,7 @@ class PersistentObjectConverterTest extends UnitTestCase
 
         $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(true));
         $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(array(
-            'property1' => array('optional' => false)
+            'property1' => array('optional' => false, 'type' => null)
         )));
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class)->will($this->returnValue(\TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));

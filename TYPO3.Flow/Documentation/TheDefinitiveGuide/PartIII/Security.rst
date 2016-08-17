@@ -428,17 +428,29 @@ configuration:
             keyName: 'AdminKey'
             authenticateRoles: ['Acme.SomePackage:Administrator']
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
-            ip: '192.168.178.0/24'
+            'Acme.SomePackage:AdministrationArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\AdministrationArea\.*'
+            'Acme.SomePackage:LocalNetwork':
+              pattern: 'Ip'
+              patternOptions:
+                'cidrPattern': '192.168.178.0/24'
         'MyLDAPProvider':
           provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            'Acme.SomePackage:AdministrationArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\AdministrationArea\.*'
         DefaultProvider:
           provider: 'PersistedUsernamePasswordProvider'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\UserArea\.*'
+            'Acme.SomePackage:UserArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\UserArea\.*'
 
 Look at the new configuration option ``requestPatterns``. This enables or disables an
 authentication provider, depending on given patterns. The patterns will look into the
@@ -471,32 +483,27 @@ controllers will be authenticated by the default username/password provider.
 
 :title:`Available request patterns`
 
-+----------------------+------------------------+------------------------------------------+
-| Request Pattern      | Match criteria         | Configuration options                    |
-+======================+========================+==========================================+
-| controllerObjectName | Matches on the object  | Expects one regular expression, to       |
-|                      | name of the controller | match on the object name.                |
-|                      | that has been resolved |                                          |
-|                      | by the MVC dispatcher  | For example.:                            |
-|                      | for the current .      |                                          |
-|                      | request                | ``My\Application\AdministrationArea\.*`` |
-+----------------------+------------------------+------------------------------------------+
-| uri                  | Matches on the uri     | Expects one regular expression, to       |
-|                      | of the current request.| match on the request uri.                |
-|                      |                        |                                          |
-|                      |                        | For example.:                            |
-|                      |                        |                                          |
-|                      |                        | ``/admin/.*``                            |
-+----------------------+------------------------+------------------------------------------+
-| host                 | Matches on the host    | Expects one wildcard expression, to      |
-|                      | part of the current    | match on the hostname, e.g.              |
-|                      | request                | ``*.mydomain.com``                       |
-+----------------------+------------------------+------------------------------------------+
-| ip                   | Matches on the user ip | Expects one CIDR expression, to match    |
-|                      | address of the current | on the source ip, e.g.                   |
-|                      | request                | ``192.168.178.0/24`` or                  |
-|                      |                        | ``fd9e:21a7:a92c:2323::/96``             |
-+----------------------+------------------------+------------------------------------------+
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Request Pattern      | Match criteria                                | Configuration options                    | Description                                                      |
++======================+===============================================+==========================================+==================================================================+
+| ControllerObjectName | Matches on the object name of the controller  | ``controllerObjectNamePattern``          | A regular expression to match on the object name, for example:   |
+|                      | that has been resolved by the MVC dispatcher  |                                          |                                                                  |
+|                      | for the current request                       |                                          | ``controllerObjectNamePattern: 'My\Package\Controller\Admin\.*`` |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Uri                  | Matches on the URI of the current request     | ``uriPattern``                           | A regular expression to match on the URI, for example:           |
+|                      | of the current request                        |                                          |                                                                  |
+|                      |                                               |                                          | ``uriPattern: '/admin/.*``                                       |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Host                 | Matches on the host part of the current       | ``hostPattern``                          | A wildcard expression to match on the hostname, for example:     |
+|                      | request                                       |                                          |                                                                  |
+|                      |                                               |                                          | ``hostPattern: '*.mydomain.com'`` or                             |
+|                      |                                               |                                          | ``hostPattern: 'www.mydomain.*'``                                |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Ip                   | Matches on the user IP address of the current | ``cidrPattern``                          | A CIDR expression to match on the source IP, for example:        |
+|                      | request                                       |                                          |                                                                  |
+|                      |                                               |                                          | ``cidrPattern: '192.168.178.0/24'`` or                           |
+|                      |                                               |                                          | ``cidrPattern: 'fd9e:21a7:a92c:2323::/96'``                      |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
 
 Authentication entry points
 ---------------------------
@@ -727,7 +734,7 @@ order to configure fine grained access rights.
   command when upgrading from a previous version.
 
 Privileges
-----------------------------
+----------
 
 In a complex web application there are different elements you might want to protect.
 This could be the permission to execute certain actions or the retrieval of certain data that has been
@@ -740,7 +747,7 @@ below.
 .. _Access Control Lists:
 
 Defining Privileges (Policies)
-========================================
+==============================
 
 This section will introduce the recommended and default way of connecting authentication
 with authorization. In Flow policies are defined in a declarative way. This is very powerful and gives
@@ -895,7 +902,7 @@ permissions to whitelist access to them for certain roles. The use of a DENY per
 resort for edge cases. Be careful, there is no way to override a DENY permission, if you use it anyways!
 
 Using privilege parameters
-------------------------------------
+--------------------------
 
 To explain the usage of privilege parameters, imagine the following scenario: there is an invoice service which requires
 the approval of invoices with an amount greater than 100 Euros. Depending on the invoice amount different roles are
@@ -1071,7 +1078,7 @@ entities. The following examples, taken from the functional tests, show some mor
 
 
 Internal workings of entity restrictions (EntityPrivilege)
-----------------------------------------------------------------------
+----------------------------------------------------------
 
 Internally the Doctrine filter API is used to add additional SQL constraints to all queries issued by the ORM against
 the database. This also ensures to rewrite queries done while lazy loading objects, or DQL statements. The responsible
@@ -1087,7 +1094,7 @@ all privilege targets that are not granted to the current user.
 
 
 Creating your custom privilege
-==================================
+==============================
 
 Creating your own privilege type usually has one of the two purposes:
 # You want to define the existing privileges with your own domain specific language (DSL).
@@ -1322,25 +1329,31 @@ firewall configuration will look like:
           rejectAll: FALSE
 
           filters:
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/.*'
+            'Some.Package:AllowedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/.*'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/blocked.*'
+            'Some.Package:BlockedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/blocked.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Host'
-              patternValue: 'static.mydomain.*'
+            'Some.Package:BlockedHosts':
+              pattern:  'Host'
+              patternOptions:
+                'hostPattern': 'static.mydomain.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Ip'
-              patternValue: '192.168.178.0/24'
+            'Some.Package:AllowedIps':
+              pattern:  'Ip'
+              patternOptions:
+                'cidrPattern': '192.168.178.0/24'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'Acme\MyPackage\Security\MyOwnRequestPattern'
-              patternValue: 'some pattern value'
+            'Some.Package:CustomPattern':
+              pattern:  'Acme\MyPackage\Security\MyOwnRequestPattern'
+              patternOptions:
+                'someOption': 'some value'
+                'someOtherOption': 'some other value'
               interceptor:  'Acme\MyPackage\Security\MyOwnSecurityInterceptor'
 
 As you can see, you can easily use your own implementations for request patterns and
@@ -1429,7 +1442,7 @@ To use existing keys the following commands can be used to import keys to be sto
 
 .. [#] The specification can be downloaded from
   `http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq`_. The implementation of
-  this specification resides in the "Party" package, which is part of the official Flow
+  this specification resides in the "Party" package, which is part of the official Neos
   distribution.
 
 .. [#] The ``AccountRepository`` provides a convenient find method called

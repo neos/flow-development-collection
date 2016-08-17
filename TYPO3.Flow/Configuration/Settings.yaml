@@ -472,21 +472,22 @@ TYPO3:
         # The filter configuration for the firewall. Here is an example configuration array:
         #
         # filters:
-        #   -
-        #     patternType:  URL
-        #     patternValue: /some/url/.*
+        #   'Some.Package:SomeFilter':
+        #     pattern: 'Uri'
+        #     patternOptions:
+        #       'uriPattern': '\/some\/url\/.*'
         #     interceptor:  AccessGrant
-        #   -
-        #     patternType:  URL
-        #     patternValue: /some/url/blocked.*
+        #   'Some.Package:AnotherFilter':
+        #     pattern: 'Some\Request\Pattern\ClassName'
+        #     patternOptions:
+        #       'foo': 'bar'
         #     interceptor:  AccessDeny
         #
         # If the objects are in the namespace "\TYPO3\Flow\Security" it is enough to specify
         # the last name of the class name, e.g. AccessGrant
         filters:
-          -
-            patternType: CsrfProtection
-            patternValue:
+          'TYPO3.Flow:CsrfProtection':
+            pattern: 'CsrfProtection'
             interceptor: AccessDeny
 
       authentication:
@@ -504,12 +505,15 @@ TYPO3:
         # case the user is not logged in, the web redirect entry point, which redirects her
         # to the login action that displays the authentication form.
         #
-        #  AdminInterfaceProvider:
+        #  'AdminInterfaceProvider':
         #    provider: 'PersistedUsernamePasswordProvider'
         #    providerOptions:
         #      fooBar: 'baz'
         #    requestPatterns:
-        #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
+        #      'AdminControllers':
+        #        pattern: 'ControllerObjectName'
+        #        patternOptions:
+        #          'controllerObjectNamePattern': 'TYPO3\Admin\Controller\.*'
         #    entryPoint: 'WebRedirect'
         #    entryPointOptions:
         #      routeValues:

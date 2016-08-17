@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\RequestPattern;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
@@ -25,25 +26,28 @@ use TYPO3\Flow\Security\RequestPatternInterface;
 class Host implements RequestPatternInterface
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $hostPattern = '';
+    protected $options;
 
     /**
-     * @return string The set pattern
+     * Expects options in the form array('hostPattern' => '<host pattern>')
+     *
+     * @param array $options
      */
-    public function getPattern()
+    public function __construct(array $options)
     {
-        return $this->hostPattern;
+        $this->options = $options;
     }
 
     /**
      * @param string $hostPattern The host pattern
      * @return void
+     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
      */
     public function setPattern($hostPattern)
     {
-        $this->hostPattern = $hostPattern;
+        $this->options['hostPattern'] = $hostPattern;
     }
 
     /**
@@ -51,13 +55,17 @@ class Host implements RequestPatternInterface
      *
      * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @throws InvalidRequestPatternException
      */
     public function matchRequest(RequestInterface $request)
     {
+        if (!isset($this->options['hostPattern'])) {
+            throw new InvalidRequestPatternException('Missing option "hostPattern" in the Host request pattern configuration', 1446224510);
+        }
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        $hostPattern = str_replace('\\*', '.*', preg_quote($this->hostPattern, '/'));
+        $hostPattern = str_replace('\\*', '.*', preg_quote($this->options['hostPattern'], '/'));
         return preg_match('/^' . $hostPattern . '$/', $request->getHttpRequest()->getUri()->getHost()) === 1;
     }
 }

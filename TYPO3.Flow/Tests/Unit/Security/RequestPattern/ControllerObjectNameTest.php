@@ -11,24 +11,40 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\RequestPattern\ControllerObjectName;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the controller object name request pattern
  *
  */
-class ControllerObjectNameTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ControllerObjectNameTest extends UnitTestCase
 {
+
     /**
      * @test
      */
-    public function requestMatchingBasicallyWorks()
+    public function matchRequestReturnsTrueIfTheCurrentRequestMatchesTheControllerObjectNamePattern()
     {
         $request = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->setMethods(array('getControllerObjectName'))->getMock();
         $request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\Security\Controller\LoginController'));
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\ControllerObjectName();
-        $requestPattern->setPattern('TYPO3\Flow\Security\.*');
+        $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'TYPO3\Flow\Security\.*']);
 
         $this->assertTrue($requestPattern->matchRequest($request));
-        $this->assertEquals('TYPO3\Flow\Security\.*', $requestPattern->getPattern());
+    }
+
+    /**
+     * @test
+     */
+    public function matchRequestReturnsFalseIfTheCurrentRequestDoesNotMatchTheControllerObjectNamePattern()
+    {
+        $request = $this->getMock(ActionRequest::class, array('getControllerObjectName'), array(), '', false);
+        $request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('Some\Package\Controller\SomeController'));
+
+        $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'TYPO3\Flow\Security\.*']);
+
+        $this->assertFalse($requestPattern->matchRequest($request));
     }
 }

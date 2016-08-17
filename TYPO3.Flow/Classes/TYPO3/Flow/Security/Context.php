@@ -19,6 +19,7 @@ use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Party\Domain\Model\AbstractParty;
 
 /**
@@ -675,23 +676,37 @@ class Context
 
         /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
         foreach ($this->tokens as $token) {
-            if ($token->hasRequestPatterns()) {
-                $requestPatterns = $token->getRequestPatterns();
-                $tokenIsActive = true;
-
-                /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
-                foreach ($requestPatterns as $requestPattern) {
-                    $tokenIsActive &= $requestPattern->matchRequest($this->request);
-                }
-                if ($tokenIsActive) {
-                    $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
-                } else {
-                    $this->inactiveTokens[$token->getAuthenticationProviderName()] = $token;
-                }
-            } else {
+            if ($this->isTokenActive($token)) {
                 $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
+            } else {
+                $this->inactiveTokens[$token->getAuthenticationProviderName()] = $token;
             }
         }
+    }
+
+    /**
+     * Evaluates any RequestPatterns of the given token to determine whether it is active for the current request
+     * - If no RequestPattern is configured for this token, it is active
+     * - Otherwise it is active only if at least one configured RequestPattern per type matches the request
+     *
+     * @param TokenInterface $token
+     * @return bool TRUE if the given token is active, otherwise FALSE
+     */
+    protected function isTokenActive(TokenInterface $token)
+    {
+        if (!$token->hasRequestPatterns()) {
+            return true;
+        }
+        $requestPatternsByType = [];
+        /** @var $requestPattern RequestPatternInterface */
+        foreach ($token->getRequestPatterns() as $requestPattern) {
+            $patternType = TypeHandling::getTypeForValue($requestPattern);
+            if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType] === true) {
+                continue;
+            }
+            $requestPatternsByType[$patternType] = $requestPattern->matchRequest($this->request);
+        }
+        return !in_array(false, $requestPatternsByType, true);
     }
 
     /**
