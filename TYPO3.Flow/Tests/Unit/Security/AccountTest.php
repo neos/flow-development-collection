@@ -220,7 +220,7 @@ class AccountTest extends UnitTestCase
     public function callingGetPartyInvokesPartyDomainServiceWithAccountAndReturnsItsValue()
     {
         $account = new Account();
-        $partyService = $this->getMockBuilder(\TYPO3\Party\Domain\Service\PartyService::class)->setMethods(array('getAssignedPartyOfAccount'))->getMock();
+        $partyService = $this->createMock(Fixture\PartyService::class);
         $partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
 
         $objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
@@ -252,7 +252,7 @@ class AccountTest extends UnitTestCase
     {
         $partyMock = new \stdClass();
         $account = new Account();
-        $partyService = $this->getMockBuilder('DummyService')->setMethods(array('assignAccountToParty'))->getMock();
+        $partyService = $this->createMock(Fixture\PartyService::class);
         $partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
 
         $objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);

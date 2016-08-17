@@ -75,7 +75,6 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
     {
         $this->tag->addAttribute('type', 'checkbox');
 
-        $nameAttribute = $this->getName();
         $valueAttribute = $this->getValueAttribute(true);
         $propertyValue = null;
         if ($this->hasMappingErrorOccurred()) {
@@ -92,11 +91,14 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             if ($checked === null) {
                 $checked = in_array($valueAttribute, $propertyValue);
             }
-            $nameAttribute .= '[]';
-        } elseif ($multiple === true) {
-            $nameAttribute .= '[]';
-        } elseif ($propertyValue !== null) {
+            $this->arguments['multiple'] = true;
+        } elseif (!$multiple && $propertyValue !== null) {
             $checked = (boolean)$propertyValue === (boolean)$valueAttribute;
+        }
+
+        $nameAttribute = $this->getName();
+        if (isset($this->arguments['multiple']) && $this->arguments['multiple'] === true) {
+            $nameAttribute .= '[]';
         }
 
         $this->registerFieldNameForFormTokenGeneration($nameAttribute);

@@ -28,7 +28,7 @@
         "symfony/dom-crawler": "~2.5.0",
         "symfony/console": "~2.0",
 
-        "neos/composer-plugin": "^1.0.1"
+        "neos/composer-plugin": "^2.0.0"
     },
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",
