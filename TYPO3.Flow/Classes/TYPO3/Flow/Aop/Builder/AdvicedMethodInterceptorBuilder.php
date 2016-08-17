@@ -46,8 +46,6 @@ class AdvicedMethodInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\AbstractMe
 
         if ($methodName !== null || $methodName === '__wakeup') {
             $proxyMethod->addPreParentCallCode('
-        // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-        $this->Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies();
         if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ');
             $proxyMethod->addPostParentCallCode('

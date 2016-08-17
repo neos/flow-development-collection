@@ -185,7 +185,7 @@ class ProxyClass
     /**
      * Adds one or more traits to the class definition.
      *
-     * Note thet the passed trait names must have a leading backslash,
+     * Note that the passed trait names must have a leading backslash,
      * for example "\TYPO3\Flow\Object\Proxy\PropertyInjectionTrait".
      *
      * @param array $traitNames

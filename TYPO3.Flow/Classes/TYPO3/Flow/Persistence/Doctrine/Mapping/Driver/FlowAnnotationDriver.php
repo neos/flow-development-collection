@@ -211,6 +211,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         } elseif ($classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
             // also ok... but we make it read-only
             $metadata->markReadOnly();
+        } elseif (isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])) {
+            $metadata->isEmbeddedClass = true;
         } else {
             throw MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
         }
@@ -253,6 +255,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         if (!isset($primaryTable['name'])) {
             $className = $classSchema->getClassName();
             $primaryTable['name'] = $this->inferTableNameFromClassName($className);
+        }
+
+        // Evaluate @Cache annotation
+        if (isset($classAnnotations['Doctrine\ORM\Mapping\Cache'])) {
+            $cacheAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Cache'];
+            $cacheMap   = array(
+                'region' => $cacheAnnotation->region,
+                'usage'  => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+            );
+
+            $metadata->enableCache($cacheMap);
         }
 
         // Evaluate NamedNativeQueries annotation
@@ -549,7 +562,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     || $classSchema->isPropertyTransient($property->getName())
                     || $metadata->isMappedSuperclass && !$property->isPrivate()
                     || $metadata->isInheritedField($property->getName())
-                    || $metadata->isInheritedAssociation($property->getName())) {
+                    || $metadata->isInheritedAssociation($property->getName())
+                    || $metadata->isInheritedEmbeddedClass($property->getName())) {
                 continue;
             }
 
@@ -681,6 +695,15 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 }
 
                 $metadata->mapManyToMany($mapping);
+            } elseif ($embeddedAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Embedded')) {
+                if ($embeddedAnnotation->class) {
+                    $mapping['class'] = $embeddedAnnotation->class;
+                } else {
+                    // This will not happen currently, because "class" argument is required. It would be nice if that could be changed though.
+                    $mapping['class'] = $mapping['targetEntity'];
+                }
+                $mapping['columnPrefix'] = $embeddedAnnotation->columnPrefix;
+                $metadata->mapEmbedded($mapping);
             } else {
                 $mapping['nullable'] = false;
 
@@ -742,6 +765,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'class' => $customGeneratorAnnotation->class
                     ));
                 }
+            }
+
+            // Evaluate @Cache annotation
+            if (($cacheAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Cache')) !== null) {
+                $metadata->enableAssociationCache($mapping['fieldName'], array(
+                    'usage'         => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+                    'region'        => $cacheAnnotation->region,
+                ));
             }
         }
     }
@@ -942,10 +973,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         $proxyAnnotation = $this->reader->getClassAnnotation($class, \TYPO3\Flow\Annotations\Proxy::class);
         if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
-            // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', Events::postLoad);
-            // FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', Events::postLoad);
+            $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
         }
     }
 

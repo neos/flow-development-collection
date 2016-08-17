@@ -104,7 +104,7 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
     public function collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrinePersistenceCollections()
     {
         $entityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
-        $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, new \Doctrine\ORM\Mapping\ClassMetadata(''), array());
+        $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, new \Doctrine\ORM\Mapping\ClassMetadata(''), new \Doctrine\Common\Collections\ArrayCollection());
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($persistentCollection, 'initialized', false, true);
 
         $this->mockValidatorResolver->expects($this->never())->method('createValidator');

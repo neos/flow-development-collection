@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Aop\Builder;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\AdvicesTrait;
 use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Reflection\ClassReflection;
@@ -466,12 +467,13 @@ class ProxyClassBuilder
         $callBuildMethodsAndAdvicesArrayCode = "\n        \$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+        $proxyClass->getMethod('__clone')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
             $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
         }
 
-        $proxyClass->addTraits(['\TYPO3\Flow\Object\Proxy\DoctrineProxyFixingTrait', '\TYPO3\Flow\Aop\AdvicesTrait']);
+        $proxyClass->addTraits(['\\' . AdvicesTrait::class]);
 
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
