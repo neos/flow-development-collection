@@ -122,14 +122,14 @@ which come with the Flow distribution for getting more examples.
   Always use *two spaces* for indentation in YAML files. The parser will not
   accept indentation using tabs.
 
-Constants
----------
+Constants and Environment
+-------------------------
 
 Sometimes it is necessary to use values in your configuration files which are defined as
-PHP constants. These values can be included by special markers which are replaced by the
-actual value during parse time. The format is ``%<CONSTANT_NAME>%`` where
-``<CONSTANT_NAME>`` is the name of a constant. Note that the constant name must be all
-uppercase.
+PHP constants or are environment variables. These values can be included by special markers
+which are replaced by the actual value during parse time. The format is ``%<CONSTANT_NAME>%``
+where ``<CONSTANT_NAME>`` is the name of a constant. Note that the constant or environment
+variable name must be all uppercase.
 
 Some examples:
 
@@ -147,6 +147,9 @@ Some examples:
   a leading namespace backslash is generally allowed as of PHP,
   but is not recommended due to CGL (stringed class names should not
   have a leading backslash).
+
+``%ENV::HOME%``
+  Will be replaced by the environment variable's value.
 
 Custom Configuration Types
 --------------------------
