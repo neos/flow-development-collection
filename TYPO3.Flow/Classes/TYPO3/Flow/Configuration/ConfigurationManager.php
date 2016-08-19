@@ -651,24 +651,58 @@ EOD;
         foreach ($configurations as $key => $configuration) {
             if (is_array($configuration)) {
                 $this->postProcessConfiguration($configurations[$key]);
-            } elseif (is_string($configuration)) {
-                $matches = array();
-                preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
-                if (count($matches[1]) > 0) {
-                    foreach ($matches[1] as $match) {
-                        if (defined($match)) {
-                            if ($configurations[$key] === '%' . $match . '%') {
-                                // the constant expression spans the complete directive, assign directly to keep type
-                                $configurations[$key] = constant($match);
-                            } else {
-                                // the constant is only a substring of the directive, replace that part accordingly
-                                $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
-                            }
-                        }
-                    }
-                }
+            }
+            if (!is_string($configuration)) {
+                continue;
+            }
+            $configurations[$key] = $this->replaceVariablesInValue($configuration);
+        }
+    }
+
+    /**
+     * Replaces variables (in the format %CONSTANT% or %ENV::ENVIRONMENT_VARIABLE)
+     * in the given (configuration) value string.
+     *
+     * @param string $value
+     * @return mixed
+     */
+    protected function replaceVariablesInValue($value)
+    {
+        $matches = [];
+        $replacements = [];
+
+        preg_match_all('/
+            (?P<fullMatch>%             # an expression is indicated by %
+            (?P<expression>
+            (?:(?:\\\?[\d\w_\\\]+\:\:)  # either a class name followed by ::
+            |                           # or
+            (?:(?P<prefix>[a-z]+)\:)    # a prefix followed by : (like "env:")
+            )?
+            (?P<name>[A-Z_0-9]+))       # the actual variable name in all upper
+            %)                          # concluded by %
+        /mx', $value, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $matchGroup) {
+            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
+                $replacements[$matchGroup['fullMatch']] = getenv($matchGroup['name']);
+            }
+
+            if (defined($matchGroup['expression'])) {
+                $replacements[$matchGroup['fullMatch']] = constant($matchGroup['expression']);
             }
         }
+
+        $replacementCount = count($replacements);
+        if ($replacementCount === 0) {
+            return $value;
+        }
+
+        if ($replacementCount === 1 && array_keys($replacements)[0] === $value) {
+            // the replacement spans the complete directive, assign directly to keep CONSTANT/ENV variable type
+            return reset($replacements);
+        }
+
+        return str_replace(array_keys($replacements), $replacements, $value);
     }
 
     /**
