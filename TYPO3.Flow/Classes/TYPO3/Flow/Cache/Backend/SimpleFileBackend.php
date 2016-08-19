@@ -214,9 +214,10 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
+        $result = null;
+        Lock::synchronized($pathAndFilename, function() use (&$result, $pathAndFilename) {
+            $result = file_get_contents($pathAndFilename);
+        });
 
         return $result;
     }
@@ -258,9 +259,9 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            $lock = new Lock($pathAndFilename);
-            unlink($pathAndFilename);
-            $lock->release();
+            Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+                unlink($pathAndFilename);
+            });
         } catch (\Exception $exception) {
             return false;
         }
@@ -351,9 +352,10 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
+        $result = null;
+        Lock::synchronized($pathAndFilename, function() use (&$result, $pathAndFilename) {
+            $result = file_get_contents($pathAndFilename);
+        });
         return $result;
     }
 
@@ -441,9 +443,10 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        $lock = new Lock($cacheEntryPathAndFilename);
-        $result = file_put_contents($cacheEntryPathAndFilename, $data);
-        $lock->release();
+        $result = null;
+        Lock::synchronized($cacheEntryPathAndFilename, function() use (&$result, $cacheEntryPathAndFilename, $data) {
+            $result = file_put_contents($cacheEntryPathAndFilename, $data);
+        });
 
         return $result;
     }

@@ -12,14 +12,15 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use malkusch\lock\mutex\FlockMutex;
+use malkusch\lock\mutex\MemcachedMutex;
 use TYPO3\Flow\Utility\Files;
 
 /**
- * A flock based lock strategy.
+ * A memcached based lock strategy.
  *
  * This lock strategy is based on Flock.
  */
-class FlockLockStrategy implements LockStrategyInterface
+class MemcachedLockStrategy implements LockStrategyInterface
 {
     /**
      * @var string
@@ -34,28 +35,16 @@ class FlockLockStrategy implements LockStrategyInterface
     protected $filePointer;
 
     /**
-     * FlockLockStrategy constructor.
-     *
-     * @param array $options
-     */
-    public function __construct(array $options = [])
-    {
-        if (!isset($options['lockDirectory'])) {
-            throw new \InvalidArgumentException('The FlockLockStrategy needs the "lockDirectory" options set and it was not.', 1454695086);
-        }
-        Files::createDirectoryRecursively($options['lockDirectory']);
-        $this->temporaryDirectory = $options['lockDirectory'];
-    }
-
-    /**
      * @param string $subject
      * @param \Closure $callback
-     * @return void
+     * @return mixed Return value of the callback
      */
     public function synchronized($subject, \Closure $callback)
     {
-        $lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
-        $mutex = new FlockMutex(fopen($lockFileName, 'w'));
-        $mutex->synchronized($callback);
+        $memcache = new \Memcached();
+        $memcache->addServer('localhost', 11211);
+
+        $mutex = new MemcachedMutex($subject, $memcache);
+        return $mutex->synchronized($callback);
     }
 }

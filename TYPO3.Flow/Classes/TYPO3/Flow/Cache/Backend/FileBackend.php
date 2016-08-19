@@ -82,19 +82,19 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            $lock = new Lock($cacheEntryPathAndFilename);
-            file_put_contents($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
-            $lock->release();
+            Lock::synchronized($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename, $entryIdentifier) {
+                file_put_contents($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
+            });
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-        $lock = new Lock($cachePathAndFileName);
-        if ($this->useIgBinary === true) {
-            file_put_contents($cachePathAndFileName, igbinary_serialize($this->cacheEntryIdentifiers));
-        } else {
-            file_put_contents($cachePathAndFileName, serialize($this->cacheEntryIdentifiers));
-        }
-        $lock->release();
+        Lock::synchronized($cachePathAndFileName, function() use ($cachePathAndFileName) {
+            if ($this->useIgBinary === true) {
+                file_put_contents($cachePathAndFileName, igbinary_serialize($this->cacheEntryIdentifiers));
+            } else {
+                file_put_contents($cachePathAndFileName, serialize($this->cacheEntryIdentifiers));
+            }
+        });
 
         $this->frozen = true;
     }
@@ -127,9 +127,10 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if (is_file($this->cacheDirectory . 'FrozenCache.data')) {
             $this->frozen = true;
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-            $lock = new Lock($cachePathAndFileName, false);
-            $data = file_get_contents($cachePathAndFileName);
-            $lock->release();
+            $data = null;
+            Lock::synchronized($cachePathAndFileName, function () use (&$data, $cachePathAndFileName) {
+                $data = file_get_contents($cachePathAndFileName);
+            });
             if ($this->useIgBinary === true) {
                 $this->cacheEntryIdentifiers = igbinary_unserialize($data);
             } else {
@@ -268,10 +269,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             }
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
-            $lock = new Lock($cacheEntryPathAndFilename, false);
-            $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-            $metaData = file_get_contents($cacheEntryPathAndFilename, null, null, $index);
-            $lock->release();
+            $metaData = null;
+            Lock::synchronized($cacheEntryPathAndFilename, function() use (&$metaData, $cacheEntryPathAndFilename) {
+                $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
+                $metaData = file_get_contents($cacheEntryPathAndFilename, null, null, $index);
+            });
 
             $expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
@@ -338,12 +340,13 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return true;
         }
 
+        $cacheData = null;
         if ($acquireLock) {
-            $lock = new Lock($cacheEntryPathAndFilename, false);
-        }
-        $cacheData = file_get_contents($cacheEntryPathAndFilename);
-        if ($acquireLock) {
-            $lock->release();
+            Lock::synchronized($cacheEntryPathAndFilename, function() use (&$cacheData, $cacheEntryPathAndFilename) {
+                $cacheData = file_get_contents($cacheEntryPathAndFilename);
+            });
+        } else {
+            $cacheData = file_get_contents($cacheEntryPathAndFilename);
         }
         $index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
         $expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
@@ -434,25 +437,30 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         if ($this->frozen === true) {
+            $result = function($entryIdentifier) {
+                return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
+            };
+            $value = null;
             if ($acquireLock) {
-                $lock = new Lock($pathAndFilename, false);
+                Lock::synchronized($pathAndFilename, function() use (&$value, $result, $entryIdentifier) {
+                    $value = $result($entryIdentifier);
+                });
+            } else {
+                $value = $result($entryIdentifier);
             }
-            $result = (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
-            if ($acquireLock) {
-                $lock->release();
-            }
-            return $result;
+            return $value;
         }
 
         if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
             return false;
         }
+        $cacheData = null;
         if ($acquireLock) {
-            $lock = new Lock($pathAndFilename, false);
-        }
-        $cacheData = file_get_contents($pathAndFilename);
-        if ($acquireLock) {
-            $lock->release();
+            Lock::synchronized($pathAndFilename, function() use (&$cacheData, $pathAndFilename) {
+                $cacheData = file_get_contents($pathAndFilename);
+            });
+        } else {
+            $cacheData = file_get_contents($pathAndFilename);
         }
 
         $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));

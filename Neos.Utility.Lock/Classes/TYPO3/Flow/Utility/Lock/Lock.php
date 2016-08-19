@@ -29,7 +29,7 @@ class Lock
     protected static $lockManager;
 
     /**
-     * @var \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @var LockStrategyInterface
      */
     protected $lockStrategy;
 
@@ -45,23 +45,15 @@ class Lock
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param \Closure $callback
      */
-    public function __construct($subject, $exclusiveLock = true)
+    public static function synchronized($subject, \Closure $callback)
     {
         if (self::$lockManager === null) {
             return;
         }
-        $this->lockStrategy = self::$lockManager->getLockStrategyInstance();
-        $this->lockStrategy->acquire($subject, $exclusiveLock);
-    }
-
-    /**
-     * @return \TYPO3\Flow\Utility\Lock\LockStrategyInterface
-     */
-    public function getLockStrategy()
-    {
-        return $this->lockStrategy;
+        $strategy = self::$lockManager->getLockStrategyInstance();
+        $strategy->synchronized($subject, $callback);
     }
 
     /**
@@ -74,26 +66,5 @@ class Lock
     public static function setLockManager(LockManager $lockManager = null)
     {
         static::$lockManager = $lockManager;
-    }
-
-    /**
-     * Releases the lock
-     * @return boolean TRUE on success, FALSE otherwise
-     */
-    public function release()
-    {
-        if ($this->lockStrategy instanceof LockStrategyInterface) {
-            return $this->lockStrategy->release();
-        }
-        return true;
-    }
-
-    /**
-     * Destructor, releases the lock
-     * @return void
-     */
-    public function __destruct()
-    {
-        $this->release();
     }
 }

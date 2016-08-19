@@ -6,6 +6,7 @@
   "license": "MIT",
   "require": {
     "neos/utility-files": "*",
+    "malkusch/lock": "^1.0",
     "php": ">=5.5.0"
   },
   "require-dev": {

@@ -22,13 +22,8 @@ interface LockStrategyInterface
 {
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
+     * @param \Closure $callback
      * @return void
      */
-    public function acquire($subject, $exclusiveLock);
-
-    /**
-     * @return boolean TRUE on success, FALSE otherwise
-     */
-    public function release();
+    public function synchronized($subject, \Closure $callback);
 }
