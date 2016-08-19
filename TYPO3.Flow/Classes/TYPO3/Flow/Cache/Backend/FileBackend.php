@@ -427,33 +427,26 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        if ($this->frozen === true) {
-            $result = function($entryIdentifier) {
+        $get = function ($entryIdentifier) use ($acquireLock, $pathAndFilename) {
+            if ($this->frozen === true) {
                 return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
-            };
-            if ($acquireLock) {
-                $value = Lock::synchronized($pathAndFilename, function() use ($result, $entryIdentifier) {
-                    return $result($entryIdentifier);
-                });
-            } else {
-                $value = $result($entryIdentifier);
             }
-            return $value;
-        }
 
-        if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
-            return false;
-        }
-        $cacheData = null;
+            if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
+                return false;
+            }
+            $cacheData = file_get_contents($pathAndFilename);
+
+            $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+            return substr($cacheData, 0, $dataSize);
+        };
+
         if ($acquireLock) {
-            $cacheData = Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
-                return file_get_contents($pathAndFilename);
+            return Lock::synchronized($pathAndFilename, function () use ($get, $entryIdentifier) {
+                return $get($entryIdentifier);
             });
         } else {
-            $cacheData = file_get_contents($pathAndFilename);
+            return $get($entryIdentifier);
         }
-
-        $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
-        return substr($cacheData, 0, $dataSize);
     }
 }
