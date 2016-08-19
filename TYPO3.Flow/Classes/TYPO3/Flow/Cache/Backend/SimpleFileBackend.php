@@ -214,9 +214,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $result = null;
-        Lock::synchronized($pathAndFilename, function() use (&$result, $pathAndFilename) {
-            $result = file_get_contents($pathAndFilename);
+        $result = Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+            return file_get_contents($pathAndFilename);
         });
 
         return $result;
@@ -352,9 +351,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $result = null;
-        Lock::synchronized($pathAndFilename, function() use (&$result, $pathAndFilename) {
-            $result = file_get_contents($pathAndFilename);
+        $result = Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+            return file_get_contents($pathAndFilename);
         });
         return $result;
     }
@@ -443,11 +441,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        $result = null;
-        Lock::synchronized($cacheEntryPathAndFilename, function() use (&$result, $cacheEntryPathAndFilename, $data) {
-            $result = file_put_contents($cacheEntryPathAndFilename, $data);
+        return Lock::synchronized($cacheEntryPathAndFilename, function() use ($cacheEntryPathAndFilename, $data) {
+            return file_put_contents($cacheEntryPathAndFilename, $data);
         });
-
-        return $result;
     }
 }

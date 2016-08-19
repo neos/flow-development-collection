@@ -53,7 +53,7 @@ class Lock
             return;
         }
         $strategy = self::$lockManager->getLockStrategyInstance();
-        $strategy->synchronized($subject, $callback);
+        return $strategy->synchronized($subject, $callback);
     }
 
     /**
