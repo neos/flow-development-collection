@@ -268,7 +268,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             }
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
-            $metaData = null;
             $metaData = Lock::synchronized($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename) {
                 $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
                 return file_get_contents($cacheEntryPathAndFilename, null, null, $index);
@@ -432,7 +431,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
                 return (isset($this->cacheEntryIdentifiers[$entryIdentifier]) ? file_get_contents($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension) : false);
             }
 
-            if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
+            if ($this->isCacheFileExpired($pathAndFilename)) {
                 return false;
             }
             $cacheData = file_get_contents($pathAndFilename);
