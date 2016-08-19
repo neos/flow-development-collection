@@ -782,11 +782,11 @@ EOD;
 
         $settings = array(
             'foo' => 'bar',
-            'baz' => '%ENV::' . $envVarName . '%',
+            'baz' => '%env:' . $envVarName . '%',
             'inspiring' => array(
                 'people' => array(
-                    'to' => '%ENV::' . $envVarName . '%',
-                    'share' => 'foo %ENV::' . $envVarName . '% bar'
+                    'to' => '%env:' . $envVarName . '%',
+                    'share' => 'foo %env:' . $envVarName . '% bar'
                 )
             )
         );

@@ -128,8 +128,8 @@ Constants and Environment
 Sometimes it is necessary to use values in your configuration files which are defined as
 PHP constants or are environment variables. These values can be included by special markers
 which are replaced by the actual value during parse time. The format is ``%<CONSTANT_NAME>%``
-where ``<CONSTANT_NAME>`` is the name of a constant. Note that the constant or environment
-variable name must be all uppercase.
+where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>``.
+Note that the constant or environment variable name must be all uppercase.
 
 Some examples:
 
@@ -148,8 +148,8 @@ Some examples:
   but is not recommended due to CGL (stringed class names should not
   have a leading backslash).
 
-``%ENV::HOME%``
-  Will be replaced by the environment variable's value.
+``%env:HOME%``
+  Will be replaced by the value of the "HOME" environment variable.
 
 Custom Configuration Types
 --------------------------

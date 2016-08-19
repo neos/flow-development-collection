@@ -670,22 +670,29 @@ EOD;
     {
         $matches = [];
         $replacements = [];
-        $replacementCount = 0;
 
-        preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $value, $matches);
-        array_walk($matches[1], function ($match, $key) use ($matches, &$replacements, &$replacementCount) {
-            $replacementCount++;
+        preg_match_all('/
+            (?P<fullMatch>%             # an expression is indicated by %
+            (?P<expression>
+            (?:(?:\\\?[\d\w_\\\]+\:\:)  # either a class name followed by ::
+            |                           # or
+            (?:(?P<prefix>[a-z]+)\:)    # a prefix followed by : (like "env:")
+            )?
+            (?P<name>[A-Z_0-9]+))       # the actual variable name in all upper
+            %)                          # concluded by %
+        /mx', $value, $matches, PREG_SET_ORDER);
 
-            if (defined($match)) {
-                $replacements[$matches[0][$key]] = constant($match);
-                return;
+        foreach ($matches as $matchGroup) {
+            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
+                $replacements[$matchGroup['fullMatch']] = getenv($matchGroup['name']);
             }
 
-            if (strpos($match, 'ENV::') === 0) {
-                $replacements[$matches[0][$key]] = getenv(substr($match, 5));
+            if (defined($matchGroup['expression'])) {
+                $replacements[$matchGroup['fullMatch']] = constant($matchGroup['expression']);
             }
-        });
+        }
 
+        $replacementCount = count($replacements);
         if ($replacementCount === 0) {
             return $value;
         }
