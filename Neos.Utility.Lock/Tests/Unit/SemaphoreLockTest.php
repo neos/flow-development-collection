@@ -62,6 +62,7 @@ class SemaphoreLockTest extends \PHPUnit_Framework_TestCase
      */
     public function writeLockLocksExclusively()
     {
+        $this->markTestSkipped('Semaphores are blocking so this will lead to deadlock unless done from two processes');
         $lock1 = new Lock('testLock');
         try {
             $lock2 = new Lock('testLock');
