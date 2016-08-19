@@ -39,7 +39,9 @@ class SliceOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
-
+        if ($context instanceof \Iterator) {
+            $context = iterator_to_array($context);
+        }
         if (isset($arguments[0]) && isset($arguments[1])) {
             $context = array_slice($context, (integer)$arguments[0], (integer)$arguments[1] - (integer)$arguments[0]);
         } elseif (isset($arguments[0])) {

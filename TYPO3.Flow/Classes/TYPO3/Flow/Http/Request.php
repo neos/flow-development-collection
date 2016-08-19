@@ -59,6 +59,23 @@ class Request extends AbstractMessage
     protected $inputStreamUri = 'php://input';
 
     /**
+     * PSR-7
+     *
+     * @var array
+     */
+    protected $attributes = array();
+
+    /**
+     * PSR-7 Attribute containing the resolved trusted client IP address as string
+     */
+    const ATTRIBUTE_CLIENT_IP = 'clientIpAddress';
+
+    /**
+     * PSR-7 Attribute containing a boolean whether the request is from a trusted proxy
+     */
+    const ATTRIBUTE_TRUSTED_PROXY = 'fromTrustedProxy';
+
+    /**
      * Constructs a new Request object based on the given environment data.
      *
      * @param array $get Data similar to that which is typically provided by $_GET
@@ -72,6 +89,7 @@ class Request extends AbstractMessage
     public function __construct(array $get, array $post, array $files, array $server)
     {
         $this->headers = Headers::createFromServer($server);
+        $this->setAttribute(self::ATTRIBUTE_CLIENT_IP, isset($server['REMOTE_ADDR']) ? $server['REMOTE_ADDR'] : null);
         $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
         if ($method === 'POST') {
             if (isset($post['__method'])) {
@@ -84,11 +102,7 @@ class Request extends AbstractMessage
         }
         $this->setMethod($method);
 
-        if ($this->headers->has('X-Forwarded-Proto')) {
-            $protocol = $this->headers->get('X-Forwarded-Proto');
-        } else {
-            $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
-        }
+        $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
         $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
         $requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
         if (substr($requestUri, 0, 10) === '/index.php') {
@@ -96,11 +110,7 @@ class Request extends AbstractMessage
         }
         $this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
-        if ($this->headers->has('X-Forwarded-Port')) {
-            $this->uri->setPort($this->headers->get('X-Forwarded-Port'));
-        } elseif ($this->headers->has('X-Forwarded-Proto')) {
-            $this->uri->setPort($protocol === 'https' ? 443 : 80);
-        } elseif (isset($server['SERVER_PORT'])) {
+        if (isset($server['SERVER_PORT'])) {
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
@@ -173,6 +183,18 @@ class Request extends AbstractMessage
         $request = new static($_GET, $_POST, $_FILES, $_SERVER);
         $request->setContent(null);
         return $request;
+    }
+
+    /**
+     * Creates a deep clone
+     */
+    public function __clone()
+    {
+        $this->uri = clone $this->uri;
+        if ($this->baseUri !== null) {
+            $this->baseUri = clone $this->baseUri;
+        }
+        $this->headers = clone $this->headers;
     }
 
     /**
@@ -373,6 +395,129 @@ class Request extends AbstractMessage
     }
 
     /**
+     * PSR-7
+     *
+     * Retrieve server parameters.
+     *
+     * Retrieves data related to the incoming request environment,
+     * typically derived from PHP's $_SERVER superglobal. The data IS NOT
+     * REQUIRED to originate from $_SERVER.
+     *
+     * @return array
+     */
+    public function getServerParams()
+    {
+        return $this->server;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Retrieve attributes derived from the request.
+     *
+     * The request "attributes" may be used to allow injection of any
+     * parameters derived from the request: e.g., the results of path
+     * match operations; the results of decrypting cookies; the results of
+     * deserializing non-form-encoded message bodies; etc. Attributes
+     * will be application and request specific, and CAN be mutable.
+     *
+     * @return mixed[] Attributes derived from the request.
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Retrieve a single derived request attribute.
+     *
+     * Retrieves a single derived request attribute as described in
+     * getAttributes(). If the attribute has not been previously set, returns
+     * the default value as provided.
+     *
+     * This method obviates the need for a hasAttribute() method, as it allows
+     * specifying a default value to return if the attribute is not found.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $default Default value to return if the attribute does not exist.
+     * @return mixed
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (isset($this->attributes[$name])) {
+            return $this->attributes[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Return an instance with the specified derived request attribute.
+     *
+     * This method allows setting a single derived request attribute as
+     * described in getAttributes().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated attribute.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     * @return self
+     */
+    public function withAttribute($name, $value)
+    {
+        $request = clone $this;
+        $request->setAttribute($name, $value);
+        return $request;
+    }
+
+    /**
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     */
+    protected function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Return an instance that removes the specified derived request attribute.
+     *
+     * This method allows removing a single derived request attribute as
+     * described in getAttributes().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that removes
+     * the attribute.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @return self
+     */
+    public function withoutAttribute($name)
+    {
+        $request = clone $this;
+        $request->unsetAttribute($name);
+        return $request;
+    }
+
+    /**
+     * @param string $name The attribute name.
+     */
+    protected function unsetAttribute($name)
+    {
+        unset($this->attributes[$name]);
+    }
+
+    /**
      * Returns the best guess of the client's IP address.
      *
      * Note that, depending on the actual source used, IP addresses can be spoofed
@@ -387,18 +532,7 @@ class Request extends AbstractMessage
      */
     public function getClientIpAddress()
     {
-        $serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
-        foreach ($serverFields as $field) {
-            if (empty($this->server[$field])) {
-                continue;
-            }
-            $length = strpos($this->server[$field], ',');
-            $ipAddress = trim(($length === false) ? $this->server[$field] : substr($this->server[$field], 0, $length));
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
-                return $ipAddress;
-            }
-        }
-        return (isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
+        return $this->getAttribute(self::ATTRIBUTE_CLIENT_IP, isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
     }
 
     /**

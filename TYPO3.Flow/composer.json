@@ -30,7 +30,7 @@
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
 
-        "doctrine/orm": "~2.4.0",
+        "doctrine/orm": "~2.5.0",
         "doctrine/migrations": "~1.3.0",
         "doctrine/dbal": "~2.5.0",
 
@@ -38,7 +38,7 @@
         "symfony/dom-crawler": "~2.8.0",
         "symfony/console": "~2.8",
 
-        "neos/composer-plugin": "^1.0.1"
+        "neos/composer-plugin": "^2.0.0"
     },
     "suggest": {
         "ext-curl": "To use the \\TYPO3\\Flow\\Http\\Client\\CurlEngine",

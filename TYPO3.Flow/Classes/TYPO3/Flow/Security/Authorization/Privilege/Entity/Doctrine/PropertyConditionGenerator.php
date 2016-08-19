@@ -337,7 +337,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             }
             $quotedColumnName = $quoteStrategy->getJoinColumnName($joinColumn, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
             $subselectIdentifier = 'subselect' . md5($subselectSql);
-            $subselectConstraintQueries[] = $targetTableAlias . '.' . $quotedColumnName . ' IN (SELECT ' . $subselectIdentifier . '.' . $joinColumn['referencedColumnName'] . '0 FROM (' . $subselectSql . ') AS ' . $subselectIdentifier . ' ) ';
+            $subselectConstraintQueries[] = $targetTableAlias . '.' . $quotedColumnName . ' IN (SELECT ' . $subselectIdentifier . '.' . $joinColumn['referencedColumnName'] . '_0 FROM (' . $subselectSql . ') AS ' . $subselectIdentifier . ' ) ';
         }
 
         return ' (' . implode(' ) AND ( ', $subselectConstraintQueries) . ') ';

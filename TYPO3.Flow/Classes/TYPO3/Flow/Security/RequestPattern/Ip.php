@@ -13,7 +13,9 @@ namespace TYPO3\Flow\Security\RequestPattern;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
+use TYPO3\Flow\Utility\Ip as IpUtility;
 
 /**
  * This class holds a CIDR IP pattern an decides, if a \TYPO3\Flow\Mvc\RequestInterface object matches against this pattern,
@@ -33,18 +35,18 @@ use TYPO3\Flow\Security\RequestPatternInterface;
 class Ip implements RequestPatternInterface
 {
     /**
-     * The CIDR styled IP pattern
-     *
-     * @var string
+     * @var array
      */
-    protected $ipPattern = '';
+    protected $options;
 
     /**
-     * @return string The set pattern
+     * Expects options in the form array('cidrPattern' => '<CIDR IP Pattern>')
+     *
+     * @param array $options
      */
-    public function getPattern()
+    public function __construct(array $options)
     {
-        return $this->ipPattern;
+        $this->options = $options;
     }
 
     /**
@@ -52,55 +54,11 @@ class Ip implements RequestPatternInterface
      *
      * @param string $ipPattern The CIDR styled IP pattern
      * @return void
+     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
      */
     public function setPattern($ipPattern)
     {
-        $this->ipPattern = $ipPattern;
-    }
-
-    /**
-     * Matches a CIDR range pattern against an IP
-     *
-     * @param string $ip The IP to match
-     * @param string $range The CIDR range pattern to match against
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
-     */
-    protected function cidrMatch($ip, $range)
-    {
-        if (strpos($range, '/') === false) {
-            $bits = null;
-            $subnet = $range;
-        } else {
-            list($subnet, $bits) = explode('/', $range);
-        }
-
-        $ip = inet_pton($ip);
-        $subnet = inet_pton($subnet);
-        if ($ip === false || $subnet === false) {
-            return false;
-        }
-
-        if (strlen($ip) > strlen($subnet)) {
-            $subnet = str_pad($subnet, strlen($ip), chr(0), STR_PAD_LEFT);
-        } elseif (strlen($subnet) > strlen($ip)) {
-            $ip = str_pad($ip, strlen($subnet), chr(0), STR_PAD_LEFT);
-        }
-
-        if ($bits === null) {
-            return ($ip === $subnet);
-        } else {
-            for ($i = 0; $i < strlen($ip); $i++) {
-                $mask = 0;
-                if ($bits > 0) {
-                    $mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
-                    $bits -= 8;
-                }
-                if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        $this->options['cidrPattern'] = $ipPattern;
     }
 
     /**
@@ -108,12 +66,16 @@ class Ip implements RequestPatternInterface
      *
      * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @throws InvalidRequestPatternException
      */
     public function matchRequest(RequestInterface $request)
     {
+        if (!isset($this->options['cidrPattern'])) {
+            throw new InvalidRequestPatternException('Missing option "cidrPattern" in the Ip request pattern configuration', 1446224520);
+        }
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->ipPattern);
+        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->options['cidrPattern']);
     }
 }

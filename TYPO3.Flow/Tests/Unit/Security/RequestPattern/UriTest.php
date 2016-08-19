@@ -11,6 +11,10 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\RequestPattern\Uri as UriPattern;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -34,18 +38,17 @@ class UriTest extends UnitTestCase
      */
     public function matchRequestTests($uriPath, $pattern, $shouldMatch)
     {
-        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockUri = $this->getMockBuilder(\TYPO3\Flow\Http\Uri::class)->disableOriginalConstructor()->getMock();
+        $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
         $mockHttpRequest->expects($this->atLeastOnce())->method('getUri')->will($this->returnValue($mockUri));
 
         $mockUri->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue($uriPath));
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Uri();
-        $requestPattern->setPattern($pattern);
+        $requestPattern = new UriPattern(['uriPattern' => $pattern]);
 
         if ($shouldMatch) {
             $this->assertTrue($requestPattern->matchRequest($mockActionRequest));

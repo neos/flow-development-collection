@@ -12,11 +12,13 @@ namespace TYPO3\Flow\Aop\Builder;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\AdvicesTrait;
 use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
 use TYPO3\Flow\Aop\TraitIntroduction;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -222,11 +224,19 @@ class ProxyClassBuilder
         }
         $targetClassNameCandidates->sort();
 
+        $treatedSubClasses = new ClassNameIndex();
+
         foreach ($targetClassNameCandidates->getClassNames() as $targetClassName) {
             $isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
             $hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
             if ($rebuildEverything === true || $hasCacheEntry === false) {
                 $proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
+                if ($proxyBuildResult === false) {
+                    // In case the proxy was not build because there was nothing adviced,
+                    // it might be an advice in the parent and so we need to try to treat this class.
+                    $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($targetClassName, $treatedSubClasses);
+                }
+                $treatedSubClasses = $this->proxySubClassesOfClassToEnsureAdvices($targetClassName, $targetClassNameCandidates, $treatedSubClasses);
                 if ($proxyBuildResult !== false) {
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
@@ -457,12 +467,13 @@ class ProxyClassBuilder
         $callBuildMethodsAndAdvicesArrayCode = "\n        \$this->Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+        $proxyClass->getMethod('__clone')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
             $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
         }
 
-        $proxyClass->addTraits(['\TYPO3\Flow\Object\Proxy\DoctrineProxyFixingTrait', '\TYPO3\Flow\Aop\AdvicesTrait']);
+        $proxyClass->addTraits(['\\' . AdvicesTrait::class]);
 
         $this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
@@ -471,6 +482,68 @@ class ProxyClassBuilder
         $proxyClass->addProperty('Flow_Aop_Proxy_methodIsInAdviceMode', 'array()');
 
         return true;
+    }
+
+    /**
+     * Makes sure that any sub classes of an adviced class also build the advices array on construction.
+     *
+     * @param string $className The adviced class name
+     * @param ClassNameIndex $targetClassNameCandidates target class names for advices
+     * @param ClassNameIndex $treatedSubClasses Already treated (sub) classes to avoid duplication
+     * @return ClassNameIndex The new collection of already treated classes
+     */
+    protected function proxySubClassesOfClassToEnsureAdvices($className, ClassNameIndex $targetClassNameCandidates, ClassNameIndex $treatedSubClasses)
+    {
+        if ($this->reflectionService->isClassReflected($className) === false) {
+            return $treatedSubClasses;
+        }
+        if (trait_exists($className)) {
+            return $treatedSubClasses;
+        }
+        if (interface_exists($className)) {
+            return $treatedSubClasses;
+        }
+
+        $subClassNames = $this->reflectionService->getAllSubClassNamesForClass($className);
+        foreach ($subClassNames as $subClassName) {
+            if ($targetClassNameCandidates->hasClassName($subClassName)) {
+                continue;
+            }
+
+            $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($subClassName, $treatedSubClasses);
+        }
+
+        return $treatedSubClasses;
+    }
+
+    /**
+     * Adds code to build the methods and advices array in case the parent class has some.
+     *
+     * @param string $className
+     * @param ClassNameIndex $treatedSubClasses
+     * @return ClassNameIndex
+     */
+    protected function addBuildMethodsAndAdvicesCodeToClass($className, ClassNameIndex $treatedSubClasses)
+    {
+        if ($treatedSubClasses->hasClassName($className)) {
+            return $treatedSubClasses;
+        }
+
+        $treatedSubClasses = $treatedSubClasses->union(new ClassNameIndex([$className]));
+        if ($this->reflectionService->isClassReflected($className) === false) {
+            return $treatedSubClasses;
+        }
+
+        $proxyClass = $this->compiler->getProxyClass($className);
+        if ($proxyClass === false) {
+            return $treatedSubClasses;
+        }
+
+        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+        $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+
+        return $treatedSubClasses;
     }
 
     /**

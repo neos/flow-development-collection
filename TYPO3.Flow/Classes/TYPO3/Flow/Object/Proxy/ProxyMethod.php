@@ -152,11 +152,15 @@ class ProxyMethod
 
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
+        $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
+        $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
+
+
         $code = '';
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")\n    {\n";
+                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {
@@ -247,6 +251,8 @@ class ProxyMethod
                 if ($addTypeAndDefaultValue) {
                     if ($methodParameterInfo['array'] === true) {
                         $methodParameterTypeName = 'array';
+                    } elseif ($methodParameterInfo['scalarDeclaration']) {
+                        $methodParameterTypeName = $methodParameterInfo['type'];
                     } else {
                         $methodParameterTypeName = ($methodParameterInfo['class'] === null) ? '' : '\\' . $methodParameterInfo['class'];
                     }

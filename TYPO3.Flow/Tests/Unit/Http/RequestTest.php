@@ -22,7 +22,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
  * In some tests backupGlobals is disabled, this is to avoid risky test warnings caused by changed globals
  * that are needed to be changed in those tests.
  *
- * Additionally those tests backup/restore the SCRIPT_NAME in the $_SERVER superglobal to avoid a warning
+ * Additionally those tests backup/restore the $_SERVER superglobal to avoid a warning
  * with PHPUnit when it tries to access that in phpunit/phpunit/src/Util/Filter.php on line 29
  */
 class RequestTest extends UnitTestCase
@@ -33,7 +33,7 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $server = $_SERVER;
 
         $_GET = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
         $_POST = array();
@@ -79,7 +79,7 @@ class RequestTest extends UnitTestCase
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
 
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
+        $_SERVER = $server;
     }
 
     /**
@@ -88,7 +88,7 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $server = $_SERVER;
 
         $_GET = array();
         $_POST = array();
@@ -100,7 +100,7 @@ class RequestTest extends UnitTestCase
 
         $this->assertEquals('http://localhost/', (string)$request->getUri());
 
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
+        $_SERVER = $server;
     }
 
     /**
@@ -408,51 +408,6 @@ class RequestTest extends UnitTestCase
     /**
      * Data Provider
      */
-    public function serverEnvironmentsForClientIpAddresses()
-    {
-        return array(
-            array(array(), '17.172.224.47'),
-            array(array('HTTP_CLIENT_IP' => 'murks'), '17.172.224.47'),
-            array(array('HTTP_CLIENT_IP' => '17.149.160.49'), '17.149.160.49'),
-            array(array('HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '17.149.160.49'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '123.123.123.123'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'), '123.123.123.123'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'), '123.123.123.123'),
-            array(array('HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
-            array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
-        );
-    }
-
-    /**
-     * @test
-     * @dataProvider serverEnvironmentsForClientIpAddresses
-     */
-    public function getClientIpAddressReturnsTheIpAddressDerivedFromSeveralServerEnvironmentVariables(array $serverEnvironment, $expectedIpAddress)
-    {
-        $defaultServerEnvironment = array(
-            'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-            'HTTP_HOST' => 'flow.typo3.org',
-            'SERVER_NAME' => 'typo3.org',
-            'SERVER_ADDR' => '217.29.36.55',
-            'SERVER_PORT' => 80,
-            'REMOTE_ADDR' => '17.172.224.47',
-            'SCRIPT_FILENAME' => FLOW_PATH_WEB . 'index.php',
-            'SERVER_PROTOCOL' => 'HTTP/1.1',
-            'SCRIPT_NAME' => '/index.php',
-            'PHP_SELF' => '/index.php',
-        );
-
-        $request = Request::create(new Uri('http://flow.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
-        $this->assertSame($expectedIpAddress, $request->getClientIpAddress());
-    }
-
-    /**
-     * Data Provider
-     */
     public function acceptHeaderValuesAndCorrespondingListOfMediaTypes()
     {
         return array(
@@ -685,32 +640,6 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * RFC 2616 / 14.23 (Host)
-     * @test
-     * @backupGlobals disabled
-     */
-    public function portInProxyHeaderIsAcknowledged()
-    {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-
-        $_SERVER = array(
-            'HTTP_HOST' => 'dev.blog.rob',
-            'HTTP_X_FORWARDED_PORT' => 2727,
-            'SERVER_NAME' => 'dev.blog.rob',
-            'SERVER_ADDR' => '127.0.0.1',
-            'SERVER_PORT' => '80',
-            'REMOTE_ADDR' => '127.0.0.1',
-            'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
-            'REQUEST_TIME' => 1326472534
-        );
-
-        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
-        $this->assertSame(2727, $request->getPort());
-
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
-    }
-
-    /**
      * @test
      */
     public function setContentAlsoAcceptsAFileHandleAsInput()
@@ -736,160 +665,6 @@ class RequestTest extends UnitTestCase
         $this->assertSame($streamHandler, $request->getContent());
         $this->assertEquals('application/octet-stream', $request->getHeader('Content-Type'));
         $this->assertEquals(filesize(__FILE__), $request->getHeader('Content-Length'));
-    }
-
-    /**
-     * @test
-     */
-    public function isSecureReturnsTrueEvenIfTheSchemeIsHttpButTheRequestWasForwardedAndOriginallyWasHttps()
-    {
-        $server = array(
-            'HTTP_X_FORWARDED_PROTO' => 'https',
-            'HTTP_X_FORWARDED_PORT' => '443',
-        );
-
-        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), $server);
-        $this->assertEquals('https://acme.com', (string)$request->getUri());
-        $this->assertEquals('https', $request->getUri()->getScheme());
-        $this->assertTrue($request->isSecure());
-    }
-
-    /**
-     * @test
-     */
-    public function isSecureReturnsFalseIfTheRequestWasForwardedAndOriginallyWasHttp()
-    {
-        $server = array(
-            'HTTP_X_FORWARDED_PROTO' => 'http',
-            'HTTP_X_FORWARDED_PORT' => '80',
-        );
-
-        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), $server);
-        $this->assertEquals('http://acme.com', (string)$request->getUri());
-        $this->assertEquals('http', $request->getUri()->getScheme());
-        $this->assertFalse($request->isSecure());
-    }
-
-    /**
-     * @return array
-     */
-    public function forwardHeaderTestsDataProvider()
-    {
-        return array(
-            array(
-                'forwardedProtocol' => null,
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ),
-
-            // forwarded protocol overrules requested protocol
-            array(
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => null,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => null,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ),
-
-            // forwarded port overrules requested port
-            array(
-                'forwardedProtocol' => null,
-                'forwardedPort' => 80,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => null,
-                'forwardedPort' => '8080',
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
-                'forwardedProtocol' => null,
-                'forwardedPort' => 8080,
-                'requestUri' => 'http://acme.com:8000',
-                'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
-                'forwardedProtocol' => null,
-                'forwardedPort' => '443',
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ),
-
-            // forwarded protocol & port
-            array(
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 80,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 8080,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 443,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com:443',
-            ),
-            array(
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 443,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 443,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ),
-            array(
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 80,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com:80',
-            ),
-        );
-    }
-
-    /**
-     * @test
-     * @dataProvider forwardHeaderTestsDataProvider
-     */
-    public function forwardHeaderTests($forwardedProtocol, $forwardedPort, $requestUri, $expectedUri)
-    {
-        $server = array();
-        if ($forwardedProtocol !== null) {
-            $server['HTTP_X_FORWARDED_PROTO'] = $forwardedProtocol;
-        }
-        if ($forwardedPort !== null) {
-            $server['HTTP_X_FORWARDED_PORT'] = $forwardedPort;
-        }
-        $request = Request::create(new Uri($requestUri), 'GET', array(), array(), $server);
-        $this->assertEquals($expectedUri, (string)$request->getUri());
     }
 
     /**
