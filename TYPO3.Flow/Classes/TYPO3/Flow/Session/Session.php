@@ -602,10 +602,11 @@ class Session implements SessionInterface
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
+     * @param boolean $maximumSessionsToRemove How many sessions to remove per run
      * @return integer The number of outdated entries removed
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage($maximumSessionsToRemove = 0)
     {
         if ($this->inactivityTimeout === 0) {
             return 0;
@@ -631,7 +632,7 @@ class Session implements SessionInterface
                 }
                 $this->metaDataCache->remove($sessionIdentifier);
             }
-            if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
+            if ($maximumSessionsToRemove > 0 && $sessionRemovalCount >= $maximumSessionsToRemove) {
                 break;
             }
         }
@@ -664,10 +665,12 @@ class Session implements SessionInterface
             }
             $this->started = false;
 
-            $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
-            $factor = ($decimals > -1) ? $decimals * 10 : 1;
-            if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
-                $this->collectGarbage();
+            if ($this->garbageCollectionProbability > 0) {
+                $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
+                $factor = ($decimals > -1) ? $decimals * 10 : 1;
+                if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+                    $this->collectGarbage($this->garbageCollectionMaximumPerRun);
+                }
             }
         }
         $this->request = null;
