@@ -329,23 +329,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * lifetime has exceeded.
      *
      * @param string $cacheEntryPathAndFilename
-     * @param boolean $acquireLock
      * @return boolean
      * @api
      */
-    protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = true)
+    protected function isCacheFileExpired($cacheEntryPathAndFilename)
     {
         if (is_file($cacheEntryPathAndFilename) === false) {
             return true;
         }
 
-        if ($acquireLock) {
-            $cacheData = Lock::synchronized($cacheEntryPathAndFilename, function() use ($cacheEntryPathAndFilename) {
-                return file_get_contents($cacheEntryPathAndFilename);
-            });
-        } else {
-            $cacheData = file_get_contents($cacheEntryPathAndFilename);
-        }
+        $cacheData = file_get_contents($cacheEntryPathAndFilename);
         $index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
         $expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
 
