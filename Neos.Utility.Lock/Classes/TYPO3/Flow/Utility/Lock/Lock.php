@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Utility\Lock;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use malkusch\lock\util\DoubleCheckedLocking;
 
 /**
  * A general lock class.
@@ -46,6 +47,7 @@ class Lock
     /**
      * @param string $subject
      * @param \Closure $callback
+     * @return mixed
      */
     public static function synchronized($subject, \Closure $callback)
     {
@@ -54,6 +56,21 @@ class Lock
         }
         $strategy = self::$lockManager->getLockStrategyInstance();
         return $strategy->synchronized($subject, $callback);
+    }
+
+    /**
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     * @throws LockNotReadyException
+     */
+    public static function check($subject, \Closure $callback)
+    {
+        if (self::$lockManager === null) {
+            throw new LockNotReadyException('The lock subsystem is not ready', 1471645266);
+        }
+        $strategy = self::$lockManager->getLockStrategyInstance();
+        return $strategy->check($subject, $callback);
     }
 
     /**
