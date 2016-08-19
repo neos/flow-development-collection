@@ -21,16 +21,17 @@ use malkusch\lock\mutex\PHPRedisMutex;
 class RedisLockStrategy implements LockStrategyInterface
 {
     /**
-     * @var string
+     * @var \Redis
      */
-    protected $temporaryDirectory;
+    protected static $redis;
 
-    /**
-     * File pointer if using flock method
-     *
-     * @var resource
-     */
-    protected $filePointer;
+    public function __construct()
+    {
+        if (self::$redis === null) {
+            self::$redis = new \Redis();
+            self::$redis->connect('localhost');
+        }
+    }
 
     /**
      * @param string $subject
@@ -39,10 +40,7 @@ class RedisLockStrategy implements LockStrategyInterface
      */
     public function synchronized($subject, \Closure $callback)
     {
-        $redis = new \Redis();
-        $redis->connect('localhost');
-
-        $mutex = new PHPRedisMutex([$redis], $subject);
+        $mutex = new PHPRedisMutex([self::$redis], $subject);
         return $mutex->synchronized($callback);
     }
 }

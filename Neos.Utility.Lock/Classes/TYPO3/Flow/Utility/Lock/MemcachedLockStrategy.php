@@ -11,9 +11,7 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
-use malkusch\lock\mutex\FlockMutex;
 use malkusch\lock\mutex\MemcachedMutex;
-use TYPO3\Flow\Utility\Files;
 
 /**
  * A memcached based lock strategy.
@@ -23,16 +21,17 @@ use TYPO3\Flow\Utility\Files;
 class MemcachedLockStrategy implements LockStrategyInterface
 {
     /**
-     * @var string
+     * @var \Memcached
      */
-    protected $temporaryDirectory;
+    protected static $memcached;
 
-    /**
-     * File pointer if using flock method
-     *
-     * @var resource
-     */
-    protected $filePointer;
+    public function __construct()
+    {
+        if (self::$memcached === null) {
+            self::$memcached = new \Memcached();
+            self::$memcached->addServer('localhost', 11211);
+        }
+    }
 
     /**
      * @param string $subject
@@ -41,10 +40,7 @@ class MemcachedLockStrategy implements LockStrategyInterface
      */
     public function synchronized($subject, \Closure $callback)
     {
-        $memcache = new \Memcached();
-        $memcache->addServer('localhost', 11211);
-
-        $mutex = new MemcachedMutex($subject, $memcache);
+        $mutex = new MemcachedMutex($subject, self::$memcached);
         return $mutex->synchronized($callback);
     }
 }

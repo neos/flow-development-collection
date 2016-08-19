@@ -23,7 +23,7 @@ interface LockStrategyInterface
     /**
      * @param string $subject
      * @param \Closure $callback
-     * @return void
+     * @return mixed Return value of the callback
      */
     public function synchronized($subject, \Closure $callback);
 }

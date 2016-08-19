@@ -27,13 +27,6 @@ class FlockLockStrategy implements LockStrategyInterface
     protected $temporaryDirectory;
 
     /**
-     * File pointer if using flock method
-     *
-     * @var resource
-     */
-    protected $filePointer;
-
-    /**
      * FlockLockStrategy constructor.
      *
      * @param array $options
@@ -50,12 +43,12 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * @param string $subject
      * @param \Closure $callback
-     * @return void
+     * @return mixed
      */
     public function synchronized($subject, \Closure $callback)
     {
         $lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $mutex = new FlockMutex(fopen($lockFileName, 'w'));
-        $mutex->synchronized($callback);
+        return $mutex->synchronized($callback);
     }
 }
