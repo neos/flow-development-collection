@@ -642,15 +642,18 @@ TYPO3:
 
         # The probability in percent of a session shutdown triggering a garbage
         # collection which removes expired session data from other sessions.
+        # Set this to 0 and use the flow:cache:collectgarbagesessions command to
+        # manually clean up expired sessions.
         #
         # Examples:
         #    1    (would be a 1% chance to clean up)
         #   20    (would be a 20% chance to clean up)
         #    0.42 (would be a 0.42 % chance to clean up)
+        #    0    (won't automatically clean up sessions)
         probability: 1
 
         # The number of invalid and expired sessions which are removed per garbage
-        # collection run.
+        # collection run. Set this to 0 to remove all expired sessions at once.
         maximumPerRun: 1000
 
       # Configuration for the session cookie:
