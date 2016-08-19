@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
+use malkusch\lock\util\DoubleCheckedLocking;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -26,4 +27,11 @@ interface LockStrategyInterface
      * @return mixed Return value of the callback
      */
     public function synchronized($subject, \Closure $callback);
+
+    /**
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     */
+    public function check($subject, \Closure $callback);
 }

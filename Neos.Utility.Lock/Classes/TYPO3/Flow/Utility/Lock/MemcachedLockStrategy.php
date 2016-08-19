@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use malkusch\lock\mutex\MemcachedMutex;
+use malkusch\lock\util\DoubleCheckedLocking;
 
 /**
  * A memcached based lock strategy.
@@ -42,5 +43,16 @@ class MemcachedLockStrategy implements LockStrategyInterface
     {
         $mutex = new MemcachedMutex($subject, self::$memcached);
         return $mutex->synchronized($callback);
+    }
+
+    /**
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     */
+    public function check($subject, \Closure $callback)
+    {
+        $mutex = new MemcachedMutex($subject, self::$memcached);
+        return $mutex->check($callback);
     }
 }

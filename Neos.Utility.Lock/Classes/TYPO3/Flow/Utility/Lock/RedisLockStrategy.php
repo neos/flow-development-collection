@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use malkusch\lock\mutex\PHPRedisMutex;
+use malkusch\lock\util\DoubleCheckedLocking;
 
 /**
  * A redis based lock strategy.
@@ -42,5 +43,16 @@ class RedisLockStrategy implements LockStrategyInterface
     {
         $mutex = new PHPRedisMutex([self::$redis], $subject);
         return $mutex->synchronized($callback);
+    }
+
+    /**
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     */
+    public function check($subject, \Closure $callback)
+    {
+        $mutex = new PHPRedisMutex([self::$redis], $subject);
+        return $mutex->check($callback);
     }
 }

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Utility\Lock;
  */
 
 use malkusch\lock\mutex\FlockMutex;
+use malkusch\lock\util\DoubleCheckedLocking;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -50,5 +51,17 @@ class FlockLockStrategy implements LockStrategyInterface
         $lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $mutex = new FlockMutex(fopen($lockFileName, 'w'));
         return $mutex->synchronized($callback);
+    }
+
+    /**
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     */
+    public function check($subject, \Closure $callback)
+    {
+        $lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
+        $mutex = new FlockMutex(fopen($lockFileName, 'w'));
+        return $mutex->check($callback);
     }
 }
