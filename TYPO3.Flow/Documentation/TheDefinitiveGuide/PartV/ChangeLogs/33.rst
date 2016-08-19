@@ -7,8 +7,10 @@ Overview of merged pull requests
 `FEATURE: Allow replacement of configuration with environment-variable <https://github.com/neos/flow-development-collection/pull/431>`_
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-Currently configuration can be replaced with constants via the ``%CONST_NAME%``syntax.
-This change adds a special prefix env: to the configuration post-processing that replaces markers of the form ``%env:ENV_VAR_NAME%`` with the content of the environment variable if one is defined
+Currently configuration can be replaced with constants via the ``%CONST_NAME%`` syntax.
+
+This change adds a special prefix ``env:`` to the configuration post-processing that replaces markers of the form ``%env:ENV_VAR_NAME%``
+with the content of the environment variable if one is defined
 
 FLOW-212  #close
 
@@ -20,16 +22,16 @@ FLOW-212  #close
 This change introduces a HTTP component for so called "Trusted Proxies" that is registered
 at the start of the HTTP chain.
 
-It is configurated via the setting `TYPO3.Flow.http.trustedProxies.proxies`, which is a list of
+It is configurated via the setting ``TYPO3.Flow.http.trustedProxies.proxies``, which is a list of
 IP address ranges that are trusted to provide header overrides for some import request meta
-informations like the host, port, protocol and client IP.
+informations like the host, port, protocol and client IP::
 
     proxies:
       - '216.246.40.0/24'
       - '216.246.100.0/24'
 
 Also the header names that are trusted for those informations can be set via the configuration
-option `TYPO3.Flow.http.trustedProxies.headers` and default to this:
+option `TYPO3.Flow.http.trustedProxies.headers` and default to this::
 
     headers:
       clientIp: 'Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded'
@@ -42,7 +44,7 @@ This method will now resolve to the first IP address that is not a trusted proxy
 This setting should be changed to only a single trusted header instead.
 
 By default all IP addresses are trusted to stay mostly backwards compatible, but a more
-safe setting would be to trust no proxies by default:
+safe setting would be to trust no proxies by default::
 
     proxies: []
 
@@ -132,26 +134,23 @@ This allows to omit singleton constructor arguments when using the
 
 Background:
 Constructor arguments can already be omitted if there is a default
-value specified in the class to convert to:
+value specified in the class to convert to::
 
-```
-class SomeClass {
-  public function __construct($optionaArgument = null) {
-    // ..
-  }
-}
-```
+    class SomeClass {
+        public function __construct($optionaArgument = null) {
+        // ..
+        }
+    }
 
-With this change this will also work for (singleton) classes:
 
-```
-class SomeClass {
-  public function __construct(SomeService $someService) {
-    // ..
-  }
-}
-$someInstance = $this->propertyMapper->convert([], SomeClass::class);
-```
+With this change this will also work for (singleton) classes::
+
+    class SomeClass {
+      public function __construct(SomeService $someService) {
+      // ..
+      }
+    }
+    $someInstance = $this->propertyMapper->convert([], SomeClass::class);
 
 FLOW-463 #close
 
@@ -163,41 +162,35 @@ FLOW-463 #close
 The configuration format for authentication request patterns is
 not very flexible and inconsistent with other settings.
 
-With this change the syntax is changed from:
-```yaml
-  'SomeAuthenticationProvider':
+With this change the syntax is changed from::
+
+    'SomeAuthenticationProvider':
     # ...
     requestPatterns:
       'controllerObjectName': 'Some\\Package\\AdministrationArea\\.*'
-```
 
-To a more generic syntax:
+To a more generic syntax::
 
-```yaml
-  'SomeAuthenticationProvider':
-    # ...
-    requestPatterns:
-      'Some.Package:AdministrationArea':
-        pattern: 'ControllerObjectName'
-        patternOptions:
-          'controllerObjectNamePattern': 'Some\\Package\\AdministrationArea\\.*'
-```
+    'SomeAuthenticationProvider':
+      # ...
+      requestPatterns:
+        'Some.Package:AdministrationArea':
+          pattern: 'ControllerObjectName'
+          patternOptions:
+            'controllerObjectNamePattern': 'Some\\Package\\AdministrationArea\\.*'
 
 The new syntax seems more cumbersome but it allows for advanced request
 pattern options. Besides the new level allows to attach *multiple*
 patterns of one type to a provider.
-This also allows to *unset* previously configured patterns:
+This also allows to *unset* previously configured patterns::
 
-```yaml
-  'SomeAuthenticationProvider':
-    requestPatterns:
-      'Some.Package:AdministrationArea': ~
-```
+    'SomeAuthenticationProvider':
+      requestPatterns:
+        'Some.Package:AdministrationArea': ~
 
 The configuration syntax for request patterns for the firewall has
 been adjusted accordingly::
 
-```yaml
     TYPO3:
       Flow:
         security:
@@ -208,16 +201,13 @@ been adjusted accordingly::
                 patternOptions:
                   'uriPattern': '\\/some\\/uri\\/.*'
                 interceptor: AccessDeny
-```
 
 This is not a breaking change as the old syntax is still supported.
 
 But as the new syntax is recommended, this comes with a corresponding
-core migration that you can execute as follows:
+core migration that you can execute as follows::
 
-```
-  /flow core:migrate --version 20151113161300 --verbose
-```
+    flow core:migrate --version 20151113161300 --verbose
 
 FLOW-412 #close
 
@@ -259,18 +249,16 @@ This is a follow-up to a feature merged with #366 that allows
 a configurable whitelist for tables respected by the `doctrine:migrationgenerate` command.
 
 This change turns that setting into a *blacklist* and makes the list a
-dictionary so that 3rd party packages can extend the list:
+dictionary so that 3rd party packages can extend the list::
 
-```yaml
-TYPO3:
-  Flow:
-    persistence:
-      doctrine:
-        migrations:
-          ignoredTables:
-            'autogenerated_.*': TRUE
-            'wp_.*: TRUE
-```
+    TYPO3:
+      Flow:
+        persistence:
+          doctrine:
+            migrations:
+              ignoredTables:
+                'autogenerated_.*': TRUE
+                'wp_.*: TRUE
 
 This would skip all tables starting with `autogenerated_` or `wp_` from migrations when
 using the `./flow doctrine:migrationgenerate` command.
@@ -316,7 +304,7 @@ This is especially useful for time-consuming tasks whose result is not
 
 Example::
 
-     Scripts::executeCommandAsync('my.package:registration:sendconfirmationmail', $this->flowSettings, ['email' => $emailAddress]);
+    Scripts::executeCommandAsync('my.package:registration:sendconfirmationmail', $this->flowSettings, ['email' => $emailAddress]);
 
 FLOW-458 #close
 
