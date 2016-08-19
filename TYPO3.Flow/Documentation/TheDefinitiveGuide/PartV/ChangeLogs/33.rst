@@ -355,47 +355,6 @@ FLOW-456 #close
 
 * Packages: ``Flow`` ``Fluid``
 
-`Revert "FEATURE: Add support for configuring trusted proxies" <https://github.com/neos/flow-development-collection/pull/388>`_
--------------------------------------------------------------------------------------------------------------------------------
-
-Reverts neos/flow-development-collection#321
-
-* Packages: ``Flow``
-
-`FEATURE: Add support for configuring trusted proxies <https://github.com/neos/flow-development-collection/pull/321>`_
-----------------------------------------------------------------------------------------------------------------------
-
-This change introduces a configuration setting `TYPO3.Flow.http.trustedProxies.proxies`
-for so called "Trusted Proxies", which is a list of IP address ranges that are trusted
-to provide header overrides for some import request meta informations like the host,
-port, protocol and client IP.
-
-        proxies:
-          - '216.246.40.0/24'
-          - '216.246.100.0/24'
-
-Also the header names that are trusted for those informations can be set via the configuration
-option `TYPO3.Flow.http.trustedProxies.headers` and default to this:
-
-        headers:
-          clientIp: 'X-Forwarded-For'
-          host: 'X-Forwarded-Host'
-          port: 'X-Forwarded-Port'
-          proto: 'X-Forwarded-Proto'
-
-To get the most trusted client IP adress, the Http Request provides a new method
-`getTrustedClientIpAddress()` which resolves the clientIp header, matching against
-trusted proxy addresses. So this might not always end up as the actual user IP address.
-
-By default all IP addresses are trusted to stay mostly backwards compatible, but a more
-safe setting would be to trust no proxies by default:
-
-        proxies: []
-
-FLOW-414 #close
-
-* Packages: ``Flow``
-
 `FEATURE: Resources can be published with relative symlinks <https://github.com/neos/flow-development-collection/pull/187>`_
 ----------------------------------------------------------------------------------------------------------------------------
 
