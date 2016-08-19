@@ -33,11 +33,11 @@ class FlockLockStrategy implements LockStrategyInterface
      */
     public function __construct(array $options = [])
     {
-        if (!isset($options['lockDirectory'])) {
-            throw new \InvalidArgumentException('The FlockLockStrategy needs the "lockDirectory" options set and it was not.', 1454695086);
+        if (!isset($options['temporaryDirectory'])) {
+            throw new \InvalidArgumentException('The FlockLockStrategy needs the "lockDirtemporaryDirectoryectory" options set and it was not.', 1454695086);
         }
-        Files::createDirectoryRecursively($options['lockDirectory']);
-        $this->temporaryDirectory = $options['lockDirectory'];
+        $this->temporaryDirectory = Files::concatenatePaths([$options['temporaryDirectory'], 'Lock']);
+        Files::createDirectoryRecursively($this->temporaryDirectory);
     }
 
     /**

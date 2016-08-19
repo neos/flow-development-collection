@@ -25,11 +25,11 @@ class MemcachedLockStrategy implements LockStrategyInterface
      */
     protected static $memcached;
 
-    public function __construct()
+    public function __construct(array $options)
     {
         if (self::$memcached === null) {
             self::$memcached = new \Memcached();
-            self::$memcached->addServer('localhost', 11211);
+            self::$memcached->addServer($options['host'], $options['port']);
         }
     }
 

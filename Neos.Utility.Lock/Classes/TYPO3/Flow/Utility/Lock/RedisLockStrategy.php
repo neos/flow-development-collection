@@ -25,11 +25,11 @@ class RedisLockStrategy implements LockStrategyInterface
      */
     protected static $redis;
 
-    public function __construct()
+    public function __construct(array $options)
     {
         if (self::$redis === null) {
             self::$redis = new \Redis();
-            self::$redis->connect('localhost');
+            self::$redis->connect($options['host'], $options['port'], $options['timeout']);
         }
     }
 
