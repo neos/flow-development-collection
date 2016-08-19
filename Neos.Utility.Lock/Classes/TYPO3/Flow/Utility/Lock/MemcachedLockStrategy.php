@@ -28,6 +28,12 @@ class MemcachedLockStrategy implements LockStrategyInterface
 
     public function __construct(array $options)
     {
+        if (!isset($options['host'])) {
+            throw new \InvalidArgumentException('The MemcachedLockStrategy needs the "host" options set and it was not.', 1471646992);
+        }
+        if (!isset($options['port'])) {
+            throw new \InvalidArgumentException('The MemcachedLockStrategy needs the "port" options set and it was not.', 1471647007);
+        }
         if (self::$memcached === null) {
             self::$memcached = new \Memcached();
             self::$memcached->addServer($options['host'], $options['port']);

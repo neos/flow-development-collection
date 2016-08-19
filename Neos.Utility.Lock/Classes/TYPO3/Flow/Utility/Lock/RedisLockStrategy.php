@@ -28,6 +28,15 @@ class RedisLockStrategy implements LockStrategyInterface
 
     public function __construct(array $options)
     {
+        if (!isset($options['host'])) {
+            throw new \InvalidArgumentException('The RedisLockStrategy needs the "host" options set and it was not.', 1471647029);
+        }
+        if (!isset($options['port'])) {
+            throw new \InvalidArgumentException('The RedisLockStrategy needs the "port" options set and it was not.', 1471647030);
+        }
+        if (!isset($options['timeout'])) {
+            throw new \InvalidArgumentException('The RedisLockStrategy needs the "timeout" options set and it was not.', 1471647031);
+        }
         if (self::$redis === null) {
             self::$redis = new \Redis();
             self::$redis->connect($options['host'], $options['port'], $options['timeout']);
