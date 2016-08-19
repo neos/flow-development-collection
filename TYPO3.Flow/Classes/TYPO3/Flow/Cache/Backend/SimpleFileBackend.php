@@ -11,11 +11,11 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
@@ -52,7 +52,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     /**
      * @var array
      */
-    protected $cacheEntryIdentifiers = array();
+    protected $cacheEntryIdentifiers = [];
 
     /**
      * @var boolean
@@ -168,7 +168,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!is_string($data)) {
             throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
@@ -214,7 +214,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
             return false;
         }
 
-        $result = Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+        $result = Lock::synchronized($pathAndFilename, function () use ($pathAndFilename) {
             return file_get_contents($pathAndFilename);
         });
 
@@ -258,7 +258,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
         try {
-            Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+            Lock::synchronized($pathAndFilename, function () use ($pathAndFilename) {
                 unlink($pathAndFilename);
             });
         } catch (\Exception $exception) {
@@ -311,7 +311,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
     protected function findCacheFilesByIdentifier($entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        return (file_exists($pathAndFilename) ? array($pathAndFilename) : false);
+        return (file_exists($pathAndFilename) ? [$pathAndFilename] : false);
     }
 
     /**
@@ -351,7 +351,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
 
-        $result = Lock::synchronized($pathAndFilename, function() use ($pathAndFilename) {
+        $result = Lock::synchronized($pathAndFilename, function () use ($pathAndFilename) {
             return file_get_contents($pathAndFilename);
         });
         return $result;
@@ -441,7 +441,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     protected function writeCacheFile($cacheEntryPathAndFilename, $data)
     {
-        return Lock::synchronized($cacheEntryPathAndFilename, function() use ($cacheEntryPathAndFilename, $data) {
+        return Lock::synchronized($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename, $data) {
             return file_put_contents($cacheEntryPathAndFilename, $data);
         });
     }

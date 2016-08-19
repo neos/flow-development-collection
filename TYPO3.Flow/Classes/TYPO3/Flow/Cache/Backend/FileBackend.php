@@ -42,7 +42,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * @var array
      */
-    protected $cacheEntryIdentifiers = array();
+    protected $cacheEntryIdentifiers = [];
 
     /**
      * @var boolean
@@ -88,7 +88,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
-        Lock::synchronized($cachePathAndFileName, function() use ($cachePathAndFileName) {
+        Lock::synchronized($cachePathAndFileName, function () use ($cachePathAndFileName) {
             if ($this->useIgBinary === true) {
                 file_put_contents($cachePathAndFileName, igbinary_serialize($this->cacheEntryIdentifiers));
             } else {
@@ -152,7 +152,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if (!is_string($data)) {
             throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
@@ -259,7 +259,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function findIdentifiersByTag($searchedTag)
     {
-        $entryIdentifiers = array();
+        $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
         $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
@@ -269,7 +269,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
             $metaData = null;
-            $metaData = Lock::synchronized($cacheEntryPathAndFilename, function() use ($cacheEntryPathAndFilename) {
+            $metaData = Lock::synchronized($cacheEntryPathAndFilename, function () use ($cacheEntryPathAndFilename) {
                 $index = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
                 return file_get_contents($cacheEntryPathAndFilename, null, null, $index);
             });
