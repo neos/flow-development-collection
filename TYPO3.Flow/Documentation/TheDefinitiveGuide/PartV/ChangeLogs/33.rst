@@ -227,11 +227,13 @@ I would also bring a `^3.0` requirement to the table, but that one would mean a 
 `FEATURE: Allow whitelisting and blacklisting paths from scanning for available locales <https://github.com/neos/flow-development-collection/pull/385>`_
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-This change introduces the configuration setting "TYPO3.Flow.i18n.scan.paths", which is a
-dictionary list of regex patterns as keys. Only paths inside all packages Resources directories that match
-the patterns that are enabled (whitelisted) and do not match any patterns that are disabled (blacklisted),
-will be scanned for locales, therefore greatly improving performance when lots of folders and files
-exist without any localized filenames, like `node_modules` or `.git`.
+This change introduces the configuration setting "TYPO3.Flow.i18n.scan.includePaths", which is a
+list of folder names relative to the `Resources` folder that should be scanned for available locales.
+By default all folders inside each Package's `Resources` will be scanned.
+
+To skip specific folders inside the scanned paths, the setting "TYPO3.Flow.i18n.scan.excludePatterns"
+can be used, which is a dictionary of regex patterns that should be ignored.
+This can greatly improving performance when lots of folders and files exist without any localized filenames, like `node_modules` or `.git`.
 
 By default the following folders will be skipped for scanning:
  - '/node_modules/'
