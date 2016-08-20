@@ -51,9 +51,9 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         };
 
-        $mockRequestPattern1 = $this->createMock(Uri::class, array(), array(), 'pattern1', false);
+        $mockRequestPattern1 = $this->createMock(Uri::class);
         $mockRequestPattern1->expects($this->once())->method('setPattern')->with('/some/url/.*');
-        $mockRequestPattern2 = $this->createMock(Uri::class, array(), array(), 'pattern2', false);
+        $mockRequestPattern2 = $this->createMock(Uri::class);
         $mockRequestPattern2->expects($this->once())->method('setPattern')->with('/some/url/blocked.*');
 
         $getObjectCallback = function () use (&$mockRequestPattern1, &$mockRequestPattern2) {
@@ -134,8 +134,8 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         };
 
-        $mockRequestPattern1 = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->setMockClassName('pattern1')->getMock();
-        $mockRequestPattern2 = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->setMockClassName('pattern2')->getMock();
+        $mockRequestPattern1 = $this->createMock(Uri::class);
+        $mockRequestPattern2 = $this->createMock(Uri::class);
 
         $getObjectCallback = function () use (&$mockRequestPattern1, &$mockRequestPattern2) {
             $args = func_get_args();
