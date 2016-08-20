@@ -256,7 +256,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $primaryTable['options'] = $tableAnnotation->options;
             }
         }
-        if (!isset($primaryTable['name'])) {
+        if (!isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])
+            && !isset($primaryTable['name'])) {
             $className = $classSchema->getClassName();
             $primaryTable['name'] = $this->inferTableNameFromClassName($className);
         }
@@ -409,7 +410,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         }
 
         // build unique index for table
-        if (!isset($primaryTable['uniqueConstraints'])) {
+        if (!isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])
+            && !isset($primaryTable['uniqueConstraints'])) {
             $idProperties = array_keys($classSchema->getIdentityProperties());
             if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== array()) {
                 $uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTable['name']);
