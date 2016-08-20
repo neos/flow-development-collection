@@ -68,11 +68,18 @@ class TestEntity
     protected $arrayProperty = array();
 
     /**
+     * @var TestEmbeddable
+     * @ORM\Embedded(class="TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable")
+     */
+    protected $embedded;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->subEntities = new ArrayCollection();
+        $this->embedded = new TestEmbeddable('');
     }
 
     /**
@@ -199,5 +206,21 @@ class TestEntity
     public function getRelatedValueObject()
     {
         return $this->relatedValueObject;
+    }
+
+    /**
+     * @return TestEmbeddable
+     */
+    public function getEmbedded()
+    {
+        return $this->embedded;
+    }
+
+    /**
+     * @param TestEmbeddable $embedded
+     */
+    public function setEmbedded($embedded)
+    {
+        $this->embedded = $embedded;
     }
 }
