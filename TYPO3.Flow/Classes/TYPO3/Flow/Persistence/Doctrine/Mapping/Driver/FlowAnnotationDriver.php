@@ -1062,7 +1062,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) &&
                     !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class) &&
                     !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
+                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass') &&
+                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')
             );
     }
 
@@ -1081,7 +1082,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\ValueObject::class),
             $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\Entity::class),
             $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Entity'),
-            $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass')
+            $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass'),
+            $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Embeddable')
         );
         $this->classNames = array_filter($this->classNames,
             function ($className) {
