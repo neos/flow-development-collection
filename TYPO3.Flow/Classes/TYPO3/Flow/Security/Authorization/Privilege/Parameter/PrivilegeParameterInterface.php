@@ -24,7 +24,7 @@ interface PrivilegeParameterInterface
      * @param string $name
      * @param mixed $value
      */
-    //public function __construct($name, $value);
+    // public function __construct($name, $value);
 
     /**
      * Name of this parameter

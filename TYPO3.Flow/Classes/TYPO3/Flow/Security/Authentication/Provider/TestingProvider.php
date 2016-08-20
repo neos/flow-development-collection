@@ -38,7 +38,7 @@ class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstr
      */
     public function getTokenClassNames()
     {
-        return array('TYPO3\Flow\Security\Authentication\Token\TestingToken');
+        return array(\TYPO3\Flow\Security\Authentication\Token\TestingToken::class);
     }
 
     /**

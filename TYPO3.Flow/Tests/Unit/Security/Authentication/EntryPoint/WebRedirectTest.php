@@ -23,7 +23,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing()
     {
@@ -71,7 +71,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid()
     {
@@ -91,7 +91,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
-        $entryPoint = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect', array('dummy'));
+        $entryPoint = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect::class, array('dummy'));
         $routeValues = array(
             '@package' => 'SomePackage',
             '@subpackage' => 'SomeSubPackage',
@@ -102,7 +102,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
         $entryPoint->setOptions(array('routeValues' => $routeValues));
 
-        $mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+        $mockUriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
         $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(true)->will($this->returnValue($mockUriBuilder));
         $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('otherArguments' => array('foo' => 'bar'), '@format' => 'someFormat'), 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
         $entryPoint->_set('uriBuilder', $mockUriBuilder);

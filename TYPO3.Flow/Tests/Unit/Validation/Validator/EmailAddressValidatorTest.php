@@ -19,7 +19,7 @@ require_once('AbstractValidatorTestcase.php');
  */
 class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
 {
-    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\EmailAddressValidator';
+    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\EmailAddressValidator::class;
 
     /**
      * @test

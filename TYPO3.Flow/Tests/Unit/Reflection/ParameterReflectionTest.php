@@ -23,7 +23,7 @@ class ParameterReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getDeclaringClassReturnsFlowsClassReflection($dummy = null)
     {
         $parameter = new \TYPO3\Flow\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $parameter->getDeclaringClass());
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $parameter->getDeclaringClass());
     }
 
     /**
@@ -32,7 +32,7 @@ class ParameterReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getClassReturnsFlowsClassReflection($dummy = null)
     {
         $parameter = new \TYPO3\Flow\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $parameter->getClass());
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $parameter->getClass());
     }
 
     /**

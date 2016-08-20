@@ -22,7 +22,7 @@ class TestEntityADoctrineRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA';
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class;
 
     /**
      * Returns all TestEntityA objects from persistence

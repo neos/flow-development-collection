@@ -100,8 +100,9 @@ class FormatResolver
             $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
         }
 
-        while (($startOfPlaceholder = strpos($textWithPlaceholders, '{')) !== false) {
-            $endOfPlaceholder = strpos($textWithPlaceholders, '}');
+        $lastPlaceHolderAt = 0;
+        while ($lastPlaceHolderAt < strlen($textWithPlaceholders) && ($startOfPlaceholder = strpos($textWithPlaceholders, '{', $lastPlaceHolderAt)) !== false) {
+            $endOfPlaceholder = strpos($textWithPlaceholders, '}', $lastPlaceHolderAt);
             $startOfNextPlaceholder = strpos($textWithPlaceholders, '{', $startOfPlaceholder + 1);
 
             if ($endOfPlaceholder === false || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== false && $startOfNextPlaceholder < $endOfPlaceholder)) {
@@ -127,6 +128,7 @@ class FormatResolver
             }
 
             $textWithPlaceholders = str_replace('{' . $contentBetweenBrackets . '}', $formattedPlaceholder, $textWithPlaceholders);
+            $lastPlaceHolderAt = $startOfPlaceholder + strlen($formattedPlaceholder);
         }
 
         return $textWithPlaceholders;
@@ -169,7 +171,7 @@ class FormatResolver
                     throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
                 }
             }
-            if (!$this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\Flow\I18n\Formatter\FormatterInterface')) {
+            if (!$this->reflectionService->isClassImplementationOf($possibleClassName, \TYPO3\Flow\I18n\Formatter\FormatterInterface::class)) {
                 throw new \TYPO3\Flow\I18n\Exception\InvalidFormatterException('The resolved internationalization formatter class name "' . $possibleClassName . '" does not implement "TYPO3\Flow\I18n\Formatter\FormatterInterface" as required.', 1358162557);
             }
             $foundFormatter = $this->objectManager->get($possibleClassName);

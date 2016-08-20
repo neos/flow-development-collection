@@ -23,7 +23,7 @@ class TransientSessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function theTransientSessionImplementsTheSessionInterface()
     {
         $session = new \TYPO3\Flow\Session\TransientSession();
-        $this->assertInstanceOf('TYPO3\Flow\Session\SessionInterface', $session);
+        $this->assertInstanceOf(\TYPO3\Flow\Session\SessionInterface::class, $session);
     }
 
     /**

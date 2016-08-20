@@ -26,7 +26,7 @@ class TableNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Flow\Tests\Functional\Command\TableNode';
+    protected $targetType = \TYPO3\Flow\Tests\Functional\Command\TableNode::class;
 
     /**
      * @var integer

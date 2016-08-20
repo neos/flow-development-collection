@@ -118,13 +118,12 @@ class JsonArrayType extends DoctrineJsonArrayType
      */
     public function convertToDatabaseValue($array, AbstractPlatform $platform)
     {
-        $this->initializeDependencies();
-
-        $this->encodeObjectReferences($array);
-
         if ($array === null) {
             return null;
         }
+
+        $this->initializeDependencies();
+        $this->encodeObjectReferences($array);
 
         return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
     }
@@ -139,8 +138,8 @@ class JsonArrayType extends DoctrineJsonArrayType
     protected function initializeDependencies()
     {
         if ($this->persistenceManager === null) {
-            $this->persistenceManager = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-            $this->reflectionService = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+            $this->persistenceManager = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+            $this->reflectionService = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
         }
     }
 
@@ -186,7 +185,7 @@ class JsonArrayType extends DoctrineJsonArrayType
 
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
-            if ($value instanceof \DateTime) {
+            if ($value instanceof \DateTimeInterface) {
                 $value = array(
                     'date' => $value->format('Y-m-d H:i:s.u'),
                     'timezone' => $value->format('e'),
@@ -200,8 +199,8 @@ class JsonArrayType extends DoctrineJsonArrayType
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
             } elseif ($this->persistenceManager->isNewObject($value) === false
                 && (
-                    $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\Entity')
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\ValueObject')
+                    $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\Entity::class)
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\ValueObject::class)
                     || $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
                 )
             ) {

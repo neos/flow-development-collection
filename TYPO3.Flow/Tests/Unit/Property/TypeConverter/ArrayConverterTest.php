@@ -34,7 +34,7 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('array', 'string', 'TYPO3\Flow\Resource\Resource'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(array('array', 'string', \TYPO3\Flow\Resource\Resource::class), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
@@ -68,10 +68,10 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         // Create a map of arguments to return values.
         $configurationValueMap = array();
         foreach ($mappingConfiguration as $setting => $value) {
-            $configurationValueMap[] = array('TYPO3\Flow\Property\TypeConverter\ArrayConverter', $setting, $value);
+            $configurationValueMap[] = array(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, $setting, $value);
         }
 
-        $propertyMappingConfiguration = $this->getMock('\TYPO3\Flow\Property\PropertyMappingConfiguration');
+        $propertyMappingConfiguration = $this->createMock(\TYPO3\Flow\Property\PropertyMappingConfiguration::class);
         $propertyMappingConfiguration
             ->expects($this->any())
             ->method('getConfigurationValue')

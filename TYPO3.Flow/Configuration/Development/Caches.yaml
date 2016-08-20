@@ -1,0 +1,3 @@
+Flow_PropertyMapper:
+  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
+  backend: TYPO3\Flow\Cache\Backend\NullBackend

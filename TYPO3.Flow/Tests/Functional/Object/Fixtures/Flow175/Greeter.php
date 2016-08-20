@@ -20,6 +20,6 @@ class Greeter implements GreeterInterface
 {
     public function greet($who)
     {
-        return "Hello $who!";
+        return 'Hello ' . $who . '!';
     }
 }

@@ -29,7 +29,7 @@ class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getDeclaringClassReturnsFlowsClassReflection()
     {
         $method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-        $this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $method->getDeclaringClass());
+        $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $method->getDeclaringClass());
     }
 
     /**
@@ -39,7 +39,7 @@ class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
         foreach ($method->getParameters() as $parameter) {
-            $this->assertInstanceOf('TYPO3\Flow\Reflection\ParameterReflection', $parameter);
+            $this->assertInstanceOf(\TYPO3\Flow\Reflection\ParameterReflection::class, $parameter);
             $this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
         }
     }

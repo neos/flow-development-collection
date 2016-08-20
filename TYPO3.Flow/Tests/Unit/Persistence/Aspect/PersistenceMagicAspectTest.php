@@ -39,12 +39,12 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->persistenceMagicAspect = $this->getAccessibleMock('TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect', array('dummy'), array());
+        $this->persistenceMagicAspect = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect::class, array('dummy'), array());
 
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
         $this->persistenceMagicAspect->_set('persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
+        $this->mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
     }
 
     /**

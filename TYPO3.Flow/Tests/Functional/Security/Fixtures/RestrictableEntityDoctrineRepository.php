@@ -22,7 +22,7 @@ class RestrictableEntityDoctrineRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class;
 
     /**
      * Returns all RestrictableEntity objects from persistence

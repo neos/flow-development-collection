@@ -97,6 +97,20 @@ class SecurityCommandController extends CommandController
     }
 
     /**
+     * Generate a public/private key pair and add it to the RSAWalletService
+     *
+     * @param boolean $usedForPasswords If the private key should be used for passwords
+     * @return void
+     * @see typo3.flow:security:importprivatekey
+     */
+    public function generateKeyPairCommand($usedForPasswords = false)
+    {
+        $fingerprint = $this->rsaWalletService->generateNewKeypair($usedForPasswords);
+
+        $this->outputLine('The key pair has been successfully generated. Use the following fingerprint to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $fingerprint . PHP_EOL);
+    }
+
+    /**
      * Import a private key
      *
      * Read a PEM formatted private key from stdin and import it into the
@@ -120,6 +134,7 @@ class SecurityCommandController extends CommandController
      * @param boolean $usedForPasswords If the private key should be used for passwords
      * @return void
      * @see typo3.flow:security:importpublickey
+     * @see typo3.flow:security:generatekeypair
      */
     public function importPrivateKeyCommand($usedForPasswords = false)
     {
@@ -238,10 +253,10 @@ class SecurityCommandController extends CommandController
     {
         $methodPrivileges = array();
         foreach ($this->policyService->getRoles(true) as $role) {
-            $methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface'));
+            $methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class));
         }
 
-        $controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
+        $controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass(\TYPO3\Flow\Mvc\Controller\AbstractController::class);
         $allActionsAreProtected = true;
         foreach ($controllerClassNames as $controllerClassName) {
             if ($this->reflectionService->isClassAbstract($controllerClassName)) {
@@ -322,7 +337,6 @@ class SecurityCommandController extends CommandController
             $this->outputLine('The given Resource did not match any method or is unknown.');
             $this->quit(1);
         }
-
 
         foreach ($matchedClassesAndMethods as $className => $methods) {
             $this->outputLine($className);

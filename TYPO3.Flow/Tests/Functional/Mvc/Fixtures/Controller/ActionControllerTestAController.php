@@ -53,7 +53,7 @@ class ActionControllerTestAController extends ActionController
      */
     public function thirdAction($firstArgument, $secondArgument, $third = null, $fourth = 'default')
     {
-        return "thirdAction-$firstArgument-$secondArgument-$third-$fourth";
+        return 'thirdAction-' . $firstArgument . '-' . $secondArgument . '-' . $third . '-' . $fourth;
     }
 
     /**
@@ -72,7 +72,7 @@ class ActionControllerTestAController extends ActionController
      */
     public function putAction($putArgument, $getArgument)
     {
-        return "putAction-$putArgument-$getArgument";
+        return 'putAction-' . $putArgument . '-' . $getArgument;
     }
 
     /**

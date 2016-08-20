@@ -56,7 +56,7 @@ class Response extends AbstractMessage implements ResponseInterface
         $statusMessages = array(
                 100 => 'Continue',
                 101 => 'Switching Protocols',
-                102 => 'Processing', # RFC 2518
+                102 => 'Processing', // RFC 2518
                 200 => 'OK',
                 201 => 'Created',
                 202 => 'Accepted',
@@ -111,7 +111,6 @@ class Response extends AbstractMessage implements ResponseInterface
     public function __construct(Response $parentResponse = null)
     {
         $this->headers = new Headers();
-        $this->headers->set('X-Flow-Powered', 'Flow/' . FLOW_VERSION_BRANCH);
         $this->headers->set('Content-Type', 'text/html; charset=' . $this->charset);
         $this->parentResponse = $parentResponse;
     }

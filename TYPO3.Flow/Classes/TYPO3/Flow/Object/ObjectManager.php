@@ -104,7 +104,7 @@ class ObjectManager implements ObjectManagerInterface
     public function setObjects(array $objects)
     {
         $this->objects = $objects;
-        $this->objects['TYPO3\Flow\Object\ObjectManagerInterface']['i'] = $this;
+        $this->objects[\TYPO3\Flow\Object\ObjectManagerInterface::class]['i'] = $this;
         $this->objects[get_class($this)]['i'] = $this;
     }
 
@@ -461,6 +461,17 @@ class ObjectManager implements ObjectManagerInterface
     public function getSettingsByPath(array $settingsPath)
     {
         return Arrays::getValueByPath($this->allSettings, $settingsPath);
+    }
+
+    /**
+     * Returns all current object configurations.
+     * For internal use in bootstrap only. Can change anytime.
+     *
+     * @return array
+     */
+    public function getAllObjectConfigurations()
+    {
+        return $this->objects;
     }
 
     /**

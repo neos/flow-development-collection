@@ -124,7 +124,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     {
         parent::setCache($cache);
 
-        if (file_exists($this->cacheDirectory . 'FrozenCache.data')) {
+        if (is_file($this->cacheDirectory . 'FrozenCache.data')) {
             $this->frozen = true;
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
             $lock = new Lock($cachePathAndFileName, false);
@@ -240,7 +240,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        if (file_exists($pathAndFilename) === false) {
+        if (is_file($pathAndFilename) === false) {
             return false;
         }
         if (unlink($pathAndFilename) === false) {
@@ -334,7 +334,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = true)
     {
-        if (file_exists($cacheEntryPathAndFilename) === false) {
+        if (is_file($cacheEntryPathAndFilename) === false) {
             return true;
         }
 

@@ -54,9 +54,9 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      *
      * @return void
      */
-    public function initialize()
+    public function initializeObject()
     {
-        $this->entityManager->getEventManager()->addEventListener(array(\Doctrine\ORM\Events::onFlush), $this);
+        $this->entityManager->getEventManager()->addEventListener([\Doctrine\ORM\Events::onFlush], $this);
     }
 
     /**
@@ -215,7 +215,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         if ($this->entityManager->contains($object)) {
             try {
                 return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-            } catch (\Doctrine\ORM\ORMException $e) {
+            } catch (\Doctrine\ORM\ORMException $exception) {
             }
         }
         return null;

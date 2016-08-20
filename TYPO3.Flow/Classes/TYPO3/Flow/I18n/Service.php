@@ -251,6 +251,21 @@ class Service
     }
 
     /**
+     * Returns a regex pattern including enclosing characters, that matches any of the configured
+     * blacklist paths inside "TYPO3.Flow.i18n.scan.excludePatterns".
+     *
+     * @return string The regex pattern matching the configured blacklist
+     */
+    protected function getScanBlacklistPattern()
+    {
+        $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePatterns'])));
+        if ($pattern !== '') {
+            $pattern = '#' . str_replace('#', '\#', $pattern) . '#';
+        }
+        return $pattern;
+    }
+
+    /**
      * Finds all Locale objects representing locales available in the
      * Flow installation. This is done by scanning all Private and Public
      * resource files of all active packages, in order to find localized files.
@@ -268,17 +283,35 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
+        $whitelistPaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
+        if ($whitelistPaths === []) {
+            return;
+        }
+        $blacklistPattern = $this->getScanBlacklistPattern();
+
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
-            $packageResourcesPath = $activePackage->getResourcesPath();
+            $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {
                 continue;
             }
 
-            $directories = array(Files::getNormalizedPath($packageResourcesPath));
-            while ($directories !== array()) {
+            $directories = [];
+            foreach ($whitelistPaths as $path) {
+                $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
+                if (is_dir($scanPath)) {
+                    array_push($directories, Files::getNormalizedPath($scanPath));
+                }
+            }
+
+            while ($directories !== []) {
                 $currentDirectory = array_pop($directories);
+                $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
+                if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                    continue;
+                }
+
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
                         if ($filename[0] === '.') {

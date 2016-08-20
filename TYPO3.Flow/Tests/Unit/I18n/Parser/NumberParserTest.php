@@ -116,7 +116,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function strictParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\NumberParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\NumberParser::class, array('dummy'));
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals($expectedParsedNumber, $result);
     }
@@ -127,7 +127,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function strictParsingReturnsFalseForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\NumberParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\NumberParser::class, array('dummy'));
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals(false, $result);
     }
@@ -138,7 +138,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lenientParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\NumberParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\NumberParser::class, array('dummy'));
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals($expectedParsedNumber, $result);
     }
@@ -149,7 +149,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lenientParsingWorksCorrectlyForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\NumberParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\NumberParser::class, array('dummy'));
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals($expectedParsedNumber, $result);
     }
@@ -160,7 +160,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
@@ -177,7 +177,7 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
-        $mockNumbersReader = $this->getMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader');
+        $mockNumbersReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 

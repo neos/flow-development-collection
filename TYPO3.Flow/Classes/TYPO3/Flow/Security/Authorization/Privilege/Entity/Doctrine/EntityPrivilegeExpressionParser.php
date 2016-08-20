@@ -31,7 +31,7 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
         if (!isset($result['code'])) {
             $result['code'] = '$context';
         }
-        $result['code'] .= '->callAndWrap(\'notExpression\', array('. $this->unwrapExpression($sub['code']) . '))';
+        $result['code'] .= '->callAndWrap(\'notExpression\', array(' . $this->unwrapExpression($sub['code']) . '))';
     }
 
     /**
@@ -40,7 +40,7 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
      */
     public function Disjunction_rgt(&$result, $sub)
     {
-        $result['code'] = '$context->callAndWrap(\'disjunction\', array('. $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
+        $result['code'] = '$context->callAndWrap(\'disjunction\', array(' . $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
     }
 
     /**
@@ -49,7 +49,7 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
      */
     public function Conjunction_rgt(&$result, $sub)
     {
-        $result['code'] = '$context->callAndWrap(\'conjunction\', array('. $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
+        $result['code'] = '$context->callAndWrap(\'conjunction\', array(' . $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
     }
 
     /**

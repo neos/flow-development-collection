@@ -13,7 +13,6 @@ namespace TYPO3\Fluid\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
@@ -29,7 +28,8 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\Format\BytesViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getMockBuilder(\TYPO3\Fluid\ViewHelpers\Format\BytesViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

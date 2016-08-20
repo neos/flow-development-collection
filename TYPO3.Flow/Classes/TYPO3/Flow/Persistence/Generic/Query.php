@@ -513,7 +513,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784963);
         }
-        if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+        if (!($operand instanceof \DateTimeInterface) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784964);
         }
 
@@ -538,7 +538,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784943);
         }
-        if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+        if (!($operand instanceof \DateTimeInterface) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784944);
         }
 
@@ -563,7 +563,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774885);
         }
-        if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+        if (!($operand instanceof \DateTimeInterface) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774886);
         }
 
@@ -588,7 +588,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774883);
         }
-        if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+        if (!($operand instanceof \DateTimeInterface) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774884);
         }
 

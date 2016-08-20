@@ -66,6 +66,19 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
+    public function multipleCheckboxRendersCorrectFieldNameForEntities()
+    {
+        $postIdentifier = $this->setupDummyPost(true);
+
+        $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
+        $form = $this->browser->getForm();
+        $this->assertFalse(isset($form['post']['tags']['__identity']));
+        $this->assertFalse(isset($form['tags']['__identity']));
+    }
+
+    /**
+     * @test
+     */
     public function formIsRedisplayedIfValidationErrorsOccur()
     {
         $this->browser->request('http://localhost/test/fluid/formobjects');
@@ -220,7 +233,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->assertNotSame('Hello World|test_noValidEmail', $response->getContent());
 
         $this->persistenceManager->clearState();
-        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, '\TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         $this->assertNotSame('test_noValidEmail', $post->getAuthor()->getEmailAddress(), 'The invalid email address "' . $post->getAuthor()->getEmailAddress() . '" was persisted!');
     }
 
@@ -245,7 +258,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $response = $this->browser->submit($form);
         $this->assertSame('Hello World|foo@bar.org', $response->getContent());
 
-        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, 'TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         $this->assertSame('foo@bar.org', $post->getAuthor()->getEmailAddress());
     }
 
@@ -333,9 +346,10 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @param boolean $withTags
      * @return string UUID of the dummy post
      */
-    protected function setupDummyPost()
+    protected function setupDummyPost($withTags = false)
     {
         $author = new Fixtures\Domain\Model\User();
         $author->setEmailAddress('foo@bar.org');
@@ -343,6 +357,10 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $post->setAuthor($author);
         $post->setName('myName');
         $post->setPrivate(true);
+        if ($withTags === true) {
+            $post->addTag(new Fixtures\Domain\Model\Tag('Tag1'));
+            $post->addTag(new Fixtures\Domain\Model\Tag('Tag2'));
+        }
         $this->persistenceManager->add($post);
         $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
         $this->persistenceManager->persistAll();
@@ -406,7 +424,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function valueForDisabledCheckboxIsNotLost()
     {
         $postIdentifier = $this->setupDummyPost();
-        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, '\TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         $this->assertEquals(true, $post->getPrivate());
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
@@ -418,7 +436,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->browser->submit($form);
 
         $this->persistenceManager->clearState();
-        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, '\TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post');
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \TYPO3\Fluid\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         // This will currently never fail, because DomCrawler\Form does not handle hidden checkbox fields correctly!
         // Hence this test currently only relies on the correctly set "disabled" attribute on the hidden field.
         $this->assertEquals(true, $post->getPrivate(), 'The value for the checkbox field "private" was lost on form submit!');

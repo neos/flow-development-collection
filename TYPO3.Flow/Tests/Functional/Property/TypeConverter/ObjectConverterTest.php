@@ -28,7 +28,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->converter = $this->objectManager->get('TYPO3\Flow\Property\TypeConverter\ObjectConverter');
+        $this->converter = $this->objectManager->get(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class);
     }
 
     /**
@@ -42,7 +42,7 @@ class ObjectConverterTest extends FunctionalTestCase
         $configuration
             ->forProperty($propertyName)
             ->setTypeConverterOption(
-                'TYPO3\Flow\Property\TypeConverter\ObjectConverter',
+                \TYPO3\Flow\Property\TypeConverter\ObjectConverter::class,
                 ObjectConverter::CONFIGURATION_TARGET_TYPE,
                 $expectedTargetType);
 
@@ -56,7 +56,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function getTypeOfChildPropertyReturnsCorrectTypeIfAConstructorArgumentForThatPropertyIsPresent()
     {
         $actual = $this->converter->getTypeOfChildProperty(
-            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
             'dummy',
             new PropertyMappingConfiguration()
         );
@@ -69,7 +69,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function getTypeOfChildPropertyReturnsCorrectTypeIfASetterForThatPropertyIsPresent()
     {
         $actual = $this->converter->getTypeOfChildProperty(
-            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
             'attributeWithStringTypeAnnotation',
             new PropertyMappingConfiguration()
         );
@@ -81,9 +81,9 @@ class ObjectConverterTest extends FunctionalTestCase
      */
     public function getTypeOfChildPropertyThrowsExceptionIfThatPropertyIsPubliclyPresentButHasNoProperTypeAnnotation()
     {
-        $this->setExpectedException('TYPO3\Flow\Property\Exception\InvalidTargetException', '', 1406821818);
+        $this->setExpectedException(\TYPO3\Flow\Property\Exception\InvalidTargetException::class, '', 1406821818);
         $this->converter->getTypeOfChildProperty(
-            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
             'somePublicPropertyWithoutVarAnnotation',
             new PropertyMappingConfiguration()
         );
@@ -96,7 +96,7 @@ class ObjectConverterTest extends FunctionalTestCase
     {
         $configuration = new PropertyMappingConfiguration();
         $actual = $this->converter->getTypeOfChildProperty(
-            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
             'somePublicProperty',
             $configuration
         );
@@ -110,7 +110,7 @@ class ObjectConverterTest extends FunctionalTestCase
     {
         $convertedObject = $this->converter->convertFrom(
             'irrelevant',
-            'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
             array(
                 'propertyMeantForConstructorUsage' => 'theValue',
                 'propertyMeantForSetterUsage' => 'theValue',
@@ -122,5 +122,29 @@ class ObjectConverterTest extends FunctionalTestCase
         $this->assertEquals('theValue set via Constructor', ObjectAccess::getProperty($convertedObject, 'propertyMeantForConstructorUsage', true));
         $this->assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', true));
         $this->assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', true));
+    }
+
+    /**
+     * @test
+     */
+    public function convertFromAllowsAutomaticInjectionOfSingletonConstructorArguments()
+    {
+        $convertedObject = $this->converter->convertFrom(
+            'irrelevant',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection::class
+        );
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Property\Exception\InvalidTargetException
+     */
+    public function convertFromThrowsMeaningfulExceptionWhenTheTargetExpectsAnUnknownDependencyThatIsNotSpecifiedInTheSource()
+    {
+        $this->converter->convertFrom(
+            'irrelevant',
+            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithThirdPartyClassConstructorInjection::class
+        );
     }
 }

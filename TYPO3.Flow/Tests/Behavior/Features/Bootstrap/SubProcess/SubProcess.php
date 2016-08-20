@@ -58,7 +58,7 @@ class SubProcess
                 throw new \Exception('Failed launching the shell sub process');
             }
         }
-        fwrite($this->pipes[0], "$commandLine\n");
+        fwrite($this->pipes[0], $commandLine . "\n");
         fflush($this->pipes[0]);
 
         return $this->getSubProcessResponse();

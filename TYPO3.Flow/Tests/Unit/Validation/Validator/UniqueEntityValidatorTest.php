@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  */
 class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\UniqueEntityValidator';
+    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\UniqueEntityValidator::class;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,9 +35,9 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->classSchema = $this->getMock('TYPO3\Flow\Reflection\ClassSchema', array(), array(), '', false);
+        $this->classSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
 
-        $this->reflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->reflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
         $this->reflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
@@ -47,7 +47,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358454270);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454270);
         $this->validator->validate('a string');
     }
 
@@ -58,7 +58,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
 
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358454284);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
@@ -69,7 +69,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT));
 
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358454284);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
@@ -86,7 +86,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->with('propertyWhichDoesntExist')
             ->will($this->returnValue(false));
 
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358960500);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358960500);
         $this->validator->validate(new \StdClass());
     }
 
@@ -101,7 +101,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->method('getIdentityProperties')
             ->will($this->returnValue(array()));
 
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358459831);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358459831);
         $this->validator->validate(new \StdClass());
     }
 
@@ -121,7 +121,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
             ->will($this->returnValue(array('dummy array', 'with more than', 'one count')));
 
-        $this->setExpectedException('TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException', '', 1358501745);
+        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358501745);
         $this->validator->validate(new \StdClass());
     }
 

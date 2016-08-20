@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Configuration\Source;
  * source code.
  */
 
+use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -52,13 +53,13 @@ class YamlSource
             $pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
             if ($pathsAndFileNames !== false) {
                 foreach ($pathsAndFileNames as $pathAndFilename) {
-                    if (file_exists($pathAndFilename)) {
+                    if (is_file($pathAndFilename)) {
                         return true;
                     }
                 }
             }
         }
-        if (file_exists($pathAndFilename . '.yaml')) {
+        if (is_file($pathAndFilename . '.yaml')) {
             return true;
         }
         return false;
@@ -86,15 +87,21 @@ class YamlSource
         }
         $configuration = array();
         foreach ($pathsAndFileNames as $pathAndFilename) {
-            if (file_exists($pathAndFilename)) {
+            if (is_file($pathAndFilename)) {
                 try {
                     if ($this->usePhpYamlExtension) {
-                        $loadedConfiguration = @yaml_parse_file($pathAndFilename);
+                        if (strpos($pathAndFilename, 'resource://') === 0) {
+                            $yaml = file_get_contents($pathAndFilename);
+                            $loadedConfiguration = @yaml_parse($yaml);
+                            unset($yaml);
+                        } else {
+                            $loadedConfiguration = @yaml_parse_file($pathAndFilename);
+                        }
                         if ($loadedConfiguration === false) {
                             throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
                         }
                     } else {
-                        $loadedConfiguration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename);
+                        $loadedConfiguration = Yaml::parse($pathAndFilename);
                     }
 
                     if (is_array($loadedConfiguration)) {
@@ -121,7 +128,7 @@ class YamlSource
         if (file_exists($pathAndFilename . '.yaml')) {
             $header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
         }
-        $yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99, 2);
+        $yaml = Yaml::dump($configuration, 99, 2);
         file_put_contents($pathAndFilename . '.yaml', $header . chr(10) . $yaml);
     }
 

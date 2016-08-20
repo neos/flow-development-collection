@@ -176,7 +176,7 @@ The following configuration options exist:
   date format::
 
 	$propertyMappingConfiguration->setTypeConverterOption(
-		'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 		'Y-m-d'
 	);
@@ -206,7 +206,7 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 	$propertyMappingConfiguration
 		->forProperty('birthDate')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 			'Y-m-d'
 		);
@@ -220,9 +220,20 @@ the path syntax supports an asterisk as a placeholder::
 	$propertyMappingConfiguration
 		->forProperty('items.*')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 			TRUE
+		);
+
+This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
+on large collections::
+
+	$propertyMappingConfiguration
+		->forProperty('persons.*.birthDate')
+		->setTypeConvertOption(
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+			'Y-m-d'
 		);
 
 .. admonition:: Property Mapping Configuration in the MVC stack
@@ -243,7 +254,7 @@ the path syntax supports an asterisk as a placeholder::
 			$commentConfiguration->allowAllProperties();
 			$commentConfiguration
 				->setTypeConverterOption(
-				'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 				TRUE
 			);
@@ -309,6 +320,14 @@ Second, you need to configure the the PersistentObjectConverter using the two op
 must be used to explicitly activate the modification or creation of objects. By
 default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,
 but does not create new ones or modifies existing ones.
+
+.. note::
+
+	The only exception to this rule are Value Objects, which may always be created newly by default,
+	as this makes sense as of their nature. If you have a use case where the user may not
+	create new Value Objects, for example because he may only choose from a fixed list, you can
+	however explicitly disallow creation by setting the appropriate property's
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
 
 
 Default Configuration

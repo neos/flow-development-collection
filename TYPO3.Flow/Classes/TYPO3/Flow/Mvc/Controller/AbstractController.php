@@ -357,7 +357,7 @@ abstract class AbstractController implements ControllerInterface
             if ($this->request->hasArgument($argumentName)) {
                 $argument->setValue($this->request->getArgument($argumentName));
             } elseif ($argument->isRequired()) {
-                throw new \TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
+                throw new \TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName . '" is not set.', 1298012500);
             }
         }
     }

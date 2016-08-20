@@ -22,7 +22,7 @@ class ObjectAccessorNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function evaluateGetsPropertyPathFromVariableContainer()
     {
         $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode('foo.bar');
-        $renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
         $variableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array(
             'foo' => array(
                 'bar' => 'some value'
@@ -41,8 +41,8 @@ class ObjectAccessorNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function evaluateCallsObjectAccessOnSubjectWithTemplateObjectAccessInterface()
     {
         $node = new \TYPO3\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode('foo.bar');
-        $renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
-        $templateObjectAcessValue = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface');
+        $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
+        $templateObjectAcessValue = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface::class);
         $variableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array(
             'foo' => array(
                 'bar' => $templateObjectAcessValue

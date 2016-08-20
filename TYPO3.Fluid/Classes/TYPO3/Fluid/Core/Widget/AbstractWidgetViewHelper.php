@@ -21,8 +21,6 @@ use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
-use TYPO3\Fluid\Core\Widget\Exception\InvalidControllerException;
-use TYPO3\Fluid\Core\Widget\Exception\MissingControllerException;
 
 /**
  * @api
@@ -146,7 +144,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     public function setChildNodes(array $childNodes)
     {
         /** @var $rootNode RootNode */
-        $rootNode = $this->objectManager->get('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
+        $rootNode = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
         foreach ($childNodes as $childNode) {
             $rootNode->addChildNode($childNode);
         }
@@ -208,9 +206,9 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         }
 
         /** @var $subRequest ActionRequest */
-        $subRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $this->controllerContext->getRequest());
+        $subRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $this->controllerContext->getRequest());
         /** @var $subResponse Response */
-        $subResponse = $this->objectManager->get('TYPO3\Flow\Http\Response', $this->controllerContext->getResponse());
+        $subResponse = $this->objectManager->get(\TYPO3\Flow\Http\Response::class, $this->controllerContext->getResponse());
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
@@ -290,7 +288,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     public function resetState()
     {
         if ($this->ajaxWidget) {
-            $this->widgetContext = $this->objectManager->get('TYPO3\Fluid\Core\Widget\WidgetContext');
+            $this->widgetContext = $this->objectManager->get(\TYPO3\Fluid\Core\Widget\WidgetContext::class);
         }
     }
 }

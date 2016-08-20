@@ -57,11 +57,11 @@ class IndexedCollectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->persistenceManager->persistAll();
         $id = $this->persistenceManager->getIdentifierByObject($entityWithIndexedRelation);
 
-        //Reset persistence manager to make sure fresh instances will be created
+        // Reset persistence manager to make sure fresh instances will be created
         $this->persistenceManager->clearState();
         unset($entityWithIndexedRelation);
 
-        $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation');
+        $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation::class);
         for ($i = 0; $i < 3; $i++) {
             $this->assertArrayHasKey('Author' . (string) $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
         }
@@ -69,6 +69,6 @@ class IndexedCollectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->assertArrayHasKey('test', $entityWithIndexedRelation->getRelatedIndexEntities());
         $this->assertArrayNotHasKey(0, $entityWithIndexedRelation->getRelatedIndexEntities());
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\RelatedIndexEntity', $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\RelatedIndexEntity::class, $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
     }
 }

@@ -28,6 +28,12 @@ class SubEntity extends SuperEntity
     protected $parentEntity;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(nullable=true)
+     */
+    protected $date;
+
+    /**
      * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity
      * @return void
      */
@@ -42,5 +48,21 @@ class SubEntity extends SuperEntity
     public function getParentEntity()
     {
         return $this->parentEntity;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
     }
 }

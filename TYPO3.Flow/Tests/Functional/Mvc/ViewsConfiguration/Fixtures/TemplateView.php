@@ -53,7 +53,7 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return \TYPO3\Flow\Mvc\View\EmptyView instance of $this to allow chaining
+     * @return \TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView instance of $this to allow chaining
      * @api
      */
     public function assign($key, $value)
@@ -65,7 +65,7 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
      * Dummy method to satisfy the ViewInterface
      *
      * @param array $values
-     * @return \TYPO3\Flow\Mvc\View\EmptyView instance of $this to allow chaining
+     * @return \TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView instance of $this to allow chaining
      * @api
      */
     public function assignMultiple(array $values)

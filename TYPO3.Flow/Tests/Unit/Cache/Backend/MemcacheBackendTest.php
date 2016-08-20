@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Core\ApplicationContext;
-
 /**
  * Testcase for the cache to memcache backend
  *

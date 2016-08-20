@@ -69,7 +69,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = array();
-        $convertElements = $configuration->getConfigurationValue('TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter', self::CONFIGURATION_CONVERT_ELEMENTS);
+        $convertElements = $configuration->getConfigurationValue(\TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS);
         foreach ($source as $element) {
             if ($convertElements === true) {
                 $element = $this->propertyMapper->convert($element, 'array', $configuration);

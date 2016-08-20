@@ -24,7 +24,7 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation()
     {
         $request = new Request();
-        $request->setControllerObjectName('TYPO3\Flow\Command\CacheCommandController');
+        $request->setControllerObjectName(\TYPO3\Flow\Command\CacheCommandController::class);
         $request->setControllerCommandName('flush');
 
         $command = $request->getCommand();
@@ -37,7 +37,7 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject()
     {
         $request = new Request();
-        $request->setControllerObjectName('TYPO3\Flow\Command\CacheCommandController');
+        $request->setControllerObjectName(\TYPO3\Flow\Command\CacheCommandController::class);
         $request->setControllerCommandName('flush');
         $request->getCommand();
 

@@ -33,7 +33,7 @@ class CompilerTest extends UnitTestCase
 
     protected function setUp()
     {
-        $this->compiler = $this->getAccessibleMock('TYPO3\Flow\Object\Proxy\Compiler', null);
+        $this->compiler = $this->getAccessibleMock(\TYPO3\Flow\Object\Proxy\Compiler::class, null);
     }
 
     /**
@@ -111,13 +111,13 @@ class CompilerTest extends UnitTestCase
     {
         return array(
                 // no (valid) php file
-            array('classCode' => "", 'expectedResult' => ""),
+            array('classCode' => '', 'expectedResult' => ''),
             array('classCode' => "Not\nPHP code\n", 'expectedResult' => "Not\nPHP code\n"),
 
                 // PHP files with only one line
-            array('classCode' => "<?php just one line", 'expectedResult' => " just one line"),
-            array('classCode' => "<?php another <?php tag", 'expectedResult' => " another <?php tag"),
-            array('classCode' => "  <?php  space before and after tag", 'expectedResult' => "  space before and after tag"),
+            array('classCode' => '<?php just one line', 'expectedResult' => ' just one line'),
+            array('classCode' => '<?php another <?php tag', 'expectedResult' => ' another <?php tag'),
+            array('classCode' => '  <?php  space before and after tag', 'expectedResult' => '  space before and after tag'),
 
                 // PHP files with more lines
             array('classCode' => "<?php\nsecond line", 'expectedResult' => "\nsecond line"),

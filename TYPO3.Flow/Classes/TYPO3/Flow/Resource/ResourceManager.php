@@ -19,7 +19,6 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
-use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -36,6 +35,8 @@ class ResourceManager
      */
     const DEFAULT_STATIC_COLLECTION_NAME = 'static';
     const DEFAULT_PERSISTENT_COLLECTION_NAME = 'persistent';
+
+    const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
 
     /**
      * @Flow\Inject
@@ -88,6 +89,11 @@ class ResourceManager
     protected $collections;
 
     /**
+     * @var boolean
+     */
+    protected $initialized = false;
+
+    /**
      * Injects the settings of this package
      *
      * @param array $settings
@@ -104,12 +110,16 @@ class ResourceManager
      *
      * @return void
      */
-    public function initialize()
+    protected function initialize()
     {
-        $this->initializeStreamWrapper();
+        if ($this->initialized === true) {
+            return;
+        }
+
         $this->initializeStorages();
         $this->initializeTargets();
         $this->initializeCollections();
+        $this->initialized = true;
     }
 
     /**
@@ -128,6 +138,7 @@ class ResourceManager
      */
     public function importResource($source, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
+        $this->initialize();
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1375196643);
         }
@@ -144,8 +155,8 @@ class ResourceManager
                 $pathInfo = UnicodeFunctions::pathinfo($source);
                 $resource->setFilename($pathInfo['basename']);
             }
-        } catch (Exception $e) {
-            throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $e->getMessage()), 1375197120, $e);
+        } catch (Exception $exception) {
+            throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
         }
 
         $this->resourceRepository->add($resource);
@@ -176,6 +187,8 @@ class ResourceManager
         if (!is_string($content)) {
             throw new Exception(sprintf('Tried to import content into the resource collection "%s" but the given content was a %s instead of a string.', $collectionName, gettype($content)), 1380878115);
         }
+        $this->initialize();
+
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1380878131);
         }
@@ -189,8 +202,8 @@ class ResourceManager
             if ($forcedPersistenceObjectIdentifier !== null) {
                 ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
             }
-        } catch (Exception $e) {
-            throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $e->getMessage()), 1381156155, $e);
+        } catch (Exception $exception) {
+            throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1381156155, $exception);
         }
 
         $this->resourceRepository->add($resource);
@@ -213,6 +226,7 @@ class ResourceManager
      */
     public function importUploadedResource(array $uploadInfo, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
     {
+        $this->initialize();
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import an uploaded file into the resource collection "%s" but no such collection exists. Please check your settings and HTML forms.', $collectionName), 1375197544);
         }
@@ -224,8 +238,8 @@ class ResourceManager
             $uploadedFile = $this->prepareUploadedFileForImport($uploadInfo);
             $resource = $collection->importResource($uploadedFile['filepath']);
             $resource->setFilename($uploadedFile['filename']);
-        } catch (Exception $e) {
-            throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $e);
+        } catch (Exception $exception) {
+            throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $exception);
         }
 
         $this->resourceRepository->add($resource);
@@ -257,6 +271,7 @@ class ResourceManager
      */
     public function getStreamByResource(Resource $resource)
     {
+        $this->initialize();
         $collectionName = $resource->getCollectionName();
         if (!isset($this->collections[$collectionName])) {
             return false;
@@ -296,6 +311,8 @@ class ResourceManager
      */
     public function deleteResource(Resource $resource, $unpublishResource = true)
     {
+        $this->initialize();
+
         $collectionName = $resource->getCollectionName();
 
         $result = $this->resourceRepository->findBySha1($resource->getSha1());
@@ -313,8 +330,8 @@ class ResourceManager
             }
             try {
                 $storage->deleteResource($resource);
-            } catch (\Exception $e) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $e->getMessage()), LOG_WARNING);
+            } catch (\Exception $exception) {
+                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LOG_WARNING);
                 return false;
             }
             if ($unpublishResource) {
@@ -341,6 +358,8 @@ class ResourceManager
      */
     public function getPublicPersistentResourceUri(Resource $resource)
     {
+        $this->initialize();
+
         if (!isset($this->collections[$resource->getCollectionName()])) {
             return false;
         }
@@ -361,6 +380,8 @@ class ResourceManager
      */
     public function getPublicPersistentResourceUriByHash($resourceHash, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
     {
+        $this->initialize();
+
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Could not determine persistent resource URI for "%s" because the specified collection "%s" does not exist.', $resourceHash, $collectionName), 1375197875);
         }
@@ -384,9 +405,44 @@ class ResourceManager
      */
     public function getPublicPackageResourceUri($packageKey, $relativePathAndFilename)
     {
+        $this->initialize();
+
         /** @var TargetInterface $target */
         $target = $this->collections[self::DEFAULT_STATIC_COLLECTION_NAME]->getTarget();
         return $target->getPublicStaticResourceUri($packageKey . '/' . $relativePathAndFilename);
+    }
+
+    /**
+     * Returns the public URI for a static resource provided by the public package
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return string
+     * @api
+     */
+    public function getPublicPackageResourceUriByPath($path)
+    {
+        $this->initialize();
+        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
+    }
+
+    /**
+     * Return the package key and the relative path and filename from the given resource path
+     *
+     * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
+     * @return array The array contains two value, first the packageKey followed by the relativePathAndFilename
+     * @throws Exception
+     * @api
+     */
+    public function getPackageAndPathByPublicPath($path)
+    {
+        if (preg_match(self::PUBLIC_RESSOURCE_REGEXP, $path, $matches) !== 1) {
+            throw new Exception(sprintf('The path "%s" which was given must point to a public resource.', $path), 1450358448);
+        }
+        return [
+            0 => $matches['packageKey'],
+            1 => $matches['relativePathAndFilename']
+        ];
     }
 
     /**
@@ -397,6 +453,8 @@ class ResourceManager
      */
     public function getStorage($storageName)
     {
+        $this->initialize();
+
         return isset($this->storages[$storageName]) ? $this->storages[$storageName] : null;
     }
 
@@ -409,6 +467,8 @@ class ResourceManager
      */
     public function getCollection($collectionName)
     {
+        $this->initialize();
+
         return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : null;
     }
 
@@ -419,6 +479,8 @@ class ResourceManager
      */
     public function getCollections()
     {
+        $this->initialize();
+
         return $this->collections;
     }
 
@@ -430,6 +492,8 @@ class ResourceManager
      */
     public function getCollectionsByStorage(StorageInterface $storage)
     {
+        $this->initialize();
+
         $collections = array();
         foreach ($this->collections as $collectionName => $collection) {
             /** @var CollectionInterface $collection */
@@ -525,24 +589,6 @@ class ResourceManager
     }
 
     /**
-     * Registers a Stream Wrapper Adapter for the resource:// scheme.
-     *
-     * @return void
-     */
-    protected function initializeStreamWrapper()
-    {
-        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
-        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
-            $scheme = $streamWrapperClassName::getScheme();
-            if (in_array($scheme, stream_get_wrappers())) {
-                stream_wrapper_unregister($scheme);
-            }
-            stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
-            StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
-        }
-    }
-
-    /**
      * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
      * move it outside of upload folder if open_basedir is enabled and check the filename.
      *
@@ -581,18 +627,6 @@ class ResourceManager
             'filepath' => $temporaryTargetPathAndFilename,
             'filename' => $pathInfo['basename']
         );
-    }
-
-    /**
-     * Returns all class names implementing the StreamWrapperInterface.
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return array Array of stream wrapper implementations
-     * @Flow\CompileStatic
-     */
-    protected static function getStreamWrapperImplementationClassNames($objectManager)
-    {
-        return $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
     }
 
     /**

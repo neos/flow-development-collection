@@ -31,7 +31,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  *
  *  protected function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', TRUE
+ *  		\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, 'locale', TRUE
  *  	);
  *  }
  *
@@ -43,7 +43,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  *
  *  protected function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'fr'
+ *  		\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, 'locale', 'fr'
  *  	);
  *  }
  *
@@ -57,7 +57,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  * *Example setting lenient mode (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
+ *  	\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', FALSE
  *  );
  *
  * **Format type**
@@ -69,7 +69,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  * *Example setting format type `currency` (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+ *  	\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, 'formatType', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
  *  );
  *
  * **Format length**
@@ -82,7 +82,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  * *Example setting format length (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
+ *  	\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, 'formatLength', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
  *  );
  *
  * @api
@@ -129,7 +129,7 @@ class FloatConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($source === null || strlen($source) === 0) {
+        if ($source === null || $source === '') {
             return null;
         } elseif (is_string($source) && $configuration instanceof \TYPO3\Flow\Property\PropertyMappingConfigurationInterface) {
             $source = $this->parseUsingLocaleIfConfigured($source, $configuration);
@@ -217,7 +217,7 @@ class FloatConverter extends AbstractTypeConverter
     {
         $keysAndValues = array();
         foreach ($configurationKeys as $configurationKey) {
-            $keysAndValues[$configurationKey] = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\FloatConverter', $configurationKey);
+            $keysAndValues[$configurationKey] = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\FloatConverter::class, $configurationKey);
         }
         return $keysAndValues;
     }

@@ -24,5 +24,5 @@ class NonstandardEntityRepository extends \TYPO3\Flow\Persistence\Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity';
+    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity::class;
 }

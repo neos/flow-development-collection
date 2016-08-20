@@ -25,5 +25,5 @@ interface Introduced01Interface
      * @param string $someString
      * @return string
      */
-    public function introducedMethodWithArguments($someString = "some string");
+    public function introducedMethodWithArguments($someString = 'some string');
 }

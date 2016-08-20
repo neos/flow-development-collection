@@ -32,7 +32,7 @@ class RoleConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Flow\Security\Policy\Role';
+    protected $targetType = \TYPO3\Flow\Security\Policy\Role::class;
 
     /**
      * @var integer

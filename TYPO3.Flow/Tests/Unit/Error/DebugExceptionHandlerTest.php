@@ -98,7 +98,7 @@ Third line'
      */
     public function splitExceptionMessageTests($message, $expectedSubject, $expectedBody)
     {
-        $debugExceptionHandler = $this->getAccessibleMock('TYPO3\Flow\Error\DebugExceptionHandler', array('dummy'));
+        $debugExceptionHandler = $this->getAccessibleMock(\TYPO3\Flow\Error\DebugExceptionHandler::class, array('dummy'));
 
         $expectedResult = array('subject' => $expectedSubject, 'body' => $expectedBody);
         $actualResult = $debugExceptionHandler->_call('splitExceptionMessage', $message);

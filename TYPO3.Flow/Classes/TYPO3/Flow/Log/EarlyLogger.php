@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Log;
  * Early logger for logging things that happens earlier in the bootstrap than setup of system logger and dependency
  * injection
  *
- * @api
+ * @deprecated Will be removed in Flow 4.0
  */
 class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
 {
@@ -39,7 +39,6 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      *
      * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
      * @return void
-     * @api
      */
     public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
     {
@@ -52,7 +51,6 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      *
      * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
      * @return void
-     * @api
      */
     public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
     {
@@ -81,7 +79,6 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
      * @return void
-     * @api
      */
     public function log($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
     {
@@ -94,7 +91,6 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      * @param \Exception $exception The exception to log
      * @param array $additionalData Additional data to log
      * @return void
-     * @api
      */
     public function logException(\Exception $exception, array $additionalData = array())
     {
@@ -116,8 +112,6 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
 
     /**
      * Replays internal logs on provided logger. Use to transfer early logs to real logger when available.
-     *
-     * @see \TYPO3\Flow\Package\PackageManager
      *
      * @param SystemLoggerInterface $logger
      * @param boolean $resetLogs

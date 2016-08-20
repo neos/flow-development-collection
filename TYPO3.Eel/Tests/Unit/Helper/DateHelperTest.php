@@ -39,7 +39,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->parse($string, $format);
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf(\DateTime::class, $result);
         $this->assertEquals((float)$expected->format('U'), (float)$result->format('U'), 'Timestamps should match', 60);
     }
 
@@ -76,7 +76,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->now();
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf(\DateTime::class, $result);
         $this->assertEquals(time(), (integer)$result->format('U'), 'Now should be now', 1);
     }
 
@@ -87,7 +87,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->today();
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf(\DateTime::class, $result);
         $today = new \DateTime('today');
         $this->assertEquals($today->getTimestamp(), $result->getTimestamp(), 'Today should be today', 1);
     }

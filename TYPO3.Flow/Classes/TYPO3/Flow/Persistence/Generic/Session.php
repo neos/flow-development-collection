@@ -245,7 +245,7 @@ class Session
                 }
             break;
             case 'DateTime':
-                if ($currentValue instanceof \DateTime && $currentValue->getTimestamp() === (int) $previousValue) {
+                if ($currentValue instanceof \DateTimeInterface && $currentValue->getTimestamp() === (int) $previousValue) {
                     return false;
                 }
             break;

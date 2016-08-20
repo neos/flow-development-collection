@@ -95,12 +95,12 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
         $elseViewHelperEncountered = false;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
+                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
                 $data = $childNode->evaluate($this->renderingContext);
                 return $data;
             }
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
                 $elseViewHelperEncountered = true;
             }
         }
@@ -131,7 +131,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
         }
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
                 return $childNode->evaluate($this->renderingContext);
             }
         }
@@ -155,12 +155,12 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper implements
     {
         foreach ($syntaxTreeNode->getChildNodes() as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ThenViewHelper') {
+                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ThenViewHelper::class) {
                 $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
                 $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
             }
             if ($childNode instanceof ViewHelperNode
-                && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\ElseViewHelper') {
+                && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\ElseViewHelper::class) {
                 $childNodesAsClosure = $templateCompiler->wrapChildNodesInClosure($childNode);
                 $initializationPhpCode .= sprintf('%s[\'__elseClosure\'] = %s;', $argumentsVariableName, $childNodesAsClosure) . chr(10);
             }

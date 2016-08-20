@@ -4,7 +4,7 @@
     "license": ["MIT"],
     "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {
-        "typo3/flow": "~3.0.0"
+        "typo3/flow": "*"
     },
     "autoload": {
         "psr-0": {

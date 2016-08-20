@@ -30,7 +30,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->translator = $this->objectManager->get('TYPO3\Flow\I18n\Translator');
+        $this->translator = $this->objectManager->get(\TYPO3\Flow\I18n\Translator::class);
     }
 
     /**
@@ -75,5 +75,14 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         $result = $this->translator->translateByOriginalLabel($label, array(), null, $locale, 'Main', 'TYPO3.Flow');
         $this->assertEquals($translation, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function translationByIdReturnsNullOnFailure()
+    {
+        $result = $this->translator->translateById('non-existing-id');
+        $this->assertNull($result);
     }
 }

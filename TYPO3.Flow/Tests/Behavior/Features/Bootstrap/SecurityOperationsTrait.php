@@ -45,12 +45,12 @@ trait SecurityOperationsTrait
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
-        $configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+        $configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
         $configurations = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($configurationManager, 'configurations', true);
         unset($configurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
-        $policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+        $policyService = $this->objectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
         \TYPO3\Flow\Reflection\ObjectAccess::setProperty($policyService, 'initialized', false, true);
     }
 
@@ -127,21 +127,21 @@ trait SecurityOperationsTrait
         if ($this->securityInitialized === true) {
             return;
         }
-        $this->privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface');
+        $this->privilegeManager = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
         $this->privilegeManager->setOverrideDecision(null);
 
-        $this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+        $this->policyService = $this->objectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
 
-        $this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
+        $this->authenticationManager = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-        $this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
+        $this->testingProvider = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\Provider\TestingProvider::class);
         $this->testingProvider->setName('TestingProvider');
 
-        $this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+        $this->securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
         $this->securityContext->clearContext();
         $httpRequest = Request::createFromEnvironment();
         $this->mockActionRequest = new ActionRequest($httpRequest);
-        $this->mockActionRequest->setControllerObjectName('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController');
+        $this->mockActionRequest->setControllerObjectName(\TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);
 
         $this->securityInitialized = true;
@@ -157,7 +157,7 @@ trait SecurityOperationsTrait
     protected function authenticateRoles(array $roleNames)
     {
         // FIXME this is currently needed in order to correctly import the roles. Otherwise RepositoryInterface::isConnected() returns FALSE and importing is skipped in PolicyService::initializeRolesFromPolicy()
-        $this->objectManager->get('TYPO3\Flow\Security\AccountRepository')->countAll();
+        $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class)->countAll();
 
         $account = new Account();
         $account->setAccountIdentifier('TestAccount');
@@ -184,7 +184,6 @@ trait SecurityOperationsTrait
 
         $this->securityContext->clearContext();
 
-        /** @var RequestHandler $requestHandler */
         $this->securityContext->setRequest($this->mockActionRequest);
         $this->authenticationManager->authenticate();
     }

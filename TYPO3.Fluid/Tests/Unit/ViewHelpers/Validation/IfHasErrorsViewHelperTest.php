@@ -32,7 +32,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\Validation\IfHasErrorsViewHelper', array('renderThenChild', 'renderElseChild'));
+        $this->viewHelper = $this->getAccessibleMock(\TYPO3\Fluid\ViewHelpers\Validation\IfHasErrorsViewHelper::class, array('renderThenChild', 'renderElseChild'));
         $this->inject($this->viewHelper, 'controllerContext', $this->controllerContext);
         //$this->inject($this->ifAccessViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
     }
@@ -67,7 +67,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
-        $resultMock = $this->getMock('TYPO3\Flow\Error\Result');
+        $resultMock = $this->createMock(\TYPO3\Flow\Error\Result::class);
         $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->will($this->returnValue(new Result()));
 
         /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */

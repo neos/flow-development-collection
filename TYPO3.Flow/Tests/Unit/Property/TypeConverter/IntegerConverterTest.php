@@ -77,7 +77,7 @@ class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric()
     {
-        $this->assertInstanceOf('TYPO3\Flow\Error\Error', $this->converter->convertFrom('not numeric', 'integer'));
+        $this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $this->converter->convertFrom('not numeric', 'integer'));
     }
 
     /**

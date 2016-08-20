@@ -12,3 +12,16 @@ properties:
          required: TRUE
          items:
            type: string
+  'scan':
+    type: dictionary
+    additionalProperties: FALSE
+    required: FALSE
+    properties:
+      'includePaths':
+        type: dictionary
+        required: TRUE
+        patternProperties: { '/.*/': { type: boolean } }
+      'excludePatterns':
+        type: dictionary
+        required: TRUE
+        patternProperties: { '/.*/': { type: boolean } }

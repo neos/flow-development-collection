@@ -196,8 +196,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $metadata->setCustomRepositoryClass($mappedSuperclassAnnotation->repositoryClass);
             }
             $metadata->isMappedSuperclass = true;
-        } elseif (isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
-            $entityAnnotation = isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) ? $classAnnotations['TYPO3\Flow\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
+        } elseif (isset($classAnnotations[\TYPO3\Flow\Annotations\Entity::class]) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
+            $entityAnnotation = isset($classAnnotations[\TYPO3\Flow\Annotations\Entity::class]) ? $classAnnotations[\TYPO3\Flow\Annotations\Entity::class] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
             if ($entityAnnotation->repositoryClass !== null) {
                 $metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
             } elseif ($classSchema->getRepositoryClassName() !== null) {
@@ -211,6 +211,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         } elseif ($classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
             // also ok... but we make it read-only
             $metadata->markReadOnly();
+        } elseif (isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])) {
+            $metadata->isEmbeddedClass = true;
         } else {
             throw MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
         }
@@ -253,6 +255,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         if (!isset($primaryTable['name'])) {
             $className = $classSchema->getClassName();
             $primaryTable['name'] = $this->inferTableNameFromClassName($className);
+        }
+
+        // Evaluate @Cache annotation
+        if (isset($classAnnotations['Doctrine\ORM\Mapping\Cache'])) {
+            $cacheAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Cache'];
+            $cacheMap   = array(
+                'region' => $cacheAnnotation->region,
+                'usage'  => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+            );
+
+            $metadata->enableCache($cacheMap);
         }
 
         // Evaluate NamedNativeQueries annotation
@@ -549,7 +562,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     || $classSchema->isPropertyTransient($property->getName())
                     || $metadata->isMappedSuperclass && !$property->isPrivate()
                     || $metadata->isInheritedField($property->getName())
-                    || $metadata->isInheritedAssociation($property->getName())) {
+                    || $metadata->isInheritedAssociation($property->getName())
+                    || $metadata->isInheritedEmbeddedClass($property->getName())) {
                 continue;
             }
 
@@ -681,6 +695,15 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 }
 
                 $metadata->mapManyToMany($mapping);
+            } elseif ($embeddedAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Embedded')) {
+                if ($embeddedAnnotation->class) {
+                    $mapping['class'] = $embeddedAnnotation->class;
+                } else {
+                    // This will not happen currently, because "class" argument is required. It would be nice if that could be changed though.
+                    $mapping['class'] = $mapping['targetEntity'];
+                }
+                $mapping['columnPrefix'] = $embeddedAnnotation->columnPrefix;
+                $metadata->mapEmbedded($mapping);
             } else {
                 $mapping['nullable'] = false;
 
@@ -703,7 +726,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             break;
                         default:
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
-                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], 'TYPO3\Flow\Annotations\ValueObject')) {
+                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], \TYPO3\Flow\Annotations\ValueObject::class)) {
                                     $mapping['type'] = 'object';
                                 } elseif (class_exists($propertyMetaData['type'])) {
                                     throw MappingException::missingRequiredOption($property->getName(), 'OneToOne', sprintf('The property "%s" in class "%s" has a non standard data type and doesn\'t define the type of the relation. You have to use one of these annotations: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany', $property->getName(), $className));
@@ -742,6 +765,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'class' => $customGeneratorAnnotation->class
                     ));
                 }
+            }
+
+            // Evaluate @Cache annotation
+            if (($cacheAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Cache')) !== null) {
+                $metadata->enableAssociationCache($mapping['fieldName'], array(
+                    'usage'         => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+                    'region'        => $cacheAnnotation->region,
+                ));
             }
         }
     }
@@ -940,12 +971,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             }
         }
 
-        $proxyAnnotation = $this->reader->getClassAnnotation($class, 'TYPO3\Flow\Annotations\Proxy');
+        $proxyAnnotation = $this->reader->getClassAnnotation($class, \TYPO3\Flow\Annotations\Proxy::class);
         if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
-            // FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', Events::postLoad);
-            // FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-            $metadata->addLifecycleCallback('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', Events::postLoad);
+            $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
         }
     }
 
@@ -1022,8 +1050,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     {
         return strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== false ||
             (
-                !$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject') &&
+                !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) &&
+                    !$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class) &&
                     !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
                     !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
             );
@@ -1041,8 +1069,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         }
 
         $this->classNames = array_merge(
-            $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\ValueObject'),
-            $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\Entity'),
+            $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\ValueObject::class),
+            $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\Entity::class),
             $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Entity'),
             $this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass')
         );

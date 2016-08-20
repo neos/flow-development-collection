@@ -26,7 +26,7 @@ class CycleViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMock('TYPO3\Fluid\ViewHelpers\CycleViewHelper', array('renderChildren'));
+        $this->viewHelper = $this->getMockBuilder(\TYPO3\Fluid\ViewHelpers\CycleViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }

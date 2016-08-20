@@ -50,8 +50,8 @@ class ParsingStateTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $rootNode = new \TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode();
         $this->parsingState->pushNodeToStack($rootNode);
-        $this->assertSame($rootNode, $this->parsingState->getNodeFromStack($rootNode), 'Node returned from stack was not the right one.');
-        $this->assertSame($rootNode, $this->parsingState->popNodeFromStack($rootNode), 'Node popped from stack was not the right one.');
+        $this->assertSame($rootNode, $this->parsingState->getNodeFromStack(), 'Node returned from stack was not the right one.');
+        $this->assertSame($rootNode, $this->parsingState->popNodeFromStack(), 'Node popped from stack was not the right one.');
     }
 
     /**
@@ -59,9 +59,9 @@ class ParsingStateTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderCallsTheRightMethodsOnTheRootNode()
     {
-        $renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $renderingContext = $this->createMock(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface::class);
 
-        $rootNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode');
+        $rootNode = $this->createMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
         $rootNode->expects($this->once())->method('evaluate')->with($renderingContext)->will($this->returnValue('T3DD09 Rock!'));
         $this->parsingState->setRootNode($rootNode);
         $renderedValue = $this->parsingState->render($renderingContext);

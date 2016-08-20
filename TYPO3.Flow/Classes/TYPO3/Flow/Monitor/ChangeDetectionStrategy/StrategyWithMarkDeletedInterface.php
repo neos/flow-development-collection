@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
  * source code.
  */
 
-use TYPO3\Flow\Monitor\FileMonitor;
-
 /**
  * Contract for a change detection strategy that allows the FileMonitor to mark a file deleted directly.
  *

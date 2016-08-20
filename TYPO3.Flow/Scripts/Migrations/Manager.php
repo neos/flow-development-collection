@@ -141,13 +141,16 @@ class Manager
     }
 
     /**
-     * By default we skip "TYPO3.*" packages and all packages of the ignored categories (@see ignoredPackageCategories)
+     * By default we skip "TYPO3.*" and "Neos.*" packages and all packages of the ignored categories (@see ignoredPackageCategories)
      *
      * @return boolean
      */
     protected function shouldPackageBeSkippedByDefault()
     {
         if (strpos($this->currentPackageData['packageKey'], 'TYPO3.') === 0) {
+            return true;
+        }
+        if (strpos($this->currentPackageData['packageKey'], 'Neos.') === 0) {
             return true;
         }
         if (in_array($this->currentPackageData['category'], $this->ignoredPackageCategories)) {
@@ -397,8 +400,7 @@ class Manager
             return;
         }
 
-        $migrationFilenames = Files::readDirectoryRecursively($migrationsDirectory, '.php');
-        foreach ($migrationFilenames as $filenameAndPath) {
+        foreach (Files::getRecursiveDirectoryGenerator($migrationsDirectory, '.php') as $filenameAndPath) {
             /** @noinspection PhpIncludeInspection */
             require_once($filenameAndPath);
             $baseFilename = basename($filenameAndPath, '.php');

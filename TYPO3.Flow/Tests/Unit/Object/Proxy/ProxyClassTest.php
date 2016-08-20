@@ -27,14 +27,14 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
                 'originalClassAnnotations' => array(),
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => array(array('name' => 'TEST_CONSTANT', 'value' => '1')),
-                'expectedProxyCode' => "namespace \Acme\Namespace;\n".
+                'expectedProxyCode' => "namespace \Acme\Namespace;\n" .
             "\n" .
             "use Doctrine\\ORM\\Mapping as ORM;\n" .
             "use TYPO3\\Flow\\Annotations as Flow;\n" .
             "\n" .
-            "class ClassName extends ClassName".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "	const TEST_CONSTANT = 1;\n\n".
-            "}",
+            'class ClassName extends ClassName' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+            "    const TEST_CONSTANT = 1;\n\n" .
+            '}',
             ),
             array(
                 'originalClassName' => '\ClassWithoutNamespace',
@@ -45,9 +45,9 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
             "use Doctrine\\ORM\\Mapping as ORM;\n" .
             "use TYPO3\\Flow\\Annotations as Flow;\n" .
             "\n" .
-            "class ClassWithoutNamespace extends ClassWithoutNamespace".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "	const TEST_CONSTANT = 1;\n\n".
-            "}",
+            'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+            "    const TEST_CONSTANT = 1;\n\n" .
+            '}',
             ),
             array(
                 'originalClassName' => 'ClassWithoutNamespace',
@@ -58,9 +58,9 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
             "use Doctrine\\ORM\\Mapping as ORM;\n" .
             "use TYPO3\\Flow\\Annotations as Flow;\n" .
             "\n" .
-            "class ClassWithoutNamespace extends ClassWithoutNamespace".\TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX." implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "	const TEST_CONSTANT = 1;\n\n".
-            "}",
+            'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+            "    const TEST_CONSTANT = 1;\n\n" .
+            '}',
             ),
         );
     }
@@ -71,11 +71,11 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
     {
-        $mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', false);
+        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('isClassAbstract')->will($this->returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
         $mockReflectionService->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($originalClassAnnotations));
 
-        $mockProxyClass = $this->getAccessibleMock('TYPO3\Flow\Object\Proxy\ProxyClass', array('buildClassDocumentation'), array($originalClassName), '', true);
+        $mockProxyClass = $this->getAccessibleMock(\TYPO3\Flow\Object\Proxy\ProxyClass::class, array('buildClassDocumentation'), array($originalClassName), '', true);
         $mockProxyClass->expects($this->any())->method('buildClassDocumentation')->will($this->returnValue($originalClassDocumentation));
         $mockProxyClass->injectReflectionService($mockReflectionService);
         foreach ($originalClassConstants as $originalClassConstant) {

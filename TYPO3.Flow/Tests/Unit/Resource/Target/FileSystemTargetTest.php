@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
 
 use TYPO3\Flow\Cli\CommandRequestHandler;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
@@ -52,7 +51,7 @@ class FileSystemTargetTest extends UnitTestCase
 
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockRequestHandler = $this->getMockBuilder(HttpRequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler = $this->createMock(HttpRequestHandlerInterface::class);
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue(new Uri('http://detected/base/uri/')));

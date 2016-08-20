@@ -182,7 +182,7 @@ class TagBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resetResetsTagBuilder()
     {
-        $tagBuilder = $this->getAccessibleMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder', array('dummy'));
+        $tagBuilder = $this->getAccessibleMock(\TYPO3\Fluid\Core\ViewHelper\TagBuilder::class, array('dummy'));
         $tagBuilder->setTagName('tagName');
         $tagBuilder->setContent('some content');
         $tagBuilder->forceClosingTag(true);

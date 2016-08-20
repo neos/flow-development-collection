@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Do
  * source code.
  */
 
-use TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
@@ -70,10 +69,10 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate($expression, $context);
 
-        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+        $entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity', $result['entityType']);
-        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'), 't0'));
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class, $result['entityType']);
+        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class), 't0'));
     }
 }

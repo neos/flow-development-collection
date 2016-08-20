@@ -63,16 +63,16 @@ class ViewHelperNodeTest extends UnitTestCase
     {
         $this->renderingContext = new RenderingContext();
 
-        $this->mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManagerInterface')->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->renderingContext, 'objectManager', $this->mockObjectManager);
 
-        $this->templateVariableContainer = $this->getMockBuilder('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer')->disableOriginalConstructor()->getMock();
+        $this->templateVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->renderingContext, 'templateVariableContainer', $this->templateVariableContainer);
 
-        $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $this->mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->renderingContext->setControllerContext($this->mockControllerContext);
 
-        $this->mockViewHelperVariableContainer = $this->getMock('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
+        $this->mockViewHelperVariableContainer = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
         $this->inject($this->renderingContext, 'viewHelperVariableContainer', $this->mockViewHelperVariableContainer);
     }
 
@@ -81,10 +81,10 @@ class ViewHelperNodeTest extends UnitTestCase
      */
     public function constructorSetsViewHelperAndArguments()
     {
-        $viewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper');
+        $viewHelper = $this->createMock(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class);
         $arguments = array('foo' => 'bar');
         /** @var ViewHelperNode|\PHPUnit_Framework_MockObject_MockObject $viewHelperNode */
-        $viewHelperNode = $this->getAccessibleMock('TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode', array('dummy'), array($viewHelper, $arguments));
+        $viewHelperNode = $this->getAccessibleMock(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, array('dummy'), array($viewHelper, $arguments));
 
         $this->assertEquals(get_class($viewHelper), $viewHelperNode->getViewHelperClassName());
         $this->assertEquals($arguments, $viewHelperNode->_get('arguments'));
@@ -96,10 +96,10 @@ class ViewHelperNodeTest extends UnitTestCase
     public function childNodeAccessFacetWorksAsExpected()
     {
         /** @var TextNode|\PHPUnit_Framework_MockObject_MockObject $childNode */
-        $childNode = $this->getMock('TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode', array(), array('foo'));
+        $childNode = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class)->setConstructorArgs(array('foo'))->getMock();
 
         /** @var ChildNodeAccessFacetViewHelper|\PHPUnit_Framework_MockObject_MockObject $mockViewHelper */
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\Parser\Fixtures\ChildNodeAccessFacetViewHelper', array('setChildNodes', 'initializeArguments', 'render', 'prepareArguments'));
+        $mockViewHelper = $this->getMockBuilder(\TYPO3\Fluid\Core\Parser\Fixtures\ChildNodeAccessFacetViewHelper::class)->setMethods(array('setChildNodes', 'initializeArguments', 'render', 'prepareArguments'))->getMock();
 
         $viewHelperNode = new ViewHelperNode($mockViewHelper, array());
         $viewHelperNode->addChildNode($childNode);
@@ -115,7 +115,7 @@ class ViewHelperNodeTest extends UnitTestCase
     public function initializeArgumentsAndRenderIsCalledByViewHelperNode()
     {
         /** @var AbstractViewHelper|\PHPUnit_Framework_MockObject_MockObject $mockViewHelper */
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('initializeArgumentsAndRender', 'prepareArguments'));
+        $mockViewHelper = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class)->setMethods(array('initializeArgumentsAndRender', 'prepareArguments'))->getMock();
         $mockViewHelper->expects($this->once())->method('initializeArgumentsAndRender');
 
         $viewHelperNode = new ViewHelperNode($mockViewHelper, array());
@@ -135,7 +135,7 @@ class ViewHelperNodeTest extends UnitTestCase
         );
 
         /** @var AbstractViewHelper|\PHPUnit_Framework_MockObject_MockObject $mockViewHelper */
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('initializeArgumentsAndRender', 'prepareArguments'));
+        $mockViewHelper = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class)->setMethods(array('initializeArgumentsAndRender', 'prepareArguments'))->getMock();
         $mockViewHelper->expects($this->any())->method('prepareArguments')->will($this->returnValue($arguments));
         $mockViewHelper->expects($this->once())->method('initializeArgumentsAndRender');
 
@@ -153,7 +153,7 @@ class ViewHelperNodeTest extends UnitTestCase
     public function evaluateMethodPassesRenderingContextToViewHelper()
     {
         /** @var AbstractViewHelper|\PHPUnit_Framework_MockObject_MockObject $mockViewHelper */
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'validateArguments', 'prepareArguments', 'setRenderingContext'));
+        $mockViewHelper = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class)->setMethods(array('render', 'validateArguments', 'prepareArguments', 'setRenderingContext'))->getMock();
         $mockViewHelper->expects($this->once())->method('setRenderingContext')->with($this->renderingContext);
 
         $viewHelperNode = new ViewHelperNode($mockViewHelper, array());
@@ -167,7 +167,7 @@ class ViewHelperNodeTest extends UnitTestCase
     public function multipleEvaluateCallsShareTheSameViewHelperInstance()
     {
         /** @var AbstractViewHelper|\PHPUnit_Framework_MockObject_MockObject $mockViewHelper */
-        $mockViewHelper = $this->getMock('TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper', array('render', 'validateArguments', 'prepareArguments', 'setViewHelperVariableContainer'));
+        $mockViewHelper = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper::class)->setMethods(array('render', 'validateArguments', 'prepareArguments', 'setViewHelperVariableContainer'))->getMock();
         $mockViewHelper->expects($this->exactly(2))->method('render')->will($this->returnValue('String'));
 
         $viewHelperNode = new ViewHelperNode($mockViewHelper, array());

@@ -49,9 +49,9 @@ class RepositoryTest extends UnitTestCase
     {
         $idSuffix = uniqid();
         return array(
-            array('TYPO3\Blog\Domain\Repository', 'C' . $idSuffix . 'BlogRepository', 'TYPO3\Blog\Domain\Model\\' . 'C' . $idSuffix . 'Blog'),
-            array('Domain\Repository\Content', 'C' . $idSuffix . 'PageRepository', 'Domain\Model\\Content\\' . 'C' . $idSuffix . 'Page'),
-            array('Domain\Repository', 'C' . $idSuffix . 'RepositoryRepository', 'Domain\Model\\' . 'C' . $idSuffix . 'Repository')
+            array('TYPO3\Blog\Domain\Repository', 'C' . $idSuffix . 'BlogRepository', 'TYPO3\Blog\Domain\Model\\C' . $idSuffix . 'Blog'),
+            array('Domain\Repository\Content', 'C' . $idSuffix . 'PageRepository', 'Domain\Model\\Content\\C' . $idSuffix . 'Page'),
+            array('Domain\Repository', 'C' . $idSuffix . 'RepositoryRepository', 'Domain\Model\\C' . $idSuffix . 'Repository')
         );
     }
 

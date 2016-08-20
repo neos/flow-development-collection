@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\Cryptography;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Utility\Algorithms as UtilityAlgorithms;
 
 /**
  * A hash service which should be used to generate and validate hashes.
@@ -214,7 +215,7 @@ class HashService
             $this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
         }
         if ($this->encryptionKey === false) {
-            $this->encryptionKey = bin2hex(\TYPO3\Flow\Utility\Algorithms::generateRandomBytes(96));
+            $this->encryptionKey = UtilityAlgorithms::generateRandomToken(48);
             $this->cache->set('encryptionKey', $this->encryptionKey);
         }
         return $this->encryptionKey;

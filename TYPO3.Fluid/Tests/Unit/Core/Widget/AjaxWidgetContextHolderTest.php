@@ -22,10 +22,10 @@ class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function storeSetsTheAjaxWidgetIdentifierInContextAndIncreasesIt()
     {
-        $ajaxWidgetContextHolder = $this->getAccessibleMock('TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder', array('dummy'));
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
         $ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
 
-        $widgetContext = $this->getMock('TYPO3\Fluid\Core\Widget\WidgetContext', array('setAjaxWidgetIdentifier'));
+        $widgetContext = $this->createMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
         $widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier')->with(123);
 
         $ajaxWidgetContextHolder->store($widgetContext);
@@ -37,10 +37,10 @@ class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function storedWidgetContextCanBeRetrievedAgain()
     {
-        $ajaxWidgetContextHolder = $this->getAccessibleMock('TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder', array('dummy'));
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class, array('dummy'));
         $ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
 
-        $widgetContext = $this->getMock('TYPO3\Fluid\Core\Widget\WidgetContext', array('setAjaxWidgetIdentifier'));
+        $widgetContext = $this->createMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class, array('setAjaxWidgetIdentifier'));
         $ajaxWidgetContextHolder->store($widgetContext);
 
         $this->assertSame($widgetContext, $ajaxWidgetContextHolder->get('123'));
@@ -48,7 +48,7 @@ class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
+     * @expectedException \TYPO3\Fluid\Core\Widget\Exception\WidgetContextNotFoundException
      */
     public function getThrowsExceptionIfWidgetContextIsNotFound()
     {

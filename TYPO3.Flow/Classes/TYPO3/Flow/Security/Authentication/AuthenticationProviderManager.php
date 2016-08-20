@@ -13,12 +13,12 @@ namespace TYPO3\Flow\Security\Authentication;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
-use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Security\Exception;
+use TYPO3\Flow\Security\RequestPatternInterface;
 use TYPO3\Flow\Security\RequestPatternResolver;
 use TYPO3\Flow\Session\SessionInterface;
 
@@ -222,7 +222,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->isAuthenticated === null) {
             try {
                 $this->authenticate();
-            } catch (AuthenticationRequiredException $e) {
+            } catch (AuthenticationRequiredException $exception) {
             }
         }
         return $this->isAuthenticated;
@@ -321,11 +321,32 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
 
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
                 $requestPatterns = array();
-                foreach ($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
+                foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+                    // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
+                    if ($patternConfiguration === null) {
+                        continue;
+                    }
+
+                    // The following check is needed for backwards compatibility:
+                    // Previously the request pattern configuration was just a key/value where the value was passed to the setPattern() method
+                    if (is_string($patternConfiguration)) {
+                        $patternType = $patternName;
+                        $patternOptions = [];
+                    } else {
+                        $patternType = $patternConfiguration['pattern'];
+                        $patternOptions = isset($patternConfiguration['patternOptions']) ? $patternConfiguration['patternOptions'] : [];
+                    }
                     $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
-                    /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
-                    $requestPattern = new $patternClassName;
-                    $requestPattern->setPattern($patternConfiguration);
+                    $requestPattern = new $patternClassName($patternOptions);
+                    if (!$requestPattern instanceof RequestPatternInterface) {
+                        throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "TYPO3:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
+                    }
+
+                    // The following check needed for backwards compatibility:
+                    // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
+                    if (is_string($patternConfiguration) && is_callable([$requestPattern, 'setPattern'])) {
+                        $requestPattern->setPattern($patternConfiguration);
+                    }
                     $requestPatterns[] = $requestPattern;
                 }
                 if ($tokenInstance !== null) {

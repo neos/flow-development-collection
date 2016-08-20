@@ -94,7 +94,9 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
         $context = new ProtectedContext(array(
-            'ident' => function ($value) { return $value; }
+            'ident' => function ($value) {
+                return $value;
+            }
         ));
 
         $evaluator = new CompilingEvaluator();
@@ -111,7 +113,9 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
         $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
 
         $context = new ProtectedContext(array(
-            'ident' => function ($value) { return $value; },
+            'ident' => function ($value) {
+                return $value;
+            },
             'value' => $securedObject
         ));
         $context->whitelist(array('ident'));
@@ -134,7 +138,9 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $context = new ProtectedContext(array(
             'Array' => array(
-                'reverse' => function ($value) { return array_reverse($value); }
+                'reverse' => function ($value) {
+                    return array_reverse($value);
+                }
             ),
             'value' => array($securedObject)
         ));

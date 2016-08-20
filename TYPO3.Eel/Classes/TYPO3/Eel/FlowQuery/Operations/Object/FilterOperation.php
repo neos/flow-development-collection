@@ -42,6 +42,9 @@ use TYPO3\Flow\Annotations as Flow;
  *   Value contains operand (string-based)
  * instanceof
  *   Checks if the value is an instance of the operand
+ * !instanceof
+ *   Checks if the value is not an instance of the operand
+ *
  *
  * For the latter the behavior is as follows: if the operand is one of the strings
  * object, array, int(eger), float, double, bool(ean) or string the value is checked
@@ -234,6 +237,12 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
                     return $this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return ($value instanceof $operand);
+                }
+            case '!instanceof':
+                if ($this->operandIsSimpleType($operand)) {
+                    return !$this->handleSimpleTypeOperand($operand, $value);
+                } else {
+                    return !($value instanceof $operand);
                 }
             default:
                 return ($value !== null);

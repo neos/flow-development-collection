@@ -7,9 +7,9 @@ This version of the documentation covering Flow |release| has been rendered at: 
 
 .. note::
 
-	We'd love to get your feedback on this documentation! Please share your thoughts on
-	`Discuss <https://discuss.neos.io/>`_ or the `#flow-general Slack channel <https://neos-project.slack.com/messages/flow-general/>`_
-	which you can join with `Slackin <http://slack.neos.io/>`_.
+	We'd love to get your feedback on this documentation! Please share 
+	your thoughts in our `forum <https://discuss.neos.io>`_, or the #flow-general channel
+	in the `Neos Project's Slack <https://slack.neos.io>`_.
 
 	Help is always greatly appreciated, read :ref:`ch-contributing` to find out how
 	you can improve Flow.
@@ -41,7 +41,7 @@ This version of the documentation covering Flow |release| has been rendered at: 
 	Publication Style Guide
 	-----------------------
 
-	A style guide giving advice on how to write for the project:
+	A style guide giving advice on how to write for the Neos project:
 
 	- :doc:`StyleGuide/index`
 

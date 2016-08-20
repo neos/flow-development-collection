@@ -40,7 +40,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function simpleQueryCanBeSerializedAndDeserialized()
     {
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
         $serializedQuery = serialize($query);
         $unserializedQuery = unserialize($serializedQuery);
 
@@ -61,7 +61,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
         $serializedQuery = serialize($query);
         $unserializedQuery = unserialize($serializedQuery);
 
@@ -74,7 +74,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function moreComplexQueryCanBeSerializedAndDeserialized()
     {
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
         $query->matching($query->equals('name', 'some'));
 
         $serializedQuery = serialize($query);
@@ -101,7 +101,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
         $query->matching($query->equals('name', 'Flow'));
 
         $serializedQuery = serialize($query);
@@ -132,7 +132,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
 
         $this->assertEquals(3, $query->execute()->count());
     }
@@ -159,7 +159,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
 
         $this->assertEquals(2, $query->setLimit(2)->execute()->count());
     }
@@ -186,7 +186,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
 
         $this->assertEquals(1, $query->setOffset(2)->execute()->count());
     }
@@ -229,7 +229,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
         $entities = $query->matching($query->equals('subEntities.content', 'value'))->setDistinct()->setLimit(2)->execute()->toArray();
 
         $this->assertEquals(2, count($entities));
@@ -260,7 +260,7 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+        $query = new Query(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post::class);
         $query->matching($query->equals('comment.content', 'Flow'));
 
         $serializedQuery = serialize($query);

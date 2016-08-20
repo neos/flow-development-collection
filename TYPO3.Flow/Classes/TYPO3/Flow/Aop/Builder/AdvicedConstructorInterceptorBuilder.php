@@ -47,20 +47,20 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\Abstr
 
         if ($methodName !== null) {
             $proxyMethod->addPreParentCallCode('
-			if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
+        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ');
             $proxyMethod->addPostParentCallCode('
-			} else {
-				$this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
-				try {
-				' . $advicesCode . '
-				} catch (\Exception $e) {
-					unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-					throw $e;
-				}
-				unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-				return;
-			}
+        } else {
+            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+            try {
+            ' . $advicesCode . '
+            } catch (\Exception $exception) {
+                unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+                throw $exception;
+            }
+            unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+            return;
+        }
 ');
         }
     }

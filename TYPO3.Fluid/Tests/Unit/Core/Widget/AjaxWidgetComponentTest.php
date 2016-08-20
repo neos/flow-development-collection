@@ -73,12 +73,12 @@ class AjaxWidgetComponentTest extends UnitTestCase
     protected $mockSecurityContext;
 
     /**
-     * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TYPO3\Flow\Property\PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPropertyMapper;
 
     /**
-     * @var PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TYPO3\Flow\Property\PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPropertyMappingConfiguration;
 
@@ -88,34 +88,31 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 
-        $this->mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManagerInterface')->getMock();
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
         $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
 
-        $this->mockComponentContext = $this->getMockBuilder('TYPO3\Flow\Http\Component\ComponentContext')->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-        $this->mockHttpResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
 
-        $this->mockAjaxWidgetContextHolder = $this->getMockBuilder('TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder')->getMock();
+        $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(\TYPO3\Fluid\Core\Widget\AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
-        $this->mockHashService = $this->getMockBuilder('TYPO3\Flow\Security\Cryptography\HashService')->getMock();
+        $this->mockHashService = $this->getMockBuilder(\TYPO3\Flow\Security\Cryptography\HashService::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
-        $this->mockDispatcher = $this->getMockBuilder('TYPO3\Flow\Mvc\Dispatcher')->getMock();
+        $this->mockDispatcher = $this->getMockBuilder(\TYPO3\Flow\Mvc\Dispatcher::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'dispatcher', $this->mockDispatcher);
 
-        $this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);
 
-        $this->mockPropertyMappingConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfiguration')->disableOriginalConstructor()->getMock();
-        $this->inject($this->ajaxWidgetComponent, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
-
-        $this->mockPropertyMapper = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMapper')->disableOriginalConstructor()->getMock();
+        $this->mockPropertyMapper = $this->getMockBuilder(\TYPO3\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->getMock();
         $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
         $this->inject($this->ajaxWidgetComponent, 'propertyMapper', $this->mockPropertyMapper);
     }
@@ -142,11 +139,11 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockControllerObjectName = 'SomeControllerObjectName';
         $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder('TYPO3\Fluid\Core\Widget\WidgetContext')->getMock();
+        $mockWidgetContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Widget\WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest')->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
 
         $mockActionRequest->expects($this->once())->method('setArgument')->with('__widgetContext', $mockWidgetContext);
         $mockActionRequest->expects($this->once())->method('setControllerObjectName')->with($mockControllerObjectName);
@@ -163,11 +160,11 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockControllerObjectName = 'SomeControllerObjectName';
         $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder('TYPO3\Fluid\Core\Widget\WidgetContext')->getMock();
+        $mockWidgetContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Widget\WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest')->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
 
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockActionRequest, $this->mockHttpResponse);
 
@@ -183,13 +180,13 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockControllerObjectName = 'SomeControllerObjectName';
         $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder('TYPO3\Fluid\Core\Widget\WidgetContext')->getMock();
+        $mockWidgetContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Widget\WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest')->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
 
-        $this->mockComponentContext->expects($this->once())->method('setParameter')->with('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', true);
+        $this->mockComponentContext->expects($this->once())->method('setParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', true);
 
         $this->ajaxWidgetComponent->handle($this->mockComponentContext);
     }
@@ -203,11 +200,11 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockControllerObjectName = 'SomeControllerObjectName';
         $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder('TYPO3\Fluid\Core\Widget\WidgetContext')->getMock();
+        $mockWidgetContext = $this->getMockBuilder(\TYPO3\Fluid\Core\Widget\WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest')->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
 
 
         $this->mockSecurityContext->expects($this->once())->method('setRequest')->with($mockActionRequest);
@@ -220,7 +217,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
      */
     public function extractWidgetContextDecodesSerializedWidgetContextIfPresent()
     {
-        $ajaxWidgetComponent = $this->getAccessibleMock('TYPO3\Fluid\Core\Widget\AjaxWidgetComponent', array('dummy'));
+        $ajaxWidgetComponent = $this->getAccessibleMock(\TYPO3\Fluid\Core\Widget\AjaxWidgetComponent::class, array('dummy'));
         $this->inject($ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
         $mockWidgetContext = 'SomeWidgetContext';

@@ -94,9 +94,9 @@ class Escape implements InterceptorInterface
      */
     protected function wrapNode(NodeInterface $node)
     {
-        $escapeViewHelper = $this->objectManager->get('TYPO3\Fluid\ViewHelpers\Format\HtmlspecialcharsViewHelper');
+        $escapeViewHelper = $this->objectManager->get(\TYPO3\Fluid\ViewHelpers\Format\HtmlspecialcharsViewHelper::class);
         return $this->objectManager->get(
-            'TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode',
+            \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class,
             $escapeViewHelper,
             array('value' => $node)
         );

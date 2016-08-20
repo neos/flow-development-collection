@@ -57,7 +57,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
     {
         $mediaType = null;
         if ($configuration !== null) {
-            $mediaType = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
+            $mediaType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
         }
         if ($mediaType === null) {
             $mediaType = MediaTypeConverterInterface::DEFAULT_MEDIA_TYPE;
@@ -96,7 +96,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                 try {
                     $xmlElement = new \SimpleXMLElement(urldecode($requestBody), LIBXML_NOERROR);
                     libxml_disable_entity_loader($entityLoaderValue);
-                } catch (\Exception $e) {
+                } catch (\Exception $exception) {
                     libxml_disable_entity_loader($entityLoaderValue);
                     return array();
                 }

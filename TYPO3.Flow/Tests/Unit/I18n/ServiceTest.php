@@ -41,7 +41,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         mkdir(dirname($filename), 0777, true);
         file_put_contents($expectedFilename, 'FooBar');
 
-        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getLocaleChain'))->getMock();
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
@@ -63,7 +63,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         mkdir($filename, 0777, true);
 
-        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getLocaleChain'))->getMock();
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
@@ -126,7 +126,7 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $desiredLocale = new \TYPO3\Flow\I18n\Locale('de_CH');
         $localeChain = array('de_CH' => $desiredLocale, 'en' => new \TYPO3\Flow\I18n\Locale('en'));
 
-        $service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+        $service = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getLocaleChain'))->getMock();
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
@@ -146,21 +146,75 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
 
-        $mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+        $mockPackage = $this->createMock(\TYPO3\Flow\Package\PackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-        $mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManagerInterface');
+        $mockPackageManager = $this->createMock(\TYPO3\Flow\Package\PackageManagerInterface::class);
         $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
-        $mockLocaleCollection = $this->getMock('TYPO3\Flow\I18n\LocaleCollection');
+        $mockLocaleCollection = $this->createMock(\TYPO3\Flow\I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
-        $mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE', 'fallbackRule' => array('strict' => false, 'order' => array())));
+        $mockSettings = array('i18n' => array(
+                                'defaultLocale' => 'sv_SE',
+                                'fallbackRule' => array('strict' => false, 'order' => array()),
+                                'scan' => array(
+                                    'includePaths' => array('/Private/' => true),
+                                    'excludePatterns' => array(),
+                                )
+                            ));
 
-        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', false);
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class);
         $mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(false));
 
-        $service = $this->getAccessibleMock('TYPO3\Flow\I18n\Service', array('dummy'));
+        $service = $this->getAccessibleMock(\TYPO3\Flow\I18n\Service::class, array('dummy'));
+        $service->_set('localeBasePath', 'vfs://Foo/');
+        $this->inject($service, 'packageManager', $mockPackageManager);
+        $this->inject($service, 'localeCollection', $mockLocaleCollection);
+        $service->injectSettings($mockSettings);
+        $this->inject($service, 'cache', $mockCache);
+        $service->initializeObject();
+    }
+
+    /**
+     * @test
+     */
+    public function initializeCorrectlySkipsExcludedPathsFromScanningLocales()
+    {
+        mkdir('vfs://Foo/Bar/Public/node_modules/foo/bar', 0777, true);
+        mkdir('vfs://Foo/Bar/Public/app/.git/refs/heads', 0777, true);
+        mkdir('vfs://Foo/Bar/Private/Translations', 0777, true);
+        foreach (array('en', 'sr_Cyrl_RS') as $localeIdentifier) {
+            file_put_contents('vfs://Foo/Bar/Public/node_modules/foo/bar/foobar.' . $localeIdentifier . '.baz', 'FooBar');
+            file_put_contents('vfs://Foo/Bar/Public/app/.git/refs/heads/' . $localeIdentifier . '.dev', 'FooBar');
+        }
+
+        foreach (array('en_GB', 'sr') as $localeIdentifier) {
+            file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
+        }
+
+        $mockPackage = $this->createMock(\TYPO3\Flow\Package\PackageInterface::class);
+        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
+
+        $mockPackageManager = $this->createMock(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
+
+        $mockLocaleCollection = $this->createMock(\TYPO3\Flow\I18n\LocaleCollection::class);
+        $mockLocaleCollection->expects($this->exactly(2))->method('addLocale');
+
+        $mockSettings = array('i18n' => array(
+                                'defaultLocale' => 'sv_SE',
+                                'fallbackRule' => array('strict' => false, 'order' => array()),
+                                'scan' => array(
+                                    'includePaths' => array('/Private/' => true, '/Public/' => true),
+                                    'excludePatterns' => array('/node_modules/' => true, '/\..*/' => true)
+                                )
+                            ));
+
+        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(false));
+
+        $service = $this->getAccessibleMock(\TYPO3\Flow\I18n\Service::class, array('dummy'));
         $service->_set('localeBasePath', 'vfs://Foo/');
         $this->inject($service, 'packageManager', $mockPackageManager);
         $this->inject($service, 'localeCollection', $mockLocaleCollection);

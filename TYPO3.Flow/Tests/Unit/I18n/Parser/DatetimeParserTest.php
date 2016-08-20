@@ -92,7 +92,7 @@ class DatetimeParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function strictParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\DatetimeParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class, array('dummy'));
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         $this->assertEquals($expectedParsedDatetime, $result);
     }
@@ -103,7 +103,7 @@ class DatetimeParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function strictParsingReturnsFalseForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\DatetimeParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class, array('dummy'));
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         $this->assertEquals(false, $result);
     }
@@ -114,7 +114,7 @@ class DatetimeParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lenientParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\DatetimeParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class, array('dummy'));
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         $this->assertEquals($expectedParsedDatetime, $result);
     }
@@ -125,7 +125,7 @@ class DatetimeParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lenientParsingWorksCorrectlyForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock('TYPO3\Flow\I18n\Parser\DatetimeParser', array('dummy'));
+        $parser = $this->getAccessibleMock(\TYPO3\Flow\I18n\Parser\DatetimeParser::class, array('dummy'));
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         $this->assertEquals($expectedParsedDatetime, $result);
     }

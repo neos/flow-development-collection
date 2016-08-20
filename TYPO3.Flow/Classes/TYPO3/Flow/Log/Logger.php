@@ -209,7 +209,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
         $errorCodeNumber = ($error->getCode() > 0) ? ' #' . $error->getCode() : '';
         $backTrace = $error->getTrace();
         $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-        return 'Uncaught exception' . $errorCodeNumber . $line . ': ' . $error->getMessage();
+        return 'Exception' . $errorCodeNumber . $line . ': ' . $error->getMessage();
     }
 
     /**
@@ -233,7 +233,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
     {
         $output = '';
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+            $bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
             /* @var Bootstrap $bootstrap */
             $requestHandler = $bootstrap->getActiveRequestHandler();
             if ($requestHandler instanceof HttpRequestHandlerInterface) {
@@ -241,6 +241,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
                 $response = $requestHandler->getHttpResponse();
                 $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
                 $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+                $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
             }
         }
 

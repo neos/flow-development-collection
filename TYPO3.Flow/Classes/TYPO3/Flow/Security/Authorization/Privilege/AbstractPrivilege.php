@@ -193,7 +193,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     public function getParsedMatcher()
     {
         $parsedMatcher = $this->matcher;
-        //TODO: handle parameters that are not strings
+        // TODO: handle parameters that are not strings
         foreach ($this->parameters as $parameter) {
             $parsedMatcher = str_replace('{parameters.' . $parameter->getName() . '}', $parameter->getValue(), $parsedMatcher);
         }

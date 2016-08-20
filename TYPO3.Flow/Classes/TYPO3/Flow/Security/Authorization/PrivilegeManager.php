@@ -105,11 +105,11 @@ class PrivilegeManager implements PrivilegeManagerInterface
 
                 $effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, strtoupper($effectivePrivilege->getPermission()));
                 if ($effectivePrivilege->isGranted()) {
-                    $accessGrants ++;
+                    $accessGrants++;
                 } elseif ($effectivePrivilege->isDenied()) {
-                    $accessDenies ++;
+                    $accessDenies++;
                 } else {
-                    $accessAbstains ++;
+                    $accessAbstains++;
                 }
             }
         }

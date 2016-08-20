@@ -192,6 +192,27 @@ The returned validator checks the following things:
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
 
+Validation on Aggregates
+------------------------
+
+In Domain Driven Design, the ``Aggregate`` is to be considered a *consistency boundary*, meaning that the whole
+``Aggregate`` needs to preserve it's invariants at all times. For that reason, validation inside an ``Aggregate`` will
+cascade into all entities and force relations to be loaded. So if you have designed large ``Aggregates`` with a deep
+hierarchy of many n-ToMany relations, validation can easily become a performance bottleneck.
+
+It is therefore, but not limited to this reason, highly recommended to keep your ``Aggregates`` small. The validation
+will stop at an ``Aggregate Root``, if the relation to it is lazy and not yet loaded. Entity relations are lazy by default,
+and as long as you don't also submit parts of the related ``Aggregate``, it will not get loaded before the validation
+kicks in.
+
+.. tip:: Be careful though, that loading the related Aggregate in your Controller will still make it get validated
+		 during persistence. That is another good reason why you should try to minimize relations between Aggregates and if
+		 possible, try to stick to a simple identifier instead of an object relation.
+
+For a good read on designing Aggregates, you are highly encouraged to take a read on Vaughn Vernon's essay series
+`Effective Aggregate Design`_.
+
+
 Advanced Feature: Partial Validation
 ====================================
 
@@ -348,3 +369,5 @@ In case you do further checks on the options and any of them is invalid, an
          If you do not want to accept empty values, you need to set the class property
          $acceptsEmptyValues to FALSE.
 
+
+.. _Effective Aggregate Design: https://vaughnvernon.co/?p=838

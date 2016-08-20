@@ -34,7 +34,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $targetClass = new Fixtures\TargetClass01();
         try {
             $targetClass->sayHelloAndThrow(true);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
         $this->assertSame('Hello World', $targetClass->sayHelloAndThrow(false));
     }
@@ -92,7 +92,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized()
     {
-        $className = 'TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01';
+        $className = \TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class;
         $targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
         $this->assertSame('Hello, me', $targetClass->greet('Flow'));
     }
@@ -143,7 +143,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function resultOfGreetObjectMethodIsModifiedByAdvice()
     {
-        $targetClass = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01');
+        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
         $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('TYPO3');
         $this->assertSame('Hello, old friend', $targetClass->greetObject($name), 'Aspect should greet with "old friend" if the name property equals "TYPO3"');
         $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Christopher');
@@ -155,7 +155,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function thisIsSupportedInMethodRuntimeCondition()
     {
-        $targetClass = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01');
+        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
         $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Neos');
         $targetClass->setCurrentName($name);
         $this->assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
@@ -170,7 +170,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function globalObjectsAreSupportedInMethodRuntimeCondition()
     {
-        $targetClass = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01');
+        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
         $this->assertSame('Hello, superstar', $targetClass->greet('Robbie'), 'Aspect should greet with "superstar" if the global context getNameOfTheWeek equals the given name');
         $this->assertSame('Hello, Christopher', $targetClass->greet('Christopher'), 'Aspect should greet with given name if the global context getNameOfTheWeek does not equal the given name');
     }
@@ -185,9 +185,30 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClass03();
 
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface', $targetClass);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface::class, $targetClass);
         $this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
         $this->assertTrue(method_exists($targetClass, 'introducedMethodWithArguments'));
+    }
+
+    /**
+     * @test
+     */
+    public function traitWithNewMethodCanBeIntroduced()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+
+        $this->assertEquals('I\'m the traitor', call_user_func(array($targetClass, 'introducedTraitMethod')));
+    }
+
+    /**
+     * @test
+     */
+    public function introducedTraitMethodWontOverrideExistingMethods()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+
+        $this->assertNotEquals('Hello from trait', $targetClass->sayHello());
+        $this->assertEquals('Hello World', $targetClass->sayHello());
     }
 
     /**
@@ -224,5 +245,30 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $targetClass = new Fixtures\TargetClass01();
         $result = $targetClass->greet('Andi');
         $this->assertEquals('Hello, Robert', $result, 'The method argument "name" has not been changed as expected by the "changeNameArgumentAdvice".');
+    }
+
+    /**
+     * @test
+     */
+    public function introducedPropertiesCanHaveADefaultValue()
+    {
+        $targetClass = new Fixtures\TargetClass03();
+
+        $this->assertSame(null, $targetClass->introducedPublicProperty);
+        $this->assertSame('thisIsADefaultValueBelieveItOrNot', $targetClass->introducedProtectedPropertyWithDefaultValue);
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithStaticTypeDeclarationsCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+
+        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42));
     }
 }

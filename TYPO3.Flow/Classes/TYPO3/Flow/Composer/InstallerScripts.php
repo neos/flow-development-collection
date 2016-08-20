@@ -15,6 +15,7 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
+use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -31,11 +32,25 @@ class InstallerScripts
      */
     public static function postUpdateAndInstall(Event $event)
     {
+        if (!defined('FLOW_PATH_ROOT')) {
+            define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
+        }
+
+        if (!defined('FLOW_PATH_PACKAGES')) {
+            define('FLOW_PATH_PACKAGES', Files::getUnixStylePath(getcwd()) . '/Packages/');
+        }
+
+        if (!defined('FLOW_PATH_CONFIGURATION')) {
+            define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
+        }
+
         Files::createDirectoryRecursively('Configuration');
         Files::createDirectoryRecursively('Data');
 
         Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Essentials', './', false, true);
         Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Defaults', './', true, true);
+        $packageManager = new PackageManager();
+        $packageManager->rescanPackages();
 
         chmod('flow', 0755);
     }
@@ -89,12 +104,12 @@ class InstallerScripts
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
-            Files::copyDirectoryRecursively($essentialsPath, getcwd() . '/', false, true);
+            Files::copyDirectoryRecursively($essentialsPath, Files::getUnixStylePath(getcwd()) . '/', false, true);
         }
 
         $defaultsPath = $installerResourcesDirectory . 'Distribution/Defaults';
         if (is_dir($defaultsPath)) {
-            Files::copyDirectoryRecursively($defaultsPath, getcwd() . '/', true, true);
+            Files::copyDirectoryRecursively($defaultsPath, Files::getUnixStylePath(getcwd()) . '/', true, true);
         }
     }
 

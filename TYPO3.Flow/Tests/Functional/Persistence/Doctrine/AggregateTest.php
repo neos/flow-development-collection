@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Annotations\After;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment;
@@ -46,8 +45,8 @@ class AggregateTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->postRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository');
-        $this->commentRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommentRepository');
+        $this->postRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository::class);
+        $this->commentRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommentRepository::class);
     }
 
     /**
@@ -64,7 +63,7 @@ class AggregateTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $imageIdentifier = $this->persistenceManager->getIdentifierByObject($image);
 
-        $retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image');
+        $retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image::class);
         $this->assertSame($image, $retrievedImage);
 
         $this->postRepository->remove($post);
@@ -89,13 +88,13 @@ class AggregateTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $commentIdentifier = $this->persistenceManager->getIdentifierByObject($comment);
 
-        $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
+        $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment::class);
         $this->assertSame($comment, $retrievedComment);
 
         $this->postRepository->remove($post);
         $this->persistenceManager->persistAll();
 
-        $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
+        $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment::class);
         $this->assertSame($comment, $retrievedComment);
     }
 

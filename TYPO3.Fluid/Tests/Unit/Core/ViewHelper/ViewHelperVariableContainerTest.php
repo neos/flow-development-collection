@@ -37,11 +37,11 @@ class ViewHelperVariableContainerTest extends UnitTestCase
     public function storedDataCanBeReadOutAgain()
     {
         $variable = 'Hello world';
-        $this->assertFalse($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\TestViewHelper', 'test'));
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelpers\TestViewHelper', 'test', $variable);
-        $this->assertTrue($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\TestViewHelper', 'test'));
+        $this->assertFalse($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\TestViewHelper::class, 'test'));
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelpers\TestViewHelper::class, 'test', $variable);
+        $this->assertTrue($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelpers\TestViewHelper::class, 'test'));
 
-        $this->assertEquals($variable, $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\TestViewHelper', 'test'));
+        $this->assertEquals($variable, $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\TestViewHelper::class, 'test'));
     }
 
     /**
@@ -50,7 +50,7 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function gettingNonNonExistentValueThrowsException()
     {
-        $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey');
+        $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey');
     }
 
     /**
@@ -59,8 +59,8 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function settingKeyWhichIsAlreadyStoredThrowsException()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey', 'value1');
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey', 'value2');
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey', 'value1');
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey', 'value2');
     }
 
     /**
@@ -68,8 +68,8 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function addOrUpdateSetsAKeyIfItDoesNotExistYet()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey', 'value1');
-        $this->assertEquals($this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey'), 'value1');
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey', 'value1');
+        $this->assertEquals($this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey'), 'value1');
     }
 
     /**
@@ -77,9 +77,9 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function addOrUpdateOverridesAnExistingKey()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey', 'value1');
-        $this->viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey', 'value2');
-        $this->assertEquals($this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey'), 'value2');
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey', 'value1');
+        $this->viewHelperVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey', 'value2');
+        $this->assertEquals($this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey'), 'value2');
     }
 
     /**
@@ -87,9 +87,9 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function aSetValueCanBeRemovedAgain()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey', 'value1');
-        $this->viewHelperVariableContainer->remove('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey');
-        $this->assertFalse($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey'));
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey', 'value1');
+        $this->viewHelperVariableContainer->remove(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey');
+        $this->assertFalse($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey'));
     }
 
     /**
@@ -98,7 +98,7 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function removingNonExistentKeyThrowsException()
     {
-        $this->viewHelperVariableContainer->remove('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey');
+        $this->viewHelperVariableContainer->remove(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey');
     }
 
     /**
@@ -106,7 +106,7 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function existsReturnsFalseIfTheSpecifiedKeyDoesNotExist()
     {
-        $this->assertFalse($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelper\NonExistent', 'nonExistentKey'));
+        $this->assertFalse($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'nonExistentKey'));
     }
 
     /**
@@ -114,8 +114,8 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function existsReturnsTrueIfTheSpecifiedKeyExists()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey', 'someValue');
-        $this->assertTrue($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey'));
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey', 'someValue');
+        $this->assertTrue($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey'));
     }
 
     /**
@@ -123,8 +123,8 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function existsReturnsTrueIfTheSpecifiedKeyExistsAndIsNull()
     {
-        $this->viewHelperVariableContainer->add('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey', null);
-        $this->assertTrue($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelper\NonExistent', 'someKey'));
+        $this->viewHelperVariableContainer->add(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey', null);
+        $this->assertTrue($this->viewHelperVariableContainer->exists(\TYPO3\Fluid\ViewHelper\NonExistent::class, 'someKey'));
     }
 
     /**
@@ -132,7 +132,7 @@ class ViewHelperVariableContainerTest extends UnitTestCase
      */
     public function viewCanBeReadOutAgain()
     {
-        $view = $this->getMock('TYPO3\Fluid\View\AbstractTemplateView', array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'hasTemplate', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'));
+        $view = $this->createMock(\TYPO3\Fluid\View\AbstractTemplateView::class, array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'hasTemplate', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'));
         $this->viewHelperVariableContainer->setView($view);
         $this->assertSame($view, $this->viewHelperVariableContainer->getView());
     }

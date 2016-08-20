@@ -129,19 +129,9 @@ class FileSystemTarget implements TargetInterface
     public function initializeObject()
     {
         foreach ($this->options as $key => $value) {
-            switch ($key) {
-                case 'baseUri':
-                case 'path':
-                    $this->$key = $value;
-                    break;
-                case 'subdivideHashPathSegment':
-                    $this->subdivideHashPathSegment = (boolean)$value;
-                    break;
-                case 'extensionBlacklist':
-                    $this->extensionBlacklist = $value;
-                    break;
-                default:
-                    throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
+            $isOptionSet = $this->setOption($key, $value);
+            if (!$isOptionSet) {
+                throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
             }
         }
 
@@ -169,13 +159,14 @@ class FileSystemTarget implements TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param \TYPO3\Flow\Resource\CollectionInterface $collection The collection to publish
+     * @param CollectionInterface $collection The collection to publish
+     * @param callable $callback Function called after each resource publishing
      * @return void
      * @throws Exception
      */
-    public function publishCollection(CollectionInterface $collection)
+    public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
-        foreach ($collection->getObjects() as $object) {
+        foreach ($collection->getObjects($callback) as $object) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $object */
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
@@ -294,6 +285,10 @@ class FileSystemTarget implements TargetInterface
             Files::createDirectoryRecursively(dirname($targetPathAndFilename));
         }
 
+        if (!is_writable(dirname($targetPathAndFilename))) {
+            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322, (isset($exception) ? $exception : null));
+        }
+
         try {
             $targetFileHandle = fopen($targetPathAndFilename, 'w');
             $result = stream_copy_to_stream($sourceStream, $targetFileHandle);
@@ -389,5 +384,30 @@ class FileSystemTarget implements TargetInterface
             }
         }
         return $pathAndFilename;
+    }
+
+    /**
+     * Set an option value and return if it was set.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function setOption($key, $value)
+    {
+        switch ($key) {
+            case 'baseUri':
+            case 'path':
+            case 'extensionBlacklist':
+                $this->$key = $value;
+                break;
+            case 'subdivideHashPathSegment':
+                $this->subdivideHashPathSegment = (boolean)$value;
+                break;
+            default:
+                return false;
+        }
+
+        return true;
     }
 }

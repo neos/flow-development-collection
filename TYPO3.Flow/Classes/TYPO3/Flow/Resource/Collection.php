@@ -150,23 +150,24 @@ class Collection implements CollectionInterface
     /**
      * Returns all internal data objects of the storage attached to this collection.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @param callable $callback Function called after each object
+     * @return \Generator<\TYPO3\Flow\Resource\Storage\Object>
      */
-    public function getObjects()
+    public function getObjects(callable $callback = null)
     {
-        $objects = array();
+        $objects = [];
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== array()) {
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects = array_merge($objects, $this->storage->getObjectsByPathPattern($pathPattern));
+                $objects = array_merge($objects, $this->storage->getObjectsByPathPattern($pathPattern, $callback));
             }
         } else {
-            $objects = $this->storage->getObjectsByCollection($this);
+            $objects = $this->storage->getObjectsByCollection($this, $callback);
         }
 
-#		TODO: Implement filter manipulation here:
-#		foreach ($objects as $object) {
-#			$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
-#		}
+        // TODO: Implement filter manipulation here:
+        // foreach ($objects as $object) {
+        // 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
+        // }
 
         return $objects;
     }

@@ -1,7 +1,7 @@
 # folder inside repository, branch, title - adjust per branch!
-branch: '3.0'
-docs-path: 'flow/3.0'
-title: 'Flow Framework 3.0'
+branch: 'master'
+docs-path: 'flow/master'
+title: 'Flow Framework (master branch)'
 
 # some project specific settings
 docs-repository: 'neos/neos.github.io'

@@ -29,7 +29,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      */
     public function allowCreationForSubProperty($propertyPath)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        $this->forProperty($propertyPath)->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         return $this;
     }
 
@@ -42,7 +42,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      */
     public function allowModificationForSubProperty($propertyPath)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $this->forProperty($propertyPath)->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         return $this;
     }
 
@@ -54,7 +54,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      */
     public function allowOverrideTargetType()
     {
-        $this->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+        $this->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
         return $this;
     }
 
@@ -70,7 +70,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      */
     public function setTargetTypeForSubProperty($propertyPath, $targetType)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
+        $this->forProperty($propertyPath)->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
         return $this;
     }
 }

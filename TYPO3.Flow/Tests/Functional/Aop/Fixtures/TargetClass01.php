@@ -46,7 +46,7 @@ class TargetClass01 implements SayHelloInterface
      */
     public function initializeObject()
     {
-        $this->initializeObjectCallCounter ++;
+        $this->initializeObjectCallCounter++;
     }
 
     /**

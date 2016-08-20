@@ -25,7 +25,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->reflectionService = $this->objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+        $this->reflectionService = $this->objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
     }
 
     /**
@@ -33,10 +33,10 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function theReflectionServiceBuildsClassSchemataForEntities()
     {
-        $classSchema = $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture');
+        $classSchema = $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture::class);
 
         $this->assertNotNull($classSchema);
-        $this->assertSame('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', $classSchema->getClassName());
+        $this->assertSame(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture::class, $classSchema->getClassName());
     }
 
     /**
@@ -57,7 +57,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function theReflectionServiceCorrectlyBuildsMethodTagsValues()
     {
-        $actual = $this->reflectionService->getMethodTagsValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', 'setName');
+        $actual = $this->reflectionService->getMethodTagsValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture::class, 'setName');
 
         $expected = array(
             'param' => array(
@@ -80,10 +80,10 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function aggregateRootAssignmentsInHierarchiesAreCorrect()
     {
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository', $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity')->getRepositoryClassName());
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository', $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity')->getRepositoryClassName());
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository', $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity')->getRepositoryClassName());
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository', $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubSubEntity')->getRepositoryClassName());
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity::class)->getRepositoryClassName());
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity::class)->getRepositoryClassName());
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository::class, $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity::class)->getRepositoryClassName());
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository::class, $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubSubEntity::class)->getRepositoryClassName());
     }
 
     /**
@@ -91,8 +91,8 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function propertyTypesAreExpandedWithUseStatements()
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'reflectionService', 'var');
-        $expected = array('TYPO3\Flow\Reflection\ReflectionService');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'reflectionService', 'var');
+        $expected = array(\TYPO3\Flow\Reflection\ReflectionService::class);
         $this->assertSame($expected, $varTagValues);
     }
 
@@ -101,8 +101,8 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function propertyTypesFromAbstractBaseClassAreExpandedWithRelativeNamespaces()
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'subSubEntity', 'var');
-        $expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subSubEntity', 'var');
+        $expected = array(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity::class);
         $this->assertSame($expected, $varTagValues);
     }
 
@@ -111,8 +111,8 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function propertyTypesFromAbstractBaseClassAreExpandedWithUseStatements()
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'superEntity', 'var');
-        $expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'superEntity', 'var');
+        $expected = array(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity::class);
         $this->assertSame($expected, $varTagValues);
     }
 
@@ -121,8 +121,8 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function propertyTypesFromSameSubpackageAreRetrievedCorrectly()
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'annotatedClass', 'var');
-        $expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'annotatedClass', 'var');
+        $expected = array(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass::class);
         $this->assertSame($expected, $varTagValues);
     }
 
@@ -131,8 +131,8 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function propertyTypesFromNestedSubpackageAreRetrievedCorrectly()
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'subEntity', 'var');
-        $expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subEntity', 'var');
+        $expected = array(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity::class);
         $this->assertSame($expected, $varTagValues);
     }
 
@@ -141,10 +141,10 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function domainModelPropertyTypesAreExpandedWithUseStatementsInClassSchema()
     {
-        $classSchema = $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements');
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity', $classSchema->getProperty('subSubEntity')['type']);
+        $classSchema = $this->reflectionService->getClassSchema(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements::class);
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity::class, $classSchema->getProperty('subSubEntity')['type']);
 
-        $this->assertEquals('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity', $classSchema->getProperty('propertyFromOtherNamespace')['type']);
+        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity::class, $classSchema->getProperty('propertyFromOtherNamespace')['type']);
     }
 
     /**
@@ -152,9 +152,9 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function methodParameterTypeExpansionWorksWithFullyQualifiedClassName()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements', 'fullyQualifiedClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements::class, 'fullyQualifiedClassName');
 
-        $expectedType = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity';
+        $expectedType = \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         $this->assertSame($expectedType, $actualType);
     }
@@ -164,9 +164,9 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function methodParameterTypeExpansionWorksWithAliasedClassName()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements', 'aliasedClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements::class, 'aliasedClassName');
 
-        $expectedType = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity';
+        $expectedType = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         $this->assertSame($expectedType, $actualType);
     }
@@ -176,9 +176,9 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function methodParameterTypeExpansionWorksWithRelativeClassName()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements', 'relativeClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements::class, 'relativeClassName');
 
-        $expectedType = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity';
+        $expectedType = \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         $this->assertSame($expectedType, $actualType);
     }
@@ -188,7 +188,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function methodParameterTypeExpansionDoesNotModifySimpleTypes()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements', 'simpleType');
+        $methodParameters = $this->reflectionService->getMethodParameters(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements::class, 'simpleType');
 
         $expectedType = 'float';
         $actualType = $methodParameters['parameter']['type'];
@@ -200,7 +200,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function integerPropertiesGetANormlizedType()
     {
-        $className = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties';
+        $className = \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties::class;
 
         $varTagValues = $this->reflectionService->getPropertyTagValues($className, 'intProperty', 'var');
         $this->assertCount(1, $varTagValues);
@@ -216,7 +216,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function booleanPropertiesGetANormlizedType()
     {
-        $className = 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties';
+        $className = \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties::class;
 
         $varTagValues = $this->reflectionService->getPropertyTagValues($className, 'boolProperty', 'var');
         $this->assertCount(1, $varTagValues);
@@ -232,7 +232,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function methodParametersGetNormalizedType()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass', 'intAndIntegerParameters');
+        $methodParameters = $this->reflectionService->getMethodParameters(\TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass::class, 'intAndIntegerParameters');
 
         foreach ($methodParameters as $methodParameter) {
             $this->assertEquals('integer', $methodParameter['type']);

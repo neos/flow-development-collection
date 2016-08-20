@@ -91,7 +91,7 @@ class ArrayConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('array', 'string', 'TYPO3\Flow\Resource\Resource');
+    protected $sourceTypes = array('array', 'string', \TYPO3\Flow\Resource\Resource::class);
 
     /**
      * @var string
@@ -150,7 +150,7 @@ class ArrayConverter extends AbstractTypeConverter
                     if ($sourceStream === false) {
                         throw new InvalidSourceException(sprintf('Could not get stream of resource "%s" (%s). This might be caused by a broken resource object and can be fixed by running the "resource:clean" command.', $source->getFilename(), $source->getSha1()), 1435842312);
                     }
-                    $targetStream = fopen($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
+                    $targetStream = fopen($configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
                     stream_copy_to_stream($sourceStream, $targetStream);
                     fclose($targetStream);
                     fclose($sourceStream);
@@ -178,7 +178,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_STRING_DELIMITER;
         }
 
-        $stringDelimiter = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_STRING_DELIMITER);
+        $stringDelimiter = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_DELIMITER);
         if ($stringDelimiter === null) {
             return self::DEFAULT_STRING_DELIMITER;
         } elseif (!is_string($stringDelimiter)) {
@@ -199,7 +199,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_STRING_FORMAT;
         }
 
-        $stringFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_STRING_FORMAT);
+        $stringFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_FORMAT);
         if ($stringFormat === null) {
             return self::DEFAULT_STRING_FORMAT;
         } elseif (!is_string($stringFormat)) {
@@ -220,7 +220,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_RESOURCE_EXPORT_TYPE;
         }
 
-        $exportType = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ArrayConverter', self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
+        $exportType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
         if ($exportType === null) {
             return self::DEFAULT_RESOURCE_EXPORT_TYPE;
         } elseif (!is_string($exportType)) {

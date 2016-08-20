@@ -22,7 +22,7 @@ class DateTimeRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
     /**
      * @var string
      */
-    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\DateTimeRangeValidator';
+    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\DateTimeRangeValidator::class;
 
     /**
      * @var \TYPO3\Flow\Validation\Validator\DateTimeRangeValidator
@@ -34,7 +34,7 @@ class DateTimeRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
      */
     public function setUp()
     {
-        $this->accessibleValidator = $this->getAccessibleMock('TYPO3\Flow\Validation\Validator\DateTimeRangeValidator', array('dummy'));
+        $this->accessibleValidator = $this->getAccessibleMock(\TYPO3\Flow\Validation\Validator\DateTimeRangeValidator::class, array('dummy'));
     }
 
     /**

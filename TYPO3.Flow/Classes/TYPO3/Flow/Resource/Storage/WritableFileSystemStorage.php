@@ -58,13 +58,13 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
                 $target = fopen($temporaryTargetPathAndFilename, 'wb');
                 stream_copy_to_stream($source, $target);
                 fclose($target);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
             try {
                 copy($source, $temporaryTargetPathAndFilename);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 throw new Exception(sprintf('Could not copy the file from "%s" to temporary file "%s".', $source, $temporaryTargetPathAndFilename), 1375198876);
             }
         }
@@ -91,7 +91,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             throw new Exception(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1381156098);
         }
 
@@ -120,26 +120,30 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
     /**
      * Imports the given temporary file into the storage and creates the new resource object.
      *
-     * @param string $temporaryFile
+     * Note: the temporary file is (re-)moved by this method.
+     *
+     * @param string $temporaryPathAndFileName
      * @param string $collectionName
      * @return Resource
      * @throws Exception
      */
-    protected function importTemporaryFile($temporaryFile, $collectionName)
+    protected function importTemporaryFile($temporaryPathAndFileName, $collectionName)
     {
-        $this->fixFilePermissions($temporaryFile);
-        $sha1Hash = sha1_file($temporaryFile);
-        $finalTargetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
+        $this->fixFilePermissions($temporaryPathAndFileName);
+        $sha1Hash = sha1_file($temporaryPathAndFileName);
+        $targetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
 
-        if (!is_file($finalTargetPathAndFilename)) {
-            $this->moveTemporaryFileToFinalDestination($temporaryFile, $finalTargetPathAndFilename);
+        if (!is_file($targetPathAndFilename)) {
+            $this->moveTemporaryFileToFinalDestination($temporaryPathAndFileName, $targetPathAndFilename);
+        } else {
+            unlink($temporaryPathAndFileName);
         }
 
         $resource = new Resource();
-        $resource->setFileSize(filesize($finalTargetPathAndFilename));
+        $resource->setFileSize(filesize($targetPathAndFilename));
         $resource->setCollectionName($collectionName);
         $resource->setSha1($sha1Hash);
-        $resource->setMd5(md5_file($finalTargetPathAndFilename));
+        $resource->setMd5(md5_file($targetPathAndFilename));
 
         return $resource;
     }

@@ -35,7 +35,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
+        $this->propertyMapper = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMapper::class);
     }
 
     /**
@@ -43,8 +43,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyIsCreatedCorrectly()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty', $result);
+        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -53,7 +53,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanBeUpdatedIfImmutablePropertyIsNotGiven()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
@@ -64,9 +64,9 @@ class PersistentObjectConverterTest extends FunctionalTestCase
             'age' => '25'
         );
 
-        $result = $this->propertyMapper->convert($update, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty', $result);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -75,7 +75,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanBeUpdatedIfImmutablePropertyIsGivenAndSameAsBefore()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
@@ -87,9 +87,9 @@ class PersistentObjectConverterTest extends FunctionalTestCase
             'name' => 'Christian M'
         );
 
-        $result = $this->propertyMapper->convert($update, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty', $result);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -99,7 +99,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanNotBeUpdatedWhenImmutablePropertyChanged()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
@@ -111,9 +111,9 @@ class PersistentObjectConverterTest extends FunctionalTestCase
             'name' => 'Christian D'
         );
 
-        $result = $this->propertyMapper->convert($update, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty');
+        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty', $result);
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 }

@@ -1,5 +1,6 @@
 <?php
 namespace TYPO3\Eel\FlowQuery;
+// @codingStandardsIgnoreFile
 
 /*
  * This file is part of the TYPO3.Eel package.
@@ -64,10 +65,10 @@ PathFilter: ( '/' ( Identifier ( '/' Identifier )* )? ) | ( Identifier '/' Ident
 AttributeFilter:
   '[' S
       (
-          ( Operator:'instanceof' S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
+          ( Operator:( 'instanceof' | '!instanceof' ) S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
           | ( :Identifier S
               (
-                  Operator:( 'instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
+                  Operator:( 'instanceof' | '!instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
               )?
           )
@@ -125,4 +126,3 @@ GreaterThanMatch: '>'
 		}
 	}
 }
-?>

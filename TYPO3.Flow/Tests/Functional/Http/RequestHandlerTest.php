@@ -47,8 +47,9 @@ class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             'PHP_SELF' => '/index.php',
         );
 
-        $requestHandler = $this->getAccessibleMock('TYPO3\Flow\Http\RequestHandler', array('boot'), array(self::$bootstrap));
-        $requestHandler->exit = function () {};
+        $requestHandler = $this->getAccessibleMock(\TYPO3\Flow\Http\RequestHandler::class, array('boot'), array(self::$bootstrap));
+        $requestHandler->exit = function () {
+        };
         $requestHandler->handleRequest();
 
         $this->expectOutputString('FooController responded');

@@ -81,9 +81,9 @@ class HeadersTest extends UnitTestCase
     public function headerFieldsCanExistMultipleTimes()
     {
         $headers = new Headers();
-        $headers->set('X-Powered-By', 'Flow');
-        $headers->set('X-Powered-By', 'TYPO3', false);
-        $this->assertSame(array('Flow', 'TYPO3'), $headers->get('X-Powered-By'));
+        $headers->set('X-Flow-Powered', 'Flow');
+        $headers->set('X-Flow-Powered', 'TYPO3', false);
+        $this->assertSame(array('Flow', 'TYPO3'), $headers->get('X-Flow-Powered'));
     }
 
     /**
@@ -92,7 +92,7 @@ class HeadersTest extends UnitTestCase
     public function getReturnsNullForNonExistingHeader()
     {
         $headers = new Headers();
-        $headers->set('X-Powered-By', 'Flow');
+        $headers->set('X-Flow-Powered', 'Flow');
         $this->assertFalse($headers->has('X-Empowered-By'));
         $this->assertNull($headers->get('X-Empowered-By'));
     }
@@ -102,7 +102,7 @@ class HeadersTest extends UnitTestCase
      */
     public function getAllReturnsAllHeaderFields()
     {
-        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
+        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
         $headers = new Headers($specifiedFields);
 
         $expectedFields = array('X-Coffee' => array('Arabica'), 'Host' => array('myhost.com'));
@@ -154,7 +154,7 @@ class HeadersTest extends UnitTestCase
      */
     public function removeRemovesTheSpecifiedHeader()
     {
-        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
+        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
         $headers = new Headers($specifiedFields);
 
         $headers->remove('X-Coffee');

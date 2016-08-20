@@ -87,19 +87,19 @@ class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
         $this->backupSwitchState();
         $templateVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
 
-        $templateVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression', $expression);
-        $templateVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break', false);
+        $templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $expression);
+        $templateVariableContainer->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', false);
 
         $defaultCaseViewHelperNode = null;
         foreach ($this->childNodes as $childNode) {
-            if ($childNode instanceof ViewHelperNode && $childNode->getViewHelperClassName() === 'TYPO3\Fluid\ViewHelpers\DefaultCaseViewHelper') {
+            if ($childNode instanceof ViewHelperNode && $childNode->getViewHelperClassName() === \TYPO3\Fluid\ViewHelpers\DefaultCaseViewHelper::class) {
                 $defaultCaseViewHelperNode = $childNode;
             }
-            if (!$childNode instanceof ViewHelperNode || $childNode->getViewHelperClassName() !== 'TYPO3\Fluid\ViewHelpers\CaseViewHelper') {
+            if (!$childNode instanceof ViewHelperNode || $childNode->getViewHelperClassName() !== \TYPO3\Fluid\ViewHelpers\CaseViewHelper::class) {
                 continue;
             }
             $content = $childNode->evaluate($this->renderingContext);
-            if ($templateVariableContainer->get('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break') === true) {
+            if ($templateVariableContainer->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break') === true) {
                 $defaultCaseViewHelperNode = null;
                 break;
             }
@@ -109,8 +109,8 @@ class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
             $content = $defaultCaseViewHelperNode->evaluate($this->renderingContext);
         }
 
-        $templateVariableContainer->remove('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression');
-        $templateVariableContainer->remove('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break');
+        $templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
+        $templateVariableContainer->remove(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
 
         $this->restoreSwitchState();
         return $content;
@@ -123,11 +123,11 @@ class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
      */
     protected function backupSwitchState()
     {
-        if ($this->renderingContext->getViewHelperVariableContainer()->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression')) {
-            $this->backupSwitchExpression = $this->renderingContext->getViewHelperVariableContainer()->get('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression');
+        if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression')) {
+            $this->backupSwitchExpression = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression');
         }
-        if ($this->renderingContext->getViewHelperVariableContainer()->exists('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break')) {
-            $this->backupBreakState = $this->renderingContext->getViewHelperVariableContainer()->get('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break');
+        if ($this->renderingContext->getViewHelperVariableContainer()->exists(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break')) {
+            $this->backupBreakState = $this->renderingContext->getViewHelperVariableContainer()->get(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break');
         }
     }
 
@@ -139,10 +139,10 @@ class SwitchViewHelper extends AbstractViewHelper implements ChildNodeAccessInte
     protected function restoreSwitchState()
     {
         if ($this->backupSwitchExpression !== null) {
-            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'switchExpression', $this->backupSwitchExpression);
+            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'switchExpression', $this->backupSwitchExpression);
         }
         if ($this->backupBreakState !== false) {
-            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate('TYPO3\Fluid\ViewHelpers\SwitchViewHelper', 'break', true);
+            $this->renderingContext->getViewHelperVariableContainer()->addOrUpdate(\TYPO3\Fluid\ViewHelpers\SwitchViewHelper::class, 'break', true);
         }
     }
 }

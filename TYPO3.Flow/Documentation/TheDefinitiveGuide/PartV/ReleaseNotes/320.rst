@@ -1,0 +1,241 @@
+========
+Flow 3.2
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 3.1 based applications to Flow 3.2.
+
+What has changed
+----------------
+
+Flow 3.2 comes with numerous fixes and improvements. Here's a list of changes that might need special attention when
+upgrading.
+
+In general make sure to run the commands::
+
+ ./flow flow:cache:flush --force
+ ./flow core:migrate
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+when upgrading (see below).
+
+Performance tweaks
+^^^^^^^^^^^^^^^^^^
+
+The ``MediaTypeConverter`` is initialized `only if request has body content <https://github.com/neos/flow-development-collection/pull/316>`_, which avoids initializing type conversion needlessly.
+
+Flow now caches the `TypeConverterMap to avoid instantiating all TypeConverters <https://github.com/neos/flow-development-collection/pull/318>`_ in production context. That avoids instantiating all ``TypeConverters`` on each request saving some time.
+
+Flow `only monitors classes of packages with registered objects <https://github.com/neos/flow-development-collection/pull/302>`_. This massively reduces the amount of monitored class files and improves request time in development context noticeably.
+
+The resource management has been refactored to `use PHP generators <https://github.com/neos/flow-development-collection/pull/41>`_ to iterate during resource cleanup and publishing (affected are ``StorageInterface`` and ``TargetInterface``).
+
+The Objects configuration was never checked against the loaded configuration cache but still saved sometimes. Whether a specific configuration type was saved depended on the fact that it was loaded at the time of writing the configuration cache. We now make sure that Objects configurations are also used if they are cached and that we load all configuration types before writing the cache, thus `fixing Configuration cache usage <https://github.com/neos/flow-development-collection/pull/300>`_.
+
+The ReflectionService is `no longer initialized on shutdown if not needed <https://github.com/neos/flow-development-collection/pull/266>`_. This results in less cache entries being loaded and therefore less memory consumption and I/O.
+
+The required version of `doctrine/migrations was raised to 1.3 <https://github.com/neos/flow-development-collection/pull/255>`_. This can bring a massive speedup in certain scenarios (and avoids an issue with composer.json not being included with the 1.0.0 archives).
+
+Configurable application token and application name
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This introduces two new settings. One which allows for configuring what is exposed via the default "X-Powered-By" HTTP header and a second one which allows for configuring a human-readable application name.
+
+Previously, the header ``X-Flow-Powered`` exposed the full version number of Flow which may be undesirable in certain setups. Through the new setting ``core.applicationToken`` now one of three options can be chosen:
+
+- "Off" (no X-Powered-By header is sent)
+- "ApplicationName" (the application name only, determined via the ``core.applicationKey`` setting)
+- "MajorVersion" (the application name + major version, e.g. "Neos/2"
+- "MinorVersion" (the application name + minor version, e.g. "Neos/2.1"
+
+The new ``core.applicationName`` setting is used for defining a human-friendly name, like "Neos" or "Flow", which is used for the `./flow` help message and in the X-Powered-By header.
+
+Memcached cache backend compatibility with memcached
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Adds support for the "memcached" extension in addition to the existing support for the "memcache" extension. "memcached" is a newer version with several improvements and often both extensions aren't available simultaneously.
+
+Refactored package management
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With this change the structure of the ``PackageStates`` file is overhauled now using the composer key for consistency to avoid problems if namespace or autoload information changes as that would change the (Flow) package key.
+
+Additionally makes the resolution mechanism for Flow package keys more robust and stores additional metadata in the ``PackageStates.php`` to avoid loading all composer manifests at runtime. Furthermore the package loading order generation was improved by using a more sophisticated algorithm to get the order right.
+
+All the changes together lead to a noticeable speed improvement in runtime situations.
+
+Deactivating packages now results in the package being moved out of regular package paths into an ``Inactive`` directory.
+
+This change is **considered breaking** due to the following:
+
+- New packages are only automatically picked up if they were installed via composer or created through the Flow package management. In all other cases you need to run the: ``package:rescan`` command to pick new package up.
+- Some @api classes and methods were deprecated and will be removed or changed in the next major Flow version.
+- Some newly added methods of PackageManager and Package are used in the Flow core now, so if someone would reimplement both according to interface it would not work with Flow, but that is already the case without this change, so it shouldn't be an issue.
+
+The whole MetaData part of the package management is no longer used and will be removed in the next major version.
+
+
+Improved Doctrine CLI tooling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The output of ``doctrine:migrationstatus`` is improved vastly (shows executed but no longer available migrations, shorter default output, can show migration descriptions, color support).
+
+Migration generation and the error handling and output of ``doctrine:migrate`` have been improved as well.
+
+Trait introduction via AOP
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This allows to introduce traits in generated proxy classes via AOP. You can use the ``Introduce`` annotation with the argument ``traitName`` to introdue the given trait into generated proxy classes matching the pointcut.
+
+The following example would introduce the trait ``\Vendor\Package\Service\Traits\ExampleTrait`` into all proxies that either are the class or extend the class ``TYPO3\Flow\Mvc\Controller\ActionController``.
+
+.. code-block:: php
+
+  @Flow\\Introduce(
+    traitName="Vendor\Package\Service\Traits\ExampleTrait"
+    pointcutExpression="class(TYPO3\Flow\Mvc\Controller\ActionController)"
+  )
+
+Redirect handling
+^^^^^^^^^^^^^^^^^
+
+A new **optional** Flow package called ``Neos.RedirectHandler`` makes working with redirects easy.
+
+The package introduces a ``Redirect`` entity along with a ``RedirectService`` helper class.
+
+Redirects can be managed via new commands::
+
+    ./flow redirect:list
+    ./flow redirect:add source/path target/path 307
+    ./flow redirect:remove source/path
+    ./flow redirect:removeall
+    ./flow redirect:removebyhost hostname.tld
+
+In addition redirects can be imported and exported as ``CSV`` using::
+
+    ./flow redirect:export
+    ./flow redirect:import
+
+The service will be triggered before the Routing Framework kicks in and redirects returns any configured
+target URI if applicable. It is however only invoked when no cached route matches the current request.
+Thus, if a redirection is added, depending route cache entries are flushed automatically.
+
+The package can be installed using composer with ``composer require "neos/redirecthandler"``.
+
+Additionally a storage package needs to be installed. A default one for storing redirects in the
+database can be installed using composer with ``composer require "neos/redirecthandler-databasestorage"``.
+
+Several Flow parts moved to seperate packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A numbr of packages have been created for functionality that used to be an integrated part of Flow. This allows to use those packages independently from Flow and defines clear scope for them.
+
+Namely the following new packages are created:
+
+- Neos.Utility.Arrays
+- Neos.Utility.Files
+- Neos.Utility.Lock
+- Neos.Utility.ObjectHandling
+- Neos.Utility.Schema
+- Neos.Utility.Pdo
+- Neos.Utility.Unicode
+- Neos.Utility.MediaTypes
+- Neos.Utility.OpCodeCacheHelper
+
+Additionally the Flow bootstrap no longer directly includes utility classes but relies on the composer autoloader to load them. As the composer autoloader is then loaded anyway the Flow ClassLoader no longer needs to include the composer autoload files but simply falls back to the composer autoloader for most classes.
+
+Other additions and fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- `TASK: Add required attribute to password ViewHelper <https://github.com/neos/flow-development-collection/pull/320>`_
+- `TASK: Get rid of PropertyMappingConfigurationBuilder <https://github.com/neos/flow-development-collection/pull/317>`_
+- `BUGFIX: Fix session garbageCollector probability of 0 <https://github.com/neos/flow-development-collection/pull/247>`_
+- `TASK: Deprecate EarlyLogger <https://github.com/neos/flow-development-collection/pull/215>`_
+- `BUGFIX: Make sure Fluid parser is configured correctly <https://github.com/neos/flow-development-collection/pull/203>`_
+- `BUGFIX: AOP Proxies properly check method existance before upward delegation <https://github.com/neos/flow-development-collection/pull/200>`_
+- `BUGFIX: ResourceStreamWrapper now saves handles for resource:// - URIs <https://github.com/neos/flow-development-collection/pull/199>`_
+- `BUGFIX: Default constructor arguments only autowired if needed <https://github.com/neos/flow-development-collection/pull/202>`_
+- `FEATURE: Command to generate key pair for RsaWalletService <https://github.com/neos/flow-development-collection/pull/230>`_
+- `BUGFIX: Allow composite keys over foreign entities <https://github.com/neos/flow-development-collection/pull/154>`_
+- `FEATURE: Allow setting validator options for element validators <https://github.com/neos/flow-development-collection/pull/242>`_
+- `BUGFIX: Always set subpackage key when setting package key in forward <https://github.com/neos/flow-development-collection/pull/319>`_
+- `FEATURE: Allow usage of is*/has* accessors in Fluid templates directly <https://github.com/neos/flow-development-collection/pull/108>`_
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There haven't been API changes in Flow 3.2 which require your code to be adjusted. However, if you are upgrading from Flow
+versions earlier than 3.1, you need to migrate your code. As with earlier changes to Flow that required code changes on
+the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*" or "Neos.*") - for the first run you might want to limit things a little to keep the overview,
+though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+Upgrading the database schema
+-----------------------------
+
+Upgrading the schema is done by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema.
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrationgenerate
+
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
+
+If it does not and you have no idea what to do next, please get in touch
+with us.

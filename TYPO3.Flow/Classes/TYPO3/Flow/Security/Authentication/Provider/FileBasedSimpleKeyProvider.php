@@ -70,7 +70,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      */
     public function getTokenClassNames()
     {
-        return array('TYPO3\Flow\Security\Authentication\Token\PasswordToken');
+        return array(\TYPO3\Flow\Security\Authentication\Token\PasswordToken::class);
     }
 
     /**
