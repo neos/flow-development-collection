@@ -229,6 +229,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if ($tableAnnotation->indexes !== null) {
                 foreach ($tableAnnotation->indexes as $indexAnnotation) {
                     $index = array('columns' => $indexAnnotation->columns);
+                    if (!empty($indexAnnotation->flags)) {
+                        $index['flags'] = $indexAnnotation->flags;
+                    }
+                    if (!empty($indexAnnotation->options)) {
+                        $index['options'] = $indexAnnotation->flags;
+                    }
                     if (!empty($indexAnnotation->name)) {
                         $primaryTable['indexes'][$indexAnnotation->name] = $index;
                     } else {
@@ -240,6 +246,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if ($tableAnnotation->uniqueConstraints !== null) {
                 foreach ($tableAnnotation->uniqueConstraints as $uniqueConstraint) {
                     $uniqueConstraint = array('columns' => $uniqueConstraint->columns);
+                    if (!empty($uniqueConstraint->options)) {
+                        $uniqueConstraint['options'] = $uniqueConstraint->options;
+                    }
                     if (!empty($uniqueConstraint->name)) {
                         $primaryTable['uniqueConstraints'][$uniqueConstraint->name] = $uniqueConstraint;
                     } else {
