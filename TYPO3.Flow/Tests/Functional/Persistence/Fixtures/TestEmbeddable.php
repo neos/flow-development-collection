@@ -23,6 +23,9 @@ class TestEmbeddable
 {
     /**
      * @var string
+     * TODO: Making this nullable is just a workaround for when the parent class is proxied and cloned,
+     *       which will currently lead to the embeddable being null.
+     * @ORM\Column(nullable=true)
      */
     protected $value;
 
