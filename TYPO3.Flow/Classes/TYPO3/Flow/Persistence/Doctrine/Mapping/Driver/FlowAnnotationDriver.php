@@ -737,8 +737,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             break;
                         default:
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
-                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
-                                    $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
+                                if ($valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     if ($valueObjectAnnotation->embedded === true) {
                                         $mapping['class'] = $propertyMetaData['type'];
                                         $mapping['columnPrefix'] = $mapping['columnName'];
@@ -1069,8 +1068,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         return strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== false ||
             (
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\Entity::class) &&
-                    (!$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) ||
-                    $this->reflectionService->getClassAnnotation($className, \TYPO3\Flow\Annotations\ValueObject::class)->embedded === true) &&
+                !$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) &&
                 !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
                 !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass') &&
                 !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')

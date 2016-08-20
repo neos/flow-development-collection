@@ -256,8 +256,10 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
         $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
-        $schema = $schemaTool->getSchemaFromMetadata(array($entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity')));
-        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'));
+        $classMetaData = $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
+        $schema = $schemaTool->getSchemaFromMetadata(array($classMetaData));
+        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
 
         $valueObject = new TestEmbeddedValueObject('someValue');
         $testEntity = new TestEntity();
