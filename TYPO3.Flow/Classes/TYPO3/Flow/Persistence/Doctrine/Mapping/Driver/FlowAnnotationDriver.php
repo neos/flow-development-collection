@@ -174,7 +174,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * @return void
      * @throws MappingException
      * @throws \UnexpectedValueException
-     * @todo adjust when Doctrine 2.5 is used, see http://www.doctrine-project.org/jira/browse/DDC-93
      */
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {
