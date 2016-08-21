@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Persistence\Aspect;
  * source code.
  */
 
-use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -48,7 +47,7 @@ class EmbeddedValueObjectPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
     {
-        $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($className, 'TYPO3\Flow\Annotations\ValueObject');
+        $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\ValueObject::class);
 
         if ($valueObjectAnnotation !== null && $valueObjectAnnotation->embedded === true) {
             return true;
@@ -85,7 +84,7 @@ class EmbeddedValueObjectPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
      */
     public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
     {
-        $classNames = $this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\ValueObject');
+        $classNames = $this->reflectionService->getClassNamesByAnnotation(Flow\ValueObject::class);
         $annotatedIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
         $annotatedIndex->setClassNames($classNames);
         return $classNameIndex->intersect($annotatedIndex);
