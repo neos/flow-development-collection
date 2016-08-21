@@ -116,9 +116,9 @@
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
 			<target xml:lang="lv">Tekstsa garumam ir jābūt starp {0,number} un {1,number} rakstzīmēm</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]">
+        <trans-unit id="1238108068[0]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="lv" state="translated">Šim laukam jāsatur vismaz {0,number} rakstzīmes</target>
+          <target xml:lang="lv">Šim laukam jāsatur vismaz {0,number} rakstzīmes</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} character</source>
@@ -130,9 +130,9 @@
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]">
+        <trans-unit id="1238108069[0]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="lv" state="translated">Šis teksts nedrīkst būt garāks par {0,number} rakstzīmēm</target>
+          <target xml:lang="lv">Šis teksts nedrīkst būt garāks par {0,number} rakstzīmēm</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} character</source>

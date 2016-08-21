@@ -25,7 +25,7 @@ class AbstractAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
-        $mockAspect = $this->getMockBuilder('MockClass' . md5(uniqid(mt_rand(), true)))->setMethods(array('someMethod'))->getMock();
+        $mockAspect = $this->getMockBuilder(Fixtures\SomeClass::class)->getMock();
         $mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint);
 
         $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
@@ -51,7 +51,7 @@ class AbstractAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
-        $mockAspect = $this->getMockBuilder('MockClass' . md5(uniqid(mt_rand(), true)))->setMethods(array('someMethod'))->getMock();
+        $mockAspect = $this->createMock(Fixtures\SomeClass::class);
         $mockAspect->expects($this->never())->method('someMethod');
 
         $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
@@ -77,7 +77,7 @@ class AbstractAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
 
-        $mockAspect = $this->getMockBuilder('MockClass' . md5(uniqid(mt_rand(), true)))->setMethods(array('someMethod'))->getMock();
+        $mockAspect = $this->getMockBuilder(Fixtures\SomeClass::class)->getMock();
         $mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint);
 
         $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
