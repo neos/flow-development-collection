@@ -24,6 +24,7 @@ class TestEmbeddedValueObject
 
     /**
      * @var string
+     * @ORM\Column(nullable=true)
      */
     protected $value;
 
