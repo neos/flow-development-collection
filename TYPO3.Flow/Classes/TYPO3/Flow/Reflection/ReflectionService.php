@@ -1166,6 +1166,7 @@ class ReflectionService
             if (
                 !$this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Entity::class) &&
                 !$this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
+                !$this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable') &&
                 !$this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class)
             ) {
                 return false;
@@ -1519,6 +1520,10 @@ class ReflectionService
         $classSchema = new ClassSchema($className);
         $this->addPropertiesToClassSchema($classSchema);
 
+        if ($this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')) {
+            return $classSchema;
+        }
+
         if ($this->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\ValueObject::class)) {
             $this->checkValueObjectRequirements($className);
             $classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
@@ -1555,6 +1560,9 @@ class ReflectionService
         $className = $classSchema->getClassName();
         $skipArtificialIdentity = false;
 
+        if ($this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')) {
+            $skipArtificialIdentity = true;
+        }
         foreach ($this->getClassPropertyNames($className) as $propertyName) {
             $skipArtificialIdentity = $this->evaluateClassPropertyAnnotationsForSchema($classSchema, $propertyName) ? true : $skipArtificialIdentity;
         }

@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntityRepository;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
@@ -638,5 +639,32 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->testEntityRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @test
+     */
+    public function doctrineEmbeddablesAreActuallyEmbedded()
+    {
+        /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
+        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
+        $metaData = $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        $this->assertTrue($metaData->hasField('embedded.value'));
+        $schema = $schemaTool->getSchemaFromMetadata(array($metaData));
+        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'));
+
+        $embeddable = new TestEmbeddable('someValue');
+        $testEntity = new TestEntity();
+        $testEntity->setEmbedded($embeddable);
+
+        $this->testEntityRepository->add($testEntity);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        /* @var $testEntity TestEntity */
+        $testEntity = $this->testEntityRepository->findAll()->getFirst();
+        $this->assertEquals('someValue', $testEntity->getEmbedded()->getValue());
     }
 }
