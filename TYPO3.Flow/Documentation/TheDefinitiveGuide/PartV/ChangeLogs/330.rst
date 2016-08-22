@@ -1,0 +1,616 @@
+`3.3.0 (2016-08-22) <https://github.com/neos/flow-development-collection/releases/tag/3.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Prevent PHPUnit Warnings introduced with #130 <https://github.com/neos/flow-development-collection/pull/438>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Add missing Doctrine 2.5 mappings and fix Embeddables <https://github.com/neos/flow-development-collection/pull/439>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This adds mappings for the @ORM\\Index annotation attributes "flags" and "options" as well as the @ORM\\UniqueConstraints annotation attribute "options".
+
+Also, this adds a test for and fixes the Doctrine Embeddables.
+
+* Packages: ``Flow``
+
+`TASK: Adjust some unit tests to avoid warnings <https://github.com/neos/flow-development-collection/pull/430>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: Allow replacement of configuration with environment-variable <https://github.com/neos/flow-development-collection/pull/431>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently configuration can be replaced with constants via the ``%CONST_NAME%``syntax.
+This change adds a special prefix env: to the configuration post-processing that replaces markers of the form ``%env:ENV_VAR_NAME%`` with the content of the environment variable if one is defined
+
+FLOW-212  #close
+
+* Packages: ``Flow``
+
+`FEATURE: Add "Trusted Proxies" as a HTTP component <https://github.com/neos/flow-development-collection/pull/409>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This change introduces a HTTP component for so called "Trusted Proxies" that is registered
+at the start of the HTTP chain.
+
+It is configurated via the setting `TYPO3.Flow.http.trustedProxies.proxies`, which is a list of
+IP address ranges that are trusted to provide header overrides for some import request meta
+informations like the host, port, protocol and client IP.
+
+    proxies:
+      - '216.246.40.0/24'
+      - '216.246.100.0/24'
+
+Also the header names that are trusted for those informations can be set via the configuration
+option `TYPO3.Flow.http.trustedProxies.headers` and default to this:
+
+    headers:
+      clientIp: 'Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded'
+      host: 'X-Forwarded-Host'
+      port: 'X-Forwarded-Port'
+      proto: 'X-Forwarded-Proto'
+
+The `clientIp` setting is chosen for backwards compatibility of the `getClientIpAddress` method.
+This method will now resolve to the first IP address that is not a trusted proxy inside the first of the configured headers that exists in order from left to right.
+This setting should be changed to only a single trusted header instead.
+
+By default all IP addresses are trusted to stay mostly backwards compatible, but a more
+safe setting would be to trust no proxies by default:
+
+    proxies: []
+
+FLOW-414 #close
+
+* Packages: ``Flow``
+
+`TASK: Adjust unit tests to use "real mocks" <https://github.com/neos/flow-development-collection/pull/429>`_
+-------------------------------------------------------------------------------------------------------------
+
+Mocking a "virtual" class is no longer allowed, so we use fixture classes.
+
+* Packages: ``Flow``
+
+`TASK: Avoid PHPUnit warnings on deprecated getMock method <https://github.com/neos/flow-development-collection/pull/428>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Update Flow to use Doctrine ORM 2.5 <https://github.com/neos/flow-development-collection/pull/121>`_
+-----------------------------------------------------------------------------------------------------------
+
+With this we update Flow to use Doctrine ORM 2.5. It should allow new features
+in Doctrine ORM (like embedded objects and the cache annotation) to be used without
+restrictions.
+
+This also removes some special proxy methods to initialise doctrine proxies.
+
+FLOW-260 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: MethodsAndAdvices fix for non proxied target classes <https://github.com/neos/flow-development-collection/pull/425>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The fix done in commit `8ca79cda53f90415458eb825c5bac52105d08d40 <https://github.com/neos/flow-development-collection/commit/8ca79cda53f90415458eb825c5bac52105d08d40>`_
+did not catch all cases as target classes that do not have an
+advice applied (usually the parent class then has the advice),
+was not treated with the fix for methods and advices.
+
+This change adds treatment for those classes as well.
+
+* Packages: ``Flow``
+
+`TASK: Remove doctrine/orm dependency <https://github.com/neos/flow-development-collection/pull/424>`_
+------------------------------------------------------------------------------------------------------
+
+As the doctrine classes are only used for type checks in
+``instanceof`` and ``is_subclass_of`` and both work with
+non existing classes we can drop the dependency on
+``doctrine/orm`` in this package.
+
+`BUGFIX: Sub classes of adviced classes should initialize advices <https://github.com/neos/flow-development-collection/pull/418>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Any sub class of a class that has an advice also needs to initialize
+the advices array in the constructor or otherwise that will lead to
+exceptions later on. The only reason it works currently is the
+``\\TYPO3\\Flow\\Object\\Proxy\\DoctrineProxyFixingTrait``
+which (as a side effect) masks this bug. If we want to get rid of this
+trait with newer Doctrine versions we need to fix the bug on our side.
+
+* Packages: ``Flow``
+
+`BUGFIX: Support PHP 7.0 type declarations on parameters and return types <https://github.com/neos/flow-development-collection/pull/394>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Adds methods to the reflection service to access declared types in
+a backwards compatible way (returning null for PHP < 7.0) and extends
+the proxy builder to add type declarations if they were used on the
+original method. This allows to use type declarations for parameters
+(scalar values) or return type declarations even for advised methods.
+
+FLOW-460 #fixes
+
+* Packages: ``Flow``
+
+`BUGFIX: Safeguard for unmananged constructor injections <https://github.com/neos/flow-development-collection/pull/422>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This adds an additional check to ``ObjectConverter::buildObject()``
+in order to prevent misleading errors when trying to convert objects
+with constructor injections that are unknown to the ``ObjectManager``.
+
+FLOW-463 #related
+
+* Packages: ``Flow``
+
+`FEATURE: Allow automatic injection of singleton constructor arguments <https://github.com/neos/flow-development-collection/pull/421>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+This allows to omit singleton constructor arguments when using the
+``PropertyMapper`` to convert objects.
+
+Background:
+Constructor arguments can already be omitted if there is a default
+value specified in the class to convert to:
+
+```
+class SomeClass {
+  public function __construct($optionaArgument = null) {
+    // ..
+  }
+}
+```
+
+With this change this will also work for (singleton) classes:
+
+```
+class SomeClass {
+  public function __construct(SomeService $someService) {
+    // ..
+  }
+}
+$someInstance = $this->propertyMapper->convert([], SomeClass::class);
+```
+
+FLOW-463 #close
+
+* Packages: ``Flow``
+
+`TASK: New configuration syntax for request patterns & firewall filters <https://github.com/neos/flow-development-collection/pull/130>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+The configuration format for authentication request patterns is
+not very flexible and inconsistent with other settings.
+
+With this change the syntax is changed from:
+```yaml
+  'SomeAuthenticationProvider':
+    # ...
+    requestPatterns:
+      'controllerObjectName': 'Some\\Package\\AdministrationArea\\.*'
+```
+
+To a more generic syntax:
+
+```yaml
+  'SomeAuthenticationProvider':
+    # ...
+    requestPatterns:
+      'Some.Package:AdministrationArea':
+        pattern: 'ControllerObjectName'
+        patternOptions:
+          'controllerObjectNamePattern': 'Some\\Package\\AdministrationArea\\.*'
+```
+
+The new syntax seems more cumbersome but it allows for advanced request
+pattern options. Besides the new level allows to attach *multiple*
+patterns of one type to a provider.
+This also allows to *unset* previously configured patterns:
+
+```yaml
+  'SomeAuthenticationProvider':
+    requestPatterns:
+      'Some.Package:AdministrationArea': ~
+```
+
+The configuration syntax for request patterns for the firewall has
+been adjusted accordingly::
+
+```yaml
+    TYPO3:
+      Flow:
+        security:
+          firewall:
+            filters:
+              'Some.Package:BlockedUris':
+                pattern: 'Uri'
+                patternOptions:
+                  'uriPattern': '\\/some\\/uri\\/.*'
+                interceptor: AccessDeny
+```
+
+This is not a breaking change as the old syntax is still supported.
+
+But as the new syntax is recommended, this comes with a corresponding
+core migration that you can execute as follows:
+
+```
+  /flow core:migrate --version 20151113161300 --verbose
+```
+
+FLOW-412 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: Require latest version of neos/composer-plugin <https://github.com/neos/flow-development-collection/pull/414>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Require version 2.x of the ``composer-plugin`` package. Previous versions
+use the ``excludeClasses`` setting which has been deprecated with Flow 3.0.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix Property Mapper determination for the ObjectConverter <https://github.com/neos/flow-development-collection/pull/397>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+When mapping a plain object with the ``ObjectConverter``, root namespace 
+properties like ``\\DateTime`` do not find a converter. This is because
+the leading backslash is not removed by the ``ObjectConverter`` (i.e. we
+looked for a ``\\DateTimeConverter`` instead of the ``DateTimeConverter``
+
+* Packages: ``Flow``
+
+`TASK: Update used Symfony components to 2.8 <https://github.com/neos/flow-development-collection/pull/408>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since symfony follows semver (http://symfony.com/doc/current/contributing/code/bc.html) it's almost always possible to upgrade components within the given major without BC breaks.
+
+This updates the used symfony components to 2.8, which also matches the most current [LTS](http://symfony.com/doc/current/contributing/community/releases.html#long-term-support-versions) version supported.
+
+I would also bring a `^3.0` requirement to the table, but that one would mean a little more work and may be done in a second step.
+
+* Packages: ``Flow``
+
+`FEATURE: Allow whitelisting and blacklisting paths from scanning for available locales <https://github.com/neos/flow-development-collection/pull/385>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change introduces the configuration setting "TYPO3.Flow.i18n.scan.includePaths", which is a
+list of folder names relative to the `Resources` folder that should be scanned for available locales.
+By default all folders inside each Package's `Resources` will be scanned.
+
+To skip specific folders inside the scanned paths, the setting "TYPO3.Flow.i18n.scan.excludePatterns"
+can be used, which is a dictionary of regex patterns that should be ignored.
+This can greatly improve performance when lots of folders and files exist without any localized filenames, like `node_modules` or `.git`.
+
+By default the following folders will be skipped for scanning:
+ - '/node_modules/'
+ - '/bower_components/'
+ - all folders that start with a dot, like '.git' or '.sass-cache'
+
+FLOW-376 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: Tweaked "ignoredTables" behavior <https://github.com/neos/flow-development-collection/pull/403>`_
+----------------------------------------------------------------------------------------------------------
+
+This is a follow-up to a feature merged with #366 that allows
+a configurable whitelist for tables respected by the `doctrine:migrationgenerate` command.
+
+This change turns that setting into a *blacklist* and makes the list a
+dictionary so that 3rd party packages can extend the list:
+
+```yaml
+TYPO3:
+  Flow:
+    persistence:
+      doctrine:
+        migrations:
+          ignoredTables:
+            'autogenerated_.*': TRUE
+            'wp_.*: TRUE
+```
+
+This would skip all tables starting with `autogenerated_` or `wp_` from migrations when
+using the `./flow doctrine:migrationgenerate` command.
+
+This also adjusts the Settings schema and adds a section to the documentation.
+
+Related: #366
+
+* Packages: ``Flow``
+
+`FEATURE: New parameter to keep output ordered by loading order instead of name <https://github.com/neos/flow-development-collection/pull/401>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Very helpful parameter to debug loading order of packages.
+
+`package:list --loading-order`
+
+* Packages: ``Flow``
+
+`BUGFIX: Input field name for multiple checkbox is generated correctly <https://github.com/neos/flow-development-collection/pull/386>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Checkboxes that were bound to collection properties or had the `multiple` attribute set,
+were generating invalid input field names like this:
+
+    <input type="checkbox" name="post[tags][__identity][]" ...>
+
+Since the internal identity is not required for checkboxes, it is stripped from the generated name.
+Also, any such checkboxes now avoid generating an empty value hidden field, as this will at most
+lead to empty values being additionally submitted to the collection property.
+
+FLOW-419 #close
+
+* Packages: ``Fluid``
+
+`TASK: Fix use of deprecated getMock() <https://github.com/neos/flow-development-collection/pull/402>`_
+-------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``Fluid``
+
+`BUGFIX: Use Unix paths in InstallerScripts <https://github.com/neos/flow-development-collection/pull/400>`_
+------------------------------------------------------------------------------------------------------------
+
+The Files utility used by InstallerScripts will use these constants
+to transform an absolute path to a relative one. As the compared path
+will always be a Unix path, the path to replace needs to be completely
+Unix as well to make replacing working. This prevents "mkdir(): invalid
+arguments" errors on Windows.
+
+Similar to neos/flow-development-collection#399 , but then for the 3.0
+version.
+
+* Packages: ``Flow``
+
+`BUGFIX: Use Unix paths in InstallerScripts <https://github.com/neos/flow-development-collection/pull/399>`_
+------------------------------------------------------------------------------------------------------------
+
+The Files utility used by InstallerScripts will use these constants
+to transform an absolute path to a relative one. As the compared path
+will always be a Unix path, the path to replace needs to be completely
+Unix as well to make replacing working. This prevents "mkdir(): invalid
+arguments" errors on Windows.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow SliceOperation to work on \\Iterator <https://github.com/neos/flow-development-collection/pull/398>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The Eel slice operation only works with arrays so far. Since the FlowQuery
+context can be anything that implements `\\Iterator`, we now convert iterators
+to arrays if they are passed in as the context.
+
+* Packages: ``Eel`` ``Flow``
+
+`BUGFIX: Check if array is \`\`null\`\` at the beginning of JSON conversion <https://github.com/neos/flow-development-collection/pull/395>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Prevent an exception to be thrown if the array passed for conversion is ``null``.
+
+* Packages: ``Flow``
+
+`FEATURE: Provide basic documentation about Eel <https://github.com/neos/flow-development-collection/pull/393>`_
+----------------------------------------------------------------------------------------------------------------
+
+* To explain what Eel is about.
+* To ease starting with Eel.
+* To provide a central place for Eel where further documentation is
+  referenced.
+
+* Packages: ``Eel`` ``Flow``
+
+`TASK: Fix documentation about Privilege Parameters <https://github.com/neos/flow-development-collection/pull/392>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Fixes the `Policy.yaml` examples in the Privilege Parameters section of the Security chapter.
+
+FLOW-459 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: FlowException is no imported <https://github.com/neos/flow-development-collection/pull/391>`_
+------------------------------------------------------------------------------------------------------
+
+This change fixes a missing class import introduced with PR #376 into the 2.3 branch.
+
+* Packages: ``Flow``
+
+`FEATURE: Allow asynchronous execution of commands <https://github.com/neos/flow-development-collection/pull/390>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Adds a new convenience method `Scripts::executeCommandAsync()` that can be
+used to execute commands without waiting for their result.
+
+This is especially useful for time-consuming tasks whose result is not
+(instantly) required.
+
+Example::
+
+     Scripts::executeCommandAsync('my.package:registration:sendconfirmationmail', $this->flowSettings, ['email' => $emailAddress]);
+
+FLOW-458 #close
+
+* Packages: ``Flow``
+
+`!!! TASK: More consistent translation behavior <https://github.com/neos/flow-development-collection/pull/377>`_
+----------------------------------------------------------------------------------------------------------------
+
+This patch adjusts the behavior of id-based translations in order to make it deterministic and consistent.
+
+It mainly adjusts `Translator::translateById()` to return `NULL` if the given `id` couldn't be translated. Previously it returned the `id` making it impossible to detect that case.
+
+This has an effect to the two related Fluid ViewHelpers in certain conditions:
+
+`{f:translate(id: 'some.id', value: 'default')}`:
+
+previously returned the *translated* default value if the `id` wasn't translated, possibly leading to unexpected behavior.
+Now it will just return the raw default value ("default" in the example above instead of "translatedDefault").
+
+Besides the `TranslateViewHelper` has been tweaked to always return an empty string rather than `NULL` if neither id nor value could be resolved.
+
+`<f:form.select translate="{by:'id', by:'value', prefix: 'prefix.'}" />`:
+
+Previously this would render
+
+`<option value="...">prefix.someValue</option>`
+
+if the id could not be translated.
+With `by:'label'` it would return the prefixed label instead.
+
+Now we always render the actual key (= label) of the option in that case:
+
+`<option value="...">Original Option</option>`
+
+FLOW-456 #close
+
+* Packages: ``Flow`` ``Fluid``
+
+`BUGIX: Remove temporary file in importTemporaryFile() <https://github.com/neos/flow-development-collection/pull/389>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The temporary file used to be gone after importing, but since it only is
+moved when the target does not yet exist, this changed. Now the file is
+unlinked in that case.
+
+FLOW-378 #close
+
+* Packages: ``Flow``
+
+`Revert "FEATURE: Add support for configuring trusted proxies" <https://github.com/neos/flow-development-collection/pull/388>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Reverts neos/flow-development-collection#321
+
+* Packages: ``Flow``
+
+`FEATURE: Add support for configuring trusted proxies <https://github.com/neos/flow-development-collection/pull/321>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This change introduces a configuration setting `TYPO3.Flow.http.trustedProxies.proxies`
+for so called "Trusted Proxies", which is a list of IP address ranges that are trusted
+to provide header overrides for some import request meta informations like the host,
+port, protocol and client IP.
+
+        proxies:
+          - '216.246.40.0/24'
+          - '216.246.100.0/24'
+
+Also the header names that are trusted for those informations can be set via the configuration
+option `TYPO3.Flow.http.trustedProxies.headers` and default to this:
+
+        headers:
+          clientIp: 'X-Forwarded-For'
+          host: 'X-Forwarded-Host'
+          port: 'X-Forwarded-Port'
+          proto: 'X-Forwarded-Proto'
+
+To get the most trusted client IP adress, the Http Request provides a new method
+`getTrustedClientIpAddress()` which resolves the clientIp header, matching against
+trusted proxy addresses. So this might not always end up as the actual user IP address.
+
+By default all IP addresses are trusted to stay mostly backwards compatible, but a more
+safe setting would be to trust no proxies by default:
+
+        proxies: []
+
+FLOW-414 #close
+
+* Packages: ``Flow``
+
+`FEATURE: Resources can be published with relative symlinks <https://github.com/neos/flow-development-collection/pull/187>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Adds a new option to the ``FileSystemSymlinkTarget`` named
+``relativeSymlinks`` which will calculate a relative path from
+source to target and symlink to that relative path instead of an
+absolute path.
+
+* Packages: ``Flow``
+
+`FEATURE: Allow use of PDO backend for caches <https://github.com/neos/flow-development-collection/pull/366>`_
+--------------------------------------------------------------------------------------------------------------
+
+This pull request contains two features:
+
+1. Make PdoBackend iterable so it can be used for caches
+2. Use default filter expression to ignore other packages when generating migrations
+
+I tested this with PostgreSQL as a backend for sessions.
+
+* Packages: ``Flow``
+
+`FEATURE: Validate only up to Aggregate boundaries <https://github.com/neos/flow-development-collection/pull/334>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This is one specific attempt at optimizing entity hierarchy validation, by stopping validation at unloaded Aggregate boundaries.
+
+It is based on the idea that unloaded aggregates (doctrine proxy instances) do not carry changes, and since aggregates form a natural consistency boundary validation should not change and therefore can be stopped.
+
+This will improve performance noticeably if you designed relatively small aggregates, but have lots of aggregate relations in your domain model.
+
+FLOW-17 #comment This optimizes validation performance for well designed Aggregates
+
+* Packages: ``Flow``
+
+`TASK: Followup cleanup for #333 to make use of ::class <https://github.com/neos/flow-development-collection/pull/375>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This change fixes the usage of class names as strings that were necessary in 2.3 branch for PHP backwards compatibility in #333 and replaces them with the recommended ::class calls.
+
+* Packages: ``Flow``
+
+`!!! TASK: Deprecate unused methods in \`\`Argument\`\` class <https://github.com/neos/flow-development-collection/pull/363>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Some methods haven't been removed or deprecated earlier but are in fact
+no longer used in the Flow core and therefore deprecated to be removed
+in the next major Flow version.
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/369>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details, see https://styleci.io/analyses/XN4pa4
+
+* Packages: ``Eel`` ``Flow`` ``Fluid``
+
+`TASK: Document handling a large number of Resources <https://github.com/neos/flow-development-collection/pull/347>`_
+---------------------------------------------------------------------------------------------------------------------
+
+If a project contains lots of resources, resource:publish might fail if the maximum number of folders is being reached when publishing resources because no more folders can be created.
+This part describes how to use the subdivideHashPathSegment target option in order to circumvent this error.
+
+* Packages: ``Flow``
+
+`TASK: Remove unneeded class imports <https://github.com/neos/flow-development-collection/pull/349>`_
+-----------------------------------------------------------------------------------------------------
+
+This changes removes imprts that are not
+longer needed.
+
+* Packages: ``Flow`` ``Fluid``
+
+`TASK: Don't set a default host for persistence backend <https://github.com/neos/flow-development-collection/pull/308>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Flow won't work on a server without a running MySQL service because a default host is configured.
+This fix will set the default host to an empty string so Flow also runs without a running MySQL service.
+
+FLOW-379 #close
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.4...3.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
