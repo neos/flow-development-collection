@@ -1,0 +1,175 @@
+========
+Flow 3.3
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 3.2 based applications to Flow 3.3.
+
+What has changed
+----------------
+
+Flow 3.3 comes with numerous fixes and improvements. Here's a list of changes that might need special attention when
+upgrading.
+
+In general make sure to run the commands::
+
+ ./flow flow:cache:flush --force
+ ./flow core:migrate
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+when upgrading (see below).
+
+Performance tweaks
+^^^^^^^^^^^^^^^^^^
+
+Validation is now restricted to Aggregate boundaries, so validation will no longer trigger doctrine proxies to be loaded from persistence as they cannot contain changes anyway.
+
+Allow PDO backend for more caches by making it iterable and ignore the cache tables for migrations. This makes the PDO backend a viable option for a multitude of caches.
+
+Whitelisting and blacklisting was introduced to reduce the amount of paths searched for possible locales, which can improve performance a lot depending on your resource folder contents.
+
+New configuration syntax for request patterns & firewall filters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The configuration for authentication provider request patterns and firewall filters was very limited in it's extensibility, therefore it was changed to allow addition of filters.
+The old format is deprecated but still works, even in conjunction with the new one.
+
+Where before you had::
+
+    requestPatterns:
+      controllerObjectName: Some\Package\AdministrationArea\.*
+
+You can now have multiple patterns with this syntax::
+
+   requestPatterns:
+     'Some.Package:AdministrationArea':
+       pattern: ‘ControllerObjectName'
+       patternOptions:
+         'controllerObjectNamePattern': 'Some\Package\AdministrationArea\.*'
+
+
+A code migration takes care of transforming exisitng configurations to the new syntax.
+
+Environment variables can now be referenced in configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can now directly reference any environment variable inside of configuration files (eg. Settings) with the following syntax::
+
+    someSetting: %env:SOME_ENVIRONMENT_VARIABLE%
+
+PHP constants can still be accessed like before::
+
+    someSetting: %SOME_CONSTANT%
+
+Note that in both cases the variable must be all upper case.
+We expect this will allow you to write more portable applications that are configurable by the environment.
+
+Allow configuring trusted proxies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A new HTTP component was introduced that allows to control trusted proxies for your application very specifically to tighten security when run in a proxied environment.
+
+A new setting ``TYPO3.Flow.http.trustedProxies.proxies`` was introduced for confiugring this feature and you can find the default configuration in the Flow package Settings.yaml.
+Please note that the default configuration is very open to retain backwards compatibility with previous versions of Flow. the safest configuration would be to trust no proxies by default but that depends on your environment.
+
+There is no migration as the default configuration should maintain the same functionality as previous versions (that being to allow all kinds of proxy headers).
+
+More consistent translation behavior
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This changes how ``id`` based translations work, so please note that this might chnage your application.
+Before if an id was not found the default value was also put to translation and then returned, now the original default is returned.
+Also in general translation will return empty string instead of NULL values if neither id could be translated nor value was given.
+
+Support PHP 7.0 type declarations on parameters and return types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Proxy classes didn't not correctly pick up the new PHP 7.0 syntax leading to invalid method declarations in proxies. This is now fixed so you can use scalar type declarations and return types in your code.
+
+Updated third party packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We upgraded the symfony components we use to version 2.8 which is also LTS so it matches well with this long term support version.
+
+Doctrine ORM was updated to version 2.5 which is the current stable version, allowing us to finally get rid of a long standing fix for doctrine.
+
+
+
+
+Symlinks can now be relative
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``FileSystemSymlinkTarget`` can now be configured to create relative symlinks for published resources. This obviously needs a common anchestor folder to work.
+
+Other additions and fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- `FEATURE: Allow automatic injection of singleton constructor arguments`
+- `BUGFIX: Fix Property Mapper determination for the ObjectConverter`
+- `BUGFIX: Tweaked “ignoredTables” behavior`
+- `FEATURE: New parameter to keep output ordered by loading order instead of name`
+- `BUGFIX: Input field name for multiple checkbox is generated correctly`
+- `FEATURE: Allow asynchronous execution of commands>`
+- `TASK: Don’t set a default host for persistence backend`
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There haven't been API changes in Flow 3.3 which require your code to be adjusted now. However, some things have changed or are deprecated
+so you should apply the new code migrations to your packages.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+Upgrading the database schema
+-----------------------------
+
+Upgrading the schema is done by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema.
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrate
+
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
+
+If it does not and you have no idea what to do next, please get in touch
+with us.
