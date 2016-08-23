@@ -1,0 +1,18 @@
+`3.3.1 (2016-08-23) <https://github.com/neos/flow-development-collection/releases/tag/3.3.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Doctrine controller should allow empty host for database <https://github.com/neos/flow-development-collection/pull/442>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+The doctrine controller checked for correct configuration of a database
+before calling the doctrine methods. As the drivers all have different
+options the ``host`` is a not a conclusive check. The only thing that
+can be checked is if a driver was set.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.0...3.3.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
