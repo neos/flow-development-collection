@@ -470,16 +470,9 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, \TYPO3\Flow\Annotations\Inject::class);
-                    // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0. Injecting settings by annotation should be done using the InjectConfiguration annotation
-                    if ($injectAnnotation->setting !== null) {
-                        $packageKey = $injectAnnotation->package !== null ? $injectAnnotation->package : $objectConfiguration->getPackageKey();
-                        $configurationPath = rtrim($packageKey . '.' . $injectAnnotation->setting, '.');
-                        $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
-                    } else {
-                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                        $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
-                        $properties[$propertyName] = $configurationProperty;
-                    }
+                    $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                    $properties[$propertyName] = $configurationProperty;
                 }
             }
 

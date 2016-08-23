@@ -66,12 +66,6 @@ class ClassWithInjectedConfiguration
     protected $injectedViewsConfiguration;
 
     /**
-     * @Flow\Inject(setting="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
-     * @var string
-     */
-    protected $legacySetting;
-
-    /**
      * @param array $settings
      * @return void
      */
@@ -151,13 +145,5 @@ class ClassWithInjectedConfiguration
     public function getInjectedViewsConfiguration()
     {
         return $this->injectedViewsConfiguration;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLegacySetting()
-    {
-        return $this->legacySetting;
     }
 }
