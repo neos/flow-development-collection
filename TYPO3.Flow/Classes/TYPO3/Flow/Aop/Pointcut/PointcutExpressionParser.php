@@ -140,31 +140,32 @@ class PointcutExpressionParser
 
             if (strpos($expression, '(') === false) {
                 $this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite);
-            } else {
-                $matches = array();
-                $numberOfMatches = preg_match(self::PATTERN_MATCHPOINTCUTDESIGNATOR, $expression, $matches);
-                if ($numberOfMatches !== 1) {
-                    throw new InvalidPointcutExpressionException('Syntax error: Pointcut designator expected near "' . $expression . '", defined in ' . $this->sourceHint, 1168874739);
-                }
-                $pointcutDesignator = $matches[0];
-                $signaturePattern = $this->getSubstringBetweenParentheses($expression);
-                switch ($pointcutDesignator) {
-                    case 'classAnnotatedWith':
-                    case 'class':
-                    case 'methodAnnotatedWith':
-                    case 'method':
-                    case 'within':
-                    case 'filter':
-                    case 'setting':
-                        $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
-                        $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
-                    break;
-                    case 'evaluate':
-                        $this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
-                    break;
-                    default:
-                        throw new AopException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet), defined in ' . $this->sourceHint, 1168874740);
-                }
+                continue;
+            }
+
+            $matches = array();
+            $numberOfMatches = preg_match(self::PATTERN_MATCHPOINTCUTDESIGNATOR, $expression, $matches);
+            if ($numberOfMatches !== 1) {
+                throw new InvalidPointcutExpressionException('Syntax error: Pointcut designator expected near "' . $expression . '", defined in ' . $this->sourceHint, 1168874739);
+            }
+            $pointcutDesignator = $matches[0];
+            $signaturePattern = $this->getSubstringBetweenParentheses($expression);
+            switch ($pointcutDesignator) {
+                case 'classAnnotatedWith':
+                case 'class':
+                case 'methodAnnotatedWith':
+                case 'method':
+                case 'within':
+                case 'filter':
+                case 'setting':
+                    $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
+                    $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
+                break;
+                case 'evaluate':
+                    $this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
+                break;
+                default:
+                    throw new AopException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet), defined in ' . $this->sourceHint, 1168874740);
             }
         }
         return $pointcutFilterComposite;

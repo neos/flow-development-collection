@@ -73,11 +73,12 @@ class FlashMessageContainer
     {
         if ($severity === null) {
             $this->messages = array();
-        } else {
-            foreach ($this->messages as $index => $message) {
-                if ($message->getSeverity() === $severity) {
-                    unset($this->messages[$index]);
-                }
+            return;
+        }
+
+        foreach ($this->messages as $index => $message) {
+            if ($message->getSeverity() === $severity) {
+                unset($this->messages[$index]);
             }
         }
     }

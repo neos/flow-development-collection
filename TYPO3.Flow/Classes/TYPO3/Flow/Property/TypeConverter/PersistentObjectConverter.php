@@ -142,9 +142,8 @@ class PersistentObjectConverter extends ObjectConverter
             $methodParameter = current($methodParameters);
             if (!isset($methodParameter['type'])) {
                 throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
-            } else {
-                return $methodParameter['type'];
             }
+            return $methodParameter['type'];
         } else {
             throw new InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
         }
@@ -195,15 +194,15 @@ class PersistentObjectConverter extends ObjectConverter
                 $currentPropertyValue = ObjectAccess::getProperty($object, $propertyName);
                 if ($currentPropertyValue === $propertyValue) {
                     continue;
-                } else {
-                    $exceptionMessage = sprintf(
-                        'Property "%s" having a value of type "%s" could not be set in target object of type "%s". The property has no setter and is not equal to the value in the object, in that case it would have been skipped.',
-                        $propertyName,
-                        (is_object($propertyValue) ? TypeHandling::getTypeForValue($propertyValue) : gettype($propertyValue)),
-                        $targetType
-                    );
-                    throw new InvalidTargetException($exceptionMessage, 1421498771);
                 }
+
+                $exceptionMessage = sprintf(
+                    'Property "%s" having a value of type "%s" could not be set in target object of type "%s". The property has no setter and is not equal to the value in the object, in that case it would have been skipped.',
+                    $propertyName,
+                    (is_object($propertyValue) ? TypeHandling::getTypeForValue($propertyValue) : gettype($propertyValue)),
+                    $targetType
+                );
+                throw new InvalidTargetException($exceptionMessage, 1421498771);
             }
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
             if ($result === false) {

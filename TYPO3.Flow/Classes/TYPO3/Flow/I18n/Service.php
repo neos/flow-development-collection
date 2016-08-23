@@ -312,23 +312,27 @@ class Service
                     continue;
                 }
 
-                if ($handle = opendir($currentDirectory)) {
-                    while (false !== ($filename = readdir($handle))) {
-                        if ($filename[0] === '.') {
-                            continue;
-                        }
-                        $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
-                        if (is_dir($pathAndFilename)) {
-                            array_push($directories, Files::getNormalizedPath($pathAndFilename));
-                        } else {
-                            $localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
-                            if ($localeIdentifier !== false) {
-                                $this->localeCollection->addLocale(new Locale($localeIdentifier));
-                            }
-                        }
-                    }
-                    closedir($handle);
+                $handle = opendir($currentDirectory);
+                if ($handle === false) {
+                    continue;
                 }
+
+                while (false !== ($filename = readdir($handle))) {
+                    if ($filename[0] === '.') {
+                        continue;
+                    }
+                    $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
+                    if (is_dir($pathAndFilename)) {
+                        array_push($directories, Files::getNormalizedPath($pathAndFilename));
+                        continue;
+                    }
+
+                    $localeIdentifier = Utility::extractLocaleTagFromFilename($filename);
+                    if ($localeIdentifier !== false) {
+                        $this->localeCollection->addLocale(new Locale($localeIdentifier));
+                    }
+                }
+                closedir($handle);
             }
         }
     }

@@ -223,9 +223,9 @@ class ActionRequest implements RequestInterface
 
             $referringRequest->setArguments(Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
             return $referringRequest;
-        } else {
-            $this->referringRequest = $this->internalArguments['__referrer'];
         }
+
+        $this->referringRequest = $this->internalArguments['__referrer'];
         return $this->referringRequest;
     }
 
@@ -366,9 +366,9 @@ class ActionRequest implements RequestInterface
 
             // Extract the subpackage key from the controller object name to assure that the case is correct.
             return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen($this->controllerSubpackageKey));
-        } else {
-            return $this->controllerSubpackageKey;
         }
+
+        return $this->controllerSubpackageKey;
     }
 
     /**
@@ -407,9 +407,9 @@ class ActionRequest implements RequestInterface
             // Extract the controller name from the controller object name to assure that the case is correct.
             // Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
             return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
-        } else {
-            return $this->controllerName;
         }
+
+        return $this->controllerName;
     }
 
     /**

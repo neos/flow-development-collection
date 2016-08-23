@@ -197,8 +197,7 @@ class Translator
     {
         if (!is_numeric($quantity)) {
             return null;
-        } else {
-            return $this->pluralsReader->getPluralForm($quantity, $locale);
         }
+        return $this->pluralsReader->getPluralForm($quantity, $locale);
     }
 }

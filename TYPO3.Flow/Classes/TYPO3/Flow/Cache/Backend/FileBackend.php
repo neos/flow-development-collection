@@ -406,16 +406,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($this->frozen === true) {
             if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
                 return require_once($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
-            } else {
-                return false;
             }
-        } else {
-            $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            if ($entryIdentifier !== basename($entryIdentifier)) {
-                throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
-            }
-            return ($this->isCacheFileExpired($pathAndFilename)) ? false : require_once($pathAndFilename);
+            return false;
         }
+
+        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+        if ($entryIdentifier !== basename($entryIdentifier)) {
+            throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
+        }
+        return ($this->isCacheFileExpired($pathAndFilename)) ? false : require_once($pathAndFilename);
     }
 
     /**

@@ -377,11 +377,10 @@ class Service
     {
         if ($version->getMigration()->getDescription()) {
             return $version->getMigration()->getDescription();
-        } else {
-            $reflectedClass = new \ReflectionClass($version->getMigration());
-            $parser->parseDocComment($reflectedClass->getDocComment());
-            return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
         }
+        $reflectedClass = new \ReflectionClass($version->getMigration());
+        $parser->parseDocComment($reflectedClass->getDocComment());
+        return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
     }
 
     /**
@@ -415,9 +414,8 @@ class Service
                 }
             }
             return $output;
-        } else {
-            return implode(PHP_EOL, $this->output);
         }
+        return implode(PHP_EOL, $this->output);
     }
 
     /**
@@ -466,24 +464,25 @@ class Service
                     $version->markNotMigrated();
                 }
             }
+            return;
+        }
+
+        if ($configuration->hasVersion($version) === false) {
+            throw MigrationException::unknownMigrationVersion($version);
+        }
+
+        $version = $configuration->getVersion($version);
+
+        if ($markAsMigrated === true) {
+            if ($configuration->hasVersionMigrated($version) === true) {
+                throw new MigrationException(sprintf('The version "%s" is already marked as executed.', $version));
+            }
+            $version->markMigrated();
         } else {
-            if ($configuration->hasVersion($version) === false) {
-                throw MigrationException::unknownMigrationVersion($version);
+            if ($configuration->hasVersionMigrated($version) === false) {
+                throw new MigrationException(sprintf('The version "%s" is already marked as not executed.', $version));
             }
-
-            $version = $configuration->getVersion($version);
-
-            if ($markAsMigrated === true) {
-                if ($configuration->hasVersionMigrated($version) === true) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as executed.', $version));
-                }
-                $version->markMigrated();
-            } else {
-                if ($configuration->hasVersionMigrated($version) === false) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as not executed.', $version));
-                }
-                $version->markNotMigrated();
-            }
+            $version->markNotMigrated();
         }
     }
 

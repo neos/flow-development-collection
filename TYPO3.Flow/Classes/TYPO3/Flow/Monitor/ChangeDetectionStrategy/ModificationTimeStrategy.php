@@ -77,25 +77,22 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
             if ($actualModificationTime !== false) {
                 if ($this->filesAndModificationTimes[$pathAndFilename] === $actualModificationTime) {
                     return self::STATUS_UNCHANGED;
-                } else {
-                    $this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
-                    $this->modificationTimesChanged = true;
-                    return self::STATUS_CHANGED;
                 }
-            } else {
-                unset($this->filesAndModificationTimes[$pathAndFilename]);
-                $this->modificationTimesChanged = true;
-                return self::STATUS_DELETED;
-            }
-        } else {
-            if ($actualModificationTime !== false) {
                 $this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
                 $this->modificationTimesChanged = true;
-                return self::STATUS_CREATED;
-            } else {
-                return self::STATUS_UNCHANGED;
+                return self::STATUS_CHANGED;
             }
+            unset($this->filesAndModificationTimes[$pathAndFilename]);
+            $this->modificationTimesChanged = true;
+            return self::STATUS_DELETED;
         }
+
+        if ($actualModificationTime !== false) {
+            $this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
+            $this->modificationTimesChanged = true;
+            return self::STATUS_CREATED;
+        }
+        return self::STATUS_UNCHANGED;
     }
 
     /**

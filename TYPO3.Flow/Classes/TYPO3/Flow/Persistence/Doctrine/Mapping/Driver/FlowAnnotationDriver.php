@@ -478,9 +478,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         // Truncate a second time if the property name was too long as well:
         if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
             return $this->truncateIdentifier($prefix . $suffix, $this->getMaxIdentifierLength());
-        } else {
-            return $prefix . $suffix;
         }
+
+        return $prefix . $suffix;
     }
 
     /**

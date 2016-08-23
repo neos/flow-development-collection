@@ -76,10 +76,10 @@ class NumberValidator extends AbstractValidator
                 $this->addError('A valid percent number is expected.', 1281452093);
             }
             return;
-        } else {
-            if ($this->numberParser->parseDecimalNumber($value, $locale, $formatLength, $strictMode) === false) {
-                $this->addError('A valid decimal number is expected.', 1281452094);
-            }
+        }
+
+        if ($this->numberParser->parseDecimalNumber($value, $locale, $formatLength, $strictMode) === false) {
+            $this->addError('A valid decimal number is expected.', 1281452094);
         }
     }
 }

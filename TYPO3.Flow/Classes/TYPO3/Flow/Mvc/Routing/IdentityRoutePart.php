@@ -268,20 +268,22 @@ class IdentityRoutePart extends DynamicRoutePart
         foreach ($matches as $match) {
             if (empty($match['dynamic'])) {
                 $pathSegment .= $match['content'];
+                continue;
+            }
+
+            $dynamicPathSegmentParts = explode(':', $match['content']);
+            $propertyPath = $dynamicPathSegmentParts[0];
+            $dynamicPathSegment = ObjectAccess::getPropertyPath($object, $propertyPath);
+            if (!is_object($dynamicPathSegment)) {
+                $pathSegment .= $this->rewriteForUri($dynamicPathSegment);
+                continue;
+            }
+
+            if ($dynamicPathSegment instanceof \DateTimeInterface) {
+                $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
+                $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
             } else {
-                $dynamicPathSegmentParts = explode(':', $match['content']);
-                $propertyPath = $dynamicPathSegmentParts[0];
-                $dynamicPathSegment = ObjectAccess::getPropertyPath($object, $propertyPath);
-                if (is_object($dynamicPathSegment)) {
-                    if ($dynamicPathSegment instanceof \DateTimeInterface) {
-                        $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
-                        $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
-                    } else {
-                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
-                    }
-                } else {
-                    $pathSegment .= $this->rewriteForUri($dynamicPathSegment);
-                }
+                throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
             }
         }
         return $pathSegment;

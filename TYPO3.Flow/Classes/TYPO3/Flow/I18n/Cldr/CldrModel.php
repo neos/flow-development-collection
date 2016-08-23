@@ -139,11 +139,10 @@ class CldrModel
         $data = $this->parsedData;
 
         foreach ($pathElements as $key) {
-            if (isset($data[$key])) {
-                $data = $data[$key];
-            } else {
+            if (!isset($data[$key])) {
                 return false;
             }
+            $data = $data[$key];
         }
 
         return $data;
@@ -183,11 +182,7 @@ class CldrModel
     {
         $data = $this->getRawData($path);
 
-        if (is_array($data)) {
-            return false;
-        } else {
-            return $data;
-        }
+        return is_array($data) ? false : $data;
     }
 
     /**
@@ -305,20 +300,18 @@ class CldrModel
      */
     protected function mergeTwoParsedFiles($firstParsedData, $secondParsedData)
     {
-        $mergedData = $firstParsedData;
-
-        if (is_array($secondParsedData)) {
-            foreach ($secondParsedData as $nodeString => $children) {
-                if (isset($firstParsedData[$nodeString])) {
-                    $mergedData[$nodeString] = $this->mergeTwoParsedFiles($firstParsedData[$nodeString], $children);
-                } else {
-                    $mergedData[$nodeString] = $children;
-                }
-            }
-        } else {
-            $mergedData = $secondParsedData;
+        if (!is_array($secondParsedData)) {
+            return $secondParsedData;
         }
 
+        $mergedData = $firstParsedData;
+        foreach ($secondParsedData as $nodeString => $children) {
+            if (isset($firstParsedData[$nodeString])) {
+                $mergedData[$nodeString] = $this->mergeTwoParsedFiles($firstParsedData[$nodeString], $children);
+            } else {
+                $mergedData[$nodeString] = $children;
+            }
+        }
         return $mergedData;
     }
 
@@ -341,32 +334,32 @@ class CldrModel
         }
 
         foreach ($data as $nodeString => $nodeChildren) {
-            if (self::getNodeName($nodeString) === 'alias') {
-                if (self::getAttributeValue($nodeString, 'source') !== 'locale') {
-                    // Value of source attribute can be 'locale' or particular locale identifier, but we do not support the second mode, ignore it silently
-                    break;
-                }
-
-                $sourcePath = self::getAttributeValue($nodeString, 'path');
-
-                // Change relative path to absolute one
-                $sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
-                $sourcePath = str_replace('\'', '"', $sourcePath);
-                $currentPathNodeNames = explode('/', $currentPath);
-                for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
-                    unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
-                }
-                $sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
-
-                unset($data[$nodeString]);
-                $sourceData = $this->getRawData($sourcePath);
-                if (is_array($sourceData)) {
-                    $data = array_merge($sourceData, $data);
-                }
-                break;
-            } else {
+            if (self::getNodeName($nodeString) !== 'alias') {
                 $data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));
+                continue;
             }
+            if (self::getAttributeValue($nodeString, 'source') !== 'locale') {
+                // Value of source attribute can be 'locale' or particular locale identifier, but we do not support the second mode, ignore it silently
+                break;
+            }
+
+            $sourcePath = self::getAttributeValue($nodeString, 'path');
+
+            // Change relative path to absolute one
+            $sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
+            $sourcePath = str_replace('\'', '"', $sourcePath);
+            $currentPathNodeNames = explode('/', $currentPath);
+            for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
+                unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
+            }
+            $sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
+
+            unset($data[$nodeString]);
+            $sourceData = $this->getRawData($sourcePath);
+            if (is_array($sourceData)) {
+                $data = array_merge($sourceData, $data);
+            }
+            break;
         }
 
         return $data;

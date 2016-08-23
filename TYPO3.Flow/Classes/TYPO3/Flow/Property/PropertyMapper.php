@@ -286,11 +286,10 @@ class PropertyMapper
         if ($converter !== null) {
             return $converter;
         }
-        if (isset($convertersForSource['object'])) {
-            return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetType);
-        } else {
+        if (!isset($convertersForSource['object'])) {
             return null;
         }
+        return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetType);
     }
 
     /**

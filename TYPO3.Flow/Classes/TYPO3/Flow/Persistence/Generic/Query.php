@@ -344,7 +344,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
     /**
      * Performs a logical negation of the given constraint
      *
-     * @param object $constraint Constraint to negate
+     * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint Constraint to negate
      * @return \TYPO3\Flow\Persistence\Generic\Qom\LogicalNot
      * @api
      */
@@ -411,22 +411,20 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
             throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
         }
         if ($caseSensitive) {
-            $comparison = $this->qomFactory->comparison(
+            return $this->qomFactory->comparison(
                 $this->qomFactory->propertyValue($propertyName, '_entity'),
                 \TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LIKE,
                 $operand
             );
-        } else {
-            $comparison = $this->qomFactory->comparison(
-                $this->qomFactory->lowerCase(
-                    $this->qomFactory->propertyValue($propertyName, '_entity')
-                ),
-                \TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LIKE,
-                strtolower($operand)
-            );
         }
 
-        return $comparison;
+        return $this->qomFactory->comparison(
+            $this->qomFactory->lowerCase(
+                $this->qomFactory->propertyValue($propertyName, '_entity')
+            ),
+            \TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LIKE,
+            strtolower($operand)
+        );
     }
 
     /**
@@ -458,7 +456,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to check
-     * @return boolean
+     * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
      * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
      * @api
      */

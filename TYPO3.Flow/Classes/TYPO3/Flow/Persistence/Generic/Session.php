@@ -164,9 +164,8 @@ class Session
 
         if ($cleanData['multivalue']) {
             return $this->isMultiValuedPropertyDirty($cleanData, $currentValue);
-        } else {
-            return $this->isSingleValuedPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
         }
+        return $this->isSingleValuedPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
     }
 
     /**

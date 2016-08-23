@@ -33,29 +33,28 @@ class DisjunctionValidator extends AbstractCompositeValidator
     public function validate($value)
     {
         $validators = $this->getValidators();
-        if ($validators->count() > 0) {
-            $result = null;
-            foreach ($validators as $validator) {
-                $validatorResult = $validator->validate($value);
-                if ($validatorResult->hasErrors()) {
-                    if ($result === null) {
-                        $result = $validatorResult;
-                    } else {
-                        $result->merge($validatorResult);
-                    }
-                } else {
-                    if ($result === null) {
-                        $result = $validatorResult;
-                    } else {
-                        $result->clear();
-                    }
-                    break;
-                }
-            }
-        } else {
-            $result = new \TYPO3\Flow\Error\Result();
+        if ($validators->count() === 0) {
+            return new \TYPO3\Flow\Error\Result();
         }
 
+        $result = null;
+        foreach ($validators as $validator) {
+            $validatorResult = $validator->validate($value);
+            if (!$validatorResult->hasErrors()) {
+                if ($result === null) {
+                    $result = $validatorResult;
+                } else {
+                    $result->clear();
+                }
+                return $result;
+            }
+
+            if ($result === null) {
+                $result = $validatorResult;
+            } else {
+                $result->merge($validatorResult);
+            }
+        }
         return $result;
     }
 }

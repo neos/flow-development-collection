@@ -374,14 +374,14 @@ class FileSystemTarget implements TargetInterface
     protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object)
     {
         if ($object->getRelativePublicationPath() !== '') {
-            $pathAndFilename = $object->getRelativePublicationPath() . $object->getFilename();
+            return $object->getRelativePublicationPath() . $object->getFilename();
+        }
+
+        if ($this->subdivideHashPathSegment) {
+            $sha1Hash = $object->getSha1();
+            $pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
         } else {
-            if ($this->subdivideHashPathSegment) {
-                $sha1Hash = $object->getSha1();
-                $pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
-            } else {
-                $pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
-            }
+            $pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
         }
         return $pathAndFilename;
     }

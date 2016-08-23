@@ -215,7 +215,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      */
     public function getFileExtension()
     {
-        $pathInfo = pathInfo($this->filename);
+        $pathInfo = pathinfo($this->filename);
         return isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
     }
 
@@ -265,9 +265,8 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
     {
         if ($this->mediaType === null) {
             return MediaTypes::getMediaTypeFromFilename($this->filename);
-        } else {
-            return $this->mediaType;
         }
+        return $this->mediaType;
     }
 
     /**

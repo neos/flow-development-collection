@@ -61,16 +61,16 @@ class Ip
 
         if ($bits === null) {
             return ($ip === $subnet);
-        } else {
-            for ($i = 0; $i < strlen($ip); $i++) {
-                $mask = 0;
-                if ($bits > 0) {
-                    $mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
-                    $bits -= 8;
-                }
-                if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
-                    return false;
-                }
+        }
+
+        for ($i = 0; $i < strlen($ip); $i++) {
+            $mask = 0;
+            if ($bits > 0) {
+                $mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
+                $bits -= 8;
+            }
+            if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
+                return false;
             }
         }
         return true;

@@ -135,9 +135,8 @@ class ObjectConverter extends AbstractTypeConverter
             $methodParameter = current($methodParameters);
             if (!isset($methodParameter['type'])) {
                 throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
-            } else {
-                return $methodParameter['type'];
             }
+            return $methodParameter['type'];
         } else {
             $targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
             if (in_array($propertyName, $targetPropertyNames)) {
@@ -242,24 +241,24 @@ class ObjectConverter extends AbstractTypeConverter
         $constructorArguments = array();
         $className = $this->objectManager->getClassNameByObjectName($objectType);
         $constructorSignature = $this->getConstructorArgumentsForClass($className);
-        if (count($constructorSignature)) {
-            foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentReflection) {
-                if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
-                    $constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
-                    unset($possibleConstructorArgumentValues[$constructorArgumentName]);
-                } elseif ($constructorArgumentReflection['optional'] === true) {
-                    $constructorArguments[] = $constructorArgumentReflection['defaultValue'];
-                } elseif ($this->objectManager->isRegistered($constructorArgumentReflection['type']) && $this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
-                    $constructorArguments[] = $this->objectManager->get($constructorArgumentReflection['type']);
-                } else {
-                    throw new InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
-                }
-            }
-            $classReflection = new \ReflectionClass($className);
-            return $classReflection->newInstanceArgs($constructorArguments);
-        } else {
+        if (count($constructorSignature) === 0) {
             return new $className();
         }
+
+        foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentReflection) {
+            if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
+                $constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
+                unset($possibleConstructorArgumentValues[$constructorArgumentName]);
+            } elseif ($constructorArgumentReflection['optional'] === true) {
+                $constructorArguments[] = $constructorArgumentReflection['defaultValue'];
+            } elseif ($this->objectManager->isRegistered($constructorArgumentReflection['type']) && $this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
+                $constructorArguments[] = $this->objectManager->get($constructorArgumentReflection['type']);
+            } else {
+                throw new InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
+            }
+        }
+        $classReflection = new \ReflectionClass($className);
+        return $classReflection->newInstanceArgs($constructorArguments);
     }
 
     /**

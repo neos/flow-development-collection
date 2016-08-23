@@ -105,9 +105,8 @@ class Utility
             return $filenameParts[0];
         } elseif (preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $filenameParts[count($filenameParts) - 2]) === 1) {
             return $filenameParts[count($filenameParts) - 2];
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

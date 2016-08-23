@@ -104,9 +104,8 @@ class Response extends \TYPO3\Flow\Mvc\Response
         }
         if (DIRECTORY_SEPARATOR !== '\\') {
             return function_exists('posix_isatty') && posix_isatty(STDOUT);
-        } else {
-            return getenv('ANSICON') !== false;
         }
+        return getenv('ANSICON') !== false;
     }
 
     /**

@@ -78,9 +78,8 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
     {
         if ($this->isInterface === true) {
             return (array_search($this->interfaceOrClassName, class_implements($className)) !== false);
-        } else {
-            return ($className === $this->interfaceOrClassName || is_subclass_of($className, $this->interfaceOrClassName));
         }
+        return ($className === $this->interfaceOrClassName || is_subclass_of($className, $this->interfaceOrClassName));
     }
 
     /**

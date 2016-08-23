@@ -431,55 +431,58 @@ class ConfigurationBuilder
                 }
             }
             foreach ($classMethodNames as $methodName) {
-                if (isset($methodName[6]) && strpos($methodName, 'inject') === 0 && $methodName[6] === strtoupper($methodName[6])) {
-                    $propertyName = lcfirst(substr($methodName, 6));
-
-                    $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, \TYPO3\Flow\Annotations\Autowiring::class);
-                    if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
-                        continue;
-                    }
-
-                    if ($methodName === 'injectSettings') {
-                        $packageKey = $objectConfiguration->getPackageKey();
-                        if ($packageKey !== null) {
-                            $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $packageKey), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
-                        }
-                    } else {
-                        if (array_key_exists($propertyName, $properties)) {
-                            continue;
-                        }
-                        $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-                        if (count($methodParameters) !== 1) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
-                            continue;
-                        }
-                        $methodParameter = array_pop($methodParameters);
-                        if ($methodParameter['class'] === null) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
-                            continue;
-                        }
-                        $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
-                    }
+                if (!isset($methodName[6]) || strpos($methodName, 'inject') !== 0 || $methodName[6] !== strtoupper($methodName[6])) {
+                    continue;
                 }
+                $propertyName = lcfirst(substr($methodName, 6));
+
+                $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, \TYPO3\Flow\Annotations\Autowiring::class);
+                if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
+                    continue;
+                }
+
+                if ($methodName === 'injectSettings') {
+                    $packageKey = $objectConfiguration->getPackageKey();
+                    if ($packageKey !== null) {
+                        $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $packageKey), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+                    }
+                    continue;
+                }
+                if (array_key_exists($propertyName, $properties)) {
+                    continue;
+                }
+                $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+                if (count($methodParameters) !== 1) {
+                    $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
+                    continue;
+                }
+                $methodParameter = array_pop($methodParameters);
+                if ($methodParameter['class'] === null) {
+                    $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
+                    continue;
+                }
+                $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
             }
 
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, \TYPO3\Flow\Annotations\Inject::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new \TYPO3\Flow\Object\Exception(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
-                if (!array_key_exists($propertyName, $properties)) {
-                    /** @var Inject $injectAnnotation */
-                    $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, \TYPO3\Flow\Annotations\Inject::class);
-                    // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0. Injecting settings by annotation should be done using the InjectConfiguration annotation
-                    if ($injectAnnotation->setting !== null) {
-                        $packageKey = $injectAnnotation->package !== null ? $injectAnnotation->package : $objectConfiguration->getPackageKey();
-                        $configurationPath = rtrim($packageKey . '.' . $injectAnnotation->setting, '.');
-                        $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
-                    } else {
-                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                        $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
-                        $properties[$propertyName] = $configurationProperty;
-                    }
+                if (array_key_exists($propertyName, $properties)) {
+                    continue;
+                }
+
+                /** @var Inject $injectAnnotation */
+                $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, \TYPO3\Flow\Annotations\Inject::class);
+                // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0. Injecting settings by annotation should be done using the InjectConfiguration annotation
+                if ($injectAnnotation->setting !== null) {
+                    $packageKey = $injectAnnotation->package !== null ? $injectAnnotation->package : $objectConfiguration->getPackageKey();
+                    $configurationPath = rtrim($packageKey . '.' . $injectAnnotation->setting, '.');
+                    $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+                } else {
+                    $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                    $properties[$propertyName] = $configurationProperty;
                 }
             }
 

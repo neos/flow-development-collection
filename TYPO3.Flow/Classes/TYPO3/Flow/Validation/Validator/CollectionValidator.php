@@ -56,9 +56,8 @@ class CollectionValidator extends GenericObjectValidator
                 return $this->result;
             } elseif (is_object($value) && $this->isValidatedAlready($value)) {
                 return $this->result;
-            } else {
-                $this->isValid($value);
             }
+            $this->isValid($value);
         }
         return $this->result;
     }

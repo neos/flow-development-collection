@@ -45,15 +45,16 @@ class ComponentChainFactory
         foreach ($sortedChainConfiguration as $componentName => $configuration) {
             $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : array();
             if (isset($configuration['chain'])) {
-                $component = $this->create($configuration['chain']);
-            } else {
-                if (!isset($configuration['component'])) {
-                    throw new Exception(sprintf('Component chain could not be created because no component class name is configured for component "%s"', $componentName), 1401718283);
-                }
-                $component = $this->objectManager->get($configuration['component'], $componentOptions);
-                if (!$component instanceof ComponentInterface) {
-                    throw new Exception(sprintf('Component chain could not be created because the class "%s" does not implement the ComponentInterface, in component "%s" does not implement', $configuration['component'], $componentName), 1401718283);
-                }
+                $chainComponents[] = $this->create($configuration['chain']);
+                continue;
+            }
+
+            if (!isset($configuration['component'])) {
+                throw new Exception(sprintf('Component chain could not be created because no component class name is configured for component "%s"', $componentName), 1401718283);
+            }
+            $component = $this->objectManager->get($configuration['component'], $componentOptions);
+            if (!$component instanceof ComponentInterface) {
+                throw new Exception(sprintf('Component chain could not be created because the class "%s" does not implement the ComponentInterface, in component "%s" does not implement', $configuration['component'], $componentName), 1401718283);
             }
             $chainComponents[] = $component;
         }

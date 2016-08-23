@@ -239,15 +239,15 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
             foreach ($value as $key => $element) {
                 if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
                     $array[$key] = $this->transformValue($element, $configuration['_descendAll']);
-                } else {
-                    if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) {
-                        continue;
-                    }
-                    if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) {
-                        continue;
-                    }
-                    $array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
+                    continue;
                 }
+                if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) {
+                    continue;
+                }
+                if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) {
+                    continue;
+                }
+                $array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
             }
             return $array;
         } elseif (is_object($value) && $value instanceof \JsonSerializable) {
@@ -271,41 +271,41 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
     {
         if ($object instanceof \DateTimeInterface) {
             return $object->format(\DateTime::ISO8601);
-        } else {
-            $propertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($object);
-
-            $propertiesToRender = array();
-            foreach ($propertyNames as $propertyName) {
-                if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
-                    continue;
-                }
-                if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) {
-                    continue;
-                }
-
-                $propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
-
-                if (!is_array($propertyValue) && !is_object($propertyValue)) {
-                    $propertiesToRender[$propertyName] = $propertyValue;
-                } elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
-                    $propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
-                }
-            }
-            if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === true) {
-                if (isset($configuration['_exposedObjectIdentifierKey']) && strlen($configuration['_exposedObjectIdentifierKey']) > 0) {
-                    $identityKey = $configuration['_exposedObjectIdentifierKey'];
-                } else {
-                    $identityKey = '__identity';
-                }
-                $propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
-            }
-            if (isset($configuration['_exposeClassName']) && ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED || $configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_UNQUALIFIED)) {
-                $className = TypeHandling::getTypeForValue($object);
-                $classNameParts = explode('\\', $className);
-                $propertiesToRender['__class'] = ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED ? $className : array_pop($classNameParts));
-            }
-
-            return $propertiesToRender;
         }
+
+        $propertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($object);
+
+        $propertiesToRender = array();
+        foreach ($propertyNames as $propertyName) {
+            if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
+                continue;
+            }
+            if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) {
+                continue;
+            }
+
+            $propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
+
+            if (!is_array($propertyValue) && !is_object($propertyValue)) {
+                $propertiesToRender[$propertyName] = $propertyValue;
+            } elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
+                $propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
+            }
+        }
+        if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === true) {
+            if (isset($configuration['_exposedObjectIdentifierKey']) && strlen($configuration['_exposedObjectIdentifierKey']) > 0) {
+                $identityKey = $configuration['_exposedObjectIdentifierKey'];
+            } else {
+                $identityKey = '__identity';
+            }
+            $propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
+        }
+        if (isset($configuration['_exposeClassName']) && ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED || $configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_UNQUALIFIED)) {
+            $className = TypeHandling::getTypeForValue($object);
+            $classNameParts = explode('\\', $className);
+            $propertiesToRender['__class'] = ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED ? $className : array_pop($classNameParts));
+        }
+
+        return $propertiesToRender;
     }
 }

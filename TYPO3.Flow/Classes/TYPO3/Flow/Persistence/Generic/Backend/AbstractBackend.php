@@ -445,41 +445,42 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
                 'multivalue' => false,
                 'value' => $this->processObject($propertyValue, $identifier)
             );
-        } else {
-            switch ($propertyMetaData['type']) {
-                case 'DateTime':
-                    $propertyData[$propertyName] = array(
-                        'multivalue' => false,
-                        'value' => $this->processDateTime($propertyValue)
-                    );
-                break;
-                case 'Doctrine\Common\Collections\Collection':
-                case 'Doctrine\Common\Collections\ArrayCollection':
-                    $propertyValue = $propertyValue === null ? array() : $propertyValue->toArray();
-                case 'array':
-                    $propertyData[$propertyName] = array(
-                        'multivalue' => true,
-                        'value' => $this->processArray($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
-                    );
-                break;
-                case 'SplObjectStorage':
-                    $propertyData[$propertyName] = array(
-                        'multivalue' => true,
-                        'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
-                    );
-                break;
-                default:
-                    if ($propertyValue === null && !\TYPO3\Flow\Utility\TypeHandling::isSimpleType($propertyMetaData['type'])) {
-                        $this->removeDeletedReference($object, $propertyName, $propertyMetaData);
-                    }
-                    $propertyData[$propertyName] = array(
-                        'multivalue' => false,
-                        'value' => $propertyValue
-                    );
-                break;
-            }
-            $propertyData[$propertyName]['type'] = $propertyMetaData['type'];
+            return;
         }
+
+        switch ($propertyMetaData['type']) {
+            case 'DateTime':
+                $propertyData[$propertyName] = array(
+                    'multivalue' => false,
+                    'value' => $this->processDateTime($propertyValue)
+                );
+            break;
+            case 'Doctrine\Common\Collections\Collection':
+            case 'Doctrine\Common\Collections\ArrayCollection':
+                $propertyValue = $propertyValue === null ? array() : $propertyValue->toArray();
+            case 'array':
+                $propertyData[$propertyName] = array(
+                    'multivalue' => true,
+                    'value' => $this->processArray($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
+                );
+            break;
+            case 'SplObjectStorage':
+                $propertyData[$propertyName] = array(
+                    'multivalue' => true,
+                    'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
+                );
+            break;
+            default:
+                if ($propertyValue === null && !\TYPO3\Flow\Utility\TypeHandling::isSimpleType($propertyMetaData['type'])) {
+                    $this->removeDeletedReference($object, $propertyName, $propertyMetaData);
+                }
+                $propertyData[$propertyName] = array(
+                    'multivalue' => false,
+                    'value' => $propertyValue
+                );
+            break;
+        }
+        $propertyData[$propertyName]['type'] = $propertyMetaData['type'];
     }
 
     /**
@@ -779,8 +780,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
     {
         if ($dateTime instanceof \DateTimeInterface) {
             return $dateTime->getTimestamp();
-        } else {
-            return null;
         }
+        return null;
     }
 }

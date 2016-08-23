@@ -94,16 +94,17 @@ class DoctrineCommandController extends CommandController
         $classesAndErrors = $this->doctrineService->validateMapping();
         if (count($classesAndErrors) === 0) {
             $this->outputLine('Mapping validation passed, no errors were found.');
-        } else {
-            $this->outputLine('Mapping validation FAILED!');
-            foreach ($classesAndErrors as $className => $errors) {
-                $this->outputLine('  %s', array($className));
-                foreach ($errors as $errorMessage) {
-                    $this->outputLine('    %s', array($errorMessage));
-                }
-            }
-            $this->quit(1);
+            return;
         }
+
+        $this->outputLine('Mapping validation FAILED!');
+        foreach ($classesAndErrors as $className => $errors) {
+            $this->outputLine('  %s', array($className));
+            foreach ($errors as $errorMessage) {
+                $this->outputLine('    %s', array($errorMessage));
+            }
+        }
+        $this->quit(1);
     }
 
     /**

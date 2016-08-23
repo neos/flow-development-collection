@@ -117,9 +117,9 @@ class PrivilegeManager implements PrivilegeManagerInterface
         if (count($effectivePrivilegeIdentifiersWithPermission) === 0) {
             $reason = sprintf('No privilege of type "%s" matched.', $privilegeType);
             return true;
-        } else {
-            $reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)', count($effectivePrivilegeIdentifiersWithPermission), implode(chr(10), $effectivePrivilegeIdentifiersWithPermission), $accessGrants, $accessDenies, $accessAbstains);
         }
+
+        $reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)', count($effectivePrivilegeIdentifiersWithPermission), implode(chr(10), $effectivePrivilegeIdentifiersWithPermission), $accessGrants, $accessDenies, $accessAbstains);
         if ($accessDenies > 0) {
             return false;
         }

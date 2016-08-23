@@ -98,8 +98,8 @@ class ResourcePublisher
 
         if (isset($backtraceStep['file'])) {
             return sprintf(' in file %s, line %s', $backtraceStep['file'], $backtraceStep['line']);
-        } else {
-            return '';
         }
+
+        return '';
     }
 }

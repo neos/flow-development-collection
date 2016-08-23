@@ -413,33 +413,7 @@ class ActionController extends AbstractController
         if (!$validationResult->hasErrors()) {
             $actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
         } else {
-            $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
-            if (isset($actionIgnoredArguments[$this->actionMethodName])) {
-                $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
-            } else {
-                $ignoredArguments = array();
-            }
-
-            // if there exists more errors than in ignoreValidationAnnotations => call error method
-            // else => call action method
-            $shouldCallActionMethod = true;
-            /** @var Result $subValidationResult */
-            foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
-                if (!$subValidationResult->hasErrors()) {
-                    continue;
-                }
-                if (isset($ignoredArguments[$argumentName]) && $subValidationResult->getErrors(\TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError::class) === array()) {
-                    continue;
-                }
-                $shouldCallActionMethod = false;
-                break;
-            }
-
-            if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
-            } else {
-                $actionResult = call_user_func(array($this, $this->errorMethodName));
-            }
+            $actionResult = $this->callActionMethodIfAllFailedValidationsAreIgnored($validationResult, $preparedArguments);
         }
 
         if ($actionResult === null && $this->view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
@@ -705,5 +679,42 @@ class ActionController extends AbstractController
     protected function getErrorFlashMessage()
     {
         return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', null, array(get_class($this), $this->actionMethodName));
+    }
+
+    /**
+     * @param Result $validationResult
+     * @param array $preparedArguments
+     * @return mixed
+     */
+    private function callActionMethodIfAllFailedValidationsAreIgnored(Result $validationResult, array $preparedArguments)
+    {
+        $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
+        if (isset($actionIgnoredArguments[$this->actionMethodName])) {
+            $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
+        } else {
+            $ignoredArguments = array();
+        }
+
+        // if there exists more errors than in ignoreValidationAnnotations => call error method
+        // else => call action method
+        $shouldCallActionMethod = true;
+        /** @var Result $subValidationResult */
+        foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
+            if (!$subValidationResult->hasErrors()) {
+                continue;
+            }
+            if (isset($ignoredArguments[$argumentName]) && $subValidationResult->getErrors(\TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError::class) === array()) {
+                continue;
+            }
+            $shouldCallActionMethod = false;
+            break;
+        }
+
+        if ($shouldCallActionMethod) {
+            $actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+        } else {
+            $actionResult = call_user_func(array($this, $this->errorMethodName));
+        }
+        return $actionResult;
     }
 }

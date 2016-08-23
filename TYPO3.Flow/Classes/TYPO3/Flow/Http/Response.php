@@ -396,11 +396,11 @@ class Response extends AbstractMessage implements ResponseInterface
     {
         if ($this->headers->has('Age')) {
             return $this->headers->get('Age');
-        } else {
-            $dateTimestamp = $this->headers->get('Date')->getTimestamp();
-            $nowTimestamp = $this->now->getTimestamp();
-            return ($nowTimestamp > $dateTimestamp) ? ($nowTimestamp - $dateTimestamp) : 0;
         }
+
+        $dateTimestamp = $this->headers->get('Date')->getTimestamp();
+        $nowTimestamp = $this->now->getTimestamp();
+        return ($nowTimestamp > $dateTimestamp) ? ($nowTimestamp - $dateTimestamp) : 0;
     }
 
     /**

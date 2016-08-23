@@ -192,9 +192,8 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
         $identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
         if ($success === false) {
             return array();
-        } else {
-            return (array) $identifiers;
         }
+        return (array) $identifiers;
     }
 
     /**

@@ -705,15 +705,16 @@ class Request extends AbstractMessage
         foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
             if (!is_array($fieldInformation['error'])) {
                 $fieldPaths[] = array($firstLevelFieldName);
-            } else {
-                $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
-                array_walk($newFieldPaths,
-                    function (&$value) {
-                        $value = explode('/', $value);
-                    }
-                );
-                $fieldPaths = array_merge($fieldPaths, $newFieldPaths);
+                continue;
             }
+
+            $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
+            array_walk($newFieldPaths,
+                function (&$value) {
+                    $value = explode('/', $value);
+                }
+            );
+            $fieldPaths = array_merge($fieldPaths, $newFieldPaths);
         }
 
         foreach ($fieldPaths as $fieldPath) {
@@ -776,19 +777,20 @@ class Request extends AbstractMessage
         $flattenedAcceptedTypes = array();
         $valuesWithoutQualityValue = array(array(), array(), array(), array());
         foreach ($acceptedTypes as $typeAndQuality) {
-            if ($typeAndQuality[1] === '') {
-                $parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
-                if ($parsedType['type'] === '*') {
-                    $valuesWithoutQualityValue[3][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['subtype'] === '*') {
-                    $valuesWithoutQualityValue[2][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['parameters'] === array()) {
-                    $valuesWithoutQualityValue[1][$typeAndQuality[0]] = true;
-                } else {
-                    $valuesWithoutQualityValue[0][$typeAndQuality[0]] = true;
-                }
-            } else {
+            if ($typeAndQuality[1] !== '') {
                 $flattenedAcceptedTypes[$typeAndQuality[0]] = $typeAndQuality[1];
+                continue;
+            }
+
+            $parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
+            if ($parsedType['type'] === '*') {
+                $valuesWithoutQualityValue[3][$typeAndQuality[0]] = true;
+            } elseif ($parsedType['subtype'] === '*') {
+                $valuesWithoutQualityValue[2][$typeAndQuality[0]] = true;
+            } elseif ($parsedType['parameters'] === array()) {
+                $valuesWithoutQualityValue[1][$typeAndQuality[0]] = true;
+            } else {
+                $valuesWithoutQualityValue[0][$typeAndQuality[0]] = true;
             }
         }
         $valuesWithoutQualityValue = array_merge(array_keys($valuesWithoutQualityValue[0]), array_keys($valuesWithoutQualityValue[1]), array_keys($valuesWithoutQualityValue[2]), array_keys($valuesWithoutQualityValue[3]));

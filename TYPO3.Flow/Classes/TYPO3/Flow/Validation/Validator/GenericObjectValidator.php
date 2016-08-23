@@ -93,11 +93,10 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
         }
         if ($this->validatedInstancesContainer->contains($object)) {
             return true;
-        } else {
-            $this->validatedInstancesContainer->attach($object);
-
-            return false;
         }
+
+        $this->validatedInstancesContainer->attach($object);
+        return false;
     }
 
     /**
@@ -175,8 +174,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     {
         if ($propertyName !== null) {
             return (isset($this->propertyValidators[$propertyName])) ? $this->propertyValidators[$propertyName] : array();
-        } else {
-            return $this->propertyValidators;
         }
+        return $this->propertyValidators;
     }
 }
