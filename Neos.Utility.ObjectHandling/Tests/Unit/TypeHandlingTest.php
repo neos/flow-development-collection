@@ -54,6 +54,10 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
             array('SplObjectStorage<\TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
             array('Doctrine\Common\Collections\Collection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'TYPO3\Foo\Bar')),
             array('Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo\Bar')),
+
+            // Types might also contain underscores at various points.
+            array('Doctrine\Common\Collections\Special_Class_With_Underscores', array('type' => 'Doctrine\Common\Collections\Special_Class_With_Underscores', 'elementType' => null)),
+            array('Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo_\Bar>', array('type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo_\Bar')),
         );
     }
 
@@ -88,6 +92,9 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
             array('SplObjectStorage<\object>', 'SplObjectStorage'),
             array('Doctrine\Common\Collections\Collection<ElementType>', 'Doctrine\Common\Collections\Collection'),
             array('Doctrine\Common\Collections\ArrayCollection<>', 'Doctrine\Common\Collections\ArrayCollection'),
+
+            // Types might also contain underscores at various points.
+            array('Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection'),
         );
     }
 
