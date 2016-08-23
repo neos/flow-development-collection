@@ -25,7 +25,7 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function parseTypeThrowsExceptionOnInvalidType()
     {
-        TypeHandling::parseType('something not a type');
+        TypeHandling::parseType('$something');
     }
 
     /**
@@ -48,12 +48,14 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
             array('DateTime', array('type' => 'DateTime', 'elementType' => null)),
             array('TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => null)),
             array('\TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => null)),
+            array('\stdClass', array('type' => 'stdClass', 'elementType' => null)),
             array('array<integer>', array('type' => 'array', 'elementType' => 'integer')),
             array('ArrayObject<string>', array('type' => 'ArrayObject', 'elementType' => 'string')),
             array('SplObjectStorage<TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
             array('SplObjectStorage<\TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
             array('Doctrine\Common\Collections\Collection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'TYPO3\Foo\Bar')),
             array('Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo\Bar')),
+            array('\SomeClass with appendix', array('type' => 'SomeClass', 'elementType' => null)),
 
             // Types might also contain underscores at various points.
             array('Doctrine\Common\Collections\Special_Class_With_Underscores', array('type' => 'Doctrine\Common\Collections\Special_Class_With_Underscores', 'elementType' => null)),
