@@ -472,7 +472,7 @@ TYPO3:
             extensionBlacklist: *uploadExtensionBlacklist
 
             # If the symlinks should be relative instead of absolute
-            relativeSymlinks: false
+            #relativeSymlinks: false
 
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
@@ -486,7 +486,7 @@ TYPO3:
             subdivideHashPathSegment: false
 
             # If the symlinks should be relative instead of absolute
-            relativeSymlinks: false
+            #relativeSymlinks: false
 
     security:
 

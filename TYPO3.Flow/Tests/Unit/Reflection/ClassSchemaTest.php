@@ -159,8 +159,6 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function invalidPropertyTypes()
     {
         return array(
-            array('stdClass'),
-            array('\someObject'),
             array('string<string>'),
             array('int<TYPO3\Flow\Baz>')
         );
