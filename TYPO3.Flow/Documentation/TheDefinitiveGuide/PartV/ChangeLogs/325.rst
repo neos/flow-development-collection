@@ -1,0 +1,128 @@
+`3.2.5 (2016-08-23) <https://github.com/neos/flow-development-collection/releases/tag/3.2.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Type Handling should not break when classnames contain underscores, or when classnames are lowerCamelCase <https://github.com/neos/flow-development-collection/pull/441>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+While underscores in class names are not used in Flow code itself, it might
+happen that TypeHandling is used outside Flow - where having underscores
+in class names is perfectly valid.
+
+This change ensures that underscores in class names are recognized properly.
+
+* Packages: ``Flow`` ``ObjectHandling``
+
+`TASK: Adjust unit tests to use "real mocks" <https://github.com/neos/flow-development-collection/pull/429>`_
+-------------------------------------------------------------------------------------------------------------
+
+Mocking a "virtual" class is no longer allowed, so we use fixture classes.
+
+* Packages: ``Flow``
+
+`BUGFIX: Require latest version of neos/composer-plugin <https://github.com/neos/flow-development-collection/pull/414>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Require version 2.x of the ``composer-plugin`` package. Previous versions
+use the ``excludeClasses`` setting which has been deprecated with Flow 3.0.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix Property Mapper determination for the ObjectConverter <https://github.com/neos/flow-development-collection/pull/397>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+When mapping a plain object with the ``ObjectConverter``, root namespace 
+properties like ``\\DateTime`` do not find a converter. This is because
+the leading backslash is not removed by the ``ObjectConverter`` (i.e. we
+looked for a ``\\DateTimeConverter`` instead of the ``DateTimeConverter``
+
+* Packages: ``Flow``
+
+`BUGFIX: Input field name for multiple checkbox is generated correctly <https://github.com/neos/flow-development-collection/pull/386>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Checkboxes that were bound to collection properties or had the `multiple` attribute set,
+were generating invalid input field names like this:
+
+    <input type="checkbox" name="post[tags][__identity][]" ...>
+
+Since the internal identity is not required for checkboxes, it is stripped from the generated name.
+Also, any such checkboxes now avoid generating an empty value hidden field, as this will at most
+lead to empty values being additionally submitted to the collection property.
+
+FLOW-419 #close
+
+* Packages: ``Fluid``
+
+`BUGFIX: Use Unix paths in InstallerScripts <https://github.com/neos/flow-development-collection/pull/400>`_
+------------------------------------------------------------------------------------------------------------
+
+The Files utility used by InstallerScripts will use these constants
+to transform an absolute path to a relative one. As the compared path
+will always be a Unix path, the path to replace needs to be completely
+Unix as well to make replacing working. This prevents "mkdir(): invalid
+arguments" errors on Windows.
+
+Similar to neos/flow-development-collection#399 , but then for the 3.0
+version.
+
+* Packages: ``Flow``
+
+`BUGFIX: Use Unix paths in InstallerScripts <https://github.com/neos/flow-development-collection/pull/399>`_
+------------------------------------------------------------------------------------------------------------
+
+The Files utility used by InstallerScripts will use these constants
+to transform an absolute path to a relative one. As the compared path
+will always be a Unix path, the path to replace needs to be completely
+Unix as well to make replacing working. This prevents "mkdir(): invalid
+arguments" errors on Windows.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow SliceOperation to work on \\Iterator <https://github.com/neos/flow-development-collection/pull/398>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The Eel slice operation only works with arrays so far. Since the FlowQuery
+context can be anything that implements `\\Iterator`, we now convert iterators
+to arrays if they are passed in as the context.
+
+* Packages: ``Eel`` ``Flow``
+
+`BUGFIX: Check if array is \`\`null\`\` at the beginning of JSON conversion <https://github.com/neos/flow-development-collection/pull/395>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Prevent an exception to be thrown if the array passed for conversion is ``null``.
+
+* Packages: ``Flow``
+
+`TASK: Fix documentation about Privilege Parameters <https://github.com/neos/flow-development-collection/pull/392>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Fixes the `Policy.yaml` examples in the Privilege Parameters section of the Security chapter.
+
+FLOW-459 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: FlowException is no imported <https://github.com/neos/flow-development-collection/pull/391>`_
+------------------------------------------------------------------------------------------------------
+
+This change fixes a missing class import introduced with PR #376 into the 2.3 branch.
+
+* Packages: ``Flow``
+
+`BUGIX: Remove temporary file in importTemporaryFile() <https://github.com/neos/flow-development-collection/pull/389>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The temporary file used to be gone after importing, but since it only is
+moved when the target does not yet exist, this changed. Now the file is
+unlinked in that case.
+
+FLOW-378 #close
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.4...3.2.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
