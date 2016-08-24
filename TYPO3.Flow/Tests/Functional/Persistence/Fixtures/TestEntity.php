@@ -17,7 +17,6 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity as ImportedSubEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
 
 /**
  * A simple entity for persistence tests

@@ -203,8 +203,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if ($entityAnnotation->readOnly) {
                 $metadata->markReadOnly();
             }
-        } elseif (isset($classAnnotations[\TYPO3\Flow\Annotations\ValueObject::class])) {
-            $valueObjectAnnotation = $classAnnotations[\TYPO3\Flow\Annotations\ValueObject::class];
+        } elseif (isset($classAnnotations[Flow\ValueObject::class])) {
+            $valueObjectAnnotation = $classAnnotations[Flow\ValueObject::class];
             if ($valueObjectAnnotation->embedded === true) {
                 $metadata->isEmbeddedClass = true;
             } else {
@@ -742,7 +742,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                                         $mapping['class'] = $propertyMetaData['type'];
                                         $mapping['columnPrefix'] = $mapping['columnName'];
                                         $metadata->mapEmbedded($mapping);
-                                        return;
+                                        continue 2;
                                     }
                                     $mapping['type'] = 'object';
                                 } elseif (class_exists($propertyMetaData['type'])) {
