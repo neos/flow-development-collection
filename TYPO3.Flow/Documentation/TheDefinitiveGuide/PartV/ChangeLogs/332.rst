@@ -1,0 +1,19 @@
+`3.3.2 (2016-08-24) <https://github.com/neos/flow-development-collection/releases/tag/3.3.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Type Handling should not break when classnames contain underscores, or when classnames are lowerCamelCase <https://github.com/neos/flow-development-collection/pull/441>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+While underscores in class names are not used in Flow code itself, it might
+happen that TypeHandling is used outside Flow - where having underscores
+in class names is perfectly valid.
+
+This change ensures that underscores in class names are recognized properly.
+
+* Packages: ``Flow`` ``ObjectHandling``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.1...3.3.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
