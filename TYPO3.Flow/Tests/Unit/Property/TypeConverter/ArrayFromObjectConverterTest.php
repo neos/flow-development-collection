@@ -69,7 +69,7 @@ class ArrayFromObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
             $source = json_decode(json_encode($source), false);
         }
 
-        $convertedChildProperties = array_map(function($value) {
+        $convertedChildProperties = array_map(function ($value) {
             return $this->converter->convertFrom($value, 'array', array(), null);
         }, $this->converter->getSourceChildPropertiesToBeConverted($source));
         $this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', $convertedChildProperties, null));
