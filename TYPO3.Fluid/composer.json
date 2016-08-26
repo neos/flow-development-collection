@@ -4,7 +4,7 @@
 	"description": "Next-Generation Templating Framework for Flow and Neos",
 	"license": ["MIT"],
 	"require": {
-		"typo3/flow": "~3.3.0"
+		"typo3/flow": "*"
 	},
 	"autoload": {
 		"psr-0": {
