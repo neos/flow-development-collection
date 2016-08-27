@@ -118,21 +118,21 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target xml:lang="hu" state="needs-translation">This field must contain at least {0,number} character</target>
+          <target xml:lang="hu" state="translated">Ez a mező legalább {0,number} karakter kell legyen</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="hu" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="hu" state="translated">Ez a mező legalább {0,number} karakter kell legyen</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target xml:lang="hu" state="needs-translation">This text may not exceed {0,number} character</target>
+          <target xml:lang="hu" state="translated">Ez a szöveg maximum {0,number} karakter lehet</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="hu" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="hu" state="translated">Ez a szöveg maximum {0,number} karakter lehet</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
