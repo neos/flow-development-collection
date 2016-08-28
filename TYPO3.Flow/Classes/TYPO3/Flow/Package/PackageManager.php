@@ -1189,7 +1189,7 @@ class PackageManager implements PackageManagerInterface
     {
         $packageKey = '';
 
-        if ($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) {
+        if (($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) || ($packageType === 'library' && substr($composerName, 0, 5) === 'neos/')) {
             $lastSegmentOfPackagePath = substr(trim($packagePath, '/'), strrpos(trim($packagePath, '/'), '/') + 1);
             if (strpos($lastSegmentOfPackagePath, '.') !== false) {
                 $packageKey = $lastSegmentOfPackagePath;
