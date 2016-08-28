@@ -10,7 +10,7 @@
 			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="hu" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="hu" state="translated">Jelszó</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="hu" state="translated">Új jelszó</target></trans-unit>
