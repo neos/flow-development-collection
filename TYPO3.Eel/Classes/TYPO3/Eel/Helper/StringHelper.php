@@ -174,19 +174,6 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * This method is deprecated. @see pregMatch()
-     *
-     * @param string $string
-     * @param string $pattern
-     * @return array The matches as array or NULL if not matched
-     * @deprecated Use pregMatch() instead
-     */
-    public function match($string, $pattern)
-    {
-        return $this->pregMatch($string, $pattern);
-    }
-
-    /**
      * Match a string with a regular expression (PREG style)
      *
      * @param string $string
