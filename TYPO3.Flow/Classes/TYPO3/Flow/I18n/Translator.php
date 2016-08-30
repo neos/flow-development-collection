@@ -165,6 +165,12 @@ class Translator
      */
     public function translateById($labelId, array $arguments = array(), $quantity = null, \TYPO3\Flow\I18n\Locale $locale = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
+        $combinedIdentifiers = explode(':', $labelId);
+        if (count($combinedIdentifiers) === 3) {
+            $packageKey = $combinedIdentifiers[0];
+            $sourceName = $combinedIdentifiers[1];
+            $labelId = $combinedIdentifiers[2];
+        }
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
