@@ -160,6 +160,17 @@ If you like to do things the hard way you can get away with implementing
 ``\Neos\Flow\Persistence\RepositoryInterface`` yourself, though that is
 something the normal developer never has to do.
 
+.. note::
+
+	With the query building API it is possible to query for properties of sub-entities easily via
+	a dot-notation path. When querying multiple properties of a collection property, it is ambiguous
+	if you want to select a single sub-entity with the given matching constraints, or multiple
+	sub-entities which each matching a part of the given constraints.
+
+	Since 4.0 Flow will translate such a query to "find all entities where a single sub-entity matches all the constraints",
+	which is the more common case. If you intend a different querying logic, you should fall back to DQL or
+	native SQL queries instead.
+
 Basics of Persistence in Flow
 =============================
 
