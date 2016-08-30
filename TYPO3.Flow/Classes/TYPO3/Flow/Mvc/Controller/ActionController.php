@@ -666,15 +666,6 @@ class ActionController extends AbstractController
     }
 
     /**
-     * @deprecated since 3.0 - Use forwardToReferringRequest() instead. This method might be reworked to issue a "real" redirect at some point!
-     * @return void
-     */
-    protected function redirectToReferringRequest()
-    {
-        $this->forwardToReferringRequest();
-    }
-
-    /**
      * Returns a string containing all validation errors separated by PHP_EOL.
      *
      * @return string
