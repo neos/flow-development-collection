@@ -359,6 +359,8 @@ TYPO3:
         eventSubscribers: []
         eventListeners: []
 
+        secondLevelCache: []
+
         # List of regular expressions table names are matched against in the doctrine service
         # to prevent them from creating corresponding migrations.
         #

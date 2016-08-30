@@ -88,7 +88,7 @@ class EntityManagerFactory
     {
         $config = new Configuration();
         $config->setClassMetadataFactoryName(Mapping\ClassMetadataFactory::class);
-        $this->applySecondLevelCacheSettingsToConfiguration($config);
+        $this->applySecondLevelCacheSettingsToConfiguration($this->settings['doctrine']['secondLevelCache'], $config);
 
         $cache = new CacheAdapter();
         // must use ObjectManager in compile phase...
