@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\I18n\Xliff\V20\Service;
+namespace TYPO3\Flow\I18n\Xliff\V20;
 
 /*
  * This file is part of the TYPO3.Flow package.
