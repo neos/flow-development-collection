@@ -44,14 +44,11 @@ abstract class AbstractXmlParser
     }
 
     /**
-     * Reads and parses XML file and returns internal representation of data.
-     *
-     * @param string $sourcePath An absolute path to XML file
-     * @return array Parsed XML file
-     * @throws \TYPO3\Flow\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+     * @param string $sourcePath
+     * @return \SimpleXMLElement
+     * @throws Exception\InvalidXmlFileException
      */
-    protected function parseXmlFile($sourcePath)
-    {
+    protected function getRootNode($sourcePath) {
         if (!file_exists($sourcePath)) {
             throw new \TYPO3\Flow\I18n\Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
         }
@@ -68,6 +65,19 @@ abstract class AbstractXmlParser
             }
             throw new \TYPO3\Flow\I18n\Exception\InvalidXmlFileException('Parsing the XML file failed. These error were reported:' . PHP_EOL . implode(PHP_EOL, $errors), 1278155987);
         }
+        return $rootXmlNode;
+    }
+
+    /**
+     * Reads and parses XML file and returns internal representation of data.
+     *
+     * @param string $sourcePath An absolute path to XML file
+     * @return array Parsed XML file
+     * @throws \TYPO3\Flow\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+     */
+    protected function parseXmlFile($sourcePath)
+    {
+        $rootXmlNode = $this->getRootNode($sourcePath);
 
         return $this->doParsingFromRoot($rootXmlNode);
     }

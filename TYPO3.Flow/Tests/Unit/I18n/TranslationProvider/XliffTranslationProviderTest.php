@@ -51,6 +51,8 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
+     * 
+     * @todo adjust to new architecture
      */
     public function returnsTranslatedLabelWhenOriginalLabelProvided()
     {
@@ -69,6 +71,7 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
+     * @todo adjust to new architecture
      */
     public function returnsTranslatedLabelWhenLabelIdProvided()
     {

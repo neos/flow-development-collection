@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\I18n\Xliff;
+namespace TYPO3\Flow\I18n\Xliff\V20\Service;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -12,6 +12,7 @@ namespace TYPO3\Flow\I18n\Xliff;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Xliff\V20\Exception\InvalidXliffDataException;
 
 /**
  * A class which parses XLIFF file to simple but useful array representation.
@@ -23,7 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
  * - reads only "source" and "target" in "trans-unit" tags
  *
  * @Flow\Scope("singleton")
- * @throws Exception\InvalidXliffDataException
+ * @throws InvalidXliffDataException
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
@@ -34,7 +35,7 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
      *
      * @param \SimpleXMLElement $root A root node
      * @return array An array representing parsed XLIFF
-     * @throws Exception\InvalidXliffDataException
+     * @throws InvalidXliffDataException
      * @todo Support "approved" attribute
      */
     protected function doParsingFromRoot(\SimpleXMLElement $root)
@@ -49,7 +50,7 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
                     // If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
                     if (!isset($translationElement['restype'])) {
                         if (!isset($translationElement['id'])) {
-                            throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
+                            throw new InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
                         }
                         $parsedData['translationUnits'][(string)$translationElement['id']][0] = array(
                             'source' => (string)$translationElement->source,
@@ -77,7 +78,7 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
                                 $id = (string)$translationElement->{'trans-unit'}[0]['id'];
                                 $id = substr($id, 0, strpos($id, '['));
                             } else {
-                                throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399258);
+                                throw new InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399258);
                             }
 
                             $parsedData['translationUnits'][$id] = $parsedTranslationElement;

@@ -43,7 +43,7 @@ TYPO3\Flow\I18n\Cldr\CldrModel:
         arguments:
           1:
             value: Flow_I18n_Cldr_CldrModelCache
-TYPO3\Flow\I18n\Xliff\XliffModel:
+TYPO3\Flow\I18n\Xliff\Service\XliffFileProvider:
   properties:
     cache:
       object:
@@ -52,6 +52,22 @@ TYPO3\Flow\I18n\Xliff\XliffModel:
         arguments:
           1:
             value: Flow_I18n_XmlModelCache
+TYPO3\Flow\I18n\Xliff\Service\XliffReader:
+  properties:
+    i18nLogger:
+      object:
+        factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Flow_I18n'
+          2:
+            value: 'TYPO3\Flow\Log\Logger'
+          3:
+            setting: TYPO3.Flow.log.i18nLogger.backend
+          4:
+            setting: TYPO3.Flow.log.i18nLogger.backendOptions
+TYPO3\Flow\I18n\Xliff\Model\FileAdapter:
+  properties:
     i18nLogger:
       object:
         factoryObjectName: TYPO3\Flow\Log\LoggerFactory
