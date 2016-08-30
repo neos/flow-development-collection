@@ -397,7 +397,6 @@ class Route
      * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
      * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
      * @throws InvalidRoutePartValueException
-     * @see getMatchingUri()
      */
     public function resolves(array $routeValues)
     {
