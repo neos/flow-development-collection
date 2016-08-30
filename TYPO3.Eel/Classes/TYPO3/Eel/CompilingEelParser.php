@@ -44,7 +44,7 @@ class CompilingEelParser extends EelParser
      */
     public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub)
     {
-        $result['code'] = '\'' . substr(str_replace(array('\'', '\\"'), array('\\\'', '"'), $sub['text']), 1, -1) . '\'';
+        $result['code'] = '\'' . substr(str_replace(['\'', '\\"'], ['\\\'', '"'], $sub['text']), 1, -1) . '\'';
     }
 
     public function BooleanLiteral__finalise(&$result)
@@ -83,7 +83,7 @@ class CompilingEelParser extends EelParser
 
     public function ObjectPath_MethodCall(&$result, $sub)
     {
-        $arguments = isset($sub['arguments']) ? $sub['arguments'] : array();
+        $arguments = isset($sub['arguments']) ? $sub['arguments'] : [];
         if (!array_key_exists('code', $result)) {
             $result['code'] = '$context';
         }

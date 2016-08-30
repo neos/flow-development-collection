@@ -13,6 +13,7 @@ namespace TYPO3\Eel\Helper;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\ProtectedContextAwareInterface;
+use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Context as SecurityContext;
 
 /**
@@ -30,7 +31,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
     /**
      * Get the account of the first authenticated token.
      *
-     * @return \TYPO3\Flow\Security\Account|NULL
+     * @return Account|NULL
      */
     public function getAccount()
     {

@@ -27,9 +27,9 @@ class ExpressionSyntaxValidator extends AbstractValidator
         $result = $parser->match_Expression();
 
         if ($result === false) {
-            $this->addError('Expression "%s" could not be parsed.', 1421940748, array($value));
+            $this->addError('Expression "%s" could not be parsed.', 1421940748, [$value]);
         } elseif ($parser->pos !== strlen($value)) {
-            $this->addError('Expression "%s" could not be parsed. Error starting at character %d: "%s".', 1421940760, array($value, $parser->pos, substr($value, $parser->pos)));
+            $this->addError('Expression "%s" could not be parsed. Error starting at character %d: "%s".', 1421940760, [$value, $parser->pos, substr($value, $parser->pos)]);
         }
     }
 }

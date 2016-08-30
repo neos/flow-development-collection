@@ -25,10 +25,10 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $date = \DateTime::createFromFormat('Y-m-d', '2013-07-03');
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return array(
-            'basic date' => array('2013-07-03', 'Y-m-d', $date),
-            'date with time' => array('2013-07-03 12:34:56', 'Y-m-d H:i:s', $dateTime)
-        );
+        return [
+            'basic date' => ['2013-07-03', 'Y-m-d', $date],
+            'date with time' => ['2013-07-03 12:34:56', 'Y-m-d H:i:s', $dateTime]
+        ];
     }
 
     /**
@@ -49,13 +49,13 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function formatExamples()
     {
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return array(
-            'DateTime object' => array($dateTime, 'Y-m-d H:i:s', '2013-07-03 12:34:56'),
-            'timestamp as integer' => array(1372856513, 'Y-m-d', '2013-07-03'),
-            'timestamp as string' => array('1372856513', 'Y-m-d', '2013-07-03'),
-            'now' => array('now', 'Y-m-d', date('Y-m-d')),
-            'interval' => array(new \DateInterval('P1D'), '%d days', '1 days')
-        );
+        return [
+            'DateTime object' => [$dateTime, 'Y-m-d H:i:s', '2013-07-03 12:34:56'],
+            'timestamp as integer' => [1372856513, 'Y-m-d', '2013-07-03'],
+            'timestamp as string' => ['1372856513', 'Y-m-d', '2013-07-03'],
+            'now' => ['now', 'Y-m-d', date('Y-m-d')],
+            'interval' => [new \DateInterval('P1D'), '%d days', '1 days']
+        ];
     }
 
     /**
@@ -98,12 +98,12 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function calculationExamples()
     {
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return array(
-            'add DateTime with DateInterval' => array('add', $dateTime, new \DateInterval('P1D'), '2013-07-04 12:34:56'),
-            'add DateTime with string' => array('add', $dateTime, 'P1D', '2013-07-04 12:34:56'),
-            'subtract DateTime with DateInterval' => array('subtract', $dateTime, new \DateInterval('P1D'), '2013-07-02 12:34:56'),
-            'subtract DateTime with string' => array('subtract', $dateTime, 'P1D', '2013-07-02 12:34:56'),
-        );
+        return [
+            'add DateTime with DateInterval' => ['add', $dateTime, new \DateInterval('P1D'), '2013-07-04 12:34:56'],
+            'add DateTime with string' => ['add', $dateTime, 'P1D', '2013-07-04 12:34:56'],
+            'subtract DateTime with DateInterval' => ['subtract', $dateTime, new \DateInterval('P1D'), '2013-07-02 12:34:56'],
+            'subtract DateTime with string' => ['subtract', $dateTime, 'P1D', '2013-07-02 12:34:56'],
+        ];
     }
 
     /**

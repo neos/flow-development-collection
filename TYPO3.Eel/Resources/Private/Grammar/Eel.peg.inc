@@ -45,4 +45,3 @@ ObjectLiteral: '{' ObjectLiteralProperty? (< ',' > ObjectLiteralProperty)* > '}'
 */
 
 }
-?>

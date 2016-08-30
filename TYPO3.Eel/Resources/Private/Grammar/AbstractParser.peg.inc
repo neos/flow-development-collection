@@ -46,11 +46,7 @@ Identifier: / [a-zA-Z_] [a-zA-Z0-9_\-]* /
         $result['val'] = (string)str_replace("'", "'", substr($sub['text'], 1, -1));
     }
 
-	public function StringLiteral_SingleQuotedStringLiteral(&$result, $sub) {
-		$result['val'] = (string)str_replace("'", "'", substr($sub['text'], 1, -1));
-	}
-	public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub) {
+    public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub) {
         $result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
     }
 }
-?>
