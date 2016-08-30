@@ -37,6 +37,7 @@ use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
@@ -223,10 +224,7 @@ class Scripts
 
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
 
-        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
-            $environment->getPathToTemporaryDirectory(),
-            'Lock'
-        ])]);
+        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], Arrays::arrayMergeRecursiveOverrule(['temporaryDirectory' => $environment->getPathToTemporaryDirectory()], Arrays::getValueByPath($settings, 'utility.lockStrategyOptions') ?: []));
         Lock::setLockManager($lockManager);
 
         $packageManager->injectSettings($settings);

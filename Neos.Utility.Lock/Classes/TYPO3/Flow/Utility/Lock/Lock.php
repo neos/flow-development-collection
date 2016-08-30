@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Utility\Lock;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use malkusch\lock\util\DoubleCheckedLocking;
 
 /**
  * A general lock class.
@@ -29,7 +30,7 @@ class Lock
     protected static $lockManager;
 
     /**
-     * @var \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @var LockStrategyInterface
      */
     protected $lockStrategy;
 
@@ -45,23 +46,31 @@ class Lock
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param \Closure $callback
+     * @return mixed
      */
-    public function __construct($subject, $exclusiveLock = true)
+    public static function synchronized($subject, \Closure $callback)
     {
         if (self::$lockManager === null) {
             return;
         }
-        $this->lockStrategy = self::$lockManager->getLockStrategyInstance();
-        $this->lockStrategy->acquire($subject, $exclusiveLock);
+        $strategy = self::$lockManager->getLockStrategyInstance();
+        return $strategy->synchronized($subject, $callback);
     }
 
     /**
-     * @return \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @param string $subject
+     * @param \Closure $callback
+     * @return DoubleCheckedLocking
+     * @throws LockNotReadyException
      */
-    public function getLockStrategy()
+    public static function check($subject, \Closure $callback)
     {
-        return $this->lockStrategy;
+        if (self::$lockManager === null) {
+            throw new LockNotReadyException('The lock subsystem is not ready', 1471645266);
+        }
+        $strategy = self::$lockManager->getLockStrategyInstance();
+        return $strategy->check($subject, $callback);
     }
 
     /**
@@ -74,26 +83,5 @@ class Lock
     public static function setLockManager(LockManager $lockManager = null)
     {
         static::$lockManager = $lockManager;
-    }
-
-    /**
-     * Releases the lock
-     * @return boolean TRUE on success, FALSE otherwise
-     */
-    public function release()
-    {
-        if ($this->lockStrategy instanceof LockStrategyInterface) {
-            return $this->lockStrategy->release();
-        }
-        return true;
-    }
-
-    /**
-     * Destructor, releases the lock
-     * @return void
-     */
-    public function __destruct()
-    {
-        $this->release();
     }
 }

@@ -11,27 +11,37 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
+use malkusch\lock\mutex\SemaphoreMutex;
 use malkusch\lock\util\DoubleCheckedLocking;
-use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Contract for a lock strategy.
+ * A semaphore based lock strategy.
  *
- * @api
+ * This lock strategy is based on Flock.
  */
-interface LockStrategyInterface
+class SemaphoreLockStrategy implements LockStrategyInterface
 {
     /**
      * @param string $subject
      * @param \Closure $callback
      * @return mixed Return value of the callback
      */
-    public function synchronized($subject, \Closure $callback);
+    public function synchronized($subject, \Closure $callback)
+    {
+        $semaphore = sem_get(crc32($subject));
+        $mutex = new SemaphoreMutex($semaphore);
+        return $mutex->synchronized($callback);
+    }
 
     /**
      * @param string $subject
      * @param \Closure $callback
      * @return DoubleCheckedLocking
      */
-    public function check($subject, \Closure $callback);
+    public function check($subject, \Closure $callback)
+    {
+        $semaphore = sem_get(crc32($subject));
+        $mutex = new SemaphoreMutex($semaphore);
+        return $mutex->check($callback);
+    }
 }
