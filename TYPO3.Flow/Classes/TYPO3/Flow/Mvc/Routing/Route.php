@@ -310,15 +310,6 @@ class Route
     }
 
     /**
-     * @return string
-     * @deprecated since Flow 2.1. Use getMatchingRequestPath() instead
-     */
-    public function getMatchingUri()
-    {
-        return $this->getResolvedUriPath();
-    }
-
-    /**
      * Returns the URI path which corresponds to this Route.
      *
      * @return string A string containing the corresponding uri (excluding protocol and host)
