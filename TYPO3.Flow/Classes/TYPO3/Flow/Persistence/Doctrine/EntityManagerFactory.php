@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Logging\SQLLogger;
@@ -136,6 +137,7 @@ class EntityManagerFactory
             $connection = DriverManager::getConnection($settings, $config, $eventManager);
         }
 
+        $this->emitConfigureEntityManager($connection, $config, $eventManager);
         $entityManager = EntityManager::create($connection, $config, $eventManager);
         $flowAnnotationDriver->setEntityManager($entityManager);
 
@@ -206,5 +208,14 @@ class EntityManagerFactory
         if (isset($configuredSettings['customDatetimeFunctions'])) {
             $doctrineConfiguration->setCustomDatetimeFunctions($configuredSettings['customDatetimeFunctions']);
         }
+    }
+
+    /**
+     * @param Connection $connection
+     * @param Configuration $config
+     * @param EventManager $eventManager
+     */
+    public function emitConfigureEntityManager($connection, $config, $eventManager)
+    {
     }
 }
