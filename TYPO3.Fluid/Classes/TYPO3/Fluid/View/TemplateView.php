@@ -81,16 +81,6 @@ class TemplateView extends AbstractTemplateView
     }
 
     /**
-     * @return string Path to template root directory
-     * @deprecated since 2.1.0 Use getTemplateRootPaths() instead
-     */
-    protected function getTemplateRootPath()
-    {
-        $templateRootPaths = $this->getTemplateRootPaths();
-        return array_shift($templateRootPaths);
-    }
-
-    /**
      * Set the root path(s) to the templates.
      * If set, overrides the one determined from $this->options['templateRootPathPattern']
      *
@@ -133,16 +123,6 @@ class TemplateView extends AbstractTemplateView
     }
 
     /**
-     * @return string Path to partial root directory
-     * @deprecated since 2.1.0 Use setPartialRootPaths() instead
-     */
-    protected function getPartialRootPath()
-    {
-        $partialRootPaths = $this->getPartialRootPaths();
-        return array_shift($partialRootPaths);
-    }
-
-    /**
      * Set the root path(s) to the partials.
      * If set, overrides the one determined from $this->options['partialRootPathPattern']
      *
@@ -182,16 +162,6 @@ class TemplateView extends AbstractTemplateView
     public function setLayoutRootPath($layoutRootPath)
     {
         $this->setLayoutRootPaths(array($layoutRootPath));
-    }
-
-    /**
-     * @return string Path to layout root directory
-     * @deprecated since 2.1.0 Use getLayoutRootPaths() instead
-     */
-    protected function getLayoutRootPath()
-    {
-        $layoutRootPaths = $this->getLayoutRootPaths();
-        return array_shift($layoutRootPaths);
     }
 
     /**
