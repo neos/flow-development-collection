@@ -12,21 +12,24 @@ namespace TYPO3\Flow\Aop\Pointcut;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
  *
  * @Flow\Proxy(false)
  */
-class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -47,7 +50,7 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
      * @param string $annotation An annotation class (for example "TYPO3\Flow\Annotations\Lazy") which defines which method annotations should match
      * @param array $annotationValueConstraints
      */
-    public function __construct($annotation, array $annotationValueConstraints = array())
+    public function __construct($annotation, array $annotationValueConstraints = [])
     {
         $this->annotation = $annotation;
         $this->annotationValueConstraints = $annotationValueConstraints;
@@ -56,19 +59,19 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
     /**
      * Injects the reflection service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
+     * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
 
     /**
-     * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+     * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -89,8 +92,8 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
         }
 
         $designatedAnnotations = $this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName, $this->annotation);
-        if ($designatedAnnotations !== array() || $this->annotationValueConstraints === array()) {
-            $matches = ($designatedAnnotations !== array());
+        if ($designatedAnnotations !== [] || $this->annotationValueConstraints === []) {
+            $matches = ($designatedAnnotations !== []);
         } else {
             // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
             $firstFoundAnnotation = $designatedAnnotations;
@@ -129,19 +132,19 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
         $classNames = $this->reflectionService->getClassesContainingMethodsAnnotatedWith($this->annotation);
-        $annotatedIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $annotatedIndex = new ClassNameIndex();
         $annotatedIndex->setClassNames($classNames);
         return $classNameIndex->intersect($annotatedIndex);
     }
