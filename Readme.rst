@@ -13,7 +13,7 @@
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: Latest Stable Version
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
-   :target: https://packagist.org/packages/neos/flow-development-collection
+   :target: https://github.com/neos/flow/blob/master/LICENSE
    :alt: License
 .. |Docs| image:: https://img.shields.io/badge/documentation-latest-blue.svg
    :target: https://flowframework.readthedocs.org/en/latest/
