@@ -270,7 +270,7 @@ class QueryTest extends FunctionalTestCase
 
         $subEntity3 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
         $subEntity3->setContent('foo');
-        $subEntity3->setContent('yup');
+        $subEntity3->setSomeProperty('yup');
         $subEntity3->setParentEntity($testEntity2);
         $testEntity2->addSubEntity($subEntity3);
         $this->persistenceManager->add($subEntity3);
