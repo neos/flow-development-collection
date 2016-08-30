@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2016-06-14
+This reference was automatically generated from code on 2016-08-30
 
 
 .. _`Flow Annotation Reference: After`:
@@ -560,6 +560,13 @@ of a value object.
 
 :Applicable to: Class
 
+
+
+
+Arguments
+*********
+
+* ``embedded`` (boolean): Whether the value object should be embedded.
 
 
 
