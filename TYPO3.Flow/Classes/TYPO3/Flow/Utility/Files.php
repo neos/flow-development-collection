@@ -377,7 +377,11 @@ class Files
         try {
             // if not on Windows, call PHPs own unlink() function
             if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
-                return @\unlink($pathAndFilename);
+                if (!@\unlink($pathAndFilename)) {
+                    clearstatcache();
+                    return !file_exists($pathAndFilename);
+                }
+                return true;
             }
         } catch (\Exception $exception) {
             clearstatcache();
