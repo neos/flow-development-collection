@@ -149,23 +149,6 @@ abstract class TypeHandling
     }
 
     /**
-     * Converts a hex encoded string into binary data
-     *
-     * @param string $hexadecimalData A hex encoded string of data
-     * @return string A binary string decoded from the input
-     * @deprecated Will be removed in next major version.
-     */
-    public static function hex2bin($hexadecimalData)
-    {
-        $binaryData = '';
-        $length = strlen($hexadecimalData);
-        for ($i = 0; $i < $length; $i += 2) {
-            $binaryData .=  pack('C', hexdec(substr($hexadecimalData, $i, 2)));
-        }
-        return $binaryData;
-    }
-
-    /**
      * Return simple type or class for object
      *
      * @param mixed $value
