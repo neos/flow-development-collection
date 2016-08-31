@@ -12,7 +12,9 @@ namespace TYPO3\Flow\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -27,30 +29,30 @@ class CacheFactory
     /**
      * The current Flow context ("Production", "Development" etc.)
      *
-     * @var \TYPO3\Flow\Core\ApplicationContext
+     * @var ApplicationContext
      */
     protected $context;
 
     /**
      * A reference to the cache manager
      *
-     * @var \TYPO3\Flow\Cache\CacheManager
+     * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * Constructs this cache factory
      *
-     * @param \TYPO3\Flow\Core\ApplicationContext $context The current Flow context
-     * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
-     * @param \TYPO3\Flow\Utility\Environment $environment
+     * @param ApplicationContext $context The current Flow context
+     * @param CacheManager $cacheManager
+     * @param Environment $environment
      */
-    public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, \TYPO3\Flow\Cache\CacheManager $cacheManager, \TYPO3\Flow\Utility\Environment $environment)
+    public function __construct(ApplicationContext $context, CacheManager $cacheManager, Environment $environment)
     {
         $this->context = $context;
         $this->cacheManager = $cacheManager;
@@ -72,17 +74,17 @@ class CacheFactory
      * @throws Exception\InvalidCacheException
      * @api
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array(), $persistent = false)
+    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
     {
         $backend = new $backendObjectName($this->context, $backendOptions);
         if (!$backend instanceof Backend\BackendInterface) {
             throw new Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
         }
         $backend->injectEnvironment($this->environment);
-        if (is_callable(array($backend, 'injectCacheManager'))) {
+        if (is_callable([$backend, 'injectCacheManager'])) {
             $backend->injectCacheManager($this->cacheManager);
         }
-        if (is_callable(array($backend, 'initializeObject'))) {
+        if (is_callable([$backend, 'initializeObject'])) {
             $backend->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         }
 
@@ -93,7 +95,7 @@ class CacheFactory
 
         $this->cacheManager->registerCache($cache, $persistent);
 
-        if (is_callable(array($cache, 'initializeObject'))) {
+        if (is_callable([$cache, 'initializeObject'])) {
             $cache->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         }
         return $cache;
