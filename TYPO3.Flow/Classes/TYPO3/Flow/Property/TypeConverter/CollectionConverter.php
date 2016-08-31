@@ -11,7 +11,10 @@ namespace TYPO3\Flow\Property\TypeConverter;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Converter which transforms strings and arrays into a Doctrine ArrayCollection.
@@ -27,7 +30,7 @@ class CollectionConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
      * @var string
@@ -46,13 +49,13 @@ class CollectionConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return ArrayCollection
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        return new \Doctrine\Common\Collections\ArrayCollection($convertedChildProperties);
+        return new ArrayCollection($convertedChildProperties);
     }
 
     /**
@@ -67,7 +70,7 @@ class CollectionConverter extends AbstractTypeConverter
         if (is_array($source)) {
             return $source;
         }
-        return array();
+        return [];
     }
 
     /**
@@ -75,13 +78,13 @@ class CollectionConverter extends AbstractTypeConverter
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @api
      */
-    public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration)
+    public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
-        $parsedTargetType = \TYPO3\Flow\Utility\TypeHandling::parseType($targetType);
+        $parsedTargetType = TypeHandling::parseType($targetType);
         return $parsedTargetType['elementType'];
     }
 }

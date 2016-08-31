@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 
@@ -30,7 +31,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('object');
+    protected $sourceTypes = ['object'];
 
     /**
      * @var string
@@ -51,7 +52,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
     public function getSourceChildPropertiesToBeConverted($source)
     {
         $gettableProperties = ObjectAccess::getGettableProperties($source);
-        $propertiesToConvert = array();
+        $propertiesToConvert = [];
         foreach ($gettableProperties as $propertyName => $gettableProperty) {
             if (is_object($gettableProperty)) {
                 $propertiesToConvert[$propertyName] = $gettableProperty;
@@ -67,7 +68,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      */
-    public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration)
+    public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
         return 'array';
     }
@@ -92,7 +93,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * @throws \TYPO3\Flow\Property\Exception\TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $properties = ObjectAccess::getGettableProperties($source);
         if ($source instanceof \Doctrine\ORM\Proxy\Proxy) {
@@ -103,7 +104,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
 
         $properties = array_merge($properties, $convertedChildProperties);
 
-        if ($source instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
+        if ($source instanceof PersistenceMagicInterface) {
             $properties['__identity'] = $this->persistenceManager->getIdentifierByObject($source);
         }
 

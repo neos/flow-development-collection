@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Session\Session;
 
 /**
  * This converter transforms a session identifier into a real session object.
@@ -31,12 +33,12 @@ class SessionConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = \TYPO3\Flow\Session\Session::class;
+    protected $targetType = Session::class;
 
     /**
      * @var integer
@@ -68,12 +70,10 @@ class SessionConverter extends AbstractTypeConverter
      * @param string $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return object the target type
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
-     * @throws \InvalidArgumentException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return $this->sessionManager->getSession($source);
     }
