@@ -54,7 +54,14 @@ class PersistenceMagicAspect
     }
 
     /**
-     * @Flow\Pointcut("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject)")
+     * @Flow\Pointcut("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && !filter(TYPO3\Flow\Persistence\Aspect\EmbeddedValueObjectPointcutFilter)")
+     */
+    public function isNonEmbeddedValueObject()
+    {
+    }
+
+    /**
+     * @Flow\Pointcut("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject")
      */
     public function isEntityOrValueObject()
     {
@@ -98,7 +105,7 @@ class PersistenceMagicAspect
      *
      * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return void
-     * @Flow\After("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && method(.*->__construct()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
+     * @Flow\After("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject && method(.*->__construct()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
     public function generateValueHash(JoinPointInterface $joinPoint)
     {

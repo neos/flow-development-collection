@@ -104,6 +104,21 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
+    public function embeddedValueobjectCanBeMapped()
+    {
+        $source = array(
+            'name' => 'Christopher',
+            'age' => '28'
+        );
+
+        $result = $this->propertyMapper->convert($source, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
+        $this->assertSame('Christopher', $result->getName());
+        $this->assertSame(28, $result->getAge());
+    }
+
+    /**
+     * @test
+     */
     public function integerCanBeMappedToString()
     {
         $source = array(

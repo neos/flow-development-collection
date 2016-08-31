@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\Exception as CacheException;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * A caching backend which stores cache entries in Redis using the phpredis PHP extension.
@@ -83,12 +84,12 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     protected $compressionLevel = 0;
 
     /**
-     * @param \TYPO3\Flow\Core\ApplicationContext $context
+     * @param ApplicationContext $context
      * @param array $options
      * @param \Redis $redis
      * @throws CacheException
      */
-    public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array(), \Redis $redis = null)
+    public function __construct(ApplicationContext $context, array $options = [], \Redis $redis = null)
     {
         parent::__construct($context, $options);
         if (null === $redis) {
@@ -108,7 +109,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
         if ($this->isFrozen()) {
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
@@ -118,7 +119,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
             $lifetime = $this->defaultLifetime;
         }
 
-        $setOptions = array();
+        $setOptions = [];
         if ($lifetime > 0) {
             $setOptions['ex'] = $lifetime;
         }
@@ -216,7 +217,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		redis.call('DEL', KEYS[1])
 		redis.call('DEL', KEYS[2])
 		";
-        $this->redis->eval($script, array($this->buildKey('entries'), $this->buildKey('frozen'), $this->buildKey('')), 2);
+        $this->redis->eval($script, [$this->buildKey('entries'), $this->buildKey('frozen'), $this->buildKey('')], 2);
 
         $this->frozen = null;
     }
@@ -266,7 +267,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		end
 		return #entries
 		";
-        $count = $this->redis->eval($script, array($this->buildKey('tag:' . $tag), $this->buildKey('')), 1);
+        $count = $this->redis->eval($script, [$this->buildKey('tag:' . $tag), $this->buildKey('')], 1);
 
         return $count;
     }

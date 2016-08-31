@@ -79,6 +79,18 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
+    public function embeddedValueObjectWillNotRenderHiddenIdentityField()
+    {
+        $postIdentifier = $this->setupDummyPost(true);
+
+        $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
+        $form = $this->browser->getForm();
+        $this->assertFalse(isset($form['post']['author']['location']['__identity']));
+    }
+
+    /**
+     * @test
+     */
     public function formIsRedisplayedIfValidationErrorsOccur()
     {
         $this->browser->request('http://localhost/test/fluid/formobjects');

@@ -63,6 +63,11 @@ class TestEntity
     protected $description = 'This is some text';
 
     /**
+     * @var TestEmbeddedValueObject
+     */
+    protected $embeddedValueObject;
+
+    /**
      * @var array
      */
     protected $arrayProperty = array();
@@ -80,6 +85,7 @@ class TestEntity
     {
         $this->subEntities = new ArrayCollection();
         $this->embedded = new TestEmbeddable('');
+        $this->embeddedValueObject = new TestEmbeddedValueObject();
     }
 
     /**
@@ -222,5 +228,22 @@ class TestEntity
     public function setEmbedded($embedded)
     {
         $this->embedded = $embedded;
+    }
+
+    /**
+     * @param TestEmbeddedValueObject $embeddedValueObject
+     * @return void
+     */
+    public function setEmbeddedValueObject($embeddedValueObject)
+    {
+        $this->embeddedValueObject = $embeddedValueObject;
+    }
+
+    /**
+     * @return TestEmbeddedValueObject
+     */
+    public function getEmbeddedValueObject()
+    {
+        return $this->embeddedValueObject;
     }
 }

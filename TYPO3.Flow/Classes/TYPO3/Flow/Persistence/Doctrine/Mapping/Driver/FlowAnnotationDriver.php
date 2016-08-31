@@ -203,9 +203,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if ($entityAnnotation->readOnly) {
                 $metadata->markReadOnly();
             }
-        } elseif ($classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
-            // also ok... but we make it read-only
-            $metadata->markReadOnly();
+        } elseif (isset($classAnnotations[Flow\ValueObject::class])) {
+            $valueObjectAnnotation = $classAnnotations[Flow\ValueObject::class];
+            if ($valueObjectAnnotation->embedded === true) {
+                $metadata->isEmbeddedClass = true;
+            } else {
+                // also ok... but we make it read-only
+                $metadata->markReadOnly();
+            }
         } elseif (isset($classAnnotations['Doctrine\ORM\Mapping\Embeddable'])) {
             $metadata->isEmbeddedClass = true;
         } else {
@@ -733,6 +738,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         default:
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
                                 if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
+                                    $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
+                                    if ($valueObjectAnnotation->embedded === true) {
+                                        $mapping['class'] = $propertyMetaData['type'];
+                                        $mapping['columnPrefix'] = $mapping['columnName'];
+                                        $metadata->mapEmbedded($mapping);
+                                        // Leave switch and continue with next property
+                                        continue 2;
+                                    }
                                     $mapping['type'] = 'object';
                                 } elseif (class_exists($propertyMetaData['type'])) {
                                     throw MappingException::missingRequiredOption($property->getName(), 'OneToOne', sprintf('The property "%s" in class "%s" has a non standard data type and doesn\'t define the type of the relation. You have to use one of these annotations: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany', $property->getName(), $className));
@@ -1057,10 +1070,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         return strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== false ||
             (
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\Entity::class) &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass') &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')
+                !$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) &&
+                !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
+                !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass') &&
+                !$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')
             );
     }
 

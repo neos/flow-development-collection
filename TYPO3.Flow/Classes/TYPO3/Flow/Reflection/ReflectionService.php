@@ -1560,9 +1560,14 @@ class ReflectionService
         $className = $classSchema->getClassName();
         $skipArtificialIdentity = false;
 
-        if ($this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')) {
+        /* @var $valueObjectAnnotation Flow\ValueObject */
+        $valueObjectAnnotation = $this->getClassAnnotation($className, Flow\ValueObject::class);
+        if ($valueObjectAnnotation !== null && $valueObjectAnnotation->embedded === true) {
+            $skipArtificialIdentity = true;
+        } elseif ($this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Embeddable')) {
             $skipArtificialIdentity = true;
         }
+
         foreach ($this->getClassPropertyNames($className) as $propertyName) {
             $skipArtificialIdentity = $this->evaluateClassPropertyAnnotationsForSchema($classSchema, $propertyName) ? true : $skipArtificialIdentity;
         }
