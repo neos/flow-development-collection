@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use \TYPO3\Flow\Cache\Exception as CacheException;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * A caching backend which stores cache entries during one script run.
@@ -22,12 +25,12 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
     /**
      * @var array
      */
-    protected $entries = array();
+    protected $entries = [];
 
     /**
      * @var array
      */
-    protected $tagsAndEntries = array();
+    protected $tagsAndEntries = [];
 
     /**
      * Saves data in the cache.
@@ -37,17 +40,17 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
-     * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
+     * @throws InvalidDataException
+     * @throws CacheException if no cache frontend has been set.
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
-        if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
-            throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
+        if (!$this->cache instanceof FrontendInterface) {
+            throw new CacheException('No cache frontend has been set yet via setCache().', 1238244992);
         }
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
         }
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {
@@ -114,7 +117,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
         if (isset($this->tagsAndEntries[$tag])) {
             return array_keys($this->tagsAndEntries[$tag]);
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -126,8 +129,8 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
      */
     public function flush()
     {
-        $this->entries = array();
-        $this->tagsAndEntries = array();
+        $this->entries = [];
+        $this->tagsAndEntries = [];
     }
 
     /**

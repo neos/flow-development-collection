@@ -12,6 +12,12 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\PdoHelper;
+use TYPO3\Flow\Cache\Exception as CacheException;
+use TYPO3\Flow\Persistence\Exception as PersistenceException;
 
 /**
  * A PDO database cache backend
@@ -100,18 +106,18 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
+     * @throws CacheException if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if $data is not a string
+     * @throws InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
-        if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
-            throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
+        if (!$this->cache instanceof FrontendInterface) {
+            throw new CacheException('No cache frontend has been set yet via setCache().', 1259515600);
         }
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
         }
 
         $this->remove($entryIdentifier);
@@ -119,16 +125,16 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
         $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-        $result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data));
+        $result = $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data]);
         if ($result === false) {
-            throw new \TYPO3\Flow\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
+            throw new CacheException('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
         }
 
         $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
         foreach ($tags as $tag) {
-            $result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, $tag));
+            $result = $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier, $tag]);
             if ($result === false) {
-                throw new \TYPO3\Flow\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                throw new CacheException('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
             }
         }
     }
@@ -143,7 +149,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function get($entryIdentifier)
     {
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier]);
         return $statementHandle->fetchColumn();
     }
 
@@ -157,7 +163,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function has($entryIdentifier)
     {
         $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier]);
         return ($statementHandle->fetchColumn() > 0);
     }
 
@@ -173,10 +179,10 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function remove($entryIdentifier)
     {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier]);
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$entryIdentifier, $this->context, $this->cacheIdentifier]);
 
         return ($statementHandle->rowCount() > 0);
     }
@@ -190,10 +196,10 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function flush()
     {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier]);
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier]);
     }
 
     /**
@@ -206,10 +212,10 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function flushByTag($tag)
     {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier, $this->context, $this->cacheIdentifier, $tag));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier, $this->context, $this->cacheIdentifier, $tag]);
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier, $tag));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier, $tag]);
     }
 
     /**
@@ -223,7 +229,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function findIdentifiersByTag($tag)
     {
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "context"=?  AND "cache"=? AND "tag"=?');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier, $tag));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier, $tag]);
         return $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
     }
 
@@ -236,10 +242,10 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
     public function collectGarbage()
     {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier, $this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier, $this->context, $this->cacheIdentifier]);
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
-        $statementHandle->execute(array($this->context, $this->cacheIdentifier));
+        $statementHandle->execute([$this->context, $this->cacheIdentifier]);
     }
 
     /**
@@ -256,7 +262,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
      * Connect to the database
      *
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception if the connection cannot be established
+     * @throws PersistenceException if the connection cannot be established
      */
     protected function connect()
     {
@@ -266,7 +272,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
 
             if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
                 if (!file_exists(dirname($splitdsn[1]))) {
-                    \TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($splitdsn[1]));
+                    Files::createDirectoryRecursively(dirname($splitdsn[1]));
                 }
                 $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
                 $this->createCacheTables();
@@ -279,7 +285,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
                 $this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
             }
         } catch (\PDOException $e) {
-            throw new \TYPO3\Flow\Persistence\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1334736164);
+            throw new PersistenceException('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1334736164);
         }
     }
 
@@ -287,14 +293,14 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface
      * Creates the tables needed for the cache backend.
      *
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception if something goes wrong
+     * @throws PersistenceException if something goes wrong
      */
     protected function createCacheTables()
     {
         try {
-            \TYPO3\Flow\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
+            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW_PATH_FLOW . 'Resources/Private/Cache/SQL/DDL.sql');
         } catch (\PDOException $e) {
-            throw new \TYPO3\Flow\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
+            throw new PersistenceException('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
         }
     }
 }
