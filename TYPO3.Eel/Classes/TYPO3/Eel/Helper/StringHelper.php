@@ -207,6 +207,24 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Split a string by a separator using regular expression matching (PREG style)
+     *
+     * Examples::
+     *
+     *     String.pregSplit("foo bar   baz", "/\s+/") == ['foo', 'bar', 'baz']
+     *     String.pregSplit("first second third", "/\s+/", 2) == ['first', 'second third']
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
+     * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
+     * @return array An array of the splitted parts, excluding the matched pattern
+     */
+    public function pregSplit($string, $pattern, $limit = null)
+    {
+        return preg_split($pattern, $string, $limit);
+    }
+
+    /**
      * Replace occurrences of a search string inside the string
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
