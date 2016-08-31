@@ -313,39 +313,50 @@ class ResourceManager
     {
         $this->initialize();
 
-        $collectionName = $resource->getCollectionName();
-
         $result = $this->resourceRepository->findBySha1($resource->getSha1());
         if (count($result) > 1) {
             $this->systemLogger->log(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other Resource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1), LOG_DEBUG);
-        } else {
-            if (!isset($this->collections[$collectionName])) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
-                return false;
-            }
-            $storage = $this->collections[$collectionName]->getStorage();
-            if (!$storage instanceof WritableStorageInterface) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
-                return false;
-            }
-            try {
-                $storage->deleteResource($resource);
-            } catch (\Exception $exception) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LOG_WARNING);
-                return false;
-            }
-            if ($unpublishResource) {
-                /** @var TargetInterface $target */
-                $target = $this->collections[$collectionName]->getTarget();
-                $target->unpublishResource($resource);
-                $this->systemLogger->log(sprintf('Removed storage data and unpublished resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
-            } else {
-                $this->systemLogger->log(sprintf('Removed storage data of resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
-            }
+        } elseif (!$this->deleteResourceFromCollection($resource, $unpublishResource)) {
+            return false;
         }
 
         $resource->setDeleted();
         $this->resourceRepository->remove($resource);
+        return true;
+    }
+
+    /**
+     * @param Resource $resource The resource to delete
+     * @param boolean $unpublishResource If the resource should be unpublished before deleting it from the storage
+     * @return boolean TRUE if the resource was deleted, otherwise FALSE
+     */
+    private function deleteResourceFromCollection(Resource $resource, $unpublishResource)
+    {
+        $collectionName = $resource->getCollectionName();
+
+        if (!isset($this->collections[$collectionName])) {
+            $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
+            return false;
+        }
+        $storage = $this->collections[$collectionName]->getStorage();
+        if (!$storage instanceof WritableStorageInterface) {
+            $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
+            return false;
+        }
+        try {
+            $storage->deleteResource($resource);
+        } catch (\Exception $exception) {
+            $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LOG_WARNING);
+            return false;
+        }
+        if ($unpublishResource) {
+            /** @var TargetInterface $target */
+            $target = $this->collections[$collectionName]->getTarget();
+            $target->unpublishResource($resource);
+            $this->systemLogger->log(sprintf('Removed storage data and unpublished resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
+        } else {
+            $this->systemLogger->log(sprintf('Removed storage data of resource %s (%s) because it not used by any other Resource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
+        }
         return true;
     }
 

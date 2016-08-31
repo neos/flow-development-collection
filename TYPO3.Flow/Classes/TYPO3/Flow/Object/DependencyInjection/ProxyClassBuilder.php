@@ -264,43 +264,44 @@ class ProxyClassBuilder
             $assignmentPrologue = 'if (!array_key_exists(' . ($argumentNumber - 1) . ', $arguments)) $arguments[' . ($argumentNumber - 1) . '] = ';
             if ($argumentValue === null && isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === true) {
                 $assignments[$argumentPosition] = $assignmentPrologue . 'NULL';
-            } else {
-                switch ($argumentConfiguration->getType()) {
-                    case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
-                        if ($argumentValue instanceof Configuration) {
-                            $argumentValueObjectName = $argumentValue->getObjectName();
-                            $argumentValueClassName = $argumentValue->getClassName();
-                            if ($argumentValueClassName === null) {
-                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
-                                $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
-                            } else {
-                                if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-                                    $assignments[$argumentPosition] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
-                                } else {
-                                    $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
-                                }
-                            }
+                continue;
+            }
+
+            switch ($argumentConfiguration->getType()) {
+                case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
+                    if ($argumentValue instanceof Configuration) {
+                        $argumentValueObjectName = $argumentValue->getObjectName();
+                        $argumentValueClassName = $argumentValue->getClassName();
+                        if ($argumentValueClassName === null) {
+                            $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
+                            $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
                         } else {
-                            if (strpos($argumentValue, '.') !== false) {
-                                $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
-                                $argumentValue = Arrays::getValueByPath($settings, $settingPath);
+                            if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                                $assignments[$argumentPosition] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
+                            } else {
+                                $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
                             }
-                            if (!isset($this->objectConfigurations[$argumentValue])) {
-                                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
-                            }
-                            $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
-                    break;
+                    } else {
+                        if (strpos($argumentValue, '.') !== false) {
+                            $settingPath = explode('.', $argumentValue);
+                            $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                            $argumentValue = Arrays::getValueByPath($settings, $settingPath);
+                        }
+                        if (!isset($this->objectConfigurations[$argumentValue])) {
+                            throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
+                        }
+                        $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
+                    }
+                break;
 
-                    case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
-                        $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
-                    break;
+                case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
+                    $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
+                break;
 
-                    case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                        $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
-                    break;
-                }
+                case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
+                    $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
+                break;
             }
         }
 
@@ -449,9 +450,8 @@ class ProxyClassBuilder
             }
             if ($propertyObjectName[0] === '\\') {
                 throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object name "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
-            } else {
-                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
             }
+            throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
         }
         $propertyClassName = $this->objectConfigurations[$propertyObjectName]->getClassName();
         if ($this->objectConfigurations[$propertyObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE && !$this->objectConfigurations[$propertyObjectName]->isCreatedByFactory()) {
@@ -594,36 +594,36 @@ class ProxyClassBuilder
         foreach ($argumentConfigurations as $argument) {
             if ($argument === null) {
                 $preparedArguments[] = 'NULL';
-            } else {
-                $argumentValue = $argument->getValue();
+                continue;
+            }
 
-                switch ($argument->getType()) {
-                    case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
-                        if ($argumentValue instanceof Configuration) {
-                            $argumentValueObjectName = $argumentValue->getObjectName();
-                            if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-                                $preparedArguments[] = 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments(), $this->objectConfigurations) . ')';
-                            } else {
-                                $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
-                            }
+            $argumentValue = $argument->getValue();
+            switch ($argument->getType()) {
+                case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
+                    if ($argumentValue instanceof Configuration) {
+                        $argumentValueObjectName = $argumentValue->getObjectName();
+                        if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                            $preparedArguments[] = 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments(), $this->objectConfigurations) . ')';
                         } else {
-                            if (strpos($argumentValue, '.') !== false) {
-                                $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
-                                $argumentValue = Arrays::getValueByPath($settings, $settingPath);
-                            }
-                            $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
+                            $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
                         }
-                    break;
+                    } else {
+                        if (strpos($argumentValue, '.') !== false) {
+                            $settingPath = explode('.', $argumentValue);
+                            $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                            $argumentValue = Arrays::getValueByPath($settings, $settingPath);
+                        }
+                        $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
+                    }
+                break;
 
-                    case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
-                        $preparedArguments[] = var_export($argumentValue, true);
-                    break;
+                case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
+                    $preparedArguments[] = var_export($argumentValue, true);
+                break;
 
-                    case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                        $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
-                    break;
-                }
+                case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
+                    $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
+                break;
             }
         }
         return implode(', ', $preparedArguments);

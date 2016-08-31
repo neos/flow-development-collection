@@ -172,13 +172,12 @@ class ClassNameIndex
             if (strpos($pointcuts[$currentPosition], $prefixFilter) === 0) {
                 $found = true;
                 break;
+            }
+            $comparisonResult = strcmp($prefixFilter, $pointcuts[$currentPosition]);
+            if ($comparisonResult > 0) {
+                $left = $currentPosition + 1;
             } else {
-                $comparisonResult = strcmp($prefixFilter, $pointcuts[$currentPosition]);
-                if ($comparisonResult > 0) {
-                    $left = $currentPosition + 1;
-                } else {
-                    $right = $currentPosition - 1;
-                }
+                $right = $currentPosition - 1;
             }
         }
 

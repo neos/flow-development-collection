@@ -181,9 +181,8 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
             $code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
                     "\n\t\t\t\t\t\t}";
             return $code;
-        } else {
-            return 'NULL';
         }
+        return 'NULL';
     }
 
     /**
@@ -373,23 +372,23 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
             foreach ($argumentAccess as $singleValue) {
                 $valuesAccessCodes[] = $this->buildArgumentEvaluationAccessCode($singleValue);
             }
-            $argumentAccessCode = 'array(' . implode(', ', $valuesAccessCodes) . ')';
-        } else {
-            $objectAccess = explode('.', $argumentAccess, 2);
-            if (count($objectAccess) === 2 && $objectAccess[0] === 'current') {
-                $objectAccess = explode('.', $objectAccess[1], 2);
-                if (count($objectAccess) === 1) {
-                    $argumentAccessCode = '$globalObjects[\'' . $objectAccess[0] . '\']';
-                } else {
-                    $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
-                }
+            return 'array(' . implode(', ', $valuesAccessCodes) . ')';
+        }
 
-                $useGlobalObjects = true;
-            } elseif (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
-                $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+        $objectAccess = explode('.', $argumentAccess, 2);
+        if (count($objectAccess) === 2 && $objectAccess[0] === 'current') {
+            $objectAccess = explode('.', $objectAccess[1], 2);
+            if (count($objectAccess) === 1) {
+                $argumentAccessCode = '$globalObjects[\'' . $objectAccess[0] . '\']';
             } else {
-                $argumentAccessCode = $argumentAccess;
+                $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
             }
+
+            $useGlobalObjects = true;
+        } elseif (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
+            $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+        } else {
+            $argumentAccessCode = $argumentAccess;
         }
 
         return $argumentAccessCode;

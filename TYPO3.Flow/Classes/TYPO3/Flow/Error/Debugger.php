@@ -553,7 +553,6 @@ function var_dump($variable, $title = null, $return = false, $plaintext = null)
 
     if ($return === true) {
         return $output;
-    } else {
-        echo $output;
     }
+    echo $output;
 }

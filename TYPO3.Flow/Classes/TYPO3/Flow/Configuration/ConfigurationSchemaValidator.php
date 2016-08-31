@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Configuration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -98,6 +99,7 @@ class ConfigurationSchemaValidator
         // find schema files for the given type and path
         $schemaFileInfos = array();
         $activePackages = $this->packageManager->getActivePackages();
+        /* @var $package PackageInterface */
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             $packageSchemaPath = Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
@@ -137,15 +139,16 @@ class ConfigurationSchemaValidator
 
             if (empty($data)) {
                 $result->addNotice(new Notice('No configuration found, skipping schema "%s".', 1364985445, array(substr($schemaFileInfo['file'], strlen(FLOW_PATH_ROOT)))));
-            } else {
-                $parsedSchema = \Symfony\Component\Yaml\Yaml::parse($schemaFileInfo['file']);
-                $validationResultForSingleSchema = $this->schemaValidator->validate($data, $parsedSchema);
+                continue;
+            }
 
-                if ($schemaFileInfo['path'] !== null) {
-                    $result->forProperty($schemaFileInfo['path'])->merge($validationResultForSingleSchema);
-                } else {
-                    $result->merge($validationResultForSingleSchema);
-                }
+            $parsedSchema = \Symfony\Component\Yaml\Yaml::parse($schemaFileInfo['file']);
+            $validationResultForSingleSchema = $this->schemaValidator->validate($data, $parsedSchema);
+
+            if ($schemaFileInfo['path'] !== null) {
+                $result->forProperty($schemaFileInfo['path'])->merge($validationResultForSingleSchema);
+            } else {
+                $result->merge($validationResultForSingleSchema);
             }
         }
 

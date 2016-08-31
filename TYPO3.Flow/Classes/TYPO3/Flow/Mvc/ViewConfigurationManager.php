@@ -69,14 +69,15 @@ class ViewConfigurationManager
                 if (!isset($configuration['requestFilter'])) {
                     $matchingConfigurations[$order]['configuration'] = $configuration;
                     $matchingConfigurations[$order]['weight'] = $order;
-                } else {
-                    $result = $this->eelEvaluator->evaluate($configuration['requestFilter'], $context);
-                    if ($result === false) {
-                        continue;
-                    }
-                    $matchingConfigurations[$order]['configuration'] = $configuration;
-                    $matchingConfigurations[$order]['weight'] = $requestMatcher->getWeight() + $order;
+                    continue;
                 }
+
+                $result = $this->eelEvaluator->evaluate($configuration['requestFilter'], $context);
+                if ($result === false) {
+                    continue;
+                }
+                $matchingConfigurations[$order]['configuration'] = $configuration;
+                $matchingConfigurations[$order]['weight'] = $requestMatcher->getWeight() + $order;
             }
 
             usort($matchingConfigurations, function ($configuration1, $configuration2) {

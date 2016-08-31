@@ -85,26 +85,22 @@ class PointcutClassAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Point
     {
         $designatedAnnotations = $this->reflectionService->getClassAnnotations($className, $this->annotation);
         if ($designatedAnnotations !== array() || $this->annotationValueConstraints === array()) {
-            $matches = ($designatedAnnotations !== array());
-        } else {
-            // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
-            $firstFoundAnnotation = $designatedAnnotations;
-            $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
-            foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
-                if (!array_key_exists($propertyName, $annotationProperties)) {
-                    $this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
-                    return false;
-                }
+            return ($designatedAnnotations !== array());
+        }
+        // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
+        $firstFoundAnnotation = $designatedAnnotations;
+        $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
+        foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
+            if (!array_key_exists($propertyName, $annotationProperties)) {
+                $this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
+                return false;
+            }
 
-                if ($firstFoundAnnotation->$propertyName === $expectedValue) {
-                    $matches = true;
-                } else {
-                    return false;
-                }
+            if ($firstFoundAnnotation->$propertyName !== $expectedValue) {
+                return false;
             }
         }
-
-        return $matches;
+        return true;
     }
 
     /**

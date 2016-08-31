@@ -35,16 +35,17 @@ class LoggerFactory
     {
         $logger = new $loggerObjectName;
 
-        if (is_array($backendObjectNames)) {
-            foreach ($backendObjectNames as $i => $backendObjectName) {
-                if (isset($backendOptions[$i])) {
-                    $backend = new $backendObjectName($backendOptions[$i]);
-                    $logger->addBackend($backend);
-                }
-            }
-        } else {
+        if (!is_array($backendObjectNames)) {
             $backend = new $backendObjectNames($backendOptions);
             $logger->addBackend($backend);
+            return $logger;
+        }
+
+        foreach ($backendObjectNames as $i => $backendObjectName) {
+            if (isset($backendOptions[$i])) {
+                $backend = new $backendObjectName($backendOptions[$i]);
+                $logger->addBackend($backend);
+            }
         }
         return $logger;
     }

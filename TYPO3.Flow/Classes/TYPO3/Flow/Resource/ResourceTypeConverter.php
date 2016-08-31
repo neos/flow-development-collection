@@ -242,9 +242,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
         if ($resource instanceof Resource) {
             return $resource;
-        } else {
-            return new Error('The resource manager could not create a Resource instance.', 1404312901);
         }
+
+        return new Error('The resource manager could not create a Resource instance.', 1404312901);
     }
 
     /**

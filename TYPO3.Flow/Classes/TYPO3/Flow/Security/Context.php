@@ -416,30 +416,30 @@ class Context
 
             if ($this->authenticationManager->isAuthenticated() === false) {
                 $this->roles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
-            } else {
-                $this->roles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
-                /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
-                foreach ($this->getAuthenticationTokens() as $token) {
-                    if ($token->isAuthenticated() !== true) {
-                        continue;
+                return $this->roles;
+            }
+
+            $this->roles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
+            /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+            foreach ($this->getAuthenticationTokens() as $token) {
+                if ($token->isAuthenticated() !== true) {
+                    continue;
+                }
+                $account = $token->getAccount();
+                if ($account === null) {
+                    continue;
+                }
+
+                $accountRoles = $account->getRoles();
+                /** @var $currentRole Role */
+                foreach ($accountRoles as $currentRole) {
+                    if (!in_array($currentRole, $this->roles)) {
+                        $this->roles[$currentRole->getIdentifier()] = $currentRole;
                     }
-                    $account = $token->getAccount();
-                    if ($account === null) {
-                        continue;
-                    }
-                    if ($account !== null) {
-                        $accountRoles = $account->getRoles();
-                        /** @var $currentRole Role */
-                        foreach ($accountRoles as $currentRole) {
-                            if (!in_array($currentRole, $this->roles)) {
-                                $this->roles[$currentRole->getIdentifier()] = $currentRole;
-                            }
-                            /** @var $currentParentRole Role */
-                            foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
-                                if (!in_array($currentParentRole, $this->roles)) {
-                                    $this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
-                                }
-                            }
+                    /** @var $currentParentRole Role */
+                    foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
+                        if (!in_array($currentParentRole, $this->roles)) {
+                            $this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
                         }
                     }
                 }

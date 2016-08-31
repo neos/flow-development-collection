@@ -505,9 +505,8 @@ class ObjectManager implements ObjectManagerInterface
 
         if (count($factoryMethodArguments) === 0) {
             return $factory->$factoryMethodName();
-        } else {
-            return call_user_func_array(array($factory, $factoryMethodName), $factoryMethodArguments);
         }
+        return call_user_func_array(array($factory, $factoryMethodName), $factoryMethodArguments);
     }
 
     /**

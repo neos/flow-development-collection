@@ -142,23 +142,21 @@ class NumberParser
 
         if (!$numberIsNegative) {
             if (!empty($parsedFormat['positivePrefix']) && !empty($parsedFormat['positiveSuffix'])) {
-                if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix']) && \TYPO3\Flow\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
-                    $numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']), - strlen($parsedFormat['positiveSuffix']));
-                } else {
+                if (!\TYPO3\Flow\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix'])
+                    || !\TYPO3\Flow\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
                     return false;
                 }
+                $numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']), - strlen($parsedFormat['positiveSuffix']));
             } elseif (!empty($parsedFormat['positivePrefix'])) {
-                if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix'])) {
-                    $numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']));
-                } else {
+                if (!\TYPO3\Flow\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix'])) {
                     return false;
                 }
+                $numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']));
             } elseif (!empty($parsedFormat['positiveSuffix'])) {
-                if (\TYPO3\Flow\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
-                    $numberToParse = substr($numberToParse, 0, - strlen($parsedFormat['positiveSuffix']));
-                } else {
+                if (!\TYPO3\Flow\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
                     return false;
                 }
+                $numberToParse = substr($numberToParse, 0, - strlen($parsedFormat['positiveSuffix']));
             }
         }
 

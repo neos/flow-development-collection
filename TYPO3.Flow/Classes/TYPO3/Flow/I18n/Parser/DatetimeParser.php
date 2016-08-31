@@ -140,7 +140,7 @@ class DatetimeParser
      * @param string $datetimeToParse Date/time to be parsed
      * @param array $parsedFormat Format parsed by DatesReader
      * @param array $localizedLiterals Array of date / time literals from CLDR
-     * @return array Array of parsed date and / or time elements, FALSE on failure
+     * @return array|boolean Array of parsed date and / or time elements, FALSE on failure
      * @throws \TYPO3\Flow\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
      * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
      */
@@ -421,14 +421,14 @@ class DatetimeParser
                         $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
                         if ($positionOfDayPeriod !== false) {
                             $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['am']);
+                            break;
+                        }
+                        $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['pm']);
+                        if ($positionOfDayPeriod !== false) {
+                            $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
+                            $timeIsPm = true;
                         } else {
-                            $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['pm']);
-                            if ($positionOfDayPeriod !== false) {
-                                $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
-                                $timeIsPm = true;
-                            } else {
-                                throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
-                            }
+                            throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
                         }
                         break;
                     case 'm':

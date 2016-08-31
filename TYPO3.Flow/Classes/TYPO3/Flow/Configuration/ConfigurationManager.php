@@ -377,9 +377,8 @@ class ConfigurationManager
 
         if ($configurationPath !== null && $configuration !== null) {
             return (Arrays::getValueByPath($configuration, $configurationPath));
-        } else {
-            return $configuration;
         }
+        return $configuration;
     }
 
     /**

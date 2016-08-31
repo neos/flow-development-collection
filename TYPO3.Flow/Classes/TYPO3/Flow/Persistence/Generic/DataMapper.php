@@ -104,37 +104,38 @@ class DataMapper
 
         if ($this->persistenceSession->hasIdentifier($objectData['identifier'])) {
             return $this->persistenceSession->getObjectByIdentifier($objectData['identifier']);
-        } else {
-            $className = $objectData['classname'];
-            $classSchema = $this->reflectionService->getClassSchema($className);
+        }
 
-            $object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-            $this->persistenceSession->registerObject($object, $objectData['identifier']);
-            if ($classSchema->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
-                $this->persistenceSession->registerReconstitutedEntity($object, $objectData);
-            }
-            if ($objectData['properties'] === array()) {
-                if (!$classSchema->isLazyLoadableObject()) {
-                    throw new \TYPO3\Flow\Persistence\Exception('The object of type "' . $className . '" is not marked as lazy loadable.', 1268309017);
-                }
-                $persistenceManager = $this->persistenceManager;
-                $persistenceSession = $this->persistenceSession;
-                $dataMapper = $this;
-                $identifier = $objectData['identifier'];
-                $modelType = $classSchema->getModelType();
-                $object->Flow_Persistence_LazyLoadingObject_thawProperties = function ($object) use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $modelType) {
-                    $objectData = $persistenceManager->getObjectDataByIdentifier($identifier);
-                    $dataMapper->thawProperties($object, $identifier, $objectData);
-                    if ($modelType === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
-                        $persistenceSession->registerReconstitutedEntity($object, $objectData);
-                    }
-                };
-            } else {
-                $this->thawProperties($object, $objectData['identifier'], $objectData);
-            }
+        $className = $objectData['classname'];
+        $classSchema = $this->reflectionService->getClassSchema($className);
 
+        $object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
+        $this->persistenceSession->registerObject($object, $objectData['identifier']);
+        if ($classSchema->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+            $this->persistenceSession->registerReconstitutedEntity($object, $objectData);
+        }
+        if ($objectData['properties'] !== array()) {
+            $this->thawProperties($object, $objectData['identifier'], $objectData);
             return $object;
         }
+
+        if (!$classSchema->isLazyLoadableObject()) {
+            throw new \TYPO3\Flow\Persistence\Exception('The object of type "' . $className . '" is not marked as lazy loadable.', 1268309017);
+        }
+        $persistenceManager = $this->persistenceManager;
+        $persistenceSession = $this->persistenceSession;
+        $dataMapper = $this;
+        $identifier = $objectData['identifier'];
+        $modelType = $classSchema->getModelType();
+        $object->Flow_Persistence_LazyLoadingObject_thawProperties = function ($object) use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $modelType) {
+            $objectData = $persistenceManager->getObjectDataByIdentifier($identifier);
+            $dataMapper->thawProperties($object, $identifier, $objectData);
+            if ($modelType === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+                $persistenceSession->registerReconstitutedEntity($object, $objectData);
+            }
+        };
+
+        return $object;
     }
 
     /**
@@ -248,33 +249,34 @@ class DataMapper
         foreach ($arrayValues as $arrayValue) {
             if ($arrayValue['value'] === null) {
                 $array[$arrayValue['index']] = null;
-            } else {
-                switch ($arrayValue['type']) {
-                    case 'integer':
-                        $array[$arrayValue['index']] = (int) $arrayValue['value'];
-                    break;
-                    case 'float':
-                        $array[$arrayValue['index']] = (float) $arrayValue['value'];
-                    break;
-                    case 'boolean':
-                        $array[$arrayValue['index']] = (boolean) $arrayValue['value'];
-                    break;
-                    case 'string':
-                        $array[$arrayValue['index']] = (string) $arrayValue['value'];
-                    break;
-                    case 'DateTime':
-                        $array[$arrayValue['index']] = $this->mapDateTime($arrayValue['value']);
-                    break;
-                    case 'array':
-                        $array[$arrayValue['index']] = $this->mapArray($arrayValue['value']);
-                    break;
-                    case 'SplObjectStorage':
-                        $array[$arrayValue['index']] = $this->mapSplObjectStorage($arrayValue['value']);
-                    break;
-                    default:
-                        $array[$arrayValue['index']] = $this->mapToObject($arrayValue['value']);
-                    break;
-                }
+                continue;
+            }
+
+            switch ($arrayValue['type']) {
+                case 'integer':
+                    $array[$arrayValue['index']] = (int) $arrayValue['value'];
+                break;
+                case 'float':
+                    $array[$arrayValue['index']] = (float) $arrayValue['value'];
+                break;
+                case 'boolean':
+                    $array[$arrayValue['index']] = (boolean) $arrayValue['value'];
+                break;
+                case 'string':
+                    $array[$arrayValue['index']] = (string) $arrayValue['value'];
+                break;
+                case 'DateTime':
+                    $array[$arrayValue['index']] = $this->mapDateTime($arrayValue['value']);
+                break;
+                case 'array':
+                    $array[$arrayValue['index']] = $this->mapArray($arrayValue['value']);
+                break;
+                case 'SplObjectStorage':
+                    $array[$arrayValue['index']] = $this->mapSplObjectStorage($arrayValue['value']);
+                break;
+                default:
+                    $array[$arrayValue['index']] = $this->mapToObject($arrayValue['value']);
+                break;
             }
         }
 
@@ -303,15 +305,15 @@ class DataMapper
                 }
             }
             return new LazySplObjectStorage($objectIdentifiers);
-        } else {
-            $objectStorage = new \SplObjectStorage();
-
-            foreach ($objectStorageValues as $arrayValue) {
-                if ($arrayValue['value'] !== null) {
-                    $objectStorage->attach($this->mapToObject($arrayValue['value']));
-                }
-            }
-            return $objectStorage;
         }
+
+        $objectStorage = new \SplObjectStorage();
+
+        foreach ($objectStorageValues as $arrayValue) {
+            if ($arrayValue['value'] !== null) {
+                $objectStorage->attach($this->mapToObject($arrayValue['value']));
+            }
+        }
+        return $objectStorage;
     }
 }

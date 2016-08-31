@@ -334,13 +334,14 @@ class Configuration
     {
         if ($properties === array()) {
             $this->properties = array();
-        } else {
-            foreach ($properties as $value) {
-                if ($value instanceof ConfigurationProperty) {
-                    $this->setProperty($value);
-                } else {
-                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
-                }
+            return;
+        }
+
+        foreach ($properties as $value) {
+            if ($value instanceof ConfigurationProperty) {
+                $this->setProperty($value);
+            } else {
+                throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
             }
         }
     }
@@ -378,13 +379,14 @@ class Configuration
     {
         if ($arguments === array()) {
             $this->arguments = array();
-        } else {
-            foreach ($arguments as $argument) {
-                if ($argument !== null && $argument instanceof ConfigurationArgument) {
-                    $this->setArgument($argument);
-                } else {
-                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
-                }
+            return;
+        }
+
+        foreach ($arguments as $argument) {
+            if ($argument !== null && $argument instanceof ConfigurationArgument) {
+                $this->setArgument($argument);
+            } else {
+                throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
             }
         }
     }

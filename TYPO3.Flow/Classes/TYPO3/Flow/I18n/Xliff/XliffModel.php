@@ -171,9 +171,9 @@ class XliffModel
             return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
         } elseif ($this->locale->getLanguage() === $this->xmlParsedData['sourceLocale']->getLanguage()) {
             return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['source'] ?: false;
-        } else {
-            $this->i18nLogger->log('The target translation was empty and the source translation language (' . $this->xmlParsedData['sourceLocale']->getLanguage() . ') does not match the current locale (' . $this->locale->getLanguage() . ') for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->sourcePath, LOG_DEBUG);
-            return false;
         }
+
+        $this->i18nLogger->log('The target translation was empty and the source translation language (' . $this->xmlParsedData['sourceLocale']->getLanguage() . ') does not match the current locale (' . $this->locale->getLanguage() . ') for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->sourcePath, LOG_DEBUG);
+        return false;
     }
 }

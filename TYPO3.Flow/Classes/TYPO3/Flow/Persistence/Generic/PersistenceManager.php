@@ -255,14 +255,13 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         }
         if ($this->persistenceSession->hasIdentifier($identifier)) {
             return $this->persistenceSession->getObjectByIdentifier($identifier);
-        } else {
-            $objectData = $this->backend->getObjectDataByIdentifier($identifier, $objectType);
-            if ($objectData !== false) {
-                return $this->dataMapper->mapToObject($objectData);
-            } else {
-                return null;
-            }
         }
+
+        $objectData = $this->backend->getObjectDataByIdentifier($identifier, $objectType);
+        if ($objectData === false) {
+            return null;
+        }
+        return $this->dataMapper->mapToObject($objectData);
     }
 
     /**

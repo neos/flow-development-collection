@@ -242,9 +242,8 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         }
         if ($useLazyLoading === true) {
             return $this->entityManager->getReference($objectType, $identifier);
-        } else {
-            return $this->entityManager->find($objectType, $identifier);
         }
+        return $this->entityManager->find($objectType, $identifier);
     }
 
     /**
@@ -271,12 +270,12 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
     {
         if (!$this->isNewObject($object)) {
             throw new \TYPO3\Flow\Persistence\Exception\KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
-        } else {
-            try {
-                $this->entityManager->persist($object);
-            } catch (\Exception $exception) {
-                throw new \TYPO3\Flow\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
-            }
+        }
+
+        try {
+            $this->entityManager->persist($object);
+        } catch (\Exception $exception) {
+            throw new \TYPO3\Flow\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
         }
     }
 
@@ -347,10 +346,10 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 
             $this->systemLogger->log('Doctrine 2 setup finished');
             return true;
-        } else {
-            $this->systemLogger->log('Doctrine 2 setup skipped, driver and path backend options not set!', LOG_NOTICE);
-            return false;
         }
+
+        $this->systemLogger->log('Doctrine 2 setup skipped, driver and path backend options not set!', LOG_NOTICE);
+        return false;
     }
 
     /**

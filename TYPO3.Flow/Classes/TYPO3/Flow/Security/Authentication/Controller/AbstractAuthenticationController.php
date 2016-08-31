@@ -83,10 +83,10 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
                 $this->securityContext->setInterceptedRequest(null);
             }
             return $this->onAuthenticationSuccess($storedRequest);
-        } else {
-            $this->onAuthenticationFailure($authenticationException);
-            return call_user_func(array($this, $this->errorMethodName));
         }
+
+        $this->onAuthenticationFailure($authenticationException);
+        return call_user_func(array($this, $this->errorMethodName));
     }
 
     /**
