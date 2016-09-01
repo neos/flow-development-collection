@@ -20,8 +20,10 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Publishing\MessageCollector;
+use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\ResourceRepository;
+use TYPO3\Media\Domain\Repository\AssetRepository;
 
 /**
  * Resource command controller for the TYPO3.Flow package
@@ -139,7 +141,7 @@ class ResourceCommandController extends CommandController
         $relatedAssets = new \SplObjectStorage();
         foreach ($this->resourceRepository->findAll() as $resource) {
             $this->output->progressAdvance(1);
-            /* @var \TYPO3\Flow\Resource\Resource $resource */
+            /* @var Resource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
                 $brokenResources[] = $resource;
@@ -150,8 +152,8 @@ class ResourceCommandController extends CommandController
         $this->outputLine();
 
         if ($mediaPackagePresent && count($brokenResources) > 0) {
-            $assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
-            /* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
+            $assetRepository = $this->objectManager->get(AssetRepository::class);
+            /* @var AssetRepository $assetRepository */
 
             foreach ($brokenResources as $resource) {
                 $assets = $assetRepository->findByResource($resource);

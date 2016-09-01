@@ -17,7 +17,9 @@ use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cli\Command;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Cli\RequestBuilder;
 use TYPO3\Flow\Cli\Response;
 use TYPO3\Flow\Core\Bootstrap;
@@ -428,10 +430,10 @@ class CoreCommandController extends CommandController
         $suggestions = array();
 
         $availableCommands = $this->bootstrap->getObjectManager()
-            ->get('TYPO3\Flow\Cli\CommandManager')
+            ->get(CommandManager::class)
             ->getAvailableCommands();
 
-        /** @var $command \TYPO3\Flow\Cli\Command */
+        /** @var $command Command */
         foreach ($availableCommands as $command) {
             if ($command->isInternal() === false) {
                 $suggestions[] = $command->getCommandIdentifier();

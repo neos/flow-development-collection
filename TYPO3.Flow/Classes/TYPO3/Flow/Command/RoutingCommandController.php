@@ -126,7 +126,7 @@ class RoutingCommandController extends CommandController
         $this->outputLine('  Format: ' . $routeValues['@format']);
 
         $controllerObjectName = null;
-        /** @var $route \TYPO3\Flow\Mvc\Routing\Route */
+        /** @var $route Route */
         foreach ($this->router->getRoutes() as $route) {
             try {
                 $resolves = $route->resolves($routeValues);

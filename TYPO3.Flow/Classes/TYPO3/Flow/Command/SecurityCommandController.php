@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Mvc\Controller\AbstractController;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
@@ -238,10 +239,10 @@ class SecurityCommandController extends CommandController
     {
         $methodPrivileges = array();
         foreach ($this->policyService->getRoles(true) as $role) {
-            $methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface'));
+            $methodPrivileges = array_merge($methodPrivileges, $role->getPrivilegesByType(MethodPrivilegeInterface::class));
         }
 
-        $controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
+        $controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass(AbstractController::class);
         $allActionsAreProtected = true;
         foreach ($controllerClassNames as $controllerClassName) {
             if ($this->reflectionService->isClassAbstract($controllerClassName)) {

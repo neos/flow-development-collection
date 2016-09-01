@@ -34,7 +34,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * @var array
@@ -70,7 +70,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     public function __construct()
     {
-        set_exception_handler(array($this, 'handleException'));
+        set_exception_handler([$this, 'handleException']);
     }
 
     /**
@@ -151,13 +151,13 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         if (isset($renderingOptions['variables'])) {
             $fluidView->assignMultiple($renderingOptions['variables']);
         }
-        $fluidView->assignMultiple(array(
+        $fluidView->assignMultiple([
             'exception' => $exception,
             'renderingOptions' => $renderingOptions,
             'statusCode' => $statusCode,
             'statusMessage' => $statusMessage,
             'referenceCode' => $referenceCode
-        ));
+        ]);
         return $fluidView;
     }
 
@@ -169,7 +169,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function resolveCustomRenderingOptions($exception)
     {
-        $renderingOptions = array();
+        $renderingOptions = [];
         if (isset($this->options['defaultRenderingOptions'])) {
             $renderingOptions = $this->options['defaultRenderingOptions'];
         }
@@ -297,9 +297,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             $subject = trim($sentences[0]);
             $body = trim($sentences[1]);
         }
-        return array(
+        return [
             'subject' => $subject,
             'body' => $body
-        );
+        ];
     }
 }
