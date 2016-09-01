@@ -574,5 +574,4 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         return true;
     }
-
 }
