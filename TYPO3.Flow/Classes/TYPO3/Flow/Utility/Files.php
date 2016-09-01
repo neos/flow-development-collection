@@ -364,9 +364,10 @@ class Files
     /**
      * A version of unlink() that works on Windows regardless on the symlink type (file/directory).
      *
-     * If this method could not unlink the specified file, it will clear the stat cache for its filename and check if
-     * the file still exist. If it does not exist, this method assumes that the file has been deleted by another process
-     * and will return TRUE. If the file still exists though, this method will return FALSE.
+     * If this method could not unlink the specified file or it doesn't exist anymore (e.g. because of a concurrent
+     * deletion), it will clear the stat cache for its filename and check if the file still exist. If it does not exist,
+     * this method assumes that the file has been deleted by another process and will return TRUE. If the file still
+     * exists though, this method will return FALSE.
      *
      * @param string $pathAndFilename Path and name of the file or directory
      * @return boolean TRUE if file/directory was removed successfully
