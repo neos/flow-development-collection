@@ -76,7 +76,7 @@ class TypedArrayConverter extends AbstractTypeConverter
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
-        return $source;
+        return is_array($source) ? $source : [];
     }
 
     /**
