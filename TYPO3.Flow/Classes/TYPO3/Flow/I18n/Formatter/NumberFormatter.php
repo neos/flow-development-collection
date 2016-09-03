@@ -12,6 +12,8 @@ namespace TYPO3\Flow\I18n\Formatter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * Formatter for numbers.
@@ -19,18 +21,18 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
+class NumberFormatter implements FormatterInterface
 {
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader
+     * @var NumbersReader
      */
     protected $numbersReader;
 
     /**
-     * @param \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader $numbersReader
+     * @param NumbersReader $numbersReader
      * @return void
      */
-    public function injectNumbersReader(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader $numbersReader)
+    public function injectNumbersReader(NumbersReader $numbersReader)
     {
         $this->numbersReader = $numbersReader;
     }
@@ -39,25 +41,25 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * Formats provided value using optional style properties
      *
      * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
-     * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
+     * @param Locale $locale Locale to use
      * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
      * @return string String representation of $value provided, or (string)$value
      * @api
      */
-    public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array())
+    public function format($value, Locale $locale, array $styleProperties = [])
     {
         if (isset($styleProperties[0])) {
             $formatType = $styleProperties[0];
-            \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
+            NumbersReader::validateFormatType($formatType);
         } else {
-            $formatType = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL;
+            $formatType = NumbersReader::FORMAT_TYPE_DECIMAL;
         }
 
         switch ($formatType) {
-            case \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT:
-                return $this->formatPercentNumber($value, $locale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT);
+            case NumbersReader::FORMAT_TYPE_PERCENT:
+                return $this->formatPercentNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
             default:
-                return $this->formatDecimalNumber($value, $locale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT);
+                return $this->formatDecimalNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
         }
     }
 
@@ -72,11 +74,11 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
      * @param string $format Format string
-     * @param \TYPO3\Flow\I18n\Locale $locale A locale used for finding symbols array
+     * @param Locale $locale A locale used for finding symbols array
      * @return string Formatted number. Will return string-casted version of $number if pattern is not valid / supported
      * @api
      */
-    public function formatNumberWithCustomPattern($number, $format, \TYPO3\Flow\I18n\Locale $locale)
+    public function formatNumberWithCustomPattern($number, $format, Locale $locale)
     {
         return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseCustomFormat($format), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
     }
@@ -89,15 +91,15 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
      */
-    public function formatDecimalNumber($number, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)
+    public function formatDecimalNumber($number, Locale $locale, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
     {
-        \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
+        NumbersReader::validateFormatLength($formatLength);
+        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
     }
 
     /**
@@ -108,15 +110,15 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
      */
-    public function formatPercentNumber($number, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)
+    public function formatPercentNumber($number, Locale $locale, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
     {
-        \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
+        NumbersReader::validateFormatLength($formatLength);
+        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
     }
 
     /**
@@ -129,16 +131,16 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @param string $currency Currency symbol (or name)
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
      */
-    public function formatCurrencyNumber($number, \TYPO3\Flow\I18n\Locale $locale, $currency, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)
+    public function formatCurrencyNumber($number, Locale $locale, $currency, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
     {
-        \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $currency);
+        NumbersReader::validateFormatLength($formatLength);
+        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $currency);
     }
 
     /**
@@ -225,7 +227,7 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
             $number = $parsedFormat['positivePrefix'] . $integerPart . $decimalPart . $parsedFormat['positiveSuffix'];
         }
 
-        $number = str_replace(array('%', '‰', '-'), array($symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']), $number);
+        $number = str_replace(['%', '‰', '-'], [$symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']], $number);
         if ($currency !== null) {
             // @todo When currency is set, min / max DecimalDigits and rounding is overridden with CLDR data
             $number = str_replace('¤', $currency, $number);

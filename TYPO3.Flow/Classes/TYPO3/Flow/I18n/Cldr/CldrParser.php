@@ -12,6 +12,7 @@ namespace TYPO3\Flow\I18n\Cldr;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\AbstractXmlParser;
 
 /**
  * A class which parses CLDR file to simple but useful array representation.
@@ -49,14 +50,14 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
-class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser
+class CldrParser extends AbstractXmlParser
 {
     /**
      * Returns array representation of XML data, starting from a root node.
      *
      * @param \SimpleXMLElement $root A root node
      * @return array An array representing parsed CLDR File
-     * @see \TYPO3\Flow\Xml\AbstractXmlParser::doParsingFromRoot()
+     * @see AbstractXmlParser::doParsingFromRoot()
      */
     protected function doParsingFromRoot(\SimpleXMLElement $root)
     {
@@ -75,7 +76,7 @@ class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser
      */
     protected function parseNode(\SimpleXMLElement $node)
     {
-        $parsedNode = array();
+        $parsedNode = [];
 
         if ($node->count() === 0) {
             return (string)$node;
@@ -118,7 +119,7 @@ class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser
     protected function isDistinguishingAttribute($attributeName)
     {
         // Taken from SupplementalMetadata and hardcoded for now
-        $distinguishingAttributes = array('key', 'request', 'id', '_q', 'registry', 'alt', 'iso4217', 'iso3166', 'mzone', 'from', 'to', 'type');
+        $distinguishingAttributes = ['key', 'request', 'id', '_q', 'registry', 'alt', 'iso4217', 'iso3166', 'mzone', 'from', 'to', 'type'];
 
         // These are not defined as distinguishing in CLDR but we need to preserve them for alias resolving later
         $distinguishingAttributes[] = 'source';

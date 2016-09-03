@@ -10,6 +10,7 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\I18n\Exception\InvalidArgumentException;
 
 /**
  * The "Invalid Format Length" exception
@@ -19,6 +20,6 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  *
  * @api
  */
-class InvalidFormatLengthException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException
+class InvalidFormatLengthException extends InvalidArgumentException
 {
 }
