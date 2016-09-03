@@ -12,6 +12,11 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 
 /**
  * This is a Service which can generate a request hash and check whether the currently given arguments
@@ -35,7 +40,7 @@ class MvcPropertyMappingConfigurationService
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Cryptography\HashService
+     * @var HashService
      */
     protected $hashService;
 
@@ -45,11 +50,11 @@ class MvcPropertyMappingConfigurationService
      * @param array $formFieldNames Array of form fields
      * @param string $fieldNamePrefix
      * @return string trusted properties token
-     * @throws \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+     * @throws InvalidArgumentForHashGenerationException
      */
     public function generateTrustedPropertiesToken($formFieldNames, $fieldNamePrefix = '')
     {
-        $formFieldArray = array();
+        $formFieldArray = [];
         foreach ($formFieldNames as $formField) {
             $formFieldParts = explode('[', $formField);
             $currentPosition =& $formFieldArray;
@@ -58,12 +63,12 @@ class MvcPropertyMappingConfigurationService
                 $formFieldPart = rtrim($formFieldPart, ']');
 
                 if (!is_array($currentPosition)) {
-                    throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as array, but it collides with a previous form field of the same name which declared the field as string. This is an inconsistency you need to fix inside your Fluid form. (String overridden by Array)', 1255072196);
+                    throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as array, but it collides with a previous form field of the same name which declared the field as string. This is an inconsistency you need to fix inside your Fluid form. (String overridden by Array)', 1255072196);
                 }
 
                 if ($i === count($formFieldParts) - 1) {
                     if (isset($currentPosition[$formFieldPart]) && is_array($currentPosition[$formFieldPart])) {
-                        throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as string, but it collides with a previous form field of the same name which declared the field as array. This is an inconsistency you need to fix inside your Fluid form. (Array overridden by String)', 1255072587);
+                        throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as string, but it collides with a previous form field of the same name which declared the field as array. This is an inconsistency you need to fix inside your Fluid form. (Array overridden by String)', 1255072587);
                     }
                     // Last iteration - add a string
                     if ($formFieldPart === '') {
@@ -73,17 +78,17 @@ class MvcPropertyMappingConfigurationService
                     }
                 } else {
                     if ($formFieldPart === '') {
-                        throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is invalid. Reason: "[]" used not as last argument, but somewhere in the middle (like foo[][bar]).', 1255072832);
+                        throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is invalid. Reason: "[]" used not as last argument, but somewhere in the middle (like foo[][bar]).', 1255072832);
                     }
                     if (!isset($currentPosition[$formFieldPart])) {
-                        $currentPosition[$formFieldPart] = array();
+                        $currentPosition[$formFieldPart] = [];
                     }
                     $currentPosition =& $currentPosition[$formFieldPart];
                 }
             }
         }
         if ($fieldNamePrefix !== '') {
-            $formFieldArray = (isset($formFieldArray[$fieldNamePrefix]) ? $formFieldArray[$fieldNamePrefix] : array());
+            $formFieldArray = (isset($formFieldArray[$fieldNamePrefix]) ? $formFieldArray[$fieldNamePrefix] : []);
         }
         return $this->serializeAndHashFormFieldArray($formFieldArray);
     }
@@ -105,11 +110,11 @@ class MvcPropertyMappingConfigurationService
      * Initialize the property mapping configuration in $controllerArguments if
      * the trusted properties are set inside the request.
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request
-     * @param \TYPO3\Flow\Mvc\Controller\Arguments $controllerArguments
+     * @param ActionRequest $request
+     * @param Arguments $controllerArguments
      * @return void
      */
-    public function initializePropertyMappingConfigurationFromRequest(\TYPO3\Flow\Mvc\ActionRequest $request, \TYPO3\Flow\Mvc\Controller\Arguments $controllerArguments)
+    public function initializePropertyMappingConfigurationFromRequest(ActionRequest $request, Arguments $controllerArguments)
     {
         $trustedPropertiesToken = $request->getInternalArgument('__trustedProperties');
         if (!is_string($trustedPropertiesToken)) {
@@ -135,19 +140,19 @@ class MvcPropertyMappingConfigurationService
      * All other properties are specified as allowed properties.
      *
      * @param array $propertyConfiguration
-     * @param \TYPO3\Flow\Property\PropertyMappingConfiguration $propertyMappingConfiguration
+     * @param PropertyMappingConfiguration $propertyMappingConfiguration
      * @return void
      */
-    protected function modifyPropertyMappingConfiguration($propertyConfiguration, \TYPO3\Flow\Property\PropertyMappingConfiguration $propertyMappingConfiguration)
+    protected function modifyPropertyMappingConfiguration($propertyConfiguration, PropertyMappingConfiguration $propertyMappingConfiguration)
     {
         if (!is_array($propertyConfiguration)) {
             return;
         }
         if (isset($propertyConfiguration['__identity'])) {
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
             unset($propertyConfiguration['__identity']);
         } else {
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         }
 
         foreach ($propertyConfiguration as $innerKey => $innerValue) {

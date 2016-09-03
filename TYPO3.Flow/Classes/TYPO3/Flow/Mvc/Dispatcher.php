@@ -46,7 +46,7 @@ class Dispatcher
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * Inject the Object Manager through setter injection because property injection
@@ -90,16 +90,16 @@ class Dispatcher
         // NOTE: The dispatcher is used for both Action- and CLI-Requests. For the latter case dispatching might happen during compile-time, that's why we can't inject the following dependencies
 
         /** @var Context $securityContext */
-        $securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+        $securityContext = $this->objectManager->get(Context::class);
         if ($securityContext->areAuthorizationChecksDisabled()) {
             $this->initiateDispatchLoop($request, $response);
             return;
         }
 
         /** @var FirewallInterface $firewall */
-        $firewall = $this->objectManager->get('TYPO3\Flow\Security\Authorization\FirewallInterface');
+        $firewall = $this->objectManager->get(FirewallInterface::class);
         /** @var SecurityLoggerInterface $securityLogger */
-        $securityLogger = $this->objectManager->get('TYPO3\Flow\Log\SecurityLoggerInterface');
+        $securityLogger = $this->objectManager->get(SecurityLoggerInterface::class);
 
         try {
             /** @var ActionRequest $request */
