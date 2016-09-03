@@ -31,22 +31,22 @@ interface LoggerInterface
     /**
      * Adds a backend to which the logger sends the logging data
      *
-     * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
+     * @param Backend\BackendInterface $backend A backend implementation
      * @return void
      * @api
      */
-    public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend);
+    public function addBackend(Backend\BackendInterface $backend);
 
     /**
      * Runs the close() method of a backend and removes the backend
      * from the logger.
      *
-     * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
+     * @param Backend\BackendInterface $backend The backend to remove
      * @return void
-     * @throws \TYPO3\Flow\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
+     * @throws Exception\NoSuchBackendException if the given backend is unknown to this logger
      * @api
      */
-    public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend);
+    public function removeBackend(Backend\BackendInterface $backend);
 
     /**
      * Writes the given message along with the additional information into the log.
@@ -70,5 +70,5 @@ interface LoggerInterface
      * @return void
      * @api
      */
-    public function logException(\Exception $exception, array $additionalData = array());
+    public function logException(\Exception $exception, array $additionalData = []);
 }

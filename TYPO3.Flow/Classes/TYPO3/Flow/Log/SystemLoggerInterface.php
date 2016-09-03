@@ -15,6 +15,6 @@ namespace TYPO3\Flow\Log;
  * Marker interface for the system logger.
  *
  */
-interface SystemLoggerInterface extends \TYPO3\Flow\Log\LoggerInterface
+interface SystemLoggerInterface extends LoggerInterface
 {
 }
