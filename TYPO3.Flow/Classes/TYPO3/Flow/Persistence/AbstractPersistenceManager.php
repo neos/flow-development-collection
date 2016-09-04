@@ -10,24 +10,26 @@ namespace TYPO3\Flow\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Core\ApplicationContext;
+
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Persistence\Exception as PersistenceException;
 
 /**
  * The Flow Persistence Manager base class
  *
  * @api
  */
-abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\PersistenceManagerInterface
+abstract class AbstractPersistenceManager implements PersistenceManagerInterface
 {
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * @var array
      */
-    protected $newObjects = array();
+    protected $newObjects = [];
 
     /**
      * @var boolean
@@ -66,7 +68,7 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
      */
     public function clearState()
     {
-        $this->newObjects = array();
+        $this->newObjects = [];
     }
 
     /**
@@ -79,12 +81,12 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
      * Objects registered with this method must be known to the getObjectByIdentifier()
      * method.
      *
-     * @param \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
+     * @param Aspect\PersistenceMagicInterface $object The new object to register
      * @return void
      */
-    public function registerNewObject(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object)
+    public function registerNewObject(Aspect\PersistenceMagicInterface $object)
     {
-        $identifier = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
+        $identifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
         $this->newObjects[$identifier] = $object;
     }
 
@@ -117,7 +119,7 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
                     'modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).' . chr(10) . chr(10) .
                     'If you need to store some data during a safe request (for example, logging some data for your analytics),' . chr(10) .
                     'you are still free to call PersistenceManager->persistAll() manually.';
-            throw new \TYPO3\Flow\Persistence\Exception($message, 1377788621);
+            throw new PersistenceException($message, 1377788621);
         }
     }
 
@@ -126,15 +128,15 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
      *
      * @param object $object The object to be converted
      * @return array The identity array in the format array('__identity' => '...')
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+     * @throws Exception\UnknownObjectException if the given object is not known to the Persistence Manager
      */
     public function convertObjectToIdentityArray($object)
     {
         $identifier = $this->getIdentifierByObject($object);
         if ($identifier === null) {
-            throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException(sprintf('Tried to convert an object of type "%s" to an identity array, but it is unknown to the Persistence Manager.', get_class($object)), 1302628242);
+            throw new Exception\UnknownObjectException(sprintf('Tried to convert an object of type "%s" to an identity array, but it is unknown to the Persistence Manager.', get_class($object)), 1302628242);
         }
-        return array('__identity' => $identifier);
+        return ['__identity' => $identifier];
     }
 
     /**
@@ -143,7 +145,7 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
      *
      * @param array $array The array to be iterated over
      * @return array The modified array without objects
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+     * @throws Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
      */
     public function convertObjectsToIdentityArrays(array $array)
     {

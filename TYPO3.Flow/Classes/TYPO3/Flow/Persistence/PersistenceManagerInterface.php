@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\Exception\UnknownObjectException;
 
 /**
  * The Flow Persistence Manager interface
@@ -77,10 +78,10 @@ interface PersistenceManagerInterface
      * Objects registered with this method must be known to the getObjectByIdentifier()
      * method.
      *
-     * @param \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
+     * @param Aspect\PersistenceMagicInterface $object The new object to register
      * @return void
      */
-    public function registerNewObject(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object);
+    public function registerNewObject(Aspect\PersistenceMagicInterface $object);
 
     /**
      * Returns the (internal) identifier for the object, if it is known to the
@@ -113,7 +114,7 @@ interface PersistenceManagerInterface
      *
      * @param object $object The object to be converted
      * @return array The identity array in the format array('__identity' => '...')
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+     * @throws UnknownObjectException if the given object is not known to the Persistence Manager
      * @api
      */
     public function convertObjectToIdentityArray($object);
@@ -124,7 +125,7 @@ interface PersistenceManagerInterface
      *
      * @param array $array The array to be iterated over
      * @return array The modified array without objects
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+     * @throws UnknownObjectException if array contains objects that are not known to the Persistence Manager
      * @api
      * @see convertObjectToIdentityArray()
      */
@@ -134,7 +135,7 @@ interface PersistenceManagerInterface
      * Return a query object for the given type.
      *
      * @param string $type
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function createQueryForType($type);
@@ -162,7 +163,7 @@ interface PersistenceManagerInterface
      *
      * @param object $object The modified object
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException
+     * @throws UnknownObjectException
      * @api
      */
     public function update($object);
