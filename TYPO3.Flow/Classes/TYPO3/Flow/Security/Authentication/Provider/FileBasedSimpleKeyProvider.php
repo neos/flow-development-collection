@@ -70,7 +70,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      */
     public function getTokenClassNames()
     {
-        return array('TYPO3\Flow\Security\Authentication\Token\PasswordToken');
+        return [PasswordToken::class];
     }
 
     /**
@@ -91,7 +91,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
             if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
                 $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
                 $account = new Account();
-                $roles = array();
+                $roles = [];
                 foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
                     $roles[] = $this->policyService->getRole($roleIdentifier);
                 }

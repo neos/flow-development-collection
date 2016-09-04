@@ -18,6 +18,8 @@ use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\Party\Domain\Model\AbstractParty;
+use TYPO3\Party\Domain\Service\PartyService;
 
 /**
  * An account model
@@ -63,7 +65,7 @@ class Account
      * @var array of strings
      * @ORM\Column(type="simple_array", nullable=true)
      */
-    protected $roleIdentifiers = array();
+    protected $roleIdentifiers = [];
 
     /**
      * @Flow\Transient
@@ -107,7 +109,7 @@ class Account
         if ($this->roles !== null) {
             return;
         }
-        $this->roles = array();
+        $this->roles = [];
         foreach ($this->roleIdentifiers as $key => $roleIdentifier) {
             // check for and clean up roles no longer available
             if ($this->policyService->hasRole($roleIdentifier)) {
@@ -190,7 +192,7 @@ class Account
     /**
      * Returns the party object this account corresponds to
      *
-     * @return \TYPO3\Party\Domain\Model\AbstractParty The party object
+     * @return AbstractParty The party object
      * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
      * @throws SecurityException
      */
@@ -202,7 +204,7 @@ class Account
         if (!$this->objectManager->isRegistered('TYPO3\Party\Domain\Service\PartyService')) {
             throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747288);
         }
-        /** @var \TYPO3\Party\Domain\Service\PartyService $partyService */
+        /** @var PartyService $partyService */
         $partyService = $this->objectManager->get('TYPO3\Party\Domain\Service\PartyService');
         return $partyService->getAssignedPartyOfAccount($this);
     }
@@ -210,7 +212,7 @@ class Account
     /**
      * Sets the corresponding party for this account
      *
-     * @param \TYPO3\Party\Domain\Model\AbstractParty $party The party object
+     * @param AbstractParty $party The party object
      * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
      * @throws SecurityException
      */
@@ -222,8 +224,8 @@ class Account
         if (!$this->objectManager->isRegistered('TYPO3\Party\Domain\Service\PartyService')) {
             throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747413);
         }
-        /** @var \TYPO3\Party\Domain\Service\PartyService $partyService */
-        $partyService = $this->objectManager->get('TYPO3\Party\Domain\Service\PartyService');
+        /** @var PartyService $partyService */
+        $partyService = $this->objectManager->get(PartyService::class);
         $partyService->assignAccountToParty($this, $party);
     }
 
@@ -242,18 +244,18 @@ class Account
     /**
      * Sets the roles for this account
      *
-     * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects
+     * @param array<Role> $roles An array of Policy\Role objects
      * @return void
      * @throws \InvalidArgumentException
      * @api
      */
     public function setRoles(array $roles)
     {
-        $this->roleIdentifiers = array();
-        $this->roles = array();
+        $this->roleIdentifiers = [];
+        $this->roles = [];
         foreach ($roles as $role) {
             if (!$role instanceof Role) {
-                throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of \TYPO3\Flow\Security\Policy\Role instances, given: "%s"', gettype($role)), 1397125997);
+                throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of %s instances, given: "%s"', Role::class, gettype($role)), 1397125997);
             }
             $this->addRole($role);
         }

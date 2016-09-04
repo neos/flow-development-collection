@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\RequestInterface;
 
 /**
  * This class holds an controller object name pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
@@ -48,10 +49,10 @@ class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterfa
     /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set controller object name pattern rules
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
      */
-    public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request)
+    public function matchRequest(RequestInterface $request)
     {
         return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());
     }

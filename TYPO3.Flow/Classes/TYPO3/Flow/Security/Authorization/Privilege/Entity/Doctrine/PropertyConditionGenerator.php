@@ -59,7 +59,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * @Flow\InjectConfiguration("aop.globalObjects")
      * @var array
      */
-    protected $globalObjects = array();
+    protected $globalObjects = [];
 
     /**
      * @Flow\Inject
@@ -96,7 +96,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      *
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @param string $path Property path the currently parsed expression relates to
@@ -276,7 +276,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     {
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
 
-        $constraints = array();
+        $constraints = [];
         foreach ($associationMapping['joinColumns'] as $joinColumn) {
             $quotedColumnName = $quoteStrategy->getJoinColumnName($joinColumn, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
             $propertyPointer = $targetTableAlias . '.' . $quotedColumnName;
@@ -323,7 +323,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
 
-        $subselectConstraintQueries = array();
+        $subselectConstraintQueries = [];
         foreach ($associationMapping['joinColumns'] as $joinColumn) {
             $rootAliases = $subselectQuery->getQueryBuilder()->getRootAliases();
             $subselectQuery->getQueryBuilder()->select($rootAliases[0] . '.' . $targetEntity->getFieldForColumn($joinColumn['referencedColumnName']));
@@ -397,7 +397,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         $addNullExpression = false;
         try {
             if (is_array($this->operandDefinition)) {
-                $parameters = array();
+                $parameters = [];
                 foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
                     if ($singleOperandValue !== null) {
                         $parameters[] = $sqlFilter->getParameter($operandIterator);
@@ -455,7 +455,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     public function getValueForOperand($expression)
     {
         if (is_array($expression)) {
-            $result = array();
+            $result = [];
             foreach ($expression as $expressionEntry) {
                 $result[] = $this->getValueForOperand($expressionEntry);
             }

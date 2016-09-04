@@ -27,12 +27,12 @@ class RoleConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Flow\Security\Policy\Role';
+    protected $targetType = Role::class;
 
     /**
      * @var integer
@@ -54,12 +54,12 @@ class RoleConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return object the target type
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         try {
             $role = $this->policyService->getRole($source);
         } catch (NoSuchRoleException $exception) {
-            return new Error('Could not find a role with the identifier "%s".', 1397212327, array($source));
+            return new Error('Could not find a role with the identifier "%s".', 1397212327, [$source]);
         }
         return $role;
     }

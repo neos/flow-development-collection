@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
+use TYPO3\Flow\Security\Exception\DecryptionNotAllowedException;
+use TYPO3\Flow\Security\Exception\InvalidKeyPairIdException;
+
 /**
  * RSA related service functions (e.g. used for the RSA authentication provider)
  *
@@ -48,8 +51,8 @@ interface RsaWalletServiceInterface
      * Returns the public key for the given fingerprint
      *
      * @param string $fingerprint The fingerprint
-     * @return \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey The public key
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
+     * @return OpenSslRsaKey The public key
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
     public function getPublicKey($fingerprint);
 
@@ -61,8 +64,8 @@ interface RsaWalletServiceInterface
      * @param string $cypher Cypher text to decrypt
      * @param string $fingerprint The fingerprint to identify to correct private key
      * @return string The decrypted text
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
-     * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      */
     public function decrypt($cypher, $fingerprint);
 
@@ -72,7 +75,7 @@ interface RsaWalletServiceInterface
      * @param string $plaintext The plaintext to sign
      * @param string $fingerprint The fingerprint to identify to correct private key
      * @return string The signature of the given plaintext
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
     public function sign($plaintext, $fingerprint);
 
@@ -113,7 +116,7 @@ interface RsaWalletServiceInterface
      *
      * @param string $fingerprint The fingerprint
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
     public function destroyKeypair($fingerprint);
 }

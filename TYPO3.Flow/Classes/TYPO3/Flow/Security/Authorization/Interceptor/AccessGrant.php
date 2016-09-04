@@ -12,18 +12,19 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\InterceptorInterface;
 
 /**
  * This security interceptor always grants access.
  *
  * @Flow\Scope("singleton")
  */
-class AccessGrant implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+class AccessGrant implements InterceptorInterface
 {
     /**
-     * Invokes nothing, always returns TRUE.
+     * Invokes nothing, always returns true.
      *
-     * @return boolean Always returns TRUE
+     * @return boolean Always returns true
      */
     public function invoke()
     {

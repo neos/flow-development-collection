@@ -116,7 +116,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      */
     public function hasParameters()
     {
-        return $this->parameters !== array();
+        return $this->parameters !== [];
     }
 
     /**
