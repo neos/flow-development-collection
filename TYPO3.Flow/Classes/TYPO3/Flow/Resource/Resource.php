@@ -14,10 +14,11 @@ namespace TYPO3\Flow\Resource;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Flow\Utility;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\Flow\Resource\Exception as ResourceException;
 
 /**
  * Model representing a persistable resource
@@ -107,19 +108,19 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Utility\Environment
      */
     protected $environment;
 
@@ -193,7 +194,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
         $pathInfo = UnicodeFunctions::pathinfo($filename);
         $extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
         $this->filename = $pathInfo['filename'] . $extension;
-        $this->mediaType = MediaTypes::getMediaTypeFromFilename($this->filename);
+        $this->mediaType = Utility\MediaTypes::getMediaTypeFromFilename($this->filename);
     }
 
     /**
@@ -215,7 +216,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      */
     public function getFileExtension()
     {
-        $pathInfo = pathInfo($this->filename);
+        $pathInfo = pathinfo($this->filename);
         return isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
     }
 
@@ -264,7 +265,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
     public function getMediaType()
     {
         if ($this->mediaType === null) {
-            return MediaTypes::getMediaTypeFromFilename($this->filename);
+            return Utility\MediaTypes::getMediaTypeFromFilename($this->filename);
         } else {
             return $this->mediaType;
         }
@@ -382,9 +383,9 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
         if ($this->temporaryLocalCopyPathAndFilename === null) {
             $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceFiles/';
             try {
-                Files::createDirectoryRecursively($temporaryPathAndFilename);
-            } catch (\TYPO3\Flow\Utility\Exception $e) {
-                throw new Exception(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
+                Utility\Files::createDirectoryRecursively($temporaryPathAndFilename);
+            } catch (Utility\Exception $e) {
+                throw new ResourceException(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
             }
 
             $temporaryPathAndFilename .= $this->getCacheEntryIdentifier();
@@ -399,11 +400,11 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
             $temporaryPathAndFilename = trim($temporaryPathAndFilename);
             $temporaryFileHandle = fopen($temporaryPathAndFilename, 'w');
             if ($temporaryFileHandle === false) {
-                throw new Exception(sprintf('Could not create the temporary file %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
+                throw new ResourceException(sprintf('Could not create the temporary file %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
             }
             $resourceStream = $this->getStream();
             if ($resourceStream === false) {
-                throw new Exception(sprintf('Could not open stream for resource %s ("%s") from collection "%s" while trying to create a temporary local copy.', $this->sha1, $this->filename, $this->collectionName), 1416221863);
+                throw new ResourceException(sprintf('Could not open stream for resource %s ("%s") from collection "%s" while trying to create a temporary local copy.', $this->sha1, $this->filename, $this->collectionName), 1416221863);
             }
             stream_copy_to_stream($resourceStream, $temporaryFileHandle);
             fclose($resourceStream);
@@ -419,7 +420,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      *
      * Deprecated – use setSha1() instead!
      *
-     * @param \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
+     * @param ResourcePointer $resourcePointer
      * @return void
      * @deprecated Since version 3.0, use setSha1() to set the raw hash of the resourcePointer
      * @see setSha1()
@@ -435,7 +436,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      *
      * Deprecated – use getSha1() instead!
      *
-     * @return \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
+     * @return ResourcePointer $resourcePointer
      * @api
      * @deprecated Since version 3.0, use getSha1() which is the same value
      * @see getSha1()
@@ -537,12 +538,12 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      * Throws an exception if this Resource object is protected against modifications.
      *
      * @return void
-     * @throws Exception
+     * @throws ResourceException
      */
     protected function throwExceptionIfProtected()
     {
         if ($this->protected) {
-            throw new Exception(sprintf('Tried to set a property of the resource object with SHA1 hash %s after it has been protected. Modifications are not allowed as soon as the Resource has been published or persisted.', $this->sha1), 1377852347);
+            throw new ResourceException(sprintf('Tried to set a property of the resource object with SHA1 hash %s after it has been protected. Modifications are not allowed as soon as the Resource has been published or persisted.', $this->sha1), 1377852347);
         }
     }
 

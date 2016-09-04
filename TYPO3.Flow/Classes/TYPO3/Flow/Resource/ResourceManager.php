@@ -17,10 +17,13 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
 use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Resource\Target\TargetInterface;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
@@ -68,22 +71,22 @@ class ResourceManager
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
-     * @var array<\TYPO3\Flow\Resource\Storage\StorageInterface>
+     * @var array<Storage\StorageInterface>
      */
     protected $storages;
 
     /**
-     * @var array<\TYPO3\Flow\Resource\Target\TargetInterface>
+     * @var array<Target\TargetInterface>
      */
     protected $targets;
 
     /**
-     * @var array<\TYPO3\Flow\Resource\CollectionInterface>
+     * @var array<CollectionInterface>
      */
     protected $collections;
 
@@ -115,14 +118,14 @@ class ResourceManager
     /**
      * Imports a resource (file) from the given location as a persistent resource.
      *
-     * On a successful import this method returns a Resource object representing the
+     * On a successful import this method returns a PersistentResource object representing the
      * newly imported persistent resource and automatically publishes it to the configured
      * publication target.
      *
      * @param string | resource $source A URI (can therefore also be a path and filename) or a PHP resource stream(!) pointing to the Resource to import
      * @param string $collectionName Name of the collection this new resource should be added to. By default the standard collection for persistent resources is used.
      * @param string $forcedPersistenceObjectIdentifier INTERNAL: Force the object identifier for this resource to the given UUID
-     * @return \TYPO3\Flow\Resource\Resource A resource object representing the imported resource
+     * @return PersistentResource A resource object representing the imported resource
      * @throws Exception
      * @api
      */
@@ -157,7 +160,7 @@ class ResourceManager
      * Imports the given content passed as a string as a new persistent resource.
      *
      * The given content typically is binary data or a text format. On a successful import this method
-     * returns a Resource object representing the imported content and automatically publishes it to the
+     * returns a PersistentResource object representing the imported content and automatically publishes it to the
      * configured publication target.
      *
      * The specified filename will be used when presenting the resource to a user. Its file extension is
@@ -167,7 +170,7 @@ class ResourceManager
      * @param string $filename The filename to use for the newly generated resource
      * @param string $collectionName Name of the collection this new resource should be added to. By default the standard collection for persistent resources is used.
      * @param string $forcedPersistenceObjectIdentifier INTERNAL: Force the object identifier for this resource to the given UUID
-     * @return Resource A resource object representing the imported resource
+     * @return PersistentResource A resource object representing the imported resource
      * @throws Exception
      * @api
      */
@@ -203,12 +206,12 @@ class ResourceManager
      * Imports a resource (file) from the given upload info array as a persistent
      * resource.
      *
-     * On a successful import this method returns a Resource object representing
+     * On a successful import this method returns a PersistentResource object representing
      * the newly imported persistent resource.
      *
      * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
      * @param string $collectionName Name of the collection this uploaded resource should be added to
-     * @return Resource A resource object representing the imported resource
+     * @return PersistentResource A resource object representing the imported resource
      * @throws Exception
      */
     public function importUploadedResource(array $uploadInfo, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
@@ -235,11 +238,11 @@ class ResourceManager
     }
 
     /**
-     * Returns the resource object identified by the given SHA1 hash over the content, or NULL if no such Resource
+     * Returns the resource object identified by the given SHA1 hash over the content, or NULL if no such PersistentResource
      * object is known yet.
      *
-     * @param string $sha1Hash The SHA1 identifying the data the Resource stands for
-     * @return Resource | NULL
+     * @param string $sha1Hash The SHA1 identifying the data the PersistentResource stands for
+     * @return PersistentResource | NULL
      * @api
      */
     public function getResourceBySha1($sha1Hash)
@@ -251,11 +254,11 @@ class ResourceManager
      * Returns a stream handle of the given persistent resource which allows for opening / copying the resource's
      * data. Note that this stream handle may only be used read-only.
      *
-     * @param Resource $resource The resource to retrieve the stream for
+     * @param PersistentResource $resource The resource to retrieve the stream for
      * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
      * @api
      */
-    public function getStreamByResource(Resource $resource)
+    public function getStreamByResource(PersistentResource $resource)
     {
         $collectionName = $resource->getCollectionName();
         if (!isset($this->collections[$collectionName])) {
@@ -289,12 +292,12 @@ class ResourceManager
      *
      * This method will also remove the Resource object from the (internal) ResourceRepository.
      *
-     * @param Resource $resource The resource to delete
+     * @param PersistentResource $resource The resource to delete
      * @param boolean $unpublishResource If the resource should be unpublished before deleting it from the storage
-     * @return boolean TRUE if the resource was deleted, otherwise FALSE
+     * @return boolean true if the resource was deleted, otherwise FALSE
      * @api
      */
-    public function deleteResource(Resource $resource, $unpublishResource = true)
+    public function deleteResource(PersistentResource $resource, $unpublishResource = true)
     {
         $collectionName = $resource->getCollectionName();
 
@@ -335,11 +338,11 @@ class ResourceManager
     /**
      * Returns the web accessible URI for the given resource object
      *
-     * @param Resource $resource The resource object
+     * @param PersistentResource $resource The resource object
      * @return string | boolean A URI as a string or FALSE if the collection of the resource is not found
      * @api
      */
-    public function getPublicPersistentResourceUri(Resource $resource)
+    public function getPublicPersistentResourceUri(PersistentResource $resource)
     {
         if (!isset($this->collections[$resource->getCollectionName()])) {
             return false;
@@ -393,7 +396,7 @@ class ResourceManager
      * Returns a Storage instance by the given name
      *
      * @param string $storageName Name of the storage as defined in the settings
-     * @return \TYPO3\Flow\Resource\Storage\StorageInterface or NULL
+     * @return StorageInterface or NULL
      */
     public function getStorage($storageName)
     {
@@ -404,7 +407,7 @@ class ResourceManager
      * Returns a Collection instance by the given name
      *
      * @param string $collectionName Name of the collection as defined in the settings
-     * @return \TYPO3\Flow\Resource\CollectionInterface or NULL
+     * @return CollectionInterface or NULL
      * @api
      */
     public function getCollection($collectionName)
@@ -415,7 +418,7 @@ class ResourceManager
     /**
      * Returns an array of currently known Collection instances
      *
-     * @return array<\TYPO3\Flow\Resource\CollectionInterface>
+     * @return array<CollectionInterface>
      */
     public function getCollections()
     {
@@ -426,11 +429,11 @@ class ResourceManager
      * Returns an array of Collection instances which use the given storage
      *
      * @param StorageInterface $storage
-     * @return array<\TYPO3\Flow\Resource\CollectionInterface>
+     * @return array<CollectionInterface>
      */
     public function getCollectionsByStorage(StorageInterface $storage)
     {
-        $collections = array();
+        $collections = [];
         foreach ($this->collections as $collectionName => $collection) {
             /** @var CollectionInterface $collection */
             if ($collection->getStorage() === $storage) {
@@ -470,7 +473,7 @@ class ResourceManager
             if (!class_exists($storageDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource storage "%s" defined in your settings has not defined a valid "storage" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $storageName, $storageDefinition['storage']), 1361467212);
             }
-            $options = (isset($storageDefinition['storageOptions']) ? $storageDefinition['storageOptions'] : array());
+            $options = (isset($storageDefinition['storageOptions']) ? $storageDefinition['storageOptions'] : []);
             $this->storages[$storageName] = new $storageDefinition['storage']($storageName, $options);
         }
     }
@@ -490,7 +493,7 @@ class ResourceManager
             if (!class_exists($targetDefinition['target'])) {
                 throw new Exception(sprintf('The configuration for the resource target "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $targetName, $targetDefinition['target']), 1361467839);
             }
-            $options = (isset($targetDefinition['targetOptions']) ? $targetDefinition['targetOptions'] : array());
+            $options = (isset($targetDefinition['targetOptions']) ? $targetDefinition['targetOptions'] : []);
             $this->targets[$targetName] = new $targetDefinition['target']($targetName, $options);
         }
     }
@@ -517,8 +520,8 @@ class ResourceManager
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $collectionName, $collectionDefinition['target']), 1361468924);
             }
 
-            $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : array();
-            $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : array();
+            $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : [];
+            $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : [];
 
             $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns, $filenames);
         }
@@ -537,7 +540,7 @@ class ResourceManager
             if (in_array($scheme, stream_get_wrappers())) {
                 stream_wrapper_unregister($scheme);
             }
-            stream_wrapper_register($scheme, 'TYPO3\Flow\Resource\Streams\StreamWrapperAdapter');
+            stream_wrapper_register($scheme, StreamWrapperAdapter::class);
             StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
         }
     }
@@ -577,10 +580,10 @@ class ResourceManager
             throw new Exception(sprintf('The temporary file "%s" of the file upload does not exist (anymore).', $temporaryTargetPathAndFilename), 1375198998);
         }
 
-        return array(
+        return [
             'filepath' => $temporaryTargetPathAndFilename,
             'filename' => $pathInfo['basename']
-        );
+        ];
     }
 
     /**
@@ -592,7 +595,7 @@ class ResourceManager
      */
     protected static function getStreamWrapperImplementationClassNames($objectManager)
     {
-        return $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
+        return $objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(Streams\StreamWrapperInterface::class);
     }
 
     /**
@@ -600,7 +603,7 @@ class ResourceManager
      *
      * @param string $content The binary content to import
      * @param string $filename The filename to use for the newly generated resource
-     * @return Resource A resource object representing the created resource or FALSE if an error occurred.
+     * @return PersistentResource A resource object representing the created resource or FALSE if an error occurred.
      * @deprecated use importResourceFromContent() instead
      * @see importResourceFromContent()
      */
