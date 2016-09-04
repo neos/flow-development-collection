@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * Interface for a Flow Package class
@@ -31,15 +32,15 @@ interface PackageInterface
     /**
      * Invokes custom PHP code directly after the package manager has been initialized.
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+     * @param Bootstrap $bootstrap The current bootstrap
      * @return void
      */
-    public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap);
+    public function boot(Bootstrap $bootstrap);
 
     /**
      * Returns the package meta object of this package.
      *
-     * @return \TYPO3\Flow\Package\MetaData
+     * @return MetaData
      */
     public function getPackageMetaData();
 
@@ -151,7 +152,7 @@ interface PackageInterface
     /**
      * Returns the available documentations for this package
      *
-     * @return array Array of \TYPO3\Flow\Package\Documentation
+     * @return array<Documentation>
      * @api
      */
     public function getPackageDocumentations();
