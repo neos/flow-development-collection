@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Object\Configuration;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 
 /**
  * Flow Object Configuration
@@ -67,13 +68,13 @@ class Configuration
      * Arguments of the constructor detected by reflection
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * Array of properties which are injected into the object
      * @var array
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
@@ -326,20 +327,20 @@ class Configuration
      * Setter function for injection properties. If an empty array is passed to this
      * method, all (possibly) defined properties are removed from the configuration.
      *
-     * @param array $properties Array of \TYPO3\Flow\Object\Configuration\ConfigurationProperty
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @param array $properties Array of ConfigurationProperty
+     * @throws InvalidConfigurationException
      * @return void
      */
     public function setProperties(array $properties)
     {
-        if ($properties === array()) {
-            $this->properties = array();
+        if ($properties === []) {
+            $this->properties = [];
         } else {
             foreach ($properties as $value) {
                 if ($value instanceof ConfigurationProperty) {
                     $this->setProperty($value);
                 } else {
-                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
+                    throw new InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
                 }
             }
         }
@@ -348,7 +349,7 @@ class Configuration
     /**
      * Returns the currently set injection properties of the object
      *
-     * @return array<TYPO3\Flow\Object\Configuration\ConfigurationProperty>
+     * @return array<ConfigurationProperty>
      */
     public function getProperties()
     {
@@ -370,20 +371,20 @@ class Configuration
      * Setter function for injection constructor arguments. If an empty array is passed to this
      * method, all (possibly) defined constructor arguments are removed from the configuration.
      *
-     * @param array<TYPO3\Flow\Object\Configuration\ConfigurationArgument> $arguments
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @param array<ConfigurationArgument> $arguments
+     * @throws InvalidConfigurationException
      * @return void
      */
     public function setArguments(array $arguments)
     {
-        if ($arguments === array()) {
-            $this->arguments = array();
+        if ($arguments === []) {
+            $this->arguments = [];
         } else {
             foreach ($arguments as $argument) {
                 if ($argument !== null && $argument instanceof ConfigurationArgument) {
                     $this->setArgument($argument);
                 } else {
-                    throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
+                    throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
                 }
             }
         }
@@ -403,18 +404,18 @@ class Configuration
     /**
      * Returns a sorted array of constructor arguments indexed by position (starting with "1")
      *
-     * @return array A sorted array of \TYPO3\Flow\Object\Configuration\ConfigurationArgument objects with the argument position as index
+     * @return array<ConfigurationArgument> A sorted array of ConfigurationArgument objects with the argument position as index
      */
     public function getArguments()
     {
         if (count($this->arguments) < 1) {
-            return array();
+            return [];
         }
 
         asort($this->arguments);
         $lastArgument = end($this->arguments);
         $argumentsCount = $lastArgument->getIndex();
-        $sortedArguments = array();
+        $sortedArguments = [];
         for ($index = 1; $index <= $argumentsCount; $index++) {
             $sortedArguments[$index] = isset($this->arguments[$index]) ? $this->arguments[$index] : null;
         }
