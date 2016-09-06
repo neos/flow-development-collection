@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Cldr\Reader\DatesReader;
+use TYPO3\Flow\I18n;
 
 /**
  * Validator for DateTime objects.
@@ -23,22 +25,22 @@ class DateTimeValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'locale' => array(null, 'The locale to use for date parsing', 'string|Locale'),
-        'strictMode' => array(true, 'Use strict mode for date parsing', 'boolean'),
-        'formatLength' => array(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, 'The format length, see DatesReader::FORMAT_LENGTH_*', 'string'),
-        'formatType' => array(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, 'The format type, see DatesReader::FORMAT_TYPE_*', 'string')
-    );
+    protected $supportedOptions = [
+        'locale' => [null, 'The locale to use for date parsing', 'string|Locale'],
+        'strictMode' => [true, 'Use strict mode for date parsing', 'boolean'],
+        'formatLength' => [DatesReader::FORMAT_LENGTH_DEFAULT, 'The format length, see DatesReader::FORMAT_LENGTH_*', 'string'],
+        'formatType' => [DatesReader::FORMAT_TYPE_DATE, 'The format type, see DatesReader::FORMAT_TYPE_*', 'string']
+    ];
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\I18n\Service
+     * @var I18n\Service
      */
     protected $localizationService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\I18n\Parser\DatetimeParser
+     * @var I18n\Parser\DatetimeParser
      */
     protected $datetimeParser;
 
@@ -57,8 +59,8 @@ class DateTimeValidator extends AbstractValidator
         if (!isset($this->options['locale'])) {
             $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
         } elseif (is_string($this->options['locale'])) {
-            $locale = new \TYPO3\Flow\I18n\Locale($this->options['locale']);
-        } elseif ($this->options['locale'] instanceof \TYPO3\Flow\I18n\Locale) {
+            $locale = new I18n\Locale($this->options['locale']);
+        } elseif ($this->options['locale'] instanceof I18n\Locale) {
             $locale = $this->options['locale'];
         } else {
             $this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281454676);
@@ -68,16 +70,16 @@ class DateTimeValidator extends AbstractValidator
         $strictMode = $this->options['strictMode'];
 
         $formatLength = $this->options['formatLength'];
-        \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+        DatesReader::validateFormatLength($formatLength);
 
         $formatType = $this->options['formatType'];
-        \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatType($formatType);
+        DatesReader::validateFormatType($formatType);
 
-        if ($formatType === \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
+        if ($formatType === DatesReader::FORMAT_TYPE_TIME) {
             if ($this->datetimeParser->parseTime($value, $locale, $formatLength, $strictMode) === false) {
                 $this->addError('A valid time is expected.', 1281454830);
             }
-        } elseif ($formatType === \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
+        } elseif ($formatType === DatesReader::FORMAT_TYPE_DATETIME) {
             if ($this->datetimeParser->parseDateAndTime($value, $locale, $formatLength, $strictMode) === false) {
                 $this->addError('A valid date and time is expected.', 1281454831);
             }

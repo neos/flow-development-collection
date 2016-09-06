@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
 
 /**
  * Validator for checking Date and Time boundaries
@@ -22,10 +23,10 @@ class DateTimeRangeValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'latestDate' => array(null, 'The latest date to accept', 'string'),
-        'earliestDate' => array(null, 'The earliest date to accept', 'string')
-    );
+    protected $supportedOptions = [
+        'latestDate' => [null, 'The latest date to accept', 'string'],
+        'earliestDate' => [null, 'The earliest date to accept', 'string']
+    ];
 
     /**
      * Adds errors if the given DateTime does not match the set boundaries.
@@ -79,15 +80,15 @@ class DateTimeRangeValidator extends AbstractValidator
 
         if (isset($earliestDate) && isset($latestDate)) {
             if ($dateTime < $earliestDate || $dateTime > $latestDate) {
-                $this->addError('The given date must be between %s and %s', 1325615630, array($earliestDate->format('Y-m-d H:i:s'), $latestDate->format('Y-m-d H:i:s')));
+                $this->addError('The given date must be between %s and %s', 1325615630, [$earliestDate->format('Y-m-d H:i:s'), $latestDate->format('Y-m-d H:i:s')]);
             }
         } elseif (isset($earliestDate)) {
             if ($dateTime < $earliestDate) {
-                $this->addError('The given date must be after %s', 1324315107, array($earliestDate->format('Y-m-d H:i:s')));
+                $this->addError('The given date must be after %s', 1324315107, [$earliestDate->format('Y-m-d H:i:s')]);
             }
         } elseif (isset($latestDate)) {
             if ($dateTime > $latestDate) {
-                $this->addError('The given date must be before %s', 1324315115, array($latestDate->format('Y-m-d H:i:s')));
+                $this->addError('The given date must be before %s', 1324315115, [$latestDate->format('Y-m-d H:i:s')]);
             }
         }
     }
@@ -97,7 +98,7 @@ class DateTimeRangeValidator extends AbstractValidator
      *
      * @param string $referenceDateString being one of <time>, <start>/<offset> or <offset>/<end>
      * @return \DateTime
-     * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @throws InvalidValidationOptionsException
      * @see isValid()
      */
     protected function parseReferenceDate($referenceDateString)
@@ -118,7 +119,7 @@ class DateTimeRangeValidator extends AbstractValidator
             $date = new \DateTime($referenceDateParts[0]);
             return $date->add($interval);
         } else {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException(sprintf('There is no valid interval declaration in "%s". Exactly one part must begin with "P".', $referenceDateString), 1324314462);
+            throw new InvalidValidationOptionsException(sprintf('There is no valid interval declaration in "%s". Exactly one part must begin with "P".', $referenceDateString), 1324314462);
         }
     }
 }

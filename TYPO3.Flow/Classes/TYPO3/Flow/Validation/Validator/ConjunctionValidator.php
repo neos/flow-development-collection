@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Error\Result as ErrorResult;
 
 /**
  * Validator to chain many validators in a conjunction (logical and).
@@ -24,7 +25,7 @@ class ConjunctionValidator extends AbstractCompositeValidator
      * Every validator has to be valid, to make the whole conjunction valid.
      *
      * @param mixed $value The value that should be validated
-     * @return \TYPO3\Flow\Error\Result
+     * @return ErrorResult
      * @api
      */
     public function validate($value)
@@ -40,7 +41,7 @@ class ConjunctionValidator extends AbstractCompositeValidator
                 }
             }
         } else {
-            $result = new \TYPO3\Flow\Error\Result();
+            $result = new ErrorResult();
         }
 
         return $result;
