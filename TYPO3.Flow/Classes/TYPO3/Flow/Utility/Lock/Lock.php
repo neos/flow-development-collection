@@ -29,7 +29,7 @@ class Lock
     protected static $lockStrategyClassName;
 
     /**
-     * @var \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @var LockStrategyInterface
      */
     protected $lockStrategy;
 
@@ -50,10 +50,10 @@ class Lock
     public function __construct($subject, $exclusiveLock = true)
     {
         if (self::$lockStrategyClassName === null) {
-            if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered('TYPO3\Flow\Configuration\ConfigurationManager')) {
+            if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(ConfigurationManager::class)) {
                 return;
             }
-            $configurationManager = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+            $configurationManager = Bootstrap::$staticObjectManager->get(ConfigurationManager::class);
             $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
             self::$lockStrategyClassName = $settings['utility']['lockStrategyClassName'];
         }
@@ -62,7 +62,7 @@ class Lock
     }
 
     /**
-     * @return \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @return LockStrategyInterface
      */
     public function getLockStrategy()
     {
