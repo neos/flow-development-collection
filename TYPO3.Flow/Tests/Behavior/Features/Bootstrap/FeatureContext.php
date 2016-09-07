@@ -5,6 +5,8 @@ use Flowpack\Behat\Tests\Behat\FlowContext;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
+use TYPO3\Flow\Tests\Functional\Command\BehatTestHelper;
+use TYPO3\Flow\Utility\Environment;
 
 require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/IsolatedBehatStepsTrait.php');
@@ -21,7 +23,7 @@ class FeatureContext extends BehatContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = 'TYPO3\Flow\Tests\Functional\Command\BehatTestHelper';
+    protected $behatTestHelperObjectName = BehatTestHelper::class;
 
     /**
      * Initializes the context
@@ -33,7 +35,7 @@ class FeatureContext extends BehatContext
         $this->useContext('flow', new FlowContext($parameters));
         $flowContext = $this->getSubcontext('flow');
         $this->objectManager = $flowContext->getObjectManager();
-        $this->environment = $this->objectManager->get('TYPO3\Flow\Utility\Environment');
+        $this->environment = $this->objectManager->get(Environment::class);
         $this->setupSecurity();
     }
 }

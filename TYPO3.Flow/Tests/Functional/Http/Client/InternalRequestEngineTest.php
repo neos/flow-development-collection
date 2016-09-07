@@ -12,11 +12,12 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
  */
 
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the HTTP client internal request engine
  */
-class InternalRequestEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class InternalRequestEngineTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -33,13 +34,13 @@ class InternalRequestEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $route = new Route();
         $route->setName('Functional Test - Http::Client::InternalRequestEngine');
         $route->setUriPattern('test/security/restricted');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'Restricted',
             '@action' => 'admin',
             '@format' => 'html'
-        ));
+        ]);
         $this->router->addRoute($route);
     }
 
