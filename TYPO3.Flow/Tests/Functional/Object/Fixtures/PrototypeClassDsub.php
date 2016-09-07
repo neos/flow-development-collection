@@ -20,7 +20,7 @@ class PrototypeClassDsub extends PrototypeClassD
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD
+     * @var SingletonClassD
      */
     protected $objectD;
 }

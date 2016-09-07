@@ -20,7 +20,7 @@ class SubProcess
     /**
      * @var array
      */
-    protected $pipes = array();
+    protected $pipes = [];
 
     /**
      * @var ApplicationContext
@@ -87,13 +87,13 @@ class SubProcess
     protected function launchSubProcess()
     {
         $systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_PATH_TEMPORARY_BASE=' . escapeshellarg(FLOW_PATH_TEMPORARY_BASE) . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
-        $descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
+        $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
         $this->subProcess = proc_open($systemCommand, $descriptorSpecification, $this->pipes);
         if (!is_resource($this->subProcess)) {
             throw new \RuntimeException('Could not execute sub process.');
         }
 
-        $read = array($this->pipes[1]);
+        $read = [$this->pipes[1]];
         $write = null;
         $except = null;
         $readTimeout = 30;
@@ -101,7 +101,7 @@ class SubProcess
         stream_select($read, $write, $except, $readTimeout);
 
         $subProcessStatus = proc_get_status($this->subProcess);
-        return ($subProcessStatus['running'] === true) ? array($this->subProcess, $this->pipes) : false;
+        return ($subProcessStatus['running'] === true) ? [$this->subProcess, $this->pipes] : false;
     }
 
     /**
@@ -114,7 +114,7 @@ class SubProcess
         if (!is_resource($this->subProcess)) {
             return '';
         }
-        $responseLines = array();
+        $responseLines = [];
         while (feof($this->pipes[1]) === false) {
             $responseLine = fgets($this->pipes[1]);
             if ($responseLine === false) {
