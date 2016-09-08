@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Resource\Streams;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Resource\Exception;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Resource\Exception as ResourceException;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Unicode\Functions;
 
@@ -37,19 +40,19 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     protected $handle;
 
     /**
-     * @var \TYPO3\Flow\Http\Uri
+     * @var Uri
      */
     protected $uri;
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var PackageManagerInterface
      */
     protected $packageManager;
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
@@ -482,7 +485,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * @param string $requestedPath
      * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
      * @return mixed The full path and filename or FALSE if the file doesn't exist
-     * @throws \InvalidArgumentException|Exception
+     * @throws \InvalidArgumentException|ResourceException
      */
     protected function evaluateResourcePath($requestedPath, $checkForExistence = true)
     {
@@ -501,11 +504,11 @@ class ResourceStreamWrapper implements StreamWrapperInterface
         }
 
         if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-            throw new Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
         }
 
         $package = $this->packageManager->getPackage($uriParts['host']);
-        $resourceUri = Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
+        $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $uriParts['path']]);
 
         if ($checkForExistence === false || file_exists($resourceUri)) {
             return $resourceUri;
