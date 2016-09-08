@@ -47,7 +47,7 @@ interface RepositoryInterface
     /**
      * Returns all objects of this repository.
      *
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
+     * @return QueryResultInterface The query result
      * @api
      */
     public function findAll();
@@ -64,7 +64,7 @@ interface RepositoryInterface
     /**
      * Returns a query for objects of this repository
      *
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function createQuery();
