@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Session;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * Implementation of a transient session.
@@ -42,7 +43,7 @@ class TransientSession implements SessionInterface
      *
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * @var integer
@@ -184,7 +185,6 @@ class TransientSession implements SessionInterface
      *
      * @param string $reason A reason for destroying the session – used by the LoggingAspect
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception
      * @throws Exception\SessionNotStartedException
      */
     public function destroy($reason = null)
@@ -192,17 +192,17 @@ class TransientSession implements SessionInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
         }
-        $this->data = array();
+        $this->data = [];
         $this->started = false;
     }
 
     /**
      * No operation for transient session.
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+     * @param Bootstrap $bootstrap
      * @return void
      */
-    public static function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap)
+    public static function destroyAll(Bootstrap $bootstrap)
     {
     }
 
