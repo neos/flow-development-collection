@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Mvc\RequestInterface;
 
 /**
  * A generic Controller exception
@@ -19,7 +20,7 @@ namespace TYPO3\Flow\Mvc\Controller;
 class Exception extends \TYPO3\Flow\Mvc\Exception
 {
     /**
-     * @var \TYPO3\Flow\Mvc\RequestInterface
+     * @var RequestInterface
      */
     protected $request;
 
@@ -29,10 +30,10 @@ class Exception extends \TYPO3\Flow\Mvc\Exception
      * @param string $message
      * @param integer $code
      * @param \Exception $previousException
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request
+     * @param RequestInterface $request
      * @see \Exception
      */
-    public function __construct($message = '', $code = 0, \Exception $previousException = null, \TYPO3\Flow\Mvc\RequestInterface $request)
+    public function __construct($message = '', $code = 0, \Exception $previousException = null, RequestInterface $request)
     {
         $this->request = $request;
         parent::__construct($message, $code, $previousException);
@@ -41,7 +42,7 @@ class Exception extends \TYPO3\Flow\Mvc\Exception
     /**
      * Returns the request object that exception belongs to.
      *
-     * @return \TYPO3\Flow\Mvc\RequestInterface
+     * @return RequestInterface
      */
     protected function getRequest()
     {

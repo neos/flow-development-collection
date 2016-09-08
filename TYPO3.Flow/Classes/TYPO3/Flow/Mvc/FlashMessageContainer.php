@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
 
 /**
  * This is a container for all Flash Messages.
@@ -24,17 +25,17 @@ class FlashMessageContainer
     /**
      * @var array
      */
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * Add a flash message object.
      *
-     * @param \TYPO3\Flow\Error\Message $message
+     * @param Message $message
      * @return void
      * @Flow\Session(autoStart=true)
      * @api
      */
-    public function addMessage(\TYPO3\Flow\Error\Message $message)
+    public function addMessage(Message $message)
     {
         $this->messages[] = $message;
     }
@@ -42,8 +43,8 @@ class FlashMessageContainer
     /**
      * Returns all currently stored flash messages.
      *
-     * @param string $severity severity of messages (from \TYPO3\Flow\Error\Message::SEVERITY_* constants) to return.
-     * @return array<\TYPO3\Flow\Error\Message>
+     * @param string $severity severity of messages (from Message::SEVERITY_* constants) to return.
+     * @return array<Message>
      * @api
      */
     public function getMessages($severity = null)
@@ -52,7 +53,7 @@ class FlashMessageContainer
             return $this->messages;
         }
 
-        $messages = array();
+        $messages = [];
         foreach ($this->messages as $message) {
             if ($message->getSeverity() === $severity) {
                 $messages[] = $message;
@@ -64,7 +65,7 @@ class FlashMessageContainer
     /**
      * Remove messages from this container.
      *
-     * @param string $severity severity of messages (from \TYPO3\Flow\Error\Message::SEVERITY_* constants) to remove.
+     * @param string $severity severity of messages (from Message::SEVERITY_* constants) to remove.
      * @return void
      * @Flow\Session(autoStart=true)
      * @api
@@ -72,7 +73,7 @@ class FlashMessageContainer
     public function flush($severity = null)
     {
         if ($severity === null) {
-            $this->messages = array();
+            $this->messages = [];
         } else {
             foreach ($this->messages as $index => $message) {
                 if ($message->getSeverity() === $severity) {
@@ -85,8 +86,8 @@ class FlashMessageContainer
     /**
      * Get all flash messages (with given severity) currently available and remove them from the container.
      *
-     * @param string $severity severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
-     * @return array<\TYPO3\Flow\Error\Message>
+     * @param string $severity severity of the messages (One of the Message::SEVERITY_* constants)
+     * @return array<Message>
      * @api
      */
     public function getMessagesAndFlush($severity = null)

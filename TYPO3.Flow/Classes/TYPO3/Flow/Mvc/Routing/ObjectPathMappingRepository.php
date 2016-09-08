@@ -27,7 +27,7 @@ class ObjectPathMappingRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = 'TYPO3\Flow\Mvc\Routing\ObjectPathMapping';
+    const ENTITY_CLASSNAME = ObjectPathMapping::class;
 
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
@@ -40,17 +40,17 @@ class ObjectPathMappingRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'objectType' => QueryInterface::ORDER_ASCENDING,
         'uriPattern' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 
     /**
      * @param string $objectType the object type of the ObjectPathMapping object
      * @param string $uriPattern the URI pattern of the ObjectPathMapping object
      * @param string $pathSegment the URI path segment of the ObjectPathMapping object
      * @param boolean $caseSensitive whether the path segment lookup should be done case-sensitive
-     * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
+     * @return ObjectPathMapping
      */
     public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment, $caseSensitive = false)
     {
@@ -70,7 +70,7 @@ class ObjectPathMappingRepository extends Repository
      * @param string $objectType the object type of the ObjectPathMapping object
      * @param string $uriPattern the URI pattern of the ObjectPathMapping object
      * @param string|integer $identifier the identifier of the object, for example the UUID, @see \TYPO3\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
-     * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
+     * @return ObjectPathMapping
      * @throws \InvalidArgumentException
      */
     public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier)

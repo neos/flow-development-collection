@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  *
  * @api
  */
-interface DynamicRoutePartInterface extends \TYPO3\Flow\Mvc\Routing\RoutePartInterface
+interface DynamicRoutePartInterface extends RoutePartInterface
 {
     /**
      * Sets split string of the Route Part.

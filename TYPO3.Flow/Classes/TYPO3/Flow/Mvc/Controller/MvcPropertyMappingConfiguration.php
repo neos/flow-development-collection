@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 
 /**
  * The default property mapping configuration is available
@@ -18,18 +20,18 @@ namespace TYPO3\Flow\Mvc\Controller;
  *
  * @api
  */
-class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappingConfiguration
+class MvcPropertyMappingConfiguration extends PropertyMappingConfiguration
 {
     /**
      * Allow creation of a certain sub property
      *
      * @param string $propertyPath
-     * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration this
+     * @return MvcPropertyMappingConfiguration this
      * @api
      */
     public function allowCreationForSubProperty($propertyPath)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        $this->forProperty($propertyPath)->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         return $this;
     }
 
@@ -37,24 +39,24 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      * Allow modification for a given property path
      *
      * @param string $propertyPath
-     * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration this
+     * @return MvcPropertyMappingConfiguration this
      * @api
      */
     public function allowModificationForSubProperty($propertyPath)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $this->forProperty($propertyPath)->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         return $this;
     }
 
     /**
      * Allow override of the target type through a special "__type" parameter
      *
-     * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration this
+     * @return MvcPropertyMappingConfiguration this
      * @api
      */
     public function allowOverrideTargetType()
     {
-        $this->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+        $this->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
         return $this;
     }
 
@@ -65,12 +67,12 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
      *
      * @param string $propertyPath
      * @param string $targetType
-     * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration this
+     * @return MvcPropertyMappingConfiguration this
      * @api
      */
     public function setTargetTypeForSubProperty($propertyPath, $targetType)
     {
-        $this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
+        $this->forProperty($propertyPath)->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
         return $this;
     }
 }
