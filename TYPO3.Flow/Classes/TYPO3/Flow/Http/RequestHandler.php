@@ -46,6 +46,11 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $baseComponentChain;
 
     /**
+     * @var Component\ComponentContext
+     */
+    protected $componentContext;
+
+    /**
      * The "http" settings
      *
      * @var array
@@ -111,8 +116,8 @@ class RequestHandler implements HttpRequestHandlerInterface
             $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
 
-        $componentContext = new ComponentContext($this->request, $this->response);
-        $this->baseComponentChain->handle($componentContext);
+        $this->componentContext = new ComponentContext($this->request, $this->response);
+        $this->baseComponentChain->handle($this->componentContext);
         $this->response = $this->baseComponentChain->getResponse();
 
         $this->response->send();
@@ -129,7 +134,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpRequest()
     {
-        return $this->request;
+        return $this->componentContext->getHttpRequest();
     }
 
     /**
@@ -140,7 +145,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpResponse()
     {
-        return $this->response;
+        return $this->componentContext->getHttpResponse();
     }
 
     /**
