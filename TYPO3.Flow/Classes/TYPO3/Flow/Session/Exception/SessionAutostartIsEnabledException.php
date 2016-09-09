@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Session\Exception;
  */
 
 /**
- * A "\TYPO3\Flow\Session\Exception\SessionAutostartIsEnabledException" Exception
- *
  * @api
  */
 class SessionAutostartIsEnabledException extends \TYPO3\Flow\Session\Exception

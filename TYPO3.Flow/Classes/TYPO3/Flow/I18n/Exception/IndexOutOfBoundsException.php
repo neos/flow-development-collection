@@ -10,6 +10,7 @@ namespace TYPO3\Flow\I18n\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\I18n;
 
 /**
  * The "Index Out Of Bounds" exception
@@ -19,6 +20,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class IndexOutOfBoundsException extends \TYPO3\Flow\I18n\Exception
+class IndexOutOfBoundsException extends I18n\Exception
 {
 }

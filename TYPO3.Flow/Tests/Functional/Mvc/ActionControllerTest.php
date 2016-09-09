@@ -105,8 +105,8 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function defaultTemplateIsResolvedAndUsedAccordingToConventions()
     {
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@typo3.org');
-        $this->assertEquals('Fourth action <b>example@typo3.org</b>', $response->getContent());
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@neos.io');
+        $this->assertEquals('Fourth action <b>example@neos.io</b>', $response->getContent());
     }
 
     /**

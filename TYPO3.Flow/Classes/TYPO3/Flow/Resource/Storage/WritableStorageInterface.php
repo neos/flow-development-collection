@@ -11,7 +11,8 @@ namespace TYPO3\Flow\Resource\Storage;
  * source code.
  */
 
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Resource\Storage\Exception as StorageException;
 
 /**
  * Interface of a Resource Storage which provides import functionality.
@@ -28,8 +29,8 @@ interface WritableStorageInterface extends StorageInterface
      *
      * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @param string $collectionName Name of the collection the new Resource belongs to
-     * @return Resource A resource object representing the imported resource
-     * @throws Exception
+     * @return PersistentResource A resource object representing the imported resource
+     * @throws StorageException
      * @api
      */
     public function importResource($source, $collectionName);
@@ -45,8 +46,8 @@ interface WritableStorageInterface extends StorageInterface
      *
      * @param string $content The actual content to import
      * @param string $collectionName Name of the collection the new Resource belongs to
-     * @return Resource A resource object representing the imported resource
-     * @throws Exception
+     * @return PersistentResource A resource object representing the imported resource
+     * @throws StorageException
      * @api
      */
     public function importResourceFromContent($content, $collectionName);
@@ -58,8 +59,8 @@ interface WritableStorageInterface extends StorageInterface
      *       Resource object is going to be removed. Therefore this method must not remove the Resource object from
      *       the Resource Repository itself!
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource The Resource to delete the storage data of
+     * @param PersistentResource $resource The Resource to delete the storage data of
      * @return boolean TRUE if removal was successful
      */
-    public function deleteResource(Resource $resource);
+    public function deleteResource(PersistentResource $resource);
 }

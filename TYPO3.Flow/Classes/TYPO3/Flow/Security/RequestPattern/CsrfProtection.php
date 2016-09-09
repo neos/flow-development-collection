@@ -153,7 +153,7 @@ class CsrfProtection implements RequestPatternInterface
      */
     protected function hasPolicyEntryForMethod($className, $methodName)
     {
-        $methodPrivileges = $this->policyService->getAllPrivilegesByType(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class);
+        $methodPrivileges = $this->policyService->getAllPrivilegesByType(MethodPrivilegeInterface::class);
         /** @var MethodPrivilegeInterface $privilege */
         foreach ($methodPrivileges as $privilege) {
             if ($privilege->matchesMethod($className, $methodName)) {

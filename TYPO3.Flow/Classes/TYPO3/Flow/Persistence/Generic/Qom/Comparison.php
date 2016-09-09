@@ -57,10 +57,10 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+class Comparison extends Constraint
 {
     /**
-     * @var \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+     * @var DynamicOperand
      */
     protected $operand1;
 
@@ -77,11 +77,11 @@ class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
     /**
      * Constructs this Comparison instance
      *
-     * @param \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1
+     * @param DynamicOperand $operand1
      * @param integer $operator one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
      * @param mixed $operand2
      */
-    public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = null)
+    public function __construct(DynamicOperand $operand1, $operator, $operand2 = null)
     {
         $this->operand1 = $operand1;
         $this->operator = $operator;
@@ -92,7 +92,7 @@ class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
      *
      * Gets the first operand.
      *
-     * @return \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand the operand; non-null
+     * @return DynamicOperand the operand; non-null
      * @api
      */
     public function getOperand1()

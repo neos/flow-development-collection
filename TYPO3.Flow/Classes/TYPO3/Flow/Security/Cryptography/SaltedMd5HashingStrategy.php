@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  * A salted MD5 based password hashing strategy
  *
  */
-class SaltedMd5HashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface
+class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
 {
     /**
      * Generates a salted md5 hash over the given string.

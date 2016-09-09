@@ -22,7 +22,11 @@ use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -34,26 +38,26 @@ class EntityManagerFactory
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * Injects the Flow settings, the persistence part is kept
@@ -78,7 +82,7 @@ class EntityManagerFactory
      * Factory method which creates an EntityManager.
      *
      * @return EntityManager
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function create()
     {
@@ -108,13 +112,13 @@ class EntityManagerFactory
 
         $eventManager = $this->buildEventManager();
 
-        $flowAnnotationDriver = $this->objectManager->get(Mapping\Driver\FlowAnnotationDriver::class);
+        $flowAnnotationDriver = $this->objectManager->get(FlowAnnotationDriver::class);
         $config->setMetadataDriverImpl($flowAnnotationDriver);
 
-        $proxyDirectory = Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
+        $proxyDirectory = Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']);
         Files::createDirectoryRecursively($proxyDirectory);
         $config->setProxyDir($proxyDirectory);
-        $config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
+        $config->setProxyNamespace(Proxies::class);
         $config->setAutoGenerateProxyClasses(false);
 
         // The following code tries to connect first, if that succeeds, all is well. If not, the platform is fetched directly from the
@@ -159,7 +163,7 @@ class EntityManagerFactory
      * Add configured event subscribers and listeners to the event manager
      *
      * @return EventManager
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     protected function buildEventManager()
     {

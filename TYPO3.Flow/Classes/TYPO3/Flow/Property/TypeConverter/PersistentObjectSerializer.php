@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * This converter transforms persistent objects to strings by returning their (technical) identifier.
@@ -26,7 +29,7 @@ class PersistentObjectSerializer extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface::class);
+    protected $sourceTypes = [PersistenceMagicInterface::class];
 
     /**
      * @var string
@@ -40,7 +43,7 @@ class PersistentObjectSerializer extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -50,12 +53,10 @@ class PersistentObjectSerializer extends AbstractTypeConverter
      * @param object $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return object the target type
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
-     * @throws \InvalidArgumentException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $identifier = $this->persistenceManager->getIdentifierByObject($source);
         return $identifier;

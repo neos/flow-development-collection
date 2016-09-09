@@ -26,16 +26,16 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
 class UpperCase
 {
     /**
-     * @var \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+     * @var DynamicOperand
      */
     protected $operand;
 
     /**
      * Constructs this UpperCase instance
      *
-     * @param \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand
+     * @param DynamicOperand $operand
      */
-    public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand)
+    public function __construct(DynamicOperand $operand)
     {
         $this->operand = $operand;
     }
@@ -43,7 +43,7 @@ class UpperCase
     /**
      * Gets the operand whose value is converted to a upper-case string.
      *
-     * @return \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand the operand; non-null
+     * @return DynamicOperand the operand; non-null
      * @api
      */
     public function getOperand()

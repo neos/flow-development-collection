@@ -11,6 +11,8 @@ namespace TYPO3\Flow\I18n\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Invalid Format Placeholder" exception
  *
@@ -20,6 +22,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class InvalidFormatPlaceholderException extends \TYPO3\Flow\I18n\Exception
+class InvalidFormatPlaceholderException extends I18n\Exception
 {
 }
