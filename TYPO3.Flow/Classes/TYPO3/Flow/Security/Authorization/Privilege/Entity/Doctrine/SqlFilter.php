@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\ClassMetaData;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface;
@@ -53,7 +54,7 @@ class SqlFilter extends DoctrineSqlFilter
          * yet fully initialized. By this we get a half built account object that will end up in access denied exception,
          * as it has no roles (and other properties) set
          */
-        if ($this->securityContext->areAuthorizationChecksDisabled() || $targetEntity->getName() === 'TYPO3\Flow\Security\Account') {
+        if ($this->securityContext->areAuthorizationChecksDisabled() || $targetEntity->getName() === Account::class) {
             return '';
         }
         if (!$this->securityContext->isInitialized()) {
@@ -66,11 +67,11 @@ class SqlFilter extends DoctrineSqlFilter
         //This is needed to include the current context of roles into query cache identifier
         $this->setParameter('__contextHash', $this->securityContext->getContextHash(), 'string');
 
-        $sqlConstraints = array();
-        $grantedConstraints = array();
-        $deniedConstraints = array();
+        $sqlConstraints = [];
+        $grantedConstraints = [];
+        $deniedConstraints = [];
         foreach ($this->securityContext->getRoles() as $role) {
-            $entityPrivileges = $role->getPrivilegesByType('TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface');
+            $entityPrivileges = $role->getPrivilegesByType(EntityPrivilegeInterface::class);
             /** @var EntityPrivilegeInterface $privilege */
             foreach ($entityPrivileges as $privilege) {
                 if (!$privilege->matchesEntityType($targetEntity->getName())) {
@@ -107,11 +108,11 @@ class SqlFilter extends DoctrineSqlFilter
     protected function initializeDependencies()
     {
         if ($this->securityContext === null) {
-            $this->securityContext = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Security\Context');
+            $this->securityContext = Bootstrap::$staticObjectManager->get(Context::class);
         }
 
         if ($this->policyService === null) {
-            $this->policyService = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
+            $this->policyService = Bootstrap::$staticObjectManager->get(PolicyService::class);
         }
     }
 }

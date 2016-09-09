@@ -36,7 +36,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     /**
      * @var array
      */
-    protected $methodPermissions = array();
+    protected $methodPermissions = [];
 
     /**
      * @var VariableFrontend
@@ -132,7 +132,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -161,7 +161,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      */
     protected function buildPointcutFilters()
     {
-        $this->filters = array();
+        $this->filters = [];
         /** @var PolicyService $policyService */
         $policyService = $this->objectManager->get(PolicyService::class);
         /** @var MethodPrivilegeInterface[] $methodPrivileges */
@@ -178,7 +178,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      */
     public function savePolicyCache()
     {
-        $tags = array('TYPO3_Flow_Aop');
+        $tags = ['TYPO3_Flow_Aop'];
         if (!$this->methodPermissionCache->has('methodPermission')) {
             $this->methodPermissionCache->set('methodPermission', $this->methodPermissions, $tags);
         }

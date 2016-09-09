@@ -77,7 +77,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     public function isGrantedForRoles(array $roles, $privilegeType, $subject, &$reason = '')
     {
-        $effectivePrivilegeIdentifiersWithPermission = array();
+        $effectivePrivilegeIdentifiersWithPermission = [];
         $accessGrants = 0;
         $accessDenies = 0;
         $accessAbstains = 0;
@@ -86,7 +86,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
             /** @var PrivilegeInterface[] $availablePrivileges */
             $availablePrivileges = $role->getPrivilegesByType($privilegeType);
             /** @var PrivilegeInterface[] $effectivePrivileges */
-            $effectivePrivileges = array();
+            $effectivePrivileges = [];
             foreach ($availablePrivileges as $privilege) {
                 if ($privilege->matchesSubject($subject)) {
                     $effectivePrivileges[] = $privilege;
@@ -95,11 +95,11 @@ class PrivilegeManager implements PrivilegeManagerInterface
 
             foreach ($effectivePrivileges as $effectivePrivilege) {
                 $privilegeName = $effectivePrivilege->getPrivilegeTargetIdentifier();
-                $parameterStrings = array();
+                $parameterStrings = [];
                 foreach ($effectivePrivilege->getParameters() as $parameter) {
                     $parameterStrings[] = sprintf('%s: "%s"', $parameter->getName(), $parameter->getValue());
                 }
-                if ($parameterStrings !== array()) {
+                if ($parameterStrings !== []) {
                     $privilegeName .= ' (with parameters: ' . implode(', ', $parameterStrings) . ')';
                 }
 
@@ -137,7 +137,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean TRUE if access is granted, FALSE otherwise
      */
-    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array())
+    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = [])
     {
         return $this->isPrivilegeTargetGrantedForRoles($this->securityContext->getRoles(), $privilegeTargetIdentifier, $privilegeParameters);
     }
@@ -150,7 +150,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean TRUE if access is granted, FALSE otherwise
      */
-    public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = array())
+    public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
     {
         $privilegeFound = false;
         $accessGrants = 0;
