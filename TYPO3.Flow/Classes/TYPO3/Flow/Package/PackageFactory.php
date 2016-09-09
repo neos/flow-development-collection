@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
+use TYPO3\Flow\Package\Exception\InvalidPackageManifestException;
 use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
@@ -26,7 +27,7 @@ class PackageFactory
     protected $packageManager;
 
     /**
-     * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
+     * @param PackageManagerInterface $packageManager
      */
     public function __construct(PackageManagerInterface $packageManager)
     {
@@ -41,22 +42,22 @@ class PackageFactory
      * @param string $packageKey key / name of the package
      * @param string $classesPath path to the classes directory, relative to the package path
      * @param string $manifestPath path to the package's Composer manifest, relative to package path, defaults to same path
-     * @return \TYPO3\Flow\Package\PackageInterface
+     * @return PackageInterface
      * @throws Exception\CorruptPackageException
      */
     public function create($packagesBasePath, $packagePath, $packageKey, $classesPath = null, $manifestPath = null)
     {
-        $absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
-        $absoluteManifestPath = $manifestPath === null ? $absolutePackagePath : Files::concatenatePaths(array($absolutePackagePath, $manifestPath)) . '/';
-        $autoLoadDirectives = array();
+        $absolutePackagePath = Files::concatenatePaths([$packagesBasePath, $packagePath]) . '/';
+        $absoluteManifestPath = $manifestPath === null ? $absolutePackagePath : Files::concatenatePaths([$absolutePackagePath, $manifestPath]) . '/';
+        $autoLoadDirectives = [];
         try {
             $autoLoadDirectives = (array)PackageManager::getComposerManifest($absoluteManifestPath, 'autoload');
         } catch (MissingPackageManifestException $exception) {
         }
         if (isset($autoLoadDirectives[Package::AUTOLOADER_TYPE_PSR4])) {
-            $packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', 'Package.php'));
+            $packageClassPathAndFilename = Files::concatenatePaths([$absolutePackagePath, 'Classes', 'Package.php']);
         } else {
-            $packageClassPathAndFilename = Files::concatenatePaths(array($absolutePackagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php'));
+            $packageClassPathAndFilename = Files::concatenatePaths([$absolutePackagePath, 'Classes', str_replace('.', '/', $packageKey), 'Package.php']);
         }
         $package = null;
         if (file_exists($packageClassPathAndFilename)) {
@@ -68,7 +69,7 @@ class PackageFactory
             }
             $package = new $packageClassName($this->packageManager, $packageKey, $absolutePackagePath, $classesPath, $manifestPath);
             if (!$package instanceof PackageInterface) {
-                throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".', $packageKey, $packageClassPathAndFilename), 1427193370);
+                throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement %s. Check the file "%s".', $packageKey, PackageInterface::class, $packageClassPathAndFilename), 1427193370);
             }
             return $package;
         }
@@ -89,12 +90,12 @@ class PackageFactory
      * @param string $packagePath
      * @param string $packagesBasePath
      * @return string
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException
+     * @throws InvalidPackageManifestException
      */
     public static function getPackageKeyFromManifest($manifest, $packagePath, $packagesBasePath)
     {
         if (!is_object($manifest)) {
-            throw new  \TYPO3\Flow\Package\Exception\InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
+            throw new  InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
         }
         if (isset($manifest->type) && substr($manifest->type, 0, 11) === 'typo3-flow-') {
             $relativePackagePath = substr($packagePath, strlen($packagesBasePath));

@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Error\Exception as ErrorException;
+
 /**
  * File and directory functions
  */
@@ -27,9 +29,9 @@ class Files
     public static function getUnixStylePath($path)
     {
         if (strpos($path, ':') === false) {
-            return str_replace(array('//', '\\'), '/', $path);
+            return str_replace(['//', '\\'], '/', $path);
         } else {
-            return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(array('//', '\\'), '/', $path));
+            return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));
         }
     }
 
@@ -287,7 +289,7 @@ class Files
         foreach (self::getRecursiveDirectoryGenerator($sourceDirectory, null, false, $copyDotFiles) as $filename) {
             $relativeFilename = str_replace($sourceDirectory, '', $filename);
             self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
-            $targetPathAndFilename = self::concatenatePaths(array($targetDirectory, $relativeFilename));
+            $targetPathAndFilename = self::concatenatePaths([$targetDirectory, $relativeFilename]);
             if ($keepExistingFiles === false || !file_exists($targetPathAndFilename)) {
                 copy($filename, $targetPathAndFilename);
             }
@@ -317,7 +319,7 @@ class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (\TYPO3\Flow\Error\Exception $ignoredException) {
+        } catch (ErrorException $ignoredException) {
             $content = false;
         }
         return $content;
@@ -414,7 +416,7 @@ class Files
      *
      * @var array
      */
-    protected static $sizeUnits = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+    protected static $sizeUnits = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     /**
      * Converts an integer with a byte count into human-readable form

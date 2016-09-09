@@ -55,9 +55,9 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
         $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\EmailAddressValidator()));
 
         $arrayOfEmailAddresses = array(
-            'andreas.foerthner@netlogix.de',
+            'andreas@neos.io',
             'not a valid address',
-            'robert@typo3.org',
+            'robert@neos.io',
             'also not valid'
         );
 

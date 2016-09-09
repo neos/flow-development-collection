@@ -65,10 +65,10 @@ class HelpCommandController extends CommandController
     {
         $context = $this->bootstrap->getContext();
         $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
-        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
+        $this->outputLine('<b>%s %s ("%s" context)</b>', [$composerManifest->description, $composerManifest->version ?: 'dev', $context]);
         $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
         $this->outputLine();
-        $this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));
+        $this->outputLine('See "%s help" for a list of all available commands.', [$this->getFlowInvocationString()]);
         $this->outputLine();
     }
 
@@ -94,9 +94,9 @@ class HelpCommandController extends CommandController
             $matchingCommands = $this->commandManager->getCommandsByIdentifier($commandIdentifier);
             $numberOfMatchingCommands = count($matchingCommands);
             if ($numberOfMatchingCommands === 0) {
-                $this->outputLine('No command could be found that matches the command identifier "%s".', array($commandIdentifier));
+                $this->outputLine('No command could be found that matches the command identifier "%s".', [$commandIdentifier]);
             } elseif ($numberOfMatchingCommands > 1) {
-                $this->outputLine('%d commands match the command identifier "%s":', array($numberOfMatchingCommands, $commandIdentifier));
+                $this->outputLine('%d commands match the command identifier "%s":', [$numberOfMatchingCommands, $commandIdentifier]);
                 $this->displayShortHelpForCommands($matchingCommands);
             } else {
                 $this->displayHelpForCommand(array_shift($matchingCommands));
@@ -112,8 +112,8 @@ class HelpCommandController extends CommandController
         $context = $this->bootstrap->getContext();
 
         $composerManifest = $this->packageManager->getPackage($this->applicationPackageKey)->getComposerManifest();
-        $this->outputLine('<b>%s %s ("%s" context)</b>', array($composerManifest->description, $composerManifest->version ?: 'dev', $context));
-        $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
+        $this->outputLine('<b>%s %s ("%s" context)</b>', [$composerManifest->description, $composerManifest->version ?: 'dev', $context]);
+        $this->outputLine('<i>usage: %s <command identifier></i>', [$this->getFlowInvocationString()]);
         $this->outputLine();
         $this->outputLine('The following commands are currently available:');
 
@@ -121,7 +121,7 @@ class HelpCommandController extends CommandController
 
         $this->outputLine('* = compile time command');
         $this->outputLine();
-        $this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlowInvocationString()));
+        $this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', [$this->getFlowInvocationString()]);
         $this->outputLine();
     }
 
@@ -134,7 +134,7 @@ class HelpCommandController extends CommandController
         $commandsByPackagesAndControllers = $this->buildCommandsIndex($commands);
         foreach ($commandsByPackagesAndControllers as $packageKey => $commandControllers) {
             $this->outputLine('');
-            $this->outputLine('PACKAGE "%s":', array(strtoupper($packageKey)));
+            $this->outputLine('PACKAGE "%s":', [strtoupper($packageKey)]);
             $this->outputLine(str_repeat('-', $this->output->getMaximumLineLength()));
             foreach ($commandControllers as $commands) {
                 /** @var Command $command */
@@ -142,7 +142,7 @@ class HelpCommandController extends CommandController
                     $description = wordwrap($command->getShortDescription(), $this->output->getMaximumLineLength() - 43, PHP_EOL . str_repeat(' ', 43), true);
                     $shortCommandIdentifier = $this->commandManager->getShortestIdentifierForCommand($command);
                     $compileTimeSymbol = ($this->bootstrap->isCompileTimeCommand($shortCommandIdentifier) ? '*' : '');
-                    $this->outputLine('%-2s%-40s %s', array($compileTimeSymbol, $shortCommandIdentifier, $description));
+                    $this->outputLine('%-2s%-40s %s', [$compileTimeSymbol, $shortCommandIdentifier, $description]);
                 }
                 $this->outputLine();
             }
@@ -163,7 +163,7 @@ class HelpCommandController extends CommandController
 
         $this->outputLine('<b>COMMAND:</b>');
         $name = '<i>' . $command->getCommandIdentifier() . '</i>';
-        $this->outputLine('%-2s%s', array(' ', $name));
+        $this->outputLine('%-2s%s', [' ', $name]);
 
         $commandArgumentDefinitions = $command->getArgumentDefinitions();
         $usage = '';
@@ -181,19 +181,19 @@ class HelpCommandController extends CommandController
 
         $this->outputLine();
         $this->outputLine('<b>USAGE:</b>');
-        $this->outputLine('  %s %s', array($this->getFlowInvocationString(), $usage));
+        $this->outputLine('  %s %s', [$this->getFlowInvocationString(), $usage]);
 
-        $argumentDescriptions = array();
-        $optionDescriptions = array();
+        $argumentDescriptions = [];
+        $optionDescriptions = [];
 
         if ($command->hasArguments()) {
             foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
                 $argumentDescription = $commandArgumentDefinition->getDescription();
                 $argumentDescription = wordwrap($argumentDescription, $this->output->getMaximumLineLength() - 23, PHP_EOL . str_repeat(' ', 23), true);
                 if ($commandArgumentDefinition->isRequired()) {
-                    $argumentDescriptions[] = vsprintf('  %-20s %s', array($commandArgumentDefinition->getDashedName(), $argumentDescription));
+                    $argumentDescriptions[] = vsprintf('  %-20s %s', [$commandArgumentDefinition->getDashedName(), $argumentDescription]);
                 } else {
-                    $optionDescriptions[] = vsprintf('  %-20s %s', array($commandArgumentDefinition->getDashedName(), $argumentDescription));
+                    $optionDescriptions[] = vsprintf('  %-20s %s', [$commandArgumentDefinition->getDashedName(), $argumentDescription]);
                 }
             }
         }
@@ -219,20 +219,20 @@ class HelpCommandController extends CommandController
             $this->outputLine('<b>DESCRIPTION:</b>');
             $descriptionLines = explode(chr(10), $command->getDescription());
             foreach ($descriptionLines as $descriptionLine) {
-                $this->outputLine('%-2s%s', array(' ', $descriptionLine));
+                $this->outputLine('%-2s%s', [' ', $descriptionLine]);
             }
         }
 
         $relatedCommandIdentifiers = $command->getRelatedCommandIdentifiers();
-        if ($relatedCommandIdentifiers !== array()) {
+        if ($relatedCommandIdentifiers !== []) {
             $this->outputLine();
             $this->outputLine('<b>SEE ALSO:</b>');
             foreach ($relatedCommandIdentifiers as $commandIdentifier) {
                 try {
                     $command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
-                    $this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
+                    $this->outputLine('%-2s%s (%s)', [' ', $commandIdentifier, $command->getShortDescription()]);
                 } catch (CommandException $exception) {
-                    $this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, '<i>Command not available</i>'));
+                    $this->outputLine('%-2s%s (%s)', [' ', $commandIdentifier, '<i>Command not available</i>']);
                 }
             }
         }
@@ -255,8 +255,8 @@ class HelpCommandController extends CommandController
             $this->displayShortHelpForCommands($exception->getMatchingCommands());
         }
         $this->outputLine();
-        $this->outputLine('Enter "%s help" for an overview of all available commands', array($this->getFlowInvocationString()));
-        $this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', array($this->getFlowInvocationString()));
+        $this->outputLine('Enter "%s help" for an overview of all available commands', [$this->getFlowInvocationString()]);
+        $this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', [$this->getFlowInvocationString()]);
     }
 
     /**
@@ -268,7 +268,7 @@ class HelpCommandController extends CommandController
      */
     protected function buildCommandsIndex(array $commands)
     {
-        $commandsByPackagesAndControllers = array();
+        $commandsByPackagesAndControllers = [];
         /** @var Command $command */
         foreach ($commands as $command) {
             if ($command->isInternal()) {

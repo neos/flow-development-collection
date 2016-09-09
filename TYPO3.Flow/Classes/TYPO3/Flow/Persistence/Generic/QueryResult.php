@@ -12,26 +12,29 @@ namespace TYPO3\Flow\Persistence\Generic;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\QueryResultInterface;
 
 /**
  * A lazy result list that is returned by Query::execute()
  *
  * @api
  */
-class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface
+class QueryResult implements QueryResultInterface
 {
     /**
-     * @var \TYPO3\Flow\Persistence\Generic\DataMapper
+     * @var DataMapper
      */
     protected $dataMapper;
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
-     * @var \TYPO3\Flow\Persistence\QueryInterface
+     * @var QueryInterface
      */
     protected $query;
 
@@ -50,9 +53,9 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Persistence\QueryInterface $query
+     * @param QueryInterface $query
      */
-    public function __construct(\TYPO3\Flow\Persistence\QueryInterface $query)
+    public function __construct(QueryInterface $query)
     {
         $this->query = $query;
     }
@@ -60,10 +63,10 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface
     /**
      * Injects the DataMapper to map records to objects
      *
-     * @param \TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper
+     * @param DataMapper $dataMapper
      * @return void
      */
-    public function injectDataMapper(\TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper)
+    public function injectDataMapper(DataMapper $dataMapper)
     {
         $this->dataMapper = $dataMapper;
     }
@@ -71,10 +74,10 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface
     /**
      * Injects the persistence manager
      *
-     * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
+     * @param PersistenceManagerInterface $persistenceManager
      * @return void
      */
-    public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager)
+    public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
     }
@@ -94,7 +97,7 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface
     /**
      * Returns a clone of the query object
      *
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function getQuery()

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * A validator for locale identifiers.
@@ -31,7 +32,7 @@ class LocaleIdentifierValidator extends AbstractValidator
      */
     protected function isValid($value)
     {
-        if (!preg_match(\TYPO3\Flow\I18n\Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
+        if (!preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
             $this->addError('Value is no valid I18n locale identifier.', 1327090892);
         }
     }

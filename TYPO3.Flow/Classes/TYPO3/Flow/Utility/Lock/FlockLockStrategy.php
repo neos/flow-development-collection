@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Utility\Lock;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Utility\Exception\LockNotAcquiredException;
-use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility;
 
 /**
  * A flock based lock strategy.
@@ -64,7 +64,7 @@ class FlockLockStrategy implements LockStrategyInterface
             $this->configureTemporaryDirectory();
         }
 
-        $this->lockFileName = Files::concatenatePaths([self::$temporaryDirectory, md5($subject)]);
+        $this->lockFileName = Utility\Files::concatenatePaths([self::$temporaryDirectory, md5($subject)]);
         $aquiredLock = false;
         $i = 0;
         while ($aquiredLock === false) {
@@ -80,17 +80,16 @@ class FlockLockStrategy implements LockStrategyInterface
      * Sets the temporaryDirectory as static variable for the lock class.
      *
      * @throws LockNotAcquiredException
-     * @throws \TYPO3\Flow\Utility\Exception
      * return void;
      */
     protected function configureTemporaryDirectory()
     {
-        if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(\TYPO3\Flow\Utility\Environment::class)) {
+        if (Bootstrap::$staticObjectManager === null || !Bootstrap::$staticObjectManager->isRegistered(Utility\Environment::class)) {
             throw new LockNotAcquiredException('Environment object could not be accessed', 1386680952);
         }
-        $environment = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Utility\Environment');
-        $temporaryDirectory = Files::concatenatePaths([$environment->getPathToTemporaryDirectory(), 'Lock']);
-        Files::createDirectoryRecursively($temporaryDirectory);
+        $environment = Bootstrap::$staticObjectManager->get(Utility\Environment::class);
+        $temporaryDirectory = Utility\Files::concatenatePaths([$environment->getPathToTemporaryDirectory(), 'Lock']);
+        Utility\Files::createDirectoryRecursively($temporaryDirectory);
         self::$temporaryDirectory = $temporaryDirectory;
     }
 

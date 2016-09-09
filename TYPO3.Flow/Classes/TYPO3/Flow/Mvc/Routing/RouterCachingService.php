@@ -13,8 +13,12 @@ namespace TYPO3\Flow\Mvc\Routing;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 
@@ -26,25 +30,25 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
 class RouterCachingService
 {
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      * @Flow\Inject
      */
     protected $routeCache;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      * @Flow\Inject
      */
     protected $resolveCache;
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      * @Flow\Inject
      */
     protected $persistenceManager;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      * @Flow\Inject
      */
     protected $systemLogger;
@@ -245,7 +249,7 @@ class RouterCachingService
      */
     protected function extractUuids(array $values)
     {
-        $uuids = array();
+        $uuids = [];
         foreach ($values as $value) {
             if (is_string($value)) {
                 if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {

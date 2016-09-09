@@ -15,8 +15,8 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A generic stream wrapper sitting between PHP and stream wrappers implementing
- * \TYPO3\Flow\Resource\Streams\StreamWrapperInterface.
+ * A generic stream wrapper sitting between PHP and stream wrappers
+ * implementing StreamWrapperInterface.
  *
  * The resource manager will register configured stream wrappers with this class,
  * enabling the use of Flow goodies like DI in those stream wrappers.
@@ -29,7 +29,7 @@ class StreamWrapperAdapter
     /**
      * @var array
      */
-    protected static $registeredStreamWrappers = array();
+    protected static $registeredStreamWrappers = [];
 
     /**
      * @var resource

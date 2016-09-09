@@ -23,17 +23,17 @@ class PropertyMappingConfigurationBuilder
     /**
      * Builds the default property mapping configuration.
      *
-     * @param string $type the implementation class name of the PropertyMappingConfiguration to instantiate; must be a subclass of TYPO3\Flow\Property\PropertyMappingConfiguration
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration
+     * @param string $type the implementation class name of the PropertyMappingConfiguration to instantiate; must be a subclass of PropertyMappingConfiguration
+     * @return PropertyMappingConfiguration
      */
-    public function build($type = \TYPO3\Flow\Property\PropertyMappingConfiguration::class)
+    public function build($type = PropertyMappingConfiguration::class)
     {
         $configuration = new $type();
 
-        $configuration->setTypeConverterOptions(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, array(
-            \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true,
-            \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => true
-        ));
+        $configuration->setTypeConverterOptions(TypeConverter\PersistentObjectConverter::class, [
+            TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true,
+            TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => true
+        ]);
         $configuration->allowAllProperties();
 
         return $configuration;
