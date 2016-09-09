@@ -31,16 +31,6 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $bootstrap;
 
     /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    /**
      * @var Component\ComponentChain
      */
     protected $baseComponentChain;
@@ -106,21 +96,21 @@ class RequestHandler implements HttpRequestHandlerInterface
     public function handleRequest()
     {
         // Create the request very early so the Resource Management has a chance to grab it:
-        $this->request = Request::createFromEnvironment();
-        $this->response = new Response();
-        $this->componentContext = new ComponentContext($this->request, $this->response);
+        $request = Request::createFromEnvironment();
+        $response = new Response();
+        $this->componentContext = new ComponentContext($request, $response);
 
         $this->boot();
         $this->resolveDependencies();
-        $this->addPoweredByHeader($this->response);
+        $this->addPoweredByHeader($response);
         if (isset($this->settings['http']['baseUri'])) {
-            $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
+            $request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
 
         $this->baseComponentChain->handle($this->componentContext);
-        $this->response = $this->baseComponentChain->getResponse();
+        $response = $this->baseComponentChain->getResponse();
 
-        $this->response->send();
+        $response->send();
 
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();
