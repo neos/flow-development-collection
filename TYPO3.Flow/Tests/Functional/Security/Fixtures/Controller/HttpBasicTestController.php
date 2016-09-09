@@ -12,17 +12,21 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * A controller for functional testing of the HttpBasic Authentication provider & token
  */
-class HttpBasicTestController extends \TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController
+class HttpBasicTestController extends AbstractAuthenticationController
 {
     /**
-     * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest
+     * @param ActionRequest $originalRequest
      * @return string
      */
-    public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = null)
+    public function onAuthenticationSuccess(ActionRequest $originalRequest = null)
     {
         if ($originalRequest !== null) {
             $this->redirectToRequest($originalRequest);
@@ -35,11 +39,11 @@ class HttpBasicTestController extends \TYPO3\Flow\Security\Authentication\Contro
     }
 
     /**
-     * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception
-     * @throws \TYPO3\Flow\Exception
+     * @param AuthenticationRequiredException $exception
+     * @throws FlowException
      */
-    public function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = null)
+    public function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        throw new \TYPO3\Flow\Exception('Failure Method Exception', 42);
+        throw new FlowException('Failure Method Exception', 42);
     }
 }
