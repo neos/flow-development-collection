@@ -71,8 +71,8 @@ class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
     {
         return array(
             array('andreas.foerthner@'),
-            array('@typo3.org'),
-            array('someone@typo3.'),
+            array('@neos.io'),
+            array('someone@neos.'),
             array('local@192.168.2'),
             array('local@192.168.270.1'),
             array('foo@bar.com' . chr(0)),

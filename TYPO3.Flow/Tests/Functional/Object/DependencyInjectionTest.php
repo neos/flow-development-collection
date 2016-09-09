@@ -309,7 +309,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      * in the package's Objects.yaml.
      *
      * @test
-     * @see https://jira.typo3.org/browse/FLOW-175
+     * @see https://jira.neos.io/browse/FLOW-175
      */
     public function transitivePrototypeDependenciesWithExplicitObjectConfigurationAreConstructedCorrectly()
     {
