@@ -31,7 +31,7 @@ class DatabaseCommandController extends CommandController
      * @Flow\InjectConfiguration(path="persistence")
      * @var array
      */
-    protected $persistenceSettings = array();
+    protected $persistenceSettings = [];
 
     /**
      * @var Connection
@@ -88,7 +88,7 @@ class DatabaseCommandController extends CommandController
      */
     public function setCharsetCommand($characterSet = 'utf8', $collation = 'utf8_unicode_ci', $output = null, $verbose = false)
     {
-        if (!in_array($this->persistenceSettings['backendOptions']['driver'], array('pdo_mysql', 'mysqli'))) {
+        if (!in_array($this->persistenceSettings['backendOptions']['driver'], ['pdo_mysql', 'mysqli'])) {
             $this->outputLine('Database charset/collation fixing is only supported on MySQL.');
             $this->quit(1);
         }
@@ -120,7 +120,7 @@ class DatabaseCommandController extends CommandController
      */
     protected function convertToCharacterSetAndCollation($characterSet = 'utf8', $collation = 'utf8_unicode_ci', $outputPathAndFilename = null, $verbose = false)
     {
-        $statements = array('SET foreign_key_checks = 0');
+        $statements = ['SET foreign_key_checks = 0'];
 
         $statements[] = 'ALTER DATABASE ' . $this->connection->quoteIdentifier($this->persistenceSettings['backendOptions']['dbname']) . ' CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
 

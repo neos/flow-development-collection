@@ -18,6 +18,6 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class StaticOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand
+class StaticOperand extends Operand
 {
 }

@@ -183,7 +183,8 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         return array(
             'replace non-alphanumeric characters' => array('Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'),
             'no match' => array('canal', '/x/', 'y', 'canal'),
-            'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü')
+            'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü'),
+            'references' => array('2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016')
         );
     }
 

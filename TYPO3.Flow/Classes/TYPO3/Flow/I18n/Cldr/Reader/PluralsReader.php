@@ -12,6 +12,9 @@ namespace TYPO3\Flow\I18n\Cldr\Reader;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\I18n\Cldr\CldrRepository;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * A reader for data placed in "plurals" tag in CLDR.
@@ -48,12 +51,12 @@ class PluralsReader
     const RULE_OTHER = 'other';
 
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     * @var CldrRepository
      */
     protected $cldrRepository;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $cache;
 
@@ -94,10 +97,10 @@ class PluralsReader
     protected $rulesetsIndices;
 
     /**
-     * @param \TYPO3\Flow\I18n\Cldr\CldrRepository $repository
+     * @param CldrRepository $repository
      * @return void
      */
-    public function injectCldrRepository(\TYPO3\Flow\I18n\Cldr\CldrRepository $repository)
+    public function injectCldrRepository(CldrRepository $repository)
     {
         $this->cldrRepository = $repository;
     }
@@ -105,10 +108,10 @@ class PluralsReader
     /**
      * Injects the Flow_I18n_Cldr_Reader_PluralsReader cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+     * @param VariableFrontend $cache
      * @return void
      */
-    public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache)
+    public function injectCache(VariableFrontend $cache)
     {
         $this->cache = $cache;
     }
@@ -138,10 +141,10 @@ class PluralsReader
      * of the rules, or there is no rules for given locale.
      *
      * @param mixed $quantity A number to find plural form for (float or int)
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @return string One of plural form constants
      */
-    public function getPluralForm($quantity, \TYPO3\Flow\I18n\Locale $locale)
+    public function getPluralForm($quantity, Locale $locale)
     {
         if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
             return self::RULE_OTHER;
@@ -212,16 +215,16 @@ class PluralsReader
     /**
      * Returns array of plural forms available for particular locale.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale Locale to return plural forms for
+     * @param Locale $locale Locale to return plural forms for
      * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
      */
-    public function getPluralForms(\TYPO3\Flow\I18n\Locale $locale)
+    public function getPluralForms(Locale $locale)
     {
         if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
-            return array(self::RULE_OTHER);
+            return [self::RULE_OTHER];
         }
 
-        return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), array(self::RULE_OTHER));
+        return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), [self::RULE_OTHER]);
     }
 
     /**
@@ -232,7 +235,7 @@ class PluralsReader
      * running this method.
      *
      * @return void
-     * @see \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::$rulesets
+     * @see PluralsReader::$rulesets
      */
     protected function generateRulesets()
     {
@@ -248,7 +251,7 @@ class PluralsReader
             }
 
             if (is_array($pluralRules)) {
-                $ruleset = array();
+                $ruleset = [];
                 foreach ($pluralRules as $pluralRuleNodeString => $pluralRule) {
                     $pluralForm = $model->getAttributeValue($pluralRuleNodeString, 'count');
                     $ruleset[$pluralForm] = $this->parseRule($pluralRule);
@@ -284,15 +287,15 @@ class PluralsReader
      *
      * @param string $rule
      * @return array Parsed rule
-     * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
+     * @throws Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
      */
     protected function parseRule($rule)
     {
-        $parsedRule = array();
+        $parsedRule = [];
 
         if (preg_match_all(self::PATTERN_MATCH_SUBRULE, strtolower(str_replace(' ', '', $rule)), $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $matchedSubrule) {
-                $subrule = array();
+                $subrule = [];
 
                 if ($matchedSubrule[1] === 'nmod') {
                     $subrule['modulo'] = (int)$matchedSubrule[2];
@@ -300,8 +303,8 @@ class PluralsReader
                     $subrule['modulo'] = false;
                 }
 
-                $condition = array($matchedSubrule[3], (int)$matchedSubrule[4]);
-                if (!in_array($matchedSubrule[3], array('is', 'isnot'), true)) {
+                $condition = [$matchedSubrule[3], (int)$matchedSubrule[4]];
+                if (!in_array($matchedSubrule[3], ['is', 'isnot'], true)) {
                     $condition[2] = (int)$matchedSubrule[5];
                 }
 
@@ -316,7 +319,7 @@ class PluralsReader
                 $parsedRule[] = $subrule;
             }
         } else {
-            throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
+            throw new Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
         }
 
         return $parsedRule;

@@ -33,10 +33,10 @@ class PropertyMappingConfigurationBuilder
     {
         $configuration = new $type();
 
-        $configuration->setTypeConverterOptions(TypeConverter\PersistentObjectConverter::class, array(
+        $configuration->setTypeConverterOptions(TypeConverter\PersistentObjectConverter::class, [
             TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true,
             TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => true
-        ));
+        ]);
         $configuration->allowAllProperties();
 
         return $configuration;

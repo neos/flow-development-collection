@@ -51,7 +51,7 @@ interface RequestInterface
     /**
      * Returns the top level Request: the one just below the HTTP request
      *
-     * @return \TYPO3\Flow\Mvc\RequestInterface
+     * @return RequestInterface
      * @api
      */
     public function getMainRequest();

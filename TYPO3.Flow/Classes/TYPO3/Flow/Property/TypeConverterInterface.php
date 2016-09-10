@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Property;
  * source code.
  */
 
+use TYPO3\Flow\Error\Error;
+
 /**
  * Interface for type converters, which can convert from a simple type to an object or another simple type.
  *
@@ -104,9 +106,9 @@ interface TypeConverterInterface
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return mixed|\TYPO3\Flow\Error\Error the target type, or an error object if a user-error occurred
+     * @return mixed|Error the target type, or an error object if a user-error occurred
      * @throws Exception\TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null);
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null);
 }

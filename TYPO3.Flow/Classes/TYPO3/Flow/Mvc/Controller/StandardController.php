@@ -12,21 +12,24 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Fluid\View\TemplateView;
 
 /**
  * A Special Case of a Controller: If no controller has been specified in the
  * request, this controller is chosen.
  */
-class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class StandardController extends ActionController
 {
     /**
      * Overrides the standard resolveView method
      *
-     * @return \TYPO3\Flow\Mvc\View\ViewInterface $view The view
+     * @return ViewInterface $view The view
      */
     protected function resolveView()
     {
-        $view = new \TYPO3\Fluid\View\TemplateView();
+        $view = new TemplateView();
         $view->setControllerContext($this->controllerContext);
         $view->setTemplatePathAndFilename(FLOW_PATH_FLOW . 'Resources/Private/Mvc/StandardView_Template.html');
         return $view;
@@ -39,7 +42,7 @@ class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     public function indexAction()
     {
-        if (!$this->request instanceof \TYPO3\Flow\Mvc\ActionRequest) {
+        if (!$this->request instanceof ActionRequest) {
             return
                 "\nWelcome to Flow!\n\n" .
                 "This is the default view of the Flow MVC object. You see this message because no \n" .

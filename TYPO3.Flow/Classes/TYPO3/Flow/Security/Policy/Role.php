@@ -56,14 +56,14 @@ class Role
     /**
      * @var PrivilegeInterface[]
      */
-    protected $privileges = array();
+    protected $privileges = [];
 
     /**
      * @param string $identifier The fully qualified identifier of this role (Vendor.Package:Role)
      * @param Role[] $parentRoles
      * @throws \InvalidArgumentException
      */
-    public function __construct($identifier, array $parentRoles = array())
+    public function __construct($identifier, array $parentRoles = [])
     {
         if (!is_string($identifier)) {
             throw new \InvalidArgumentException('The role identifier must be a string, "' . gettype($identifier) . '" given. Please check the code or policy configuration creating or defining this role.', 1296509556);
@@ -136,7 +136,7 @@ class Role
      */
     public function setParentRoles(array $parentRoles)
     {
-        $this->parentRoles = array();
+        $this->parentRoles = [];
         foreach ($parentRoles as $parentRole) {
             $this->addParentRole($parentRole);
         }
@@ -159,7 +159,7 @@ class Role
      */
     public function getAllParentRoles()
     {
-        $result = array();
+        $result = [];
 
         foreach ($this->parentRoles as $parentRoleIdentifier => $currentParentRole) {
             if (isset($result[$parentRoleIdentifier])) {
@@ -230,7 +230,7 @@ class Role
      */
     public function getPrivilegesByType($className)
     {
-        $privileges = array();
+        $privileges = [];
         foreach ($this->privileges as $privilege) {
             if ($privilege instanceof $className) {
                 $privileges[] = $privilege;
@@ -244,13 +244,13 @@ class Role
      * @param array $privilegeParameters
      * @return PrivilegeInterface the matching privilege or NULL if no privilege exists for the given constraints
      */
-    public function getPrivilegeForTarget($privilegeTargetIdentifier, array $privilegeParameters = array())
+    public function getPrivilegeForTarget($privilegeTargetIdentifier, array $privilegeParameters = [])
     {
         foreach ($this->privileges as $privilege) {
             if ($privilege->getPrivilegeTargetIdentifier() !== $privilegeTargetIdentifier) {
                 continue;
             }
-            if (array_diff_assoc($privilege->getParameters(), $privilegeParameters) !== array()) {
+            if (array_diff_assoc($privilege->getParameters(), $privilegeParameters) !== []) {
                 continue;
             }
             return $privilege;

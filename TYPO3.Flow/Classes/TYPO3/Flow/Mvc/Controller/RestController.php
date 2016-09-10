@@ -12,21 +12,26 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Exception\NoSuchActionException;
+use TYPO3\Flow\Mvc\Exception\StopActionException;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 
 /**
  * An action controller for RESTful web services
  */
-class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class RestController extends ActionController
 {
     /**
      * The current request
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var ActionRequest
      */
     protected $request;
 
     /**
      * The response which will be returned by this action controller
-     * @var \TYPO3\Flow\Http\Response
+     * @var Response
      */
     protected $response;
 
@@ -44,7 +49,7 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * Determines the action method and assures that the method exists.
      *
      * @return string The action method name
-     * @throws \TYPO3\Flow\Mvc\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+     * @throws NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
      */
     protected function resolveActionMethodName()
     {
@@ -84,7 +89,7 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected function initializeCreateAction()
     {
         $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
-        $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         $propertyMappingConfiguration->allowAllProperties();
     }
 
@@ -96,7 +101,7 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected function initializeUpdateAction()
     {
         $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
-        $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         $propertyMappingConfiguration->allowAllProperties();
     }
 
@@ -110,7 +115,7 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+     * @throws StopActionException
      * @api
      */
     protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
@@ -119,7 +124,7 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController
         // thus the code in catch - it's the expected state
         try {
             parent::redirectToUri($uri, $delay, $statusCode);
-        } catch (\TYPO3\Flow\Mvc\Exception\StopActionException $exception) {
+        } catch (StopActionException $exception) {
             if ($this->request->getFormat() === 'json') {
                 $this->response->setContent('');
             }

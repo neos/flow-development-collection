@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * Interface for the Flow Package Manager
@@ -25,10 +26,10 @@ interface PackageManagerInterface
     /**
      * Initializes the package manager
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+     * @param Bootstrap $bootstrap The current bootstrap
      * @return void
      */
-    public function initialize(\TYPO3\Flow\Core\Bootstrap $bootstrap);
+    public function initialize(Bootstrap $bootstrap);
 
     /**
      * Returns TRUE if a package is available (the package's files exist in the packages directory)
@@ -50,11 +51,11 @@ interface PackageManagerInterface
     public function isPackageActive($packageKey);
 
     /**
-     * Returns a \TYPO3\Flow\Package\PackageInterface object for the specified package.
+     * Returns a PackageInterface object for the specified package.
      * A package is available, if the package directory contains valid meta information.
      *
      * @param string $packageKey
-     * @return \TYPO3\Flow\Package\PackageInterface
+     * @return PackageInterface
      * @api
      */
     public function getPackage($packageKey);
@@ -64,7 +65,7 @@ interface PackageManagerInterface
      * could be found, NULL is returned.
      *
      * @param object $object The object to find the possessing package of
-     * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
      */
     public function getPackageOfObject($object);
 
@@ -72,39 +73,39 @@ interface PackageManagerInterface
      * Finds a package by a given class name of that package
      *
      * @param string $className The class name to find the possessing package of
-     * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
      * @see getPackageOfObject()
      */
     public function getPackageByClassName($className);
 
     /**
-     * Returns an array of \TYPO3\Flow\Package\PackageInterface objects of all available packages.
+     * Returns an array of PackageInterface objects of all available packages.
      * A package is available, if the package directory contains valid meta information.
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      * @api
      */
     public function getAvailablePackages();
 
     /**
-     * Returns an array of \TYPO3\Flow\PackageInterface objects of all active packages.
+     * Returns an array of PackageInterface objects of all active packages.
      * A package is active, if it is available and has been activated in the package
      * manager settings.
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      * @api
      */
     public function getActivePackages();
 
     /**
-     * Returns an array of \TYPO3\Flow\PackageInterface objects of all packages that match
+     * Returns an array of PackageInterface objects of all packages that match
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
      * @param string $packagePath
      * @param string $packageType
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      * @api
      */
     public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null);
@@ -131,16 +132,16 @@ interface PackageManagerInterface
      * Create a new package, given the package key
      *
      * @param string $packageKey The package key to use for the new package
-     * @param \TYPO3\Flow\Package\MetaData $packageMetaData Package metadata
+     * @param MetaData $packageMetaData Package metadata
      * @param string $packagesPath If specified, the package will be created in this path
      * @param string $packageType If specified, the package type will be set
-     * @return \TYPO3\Flow\Package\Package The newly created package
+     * @return Package The newly created package
      * @api
      * @deprecated This methods signature is deprecated and will change with Flow 4.0
      *
      * TODO: Change signature for Flow 4.0 to ($packageKey, $manifest, $packagesPath)
      */
-    public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null, $packagesPath = null, $packageType = null);
+    public function createPackage($packageKey, MetaData $packageMetaData = null, $packagesPath = null, $packageType = null);
 
     /**
      * Deactivates a package if it is in the list of active packages

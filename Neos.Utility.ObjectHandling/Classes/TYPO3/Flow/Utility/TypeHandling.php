@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Proxy\Proxy;
 use TYPO3\Flow\Utility\Exception\InvalidTypeException;
 
@@ -33,7 +34,7 @@ abstract class TypeHandling
     /**
      * @var array
      */
-    protected static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection');
+    protected static $collectionTypes = ['array', 'ArrayObject', 'SplObjectStorage', Collection::class];
 
     /**
      * Returns an array with type information, including element type for
@@ -41,11 +42,11 @@ abstract class TypeHandling
      *
      * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
      * @return array An array with information about the type
-     * @throws Exception\InvalidTypeException
+     * @throws InvalidTypeException
      */
     public static function parseType($type)
     {
-        $matches = array();
+        $matches = [];
         if (preg_match(self::PARSE_TYPE_PATTERN, $type, $matches)) {
             $type = self::normalizeType($matches['type']);
             $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
@@ -54,10 +55,10 @@ abstract class TypeHandling
                 throw new InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
             }
 
-            return array(
+            return [
                 'type' => $type,
                 'elementType' => $elementType
-            );
+            ];
         } else {
             throw new InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
@@ -107,7 +108,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType($type)
     {
-        return in_array(self::normalizeType($type), array('array', 'string', 'float', 'integer', 'boolean'), true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
     }
 
     /**

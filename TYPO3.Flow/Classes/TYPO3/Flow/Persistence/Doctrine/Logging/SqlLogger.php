@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Persistence\Doctrine\Logging;
  * source code.
  */
 
+use TYPO3\Flow\Log\LoggerInterface;
 
 /**
  * A SQL logger that logs to a Flow logger.
@@ -19,7 +20,7 @@ namespace TYPO3\Flow\Persistence\Doctrine\Logging;
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
 {
     /**
-     * @var \TYPO3\Flow\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -35,7 +36,7 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
     {
         // this is a safeguard for when no logger might be available...
         if ($this->logger !== null) {
-            $this->logger->log($sql, LOG_DEBUG, array('params' => $params, 'types' => $types));
+            $this->logger->log($sql, LOG_DEBUG, ['params' => $params, 'types' => $types]);
         }
     }
 

@@ -13,11 +13,14 @@ namespace TYPO3\Flow\Property;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\Exception\DuplicateTypeConverterException;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\TypeHandling;
-use TYPO3\Flow\Error as FlowError;
 use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\Flow\Property\Exception as PropertyException;
 
 /**
  * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
@@ -57,7 +60,7 @@ class PropertyMapper
     /**
      * A list of property mapping messages (errors, warnings) which have occured on last mapping.
      *
-     * @var FlowError\Result
+     * @var Result
      */
     protected $messages;
 
@@ -66,7 +69,6 @@ class PropertyMapper
      * Here, the typeConverter array gets initialized.
      *
      * @return void
-     * @throws Exception\DuplicateTypeConverterException
      */
     public function initializeObject()
     {
@@ -113,10 +115,10 @@ class PropertyMapper
         }
 
         $currentPropertyPath = [];
-        $this->messages = new FlowError\Result();
+        $this->messages = new Result();
         try {
             $result = $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
-            if ($result instanceof FlowError\Error) {
+            if ($result instanceof Error) {
                 return null;
             }
 
@@ -124,14 +126,14 @@ class PropertyMapper
         } catch (SecurityException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
-            throw new Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
+            throw new PropertyException('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
 
     /**
      * Get the messages of the last Property Mapping
      *
-     * @return FlowError\Result
+     * @return Result
      * @api
      */
     public function getMessages()
@@ -191,13 +193,13 @@ class PropertyMapper
             $currentPropertyPath[] = $targetPropertyName;
             $targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
             array_pop($currentPropertyPath);
-            if (!($targetPropertyValue instanceof FlowError\Error)) {
+            if (!($targetPropertyValue instanceof Error)) {
                 $convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
             }
         }
         $result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
-        if ($result instanceof FlowError\Error) {
+        if ($result instanceof Error) {
             $this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
         }
 
@@ -328,7 +330,7 @@ class PropertyMapper
      * @param array $convertersForSource
      * @param array $interfaceNames
      * @return array
-     * @throws Exception\DuplicateTypeConverterException
+     * @throws DuplicateTypeConverterException
      */
     protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames)
     {
@@ -337,7 +339,7 @@ class PropertyMapper
             if (isset($convertersForSource[$implementedInterface])) {
                 foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
                     if (isset($convertersForInterface[$priority])) {
-                        throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
+                        throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
                     }
                     $convertersForInterface[$priority] = $converter;
                 }

@@ -565,7 +565,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
     public function validateHandlesStringTypePropertyWithFormatHostnameConstraintDataProvider()
     {
         return array(
-            array('www.typo3.org', true),
+            array('www.neos.io', true),
             array('this.is.an.invalid.hostname', false),
             array('foobar', false),
             array(123, false)

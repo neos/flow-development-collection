@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Resource;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Property\Exception;
+use TYPO3\Flow\Error\Error as FlowError;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 
 /**
  * A type converter for converting strings, array and uploaded files to Resource objects.
@@ -69,7 +71,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * Sets the default resource collection name (see Settings: TYPO3.Flow.resource.collections) to use for this resource,
-     * will fallback to \TYPO3\Flow\Resource\ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
+     * will fallback to ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
      *
      * @var string
      */
@@ -78,12 +80,12 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
      * @var string
      */
-    protected $targetType = \TYPO3\Flow\Resource\Resource::class;
+    protected $targetType = PersistentResource::class;
 
     /**
      * @var integer
@@ -92,35 +94,35 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceRepository
+     * @var ResourceRepository
      */
     protected $resourceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @var array
      */
-    protected $convertedResources = array();
+    protected $convertedResources = [];
 
     /**
-     * Converts the given string or array to a Resource object.
+     * Converts the given string or array to a PersistentResource object.
      *
      * If the input format is an array, this method assumes the resource to be a
      * fresh file upload and imports the temporary upload file through the
@@ -133,16 +135,16 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return Resource|Error if the input format is not supported or could not be converted for other reasons
+     * @return PersistentResource|FlowError if the input format is not supported or could not be converted for other reasons
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (empty($source)) {
             return null;
         }
 
         if (is_string($source)) {
-            $source = array('hash' => $source);
+            $source = ['hash' => $source];
         }
 
         // $source is ALWAYS an array at this point
@@ -157,14 +159,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @param array $source
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return Resource|Error
-     * @throws Exception
+     * @return PersistentResource|FlowError
+     * @throws \Exception
      */
     protected function handleFileUploads(array $source, PropertyMappingConfigurationInterface $configuration = null)
     {
         if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
             if (isset($source['originallySubmittedResource']) && isset($source['originallySubmittedResource']['__identity'])) {
-                return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], \TYPO3\Flow\Resource\Resource::class);
+                return $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], PersistentResource::class);
             }
             return null;
         }
@@ -174,10 +176,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_INI_SIZE:
                 case \UPLOAD_ERR_FORM_SIZE:
                 case \UPLOAD_ERR_PARTIAL:
-                    return new Error(Files::getUploadErrorMessage($source['error']), 1264440823);
+                    return new FlowError(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
                     $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
-                    return new Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+                    return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
 
@@ -192,15 +194,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
         } catch (\Exception $exception) {
             $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
             $this->systemLogger->logException($exception);
-            return new Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+            return new FlowError('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
 
     /**
      * @param array $source
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return Resource|Error
-     * @throws Exception
+     * @return PersistentResource|FlowError
      * @throws InvalidPropertyMappingConfigurationException
      */
     protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = null)
@@ -212,11 +213,11 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $givenResourceIdentity = $source['__identity'];
             unset($source['__identity']);
             $resource = $this->resourceRepository->findByIdentifier($givenResourceIdentity);
-            if ($resource instanceof Resource) {
+            if ($resource instanceof PersistentResource) {
                 return $resource;
             }
 
-            if ($configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
+            if ($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
                 throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
             }
         }
@@ -233,17 +234,18 @@ class ResourceTypeConverter extends AbstractTypeConverter
             if (isset($source['data'])) {
                 $resource = $this->resourceManager->importResourceFromContent($source['data'], $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
-                $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
+                /** @var PersistentResource $resource */
+                $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
                 if (is_array($source) && isset($source['filename'])) {
                     $resource->setFilename($source['filename']);
                 }
             }
         }
 
-        if ($resource instanceof Resource) {
+        if ($resource instanceof PersistentResource) {
             return $resource;
         } else {
-            return new Error('The resource manager could not create a Resource instance.', 1404312901);
+            return new FlowError('The resource manager could not create a Resource instance.', 1404312901);
         }
     }
 
@@ -262,7 +264,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($configuration === null) {
             return ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
         }
-        $collectionName = $configuration->getConfigurationValue(\TYPO3\Flow\Resource\ResourceTypeConverter::class, self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
+        $collectionName = $configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
         if (isset($source['__collectionName']) && $source['__collectionName'] !== '') {
             $collectionName = $source['__collectionName'];
         }

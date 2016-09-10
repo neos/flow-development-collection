@@ -12,13 +12,17 @@ namespace TYPO3\Flow\Security\Cryptography;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\Flow\Security\Exception\DecryptionNotAllowedException;
+use TYPO3\Flow\Security\Exception\InvalidKeyPairIdException;
+use TYPO3\Flow\Security\Exception\MissingConfigurationException;
 
 /**
  * Implementation of the RSAWalletServiceInterface using PHP's OpenSSL extension
  *
  * @Flow\Scope("singleton")
  */
-class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWalletServiceInterface
+class RsaWalletServicePhp implements RsaWalletServiceInterface
 {
     /**
      * @var string
@@ -28,13 +32,13 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     /**
      * @var array
      */
-    protected $keys = array();
+    protected $keys = [];
 
     /**
      * The openSSL configuration
      * @var array
      */
-    protected $openSSLConfiguration = array();
+    protected $openSSLConfiguration = [];
 
     /**
      * @var boolean
@@ -46,7 +50,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      *
      * @param array $settings
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
+     * @throws MissingConfigurationException
      */
     public function injectSettings(array $settings)
     {
@@ -58,7 +62,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
         if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'])) {
             $this->keystorePathAndFilename = $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'];
         } else {
-            throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.Flow.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
+            throw new MissingConfigurationException('The configuration setting TYPO3.Flow.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
         }
     }
 
@@ -80,14 +84,14 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      *
      * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The RSA public key fingerprint for reference
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function generateNewKeypair($usedForPasswords = false)
     {
         $keyResource = openssl_pkey_new($this->openSSLConfiguration);
 
         if ($keyResource === false) {
-            throw new \TYPO3\Flow\Security\Exception('OpenSSL private key generation failed.', 1254838154);
+            throw new SecurityException('OpenSSL private key generation failed.', 1254838154);
         }
 
         $modulus = $this->getModulus($keyResource);
@@ -142,13 +146,13 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * Returns the public key for the given fingerprint
      *
      * @param string $fingerprint The fingerprint of the stored key
-     * @return \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey The public key
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
+     * @return OpenSslRsaKey The public key
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
     public function getPublicKey($fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438860);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438860);
         }
 
         return $this->keys[$fingerprint]['publicKey'];
@@ -177,19 +181,19 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * @param string $cipher cipher text to decrypt
      * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return string The decrypted text
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
-     * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      */
     public function decrypt($cipher, $fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438861);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438861);
         }
 
         $keyPair = $this->keys[$fingerprint];
 
         if ($keyPair['usedForPasswords']) {
-            throw new \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
+            throw new DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
         }
 
         return $this->decryptWithPrivateKey($cipher, $keyPair['privateKey']);
@@ -201,12 +205,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * @param string $plaintext The plaintext to sign
      * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return string The signature of the given plaintext
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
     public function sign($plaintext, $fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1299095799);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1299095799);
         }
 
         $signature = '';
@@ -223,12 +227,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * @param string $signature The signature that should be verified
      * @param string $fingerprint The fingerprint to identify the public key (RSA public key fingerprint)
      * @return boolean TRUE if the signature is correct for the given plaintext and public key
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException
+     * @throws InvalidKeyPairIdException
      */
     public function verifySignature($plaintext, $signature, $fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1304959763);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1304959763);
         }
 
         $verifyResult = openssl_verify($plaintext, $signature, $this->getPublicKey($fingerprint)->getKeyString());
@@ -245,12 +249,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * @param string $salt The salt used in the md5 password hash
      * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return boolean TRUE if the password is correct
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
     public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1233655216);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1233655216);
         }
 
         $decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keys[$fingerprint]['privateKey']);
@@ -263,12 +267,12 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      *
      * @param string $fingerprint The fingerprint
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
+     * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
     public function destroyKeypair($fingerprint)
     {
         if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438863);
+            throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438863);
         }
 
         unset($this->keys[$fingerprint]);
@@ -316,10 +320,10 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * Decrypts the given ciphertext with the given private key
      *
      * @param string $cipher The ciphertext to decrypt
-     * @param \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $privateKey The private key
+     * @param OpenSslRsaKey $privateKey The private key
      * @return string The decrypted plaintext
      */
-    private function decryptWithPrivateKey($cipher, \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $privateKey)
+    private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
@@ -334,8 +338,8 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * The SSH fingerprint of the RSA public key will be used as an identifier for
      * consistent key access.
      *
-     * @param \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $publicKey The public key
-     * @param \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $privateKey The private key
+     * @param OpenSslRsaKey $publicKey The public key
+     * @param OpenSslRsaKey $privateKey The private key
      * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The fingerprint which is used as an identifier for storing the key pair
      */
@@ -343,7 +347,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
     {
         $publicKeyFingerprint = $this->getFingerprintByPublicKey($publicKey->getKeyString());
 
-        $keyPair = array();
+        $keyPair = [];
         $keyPair['publicKey'] = $publicKey;
         $keyPair['privateKey'] = $privateKey;
         $keyPair['usedForPasswords'] = $usedForPasswords;
@@ -358,7 +362,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
      * Stores the keys array in the keystore file
      *
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function shutdownObject()
     {
@@ -370,14 +374,14 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
         $result = file_put_contents($temporaryKeystorePathAndFilename, serialize($this->keys));
 
         if ($result === false) {
-            throw new \TYPO3\Flow\Security\Exception('The temporary keystore file "' . $temporaryKeystorePathAndFilename . '" could not be written.', 1305812921);
+            throw new SecurityException('The temporary keystore file "' . $temporaryKeystorePathAndFilename . '" could not be written.', 1305812921);
         }
         $i = 0;
         while (($result = rename($temporaryKeystorePathAndFilename, $this->keystorePathAndFilename)) === false && $i < 5) {
             $i++;
         }
         if ($result === false) {
-            throw new \TYPO3\Flow\Security\Exception('The keystore file "' . $this->keystorePathAndFilename . '" could not be written.', 1305812938);
+            throw new SecurityException('The keystore file "' . $this->keystorePathAndFilename . '" could not be written.', 1305812938);
         }
     }
 
