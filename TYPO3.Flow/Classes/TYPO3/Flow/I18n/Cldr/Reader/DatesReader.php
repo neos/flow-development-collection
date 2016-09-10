@@ -12,6 +12,10 @@ namespace TYPO3\Flow\I18n\Cldr\Reader;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\I18n\Cldr\CldrModel;
+use TYPO3\Flow\I18n\Cldr\CldrRepository;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * A reader for data placed in "dates" tag in CLDR.
@@ -83,12 +87,12 @@ class DatesReader
     const FORMAT_LENGTH_SHORT = 'short';
 
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     * @var CldrRepository
      */
     protected $cldrRepository;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $cache;
 
@@ -104,7 +108,7 @@ class DatesReader
      *
      * @var array
      */
-    protected static $maxLengthOfSubformats = array(
+    protected static $maxLengthOfSubformats = [
         'G' => 5,
         'y' => 0,
         'Y' => 0,
@@ -137,7 +141,7 @@ class DatesReader
         'Z' => 4,
         'v' => 4,
         'V' => 4,
-    );
+    ];
 
     /**
      * An array of parsed formats, indexed by format strings.
@@ -193,10 +197,10 @@ class DatesReader
     protected $localizedLiterals;
 
     /**
-     * @param \TYPO3\Flow\I18n\Cldr\CldrRepository $repository
+     * @param CldrRepository $repository
      * @return void
      */
-    public function injectCldrRepository(\TYPO3\Flow\I18n\Cldr\CldrRepository $repository)
+    public function injectCldrRepository(CldrRepository $repository)
     {
         $this->cldrRepository = $repository;
     }
@@ -204,10 +208,10 @@ class DatesReader
     /**
      * Injects the Flow_I18n_Cldr_Reader_DatesReader cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+     * @param VariableFrontend $cache
      * @return void
      */
-    public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache)
+    public function injectCache(VariableFrontend $cache)
     {
         $this->cache = $cache;
     }
@@ -245,14 +249,14 @@ class DatesReader
      * When third parameter ($formatLength) equals 'default', default format for a
      * locale will be used.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return array An array representing parsed format
-     * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
+     * @throws Exception\UnableToFindFormatException When there is no proper format string in CLDR
      * @todo make default format reading nicer
      */
-    public function parseFormatFromCldr(\TYPO3\Flow\I18n\Locale $locale, $formatType, $formatLength)
+    public function parseFormatFromCldr(Locale $locale, $formatType, $formatLength)
     {
         self::validateFormatType($formatType);
         self::validateFormatLength($formatLength);
@@ -267,7 +271,7 @@ class DatesReader
             // the default thing only has an attribute. ugly fetch code. was a nice three-liner before 2011-11-21
             $formats = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats');
             foreach (array_keys($formats) as $k) {
-                $realFormatLength = \TYPO3\Flow\I18n\Cldr\CldrModel::getAttributeValue($k, 'choice');
+                $realFormatLength = CldrModel::getAttributeValue($k, 'choice');
                 if ($realFormatLength !== false) {
                     break;
                 }
@@ -279,7 +283,7 @@ class DatesReader
         $format = $model->getElement('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $realFormatLength . '"]/' . $formatType . 'Format/pattern');
 
         if (empty($format)) {
-            throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Date / time format was not found. Please check whether CLDR repository is valid.', 1280218994);
+            throw new Exception\UnableToFindFormatException('Date / time format was not found. Please check whether CLDR repository is valid.', 1280218994);
         }
 
         if ($formatType === 'dateTime') {
@@ -313,10 +317,10 @@ class DatesReader
      *
      * If array was not generated earlier, it will be generated and cached.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @return array An array with localized literals
      */
-    public function getLocalizedLiteralsForLocale(\TYPO3\Flow\I18n\Locale $locale)
+    public function getLocalizedLiteralsForLocale(Locale $locale)
     {
         if (isset($this->localizedLiterals[(string)$locale])) {
             return $this->localizedLiterals[(string)$locale];
@@ -339,12 +343,12 @@ class DatesReader
      *
      * @param string $formatType
      * @return void
-     * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatTypeException When value is unallowed
+     * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
     public static function validateFormatType($formatType)
     {
-        if (!in_array($formatType, array(self::FORMAT_TYPE_DATE, self::FORMAT_TYPE_TIME, self::FORMAT_TYPE_DATETIME))) {
-            throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281442590);
+        if (!in_array($formatType, [self::FORMAT_TYPE_DATE, self::FORMAT_TYPE_TIME, self::FORMAT_TYPE_DATETIME])) {
+            throw new Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281442590);
         }
     }
 
@@ -354,12 +358,12 @@ class DatesReader
      *
      * @param string $formatLength
      * @return void
-     * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is not allowed
+     * @throws Exception\InvalidFormatLengthException When value is not allowed
      */
     public static function validateFormatLength($formatLength)
     {
-        if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
-            throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281442591);
+        if (!in_array($formatLength, [self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT])) {
+            throw new Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281442591);
         }
     }
 
@@ -371,12 +375,12 @@ class DatesReader
      *
      * @param string $format
      * @return array Parsed format
-     * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
-     * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::$parsedFormats
+     * @throws Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
+     * @see DatesReader::$parsedFormats
      */
     protected function parseFormat($format)
     {
-        $parsedFormat = array();
+        $parsedFormat = [];
         $formatLengthOfFormat = strlen($format);
         $duringCompletionOfLiteral = false;
         $literal = '';
@@ -389,14 +393,14 @@ class DatesReader
                     // Two apostrophes means that one apostrophe is escaped
                     if ($duringCompletionOfLiteral) {
                         // We are already reading some literal, save it and continue
-                        $parsedFormat[] = array($literal);
+                        $parsedFormat[] = [$literal];
                         $literal = '';
                     }
 
-                    $parsedFormat[] = array('\'');
+                    $parsedFormat[] = ['\''];
                     ++$i;
                 } elseif ($duringCompletionOfLiteral) {
-                    $parsedFormat[] = array($literal);
+                    $parsedFormat[] = [$literal];
                     $literal = '';
                     $duringCompletionOfLiteral = false;
                 } else {
@@ -418,10 +422,10 @@ class DatesReader
                     if (self::$maxLengthOfSubformats[$subformatSymbol] === 0 || strlen($subformat) <= self::$maxLengthOfSubformats[$subformatSymbol]) {
                         $parsedFormat[] = $subformat;
                     } else {
-                        throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
+                        throw new Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
                     }
                 } else {
-                    $parsedFormat[] = array($subformat);
+                    $parsedFormat[] = [$subformat];
                 }
 
                 $i = $j - 1;
@@ -429,7 +433,7 @@ class DatesReader
         }
 
         if ($literal !== '') {
-            $parsedFormat[] = array($literal);
+            $parsedFormat[] = [$literal];
         }
 
         return $parsedFormat;
@@ -441,14 +445,14 @@ class DatesReader
      * Many children of "dates" node have common structure, so one method can
      * be used to parse them all.
      *
-     * @param \TYPO3\Flow\I18n\Cldr\CldrModel $model CldrModel to read data from
+     * @param CldrModel $model CldrModel to read data from
      * @param string $literalType One of: month, day, quarter, dayPeriod
      * @return array An array with localized literals for given type
      * @todo the two array checks should go away - but that needs clean input data
      */
-    protected function parseLocalizedLiterals(\TYPO3\Flow\I18n\Cldr\CldrModel $model, $literalType)
+    protected function parseLocalizedLiterals(CldrModel $model, $literalType)
     {
-        $data = array();
+        $data = [];
         $context = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $literalType . 's');
 
         foreach ($context as $contextNodeString => $literalsWidths) {
@@ -475,12 +479,12 @@ class DatesReader
     /**
      * Parses "eras" child of "dates" node and returns it's array representation.
      *
-     * @param \TYPO3\Flow\I18n\Cldr\CldrModel $model CldrModel to read data from
+     * @param CldrModel $model CldrModel to read data from
      * @return array An array with localized literals for "eras" node
      */
-    protected function parseLocalizedEras(\TYPO3\Flow\I18n\Cldr\CldrModel $model)
+    protected function parseLocalizedEras(CldrModel $model)
     {
-        $data = array();
+        $data = [];
         foreach ($model->getRawArray('dates/calendars/calendar[@type="gregorian"]/eras') as $widthType => $eras) {
             foreach ($eras as $eraNodeString => $eraValue) {
                 $eraName = $model->getAttributeValue($eraNodeString, 'type');
@@ -501,11 +505,11 @@ class DatesReader
      * and / or after them.
      *
      * @param string $format DateTime format
-     * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
+     * @param Locale $locale Locale to use
      * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
      * @return array Merged formats of date and time
      */
-    protected function prepareDateAndTimeFormat($format, \TYPO3\Flow\I18n\Locale $locale, $formatLength)
+    protected function prepareDateAndTimeFormat($format, Locale $locale, $formatLength)
     {
         $parsedFormatForDate = $this->parseFormatFromCldr($locale, 'date', $formatLength);
         $parsedFormatForTime = $this->parseFormatFromCldr($locale, 'time', $formatLength);
@@ -525,25 +529,25 @@ class DatesReader
             $secondParsedFormat = $parsedFormatForTime;
         }
 
-        $parsedFormat = array();
+        $parsedFormat = [];
 
         if ($positionOfFirstPlaceholder !== 0) {
             // Add everything before placeholder as literal
-            $parsedFormat[] = array(substr($format, 0, $positionOfFirstPlaceholder));
+            $parsedFormat[] = [substr($format, 0, $positionOfFirstPlaceholder)];
         }
 
         $parsedFormat = array_merge($parsedFormat, $firstParsedFormat);
 
         if ($positionOfSecondPlaceholder - $positionOfFirstPlaceholder > 3) {
             // There is something between the placeholders
-            $parsedFormat[] = array(substr($format, $positionOfFirstPlaceholder + 3, $positionOfSecondPlaceholder - ($positionOfFirstPlaceholder + 3)));
+            $parsedFormat[] = [substr($format, $positionOfFirstPlaceholder + 3, $positionOfSecondPlaceholder - ($positionOfFirstPlaceholder + 3))];
         }
 
         $parsedFormat = array_merge($parsedFormat, $secondParsedFormat);
 
         if ($positionOfSecondPlaceholder !== strlen($format) - 1) {
             // Add everything before placeholder as literal
-            $parsedFormat[] = array(substr($format, $positionOfSecondPlaceholder + 3));
+            $parsedFormat[] = [substr($format, $positionOfSecondPlaceholder + 3)];
         }
 
         return $parsedFormat;

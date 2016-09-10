@@ -11,6 +11,8 @@ namespace TYPO3\Flow\I18n\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Unsatisfactory Formatter" exception
  *
@@ -19,6 +21,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class InvalidFormatterException extends \TYPO3\Flow\I18n\Exception
+class InvalidFormatterException extends I18n\Exception
 {
 }

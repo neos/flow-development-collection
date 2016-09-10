@@ -14,7 +14,9 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidSourceException;
+use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 
 /**
  * Converter which transforms various types to arrays.
@@ -91,7 +93,7 @@ class ArrayConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('array', 'string', \TYPO3\Flow\Resource\Resource::class);
+    protected $sourceTypes = ['array', 'string', FlowResource::class];
 
     /**
      * @var string
@@ -113,9 +115,12 @@ class ArrayConverter extends AbstractTypeConverter
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
+     * @throws InvalidPropertyMappingConfigurationException
+     * @throws InvalidSourceException
+     * @throws TypeConverterException
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_array($source)) {
             return $source;
@@ -123,7 +128,7 @@ class ArrayConverter extends AbstractTypeConverter
 
         if (is_string($source)) {
             if ($source === '') {
-                return array();
+                return [];
             } else {
                 $stringFormat = $this->getStringFormat($configuration);
                 switch ($stringFormat) {
@@ -137,34 +142,34 @@ class ArrayConverter extends AbstractTypeConverter
             }
         }
 
-        if ($source instanceof \TYPO3\Flow\Resource\Resource) {
+        if ($source instanceof FlowResource) {
             $exportType = $this->getResourceExportType($configuration);
             switch ($exportType) {
                 case self::RESOURCE_EXPORT_TYPE_BASE64:
-                    return array(
+                    return [
                         'filename' => $source->getFilename(),
                         'data' => base64_encode(file_get_contents('resource://' . $source->getSha1()))
-                    );
+                    ];
                 case self::RESOURCE_EXPORT_TYPE_FILE:
                     $sourceStream = $source->getStream();
                     if ($sourceStream === false) {
                         throw new InvalidSourceException(sprintf('Could not get stream of resource "%s" (%s). This might be caused by a broken resource object and can be fixed by running the "resource:clean" command.', $source->getFilename(), $source->getSha1()), 1435842312);
                     }
-                    $targetStream = fopen($configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
+                    $targetStream = fopen($configuration->getConfigurationValue(ArrayConverter::class, self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
                     stream_copy_to_stream($sourceStream, $targetStream);
                     fclose($targetStream);
                     fclose($sourceStream);
-                    return array(
+                    return [
                         'filename' => $source->getFilename(),
                         'hash' => $source->getSha1(),
-                    );
+                    ];
                 default:
                     throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from Resource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);
 
             }
         }
 
-        throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Conversion to array failed for unknown reason', 1404903387);
+        throw new TypeConverterException('Conversion to array failed for unknown reason', 1404903387);
     }
 
     /**
@@ -178,7 +183,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_STRING_DELIMITER;
         }
 
-        $stringDelimiter = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_DELIMITER);
+        $stringDelimiter = $configuration->getConfigurationValue(ArrayConverter::class, self::CONFIGURATION_STRING_DELIMITER);
         if ($stringDelimiter === null) {
             return self::DEFAULT_STRING_DELIMITER;
         } elseif (!is_string($stringDelimiter)) {
@@ -199,7 +204,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_STRING_FORMAT;
         }
 
-        $stringFormat = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_STRING_FORMAT);
+        $stringFormat = $configuration->getConfigurationValue(ArrayConverter::class, self::CONFIGURATION_STRING_FORMAT);
         if ($stringFormat === null) {
             return self::DEFAULT_STRING_FORMAT;
         } elseif (!is_string($stringFormat)) {
@@ -220,7 +225,7 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_RESOURCE_EXPORT_TYPE;
         }
 
-        $exportType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ArrayConverter::class, self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
+        $exportType = $configuration->getConfigurationValue(ArrayConverter::class, self::CONFIGURATION_RESOURCE_EXPORT_TYPE);
         if ($exportType === null) {
             return self::DEFAULT_RESOURCE_EXPORT_TYPE;
         } elseif (!is_string($exportType)) {

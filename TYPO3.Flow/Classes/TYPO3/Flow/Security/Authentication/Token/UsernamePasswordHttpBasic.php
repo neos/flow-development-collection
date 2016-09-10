@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\ActionRequest;
+
 /**
  * An authentication token used for simple username and password authentication via HTTP Basic Auth.
  */
@@ -21,10 +23,10 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
      * Sets the authentication status to AUTHENTICATION_NEEDED, if the header has been
      * sent, to NO_CREDENTIALS_GIVEN if no authorization header was there.
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
+     * @param ActionRequest $actionRequest The current action request instance
      * @return void
      */
-    public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest)
+    public function updateCredentials(ActionRequest $actionRequest)
     {
         $authorizationHeader = $actionRequest->getHttpRequest()->getHeaders()->get('Authorization');
         if (substr($authorizationHeader, 0, 5) === 'Basic') {
@@ -33,7 +35,7 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
             $this->credentials['password'] = substr($credentials, strpos($credentials, ':') + 1);
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         } else {
-            $this->credentials = array('username' => null, 'password' => null);
+            $this->credentials = ['username' => null, 'password' => null];
             $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
         }
     }

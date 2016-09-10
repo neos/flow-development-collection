@@ -12,12 +12,16 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Authentication\EntryPointInterface;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
  * An abstract authentication token.
  */
-abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\TokenInterface
+abstract class AbstractToken implements TokenInterface
 {
     /**
      * @var string
@@ -35,21 +39,21 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
      * @var array
      * @Flow\Transient
      */
-    protected $credentials = array();
+    protected $credentials = [];
 
     /**
-     * @var \TYPO3\Flow\Security\Account
+     * @var Account
      */
     protected $account;
 
     /**
      * @var array
      */
-    protected $requestPatterns = array();
+    protected $requestPatterns = [];
 
     /**
      * The authentication entry point
-     * @var \TYPO3\Flow\Security\Authentication\EntryPointInterface
+     * @var EntryPointInterface
      */
     protected $entryPoint = null;
 
@@ -87,10 +91,10 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
     /**
      * Sets the authentication entry point
      *
-     * @param \TYPO3\Flow\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+     * @param EntryPointInterface $entryPoint The authentication entry point
      * @return void
      */
-    public function setAuthenticationEntryPoint(\TYPO3\Flow\Security\Authentication\EntryPointInterface $entryPoint)
+    public function setAuthenticationEntryPoint(EntryPointInterface $entryPoint)
     {
         $this->entryPoint = $entryPoint;
     }
@@ -98,7 +102,7 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
     /**
      * Returns the configured authentication entry point, NULL if none is available
      *
-     * @return \TYPO3\Flow\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
+     * @return EntryPointInterface The configured authentication entry point, NULL if none is available
      */
     public function getAuthenticationEntryPoint()
     {
@@ -112,7 +116,7 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
      */
     public function hasRequestPatterns()
     {
-        return ($this->requestPatterns !== array());
+        return ($this->requestPatterns !== []);
     }
 
     /**
@@ -135,7 +139,7 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
     /**
      * Returns an array of set \TYPO3\Flow\Security\RequestPatternInterface, NULL if none was set
      *
-     * @return array Array of set request patterns
+     * @return array<\TYPO3\Flow\Security\RequestPatternInterface> Array of set request patterns
      * @see hasRequestPattern()
      */
     public function getRequestPatterns()
@@ -156,7 +160,7 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return \TYPO3\Flow\Security\Account An account object
+     * @return Account An account object
      */
     public function getAccount()
     {
@@ -166,10 +170,10 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
     /**
      * Set the (authenticated) account
      *
-     * @param \TYPO3\Flow\Security\Account $account An account object
+     * @param Account $account An account object
      * @return void
      */
-    public function setAccount(\TYPO3\Flow\Security\Account $account = null)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
     }
@@ -179,12 +183,12 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
      *
      * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException
+     * @throws InvalidAuthenticationStatusException
      */
     public function setAuthenticationStatus($authenticationStatus)
     {
-        if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) {
-            throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
+        if (!in_array($authenticationStatus, [self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED])) {
+            throw new InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
         }
         $this->authenticationStatus = $authenticationStatus;
     }

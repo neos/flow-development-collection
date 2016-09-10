@@ -11,11 +11,13 @@ namespace TYPO3\Flow\I18n\Parser\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Unsupported Parser Mode" exception
  *
  * @api
  */
-class UnsupportedParserModeException extends \TYPO3\Flow\I18n\Exception
+class UnsupportedParserModeException extends I18n\Exception
 {
 }

@@ -17,6 +17,7 @@ use TYPO3\Flow\Object\Exception\UnknownObjectException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -73,7 +74,7 @@ class ActionRequest implements RequestInterface
      * objects allowed.
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * Framework-internal arguments for this request, such as __referrer.
@@ -82,14 +83,14 @@ class ActionRequest implements RequestInterface
      * Internal Arguments can be objects, in contrast to public arguments.
      * @var array
      */
-    protected $internalArguments = array();
+    protected $internalArguments = [];
 
     /**
      * Arguments and configuration for plugins – including widgets – which are
      * sub controllers to the controller referred to by this request.
      * @var array
      */
-    protected $pluginArguments = array();
+    protected $pluginArguments = [];
 
     /**
      * An optional namespace for arguments of this request. Used, for example, in
@@ -213,7 +214,7 @@ class ActionRequest implements RequestInterface
 
             $referringRequest = new ActionRequest($this->getHttpRequest());
 
-            $arguments = array();
+            $arguments = [];
             if (isset($referrerArray['arguments'])) {
                 $serializedArgumentsWithHmac = $referrerArray['arguments'];
                 $serializedArguments = $this->hashService->validateAndStripHmac($serializedArgumentsWithHmac);
@@ -284,7 +285,7 @@ class ActionRequest implements RequestInterface
      *
      * @param string $unknownCasedControllerObjectName The fully qualified controller object name
      * @return void
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws UnknownObjectException
      * @api
      */
     public function setControllerObjectName($unknownCasedControllerObjectName)
@@ -297,7 +298,7 @@ class ActionRequest implements RequestInterface
 
         $this->controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
 
-        $matches = array();
+        $matches = [];
         $subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
         preg_match('/
 			^(
@@ -379,7 +380,7 @@ class ActionRequest implements RequestInterface
      *
      * @param string $controllerName Name of the controller
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
+     * @throws Exception\InvalidControllerNameException
      */
     public function setControllerName($controllerName)
     {
@@ -419,7 +420,7 @@ class ActionRequest implements RequestInterface
      *
      * @param string $actionName Name of the action to execute by the controller
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidActionNameException if the action name is not valid
+     * @throws Exception\InvalidActionNameException if the action name is not valid
      */
     public function setControllerActionName($actionName)
     {
@@ -463,8 +464,8 @@ class ActionRequest implements RequestInterface
      * @param string $argumentName Name of the argument to set
      * @param mixed $value The new value
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException if the given argument name is no string
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
+     * @throws Exception\InvalidArgumentNameException if the given argument name is no string
+     * @throws Exception\InvalidArgumentTypeException if the given argument value is an object
      */
     public function setArgument($argumentName, $value)
     {
@@ -512,7 +513,7 @@ class ActionRequest implements RequestInterface
      *
      * @param string $argumentName Name of the argument
      * @return string Value of the argument
-     * @throws \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException if such an argument does not exist
+     * @throws Exception\NoSuchArgumentException if such an argument does not exist
      * @api
      */
     public function getArgument($argumentName)
@@ -548,7 +549,7 @@ class ActionRequest implements RequestInterface
      */
     public function setArguments(array $arguments)
     {
-        $this->arguments = array();
+        $this->arguments = [];
         foreach ($arguments as $key => $value) {
             $this->setArgument($key, $value);
         }
@@ -660,9 +661,9 @@ class ActionRequest implements RequestInterface
     protected function emitRequestDispatched($request)
     {
         if ($this->objectManager !== null) {
-            $dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
+            $dispatcher = $this->objectManager->get(SignalSlotDispatcher::class);
             if ($dispatcher !== null) {
-                $dispatcher->dispatch(\TYPO3\Flow\Mvc\ActionRequest::class, 'requestDispatched', array($request));
+                $dispatcher->dispatch(ActionRequest::class, 'requestDispatched', [$request]);
             }
         }
     }
@@ -683,7 +684,7 @@ class ActionRequest implements RequestInterface
      */
     public function __sleep()
     {
-        $properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
+        $properties = ['controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched'];
         if ($this->parentRequest instanceof ActionRequest) {
             $properties[] = 'parentRequest';
         }

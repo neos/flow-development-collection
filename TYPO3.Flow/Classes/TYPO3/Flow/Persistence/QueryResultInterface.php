@@ -21,7 +21,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
     /**
      * Returns a clone of the query object
      *
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function getQuery();

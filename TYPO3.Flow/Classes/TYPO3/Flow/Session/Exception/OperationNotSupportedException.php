@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Session\Exception;
  */
 
 /**
- * A "\TYPO3\Flow\Session\Exception\OperationNotSupportedException" Exception
- *
  * @api
  */
 class OperationNotSupportedException extends \TYPO3\Flow\Session\Exception

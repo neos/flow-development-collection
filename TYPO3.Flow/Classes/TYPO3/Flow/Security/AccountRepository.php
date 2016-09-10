@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Session\SessionManagerInterface;
@@ -27,12 +28,12 @@ class AccountRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Security\Account::class;
+    const ENTITY_CLASSNAME = Account::class;
 
     /**
      * @var array
      */
-    protected $defaultOrderings = array('creationDate' => QueryInterface::ORDER_DESCENDING);
+    protected $defaultOrderings = ['creationDate' => QueryInterface::ORDER_DESCENDING];
 
     /**
      * @Flow\Inject
@@ -51,7 +52,7 @@ class AccountRepository extends Repository
      *
      * @param object $object The account to remove
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function remove($object)
     {
@@ -66,7 +67,7 @@ class AccountRepository extends Repository
      *
      * @param string $accountIdentifier The account identifier
      * @param string $authenticationProviderName The authentication provider name
-     * @return \TYPO3\Flow\Security\Account
+     * @return Account
      */
     public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {
@@ -84,7 +85,7 @@ class AccountRepository extends Repository
      *
      * @param string $accountIdentifier The account identifier
      * @param string $authenticationProviderName The authentication provider name
-     * @return \TYPO3\Flow\Security\Account
+     * @return Account
      */
     public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {

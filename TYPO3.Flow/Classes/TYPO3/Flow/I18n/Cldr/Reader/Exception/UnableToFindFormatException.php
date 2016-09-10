@@ -10,6 +10,7 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException;
 
 /**
  * The "Unable To Find Format" exception
@@ -19,6 +20,6 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  *
  * @api
  */
-class UnableToFindFormatException extends \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException
+class UnableToFindFormatException extends InvalidCldrDataException
 {
 }

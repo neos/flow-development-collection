@@ -11,12 +11,13 @@ namespace TYPO3\Flow\Package\MetaData;
  * source code.
  */
 
+use TYPO3\Flow\Package\MetaDataInterface;
 
 /**
  * Package company party meta model
  *
  */
-class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty
+class Company extends AbstractParty
 {
     /**
      * Get the party type
@@ -25,6 +26,6 @@ class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty
      */
     public function getPartyType()
     {
-        return \TYPO3\Flow\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
+        return MetaDataInterface::PARTY_TYPE_COMPANY;
     }
 }
