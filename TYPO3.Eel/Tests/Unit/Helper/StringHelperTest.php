@@ -183,7 +183,8 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         return array(
             'replace non-alphanumeric characters' => array('Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'),
             'no match' => array('canal', '/x/', 'y', 'canal'),
-            'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü')
+            'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü'),
+            'references' => array('2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016')
         );
     }
 
@@ -195,6 +196,25 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->pregReplace($string, $pattern, $replace);
+        $this->assertSame($expected, $result);
+    }
+
+    public function pregSplitExamples()
+    {
+        return array(
+            'matches' => array('foo bar   baz', '/\s+/', null, array('foo', 'bar', 'baz')),
+            'matches with limit' => array('first second third', '/\s+/', 2, array('first', 'second third'))
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider pregSplitExamples
+     */
+    public function pregMSplitWorks($string, $pattern, $limit, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->pregSplit($string, $pattern, $limit);
         $this->assertSame($expected, $result);
     }
 

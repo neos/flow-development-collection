@@ -12,7 +12,9 @@ namespace TYPO3\Flow\I18n\Xliff\V20;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Xliff\V20\Exception\InvalidXliffDataException;
+use TYPO3\Flow\I18n\Xliff\Exception\InvalidXliffDataException;
+use TYPO3\Flow\I18n\AbstractXmlParser;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * A class which parses XLIFF file to simple but useful array representation.
@@ -28,7 +30,7 @@ use TYPO3\Flow\I18n\Xliff\V20\Exception\InvalidXliffDataException;
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
-class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
+class XliffParser extends AbstractXmlParser
 {
     /**
      * Returns array representation of XLIFF data, starting from a root node.
@@ -40,9 +42,9 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
      */
     protected function doParsingFromRoot(\SimpleXMLElement $root)
     {
-        $parsedData = array(
-            'sourceLocale' => new \TYPO3\Flow\I18n\Locale((string)$root->file['source-language'])
-        );
+        $parsedData = [
+            'sourceLocale' => new Locale((string)$root->file['source-language'])
+        ];
 
         foreach ($root->file->body->children() as $translationElement) {
             switch ($translationElement->getName()) {
@@ -52,24 +54,24 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser
                         if (!isset($translationElement['id'])) {
                             throw new InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
                         }
-                        $parsedData['translationUnits'][(string)$translationElement['id']][0] = array(
+                        $parsedData['translationUnits'][(string)$translationElement['id']][0] = [
                             'source' => (string)$translationElement->source,
                             'target' => (string)$translationElement->target,
-                        );
+                        ];
                     }
                     break;
                 case 'group':
                     if (isset($translationElement['restype']) && (string)$translationElement['restype'] === 'x-gettext-plurals') {
-                        $parsedTranslationElement = array();
+                        $parsedTranslationElement = [];
                         foreach ($translationElement->children() as $translationPluralForm) {
                             if ($translationPluralForm->getName() === 'trans-unit') {
                                 // When using plural forms, ID looks like this: 1[0], 1[1] etc
                                 $formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
 
-                                $parsedTranslationElement[(int)$formIndex] = array(
+                                $parsedTranslationElement[(int)$formIndex] = [
                                     'source' => (string)$translationPluralForm->source,
                                     'target' => (string)$translationPluralForm->target,
-                                );
+                                ];
                             }
                         }
 

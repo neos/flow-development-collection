@@ -13,9 +13,7 @@ namespace TYPO3\Flow\I18n\TranslationProvider;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Cldr\Reader\PluralsReader;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Xliff\Model\FileAdapter;
-use TYPO3\Flow\I18n\Xliff\Service\XliffFileProvider;
+use TYPO3\Flow\I18n;
 
 /**
  * The concrete implementation of TranslationProviderInterface which uses XLIFF
@@ -27,17 +25,42 @@ class XliffTranslationProvider implements TranslationProviderInterface
 {
 
     /**
-     * @Flow\Inject
-     * @var XliffFileProvider
+     * @var I18n\Xliff\Service\XliffFileProvider
      */
     protected $fileProvider;
 
     /**
-     * @Flow\Inject
      * @var PluralsReader
      */
     protected $pluralsReader;
 
+    /**
+     * A collection of models requested at least once in current request.
+     *
+     * This is an associative array with pairs as follow:
+     * ['filename'] => $model,
+     *
+     * @var array<XliffModel>
+     */
+    protected $models;
+
+    /**
+     * @param I18n\Service $localizationService
+     * @return void
+     */
+    public function injectLocalizationService(I18n\Service $localizationService)
+    {
+        $this->localizationService = $localizationService;
+    }
+
+    /**
+     * @param PluralsReader $pluralsReader
+     * @return void
+     */
+    public function injectPluralsReader(PluralsReader $pluralsReader)
+    {
+        $this->pluralsReader = $pluralsReader;
+    }
 
     /**
      * Returns translated label of $originalLabel from a file defined by $sourceName.
@@ -45,14 +68,14 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * Chooses particular form of label if available and defined in $pluralForm.
      *
      * @param string $originalLabel Label used as a key in order to find translation
-     * @param Locale $locale Locale to use
+     * @param I18n\Locale $locale Locale to use
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
      * @return mixed Translated label or FALSE on failure
      * @throws Exception\InvalidPluralFormException
      */
-    public function getTranslationByOriginalLabel($originalLabel, Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
+    public function getTranslationByOriginalLabel($originalLabel, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
         $fileData = $this->fileProvider->getMergedFileData($packageKey . ':' . $sourceName, $locale);
         $fileModel = new FileAdapter($fileData, $locale);
@@ -78,14 +101,14 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * Chooses particular form of label if available and defined in $pluralForm.
      *
      * @param string $labelId Key used to find translated label
-     * @param Locale $locale Locale to use
+     * @param I18n\Locale $locale Locale to use
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
      * @return mixed Translated label or FALSE on failure
      * @throws Exception\InvalidPluralFormException
      */
-    public function getTranslationById($labelId, Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
+    public function getTranslationById($labelId, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
         $fileData = $this->fileProvider->getMergedFileData($packageKey . ':' . $sourceName, $locale);
         $fileModel = new FileAdapter($fileData, $locale);

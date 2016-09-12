@@ -11,6 +11,10 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  * source code.
  */
 
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface;
+use TYPO3\Flow\Security\Authorization\InterceptorInterface;
+use TYPO3\Flow\Security\Context;
 
 /**
  * This is the second main security interceptor, which enforces the current security policy for return values and is usually applied over AOP:
@@ -21,10 +25,10 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  * 4. Then the value is returned to the caller
  *
  */
-class AfterInvocation implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+class AfterInvocation implements InterceptorInterface
 {
     /**
-     * @var \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface
+     * @var AfterInvocationManagerInterface
      */
     protected $afterInvocationManager = null;
 
@@ -37,20 +41,20 @@ class AfterInvocation implements \TYPO3\Flow\Security\Authorization\InterceptorI
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Security\Context $securityContext The current security context
-     * @param \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+     * @param Context $securityContext The current security context
+     * @param AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
      */
-    public function __construct(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager)
+    public function __construct(Context $securityContext, AfterInvocationManagerInterface $afterInvocationManager)
     {
     }
 
     /**
      * Sets the current joinpoint for this interception
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
+     * @param JoinPointInterface $joinPoint The current joinpoint
      * @return void
      */
-    public function setJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function setJoinPoint(JoinPointInterface $joinPoint)
     {
     }
 

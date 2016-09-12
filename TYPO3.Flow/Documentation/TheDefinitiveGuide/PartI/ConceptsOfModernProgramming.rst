@@ -116,7 +116,7 @@ There are two types of domain objects, called
 If a domain object has a certain *identity* which
 stays the same as the objects changes its state, the object is an
 *entity*. Otherwise, if the identity of an object
-is built from *all properties*, it is a
+is only defined from *all properties*, it is a
 *value object*. We will now explain these two types
 of objects in detail, including practical use-cases.
 
@@ -237,6 +237,15 @@ entity or value object.
 People new to Domain-Driven Design often tend to overuse
 entities, as this is what people coming from a relational database
 background are used to.
+
+So why not just use entities all the time?
+The design/architectural answer is: because a value object might just
+be more fitting your problem at hand.
+The technical answer is: because value objects are immutable and
+therefore avoid aliasing ([#aliasing]) problems, which are common cause
+of all kinds of bugs.
+
+.. [#aliasing] https://en.wikipedia.org/wiki/Aliasing_(computing)
 
 Associations
 ~~~~~~~~~~~~

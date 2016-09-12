@@ -32,13 +32,13 @@ abstract class ObjectAccess
      * Internal RuntimeCache for getGettablePropertyNames()
      * @var array
      */
-    protected static $gettablePropertyNamesCache = array();
+    protected static $gettablePropertyNamesCache = [];
 
     /**
      * Internal RuntimeCache for getPropertyInternal()
      * @var array
      */
-    protected static $propertyGetterCache = array();
+    protected static $propertyGetterCache = [];
 
     const ACCESS_GET = 0;
     const ACCESS_SET = 1;
@@ -162,11 +162,11 @@ abstract class ObjectAccess
         if (isset(self::$propertyGetterCache[$cacheIdentifier])) {
             return;
         }
-        self::$propertyGetterCache[$cacheIdentifier] = array();
+        self::$propertyGetterCache[$cacheIdentifier] = [];
         $uppercasePropertyName = ucfirst($propertyName);
-        $getterMethodNames = array('get' . $uppercasePropertyName, 'is' . $uppercasePropertyName, 'has' . $uppercasePropertyName);
+        $getterMethodNames = ['get' . $uppercasePropertyName, 'is' . $uppercasePropertyName, 'has' . $uppercasePropertyName];
         foreach ($getterMethodNames as $getterMethodName) {
-            if (is_callable(array($subject, $getterMethodName))) {
+            if (is_callable([$subject, $getterMethodName])) {
                 self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'] = $getterMethodName;
                 return;
             }
@@ -246,7 +246,7 @@ abstract class ObjectAccess
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
+        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;
@@ -285,7 +285,7 @@ abstract class ObjectAccess
 
         if (!isset(self::$gettablePropertyNamesCache[$className])) {
             foreach (get_class_methods($object) as $methodName) {
-                if (is_callable(array($object, $methodName))) {
+                if (is_callable([$object, $methodName])) {
                     if (substr($methodName, 0, 2) === 'is') {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
                     }
@@ -329,7 +329,7 @@ abstract class ObjectAccess
         }
 
         foreach (get_class_methods($object) as $methodName) {
-            if (substr($methodName, 0, 3) === 'set' && is_callable(array($object, $methodName))) {
+            if (substr($methodName, 0, 3) === 'set' && is_callable([$object, $methodName])) {
                 $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
             }
         }
@@ -359,7 +359,7 @@ abstract class ObjectAccess
         } elseif (array_search($propertyName, array_keys(get_class_vars($className))) !== false) {
             return true;
         }
-        return is_callable(array($object, self::buildSetterMethodName($propertyName)));
+        return is_callable([$object, self::buildSetterMethodName($propertyName)]);
     }
 
     /**
@@ -381,13 +381,13 @@ abstract class ObjectAccess
             return true;
         }
         $uppercasePropertyName = ucfirst($propertyName);
-        if (is_callable(array($object, 'get' . $uppercasePropertyName))) {
+        if (is_callable([$object, 'get' . $uppercasePropertyName])) {
             return true;
         }
-        if (is_callable(array($object, 'is' . $uppercasePropertyName))) {
+        if (is_callable([$object, 'is' . $uppercasePropertyName])) {
             return true;
         }
-        if (is_callable(array($object, 'has' . $uppercasePropertyName))) {
+        if (is_callable([$object, 'has' . $uppercasePropertyName])) {
             return true;
         }
         $className = TypeHandling::getTypeForValue($object);
@@ -408,7 +408,7 @@ abstract class ObjectAccess
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
         }
-        $properties = array();
+        $properties = [];
         foreach (self::getGettablePropertyNames($object) as $propertyName) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($object, $propertyName, false, $propertyExists);

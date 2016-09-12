@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Session;
  */
 
 /**
- * A "\TYPO3\Flow\Session\Exception" Exception
- *
  * @api
  */
 class Exception extends \TYPO3\Flow\Exception

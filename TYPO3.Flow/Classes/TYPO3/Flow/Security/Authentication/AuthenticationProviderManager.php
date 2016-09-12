@@ -64,18 +64,14 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $requestPatternResolver;
 
     /**
-     * Array of \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface objects
-     *
      * @var array
      */
-    protected $providers = array();
+    protected $providers = [];
 
     /**
-     * Array of \TYPO3\Flow\Security\Authentication\TokenInterface objects
-     *
      * @var array
      */
-    protected $tokens = array();
+    protected $tokens = [];
 
     /**
      * @var boolean
@@ -132,7 +128,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Returns clean tokens this manager is responsible for.
      * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
      *
-     * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
+     * @return array Array of TokenInterface this manager is responsible for
      */
     public function getTokens()
     {
@@ -148,8 +144,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
      *
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception
-     * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+     * @throws Exception
+     * @throws AuthenticationRequiredException
      */
     public function authenticate()
     {
@@ -297,7 +293,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             if ($providerObjectName === null) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
             }
-            $providerOptions = array();
+            $providerOptions = [];
             if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
                 $providerOptions = $providerConfiguration['providerOptions'];
             }
@@ -320,7 +316,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
 
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
-                $requestPatterns = array();
+                $requestPatterns = [];
                 foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
                     // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
                     if ($patternConfiguration === null) {
@@ -368,7 +364,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     throw new Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\Flow\Security\Authentication\EntryPoint!', 1236767282);
                 }
 
-                /** @var $entryPoint \TYPO3\Flow\Security\Authentication\EntryPointInterface */
+                /** @var $entryPoint EntryPointInterface */
                 $entryPoint = new $entryPointClassName();
                 if (isset($providerConfiguration['entryPointOptions'])) {
                     $entryPoint->setOptions($providerConfiguration['entryPointOptions']);

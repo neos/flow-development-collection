@@ -12,12 +12,23 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\Error;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\InvalidActionVisibilityException;
+use TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use TYPO3\Flow\Mvc\Exception\NoSuchActionException;
+use TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\Flow\Mvc\Exception\ViewNotFoundException;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Mvc\ResponseInterface;
+use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Mvc\ViewConfigurationManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Fluid\View\TemplateView;
 
 /**
  * An HTTP based multi-action controller.
@@ -44,26 +55,32 @@ class ActionController extends AbstractController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
+     * @Flow\Inject
+     * @var MvcPropertyMappingConfigurationService
      */
     protected $mvcPropertyMappingConfigurationService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Mvc\ViewConfigurationManager
+     * @var ViewConfigurationManager
      */
     protected $viewConfigurationManager;
 
     /**
      * The current view, as resolved by resolveView()
      *
-     * @var \TYPO3\Flow\Mvc\View\ViewInterface
+     * @var ViewInterface
      * @api
      */
     protected $view = null;
@@ -86,7 +103,7 @@ class ActionController extends AbstractController
      *
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array();
+    protected $viewFormatToObjectNameMap = [];
 
     /**
      * The default view object to use if none of the resolved views can render
@@ -95,7 +112,7 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = \TYPO3\Fluid\View\TemplateView::class;
+    protected $defaultViewObjectName = TemplateView::class;
 
     /**
      * Name of the action method
@@ -118,7 +135,7 @@ class ActionController extends AbstractController
     protected $settings;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      * @Flow\Inject
      */
     protected $systemLogger;
@@ -135,13 +152,13 @@ class ActionController extends AbstractController
     /**
      * Handles a request. The result output is returned by altering the given response.
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
-     * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by this handler
+     * @param RequestInterface $request The request object
+     * @param ResponseInterface $response The response, modified by this handler
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws UnsupportedRequestTypeException
      * @api
      */
-    public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response)
+    public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
         $this->initializeController($request, $response);
 
@@ -153,7 +170,7 @@ class ActionController extends AbstractController
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
         if (method_exists($this, $actionInitializationMethodName)) {
-            call_user_func(array($this, $actionInitializationMethodName));
+            call_user_func([$this, $actionInitializationMethodName]);
         }
         $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
@@ -181,7 +198,7 @@ class ActionController extends AbstractController
     protected function resolveActionMethodName()
     {
         $actionMethodName = $this->request->getControllerActionName() . 'Action';
-        if (!is_callable(array($this, $actionMethodName))) {
+        if (!is_callable([$this, $actionMethodName])) {
             throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
         }
         $publicActionMethods = static::getPublicActionMethods($this->objectManager);
@@ -198,7 +215,7 @@ class ActionController extends AbstractController
      * Don't override this method - use initializeAction() instead.
      *
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
+     * @throws InvalidArgumentTypeException
      * @see initializeArguments()
      */
     protected function initializeActionMethodArguments()
@@ -207,7 +224,7 @@ class ActionController extends AbstractController
         if (isset($actionMethodParameters[$this->actionMethodName])) {
             $methodParameters = $actionMethodParameters[$this->actionMethodName];
         } else {
-            $methodParameters = array();
+            $methodParameters = [];
         }
 
         $this->arguments->removeAll();
@@ -219,7 +236,7 @@ class ActionController extends AbstractController
                 $dataType = 'array';
             }
             if ($dataType === null) {
-                throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
+                throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
             $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
             $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
@@ -229,15 +246,15 @@ class ActionController extends AbstractController
     /**
      * Returns a map of action method names and their parameters.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of method parameters by action name
      * @Flow\CompileStatic
      */
     public static function getActionMethodParameters($objectManager)
     {
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $result = array();
+        $result = [];
 
         $className = get_called_class();
         $methodNames = get_class_methods($className);
@@ -258,12 +275,12 @@ class ActionController extends AbstractController
      */
     protected function getInformationNeededForInitializeActionMethodValidators()
     {
-        return array(
+        return [
             static::getActionValidationGroups($this->objectManager),
             static::getActionMethodParameters($this->objectManager),
             static::getActionValidateAnnotationData($this->objectManager),
             static::getActionIgnoredValidationArguments($this->objectManager)
-        );
+        ];
     }
 
     /**
@@ -283,26 +300,26 @@ class ActionController extends AbstractController
         if (isset($validateGroupAnnotations[$this->actionMethodName])) {
             $validationGroups = $validateGroupAnnotations[$this->actionMethodName];
         } else {
-            $validationGroups = array('Default', 'Controller');
+            $validationGroups = ['Default', 'Controller'];
         }
 
         if (isset($actionMethodParameters[$this->actionMethodName])) {
             $methodParameters = $actionMethodParameters[$this->actionMethodName];
         } else {
-            $methodParameters = array();
+            $methodParameters = [];
         }
 
         if (isset($actionValidateAnnotations[$this->actionMethodName])) {
             $validateAnnotations = $actionValidateAnnotations[$this->actionMethodName];
         } else {
-            $validateAnnotations = array();
+            $validateAnnotations = [];
         }
         $parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
 
         if (isset($actionIgnoredArguments[$this->actionMethodName])) {
             $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
         } else {
-            $ignoredArguments = array();
+            $ignoredArguments = [];
         }
 
         foreach ($this->arguments as $argument) {
@@ -324,21 +341,21 @@ class ActionController extends AbstractController
     /**
      * Returns a map of action method names and their validation groups.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of validation groups by action method name
      * @Flow\CompileStatic
      */
     public static function getActionValidationGroups($objectManager)
     {
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $result = array();
+        $result = [];
 
         $className = get_called_class();
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
-                $validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, \TYPO3\Flow\Annotations\ValidationGroups::class);
+                $validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\ValidationGroups::class);
                 if ($validationGroupsAnnotation !== null) {
                     $result[$methodName] = $validationGroupsAnnotation->validationGroups;
                 }
@@ -351,27 +368,27 @@ class ActionController extends AbstractController
     /**
      * Returns a map of action method names and their validation parameters.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of validate annotation parameters by action method name
      * @Flow\CompileStatic
      */
     public static function getActionValidateAnnotationData($objectManager)
     {
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $result = array();
+        $result = [];
 
         $className = get_called_class();
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
-                $validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, \TYPO3\Flow\Annotations\Validate::class);
+                $validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
                 $result[$methodName] = array_map(function ($validateAnnotation) {
-                    return array(
+                    return [
                         'type' => $validateAnnotation->type,
                         'options' => $validateAnnotation->options,
                         'argumentName' => $validateAnnotation->argumentName,
-                    );
+                    ];
                 }, $validateAnnotations);
             }
         }
@@ -403,7 +420,7 @@ class ActionController extends AbstractController
      */
     protected function callActionMethod()
     {
-        $preparedArguments = array();
+        $preparedArguments = [];
         foreach ($this->arguments as $argument) {
             $preparedArguments[] = $argument->getValue();
         }
@@ -411,13 +428,13 @@ class ActionController extends AbstractController
         $validationResult = $this->arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
-            $actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+            $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
         } else {
             $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
             if (isset($actionIgnoredArguments[$this->actionMethodName])) {
                 $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
             } else {
-                $ignoredArguments = array();
+                $ignoredArguments = [];
             }
 
             // if there exists more errors than in ignoreValidationAnnotations => call error method
@@ -428,7 +445,7 @@ class ActionController extends AbstractController
                 if (!$subValidationResult->hasErrors()) {
                     continue;
                 }
-                if (isset($ignoredArguments[$argumentName]) && $subValidationResult->getErrors(\TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError::class) === array()) {
+                if (isset($ignoredArguments[$argumentName]) && $subValidationResult->getErrors(TargetNotFoundError::class) === []) {
                     continue;
                 }
                 $shouldCallActionMethod = false;
@@ -436,13 +453,13 @@ class ActionController extends AbstractController
             }
 
             if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+                $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
             } else {
-                $actionResult = call_user_func(array($this, $this->errorMethodName));
+                $actionResult = call_user_func([$this, $this->errorMethodName]);
             }
         }
 
-        if ($actionResult === null && $this->view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
+        if ($actionResult === null && $this->view instanceof ViewInterface) {
             $this->response->appendContent($this->view->render());
         } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
             $this->response->appendContent($actionResult);
@@ -452,29 +469,29 @@ class ActionController extends AbstractController
     }
 
     /**
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of argument names as key by action method name
      * @Flow\CompileStatic
      */
     public static function getActionIgnoredValidationArguments($objectManager)
     {
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $result = array();
+        $result = [];
 
         $className = get_called_class();
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
-                $ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, \TYPO3\Flow\Annotations\IgnoreValidation::class);
+                $ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\IgnoreValidation::class);
                 /** @var Flow\IgnoreValidation $ignoreValidationAnnotation */
                 foreach ($ignoreValidationAnnotations as $ignoreValidationAnnotation) {
                     if (!isset($ignoreValidationAnnotation->argumentName)) {
                         throw new \InvalidArgumentException('An IgnoreValidation annotation on a method must be given an argument name.', 1318456607);
                     }
-                    $result[$methodName][$ignoreValidationAnnotation->argumentName] = array(
+                    $result[$methodName][$ignoreValidationAnnotation->argumentName] = [
                         'evaluate' => $ignoreValidationAnnotation->evaluate
-                    );
+                    ];
                 }
             }
         }
@@ -483,16 +500,16 @@ class ActionController extends AbstractController
     }
 
     /**
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of all public action method names, indexed by method name
      * @Flow\CompileStatic
      */
     public static function getPublicActionMethods($objectManager)
     {
-        /** @var \TYPO3\Flow\Reflection\ReflectionService $reflectionService */
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+        /** @var ReflectionService $reflectionService */
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $result = array();
+        $result = [];
 
         $className = get_called_class();
         $methodNames = get_class_methods($className);
@@ -512,8 +529,8 @@ class ActionController extends AbstractController
      * By default, this method tries to locate a view with a name matching
      * the current action.
      *
-     * @return \TYPO3\Flow\Mvc\View\ViewInterface the resolved view
-     * @throws \TYPO3\Flow\Mvc\Exception\ViewNotFoundException if no view can be resolved
+     * @return ViewInterface the resolved view
+     * @throws ViewNotFoundException if no view can be resolved
      */
     protected function resolveView()
     {
@@ -534,10 +551,10 @@ class ActionController extends AbstractController
         }
 
         if (!isset($view)) {
-            throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);
+            throw new ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);
         }
-        if (!$view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
-            throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('View has to be of type ViewInterface, got "%s" in action "%s" of controller "%s"', get_class($view), $this->request->getControllerActionName(), get_class($this)), 1355153188);
+        if (!$view instanceof ViewInterface) {
+            throw new ViewNotFoundException(sprintf('View has to be of type ViewInterface, got "%s" in action "%s" of controller "%s"', get_class($view), $this->request->getControllerActionName(), get_class($this)), 1355153188);
         }
 
         return $view;
@@ -579,11 +596,11 @@ class ActionController extends AbstractController
      * Override this method to solve assign variables common for all actions
      * or prepare the view in another way before the action is called.
      *
-     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view The view to be initialized
+     * @param ViewInterface $view The view to be initialized
      * @return void
      * @api
      */
-    protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    protected function initializeView(ViewInterface $view)
     {
     }
 
@@ -618,7 +635,7 @@ class ActionController extends AbstractController
     {
         foreach (array_keys($this->request->getArguments()) as $argumentName) {
             /** @var TargetNotFoundError $targetNotFoundError */
-            $targetNotFoundError = $this->arguments->getValidationResults()->forProperty($argumentName)->getFirstError(\TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError::class);
+            $targetNotFoundError = $this->arguments->getValidationResults()->forProperty($argumentName)->getFirstError(TargetNotFoundError::class);
             if ($targetNotFoundError !== false) {
                 throw new TargetNotFoundException($targetNotFoundError->getMessage(), $targetNotFoundError->getCode());
             }
@@ -695,6 +712,6 @@ class ActionController extends AbstractController
      */
     protected function getErrorFlashMessage()
     {
-        return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', null, array(get_class($this), $this->actionMethodName));
+        return new Error\Error('An error occurred while trying to call %1$s->%2$s()', null, [get_class($this), $this->actionMethodName]);
     }
 }

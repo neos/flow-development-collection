@@ -84,7 +84,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if ($subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface" only support subjects of type "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1416241148);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', MethodPrivilegeInterface::class, MethodPrivilegeSubject::class, get_class($subject)), 1416241148);
         }
 
         $this->initialize();
@@ -132,7 +132,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     {
         if ($this->pointcutFilter === null) {
             /** @var MethodTargetExpressionParser $methodTargetExpressionParser */
-            $methodTargetExpressionParser = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class);
+            $methodTargetExpressionParser = $this->objectManager->get(MethodTargetExpressionParser::class);
             $this->pointcutFilter = $methodTargetExpressionParser->parse($this->getParsedMatcher(), 'Policy privilege "' . $this->getPrivilegeTargetIdentifier() . '"');
         }
 

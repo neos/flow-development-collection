@@ -28,7 +28,7 @@ interface SessionManagerInterface
      * Returns the currently active session which stores session data for the
      * current HTTP request on this local system.
      *
-     * @return \TYPO3\Flow\Session\SessionInterface
+     * @return SessionInterface
      * @api
      */
     public function getCurrentSession();
@@ -38,7 +38,7 @@ interface SessionManagerInterface
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return \TYPO3\Flow\Session\SessionInterface
+     * @return SessionInterface
      * @api
      */
     public function getSession($sessionIdentifier);
@@ -46,7 +46,7 @@ interface SessionManagerInterface
     /**
      * Returns all active sessions, even remote ones.
      *
-     * @return array<\TYPO3\Flow\Session\Session>
+     * @return array<Session>
      * @api
      */
     public function getActiveSessions();

@@ -22,25 +22,25 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
     /**
      * @var array
      */
-    protected $logEntries = array();
+    protected $logEntries = [];
 
     /**
      * @var array
      */
-    protected $exceptions = array();
+    protected $exceptions = [];
 
     /**
      * @var array
      */
-    protected $throwables = array();
+    protected $throwables = [];
 
     /**
      * Adds a backend to which the logger sends the logging data
      *
-     * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
+     * @param Backend\BackendInterface $backend A backend implementation
      * @return void
      */
-    public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
+    public function addBackend(Backend\BackendInterface $backend)
     {
         $this->log('Method "addBackend" called on object earlyLogger. Not supported, silently ignoring.');
     }
@@ -49,10 +49,10 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      * Runs the close() method of a backend and removes the backend
      * from the logger.
      *
-     * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
+     * @param Backend\BackendInterface $backend The backend to remove
      * @return void
      */
-    public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend)
+    public function removeBackend(Backend\BackendInterface $backend)
     {
         $this->log('Method "removeBackend" called on object earlyLogger. Not supported, silently ignoring');
     }
@@ -64,9 +64,9 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      */
     protected function resetInternalLogs()
     {
-        $this->logEntries = array();
-        $this->exceptions = array();
-        $this->throwables = array();
+        $this->logEntries = [];
+        $this->exceptions = [];
+        $this->throwables = [];
     }
 
     /**
@@ -92,7 +92,7 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      * @param array $additionalData Additional data to log
      * @return void
      */
-    public function logException(\Exception $exception, array $additionalData = array())
+    public function logException(\Exception $exception, array $additionalData = [])
     {
         $this->exceptions[] = func_get_args();
     }
@@ -105,7 +105,7 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
      * @return void
      * @api
      */
-    public function logThrowable(\Throwable $throwable, array $additionalData = array())
+    public function logThrowable(\Throwable $throwable, array $additionalData = [])
     {
         $this->throwables[] = func_get_args();
     }
@@ -122,18 +122,18 @@ class EarlyLogger implements SystemLoggerInterface, ThrowableLoggerInterface
         if (count($this->logEntries) > 0) {
             $logger->log('[Replaying logs from instance of EarlyLogger. Order of internal log-entries is maintained, but other log-entries might not be in order.]');
             foreach ($this->logEntries as $logEntry) {
-                call_user_func_array(array($logger, 'log'), $logEntry);
+                call_user_func_array([$logger, 'log'], $logEntry);
             }
             $logger->log('[Done replaying logs from instance of EarlyLogger.]');
         }
         if (count($this->exceptions) > 0) {
             foreach ($this->exceptions as $exception) {
-                call_user_func_array(array($logger, 'logException'), $exception);
+                call_user_func_array([$logger, 'logException'], $exception);
             }
         }
         if (count($this->throwables) > 0 && $logger instanceof ThrowableLoggerInterface) {
             foreach ($this->throwables as $throwable) {
-                call_user_func_array(array($logger, 'logThrowable'), $throwable);
+                call_user_func_array([$logger, 'logThrowable'], $throwable);
             }
         }
         if ($resetLogs === true) {

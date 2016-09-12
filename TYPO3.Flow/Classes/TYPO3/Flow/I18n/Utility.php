@@ -47,7 +47,7 @@ class Utility
     public static function parseAcceptLanguageHeader($acceptLanguageHeader)
     {
         $acceptLanguageHeader = str_replace(' ', '', $acceptLanguageHeader);
-        $matchingLanguages = array();
+        $matchingLanguages = [];
 
         if (preg_match_all(self::PATTERN_MATCH_ACCEPTLANGUAGE, $acceptLanguageHeader, $matches, \PREG_PATTERN_ORDER) !== false) {
             foreach ($matches[1] as $localeIdentifier) {
@@ -99,7 +99,7 @@ class Utility
 
         $filenameParts = explode('.', $filename);
 
-        if (in_array($filenameParts[count($filenameParts) - 2], array('php', 'rss', 'xml'))) {
+        if (in_array($filenameParts[count($filenameParts) - 2], ['php', 'rss', 'xml'])) {
             return false;
         } elseif (count($filenameParts) === 2 && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $filenameParts[0]) === 1) {
             return $filenameParts[0];
