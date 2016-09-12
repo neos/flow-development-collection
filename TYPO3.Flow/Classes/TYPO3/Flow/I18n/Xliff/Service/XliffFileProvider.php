@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Xliff\V12\XliffParser as V12XliffParser;
-#use TYPO3\Flow\I18n\Xliff\V20\XliffParser as V20XliffParser;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
@@ -55,7 +54,6 @@ class XliffFileProvider
     protected $xliffBasePath = 'Private/Translations/';
 
     /**
-     * @todo select and implement a caching mechanism
      * @var array
      */
     protected $files = [];
@@ -88,6 +86,7 @@ class XliffFileProvider
      * @param string $fileId
      * @param Locale $locale
      * @return array
+     * @todo Add XLIFF 2.0 support
      */
     public function getMergedFileData($fileId, Locale $locale)
     {
@@ -115,27 +114,18 @@ class XliffFileProvider
                                     $source = $file->getAttribute('original') ?: $defaultSource;
                                 break;
                                 default:
-                                    $packageName = $defaultPackageName;
-                                    $source = $defaultSource;
+                                    return;
                             }
                             if ($fileId === $packageName . ':' . $source) {
                                 $relevantOffset = $offset;
                             }
                         });
-
-                        switch ($documentVersion) {
-                            case '1.2':
-                                $xliffParser = new V12XliffParser();
-                                break;
-                            #case '2.0':
-                            #    $xliffParser = new V20XliffParser();
-                            #    break;
-                            default:
-                                $xliffParser = new V12XliffParser();
-                                continue;
-                        }
                         if (!is_null($relevantOffset)) {
-                            $parsedData = Arrays::arrayMergeRecursiveOverrule($parsedData, $xliffParser->getFileDataFromDocument($filePath, $relevantOffset));
+                            $xliffParser = $this->getParser($documentVersion);
+                            if ($xliffParser) {
+                                $fileData = $xliffParser->getFileDataFromDocument($filePath, $relevantOffset);
+                                $parsedData = Arrays::arrayMergeRecursiveOverrule($parsedData, $fileData);
+                            }
                         }
                     }
                 }
@@ -145,5 +135,20 @@ class XliffFileProvider
         }
 
         return $this->files[$fileId][$locale->getLanguage()];
+    }
+
+
+    /**
+     * @param string $documentVersion
+     * @return null|V12XliffParser
+     */
+    public function getParser($documentVersion) {
+        switch ($documentVersion) {
+            case '1.2':
+                return new V12XliffParser();
+                break;
+            default:
+                return null;
+        }
     }
 }
