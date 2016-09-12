@@ -80,7 +80,7 @@ class XliffFileProvider
      */
     public function initializeObject()
     {
-        $this->files = $this->cache->get('translationFiles');
+        $this->files = $this->cache->get('translationFiles') ?: [];
     }
 
 
@@ -91,7 +91,7 @@ class XliffFileProvider
      */
     public function getMergedFileData($fileId, Locale $locale)
     {
-        if (!isset($this->files[$fileId])) {
+        if (!isset($this->files[$fileId][$locale->getLanguage()])) {
             $parsedData = [
                 'fileIdentifier' => $fileId
             ];
@@ -140,10 +140,10 @@ class XliffFileProvider
                     }
                 }
             }
-            $this->files[$fileId] = $parsedData;
+            $this->files[$fileId][$locale->getLanguage()] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
         }
 
-        return $this->files[$fileId];
+        return $this->files[$fileId][$locale->getLanguage()];
     }
 }
