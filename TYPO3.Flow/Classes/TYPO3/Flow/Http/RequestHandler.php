@@ -108,6 +108,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         // Create the request very early so the Resource Management has a chance to grab it:
         $this->request = Request::createFromEnvironment();
         $this->response = new Response();
+        $this->componentContext = new ComponentContext($this->request, $this->response);
 
         $this->boot();
         $this->resolveDependencies();
@@ -116,7 +117,6 @@ class RequestHandler implements HttpRequestHandlerInterface
             $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
 
-        $this->componentContext = new ComponentContext($this->request, $this->response);
         $this->baseComponentChain->handle($this->componentContext);
         $this->response = $this->baseComponentChain->getResponse();
 
