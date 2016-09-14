@@ -12,7 +12,6 @@ namespace TYPO3\Flow\I18n\TranslationProvider;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Cldr\Reader\PluralsReader;
 use TYPO3\Flow\I18n;
 
 /**
@@ -30,36 +29,26 @@ class XliffTranslationProvider implements TranslationProviderInterface
     protected $fileProvider;
 
     /**
-     * @var PluralsReader
+     * @var I18n\Cldr\Reader\PluralsReader
      */
     protected $pluralsReader;
 
     /**
-     * A collection of models requested at least once in current request.
-     *
-     * This is an associative array with pairs as follow:
-     * ['filename'] => $model,
-     *
-     * @var array<XliffModel>
-     */
-    protected $models;
-
-    /**
-     * @param I18n\Service $localizationService
+     * @param I18n\Cldr\Reader\PluralsReader $pluralsReader
      * @return void
      */
-    public function injectLocalizationService(I18n\Service $localizationService)
+    public function injectPluralsReader(I18n\Cldr\Reader\PluralsReader $pluralsReader)
     {
-        $this->localizationService = $localizationService;
+        $this->pluralsReader = $pluralsReader;
     }
 
     /**
-     * @param PluralsReader $pluralsReader
+     * @param I18n\Xliff\Service\XliffFileProvider $fileProvider
      * @return void
      */
-    public function injectPluralsReader(PluralsReader $pluralsReader)
+    public function injectFileProvider(I18n\Xliff\Service\XliffFileProvider $fileProvider)
     {
-        $this->pluralsReader = $pluralsReader;
+        $this->fileProvider = $fileProvider;
     }
 
     /**
@@ -77,9 +66,6 @@ class XliffTranslationProvider implements TranslationProviderInterface
      */
     public function getTranslationByOriginalLabel($originalLabel, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        $fileData = $this->fileProvider->getMergedFileData($packageKey . ':' . $sourceName, $locale);
-        $fileModel = new FileAdapter($fileData, $locale);
-
         if ($pluralForm !== null) {
             $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
@@ -92,7 +78,9 @@ class XliffTranslationProvider implements TranslationProviderInterface
             $pluralFormIndex = 0;
         }
 
-        return $fileModel->getTargetBySource($originalLabel, $pluralFormIndex);
+        $file = $this->fileProvider->getFile($packageKey . ':' . $sourceName, $locale);
+
+        return $file->getTargetBySource($originalLabel, $pluralFormIndex);
     }
 
     /**
@@ -110,9 +98,6 @@ class XliffTranslationProvider implements TranslationProviderInterface
      */
     public function getTranslationById($labelId, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow')
     {
-        $fileData = $this->fileProvider->getMergedFileData($packageKey . ':' . $sourceName, $locale);
-        $fileModel = new FileAdapter($fileData, $locale);
-
         if ($pluralForm !== null) {
             $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
@@ -125,6 +110,8 @@ class XliffTranslationProvider implements TranslationProviderInterface
             $pluralFormIndex = 0;
         }
 
-        return $fileModel->getTargetByTransUnitId($labelId, $pluralFormIndex);
+        $file = $this->fileProvider->getFile($packageKey . ':' . $sourceName, $locale);
+
+        return $file->getTargetByTransUnitId($labelId, $pluralFormIndex);
     }
 }
