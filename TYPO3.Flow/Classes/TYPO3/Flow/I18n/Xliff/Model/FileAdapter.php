@@ -72,7 +72,7 @@ class FileAdapter
     public function getTargetBySource($source, $pluralFormIndex = 0)
     {
         if (!isset($this->fileData['translationUnits'])) {
-            $this->i18nLogger->log(sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->sourcePath), LOG_DEBUG);
+            $this->i18nLogger->log(sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->fileData['fileIdentifier']), LOG_DEBUG);
             return false;
         }
         foreach ($this->fileData['translationUnits'] as $translationUnit) {
@@ -82,7 +82,7 @@ class FileAdapter
             }
 
             if (count($translationUnit) <= $pluralFormIndex) {
-                $this->i18nLogger->log('The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->sourcePath . ' is not available.', LOG_DEBUG);
+                $this->i18nLogger->log('The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->fileData['fileIdentifier'] . ' is not available.', LOG_DEBUG);
                 return false;
             }
 
