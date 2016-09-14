@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\I18n\Xliff;
+namespace TYPO3\Flow\Tests\Unit\I18n\Xliff\V12;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -22,10 +22,10 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsesXliffFileCorrectly()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
-        $mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockXliffData.xlf';
+        $mockParsedData = require(__DIR__ . '/../../Fixtures/MockParsedXliffData.php');
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new \TYPO3\Flow\I18n\Xliff\V12\XliffParser();
         $result = $parser->getParsedData($mockFilenamePath);
         $this->assertEquals($mockParsedData, $result);
     }
@@ -36,9 +36,9 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function missingIdInSingularTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidXliffData.xlf';
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new \TYPO3\Flow\I18n\Xliff\V12\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 
@@ -48,9 +48,9 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function missingIdInPluralTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidPluralXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidPluralXliffData.xlf';
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new \TYPO3\Flow\I18n\Xliff\V12\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 }
