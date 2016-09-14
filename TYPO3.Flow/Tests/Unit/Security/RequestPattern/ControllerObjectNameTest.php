@@ -11,21 +11,24 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\RequestPattern\ControllerObjectName;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the controller object name request pattern
- *
  */
-class ControllerObjectNameTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ControllerObjectNameTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function requestMatchingBasicallyWorks()
     {
-        $request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('getControllerObjectName'))->getMock();
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\Security\Controller\LoginController'));
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\ControllerObjectName();
+        $requestPattern = new ControllerObjectName();
         $requestPattern->setPattern('TYPO3\Flow\Security\.*');
 
         $this->assertTrue($requestPattern->matchRequest($request));

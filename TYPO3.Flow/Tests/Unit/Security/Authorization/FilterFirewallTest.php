@@ -13,12 +13,19 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Authorization\FilterFirewall;
+use TYPO3\Flow\Security\Authorization\InterceptorResolver;
+use TYPO3\Flow\Security\Authorization\RequestFilter;
+use TYPO3\Flow\Security\RequestPatternInterface;
+use TYPO3\Flow\Security\RequestPatternResolver;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the filter firewall
- *
  */
-class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FilterFirewallTest extends UnitTestCase
 {
     /**
      * @test
@@ -46,9 +53,9 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         };
 
-        $mockRequestPattern1 = $this->createMock('TYPO3\Flow\Security\RequestPatternInterface', array(), array(), 'pattern1', false);
+        $mockRequestPattern1 = $this->createMock(RequestPatternInterface::class, [], [], 'pattern1', false);
         $mockRequestPattern1->expects($this->once())->method('setPattern')->with('/some/url/.*');
-        $mockRequestPattern2 = $this->createMock('TYPO3\Flow\Security\RequestPatternInterface', array(), array(), 'pattern2', false);
+        $mockRequestPattern2 = $this->createMock(RequestPatternInterface::class, [], [], 'pattern2', false);
         $mockRequestPattern2->expects($this->once())->method('setPattern')->with('/some/url/blocked.*');
 
         $getObjectCallback = function () use (&$mockRequestPattern1, &$mockRequestPattern2) {
@@ -62,7 +69,7 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
                 return 'AccessGrant';
             } elseif ($args[0] === 'mockInterceptorTest') {
                 return 'InterceptorTest';
-            } elseif ($args[0] === 'TYPO3\Flow\Security\Authorization\RequestFilter') {
+            } elseif ($args[0] === RequestFilter::class) {
                 if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') {
                     return 'filter1';
                 }
@@ -72,28 +79,28 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         };
 
-        $mockObjectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManagerInterface')->disableOriginalConstructor()->getMock();
-        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', false);
+        $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class, [], [], '', false);
         $mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
-        $mockPatternResolver = $this->getMockBuilder('TYPO3\Flow\Security\RequestPatternResolver')->disableOriginalConstructor()->getMock();
+        $mockPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
         $mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will($this->returnCallback($resolveRequestPatternClassCallback));
-        $mockInterceptorResolver = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\InterceptorResolver')->disableOriginalConstructor()->getMock();
+        $mockInterceptorResolver = $this->getMockBuilder(InterceptorResolver::class)->disableOriginalConstructor()->getMock();
         $mockInterceptorResolver->expects($this->any())->method('resolveInterceptorClass')->will($this->returnCallback($resolveInterceptorClassCallback));
 
-        $settings = array(
-            array(
+        $settings = [
+            [
                 'patternType' => 'URI',
                 'patternValue' => '/some/url/.*',
                 'interceptor' => 'AccessGrant'
-            ),
-            array(
+            ],
+            [
                 'patternType' => 'TYPO3\TestRequestPattern',
                 'patternValue' => '/some/url/blocked.*',
                 'interceptor' => 'TYPO3\TestSecurityInterceptor'
-            )
-        );
+            ]
+        ];
 
-        $firewall = $this->getAccessibleMock('TYPO3\Flow\Security\Authorization\FilterFirewall', array('blockIllegalRequests'), array(), '', false);
+        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['blockIllegalRequests'], [], '', false);
         $firewall->_set('objectManager', $mockObjectManager);
         $firewall->_set('requestPatternResolver', $mockPatternResolver);
         $firewall->_set('interceptorResolver', $mockInterceptorResolver);
@@ -101,7 +108,7 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
         $firewall->_call('buildFiltersFromSettings', $settings);
         $result = $firewall->_get('filters');
 
-        $this->assertEquals(array('filter1', 'filter2'), $result, 'The filters were not built correctly.');
+        $this->assertEquals(['filter1', 'filter2'], $result, 'The filters were not built correctly.');
     }
 
     /**
@@ -109,17 +116,17 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function allConfiguredFiltersAreCalled()
     {
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockFilter1 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter1 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter1->expects($this->once())->method('filterRequest')->with($mockActionRequest);
-        $mockFilter2 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter2 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter2->expects($this->once())->method('filterRequest')->with($mockActionRequest);
-        $mockFilter3 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter3 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter3->expects($this->once())->method('filterRequest')->with($mockActionRequest);
 
-        $firewall = $this->getAccessibleMock('TYPO3\Flow\Security\Authorization\FilterFirewall', array('dummy'), array(), '', false);
-        $firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
+        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['dummy'], [], '', false);
+        $firewall->_set('filters', [$mockFilter1, $mockFilter2, $mockFilter3]);
 
         $firewall->blockIllegalRequests($mockActionRequest);
     }
@@ -130,17 +137,17 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown()
     {
-        $mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockFilter1 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter1 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter1->expects($this->once())->method('filterRequest')->with($mockActionRequest)->will($this->returnValue(false));
-        $mockFilter2 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter2 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter2->expects($this->once())->method('filterRequest')->with($mockActionRequest)->will($this->returnValue(false));
-        $mockFilter3 = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\RequestFilter')->disableOriginalConstructor()->getMock();
+        $mockFilter3 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
         $mockFilter3->expects($this->once())->method('filterRequest')->with($mockActionRequest)->will($this->returnValue(false));
 
-        $firewall = $this->getAccessibleMock('TYPO3\Flow\Security\Authorization\FilterFirewall', array('dummy'), array(), '', false);
-        $firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
+        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['dummy'], [], '', false);
+        $firewall->_set('filters', [$mockFilter1, $mockFilter2, $mockFilter3]);
         $firewall->_set('rejectAll', true);
 
         $firewall->blockIllegalRequests($mockActionRequest);
