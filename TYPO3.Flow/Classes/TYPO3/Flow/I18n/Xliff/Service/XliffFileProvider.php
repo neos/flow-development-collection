@@ -14,6 +14,7 @@ namespace TYPO3\Flow\I18n\Xliff\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\I18n\Xliff\Model\FileAdapter;
 use TYPO3\Flow\I18n\Xliff\V12\XliffParser as V12XliffParser;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
@@ -106,7 +107,7 @@ class XliffFileProvider
                         $relevantOffset = null;
                         $documentVersion = null;
 
-                        $this->xliffReader->readFiles($filePath, function (\XMLReader $file, $offset, $version) use($fileId, &$documentVersion, &$relevantOffset, $defaultPackageName, $defaultSource) {
+                        $this->xliffReader->readFiles($filePath, function (\XMLReader $file, $offset, $version) use ($fileId, &$documentVersion, &$relevantOffset, $defaultPackageName, $defaultSource) {
                             $documentVersion = $version;
                             switch ($version) {
                                 case '1.2':
@@ -137,12 +138,23 @@ class XliffFileProvider
         return $this->files[$fileId][$locale->getLanguage()];
     }
 
+    /**
+     * @param string $fileId
+     * @param Locale $locale
+     * @return FileAdapter
+     */
+    public function getFile($fileId, Locale $locale)
+    {
+        return new FileAdapter($this->getMergedFileData($fileId, $locale), $locale);
+    }
+
 
     /**
      * @param string $documentVersion
      * @return null|V12XliffParser
      */
-    public function getParser($documentVersion) {
+    public function getParser($documentVersion)
+    {
         switch ($documentVersion) {
             case '1.2':
                 return new V12XliffParser();
