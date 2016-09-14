@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageFactory;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -37,8 +38,8 @@ class PackageFactoryTest extends UnitTestCase
     public function setUp()
     {
         vfsStream::setup('Packages');
-        $this->mockPackageManager = $this->getMockBuilder('TYPO3\Flow\Package\PackageManager')->disableOriginalConstructor()->getMock();
-        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', array(), true);
+        $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
+        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', [], true);
 
         $this->packageFactory = new PackageFactory($this->mockPackageManager);
     }
@@ -148,6 +149,6 @@ class PackageFactoryTest extends UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "flow-test"}');
 
         $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package');
-        $this->assertSame('TYPO3\Flow\Package\Package', get_class($package));
+        $this->assertSame(Package::class, get_class($package));
     }
 }
