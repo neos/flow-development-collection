@@ -1,42 +1,42 @@
 <?php
-return array(
-    'identity' => array(
+return [
+    'identity' => [
         'version' => '',
         'generation' => '',
         'language[@type="pl"]' => '',
-    ),
-    'dates' => array(
-        'calendars' => array(
-            'calendar[@type="gregorian"]' => array(
-                'dateFormats' => array(
-                    'dateFormatLength[@type="full"]' => array(
-                        'dateFormat' => array(
+    ],
+    'dates' => [
+        'calendars' => [
+            'calendar[@type="gregorian"]' => [
+                'dateFormats' => [
+                    'dateFormatLength[@type="full"]' => [
+                        'dateFormat' => [
                             'pattern' => 'EEEE, d MMMM y',
-                        ),
-                    ),
-                    'dateFormatLength[@type="long"]' => array(
-                        'dateFormat' => array(
+                        ],
+                    ],
+                    'dateFormatLength[@type="long"]' => [
+                        'dateFormat' => [
                             'pattern' => 'd MMMM y',
-                        ),
-                    ),
-                    'dateFormatLength[@type="medium"]' => array(
-                        'dateFormat' => array(
+                        ],
+                    ],
+                    'dateFormatLength[@type="medium"]' => [
+                        'dateFormat' => [
                             'pattern' => 'dd-MM-yyyy',
                             'pattern[@alt="proposed-x1001"]' => 'd MMM y',
-                        ),
-                    ),
-                    'dateFormatLength[@type="short"]' => array(
+                        ],
+                    ],
+                    'dateFormatLength[@type="short"]' => [
                             'alias[@source="locale"][@path="../dateFormatLength[@type=\'medium\']"]' => '',
-                    ),
-                ),
-            ),
-            'calendar[@type="buddhist"]' => array(
-                'dateFormats' => array(
-                    'dateFormatLength[@type="full"]' => array(
+                    ],
+                ],
+            ],
+            'calendar[@type="buddhist"]' => [
+                'dateFormats' => [
+                    'dateFormatLength[@type="full"]' => [
                         'alias[@source="locale"][@path="../../../calendar[@type=\'gregorian\']/dateFormats/dateFormatLength[@type=\'full\']"]' => '',
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

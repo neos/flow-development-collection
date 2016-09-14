@@ -1,22 +1,22 @@
 <?php
-return array(
-    'localeDisplayNames' => array(
-        'measurementSystemNames' => array(
+return [
+    'localeDisplayNames' => [
+        'measurementSystemNames' => [
             'measurementSystemName[@type="US"]' => 'imperiska enheter',
-        ),
-        'variants' => array(
+        ],
+        'variants' => [
             'variant[@type="1996"]' => '1996 års stavning',
-        ),
-    ),
-    'dates' => array(
-        'calendars' => array(
-            'calendar[@type="gregorian"]' => array(
-                'fields' => array(
-                    'field[@type="dayperiod"]' => array(
+        ],
+    ],
+    'dates' => [
+        'calendars' => [
+            'calendar[@type="gregorian"]' => [
+                'fields' => [
+                    'field[@type="dayperiod"]' => [
                         'displayName' => 'dagsperiod',
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
