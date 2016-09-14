@@ -42,7 +42,7 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
         $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
-        $backend->injectEnvironment($this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock());
+        $backend->injectEnvironment($this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock());
         $data = 'Some data';
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
@@ -110,7 +110,7 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $entryIdentifier = 'MyIdentifier';
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($entryIdentifier, $retrieved[0]);
@@ -128,11 +128,11 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $entryIdentifier = 'MyIdentifier';
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
-        $backend->set($entryIdentifier, $data, array('UnitTestTag%tag3'));
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals(array(), $retrieved);
+        $this->assertEquals([], $retrieved);
     }
 
     /**
@@ -163,9 +163,9 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('PdoBackendTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('PdoBackendTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('PdoBackendTest3', $data, array('UnitTestTag%test'));
+        $backend->set('PdoBackendTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('PdoBackendTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('PdoBackendTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
@@ -198,12 +198,12 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -223,9 +223,9 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend()
     {
-        $mockEnvironment = $this->getMockBuilder('TYPO3\Flow\Utility\Environment')->disableOriginalConstructor()->getMock();
+        $mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
 
-        $mockCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
         $backend = new \TYPO3\Flow\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
