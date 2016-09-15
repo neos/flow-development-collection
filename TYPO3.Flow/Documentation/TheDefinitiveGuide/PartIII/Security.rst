@@ -857,27 +857,27 @@ extends our roles definition accordingly:
     'Acme.MyPackage:Administrator’:
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+          permission: GRANT
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
+          permission: GRANT
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+          permission: GRANT
 
     'Acme.MyPackage:Customer':
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+          permission: GRANT
 
     'Acme.MyPackage:PrivilegedCustomer':
       parentRoles: ['Acme.MyPackage:Customer']
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+          permission: GRANT
 
 
 This will end up in ``Administrators`` being able to call all the methods matched by the
@@ -920,22 +920,22 @@ allowed to approve an invoice or not. The respective MethodPrivilege could look 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
         matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 1000))'
 
-    roles:
-      'Acme.MyPackage:Employee':
-        privileges:
-          -
+  roles:
+    'Acme.MyPackage:Employee':
+      privileges:
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
           permission: GRANT
-          -
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
           permission: DENY
 
-      'Acme.MyPackage:CEO':
-        privileges:
-          -
+    'Acme.MyPackage:CEO':
+      privileges:
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
           permission: GRANT
-          -
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
           permission: GRANT
 
@@ -959,27 +959,27 @@ The following Policy expresses the exact same functionality as above:
       'Acme.MyPackage:Employee':
         privileges:
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 100
-          permission: GRANT
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 100
+            permission: GRANT
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 1000
-          permission: DENY
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 1000
+            permission: DENY
 
       'Acme.MyPackage:CEO':
         privileges:
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 100
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 100
             permission: GRANT
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 1000
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 1000
             permission: GRANT
 
 As you can see we saved one privilege target definition. The specific amount will not be defined in the privilege target
