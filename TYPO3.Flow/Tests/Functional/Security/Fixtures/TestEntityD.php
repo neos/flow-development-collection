@@ -22,19 +22,19 @@ use TYPO3\Flow\Annotations as Flow;
 class TestEntityD
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @var TestEntityC
      * @ORM\OneToMany(mappedBy="relatedEntityD")
      */
     protected $relatedEntityC;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @var TestEntityC
      * @ORM\ManyToOne(inversedBy="oneToManyToRelatedEntityD")
      */
     protected $manyToOneToRelatedEntityC;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $oneToManyToRelatedEntityC
+     * @param TestEntityC $oneToManyToRelatedEntityC
      */
     public function setOneToManyToRelatedEntityC($oneToManyToRelatedEntityC)
     {
@@ -42,7 +42,7 @@ class TestEntityD
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @return TestEntityC
      */
     public function getOneToManyToRelatedEntityC()
     {
@@ -50,7 +50,7 @@ class TestEntityD
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC $relatedEntityC
+     * @param TestEntityC $relatedEntityC
      */
     public function setRelatedEntityC($relatedEntityC)
     {
@@ -58,7 +58,7 @@ class TestEntityD
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC
+     * @return TestEntityC
      */
     public function getRelatedEntityC()
     {
