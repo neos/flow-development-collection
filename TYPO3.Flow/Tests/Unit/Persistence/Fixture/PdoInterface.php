@@ -28,7 +28,7 @@ interface PdoInterface
     public function getAttribute($attribute);
     public function getAvailableDrivers();
     public function lastInsertId($name = null);
-    public function prepare($statement, $driver_options = array());
+    public function prepare($statement, $driver_options = []);
     public function query($statement);
     public function quote($string, $parameter_type = \PDO::PARAM_STR);
     public function rollBack();
