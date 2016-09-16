@@ -34,7 +34,7 @@ class AbstractControllerTestAController extends ActionController
      * @param boolean $passSomeObjectArguments
      * @return void
      */
-    public function forwardAction($actionName, $controllerName = null, $packageKey = null, array $arguments = array(), $passSomeObjectArguments = false)
+    public function forwardAction($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $passSomeObjectArguments = false)
     {
         if ($passSomeObjectArguments) {
             $arguments['__object1'] = new Message('Some test message', 12345);

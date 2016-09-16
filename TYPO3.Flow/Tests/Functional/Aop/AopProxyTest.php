@@ -11,10 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Aop;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Test suite for aop proxy classes
  */
-class AopProxyTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class AopProxyTest extends FunctionalTestCase
 {
     /**
      * @test
