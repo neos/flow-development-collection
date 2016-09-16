@@ -51,11 +51,6 @@ class JsonViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
-     * @var boolean
-     */
-    protected $escapeOutput = false;
-
-    /**
      * Outputs content with its JSON representation. To prevent issues in HTML context, occurrences
      * of greater-than or less-than characters are converted to their hexadecimal representations.
      *

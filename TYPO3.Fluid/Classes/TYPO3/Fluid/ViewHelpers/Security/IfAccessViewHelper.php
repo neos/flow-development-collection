@@ -12,8 +12,11 @@ namespace TYPO3\Fluid\ViewHelpers\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Fluid\Core\Rendering\RenderingContext;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper implements an ifAccess/else condition.
@@ -50,26 +53,55 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  */
 class IfAccessViewHelper extends AbstractConditionViewHelper
 {
+
     /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
+     * Initializes the "then" and "else" arguments
      */
-    protected $privilegeManager;
+    public function initializeArguments()
+    {
+        $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
+        $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
+        $this->registerArgument('privilegeTarget', 'string', 'Condition expression conforming to Fluid boolean rules', true);
+        $this->registerArgument('parameters', 'array', 'Condition expression conforming to Fluid boolean rules', false, []);
+    }
 
     /**
      * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
      *
-     * @param string $privilegeTarget The Privilege target identifier
-     * @param array $parameters optional privilege target parameters to be evaluated
      * @return string the rendered then/else child nodes depending on the access
      * @api
      */
-    public function render($privilegeTarget, array $parameters = array())
+    public function render()
     {
-        if ($this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters)) {
+        $privilegeManager = static::getPrivilegeManager($this->renderingContext);
+        $arguments = $this->arguments;
+
+        if ($privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters'])) {
             return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
         }
+
+        return $this->renderElseChild();
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $privilegeManager = static::getPrivilegeManager($renderingContext);
+        return static::renderResult($privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']), $arguments, $renderingContext);
+    }
+
+    /**
+     * @param RenderingContext $renderingContext
+     * @return PrivilegeManagerInterface
+     */
+    protected static function getPrivilegeManager(RenderingContext $renderingContext)
+    {
+        $objectManager = $renderingContext->getObjectManager();
+        return $objectManager->get(PrivilegeManagerInterface::class);
     }
 }

@@ -15,9 +15,9 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
- * Applies html_entity_decode() to a value
+ * Applies base64_decode to the input
  *
- * @see http://www.php.net/html_entity_decode
+ * @see http://www.php.net/base64_decode
  *
  * = Examples =
  *
@@ -32,10 +32,10 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * {text -> f:format.base64Decode()}
  * </code>
  * <output>
- * Text with &amp; &quot; &lt; &gt; replaced by unescaped entities (html_entity_decode applied).
+ * Text in Base64 encoding will be decoded
  * </output>
  *
- * @api
+ * @api This is used by the Fluid adaptor internally.
  */
 class Base64DecodeViewHelper extends AbstractViewHelper
 {

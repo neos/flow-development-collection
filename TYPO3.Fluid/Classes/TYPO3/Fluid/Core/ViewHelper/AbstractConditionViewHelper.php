@@ -107,7 +107,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return string
      */
-    private static function evaluateElseClosures(array $closures, array $conditionClosures, RenderingContextInterface $renderingContext)
+    protected static function evaluateElseClosures(array $closures, array $conditionClosures, RenderingContextInterface $renderingContext)
     {
         foreach ($closures as $elseNodeIndex => $elseNodeClosure) {
             if (!isset($conditionClosures[$elseNodeIndex])) {
@@ -231,5 +231,31 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         }
 
         return parent::compile($argumentsName, $closureName, $initializationPhpCode, $node, $compiler);
+    }
+
+    /**
+     * @param boolean $isConditionFullfilled
+     * @param array $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return string
+     */
+    protected static function renderResult($isConditionFullfilled, array $arguments, RenderingContextInterface $renderingContext)
+    {
+        if ($isConditionFullfilled && isset($arguments['then'])) {
+            return $arguments['then'];
+        }
+
+        if ($isConditionFullfilled && isset($arguments['__thenClosure'])) {
+            return $arguments['__thenClosure']();
+        }
+
+        if (!empty($arguments['__elseClosures'])) {
+            $elseIfClosures = isset($arguments['__elseifClosures']) ? $arguments['__elseifClosures'] : [];
+            return static::evaluateElseClosures($arguments['__elseClosures'], $elseIfClosures, $renderingContext);
+        }
+
+        if (array_key_exists('else', $arguments)) {
+            return $arguments['else'];
+        }
     }
 }

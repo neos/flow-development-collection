@@ -14,6 +14,7 @@ namespace TYPO3\Fluid\ViewHelpers\Security;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper implements an ifAuthenticated/else condition.
@@ -49,36 +50,39 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * Injects the Security Context
+     * renders <f:then> child if access to the given resource is allowed, otherwise renders <f:else> child.
      *
-     * @param Context $securityContext
-     * @return void
-     */
-    public function injectSecurityContext(Context $securityContext)
-    {
-        $this->securityContext = $securityContext;
-    }
-
-    /**
-     * Renders <f:then> child if any account is currently authenticated, otherwise renders <f:else> child.
-     *
-     * @return string the rendered string
+     * @return string the rendered then/else child nodes depending on the access
      * @api
      */
     public function render()
     {
-        $activeTokens = $this->securityContext->getAuthenticationTokens();
-        /** @var $token TokenInterface */
+        if ($this->renderChildrenClosure === null) {
+            $this->renderChildrenClosure = function() {};
+        }
+        return self::renderStatic($this->arguments, $this->renderChildrenClosure, $this->renderingContext);
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $objectManager = $renderingContext->getObjectManager();
+        /** @var Context $securityContext */
+        $securityContext = $objectManager->get(Context::class);
+        $activeTokens = $securityContext->getAuthenticationTokens();
+
+        $isAuthenticated = false;
         foreach ($activeTokens as $token) {
             if ($token->isAuthenticated()) {
-                return $this->renderThenChild();
+                $isAuthenticated = true;
             }
         }
-        return $this->renderElseChild();
+
+        return static::renderResult($isAuthenticated, $arguments, $renderingContext);
     }
 }

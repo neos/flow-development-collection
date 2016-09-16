@@ -103,28 +103,43 @@ class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\
         $parts = preg_split('/(\<\!\[CDATA\[|\]\]\>)/', $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE);
         $balance = 0;
         $content = '';
+        $resultingParts = [];
         foreach ($parts as $index => $part) {
-            if ($part === '<![CDATA[') {
+            unset($parts[$index]);
+
+            if ($balance === 0 && $part === '<![CDATA[') {
                 $balance++;
+                continue;
+            }
+
+            if ($balance === 0) {
+                $resultingParts[] = $part;
+                continue;
+            }
+
+            if ($balance === 1 && $part === ']]>') {
+                $balance--;
+            }
+
+            if ($balance > 0 && $part === '<![CDATA[') {
+                $balance++;
+            }
+
+            if ($balance > 0 && $part === ']]>') {
+                $balance--;
             }
 
             if ($balance > 0) {
                 $content .= $part;
-                unset($parts[$index]);
-            }
-
-            if ($part === ']]>' && $balance > 0) {
-                $balance--;
             }
 
             if ($balance === 0 && $content !== '') {
-                $parts[$index] = '<f:format.base64Decode>' . base64_encode($content) . '</f:format.base64Decode>';
+                $resultingParts[] = '<f:format.base64Decode>' . base64_encode($content) . '</f:format.base64Decode>';
                 $content = '';
             }
         }
 
-        ksort($parts);
-        return implode('', $parts);
+        return implode('', $resultingParts);
     }
 
     /**

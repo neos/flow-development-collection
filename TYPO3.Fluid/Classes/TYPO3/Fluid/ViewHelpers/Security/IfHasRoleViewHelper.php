@@ -17,6 +17,7 @@ use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper implements an ifHasRole/else condition.
@@ -129,5 +130,39 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         } else {
             return $this->renderElseChild();
         }
+    }
+
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $objectManager = $renderingContext->getObjectManager();
+        /** @var PolicyService $policyService */
+        $policyService = $objectManager->get(PolicyService::class);
+        /** @var Context $securityContext */
+        $securityContext = $objectManager->get(Context::class);
+
+        $role = $arguments['role'];
+        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
+        $account = $arguments['account'];
+
+        if (is_string($role)) {
+            $roleIdentifier = $role;
+
+            if (in_array($roleIdentifier, ['Everybody', 'Anonymous', 'AuthenticatedUser'])) {
+                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
+            }
+
+            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
+                $roleIdentifier = $packageKey . ':' . $roleIdentifier;
+            }
+
+            $role = $policyService->getRole($roleIdentifier);
+        }
+
+        $hasRole = $securityContext->hasRole($role->getIdentifier());
+        if ($account instanceof Account) {
+            $hasRole = $account->hasRole($role);
+        }
+
+        return static::renderResult($hasRole, $arguments, $renderingContext);
     }
 }

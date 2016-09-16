@@ -167,7 +167,7 @@ class FormViewHelper extends AbstractFormViewHelper
         // Render the trusted list of all properties after everything else has been rendered
         $content .= $this->renderTrustedPropertiesField();
         $content .= $this->renderCsrfTokenField();
-        $content .= chr(10) . '</div>' . chr(10);
+        $content .= '</div>' . chr(10);
         $content .= $formContent;
 
         $this->tag->setContent($content);

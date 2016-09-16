@@ -14,6 +14,8 @@ namespace TYPO3\Fluid\Core\Rendering;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Fluid\Core\Parser\Interceptor\EscapeInterceptor;
 use TYPO3\Fluid\Core\Parser\Interceptor\ResourceInterceptor;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
 use TYPO3\Fluid\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor;
@@ -51,6 +53,11 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
     protected $controllerContext;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
      * @Flow\Inject
      * @var ViewHelperResolver
      */
@@ -75,6 +82,14 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
         $this->setTemplateProcessors([new NamespaceDetectionTemplateProcessor()]);
         $this->setTemplatePaths(new TemplatePaths($options));
         $this->setVariableProvider(new TemplateVariableContainer());
+    }
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -106,6 +121,14 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
     }
 
     /**
+     * @return ObjectManagerInterface
+     */
+    public function getObjectManager()
+    {
+        return $this->objectManager;
+    }
+
+    /**
      * @return \TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface
      * @deprecated use "getVariableProvider"
      */
@@ -123,6 +146,7 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
     {
         $parserConfiguration = parent::buildParserConfiguration();
         $parserConfiguration->addInterceptor(new ResourceInterceptor());
+
         return $parserConfiguration;
     }
 
