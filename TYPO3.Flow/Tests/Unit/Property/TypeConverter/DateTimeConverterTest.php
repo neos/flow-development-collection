@@ -390,7 +390,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         return array(
             array(array('date' => '2005-08-15T15:52:01+01:00'), true),
-            array(array('date' => '1308174051', 'dateFormat' => ''), false),
+            array(array('date' => '1308174051', 'dateFormat' => ''), true),
             array(array('date' => '13-12-1980', 'dateFormat' => 'd.m.Y'), false),
             array(array('date' => '1308174051', 'dateFormat' => 'Y-m-d'), false),
             array(array('date' => '12:13', 'dateFormat' => 'H:i'), true),
@@ -429,10 +429,14 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         }
 
         $this->assertInstanceOf(\DateTime::class, $date);
-        if ($dateFormat === null) {
-            $dateFormat = \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
-        }
         $dateAsString = isset($source['date']) ? strval($source['date']) : '';
+        if ($dateFormat === null) {
+            if (ctype_digit($dateAsString)) {
+                $dateFormat = 'U';
+            } else {
+                $dateFormat = \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
+            }
+        }
         $this->assertSame($dateAsString, $date->format($dateFormat));
     }
 
