@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Exception;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * A boot sequence, consisting of individual steps, each of them initializing a
@@ -59,7 +59,7 @@ class Sequence
      *
      * @param string $stepIdentifier
      * @return void
-     * @throws Exception
+     * @throws FlowException
      */
     public function removeStep($stepIdentifier)
     {
@@ -73,7 +73,7 @@ class Sequence
             }
         }
         if ($removedOccurrences === 0) {
-            throw new Exception(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
+            throw new FlowException(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
         }
     }
 
