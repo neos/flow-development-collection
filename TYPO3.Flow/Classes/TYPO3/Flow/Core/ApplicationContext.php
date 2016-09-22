@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Core;
 
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Exception;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * The Flow Context object.
@@ -58,7 +58,7 @@ class ApplicationContext
      * Initialize the context object.
      *
      * @param string $contextString
-     * @throws Exception if the parent context is none of "Development", "Production" or "Testing"
+     * @throws FlowException if the parent context is none of "Development", "Production" or "Testing"
      */
     public function __construct($contextString)
     {
@@ -73,7 +73,7 @@ class ApplicationContext
         }
 
         if (!in_array($this->rootContextString, ['Development', 'Production', 'Testing'])) {
-            throw new Exception('The given context "' . $contextString . '" was not valid. Only allowed are Development, Production and Testing, including their sub-contexts', 1335436551);
+            throw new FlowException('The given context "' . $contextString . '" was not valid. Only allowed are Development, Production and Testing, including their sub-contexts', 1335436551);
         }
 
         $this->contextString = $contextString;

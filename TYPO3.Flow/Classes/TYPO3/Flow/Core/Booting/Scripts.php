@@ -22,7 +22,7 @@ use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Core\LockManager;
 use TYPO3\Flow\Error\Debugger;
 use TYPO3\Flow\Error\ErrorHandler;
-use TYPO3\Flow\Exception;
+use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Log\Logger;
 use TYPO3\Flow\Log\LoggerFactory;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -173,7 +173,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws Exception
+     * @throws FlowException
      */
     public static function initializeConfiguration(Bootstrap $bootstrap)
     {
@@ -191,7 +191,7 @@ class Scripts
         if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
             $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
             if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
-                throw new Exception(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
+                throw new FlowException(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
             }
             $environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
         } else {
@@ -275,7 +275,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws Exception
+     * @throws FlowException
      */
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
@@ -309,9 +309,9 @@ class Scripts
             exec($command, $output, $result);
             if ($result !== 0) {
                 if (!file_exists($phpBinaryPathAndFilename)) {
-                    throw new Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
+                    throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
                 }
-                throw new Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
+                throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
             }
             echo PHP_EOL . 'Flow: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
             exit(1);
@@ -324,7 +324,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws Exception
+     * @throws FlowException
      */
     public static function recompileClasses(Bootstrap $bootstrap)
     {
