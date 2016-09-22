@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -38,16 +39,16 @@ class IsOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the filter arguments
      * @return boolean
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (count($arguments) == 0) {
             return count($flowQuery->getContext()) > 0;
         } else {
-            $flowQuery->pushOperation('is', array());
+            $flowQuery->pushOperation('is', []);
             $flowQuery->pushOperation('filter', $arguments);
         }
     }

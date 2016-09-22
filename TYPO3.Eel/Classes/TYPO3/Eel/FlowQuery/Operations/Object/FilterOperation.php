@@ -11,7 +11,14 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FizzleException;
+use TYPO3\Eel\FlowQuery\FizzleParser;
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Filter operation, limiting the set of objects. The filter expression is
@@ -48,7 +55,7 @@ use TYPO3\Flow\Annotations as Flow;
  * for being of the specified type. For any other strings the value is used as
  * classname with the PHP instanceof operation to check if the value matches.
  */
-class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
+class FilterOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
@@ -59,31 +66,31 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the filter expression to use (in index 0)
      * @return void
-     * @throws \TYPO3\Eel\FlowQuery\FizzleException
+     * @throws FizzleException
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (!isset($arguments[0]) || empty($arguments[0])) {
             return;
         }
         if (!is_string($arguments[0])) {
-            throw new \TYPO3\Eel\FlowQuery\FizzleException('filter operation expects string argument', 1332489625);
+            throw new FizzleException('filter operation expects string argument', 1332489625);
         }
         $filter = $arguments[0];
 
-        $parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($filter);
+        $parsedFilter = FizzleParser::parseFilterGroup($filter);
 
-        $filteredContext = array();
+        $filteredContext = [];
         $context = $flowQuery->getContext();
         foreach ($context as $element) {
             if ($this->matchesFilterGroup($element, $parsedFilter)) {
@@ -146,11 +153,11 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
      * @param object $element
      * @param string $propertyNameFilter
      * @return boolean
-     * @throws \TYPO3\Eel\FlowQuery\FizzleException
+     * @throws FizzleException
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
-        throw new \TYPO3\Eel\FlowQuery\FizzleException('Property Name filter not supported for generic objects.', 1332489796);
+        throw new FizzleException('Property Name filter not supported for generic objects.', 1332489796);
     }
 
     /**
@@ -197,7 +204,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
      */
     protected function getPropertyPath($element, $propertyPath)
     {
-        return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyPath);
+        return ObjectAccess::getPropertyPath($element, $propertyPath);
     }
 
     /**
@@ -246,7 +253,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
      */
     protected function operandIsSimpleType($type)
     {
-        return $type === 'object' || $type === 'array' || \TYPO3\Flow\Utility\TypeHandling::isLiteral($type);
+        return $type === 'object' || $type === 'array' || TypeHandling::isLiteral($type);
     }
 
     /**
@@ -256,7 +263,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
      */
     protected function handleSimpleTypeOperand($operand, $value)
     {
-        $operand = \TYPO3\Flow\Utility\TypeHandling::normalizeType($operand);
+        $operand = TypeHandling::normalizeType($operand);
         if ($operand === 'object') {
             return is_object($value);
         } elseif ($operand === 'string') {
