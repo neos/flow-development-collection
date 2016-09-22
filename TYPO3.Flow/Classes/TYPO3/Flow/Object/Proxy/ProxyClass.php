@@ -62,7 +62,7 @@ class ProxyClass
     /**
      * @var array
      */
-    protected $interfaces = ['\\' . ProxyInterface::class];
+    protected $interfaces = [];
 
     /**
      * @var array
@@ -81,6 +81,7 @@ class ProxyClass
      */
     public function __construct($fullOriginalClassName)
     {
+        $this->interfaces[] = '\\' . ProxyInterface::class;
         if (strpos($fullOriginalClassName, '\\') === false) {
             $this->originalClassName = $fullOriginalClassName;
         } else {

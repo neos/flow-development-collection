@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Object;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\PropertyReflection;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -176,7 +177,7 @@ class ObjectSerializer
                 $propertyArray[$propertyName][self::VALUE] = get_class($propertyValue) . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);
             } elseif (is_object($propertyValue)) {
                 $propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-                if ($this->objectManager->getScope($propertyObjectName) === Configuration\Configuration::SCOPE_SINGLETON) {
+                if ($this->objectManager->getScope($propertyObjectName) === Configuration::SCOPE_SINGLETON) {
                     continue;
                 }
 
