@@ -10,12 +10,13 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\I18n\Exception\InvalidArgumentException;
 
 /**
  * The "Unsupported Number Format" exception
  *
  * @api
  */
-class UnsupportedNumberFormatException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException
+class UnsupportedNumberFormatException extends InvalidArgumentException
 {
 }

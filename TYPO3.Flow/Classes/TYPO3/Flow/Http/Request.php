@@ -119,14 +119,14 @@ class Request extends AbstractMessage
      * @return Request
      * @api
      */
-    public static function create(Uri $uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array())
+    public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [])
     {
         $get = $uri->getArguments();
         $post = $arguments;
 
         $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
 
-        $defaultServerEnvironment = array(
+        $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
             'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uri->getPort() !== null ? ':' . $uri->getPort() : ''),
             'SERVER_NAME' => $uri->getHost(),
@@ -137,24 +137,24 @@ class Request extends AbstractMessage
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
         if ($uri->getScheme() === 'https') {
             $defaultServerEnvironment['HTTPS'] = 'on';
             $defaultServerEnvironment['SERVER_PORT'] = $uri->getPort() ?: 443;
         }
 
-        if (in_array($method, array('POST', 'PUT', 'DELETE'))) {
+        if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
             $defaultServerEnvironment['HTTP_CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         }
 
         $query = (string)$uri->getQuery();
         $fragment = $uri->getFragment();
-        $overrideValues = array(
+        $overrideValues = [
             'REQUEST_URI' => $uri->getPath() . ($query !== '' ? '?' . $query : '') . ($fragment !== '' ? '#' . $fragment : ''),
             'REQUEST_METHOD' => $method,
             'QUERY_STRING' => $query
-        );
+        ];
         $server = array_replace($defaultServerEnvironment, $server, $overrideValues);
 
         return new static($get, $post, $files, $server);
@@ -273,7 +273,7 @@ class Request extends AbstractMessage
      */
     public function isMethodSafe()
     {
-        return (in_array($this->method, array('GET', 'HEAD')));
+        return (in_array($this->method, ['GET', 'HEAD']));
     }
 
     /**
@@ -385,7 +385,7 @@ class Request extends AbstractMessage
      */
     public function getClientIpAddress()
     {
-        $serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
+        $serverFields = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED'];
         foreach ($serverFields as $field) {
             if (empty($this->server[$field])) {
                 continue;
@@ -416,7 +416,7 @@ class Request extends AbstractMessage
     {
         $rawValues = $this->headers->get('Accept');
         if (empty($rawValues)) {
-            return array('*/*');
+            return ['*/*'];
         }
         $acceptedMediaTypes = self::parseContentNegotiationQualityValues($rawValues);
         return $acceptedMediaTypes;
@@ -563,12 +563,12 @@ class Request extends AbstractMessage
      */
     protected function untangleFilesArray(array $convolutedFiles)
     {
-        $untangledFiles = array();
+        $untangledFiles = [];
 
-        $fieldPaths = array();
+        $fieldPaths = [];
         foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
             if (!is_array($fieldInformation['error'])) {
-                $fieldPaths[] = array($firstLevelFieldName);
+                $fieldPaths[] = [$firstLevelFieldName];
             } else {
                 $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
                 array_walk($newFieldPaths,
@@ -584,7 +584,7 @@ class Request extends AbstractMessage
             if (count($fieldPath) === 1) {
                 $fileInformation = $convolutedFiles[$fieldPath{0}];
             } else {
-                $fileInformation = array();
+                $fileInformation = [];
                 foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
                     $fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
                 }
@@ -605,7 +605,7 @@ class Request extends AbstractMessage
      */
     protected function calculateFieldPaths(array $structure, $firstLevelFieldName = null)
     {
-        $fieldPaths = array();
+        $fieldPaths = [];
         if (is_array($structure)) {
             foreach ($structure as $key => $subStructure) {
                 $fieldPath = ($firstLevelFieldName !== null ? $firstLevelFieldName . '/' : '') . $key;
@@ -633,12 +633,12 @@ class Request extends AbstractMessage
         $acceptedTypes = array_map(
             function ($acceptType) {
                 $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
-                return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
+                return [$typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : '')];
             }, preg_split('/,\s*/', $rawValues)
         );
 
-        $flattenedAcceptedTypes = array();
-        $valuesWithoutQualityValue = array(array(), array(), array(), array());
+        $flattenedAcceptedTypes = [];
+        $valuesWithoutQualityValue = [[], [], [], []];
         foreach ($acceptedTypes as $typeAndQuality) {
             if ($typeAndQuality[1] === '') {
                 $parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
@@ -646,7 +646,7 @@ class Request extends AbstractMessage
                     $valuesWithoutQualityValue[3][$typeAndQuality[0]] = true;
                 } elseif ($parsedType['subtype'] === '*') {
                     $valuesWithoutQualityValue[2][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['parameters'] === array()) {
+                } elseif ($parsedType['parameters'] === []) {
                     $valuesWithoutQualityValue[1][$typeAndQuality[0]] = true;
                 } else {
                     $valuesWithoutQualityValue[0][$typeAndQuality[0]] = true;
@@ -693,7 +693,7 @@ class Request extends AbstractMessage
 
     /**
      * Parses a RFC 2616 Media Type and returns its parts in an associative array.
-     * @see \TYPO3\Flow\Utility\MediaTypes::parseMediaType()
+     * @see MediaTypes::parseMediaType()
      *
      * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
      * @return array An associative array with parsed information
@@ -706,7 +706,7 @@ class Request extends AbstractMessage
 
     /**
      * Checks if the given media range and the media type match.
-     * @see \TYPO3\Flow\Utility\MediaTypes::mediaRangeMatches()
+     * @see MediaTypes::mediaRangeMatches()
      *
      * @param string $mediaRange The media range, for example "text/*"
      * @param string $mediaType The media type to match against, for example "text/html"

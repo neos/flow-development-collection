@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  * source code.
  */
 
+use TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
 /**
  * A target class for testing the AOP framework
@@ -19,7 +20,7 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 class TargetClass01 implements SayHelloInterface
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name
+     * @var Fixtures\Name
      */
     protected $currentName;
 
@@ -96,10 +97,10 @@ class TargetClass01 implements SayHelloInterface
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
+     * @param Fixtures\Name $name
      * @return string
      */
-    public function greetObject(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name)
+    public function greetObject(Fixtures\Name $name)
     {
         return 'Hello, ' . $name;
     }
@@ -128,10 +129,10 @@ class TargetClass01 implements SayHelloInterface
 
     /**
      *
-     * @param \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name
+     * @param Fixtures\Name $name
      * @return void
      */
-    public function setCurrentName(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name = null)
+    public function setCurrentName(Fixtures\Name $name = null)
     {
         $this->currentName = $name;
     }

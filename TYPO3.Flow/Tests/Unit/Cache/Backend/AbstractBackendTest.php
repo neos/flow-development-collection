@@ -12,15 +12,16 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Cache;
 
 /**
  * Testcase for the abstract cache backend
- *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractBackendTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
+     * @var Cache\Backend\AbstractBackend
      */
     protected $backend;
 
@@ -57,7 +58,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = get_class($this->backend);
-        $backend = new $className(new ApplicationContext('Testing'), array('someOption' => 'someValue'));
+        $backend = new $className(new ApplicationContext('Testing'), ['someOption' => 'someValue']);
         $this->assertSame('someValue', $backend->getSomeOption());
     }
 }

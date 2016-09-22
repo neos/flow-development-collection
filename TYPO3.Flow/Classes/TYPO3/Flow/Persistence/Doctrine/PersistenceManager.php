@@ -11,11 +11,22 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Tools\SchemaTool;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\AbstractPersistenceManager;
+use TYPO3\Flow\Persistence\Exception\KnownObjectException;
+use TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException;
+use TYPO3\Flow\Persistence\Exception as PersistenceException;
+use TYPO3\Flow\Persistence\Exception\UnknownObjectException;
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Error\Exception;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Validation\ValidatorResolver;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -23,29 +34,29 @@ use TYPO3\Flow\Utility\TypeHandling;
  * @Flow\Scope("singleton")
  * @api
  */
-class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceManager
+class PersistenceManager extends AbstractPersistenceManager
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Validation\ValidatorResolver
+     * @var ValidatorResolver
      */
     protected $validatorResolver;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -56,7 +67,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      */
     public function initialize()
     {
-        $this->entityManager->getEventManager()->addEventListener(array(\Doctrine\ORM\Events::onFlush), $this);
+        $this->entityManager->getEventManager()->addEventListener([\Doctrine\ORM\Events::onFlush], $this);
     }
 
     /**
@@ -71,7 +82,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
         $validatedInstancesContainer = new \SplObjectStorage();
-        $knownValueObjects = array();
+        $knownValueObjects = [];
         foreach ($entityInsertions as $entity) {
             $className = TypeHandling::getTypeForValue($entity);
             if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
@@ -87,7 +98,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
             $this->validateObject($entity, $validatedInstancesContainer);
         }
 
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
+        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
 
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $this->validateObject($entity, $validatedInstancesContainer);
@@ -100,12 +111,12 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      * @param object $object
      * @param \SplObjectStorage $validatedInstancesContainer
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException
+     * @throws ObjectValidationFailedException
      */
     protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
     {
         $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
-        $validator = $this->validatorResolver->getBaseValidatorConjunction($className, array('Persistence', 'Default'));
+        $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
         if ($validator === null) {
             return;
         }
@@ -121,7 +132,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
                     $errorMessages .= (string)$error . PHP_EOL;
                 }
             }
-            throw new \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
         }
     }
 
@@ -207,7 +218,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
     public function getIdentifierByObject($object)
     {
         if (property_exists($object, 'Persistence_Object_Identifier')) {
-            $identifierCandidate = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
+            $identifierCandidate = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
             if ($identifierCandidate !== null) {
                 return $identifierCandidate;
             }
@@ -251,11 +262,11 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      * Return a query object for the given type.
      *
      * @param string $type
-     * @return \TYPO3\Flow\Persistence\Doctrine\Query
+     * @return Query
      */
     public function createQueryForType($type)
     {
-        return new \TYPO3\Flow\Persistence\Doctrine\Query($type);
+        return new Query($type);
     }
 
     /**
@@ -263,19 +274,19 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      *
      * @param object $object The object to add
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception\KnownObjectException if the given $object is not new
-     * @throws \TYPO3\Flow\Persistence\Exception if another error occurs
+     * @throws KnownObjectException if the given $object is not new
+     * @throws PersistenceException if another error occurs
      * @api
      */
     public function add($object)
     {
         if (!$this->isNewObject($object)) {
-            throw new \TYPO3\Flow\Persistence\Exception\KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
+            throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
         } else {
             try {
                 $this->entityManager->persist($object);
             } catch (\Exception $exception) {
-                throw new \TYPO3\Flow\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
+                throw new PersistenceException('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
             }
         }
     }
@@ -297,19 +308,19 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
      *
      * @param object $object The modified object
      * @return void
-     * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if the given $object is new
-     * @throws \TYPO3\Flow\Persistence\Exception if another error occurs
+     * @throws UnknownObjectException if the given $object is new
+     * @throws PersistenceException if another error occurs
      * @api
      */
     public function update($object)
     {
         if ($this->isNewObject($object)) {
-            throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
+            throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
         }
         try {
             $this->entityManager->persist($object);
         } catch (\Exception $exception) {
-            throw new \TYPO3\Flow\Persistence\Exception('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
+            throw new PersistenceException('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
         }
     }
 
@@ -335,7 +346,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['path'] !== null) {
-            $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+            $schemaTool = new SchemaTool($this->entityManager);
             if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
                 $schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
             } else {
@@ -365,7 +376,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['path'] !== null) {
             $this->entityManager->clear();
 
-            $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+            $schemaTool = new SchemaTool($this->entityManager);
             $schemaTool->dropDatabase();
             $this->systemLogger->log('Doctrine 2 schema destroyed.', LOG_NOTICE);
         } else {
@@ -396,11 +407,12 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $unitOfWork->computeChangeSets();
 
-        if ($unitOfWork->getScheduledEntityInsertions() !== array()
-            || $unitOfWork->getScheduledEntityUpdates() !== array()
-            || $unitOfWork->getScheduledEntityDeletions() !== array()
-            || $unitOfWork->getScheduledCollectionDeletions() !== array()
-            || $unitOfWork->getScheduledCollectionUpdates() !== array()) {
+        if ($unitOfWork->getScheduledEntityInsertions() !== []
+            || $unitOfWork->getScheduledEntityUpdates() !== []
+            || $unitOfWork->getScheduledEntityDeletions() !== []
+            || $unitOfWork->getScheduledCollectionDeletions() !== []
+            || $unitOfWork->getScheduledCollectionUpdates() !== []
+        ) {
             return true;
         }
 

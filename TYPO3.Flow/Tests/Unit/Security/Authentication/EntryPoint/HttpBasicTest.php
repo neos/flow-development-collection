@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use TYPO3\Flow\Tests\UnitTestCase;
 
@@ -27,11 +26,11 @@ class HttpBasicTest extends UnitTestCase
      */
     public function startAuthenticationSetsTheCorrectValuesInTheResponseObject()
     {
-        $mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
+        $mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
         $entryPoint = new HttpBasic();
-        $entryPoint->setOptions(array('realm' => 'realm string'));
+        $entryPoint->setOptions(['realm' => 'realm string']);
 
         $mockResponse->expects($this->once())->method('setStatus')->with(401);
         $mockResponse->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');
@@ -39,6 +38,6 @@ class HttpBasicTest extends UnitTestCase
 
         $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
 
-        $this->assertEquals(array('realm' => 'realm string'), $entryPoint->getOptions());
+        $this->assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
     }
 }

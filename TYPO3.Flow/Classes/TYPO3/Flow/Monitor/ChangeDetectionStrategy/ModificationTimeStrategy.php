@@ -33,7 +33,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     /**
      * @var array
      */
-    protected $filesAndModificationTimes = array();
+    protected $filesAndModificationTimes = [];
 
     /**
      * If the modification times changed and therefore need to be cached

@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for proxy initialization within doctrine lazy loading
  */
-class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class LazyLoadingTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -24,7 +26,7 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+     * @var Fixtures\TestEntityRepository;
      */
     protected $testEntityRepository;
 
@@ -34,10 +36,10 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->testEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository');
+        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
     }
 
     /**
@@ -45,9 +47,9 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function dependencyInjectionIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -71,9 +73,9 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aopIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 

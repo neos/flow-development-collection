@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
 
@@ -25,22 +28,22 @@ class UniqueEntityValidator extends AbstractValidator
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'identityProperties' => array(null, 'List of custom identity properties.', 'array')
-    );
+    protected $supportedOptions = [
+        'identityProperties' => [null, 'List of custom identity properties.', 'array']
+    ];
 
     /**
      * Checks if the given value is a unique entity depending on it's identity properties or
@@ -48,7 +51,7 @@ class UniqueEntityValidator extends AbstractValidator
      *
      * @param mixed $value The value that should be validated
      * @return void
-     * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @throws InvalidValidationOptionsException
      * @api
      */
     protected function isValid($value)
@@ -58,7 +61,7 @@ class UniqueEntityValidator extends AbstractValidator
         }
 
         $classSchema = $this->reflectionService->getClassSchema(TypeHandling::getTypeForValue($value));
-        if ($classSchema === null || $classSchema->getModelType() !== \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+        if ($classSchema === null || $classSchema->getModelType() !== ClassSchema::MODELTYPE_ENTITY) {
             throw new InvalidValidationOptionsException('The object supplied for the UniqueEntityValidator must be an entity.', 1358454284);
         }
 
@@ -85,7 +88,7 @@ class UniqueEntityValidator extends AbstractValidator
         $identifierPropertyName = count($identifierProperties) > 0 ? array_shift($identifierProperties) : 'Persistence_Object_Identifier';
 
         $query = $this->persistenceManager->createQueryForType($classSchema->getClassName());
-        $constraints = array($query->logicalNot($query->equals($identifierPropertyName, $this->persistenceManager->getIdentifierByObject($value))));
+        $constraints = [$query->logicalNot($query->equals($identifierPropertyName, $this->persistenceManager->getIdentifierByObject($value)))];
         foreach ($identityProperties as  $propertyName) {
             $constraints[] = $query->equals($propertyName, ObjectAccess::getProperty($value, $propertyName));
         }

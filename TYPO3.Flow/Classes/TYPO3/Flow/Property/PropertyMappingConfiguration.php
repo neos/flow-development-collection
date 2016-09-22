@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Property;
  *
  * @api
  */
-class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappingConfigurationInterface
+class PropertyMappingConfiguration implements PropertyMappingConfigurationInterface
 {
     /**
      * Placeholder in property paths for multi-valued types
@@ -37,19 +37,19 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
     /**
      * Stores the configuration for specific child properties.
      *
-     * @var array<\TYPO3\Flow\Property\PropertyMappingConfigurationInterface>
+     * @var array<PropertyMappingConfigurationInterface>
      */
-    protected $subConfigurationForProperty = array();
+    protected $subConfigurationForProperty = [];
 
     /**
      * Keys which should be renamed
      *
      * @var array
      */
-    protected $mapping = array();
+    protected $mapping = [];
 
     /**
-     * @var \TYPO3\Flow\Property\TypeConverterInterface
+     * @var TypeConverterInterface
      */
     protected $typeConverter = null;
 
@@ -58,21 +58,21 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * @var array
      */
-    protected $propertiesToBeMapped = array();
+    protected $propertiesToBeMapped = [];
 
     /**
      * List of property names to be skipped during property mapping
      *
      * @var array
      */
-    protected $propertiesToSkip = array();
+    protected $propertiesToSkip = [];
 
     /**
      * List of disallowed property names which will be ignored while property mapping
      *
      * @var array
      */
-    protected $propertiesNotToBeMapped = array();
+    protected $propertiesNotToBeMapped = [];
 
     /**
      * If TRUE, unknown properties will be skipped during property mapping
@@ -131,7 +131,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
     /**
      * Allow all properties in property mapping, even unknown ones.
      *
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function allowAllProperties()
@@ -146,7 +146,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * Example: allowProperties('title', 'content', 'author')
      *
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function allowProperties()
@@ -163,7 +163,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * Example: skipProperties('unused', 'dummy')
      *
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function skipProperties()
@@ -180,7 +180,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * Example: allowAllPropertiesExcept('password', 'userGroup')
      *
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function allowAllPropertiesExcept()
@@ -197,7 +197,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      * When this is enabled, properties that are disallowed will be skipped
      * instead of triggering an error during mapping.
      *
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function skipUnknownProperties()
@@ -222,7 +222,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!
      *
      * @param string $propertyName
-     * @return \TYPO3\Flow\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
+     * @return PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
      * @api
      */
     public function getConfigurationFor($propertyName)
@@ -233,7 +233,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
             return $this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER];
         }
 
-        return new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        return new PropertyMappingConfiguration();
     }
 
     /**
@@ -271,7 +271,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * @param string $sourcePropertyName
      * @param string $targetPropertyName
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function setMapping($sourcePropertyName, $targetPropertyName)
@@ -285,7 +285,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      *
      * @param string $typeConverter class name of type converter
      * @param array $options
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function setTypeConverterOptions($typeConverter, array $options)
@@ -302,7 +302,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      * @param string $typeConverter class name of type converter
      * @param string $optionKey
      * @param mixed $optionValue
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @return PropertyMappingConfiguration this
      * @api
      */
     public function setTypeConverterOption($typeConverter, $optionKey, $optionValue)
@@ -325,7 +325,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
     protected function getTypeConvertersWithParentClasses($typeConverter)
     {
         $typeConverterClasses = class_parents($typeConverter);
-        $typeConverterClasses = $typeConverterClasses === false ? array() : $typeConverterClasses;
+        $typeConverterClasses = $typeConverterClasses === false ? [] : $typeConverterClasses;
         $typeConverterClasses[] = $typeConverter;
         return $typeConverterClasses;
     }
@@ -336,7 +336,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      * $configuration->forProperty('foo.bar')->setTypeConverterOption(....)
      *
      * @param string $propertyPath
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration (or a subclass thereof)
+     * @return PropertyMappingConfiguration
      * @api
      */
     public function forProperty($propertyPath)
@@ -349,7 +349,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
      * Traverse the property configuration. Only used by forProperty().
      *
      * @param array $splittedPropertyPath
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration (or a subclass thereof)
+     * @return PropertyMappingConfiguration
      */
     public function traverseProperties(array $splittedPropertyPath)
     {
@@ -372,7 +372,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
     /**
      * Return the type converter set for this configuration.
      *
-     * @return \TYPO3\Flow\Property\TypeConverterInterface
+     * @return TypeConverterInterface
      * @api
      */
     public function getTypeConverter()
@@ -383,11 +383,11 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
     /**
      * Set a type converter which should be used for this specific conversion.
      *
-     * @param \TYPO3\Flow\Property\TypeConverterInterface $typeConverter
-     * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+     * @param TypeConverterInterface $typeConverter
+     * @return PropertyMappingConfiguration this
      * @api
      */
-    public function setTypeConverter(\TYPO3\Flow\Property\TypeConverterInterface $typeConverter)
+    public function setTypeConverter(TypeConverterInterface $typeConverter)
     {
         $this->typeConverter = $typeConverter;
         return $this;

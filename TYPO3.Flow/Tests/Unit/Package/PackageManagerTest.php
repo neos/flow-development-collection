@@ -13,18 +13,28 @@ namespace TYPO3\Flow\Tests\Unit\Package;
 
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\Exception\InvalidPackageKeyException;
+use TYPO3\Flow\Package\MetaData;
+use TYPO3\Flow\Package\MetaDataInterface;
+use TYPO3\Flow\Package\PackageFactory;
 use TYPO3\Flow\Package\PackageInterface;
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Package\PackageManager;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the default package manager
  *
  */
-class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PackageManagerTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Package\PackageManager
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -51,31 +61,31 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         vfsStream::setup('Test');
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->createMock('TYPO3\Flow\SignalSlot\Dispatcher')));
+        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->createMock(Dispatcher::class)));
 
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
         $this->mockBootstrap->expects($this->any())->method('getContext')->will($this->returnValue($this->mockApplicationContext));
 
-        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
-        $mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
+        $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function ($object) {
             if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
                 return get_parent_class($object);
             }
             return get_class($object);
         }));
-        $mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
-        $this->packageManager = new \TYPO3\Flow\Package\PackageManager();
+        $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->will($this->returnValue($mockReflectionService));
+        $this->packageManager = new PackageManager();
 
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
 
-        $mockClassLoader = $this->createMock('TYPO3\Flow\Core\ClassLoader');
+        $mockClassLoader = $this->createMock(ClassLoader::class);
 
-        $composerNameToPackageKeyMap = array(
-            'typo3/flow' => 'TYPO3.Flow'
-        );
+        $composerNameToPackageKeyMap = [
+            'neos/flow' => 'Neos.Flow'
+        ];
 
         $this->packageManager->injectClassLoader($mockClassLoader);
         $this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
@@ -93,10 +103,10 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPackageReturnsTheSpecifiedPackage()
     {
-        $this->packageManager->createPackage('TYPO3.Flow');
+        $this->packageManager->createPackage('Neos.Flow');
 
-        $package = $this->packageManager->getPackage('TYPO3.Flow');
-        $this->assertInstanceOf('TYPO3\Flow\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
+        $package = $this->packageManager->getPackage('Neos.Flow');
+        $this->assertInstanceOf(PackageInterface::class, $package, 'The result of getPackage() was no valid package object.');
     }
 
     /**
@@ -171,11 +181,11 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
         $fullyQualifiedClassName = '\\' . $package->getNamespace() . '\\' . $dummyClassName;
-        $dummyClassFilePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
+        $dummyClassFilePath = Files::concatenatePaths([
             $package->getPackagePath(),
             PackageInterface::DIRECTORY_CLASSES,
             $dummyClassName . '.php'
-        ));
+        ]);
         file_put_contents($dummyClassFilePath, '<?php namespace ' . $package->getNamespace() . '; class ' . $dummyClassName . ' {}');
         require $dummyClassFilePath;
         return new $fullyQualifiedClassName();
@@ -194,8 +204,8 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered()
     {
-        $packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));
-        $packageManager->_set('packageKeys', array('acme.testpackage' => 'Acme.TestPackage'));
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy']);
+        $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
         $this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
 
@@ -204,12 +214,12 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds()
     {
-        $expectedPackageKeys = array(
-            'TYPO3.Flow' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+        $expectedPackageKeys = [
+            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
+            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
-        );
+        ];
 
         foreach ($expectedPackageKeys as $packageKey) {
             $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
@@ -219,14 +229,14 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
         $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
-        $packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+        $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
 
-        $packageManager->_set('packages', array());
+        $packageManager->_set('packages', []);
         $packageManager->_call('scanAvailablePackages');
 
         $packageStates = require('vfs://Test/Configuration/PackageStates.php');
@@ -239,12 +249,12 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function scanAvailablePackagesKeepsExistingPackageConfiguration()
     {
-        $expectedPackageKeys = array(
-            'TYPO3.Flow' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+        $expectedPackageKeys = [
+            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
+            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
-        );
+        ];
 
         foreach ($expectedPackageKeys as $packageKey) {
             $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
@@ -254,24 +264,24 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
         $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
-        $packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+        $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
 
-        $packageManager->_set('packageStatesConfiguration', array(
-            'packages' => array(
-                $packageKey => array(
+        $packageManager->_set('packageStatesConfiguration', [
+            'packages' => [
+                $packageKey => [
                     'state' => 'inactive',
                     'frozen' => false,
                     'packagePath' => 'Application/' . $packageKey . '/',
                     'classesPath' => 'Classes/'
-                )
-            ),
+                ]
+            ],
             'version' => 2
-        ));
+        ]);
         $packageManager->_call('scanAvailablePackages');
         $packageManager->_call('sortAndsavePackageStates');
 
@@ -285,11 +295,11 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function packageStatesConfigurationContainsRelativePaths()
     {
-        $packageKeys = array(
+        $packageKeys = [
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.Flow' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-        );
+            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+        ];
 
         foreach ($packageKeys as $packageKey) {
             $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
@@ -299,25 +309,25 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('updateShortcuts', 'emitPackageStatesUpdated'), array(), '', false);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
         $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
-        $packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+        $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
 
-        $packageManager->_set('packages', array());
+        $packageManager->_set('packages', []);
         $packageManager->_call('scanAvailablePackages');
 
-        $expectedPackageStatesConfiguration = array();
+        $expectedPackageStatesConfiguration = [];
         foreach ($packageKeys as $packageKey) {
-            $expectedPackageStatesConfiguration[$packageKey] = array(
+            $expectedPackageStatesConfiguration[$packageKey] = [
                 'state' => 'active',
                 'packagePath' => 'Application/' . $packageKey . '/',
                 'classesPath' => 'Classes/',
                 'manifestPath' => '',
                 'composerName' => $packageKey
-            );
+            ];
         }
 
         $actualPackageStatesConfiguration = $packageManager->_get('packageStatesConfiguration');
@@ -331,10 +341,10 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function packageKeysAndPaths()
     {
-        return array(
-            array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/'),
-            array('RobertLemke.Flow.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.Flow.NothingElse/')
-        );
+        return [
+            ['Neos.YetAnotherTestPackage', 'vfs://Test/Packages/Application/Neos.YetAnotherTestPackage/'],
+            ['RobertLemke.Flow.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.Flow.NothingElse/']
+        ];
     }
 
     /**
@@ -357,7 +367,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function createPackageWritesAComposerManifestUsingTheGivenMetaObject()
     {
-        $metaData = new \TYPO3\Flow\Package\MetaData('Acme.YetAnotherTestPackage');
+        $metaData = new MetaData('Acme.YetAnotherTestPackage');
         $metaData->setDescription('Yet Another Test Package');
 
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', $metaData);
@@ -374,7 +384,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function createPackageCanChangePackageTypeInComposerManifest()
     {
-        $metaData = new \TYPO3\Flow\Package\MetaData('Acme.YetAnotherTestPackage2');
+        $metaData = new MetaData('Acme.YetAnotherTestPackage2');
         $metaData->setDescription('Yet Another Test Package');
         $metaData->setPackageType('flow-custom-package');
 
@@ -414,7 +424,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         try {
             $this->packageManager->createPackage('Invalid_PackageKey');
-        } catch (\TYPO3\Flow\Package\Exception\InvalidPackageKeyException $exception) {
+        } catch (InvalidPackageKeyException $exception) {
         }
         $this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
     }
@@ -514,23 +524,23 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function availablePackagesAreSortedAfterTheirDependencies($packages, $expectedPackageOrder)
     {
-        $unsortedPackages = array();
+        $unsortedPackages = [];
         foreach ($packages as $packageKey => $package) {
-            $mockPackageConstraints = array();
+            $mockPackageConstraints = [];
             foreach ($package['dependencies'] as $dependency) {
-                $mockPackageConstraints[] = new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', $dependency);
+                $mockPackageConstraints[] = new MetaData\PackageConstraint('depends', $dependency);
             }
-            $mockMetaData = $this->createMock('TYPO3\Flow\Package\MetaDataInterface');
+            $mockMetaData = $this->createMock(MetaDataInterface::class);
             $mockMetaData->expects($this->any())->method('getConstraintsByType')->will($this->returnValue($mockPackageConstraints));
-            $mockPackage = $this->createMock('TYPO3\Flow\Package\PackageInterface');
+            $mockPackage = $this->createMock(PackageInterface::class);
             $mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue($packageKey));
             $mockPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockMetaData));
             $unsortedPackages[$packageKey] = $mockPackage;
         }
 
-        $packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('emitPackageStatesUpdated'));
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
         $packageManager->_set('packages', $unsortedPackages);
-        $packageManager->_set('packageStatesConfiguration', array('packages' => $packages));
+        $packageManager->_set('packageStatesConfiguration', ['packages' => $packages]);
         $packageManager->_call('sortAvailablePackagesByDependencies');
 
         /*
@@ -559,242 +569,242 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function packagesAndDependenciesOrder()
     {
-        return array(
-            array(
-                array(
-                    'Doctrine.ORM' => array(
-                        'dependencies' => array('Doctrine.DBAL'),
-                    ),
-                    'Symfony.Component.Yaml' => array(
-                        'dependencies' => array(),
-                    ),
-                    'TYPO3.Flow' => array(
-                        'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.ORM'),
-                    ),
-                    'Doctrine.Common' => array(
-                        'dependencies' => array(),
-                    ),
-                    'Doctrine.DBAL' => array(
-                        'dependencies' => array('Doctrine.Common'),
-                    ),
-                ),
-                array(
+        return [
+            [
+                [
+                    'Doctrine.ORM' => [
+                        'dependencies' => ['Doctrine.DBAL'],
+                    ],
+                    'Symfony.Component.Yaml' => [
+                        'dependencies' => [],
+                    ],
+                    'Neos.Flow' => [
+                        'dependencies' => ['Symfony.Component.Yaml', 'Doctrine.ORM'],
+                    ],
+                    'Doctrine.Common' => [
+                        'dependencies' => [],
+                    ],
+                    'Doctrine.DBAL' => [
+                        'dependencies' => ['Doctrine.Common'],
+                    ],
+                ],
+                [
                     'Doctrine.Common',
                     'Doctrine.DBAL',
                     'Doctrine.ORM',
                     'Symfony.Component.Yaml',
-                    'TYPO3.Flow'
-                ),
-            ),
-            array(
-                array(
-                    'TYPO3.NeosDemoTypo3Org' => array(
-                        'dependencies' => array(
-                            'TYPO3.Neos',
-                        ),
-                    ),
-                    'Flowpack.Behat' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Imagine' => array(
-                        'dependencies' => array(
+                    'Neos.Flow'
+                ],
+            ],
+            [
+                [
+                    'Neos.NeosDemoTypo3Org' => [
+                        'dependencies' => [
+                            'Neos.Neos',
+                        ],
+                    ],
+                    'Flowpack.Behat' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Imagine' => [
+                        'dependencies' => [
                             'imagine.imagine',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.TYPO3CR' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Neos' => array(
-                        'dependencies' => array(
-                            'TYPO3.TYPO3CR',
-                            'TYPO3.Twitter.Bootstrap',
-                            'TYPO3.Setup',
-                            'TYPO3.TypoScript',
-                            'TYPO3.Neos.NodeTypes',
-                            'TYPO3.Media',
-                            'TYPO3.ExtJS',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Setup' => array(
-                        'dependencies' => array(
-                            'TYPO3.Twitter.Bootstrap',
-                            'TYPO3.Form',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Media' => array(
-                        'dependencies' => array(
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.TYPO3CR' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Neos' => [
+                        'dependencies' => [
+                            'Neos.TYPO3CR',
+                            'Neos.Twitter.Bootstrap',
+                            'Neos.Setup',
+                            'Neos.TypoScript',
+                            'Neos.Neos.NodeTypes',
+                            'Neos.Media',
+                            'Neos.ExtJS',
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Setup' => [
+                        'dependencies' => [
+                            'Neos.Twitter.Bootstrap',
+                            'Neos.Form',
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Media' => [
+                        'dependencies' => [
                             'imagine.imagine',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.ExtJS' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Neos.NodeTypes' => array(
-                        'dependencies' => array(
-                            'TYPO3.TypoScript',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.TypoScript' => array(
-                        'dependencies' => array(
-                            'TYPO3.Eel',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Form' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Twitter.Bootstrap' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.SiteKickstarter' => array(
-                        'dependencies' => array(
-                            'TYPO3.Kickstart',
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'imagine.imagine' => array(
-                        'dependencies' => array(),
-                    ),
-                    'mikey179.vfsStream' => array(
-                        'dependencies' => array(),
-                    ),
-                    'Composer.Installers' => array(
-                        'dependencies' => array(),
-                    ),
-                    'symfony.console' => array(
-                        'dependencies' => array(),
-                    ),
-                    'symfony.domcrawler' => array(
-                        'dependencies' => array(),
-                    ),
-                    'symfony.yaml' => array(
-                        'dependencies' => array(),
-                    ),
-                    'doctrine.annotations' => array(
-                        'dependencies' => array(
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.ExtJS' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Neos.NodeTypes' => [
+                        'dependencies' => [
+                            'Neos.TypoScript',
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.TypoScript' => [
+                        'dependencies' => [
+                            'Neos.Eel',
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Form' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Twitter.Bootstrap' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.SiteKickstarter' => [
+                        'dependencies' => [
+                            'Neos.Kickstart',
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'imagine.imagine' => [
+                        'dependencies' => [],
+                    ],
+                    'mikey179.vfsStream' => [
+                        'dependencies' => [],
+                    ],
+                    'Composer.Installers' => [
+                        'dependencies' => [],
+                    ],
+                    'symfony.console' => [
+                        'dependencies' => [],
+                    ],
+                    'symfony.domcrawler' => [
+                        'dependencies' => [],
+                    ],
+                    'symfony.yaml' => [
+                        'dependencies' => [],
+                    ],
+                    'doctrine.annotations' => [
+                        'dependencies' => [
                             0 => 'doctrine.lexer',
-                        ),
-                    ),
-                    'doctrine.cache' => array(
-                        'dependencies' => array(),
-                    ),
-                    'doctrine.collections' => array(
-                        'dependencies' => array(),
-                    ),
-                    'Doctrine.Common' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'doctrine.cache' => [
+                        'dependencies' => [],
+                    ],
+                    'doctrine.collections' => [
+                        'dependencies' => [],
+                    ],
+                    'Doctrine.Common' => [
+                        'dependencies' => [
                             'doctrine.annotations',
                             'doctrine.lexer',
                             'doctrine.collections',
                             'doctrine.cache',
                             'doctrine.inflector',
-                        ),
-                    ),
-                    'Doctrine.DBAL' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'Doctrine.DBAL' => [
+                        'dependencies' => [
                             'Doctrine.Common',
-                        ),
-                    ),
-                    'doctrine.inflector' => array(
-                        'dependencies' => array(),
-                    ),
-                    'doctrine.lexer' => array(
-                        'dependencies' => array(),
-                    ),
-                    'doctrine.migrations' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'doctrine.inflector' => [
+                        'dependencies' => [],
+                    ],
+                    'doctrine.lexer' => [
+                        'dependencies' => [],
+                    ],
+                    'doctrine.migrations' => [
+                        'dependencies' => [
                             'Doctrine.DBAL',
-                        ),
-                    ),
-                    'Doctrine.ORM' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'Doctrine.ORM' => [
+                        'dependencies' => [
                             'symfony.console',
                             'Doctrine.DBAL',
-                        ),
-                    ),
-                    'phpunit.phpcodecoverage' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'phpunit.phpcodecoverage' => [
+                        'dependencies' => [
                             'phpunit.phptexttemplate',
                             'phpunit.phptokenstream',
                             'phpunit.phpfileiterator',
-                        ),
-                    ),
-                    'phpunit.phpfileiterator' => array(
-                        'dependencies' => array(),
-                    ),
-                    'phpunit.phptexttemplate' => array(
-                        'dependencies' => array(),
-                    ),
-                    'phpunit.phptimer' => array(
-                        'dependencies' => array(),
-                    ),
-                    'phpunit.phptokenstream' => array(
-                        'dependencies' => array(),
-                    ),
-                    'phpunit.phpunitmockobjects' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'phpunit.phpfileiterator' => [
+                        'dependencies' => [],
+                    ],
+                    'phpunit.phptexttemplate' => [
+                        'dependencies' => [],
+                    ],
+                    'phpunit.phptimer' => [
+                        'dependencies' => [],
+                    ],
+                    'phpunit.phptokenstream' => [
+                        'dependencies' => [],
+                    ],
+                    'phpunit.phpunitmockobjects' => [
+                        'dependencies' => [
                             'phpunit.phptexttemplate',
-                        ),
-                    ),
-                    'phpunit.phpunit' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'phpunit.phpunit' => [
+                        'dependencies' => [
                             'symfony.yaml',
                             'phpunit.phpunitmockobjects',
                             'phpunit.phptimer',
                             'phpunit.phpcodecoverage',
                             'phpunit.phptexttemplate',
                             'phpunit.phpfileiterator',
-                        ),
-                    ),
-                    'TYPO3.Party' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Flow' => array(
-                        'dependencies' => array(
+                        ],
+                    ],
+                    'Neos.Party' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Flow' => [
+                        'dependencies' => [
                             'Composer.Installers',
                             'symfony.domcrawler',
                             'symfony.yaml',
                             'doctrine.migrations',
                             'Doctrine.ORM',
-                            'TYPO3.Eel',
-                            'TYPO3.Party',
-                            'TYPO3.Fluid',
-                        ),
-                    ),
-                    'TYPO3.Eel' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Kickstart' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                    'TYPO3.Fluid' => array(
-                        'dependencies' => array(
-                            'TYPO3.Flow',
-                        ),
-                    ),
-                ),
-                array(
+                            'Neos.Eel',
+                            'Neos.Party',
+                            'Neos.Fluid',
+                        ],
+                    ],
+                    'Neos.Eel' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Kickstart' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                    'Neos.Fluid' => [
+                        'dependencies' => [
+                            'Neos.Flow',
+                        ],
+                    ],
+                ],
+                [
                     'Composer.Installers',
                     'symfony.domcrawler',
                     'symfony.yaml',
@@ -808,25 +818,25 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'doctrine.migrations',
                     'symfony.console',
                     'Doctrine.ORM',
-                    'TYPO3.Eel',
-                    'TYPO3.Party',
-                    'TYPO3.Fluid',
-                    'TYPO3.Flow',
-                    'TYPO3.TYPO3CR',
-                    'TYPO3.Twitter.Bootstrap',
-                    'TYPO3.Form',
-                    'TYPO3.Setup',
-                    'TYPO3.TypoScript',
-                    'TYPO3.Neos.NodeTypes',
+                    'Neos.Eel',
+                    'Neos.Party',
+                    'Neos.Fluid',
+                    'Neos.Flow',
+                    'Neos.TYPO3CR',
+                    'Neos.Twitter.Bootstrap',
+                    'Neos.Form',
+                    'Neos.Setup',
+                    'Neos.TypoScript',
+                    'Neos.Neos.NodeTypes',
                     'imagine.imagine',
-                    'TYPO3.Media',
-                    'TYPO3.ExtJS',
-                    'TYPO3.Neos',
-                    'TYPO3.NeosDemoTypo3Org',
+                    'Neos.Media',
+                    'Neos.ExtJS',
+                    'Neos.Neos',
+                    'Neos.NeosDemoTypo3Org',
                     'Flowpack.Behat',
-                    'TYPO3.Imagine',
-                    'TYPO3.Kickstart',
-                    'TYPO3.SiteKickstarter',
+                    'Neos.Imagine',
+                    'Neos.Kickstart',
+                    'Neos.SiteKickstarter',
                     'mikey179.vfsStream',
                     'phpunit.phptexttemplate',
                     'phpunit.phptokenstream',
@@ -835,9 +845,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'phpunit.phptimer',
                     'phpunit.phpunitmockobjects',
                     'phpunit.phpunit',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -845,12 +855,12 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function composerNamesAndPackageKeys()
     {
-        return array(
-            array('imagine/Imagine', 'imagine.Imagine'),
-            array('imagine/imagine', 'imagine.Imagine'),
-            array('typo3/flow', 'TYPO3.Flow'),
-            array('TYPO3/Flow', 'TYPO3.Flow')
-        );
+        return [
+            ['imagine/Imagine', 'imagine.Imagine'],
+            ['imagine/imagine', 'imagine.Imagine'],
+            ['neos/flow', 'Neos.Flow'],
+            ['Neos/Flow', 'Neos.Flow']
+        ];
     }
 
     /**
@@ -859,18 +869,18 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getPackageKeyFromComposerNameIgnoresCaseDifferences($composerName, $packageKey)
     {
-        $packageStatesConfiguration = array('packages' =>
-            array(
-                'TYPO3.Flow' => array(
-                    'composerName' => 'typo3/flow'
-                ),
-                'imagine.Imagine' => array(
+        $packageStatesConfiguration = ['packages' =>
+            [
+                'Neos.Flow' => [
+                    'composerName' => 'neos/flow'
+                ],
+                'imagine.Imagine' => [
                     'composerName' => 'imagine/Imagine'
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('resolvePackageDependencies'));
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies']);
         $packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
         $this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
@@ -891,7 +901,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function createPackageEmitsPackageStatesUpdatedSignal()
     {
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->createPackage('Some.Package');
     }
 
@@ -903,7 +913,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->packageManager->createPackage('Some.Package');
         $this->packageManager->deactivatePackage('Some.Package');
 
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->activatePackage('Some.Package');
     }
 
@@ -914,7 +924,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->packageManager->createPackage('Some.Package');
 
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->deactivatePackage('Some.Package');
     }
 
@@ -928,7 +938,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->packageManager->createPackage('Some.Package');
 
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->freezePackage('Some.Package');
     }
 
@@ -942,7 +952,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->packageManager->createPackage('Some.Package');
         $this->packageManager->freezePackage('Some.Package');
 
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Package\PackageManager', 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->unfreezePackage('Some.Package');
     }
 }

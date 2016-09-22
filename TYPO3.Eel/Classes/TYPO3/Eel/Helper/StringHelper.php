@@ -189,8 +189,13 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Match a string with a regular expression (PREG style)
      *
-     * @param string $string
-     * @param string $pattern
+     * Example::
+     *
+     *     String.pregMatch("For more information, see Chapter 3.4.5.1", "/(chapter \d+(\.\d)*)/i")
+     *       == ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
      * @return array The matches as array or NULL if not matched
      * @throws EvaluationException
      */
@@ -209,9 +214,14 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Replace occurrences of a search string inside the string using regular expression matching (PREG style)
      *
-     * @param string $string
-     * @param string $pattern
-     * @param string $replace
+     * Examples::
+     *
+     *     String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-") == "Some-String-with-sp-cial-characters"
+     *     String.pregReplace("2016-08-31", "/([0-9]+)-([0-9]+)-([0-9]+)/", "$3.$2.$1") == "31.08.2016"
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
+     * @param string $replace A replacement string, can contain references to capture groups with "\\n" or "$n"
      * @return string The string with all occurrences replaced
      */
     public function pregReplace($string, $pattern, $replace)
@@ -222,11 +232,15 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Replace occurrences of a search string inside the string
      *
+     * Example::
+     *
+     *     String.replace("canal", "ana", "oo") == "cool"
+     *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param string $string
-     * @param string $search
-     * @param string $replace
+     * @param string $string The input string
+     * @param string $search A search string
+     * @param string $replace A replacement string
      * @return string The string with all occurrences replaced
      */
     public function replace($string, $search, $replace)
@@ -237,11 +251,16 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Split a string by a separator
      *
+     * Example::
+     *
+     *     String.split("My hovercraft is full of eels", " ") == ['My', 'hovercraft', 'is', 'full', 'of', 'eels']
+     *     String.split("Foo", "", 2) == ['F', 'o']
+     *
      * Node: This implementation follows JavaScript semantics without support of regular expressions.
      *
      * @param string $string The string to split
      * @param string $separator The separator where the string should be splitted
-     * @param integer $limit The maximum amount of items to split
+     * @param integer $limit The maximum amount of items to split (exceeding items will be discarded)
      * @return array An array of the splitted parts, excluding the separators
      */
     public function split($string, $separator = null, $limit = null)

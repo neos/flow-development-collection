@@ -16,6 +16,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class InvalidXmlFileException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException
+class InvalidXmlFileException extends InvalidArgumentException
 {
 }

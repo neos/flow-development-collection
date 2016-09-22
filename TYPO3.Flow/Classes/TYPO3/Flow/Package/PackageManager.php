@@ -11,12 +11,19 @@ namespace TYPO3\Flow\Package;
  * source code.
  */
 
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Log\EarlyLogger;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Utility\Exception as UtilityException;
+use TYPO3\Flow\Package\Exception as PackageException;
 
 /**
  * The default Flow Package Manager
@@ -24,15 +31,15 @@ use TYPO3\Flow\Utility\TypeHandling;
  * @api
  * @Flow\Scope("singleton")
  */
-class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
+class PackageManager implements PackageManagerInterface
 {
     /**
-     * @var \TYPO3\Flow\Core\ClassLoader
+     * @var ClassLoader
      */
     protected $classLoader;
 
     /**
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
@@ -98,7 +105,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     protected $settings;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -108,10 +115,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     protected static $composerManifestData = array();
 
     /**
-     * @param \TYPO3\Flow\Core\ClassLoader $classLoader
+     * @param ClassLoader $classLoader
      * @return void
      */
-    public function injectClassLoader(\TYPO3\Flow\Core\ClassLoader $classLoader)
+    public function injectClassLoader(ClassLoader $classLoader)
     {
         $this->classLoader = $classLoader;
     }
@@ -126,12 +133,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+     * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
-        if ($this->systemLogger instanceof \TYPO3\Flow\Log\EarlyLogger) {
+        if ($this->systemLogger instanceof EarlyLogger) {
             $this->systemLogger->replayLogsOn($systemLogger);
             unset($this->systemLogger);
         }
@@ -141,12 +148,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     /**
      * Initializes the package manager
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+     * @param Bootstrap $bootstrap The current bootstrap
      * @return void
      */
-    public function initialize(\TYPO3\Flow\Core\Bootstrap $bootstrap)
+    public function initialize(Bootstrap $bootstrap)
     {
-        $this->systemLogger = new \TYPO3\Flow\Log\EarlyLogger();
+        $this->systemLogger = new EarlyLogger();
 
         $this->bootstrap = $bootstrap;
         $this->packageStatesPathAndFilename = $this->packageStatesPathAndFilename ?: FLOW_PATH_CONFIGURATION . 'PackageStates.php';
@@ -209,14 +216,14 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * A package is available, if the package directory contains valid MetaData information.
      *
      * @param string $packageKey
-     * @return \TYPO3\Flow\Package\PackageInterface The requested package object
-     * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException if the specified package is not known
+     * @return PackageInterface The requested package object
+     * @throws Exception\UnknownPackageException if the specified package is not known
      * @api
      */
     public function getPackage($packageKey)
     {
         if (!$this->isPackageAvailable($packageKey)) {
-            throw new \TYPO3\Flow\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
         return $this->packages[$packageKey];
     }
@@ -259,10 +266,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\Package objects of all available packages.
+     * Returns an array of PackageInterface objects of all available packages.
      * A package is available, if the package directory contains valid meta information.
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      * @api
      */
     public function getAvailablePackages()
@@ -271,11 +278,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\Package objects of all active packages.
+     * Returns an array of PackageInterface objects of all active packages.
      * A package is active, if it is available and has been activated in the package
      * manager settings.
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array <PackageInterface>
      * @api
      */
     public function getActivePackages()
@@ -284,11 +291,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\Package objects of all frozen packages.
+     * Returns an array of PackageInterface objects of all frozen packages.
      * A frozen package is not considered by file monitoring and provides some
      * precompiled reflection data in order to improve performance.
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      */
     public function getFrozenPackages()
     {
@@ -305,14 +312,14 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\PackageInterface objects of all packages that match
+     * Returns an array of PackageInterface objects of all packages that match
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
      * @param string $packagePath
      * @param string $packageType
      *
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      * @throws Exception\InvalidPackageStateException
      * @api
      */
@@ -330,7 +337,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
                 $packages = $this->getFrozenPackages();
             break;
             default:
-                throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
+                throw new Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
         }
 
         if ($packagePath !== null) {
@@ -344,12 +351,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\Package objects in the given array of packages
+     * Returns an array of PackageInterface objects in the given array of packages
      * that are in the specified Package Path
      *
-     * @param array $packages Array of \TYPO3\Flow\Package\PackageInterface to be filtered
+     * @param array $packages Array of PackageInterface to be filtered
      * @param string $filterPath Filter out anything that's not in this path
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      */
     protected function filterPackagesByPath(&$packages, $filterPath)
     {
@@ -366,12 +373,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
     }
 
     /**
-     * Returns an array of \TYPO3\Flow\Package objects in the given array of packages
+     * Returns an array of PackageInterface objects in the given array of packages
      * that are of the specified package type.
      *
-     * @param array $packages Array of \TYPO3\Flow\Package\PackageInterface to be filtered
+     * @param array $packages Array of PackageInterface objects to be filtered
      * @param string $packageType Filter out anything that's not of this packageType
-     * @return array Array of \TYPO3\Flow\Package\PackageInterface
+     * @return array<PackageInterface>
      */
     protected function filterPackagesByType(&$packages, $packageType)
     {
@@ -415,7 +422,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
         }
         $lowercasedComposerName = strtolower($composerName);
         if (!isset($this->composerNameToPackageKeyMap[$lowercasedComposerName])) {
-            throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('Could not find package with composer name "' . $composerName . '" in PackageStates configuration.', 1352320649);
+            throw new Exception\InvalidPackageStateException('Could not find package with composer name "' . $composerName . '" in PackageStates configuration.', 1352320649);
         }
         return $this->composerNameToPackageKeyMap[$lowercasedComposerName];
     }
@@ -436,22 +443,22 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * Create a package, given the package key
      *
      * @param string $packageKey The package key of the new package
-     * @param \TYPO3\Flow\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
+     * @param MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
      * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
      * @param string $packageType If specified, the package type will be set, otherwise it will default to "typo3-flow-package"
      * @return PackageInterface The newly created package
-     * @throws \TYPO3\Flow\Package\Exception
-     * @throws \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException
-     * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
+     * @throws Exception
+     * @throws Exception\PackageKeyAlreadyExistsException
+     * @throws Exception\InvalidPackageKeyException
      * @api
      */
-    public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null, $packagesPath = null, $packageType = 'typo3-flow-package')
+    public function createPackage($packageKey, MetaData $packageMetaData = null, $packagesPath = null, $packageType = 'typo3-flow-package')
     {
         if (!$this->isPackageKeyValid($packageKey)) {
-            throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
+            throw new Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
         }
         if ($this->isPackageAvailable($packageKey)) {
-            throw new \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
+            throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
         }
 
         if ($packagesPath === null) {
@@ -509,7 +516,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * @param MetaData $packageMetaData
      * @return void
      */
-    protected function writeComposerManifest($manifestPath, $packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null)
+    protected function writeComposerManifest($manifestPath, $packageKey, MetaData $packageMetaData = null)
     {
         $manifest = array(
             'name' => $this->getComposerPackageNameFromPackageKey($packageKey)
@@ -588,7 +595,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      *
      * @param string $packageKey The package to deactivate
      * @return void
-     * @throws \TYPO3\Flow\Package\Exception\ProtectedPackageKeyException if a package is protected and cannot be deactivated
+     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deactivated
      * @api
      */
     public function deactivatePackage($packageKey)
@@ -599,7 +606,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
 
         $package = $this->getPackage($packageKey);
         if ($package->isProtected()) {
-            throw new \TYPO3\Flow\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be deactivated.', 1308662891);
+            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be deactivated.', 1308662891);
         }
 
         unset($this->activePackages[$packageKey]);
@@ -638,7 +645,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * @param string $packageKey The package to freeze
      * @return void
      * @throws \LogicException
-     * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException
+     * @throws Exception\UnknownPackageException
      */
     public function freezePackage($packageKey)
     {
@@ -647,13 +654,13 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
         }
 
         if (!$this->isPackageActive($packageKey)) {
-            throw new \TYPO3\Flow\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
         }
         if ($this->isPackageFrozen($packageKey)) {
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->freezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(ReflectionService::class)->freezePackageReflection($packageKey);
 
         $this->packageStatesConfiguration['packages'][$packageKey]['frozen'] = true;
         $this->sortAndSavePackageStates();
@@ -686,7 +693,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(ReflectionService::class)->unfreezePackageReflection($packageKey);
 
         unset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']);
         $this->sortAndSavePackageStates();
@@ -704,7 +711,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             return;
         }
 
-        $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+        $this->bootstrap->getObjectManager()->get(ReflectionService::class)->unfreezePackageReflection($packageKey);
     }
 
     /**
@@ -769,20 +776,20 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      *
      * @param string $packageKey package to remove
      * @return void
-     * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException if the specified package is not known
-     * @throws \TYPO3\Flow\Package\Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
-     * @throws \TYPO3\Flow\Package\Exception
+     * @throws Exception\UnknownPackageException if the specified package is not known
+     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
+     * @throws Exception
      * @api
      */
     public function deletePackage($packageKey)
     {
         if (!$this->isPackageAvailable($packageKey)) {
-            throw new \TYPO3\Flow\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
         }
 
         $package = $this->getPackage($packageKey);
         if ($package->isProtected()) {
-            throw new \TYPO3\Flow\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
+            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
         }
 
         if ($this->isPackageActive($packageKey)) {
@@ -792,8 +799,8 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
         $packagePath = $package->getPackagePath();
         try {
             Files::removeDirectoryRecursively($packagePath);
-        } catch (\TYPO3\Flow\Utility\Exception $exception) {
-            throw new \TYPO3\Flow\Package\Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
+        } catch (UtilityException $exception) {
+            throw new Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
         }
 
         $this->unregisterPackage($package);
@@ -823,7 +830,6 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * For each package a Package object is created and stored in $this->packages.
      *
      * @return void
-     * @throws \TYPO3\Flow\Package\Exception\DuplicatePackageException
      */
     protected function scanAvailablePackages()
     {
@@ -1041,7 +1047,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
      * Requires and registers all packages which were defined in packageStatesConfiguration
      *
      * @return void
-     * @throws \TYPO3\Flow\Package\Exception\CorruptPackageException
+     * @throws Exception\CorruptPackageException
      */
     protected function registerPackagesFromConfiguration()
     {
@@ -1052,7 +1058,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
 
             try {
                 $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
-            } catch (\TYPO3\Flow\Package\Exception\InvalidPackagePathException $exception) {
+            } catch (Exception\InvalidPackagePathException $exception) {
                 $this->unregisterPackageByPackageKey($packageKey);
                 $this->systemLogger->log('Package ' . $packageKey . ' could not be loaded, it has been unregistered. Error description: "' . $exception->getMessage() . '" (' . $exception->getCode() . ')', LOG_WARNING);
                 continue;
@@ -1061,7 +1067,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface
             $this->registerPackage($package, false);
 
             if (!$this->packages[$packageKey] instanceof PackageInterface) {
-                throw new \TYPO3\Flow\Package\Exception\CorruptPackageException(sprintf('The package class in package "%s" does not implement PackageInterface.', $packageKey), 1300782487);
+                throw new Exception\CorruptPackageException(sprintf('The package class in package "%s" does not implement PackageInterface.', $packageKey), 1300782487);
             }
 
             $this->packageKeys[strtolower($packageKey)] = $packageKey;

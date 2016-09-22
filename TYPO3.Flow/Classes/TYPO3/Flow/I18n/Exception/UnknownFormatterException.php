@@ -11,6 +11,8 @@ namespace TYPO3\Flow\I18n\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Unknown Formatter" exception
  *
@@ -20,6 +22,6 @@ namespace TYPO3\Flow\I18n\Exception;
  *
  * @api
  */
-class UnknownFormatterException extends \TYPO3\Flow\I18n\Exception
+class UnknownFormatterException extends I18n\Exception
 {
 }

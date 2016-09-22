@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
-use TYPO3\Flow\Exception;
+use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Eel\ProtectedContextAwareInterface;
 
 /**
@@ -36,7 +36,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      *
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @param string $id
@@ -137,19 +137,19 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     }
 
     /**
-     * Set the locale. The locale Identifier will be converted into
-     * a \TYPO3\Flow\I18n\Locale
+     * Set the locale.
+     * The locale Identifier will be converted into a Locale
      *
      * @param string $locale An identifier of locale to use (NULL for use the default locale)
      * @return TranslationParameterToken
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public function locale($locale)
     {
         try {
             $this->parameters['locale'] = new Locale($locale);
         } catch (InvalidLocaleIdentifierException $e) {
-            throw new Exception(sprintf('"%s" is not a valid locale identifier.', $locale), 1436784806);
+            throw new FlowException(sprintf('"%s" is not a valid locale identifier.', $locale), 1436784806);
         }
 
         return $this;
@@ -161,13 +161,13 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      * @param array $overrides An associative array to override the collected parameters
      * @return string
      */
-    public function translate(array $overrides = array())
+    public function translate(array $overrides = [])
     {
         array_replace_recursive($this->parameters, $overrides);
 
         $id = isset($this->parameters['id']) ? $this->parameters['id'] : null;
         $value = isset($this->parameters['value']) ? $this->parameters['value'] : null;
-        $arguments = isset($this->parameters['arguments']) ? $this->parameters['arguments'] : array();
+        $arguments = isset($this->parameters['arguments']) ? $this->parameters['arguments'] : [];
         $source = isset($this->parameters['source']) ? $this->parameters['source'] : 'Main';
         $package = isset($this->parameters['package']) ? $this->parameters['package'] : null;
         $quantity = isset($this->parameters['quantity']) ? $this->parameters['quantity'] : null;

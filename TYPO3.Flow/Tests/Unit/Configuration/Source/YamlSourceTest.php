@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Configuration\Source;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Configuration\Source\YamlSource;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the YAML configuration source
  *
  */
-class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
+class YamlSourceTest extends UnitTestCase
 {
     /**
      * Sets up this test case
@@ -33,9 +35,9 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function returnsEmptyArrayOnNonExistingFile()
     {
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+        $configurationSource = new YamlSource();
         $configuration = $configurationSource->load('/ThisFileDoesNotExist');
-        $this->assertEquals(array(), $configuration, 'No empty array was returned.');
+        $this->assertEquals([], $configuration, 'No empty array was returned.');
     }
 
     /**
@@ -44,7 +46,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function optionSetInTheConfigurationFileReallyEndsUpInTheArray()
     {
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+        $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
         $this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
     }
@@ -55,13 +57,13 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function saveWritesArrayToGivenFileAsYAML()
     {
         $pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
-        $mockConfiguration = array(
+        $configurationSource = new YamlSource();
+        $mockConfiguration = [
             'configurationFileHasBeenLoaded' => true,
-            'foo' => array(
+            'foo' => [
                 'bar' => 'Baz'
-            )
-        );
+            ]
+        ];
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
@@ -77,8 +79,8 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
         file_put_contents($pathAndFilename . '.yaml', $comment);
 
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
-        $configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => true));
+        $configurationSource = new YamlSource();
+        $configurationSource->save($pathAndFilename, ['configurationFileHasBeenLoaded' => true]);
 
         $yaml = file_get_contents($pathAndFilename . '.yaml');
         $this->assertContains('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
@@ -90,18 +92,18 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function yamlFileIsParsedToArray()
     {
-        $expectedConfiguration = array(
+        $expectedConfiguration = [
             'configurationFileHasBeenLoaded' => true,
-            'TYPO3' => array(
-                'Flow' => array(
+            'TYPO3' => [
+                'Flow' => [
                     'something' => 'foo',
                     '@bar' => 1,
                     'aboolean' => true
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+        $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
         $this->assertSame($expectedConfiguration, $configuration);
     }
@@ -111,20 +113,20 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function splitConfigurationFilesAreMergedAsExpected()
     {
-        $expectedConfiguration = array(
+        $expectedConfiguration = [
             'configurationFileHasBeenLoaded' => true,
-            'TYPO3' => array(
-                'Flow' => array(
+            'TYPO3' => [
+                'Flow' => [
                     'default' => 'test',
                     'toBeOverwritten' => 2,
                     'something' => 'zzz',
                     '@bar' => 1,
                     'aboolean' => true
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $pathAndFilename = __DIR__ . '/../Fixture/SplitYamlConfigurationFile';
-        $configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+        $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename, true);
         $this->assertSame($expectedConfiguration, $configuration);
     }

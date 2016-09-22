@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Security\Authorization;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Exception\NoInterceptorFoundException;
 
 /**
  * The security interceptor resolver. It resolves the class name of a security interceptor based on names.
@@ -21,16 +23,16 @@ use TYPO3\Flow\Annotations as Flow;
 class InterceptorResolver
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
+     * @param ObjectManagerInterface $objectManager The object manager
      */
-    public function __construct(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -40,7 +42,7 @@ class InterceptorResolver
      *
      * @param string $name The (short) name of the interceptor
      * @return string The class name of the security interceptor, NULL if no class was found.
-     * @throws \TYPO3\Flow\Security\Exception\NoInterceptorFoundException
+     * @throws NoInterceptorFoundException
      */
     public function resolveInterceptorClass($name)
     {
@@ -54,6 +56,6 @@ class InterceptorResolver
             return $resolvedObjectName;
         }
 
-        throw new \TYPO3\Flow\Security\Exception\NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
+        throw new NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
     }
 }

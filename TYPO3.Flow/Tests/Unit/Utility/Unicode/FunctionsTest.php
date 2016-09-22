@@ -11,13 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Utility\Unicode;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Unicode\Functions;
 
 /**
  * Testcase for the PHP6 Functions backport
- *
  */
-class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FunctionsTest extends UnitTestCase
 {
     /**
      * Checks if strtotitle() at least works with latin characters.
@@ -229,11 +229,11 @@ class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function parse_urlWorksWithUTF8Chars()
     {
         $url = 'http://www.mysite.org/he/פרויקטים/ByYear.html';
-        $expected = array(
+        $expected = [
             'scheme' => 'http',
             'host' => 'www.mysite.org',
             'path' => '/he/פרויקטים/ByYear.html'
-        );
+        ];
         $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 
@@ -245,9 +245,9 @@ class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function pathinfoWorksWithCertainSpecialChars()
     {
         $testString = 'кириллическийПуть/кириллическоеИмя.расширение';
-        $this->assertEquals('кириллическийПуть', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
-        $this->assertEquals('кириллическоеИмя.расширение', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
-        $this->assertEquals('расширение', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
-        $this->assertEquals('кириллическоеИмя', \TYPO3\Flow\Utility\Unicode\Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
+        $this->assertEquals('кириллическийПуть', Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
+        $this->assertEquals('кириллическоеИмя.расширение', Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
+        $this->assertEquals('расширение', Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
+        $this->assertEquals('кириллическоеИмя', Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
     }
 }

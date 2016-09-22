@@ -19,7 +19,7 @@ use TYPO3\Flow\Security\RequestPatternInterface;
  * This class holds a host URI pattern and decides, if a \TYPO3\Flow\Mvc\RequestInterface object matches against this pattern
  * Note: the pattern is a simple wildcard matching pattern, with * as the wildcard character.
  *
- * Example: *.typo3.org will match "flow.typo3.org" and "neos.typo3.org", but not "typo3.org"
+ * Example: *.neos.io will match "flow.neos.io" and "www.neos.io", but not "neos.io"
  *          www.mydomain.* will match all TLDs of www.mydomain, but not "blog.mydomain.net" or "mydomain.com"
  */
 class Host implements RequestPatternInterface

@@ -56,7 +56,7 @@ class Router implements RouterInterface
      *
      * @var array
      */
-    protected $routes = array();
+    protected $routes = [];
 
     /**
      * TRUE if route object have been created, otherwise FALSE
@@ -213,8 +213,8 @@ class Router implements RouterInterface
             return;
         }
         $this->initializeRoutesConfiguration();
-        $this->routes = array();
-        $routesWithHttpMethodConstraints = array();
+        $this->routes = [];
+        $routesWithHttpMethodConstraints = [];
         foreach ($this->routesConfiguration as $routeConfiguration) {
             $route = new Route();
             if (isset($routeConfiguration['name'])) {

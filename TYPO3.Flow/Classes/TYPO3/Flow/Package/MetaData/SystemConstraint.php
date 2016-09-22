@@ -11,12 +11,13 @@ namespace TYPO3\Flow\Package\MetaData;
  * source code.
  */
 
+use TYPO3\Flow\Package\MetaDataInterface;
 
 /**
  * System constraint meta model
  *
  */
-class SystemConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint
+class SystemConstraint extends AbstractConstraint
 {
     /**
      * The type for a system scope constraint (e.g. "Memory")
@@ -53,10 +54,10 @@ class SystemConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint
 
     /**
      * @return string The constraint scope
-     * @see \TYPO3\Flow\Package\MetaData\Constraint\getConstraintScope()
+     * @see Constraint::getConstraintScope()
      */
     public function getConstraintScope()
     {
-        return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
+        return MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
     }
 }

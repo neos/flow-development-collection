@@ -12,7 +12,8 @@ namespace TYPO3\Flow\Security\Cryptography;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility;
+use TYPO3\Flow\Security\Exception as SecurityException;
 
 /**
  * File based simple encrypted key service
@@ -37,7 +38,7 @@ class FileBasedSimpleKeyService
     protected $passwordGenerationLength = 8;
 
     /**
-     * @var \TYPO3\Flow\Security\Cryptography\HashService
+     * @var HashService
      * @Flow\Inject
      */
     protected $hashService;
@@ -61,14 +62,14 @@ class FileBasedSimpleKeyService
      *
      * @param string $name
      * @return string
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function generateKey($name)
     {
         if (strlen($name) === 0) {
-            throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215474);
+            throw new SecurityException('Required name argument was empty', 1334215474);
         }
-        $password = \TYPO3\Flow\Utility\Algorithms::generateRandomString($this->passwordGenerationLength);
+        $password = Utility\Algorithms::generateRandomString($this->passwordGenerationLength);
         $this->persistKey($name, $password);
         return $password;
     }
@@ -79,15 +80,15 @@ class FileBasedSimpleKeyService
      * @param string $name
      * @param string $password
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function storeKey($name, $password)
     {
         if (strlen($name) === 0) {
-            throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215443);
+            throw new SecurityException('Required name argument was empty', 1334215443);
         }
         if (strlen($password) === 0) {
-            throw new \TYPO3\Flow\Security\Exception('Required password argument was empty', 1334215349);
+            throw new SecurityException('Required password argument was empty', 1334215349);
         }
         $this->persistKey($name, $password);
     }
@@ -97,12 +98,12 @@ class FileBasedSimpleKeyService
      *
      * @param string $name
      * @return boolean
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function keyExists($name)
     {
         if (strlen($name) === 0) {
-            throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215344);
+            throw new SecurityException('Required name argument was empty', 1334215344);
         }
         if (!file_exists($this->getKeyPathAndFilename($name))) {
             return false;
@@ -115,23 +116,23 @@ class FileBasedSimpleKeyService
      *
      * @param string $name
      * @return boolean
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     public function getKey($name)
     {
         if (strlen($name) === 0) {
-            throw new \TYPO3\Flow\Security\Exception('Required name argument was empty', 1334215378);
+            throw new SecurityException('Required name argument was empty', 1334215378);
         }
         $keyPathAndFilename = $this->getKeyPathAndFilename($name);
         if (!file_exists($keyPathAndFilename)) {
-            throw new \TYPO3\Flow\Security\Exception(sprintf('The key "%s" does not exist.', $keyPathAndFilename), 1305812921);
+            throw new SecurityException(sprintf('The key "%s" does not exist.', $keyPathAndFilename), 1305812921);
         }
-        $key = Files::getFileContents($keyPathAndFilename);
+        $key = Utility\Files::getFileContents($keyPathAndFilename);
         if ($key === false) {
-            throw new \TYPO3\Flow\Security\Exception(sprintf('The key "%s" could not be read.', $keyPathAndFilename), 1334483163);
+            throw new SecurityException(sprintf('The key "%s" could not be read.', $keyPathAndFilename), 1334483163);
         }
         if (strlen($key) === 0) {
-            throw new \TYPO3\Flow\Security\Exception(sprintf('The key "%s" is empty.', $keyPathAndFilename), 1334483165);
+            throw new SecurityException(sprintf('The key "%s" is empty.', $keyPathAndFilename), 1334483165);
         }
         return $key;
     }
@@ -142,18 +143,18 @@ class FileBasedSimpleKeyService
      * @param string $name
      * @param string $password
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     protected function persistKey($name, $password)
     {
         $hashedPassword = $this->hashService->hashPassword($password, $this->passwordHashingStrategy);
         $keyPathAndFilename = $this->getKeyPathAndFilename($name);
         if (!is_dir($this->getPath())) {
-            Files::createDirectoryRecursively($this->getPath());
+            Utility\Files::createDirectoryRecursively($this->getPath());
         }
         $result = file_put_contents($keyPathAndFilename, $hashedPassword);
         if ($result === false) {
-            throw new \TYPO3\Flow\Security\Exception(sprintf('The key could not be stored ("%s").', $keyPathAndFilename), 1305812921);
+            throw new SecurityException(sprintf('The key could not be stored ("%s").', $keyPathAndFilename), 1305812921);
         }
     }
 
@@ -165,7 +166,7 @@ class FileBasedSimpleKeyService
      */
     protected function getKeyPathAndFilename($name)
     {
-        return Files::concatenatePaths(array($this->getPath(), $this->checkKeyName($name)));
+        return Utility\Files::concatenatePaths([$this->getPath(), $this->checkKeyName($name)]);
     }
 
     /**
@@ -174,12 +175,12 @@ class FileBasedSimpleKeyService
      *
      * @param string $name
      * @return string
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws SecurityException
      */
     protected function checkKeyName($name)
     {
         if (preg_match(self::PATTERN_KEYNAME, $name) !== 1) {
-            throw new \TYPO3\Flow\Security\Exception('The key name "' . $name . '" is not valid.', 1334219077);
+            throw new SecurityException('The key name "' . $name . '" is not valid.', 1334219077);
         }
         return $name;
     }
@@ -191,6 +192,6 @@ class FileBasedSimpleKeyService
      */
     protected function getPath()
     {
-        return Files::concatenatePaths(array(FLOW_PATH_DATA, 'Persistent', 'FileBasedSimpleKeyService'));
+        return Utility\Files::concatenatePaths([FLOW_PATH_DATA, 'Persistent', 'FileBasedSimpleKeyService']);
     }
 }

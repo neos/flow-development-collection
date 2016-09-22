@@ -31,7 +31,7 @@ class DoctrineCommandController extends CommandController
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * @Flow\Inject
@@ -89,9 +89,9 @@ class DoctrineCommandController extends CommandController
         } else {
             $this->outputLine('Mapping validation FAILED!');
             foreach ($classesAndErrors as $className => $errors) {
-                $this->outputLine('  %s', array($className));
+                $this->outputLine('  %s', [$className]);
                 foreach ($errors as $errorMessage) {
-                    $this->outputLine('    %s', array($errorMessage));
+                    $this->outputLine('    %s', [$errorMessage]);
                 }
             }
             $this->quit(1);
@@ -174,20 +174,20 @@ class DoctrineCommandController extends CommandController
     {
         $info = $this->doctrineService->getEntityStatus();
 
-        if ($info === array()) {
+        if ($info === []) {
             $this->output('You do not have any mapped Doctrine ORM entities according to the current configuration. ');
             $this->outputLine('If you have entities or mapping files you should check your mapping configuration for errors.');
         } else {
-            $this->outputLine('Found %d mapped entities:', array(count($info)));
+            $this->outputLine('Found %d mapped entities:', [count($info)]);
             foreach ($info as $entityClassName => $entityStatus) {
                 if ($entityStatus instanceof ClassMetadata) {
-                    $this->outputLine('[OK]   %s', array($entityClassName));
+                    $this->outputLine('[OK]   %s', [$entityClassName]);
                     if ($dumpMappingData) {
                         Debugger::clearState();
                         $this->outputLine(Debugger::renderDump($entityStatus, 0, true, true));
                     }
                 } else {
-                    $this->outputLine('[FAIL] %s', array($entityClassName));
+                    $this->outputLine('[FAIL] %s', [$entityClassName]);
                     $this->outputLine($entityStatus);
                     $this->outputLine();
                 }
@@ -392,8 +392,8 @@ class DoctrineCommandController extends CommandController
 
         $migrationClassPathAndFilename = $this->doctrineService->generateMigration($diffAgainstCurrent);
 
-        $choices = array('Don\'t Move');
-        $packages = array(null);
+        $choices = ['Don\'t Move'];
+        $packages = [null];
 
         /** @var Package $package */
         foreach ($this->packageManager->getAvailablePackages() as $package) {
@@ -411,16 +411,16 @@ class DoctrineCommandController extends CommandController
         if ($selectedPackageIndex !== 0) {
             /** @var Package $selectedPackage */
             $selectedPackage = $packages[$selectedPackageIndex];
-            $targetPathAndFilename = Files::concatenatePaths(array($selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)));
+            $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
             Files::createDirectoryRecursively(dirname($targetPathAndFilename));
             rename($migrationClassPathAndFilename, $targetPathAndFilename);
-            $this->outputLine('The migration was moved to %s.', array(substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))));
+            $this->outputLine('The migration was moved to %s.', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);
             $this->outputLine('Next Steps:');
         } else {
             $this->outputLine('Next Steps:');
             $this->outputLine(sprintf('- Move <comment>%s</comment> to YourPackage/<comment>Migrations/%s/</comment>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
         }
         $this->outputLine('- Review and adjust the generated migration.');
-        $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', array($this->getFlowInvocationString()));
+        $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', [$this->getFlowInvocationString()]);
     }
 }
