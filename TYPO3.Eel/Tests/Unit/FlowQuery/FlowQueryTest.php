@@ -10,7 +10,7 @@ namespace TYPO3\Eel\Tests\Unit\FlowQuery;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Eel\FlowQuery\FizzleException;
+
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\OperationResolver;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -424,7 +424,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @dataProvider dataProviderForErrorQueries
      * @test
-     * @expectedException FizzleException
+     * @expectedException \TYPO3\Eel\FlowQuery\FizzleException
      */
     public function errorQueriesThrowError($expression)
     {
@@ -458,7 +458,7 @@ class FlowQueryTest extends UnitTestCase
         $objectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation
-            if ($className === Operations\FilterOperation::class) {
+            if ($className === Operations\Object\FilterOperation::class) {
                 ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, true);
             }
             return $instance;

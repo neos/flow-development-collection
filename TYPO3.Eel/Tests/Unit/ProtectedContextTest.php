@@ -12,7 +12,6 @@ namespace TYPO3\Eel\Tests\Unit;
  */
 
 use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\NotAllowedException;
 use TYPO3\Eel\ProtectedContext;
 use TYPO3\Eel\Tests\Unit\Fixtures\TestObject;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -24,7 +23,7 @@ class ProtectedContextTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException NotAllowedException
+     * @expectedException \TYPO3\Eel\NotAllowedException
      */
     public function methodCallToAnyValueIsNotAllowed()
     {
@@ -40,7 +39,7 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NotAllowedException
+     * @expectedException \TYPO3\Eel\NotAllowedException
      */
     public function arrayAccessResultIsStillUntrusted()
     {
@@ -92,7 +91,7 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NotAllowedException
+     * @expectedException \TYPO3\Eel\NotAllowedException
      */
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
@@ -109,7 +108,7 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NotAllowedException
+     * @expectedException \TYPO3\Eel\NotAllowedException
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
@@ -133,7 +132,7 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NotAllowedException
+     * @expectedException \TYPO3\Eel\NotAllowedException
      */
     public function resultOfWhitelistedMethodCallIsProtected()
     {

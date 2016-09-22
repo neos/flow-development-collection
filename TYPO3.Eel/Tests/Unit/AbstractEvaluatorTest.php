@@ -13,8 +13,6 @@ namespace TYPO3\Eel\Tests\Unit;
 
 use TYPO3\Eel\Context;
 use TYPO3\Eel\EelEvaluatorInterface;
-use TYPO3\Eel\EvaluationException;
-use TYPO3\Eel\ParserException;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -557,7 +555,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException EvaluationException
+     * @expectedException \TYPO3\Eel\EvaluationException
      */
     public function methodCallOfUndefinedFunctionThrowsException()
     {
@@ -573,7 +571,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException EvaluationException
+     * @expectedException \TYPO3\Eel\EvaluationException
      */
     public function methodCallOfUnknownMethodThrowsException()
     {
@@ -658,7 +656,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidExpressions
-     * @expectedException ParserException
+     * @expectedException \TYPO3\Eel\ParserException
      */
     public function invalidExpressionsThrowExceptions($expression)
     {
