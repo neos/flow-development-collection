@@ -137,6 +137,9 @@ class Compiler
         if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
             return false;
         }
+        if ($classReflection->isFinal() && $proxyAnnotation === null) {
+            return false;
+        }
 
         if (in_array(substr($fullClassName, 0, 14), $this->blacklistedSubPackages)) {
             return false;
@@ -227,12 +230,16 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $classCode = $this->stripOpeningPhpTag($classCode);
 
         $classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
-        $classCode = preg_replace_callback('/^([a-z\s]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix) {
+        $classCode = preg_replace_callback('/^([a-z\s]*?)(final\s+)?(interface|class)\s+([a-zA-Z0-9_]+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
             $classNameAccordingToFileName = basename($pathAndFilename, '.php');
-            if ($matches[3] !== $classNameAccordingToFileName) {
-                throw new Exception('The name of the class "' . $matches[3] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
+            if ($matches[4] !== $classNameAccordingToFileName) {
+                throw new Exception('The name of the class "' . $matches[4] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
             }
-            return $matches[1] . $matches[2] . ' ' . $matches[3] . $classNameSuffix;
+//            if ($matches[2] !== '') {
+//                var_dump($proxyClassCode);
+//                exit;
+//            }
+            return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);

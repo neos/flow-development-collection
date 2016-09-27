@@ -261,7 +261,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function methodWithStaticTypeDeclarationsCanBeAdviced()
+    public function methodWithStaticTypeDeclarationsCanBeAdvised()
     {
         if (version_compare(PHP_VERSION, '7.0.0') < 0) {
             $this->markTestSkipped('Requires PHP 7');
@@ -270,5 +270,23 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $targetClass = new Fixtures\TargetClassWithPhp7Features();
 
         $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42));
+    }
+
+    /**
+     * @test
+     */
+    public function finalClassesCantBeAdvisedByDefault()
+    {
+        $targetClass = new Fixtures\TargetClassWithFinalModifier();
+        $this->assertSame('final', $targetClass->someMethod());
+    }
+
+    /**
+     * @test
+     */
+    public function finalClassesWithProxyAnnotationCanBeAdvised()
+    {
+        $targetClass = new Fixtures\TargetClassWithFinalModifierAndProxyAnnotation();
+        $this->assertSame('nothing is final!', $targetClass->someMethod());
     }
 }

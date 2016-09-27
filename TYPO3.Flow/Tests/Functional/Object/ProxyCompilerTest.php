@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  */
 
 use TYPO3\Flow\Reflection\ClassReflection;
+use TYPO3\Flow\Tests\Functional\Object\Fixtures\FinalClassWithDependenciesAndProxyAnnotation;
 
 /**
  * Functional tests for the Proxy Compiler and related features
@@ -117,5 +118,14 @@ class ProxyCompilerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $prototypeF = unserialize($serializedObject);
         $this->assertSame($prototypeF->getNonTransientProperty(), 'bar');
         $this->assertSame($prototypeF->getTransientProperty(), null);
+    }
+
+    /**
+     * @test
+     */
+    public function proxiedFinalClassesAreStillFinal()
+    {
+        $reflectionClass = new ClassReflection(FinalClassWithDependenciesAndProxyAnnotation::class);
+        $this->assertTrue($reflectionClass->isFinal());
     }
 }

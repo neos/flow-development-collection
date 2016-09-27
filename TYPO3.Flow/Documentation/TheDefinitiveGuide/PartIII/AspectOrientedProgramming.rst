@@ -294,6 +294,11 @@ aspect.
 	example, the AOP framework will throw an exception complaining that no
 	advice, introduction or pointcut has been defined.
 
+.. warning::
+	Classes that are marked ``final`` cannot be targeted by AOP advices by default.
+	This can be explicitly allowed with a ``@Flow\Proxy(true)`` annotation on the
+	class in question.
+
 Pointcuts
 =========
 
