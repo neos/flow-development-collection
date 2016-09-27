@@ -235,10 +235,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             if ($matches[4] !== $classNameAccordingToFileName) {
                 throw new Exception('The name of the class "' . $matches[4] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
             }
-//            if ($matches[2] !== '') {
-//                var_dump($proxyClassCode);
-//                exit;
-//            }
             return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
