@@ -2,7 +2,6 @@
 namespace TYPO3\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types;
 use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
@@ -14,7 +13,9 @@ use TYPO3\Flow\Utility\TypeHandling;
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
  *
- * TOOD: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
+ * TODO: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
+ *
+ * @Flow\Proxy(false)
  */
 class JsonArrayType extends DoctrineJsonArrayType
 {
