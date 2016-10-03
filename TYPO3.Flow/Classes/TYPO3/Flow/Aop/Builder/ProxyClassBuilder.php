@@ -540,8 +540,21 @@ class ProxyClassBuilder
         }
 
         $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
-        $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
-        $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+
+        $proxyMethods = ['__construct' => null, '__wakeup' => null];
+        if ($this->reflectionService->isMethodFinal($className, '__construct') === false) {
+            $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+            $proxyMethods['__construct'] = true;
+        }
+
+        if ($this->reflectionService->isMethodFinal($className, '__wakeup') === false) {
+            $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+            $proxyMethods['__wakeup'] = true;
+        }
+
+        foreach (array_keys(array_filter($proxyMethods, 'is_null')) as $methodName) {
+            $this->systemLogger->log(sprintf('Could not proxy method "%s" in class "%s", as it is declared final, AOP might not be correctly applied.', $methodName, $className), LOG_DEBUG);
+        }
 
         return $treatedSubClasses;
     }
