@@ -6,11 +6,12 @@ namespace {packageNamespace}\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
 
 /**
  * @Flow\Scope("singleton")
  */
-class {controllerClassName} extends \TYPO3\Flow\Cli\CommandController
+class {controllerClassName} extends CommandController
 {
 
     /**
@@ -27,7 +28,7 @@ class {controllerClassName} extends \TYPO3\Flow\Cli\CommandController
      * @param string $optionalArgument This argument is optional
      * @return void
      */
-    public function exampleCommand($requiredArgument, $optionalArgument = NULL)
+    public function exampleCommand($requiredArgument, $optionalArgument = null)
     {
         $this->outputLine('You called the example command and passed "%s" as the first argument.', array($requiredArgument));
     }
