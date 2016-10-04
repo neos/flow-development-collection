@@ -54,7 +54,7 @@ class StripTagsViewHelper extends AbstractViewHelper
      */
     public function render($value = null)
     {
-        return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

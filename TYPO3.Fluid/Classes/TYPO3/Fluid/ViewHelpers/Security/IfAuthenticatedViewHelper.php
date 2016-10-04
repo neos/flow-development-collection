@@ -57,19 +57,19 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
      */
     public function render()
     {
-        if ($this->renderChildrenClosure === null) {
-            $this->renderChildrenClosure = function() {};
+        if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
+            return $this->renderThenChild();
         }
-        return self::renderStatic($this->arguments, $this->renderChildrenClosure, $this->renderingContext);
+
+        return $this->renderElseChild();
     }
 
     /**
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param null $arguments
      * @param RenderingContextInterface $renderingContext
-     * @return mixed
+     * @return bool
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
         /** @var Context $securityContext */
@@ -83,6 +83,6 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
             }
         }
 
-        return static::renderResult($isAuthenticated, $arguments, $renderingContext);
+        return $isAuthenticated;
     }
 }

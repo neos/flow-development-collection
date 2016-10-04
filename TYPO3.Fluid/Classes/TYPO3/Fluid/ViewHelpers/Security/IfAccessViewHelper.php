@@ -73,10 +73,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
      */
     public function render()
     {
-        $privilegeManager = static::getPrivilegeManager($this->renderingContext);
-        $arguments = $this->arguments;
-
-        if ($privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters'])) {
+        if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
             return $this->renderThenChild();
         }
 
@@ -91,8 +88,18 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
+        return static::renderResult(static::evaluateCondition($arguments, $renderingContext), $arguments, $renderingContext);
+    }
+
+    /**
+     * @param null $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
         $privilegeManager = static::getPrivilegeManager($renderingContext);
-        return static::renderResult($privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']), $arguments, $renderingContext);
+        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']);
     }
 
     /**

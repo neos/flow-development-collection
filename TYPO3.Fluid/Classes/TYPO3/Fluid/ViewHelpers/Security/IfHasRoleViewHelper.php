@@ -77,18 +77,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 class IfHasRoleViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var PolicyService
-     */
-    protected $policyService;
-
-    /**
      * renders <f:then> child if the role could be found in the security context,
      * otherwise renders <f:else> child.
      *
@@ -100,39 +88,19 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      */
     public function render($role, $packageKey = null, Account $account = null)
     {
-        if (is_string($role)) {
-            $roleIdentifier = $role;
-
-            if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
-                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
-            }
-
-            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
-                if ($packageKey === null) {
-                    $request = $this->controllerContext->getRequest();
-                    $roleIdentifier = $request->getControllerPackageKey() . ':' . $roleIdentifier;
-                } else {
-                    $roleIdentifier = $packageKey . ':' . $roleIdentifier;
-                }
-            }
-
-            $role = $this->policyService->getRole($roleIdentifier);
-        }
-
-        if ($account instanceof Account) {
-            $hasRole = $account->hasRole($role);
-        } else {
-            $hasRole = $this->securityContext->hasRole($role->getIdentifier());
-        }
-
-        if ($hasRole) {
+        if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
             return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
         }
+
+        return $this->renderElseChild();
     }
 
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    /**
+     * @param null $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
         /** @var PolicyService $policyService */
@@ -163,6 +131,6 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
             $hasRole = $account->hasRole($role);
         }
 
-        return static::renderResult($hasRole, $arguments, $renderingContext);
+        return $hasRole;
     }
 }
