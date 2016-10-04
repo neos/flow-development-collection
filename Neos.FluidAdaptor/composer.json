@@ -1,0 +1,15 @@
+{
+	"name": "neos/fluid-adaptor",
+	"type": "neos-framework",
+	"description": "Fluid Templating Framework Adaptor",
+	"license": ["MIT"],
+	"require": {
+		"typo3/flow": "*",
+		"typo3fluid/fluid": "^1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Neos\\FluidAdaptor\\": "Classes/"
+		}
+	}
+}

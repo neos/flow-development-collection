@@ -21,6 +21,7 @@
     },
     "replace": {
         "neos/error-messages": "self.version",
+        "neos/fluid-adaptor": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -32,7 +33,6 @@
         "neos/utility-unicode": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
-        "typo3/fluid": "self.version",
         "typo3/kickstart": "self.version"
     },
     "suggest": {
@@ -81,8 +81,8 @@
             "TYPO3\\Flow\\Core\\Migrations\\": [
                 "TYPO3.Flow/Scripts/Migrations"
             ],
-            "Neos\\Fluid\\": [
-                "TYPO3.Fluid/Classes/"
+            "Neos\\FluidAdaptor\\": [
+                "Neos.FluidAdaptor/Classes/"
             ]
         }
     },

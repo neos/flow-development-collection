@@ -95,7 +95,7 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = \TYPO3\Fluid\View\TemplateView::class;
+    protected $defaultViewObjectName = \Neos\FluidAdaptor\View\TemplateView::class;
 
     /**
      * Name of the action method

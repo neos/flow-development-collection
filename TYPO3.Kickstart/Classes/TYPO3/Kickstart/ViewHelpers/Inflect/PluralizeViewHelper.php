@@ -26,7 +26,7 @@ use TYPO3\Flow\Annotations as Flow;
  * content of {variable} in its plural form (foo => foos)
  *
  */
-class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class PluralizeViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var \TYPO3\Kickstart\Utility\Inflector

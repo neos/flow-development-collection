@@ -12,7 +12,7 @@ namespace TYPO3\Kickstart\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\View\StandaloneView;
+use Neos\FluidAdaptor\View\StandaloneView;
 
 /**
  * Service for the Kickstart generator
@@ -437,7 +437,7 @@ class GeneratorService
      * @param string $templatePathAndFilename
      * @param array $contextVariables
      * @return string
-     * @throws \TYPO3\Fluid\Core\Exception
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
     protected function renderTemplate($templatePathAndFilename, array $contextVariables)
     {

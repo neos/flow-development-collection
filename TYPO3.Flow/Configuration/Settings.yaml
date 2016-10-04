@@ -709,13 +709,13 @@ TYPO3:
         title: 'Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/FluidViewHelperReference.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Flow:FlowValidators':
         title: 'Flow Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'

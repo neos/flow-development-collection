@@ -15,7 +15,7 @@ use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Fluid\Core\Parser\TemplateParser;
+use Neos\FluidAdaptor\Core\Parser\TemplateParser;
 
 /**
  * The Flow Package
@@ -116,7 +116,7 @@ class Package extends BasePackage
         });
         $dispatcher->connect(\TYPO3\Flow\Command\CacheCommandController::class, 'warmupCaches', \TYPO3\Flow\Configuration\ConfigurationManager::class, 'warmup');
 
-        $dispatcher->connect(\TYPO3\Fluid\Core\Parser\TemplateParser::class, 'initializeNamespaces', function (TemplateParser $templateParser) use ($bootstrap) {
+        $dispatcher->connect(\Neos\FluidAdaptor\Core\Parser\TemplateParser::class, 'initializeNamespaces', function (TemplateParser $templateParser) use ($bootstrap) {
             /** @var PackageManagerInterface $packageManager */
             $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
             /** @var PackageInterface $package */

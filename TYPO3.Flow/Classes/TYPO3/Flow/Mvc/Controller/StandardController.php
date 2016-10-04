@@ -26,7 +26,7 @@ class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     protected function resolveView()
     {
-        $view = new \TYPO3\Fluid\View\TemplateView();
+        $view = new \Neos\FluidAdaptor\View\TemplateView();
         $view->setControllerContext($this->controllerContext);
         $view->setTemplatePathAndFilename(FLOW_PATH_FLOW . 'Resources/Private/Mvc/StandardView_Template.html');
         return $view;

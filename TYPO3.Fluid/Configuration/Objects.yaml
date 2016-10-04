@@ -1,9 +1,0 @@
-TYPO3\Fluid\Core\Cache\CacheAdaptor:
-  properties:
-    flowCache:
-      object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Fluid_TemplateCache
