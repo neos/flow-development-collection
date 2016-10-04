@@ -370,11 +370,12 @@ class StringHelper implements ProtectedContextAwareInterface
      * This is a wrapper for the strip_tags() PHP function.
      *
      * @param string $string The string to strip
+     * @param string $allowableTags Specify tags which should not be stripped
      * @return string The string with tags stripped
      */
-    public function stripTags($string)
+    public function stripTags($string, $allowableTags = null)
     {
-        return strip_tags($string);
+        return strip_tags($string, $allowableTags);
     }
 
     /**
