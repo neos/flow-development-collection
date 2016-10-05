@@ -13,6 +13,8 @@ use TYPO3\Flow\Utility\TypeHandling;
 /**
  * A datatype that replaces references to entities in arrays with a type/identifier tuple
  * and strips singletons from the data to be stored.
+ *
+ * @Flow\Proxy(false)
  */
 class ObjectArray extends Types\ArrayType
 {

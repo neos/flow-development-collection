@@ -30,6 +30,8 @@ class DummyClassWithGettersAndSetters
     public $publicProperty;
     public $publicProperty2 = 42;
 
+    protected $propertyBag = [];
+
     public function setProperty($property)
     {
         $this->property = $property;
@@ -91,5 +93,20 @@ class DummyClassWithGettersAndSetters
 
     public function setWriteOnlyMagicProperty($value)
     {
+    }
+
+    public function has($property)
+    {
+        return isset($this->propertyBag[$property]);
+    }
+
+    public function get($property)
+    {
+        return isset($this->propertyBag[$property]) ? $this->propertyBag[$property] : null;
+    }
+
+    public function set($property, $value)
+    {
+        $this->propertyBag[$property] = $value;
     }
 }
