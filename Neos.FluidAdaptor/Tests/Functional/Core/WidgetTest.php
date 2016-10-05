@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Functional\Core;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -29,7 +29,7 @@ class WidgetTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $route->setName('WidgetTest');
         $route->setUriPattern('test/widget/{@controller}(/{@action})');
         $route->setDefaults(array(
-            '@package' => 'TYPO3.Fluid',
+            '@package' => 'Neos.FluidAdaptor',
             '@subpackage' => 'Tests\Functional\Core\Fixtures',
             '@action' => 'index',
             '@format' => 'html'

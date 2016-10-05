@@ -11,10 +11,10 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Fluid\View\TemplateView;
 
 /**
  * A Special Case of a Controller: If no controller has been specified in the
@@ -29,7 +29,7 @@ class StandardController extends ActionController
      */
     protected function resolveView()
     {
-        $view = new \Neos\FluidAdaptor\View\TemplateView();
+        $view = new TemplateView();
         $view->setControllerContext($this->controllerContext);
         $view->setTemplatePathAndFilename(FLOW_PATH_FLOW . 'Resources/Private/Mvc/StandardView_Template.html');
         return $view;

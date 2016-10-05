@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -28,7 +29,6 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Fluid\View\TemplateView;
 
 /**
  * An HTTP based multi-action controller.
@@ -112,7 +112,7 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = \Neos\FluidAdaptor\View\TemplateView::class;
+    protected $defaultViewObjectName = TemplateView::class;
 
     /**
      * Name of the action method

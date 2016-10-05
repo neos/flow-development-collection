@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -44,7 +44,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, array('renderChildren'));
 
-        $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TYPO3.Fluid'));
+        $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Neos.FluidAdaptor'));
 
         $this->dummyLocale = new Locale('de_DE');
 

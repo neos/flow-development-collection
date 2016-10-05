@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Functional\Form;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -38,7 +38,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $route = new \TYPO3\Flow\Mvc\Routing\Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
         $route->setDefaults(array(
-            '@package' => 'TYPO3.Fluid',
+            '@package' => 'Neos.FluidAdaptor',
             '@subpackage' => 'Tests\Functional\Form\Fixtures',
             '@controller' => 'Form',
             '@action' => 'index',

@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

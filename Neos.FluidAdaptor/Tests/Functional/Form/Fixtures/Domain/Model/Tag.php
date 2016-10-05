@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

@@ -2,7 +2,7 @@
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 
 /*
- * This file is part of the TYPO3.Fluid package.
+ * This file is part of the Neos.FluidAdaptor package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -80,9 +80,9 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
         $mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnCallback(function ($role) {
             switch ($role) {
-                case 'TYPO3.Fluid:Administrator':
+                case 'Neos.FluidAdaptor:Administrator':
                     return true;
-                case 'TYPO3.Fluid:User':
+                case 'Neos.FluidAdaptor:User':
                     return false;
             }
         }));
@@ -92,10 +92,10 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $this->mockViewHelper->expects($this->any())->method('renderThenChild')->will($this->returnValue('true'));
         $this->mockViewHelper->expects($this->any())->method('renderElseChild')->will($this->returnValue('false'));
 
-        $actualResult = $this->mockViewHelper->render(new Role('TYPO3.Fluid:Administrator'));
+        $actualResult = $this->mockViewHelper->render(new Role('Neos.FluidAdaptor:Administrator'));
         $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
 
-        $actualResult = $this->mockViewHelper->render(new Role('TYPO3.Fluid:User'), 'TYPO3.Fluid');
+        $actualResult = $this->mockViewHelper->render(new Role('Neos.FluidAdaptor:User'), 'Neos.FluidAdaptor');
         $this->assertEquals('false', $actualResult);
     }
 
@@ -107,7 +107,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $mockAccount = $this->createMock(\TYPO3\Flow\Security\Account::class);
         $mockAccount->expects($this->any())->method('hasRole')->will($this->returnCallback(function (Role $role) {
             switch ($role->getIdentifier()) {
-                case 'TYPO3.Fluid:Administrator':
+                case 'Neos.FluidAdaptor:Administrator':
                     return true;
             }
         }));
@@ -117,7 +117,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $this->mockViewHelper->expects($this->any())->method('renderElseChild')->will($this->returnValue('false'));
 
         /** @var IfHasRoleViewHelper $this ->mockViewHelper */
-        $actualResult = $this->mockViewHelper->render(new Role('TYPO3.Fluid:Administrator'), null, $mockAccount);
+        $actualResult = $this->mockViewHelper->render(new Role('Neos.FluidAdaptor:Administrator'), null, $mockAccount);
         $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
     }
 }
