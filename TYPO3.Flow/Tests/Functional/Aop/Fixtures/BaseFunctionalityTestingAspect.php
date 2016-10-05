@@ -214,8 +214,6 @@ class BaseFunctionalityTestingAspect
     }
 
     /**
-     * This advice is expected to be ignored because the target class is final and thus not proxied by default
-     *
      * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithFinalModifier->someMethod())")
      * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
      * @return string
