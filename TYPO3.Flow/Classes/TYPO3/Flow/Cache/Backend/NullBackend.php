@@ -30,7 +30,7 @@ class NullBackend extends AbstractBackend implements PhpCapableBackendInterface,
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
     {
     }
 
@@ -79,7 +79,7 @@ class NullBackend extends AbstractBackend implements PhpCapableBackendInterface,
      */
     public function findIdentifiersByTag($tag)
     {
-        return array();
+        return [];
     }
 
     /**

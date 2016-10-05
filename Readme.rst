@@ -13,7 +13,7 @@
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: Latest Stable Version
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
-   :target: https://packagist.org/packages/neos/flow-development-collection
+   :target: https://raw.githubusercontent.com/neos/flow/master/LICENSE
    :alt: License
 .. |Docs| image:: https://img.shields.io/badge/documentation-latest-blue.svg
    :target: https://flowframework.readthedocs.org/en/latest/
@@ -27,8 +27,8 @@
 .. |Forum| image:: https://img.shields.io/badge/forum-Discourse-39c6ff.svg
    :target: https://discuss.neos.io/
    :alt: Discussion Forum
-.. |Issues| image:: https://img.shields.io/badge/issues-Jira-39c6ff.svg
-   :target: https://jira.neos.io/browse/FLOW
+.. |Issues| image:: https://img.shields.io/github/issues/neos/flow-development-collection.svg
+   :target: https://github.com/neos/flow-development-collection/issues
    :alt: Issues
 .. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
    :target: http://translate.neos.io/

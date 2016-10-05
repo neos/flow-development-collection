@@ -89,7 +89,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         }
         if (is_array($propertyValue)) {
             if ($checked === null) {
-                $checked = in_array($valueAttribute, $propertyValue);
+                $checked = in_array($valueAttribute, $propertyValue, true);
             }
             $this->arguments['multiple'] = true;
         } elseif (!$multiple && $propertyValue !== null) {

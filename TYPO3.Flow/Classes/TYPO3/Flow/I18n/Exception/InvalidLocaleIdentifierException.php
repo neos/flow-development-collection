@@ -11,11 +11,13 @@ namespace TYPO3\Flow\I18n\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Invalid Locale Identifier" exception
  *
  * @api
  */
-class InvalidLocaleIdentifierException extends \TYPO3\Flow\I18n\Exception
+class InvalidLocaleIdentifierException extends I18n\Exception
 {
 }

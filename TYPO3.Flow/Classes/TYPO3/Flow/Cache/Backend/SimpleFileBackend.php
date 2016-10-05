@@ -13,9 +13,12 @@ namespace TYPO3\Flow\Cache\Backend;
 
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Exception;
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Exception as UtilityException;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
@@ -100,7 +103,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      * Sets a reference to the cache frontend which uses this backend and
      * initializes the default cache directory.
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The cache frontend
+     * @param FrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */
@@ -116,8 +119,8 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
         }
         if (!is_writable($cacheDirectory)) {
             try {
-                \TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);
-            } catch (\TYPO3\Flow\Utility\Exception $exception) {
+                Files::createDirectoryRecursively($cacheDirectory);
+            } catch (UtilityException $exception) {
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }
@@ -164,14 +167,14 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      * @param integer $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @api
      */
     public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
     {
         if (!is_string($data)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
+            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
         }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
@@ -275,7 +278,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
      */
     public function flush()
     {
-        \TYPO3\Flow\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
+        Files::emptyDirectoryRecursively($this->cacheDirectory);
     }
 
     /**

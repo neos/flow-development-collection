@@ -88,31 +88,31 @@ class Context
      * Array of configured tokens (might have request patterns)
      * @var array
      */
-    protected $tokens = array();
+    protected $tokens = [];
 
     /**
      * @var array
      */
-    protected $tokenStatusLabels = array(
+    protected $tokenStatusLabels = [
         1 => 'no credentials given',
         2 => 'wrong credentials',
         3 => 'authentication successful',
         4 => 'authentication needed'
-    );
+    ];
 
     /**
      * Array of tokens currently active
      * @var TokenInterface[]
      * @Flow\Transient
      */
-    protected $activeTokens = array();
+    protected $activeTokens = [];
 
     /**
      * Array of tokens currently inactive
      * @var array
      * @Flow\Transient
      */
-    protected $inactiveTokens = array();
+    protected $inactiveTokens = [];
 
     /**
      * One of the AUTHENTICATE_* constants to set the authentication strategy.
@@ -164,7 +164,7 @@ class Context
     /**
      * @var array
      */
-    protected $csrfProtectionTokens = array();
+    protected $csrfProtectionTokens = [];
 
     /**
      * @var RequestInterface
@@ -324,7 +324,7 @@ class Context
         }
 
         if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
-            $this->csrfProtectionTokens = array();
+            $this->csrfProtectionTokens = [];
         }
 
         $this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
@@ -357,7 +357,7 @@ class Context
     }
 
     /**
-     * Returns all \TYPO3\Flow\Security\Authentication\Tokens of the security context which are
+     * Returns all Authentication\Tokens of the security context which are
      * active for the current request. If a token has a request pattern that cannot match
      * against the current request it is determined as not active.
      *
@@ -373,7 +373,7 @@ class Context
     }
 
     /**
-     * Returns all \TYPO3\Flow\Security\Authentication\Tokens of the security context which are
+     * Returns all Authentication\Tokens of the security context which are
      * active for the current request and of the given type. If a token has a request pattern that cannot match
      * against the current request it is determined as not active.
      *
@@ -386,7 +386,7 @@ class Context
             $this->initialize();
         }
 
-        $activeTokens = array();
+        $activeTokens = [];
         foreach ($this->activeTokens as $token) {
             if ($token instanceof $className) {
                 $activeTokens[] = $token;
@@ -412,13 +412,13 @@ class Context
         }
 
         if ($this->roles === null) {
-            $this->roles = array('TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody'));
+            $this->roles = ['TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody')];
 
             if ($this->authenticationManager->isAuthenticated() === false) {
                 $this->roles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
             } else {
                 $this->roles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
-                /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+                /** @var $token TokenInterface */
                 foreach ($this->getAuthenticationTokens() as $token) {
                     if ($token->isAuthenticated() !== true) {
                         continue;
@@ -479,7 +479,7 @@ class Context
      * (@see getAuthenticationTokens())
      *
      * @return AbstractParty The authenticated party
-     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.typo3.org/browse/FLOW-5)
+     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.neos.io/browse/FLOW-5)
      */
     public function getParty()
     {
@@ -487,7 +487,7 @@ class Context
             $this->initialize();
         }
 
-        /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+        /** @var $token TokenInterface */
         foreach ($this->getAuthenticationTokens() as $token) {
             if ($token->isAuthenticated() === true) {
                 /** @noinspection PhpDeprecationInspection */
@@ -502,7 +502,7 @@ class Context
      *
      * @param string $className Class name of the party to find
      * @return AbstractParty The authenticated party
-     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.typo3.org/browse/FLOW-5)
+     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.neos.io/browse/FLOW-5)
      */
     public function getPartyByType($className)
     {
@@ -510,7 +510,7 @@ class Context
             $this->initialize();
         }
 
-        /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+        /** @var $token TokenInterface */
         foreach ($this->getAuthenticationTokens() as $token) {
             /** @noinspection PhpDeprecationInspection */
             if ($token->isAuthenticated() === true && $token->getAccount() instanceof Account && $token->getAccount()->getParty() instanceof $className) {
@@ -528,7 +528,7 @@ class Context
      * from the tokens.
      * (@see getAuthenticationTokens())
      *
-     * @return \TYPO3\Flow\Security\Account The authenticated account
+     * @return Account The authenticated account
      */
     public function getAccount()
     {
@@ -536,7 +536,7 @@ class Context
             $this->initialize();
         }
 
-        /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+        /** @var $token TokenInterface */
         foreach ($this->getAuthenticationTokens() as $token) {
             if ($token->isAuthenticated() === true) {
                 return $token->getAccount();
@@ -551,7 +551,7 @@ class Context
      * authentication provider name.
      *
      * @param string $authenticationProviderName Authentication provider name of the account to find
-     * @return \TYPO3\Flow\Security\Account The authenticated account
+     * @return Account The authenticated account
      */
     public function getAccountByAuthenticationProviderName($authenticationProviderName)
     {
@@ -653,11 +653,11 @@ class Context
     {
         $this->roles = null;
         $this->contextHash = null;
-        $this->tokens = array();
-        $this->activeTokens = array();
-        $this->inactiveTokens = array();
+        $this->tokens = [];
+        $this->activeTokens = [];
+        $this->inactiveTokens = [];
         $this->request = null;
-        $this->csrfProtectionTokens = array();
+        $this->csrfProtectionTokens = [];
         $this->interceptedRequest = null;
         $this->authorizationChecksDisabled = false;
         $this->initialized = false;
@@ -674,7 +674,7 @@ class Context
             return;
         }
 
-        /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+        /** @var $token TokenInterface */
         foreach ($this->tokens as $token) {
             if ($this->isTokenActive($token)) {
                 $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
@@ -716,17 +716,17 @@ class Context
      *
      * @param array $managerTokens Array of tokens provided by the authentication manager
      * @param array $sessionTokens Array of tokens restored from the session
-     * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface objects
+     * @return array Array of Authentication\TokenInterface objects
      */
     protected function mergeTokens($managerTokens, $sessionTokens)
     {
-        $resultTokens = array();
+        $resultTokens = [];
 
         if (!is_array($managerTokens)) {
             return $resultTokens;
         }
 
-        /** @var $managerToken \TYPO3\Flow\Security\Authentication\TokenInterface */
+        /** @var $managerToken TokenInterface */
         foreach ($managerTokens as $managerToken) {
             $noCorrespondingSessionTokenFound = true;
 
@@ -734,7 +734,7 @@ class Context
                 continue;
             }
 
-            /** @var $sessionToken \TYPO3\Flow\Security\Authentication\TokenInterface */
+            /** @var $sessionToken TokenInterface */
             foreach ($sessionTokens as $sessionToken) {
                 if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
                     $session = $this->sessionManager->getCurrentSession();
@@ -770,7 +770,7 @@ class Context
     protected function updateTokens(array $tokens)
     {
         if ($this->request !== null) {
-            /** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+            /** @var $token TokenInterface */
             foreach ($tokens as $token) {
                 $token->updateCredentials($this->request);
             }

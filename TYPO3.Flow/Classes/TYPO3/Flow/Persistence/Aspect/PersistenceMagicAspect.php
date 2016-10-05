@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Persistence\Aspect;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Algorithms;
@@ -36,7 +37,7 @@ class PersistenceMagicAspect
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -54,7 +55,14 @@ class PersistenceMagicAspect
     }
 
     /**
-     * @Flow\Pointcut("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject)")
+     * @Flow\Pointcut("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && !filter(TYPO3\Flow\Persistence\Aspect\EmbeddedValueObjectPointcutFilter)")
+     */
+    public function isNonEmbeddedValueObject()
+    {
+    }
+
+    /**
+     * @Flow\Pointcut("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject")
      */
     public function isEntityOrValueObject()
     {
@@ -81,13 +89,13 @@ class PersistenceMagicAspect
     /**
      * After returning advice, making sure we have an UUID for each and every entity.
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return void
      * @Flow\Before("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
     public function generateUuid(JoinPointInterface $joinPoint)
     {
-        /** @var $proxy \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface */
+        /** @var $proxy PersistenceMagicInterface */
         $proxy = $joinPoint->getProxy();
         ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', Algorithms::generateUUID(), true);
         $this->persistenceManager->registerNewObject($proxy);
@@ -96,15 +104,15 @@ class PersistenceMagicAspect
     /**
      * After returning advice, generates the value hash for the object
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return void
-     * @Flow\After("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && method(.*->__construct()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
+     * @Flow\After("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject && method(.*->__construct()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
     public function generateValueHash(JoinPointInterface $joinPoint)
     {
         $proxy = $joinPoint->getProxy();
         $proxyClassName = get_class($proxy);
-        $hashSourceParts = array();
+        $hashSourceParts = [];
 
         $classSchema = $this->reflectionService->getClassSchema($proxyClassName);
         foreach ($classSchema->getProperties() as $property => $propertySchema) {
@@ -140,7 +148,7 @@ class PersistenceMagicAspect
      * Note: this is not used by anything in the Flow base distribution,
      * but might be needed by custom backends (like TYPO3.CouchDB).
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return void
      * @Flow\AfterReturning("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
      */

@@ -11,7 +11,8 @@ namespace TYPO3\Flow\Utility\Lock;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility;
 
 /**
  * A flock based lock strategy.
@@ -69,7 +70,7 @@ class FlockLockStrategy implements LockStrategyInterface
      */
     public function acquire($subject, $exclusiveLock)
     {
-        $this->lockFileName = Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
+        $this->lockFileName = Utility\Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $aquiredLock = false;
         $i = 0;
         while ($aquiredLock === false) {
@@ -86,12 +87,11 @@ class FlockLockStrategy implements LockStrategyInterface
      *
      * @param string $lockDirectory
      * @throws LockNotAcquiredException
-     * @throws \TYPO3\Flow\Utility\Exception
      * return void
      */
     protected function configureLockDirectory($lockDirectory)
     {
-        Files::createDirectoryRecursively($lockDirectory);
+        Utility\Files::createDirectoryRecursively($lockDirectory);
         $this->temporaryDirectory = $lockDirectory;
     }
 

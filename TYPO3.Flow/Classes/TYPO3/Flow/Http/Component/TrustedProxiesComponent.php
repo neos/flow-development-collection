@@ -58,7 +58,7 @@ class TrustedProxiesComponent implements ComponentInterface
         if ($portHeader !== null) {
             $trustedRequest->getUri()->setPort($portHeader);
         } elseif ($protocolHeader !== null) {
-            $trustedRequest->getUri()->setPort($protocolHeader === 'https' ? 443 : 80);
+            $trustedRequest->getUri()->setPort(strtolower($protocolHeader) === 'https' ? 443 : 80);
         }
 
         $componentContext->replaceHttpRequest($trustedRequest);

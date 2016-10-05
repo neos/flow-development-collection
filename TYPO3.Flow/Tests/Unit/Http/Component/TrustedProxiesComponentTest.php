@@ -440,6 +440,12 @@ class TrustedProxiesComponentTest extends UnitTestCase
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'https://acme.com:80',
             ),
+            array(
+                'forwardedProtocol' => 'HTTPS',
+                'forwardedPort' => null,
+                'requestUri' => 'http://acme.com',
+                'expectedUri' => 'https://acme.com',
+            ),
         );
     }
 

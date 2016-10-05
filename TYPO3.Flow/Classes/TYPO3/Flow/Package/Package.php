@@ -130,7 +130,7 @@ class Package implements PackageInterface
      * Note that since Flow 3.1 the MetaData won't contain any constraints,
      * please use the composer manifest directly if you need this information.
      *
-     * @return \TYPO3\Flow\Package\MetaData
+     * @return MetaData
      * @deprecated To be removed in Flow 4.0
      */
     public function getPackageMetaData()

@@ -68,4 +68,12 @@ class TypedArrayConverterTest extends UnitTestCase
             $this->assertFalse($actualResult);
         }
     }
+
+    /**
+     * @test
+     */
+    public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
+    {
+        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted(''));
+    }
 }

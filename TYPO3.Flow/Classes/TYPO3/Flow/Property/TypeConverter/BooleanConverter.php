@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * Converter which transforms simple types to a boolean.
@@ -28,7 +29,7 @@ class BooleanConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('boolean', 'string', 'integer', 'float');
+    protected $sourceTypes = ['boolean', 'string', 'integer', 'float'];
 
     /**
      * @var string
@@ -46,11 +47,11 @@ class BooleanConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return boolean
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_bool($source)) {
             return $source;
@@ -60,6 +61,6 @@ class BooleanConverter extends AbstractTypeConverter
             return (boolean)$source;
         }
 
-        return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
+        return (!empty($source) && !in_array(strtolower($source), ['off', 'n', 'no', 'false']));
     }
 }

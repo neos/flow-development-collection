@@ -11,6 +11,8 @@ namespace TYPO3\Flow\I18n\Cldr\Exception;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+
 /**
  * The "Invalid CLDR Data" exception
  *
@@ -18,6 +20,6 @@ namespace TYPO3\Flow\I18n\Cldr\Exception;
  *
  * @api
  */
-class InvalidCldrDataException extends \TYPO3\Flow\I18n\Exception
+class InvalidCldrDataException extends I18n\Exception
 {
 }
