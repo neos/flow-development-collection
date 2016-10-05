@@ -127,10 +127,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
                 break;
         }
 
-        if ($methodDeclaringClassName !== null && $this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName)) {
-            return false;
-        }
-
         $methodArguments = ($methodDeclaringClassName === null ? [] : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));
         foreach (array_keys($this->methodArgumentConstraints) as $argumentName) {
             $objectAccess = explode('.', $argumentName, 2);

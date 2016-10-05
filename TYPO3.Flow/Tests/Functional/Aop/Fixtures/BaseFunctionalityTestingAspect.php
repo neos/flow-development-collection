@@ -224,4 +224,16 @@ class BaseFunctionalityTestingAspect
         $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return 'nothing is ' . $originalValue . '!';
     }
+
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->someFinalMethod())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithFinalModifierAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return $originalValue . ' But, as said, nothing is final!';
+    }
 }

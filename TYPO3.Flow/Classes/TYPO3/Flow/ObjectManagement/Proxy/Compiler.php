@@ -243,6 +243,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
+            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6];
+        }, $classCode);
+
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
         $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;

@@ -664,10 +664,6 @@ class ProxyClassBuilder
                 foreach ($methods as $method) {
                     list($methodDeclaringClassName, $methodName) = $method;
 
-                    if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) {
-                        continue;
-                    }
-
                     if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
                         continue;
                     }

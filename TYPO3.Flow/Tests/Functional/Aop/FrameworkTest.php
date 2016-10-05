@@ -283,4 +283,13 @@ class FrameworkTest extends FunctionalTestCase
         $targetClass = new Fixtures\TargetClassWithFinalModifier();
         $this->assertSame('nothing is final!', $targetClass->someMethod());
     }
+
+    /**
+     * @test
+     */
+    public function finalMethodsCanBeAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertSame('I am final. But, as said, nothing is final!', $targetClass->someFinalMethod());
+    }
 }
