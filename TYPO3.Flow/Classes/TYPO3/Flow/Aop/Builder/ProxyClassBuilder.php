@@ -227,7 +227,7 @@ class ProxyClassBuilder
         $treatedSubClasses = new ClassNameIndex();
 
         foreach ($targetClassNameCandidates->getClassNames() as $targetClassName) {
-            $isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
+            $isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '-', $targetClassName));
             $hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
             if ($rebuildEverything === true || $hasCacheEntry === false) {
                 $proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
@@ -239,11 +239,11 @@ class ProxyClassBuilder
                 $treatedSubClasses = $this->proxySubClassesOfClassToEnsureAdvices($targetClassName, $targetClassNameCandidates, $treatedSubClasses);
                 if ($proxyBuildResult !== false) {
                     if ($isUnproxied) {
-                        $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
+                        $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '-', $targetClassName));
                     }
                     $this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_DEBUG);
                 } else {
-                    $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), true);
+                    $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '-', $targetClassName), true);
                 }
             }
         }

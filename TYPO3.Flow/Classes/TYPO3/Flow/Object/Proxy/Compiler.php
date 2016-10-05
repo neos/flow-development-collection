@@ -162,7 +162,7 @@ class Compiler
         if (isset($this->proxyClasses[$fullClassName])) {
             return false;
         }
-        return $this->classesCache->has(str_replace('\\', '_', $fullClassName));
+        return $this->classesCache->has(str_replace('\\', '-', $fullClassName));
     }
 
     /**
@@ -182,12 +182,12 @@ class Compiler
                         $class = new \ReflectionClass($fullOriginalClassName);
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
+                        $this->storedProxyClasses[str_replace('\\', '-', $fullOriginalClassName)] = true;
                         $classCount++;
                     }
                 } else {
-                    if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
+                    if ($this->classesCache->has(str_replace('\\', '-', $fullOriginalClassName))) {
+                        $this->storedProxyClasses[str_replace('\\', '-', $fullOriginalClassName)] = true;
                     }
                 }
             }
@@ -239,7 +239,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
         $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
 
-        $this->classesCache->set(str_replace('\\', '_', $className), $classCode . $proxyClassCode);
+        $this->classesCache->set(str_replace('\\', '-', $className), $classCode . $proxyClassCode);
     }
 
     /**

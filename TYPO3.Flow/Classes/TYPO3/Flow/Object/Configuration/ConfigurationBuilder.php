@@ -107,7 +107,6 @@ class ConfigurationBuilder
 
         foreach ($rawObjectConfigurationsByPackages as $packageKey => $rawObjectConfigurations) {
             foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
-                $objectName = str_replace('_', '\\', $objectName);
                 if (!is_array($rawObjectConfiguration)) {
                     throw new InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey . '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
                 }

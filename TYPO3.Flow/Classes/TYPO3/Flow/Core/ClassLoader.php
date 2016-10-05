@@ -158,7 +158,7 @@ class ClassLoader
         }
 
         // Loads any known proxied class:
-        if ($this->classesCache !== null && ($this->availableProxyClasses === null || isset($this->availableProxyClasses[implode('_', $namespaceParts)])) && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== false) {
+        if ($this->classesCache !== null && ($this->availableProxyClasses === null || isset($this->availableProxyClasses[implode('-', $namespaceParts)])) && $this->classesCache->requireOnce(implode('-', $namespaceParts)) !== false) {
             return true;
         }
 
