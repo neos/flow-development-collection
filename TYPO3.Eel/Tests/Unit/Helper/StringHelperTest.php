@@ -435,7 +435,9 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function stripTagsExamples()
     {
         return array(
-            'strip tags' => array('<a href="#">here</a>', 'here')
+            'strip tags' => array('<a href="#">here</a>', null, 'here'),
+            'strip tags with allowed tags' => array('<p><strong>important text</strong></p>', '<strong>', '<strong>important text</strong>'),
+            'strip tags with multiple allowed tags' => array('<div><p><strong>important text</strong></p></div>', '<strong>, <p>', '<p><strong>important text</strong></p>')
         );
     }
 
@@ -443,10 +445,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider stripTagsExamples
      */
-    public function stripTagsWorks($string, $expected)
+    public function stripTagsWorks($string, $allowedTags, $expected)
     {
         $helper = new StringHelper();
-        $result = $helper->stripTags($string);
+        $result = $helper->stripTags($string, $allowedTags);
         $this->assertSame($expected, $result);
     }
 
