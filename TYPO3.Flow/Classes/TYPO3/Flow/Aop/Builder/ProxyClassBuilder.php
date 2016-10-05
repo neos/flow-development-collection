@@ -288,13 +288,6 @@ class ProxyClassBuilder
                 if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Aspect::class)) {
                     continue;
                 }
-                if ($this->reflectionService->isClassFinal($className)) {
-                    /** @var Flow\Proxy $proxyAnnotation */
-                    $proxyAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Proxy::class);
-                    if ($proxyAnnotation === null || $proxyAnnotation->enabled !== true) {
-                        continue;
-                    }
-                }
                 $proxyableClasses[] = $className;
             }
         }

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A final class with dependencies - This won't work as of now!
+ * A final class with dependencies
  */
 final class FinalClassWithDependencies
 {

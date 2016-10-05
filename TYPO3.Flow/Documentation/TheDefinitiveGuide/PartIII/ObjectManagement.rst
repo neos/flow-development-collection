@@ -385,10 +385,6 @@ Generally there are two modes of dependency injection supported by Flow:
 	a serialize/unserialize cycle you should not inject the Prototype but rather create it in
 	constructor of the object.
 
-.. warning::
-	Dependency Injection doesn't work for ``final`` classes by default but it can be
-	explicitly allowed with a ``@Flow\Proxy(true)`` annotation on the class in question.
-
 Constructor Injection
 ---------------------
 

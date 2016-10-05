@@ -275,18 +275,9 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function finalClassesCantBeAdvisedByDefault()
+    public function finalClassesCanBeAdvised()
     {
         $targetClass = new Fixtures\TargetClassWithFinalModifier();
-        $this->assertSame('final', $targetClass->someMethod());
-    }
-
-    /**
-     * @test
-     */
-    public function finalClassesWithProxyAnnotationCanBeAdvised()
-    {
-        $targetClass = new Fixtures\TargetClassWithFinalModifierAndProxyAnnotation();
         $this->assertSame('nothing is final!', $targetClass->someMethod());
     }
 }

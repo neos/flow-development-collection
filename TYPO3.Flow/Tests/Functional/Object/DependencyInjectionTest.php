@@ -323,18 +323,9 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dependencyInjectionIsDisabledForFinalClassesByDefault()
+    public function dependencyInjectionWorksForFinalClasses()
     {
         $object = $this->objectManager->get(FinalClassWithDependencies::class);
-        $this->assertNull($object->dependency);
-    }
-
-    /**
-     * @test
-     */
-    public function dependencyInjectionWorksForFinalClassesThatExplicitlyEnableProxyBuilding()
-    {
-        $object = $this->objectManager->get(FinalClassWithDependenciesAndProxyAnnotation::class);
         $this->assertInstanceOf(SingletonClassA::class, $object->dependency);
     }
 }

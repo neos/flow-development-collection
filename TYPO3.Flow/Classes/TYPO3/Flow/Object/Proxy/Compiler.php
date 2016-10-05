@@ -137,11 +137,11 @@ class Compiler
         if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
             return false;
         }
-        if ($classReflection->isFinal() && $proxyAnnotation === null) {
-            return false;
-        }
 
         if (in_array(substr($fullClassName, 0, 14), $this->blacklistedSubPackages)) {
+            return false;
+        }
+        if ($classReflection->isFinal() && preg_match('/^\s?\*\s?\@Annotation\s/m', $classReflection->getDocComment()) === 1) {
             return false;
         }
 

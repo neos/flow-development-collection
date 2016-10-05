@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  */
 
 use TYPO3\Flow\Reflection\ClassReflection;
-use TYPO3\Flow\Tests\Functional\Object\Fixtures\FinalClassWithDependenciesAndProxyAnnotation;
+use TYPO3\Flow\Tests\Functional\Object\Fixtures\FinalClassWithDependencies;
 
 /**
  * Functional tests for the Proxy Compiler and related features
@@ -125,7 +125,7 @@ class ProxyCompilerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function proxiedFinalClassesAreStillFinal()
     {
-        $reflectionClass = new ClassReflection(FinalClassWithDependenciesAndProxyAnnotation::class);
+        $reflectionClass = new ClassReflection(FinalClassWithDependencies::class);
         $this->assertTrue($reflectionClass->isFinal());
     }
 }
