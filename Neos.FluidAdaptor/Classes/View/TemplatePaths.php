@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -155,10 +156,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $layoutName = ucfirst($layoutName);
 
         $paths = $this->expandGenericPathPattern($this->options['layoutPathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
-            'layout' => $layoutName,
+            'layout' => $layoutName
         ]), true, true);
 
-        foreach ($paths as &$layoutPathAndFilename) {
+        foreach ($paths as $layoutPathAndFilename) {
             if (is_file($layoutPathAndFilename)) {
                 return $layoutPathAndFilename;
             }
@@ -175,11 +176,21 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function getPartialPathAndFilename($partialName)
     {
-        $paths = $this->expandGenericPathPattern($this->options['partialPathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
+        $patternReplacementVariables = array_merge($this->patternReplacementVariables, [
             'partial' => $partialName,
-        ]), true, true);
+        ]);
 
-        foreach ($paths as &$partialPathAndFilename) {
+        if (strpos($partialName, ':') !== false) {
+            list($packageKey, $actualPartialName) = explode(':', $partialName);
+            $package = $this->packageManager->getPackage($packageKey);
+            $patternReplacementVariables['package'] = $packageKey;
+            $patternReplacementVariables['packageResourcesPath'] = $package->getResourcesPath();
+            $patternReplacementVariables['partial'] = $actualPartialName;
+        }
+
+        $paths = $this->expandGenericPathPattern($this->options['partialPathAndFilenamePattern'], $patternReplacementVariables, true, true);
+
+        foreach ($paths as $partialPathAndFilename) {
             if (is_file($partialPathAndFilename)) {
                 return $partialPathAndFilename;
             }
@@ -279,9 +290,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     protected function expandGenericPathPattern($pattern, array $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional)
     {
         $paths = [$pattern];
-        $paths = $this->expandPatterns($paths, '@templateRoot', $this->getTemplateRootPaths());
-        $paths = $this->expandPatterns($paths, '@partialRoot', $this->getPartialRootPaths());
-        $paths = $this->expandPatterns($paths, '@layoutRoot', $this->getLayoutRootPaths());
+        $paths = $this->expandPatterns($paths, '@templateRoot', isset($patternReplacementVariables['templateRoot']) ? [$patternReplacementVariables['templateRoot']] : $this->getTemplateRootPaths());
+        $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());
+        $paths = $this->expandPatterns($paths, '@layoutRoot', isset($patternReplacementVariables['layoutRoot']) ? [$patternReplacementVariables['layoutRoot']] : $this->getLayoutRootPaths());
 
         $subPackageKey = isset($patternReplacementVariables['subPackageKey']) ? $patternReplacementVariables['subPackageKey'] : '';
         $controllerName = isset($patternReplacementVariables['controllerName']) ? $patternReplacementVariables['controllerName'] : '';

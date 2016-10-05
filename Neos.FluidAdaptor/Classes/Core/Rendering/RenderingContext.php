@@ -116,7 +116,7 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
             'subPackageKey' => $request->getControllerSubpackageKey(),
             'controllerName' => $request->getControllerName(),
             'action' => $request->getControllerActionName(),
-            'format' => $request->getFormat()
+            'format' => $request->getFormat() ?: 'html'
         ]);
     }
 

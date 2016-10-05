@@ -11,13 +11,11 @@ namespace Neos\FluidAdaptor;
  * source code.
  */
 
-use TYPO3\Flow;
-
 /**
  * The most general Fluid exception.
  *
  * @api
  */
-class Exception extends Flow\Exception
+class Exception extends \Exception
 {
 }

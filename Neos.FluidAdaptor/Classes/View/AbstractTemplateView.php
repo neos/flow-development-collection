@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
+use Neos\FluidAdaptor\Exception;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\View\ViewInterface;
@@ -119,6 +120,14 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         $context->setControllerName('Default');
         $context->setControllerAction('Default');
         $this->setRenderingContext($context);
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     */
+    public function setTemplatePathAndFilename($templatePathAndFilename)
+    {
+        return $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
     }
 
     /**

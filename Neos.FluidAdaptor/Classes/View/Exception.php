@@ -18,6 +18,6 @@ use Neos\FluidAdaptor;
  *
  * @api
  */
-class Exception extends Fluid\Exception
+class Exception extends FluidAdaptor\Exception
 {
 }
