@@ -578,15 +578,15 @@ Flow allows you can enable and configure the second level cache through the conf
 
 .. code-block:: yaml
 
-	TYPO3:
-	  Flow:
-	    persistence:
-	      doctrine:
-	        secondLevelCache:
-	          enable: true
-	          defaultLifetime: 3600
-	          regions:
-	            'my_entity_region': 7200
+  TYPO3:
+    Flow:
+      persistence:
+        doctrine:
+          secondLevelCache:
+            enable: true
+            defaultLifetime: 3600
+            regions:
+              'my_entity_region': 7200
 
 .. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
 
