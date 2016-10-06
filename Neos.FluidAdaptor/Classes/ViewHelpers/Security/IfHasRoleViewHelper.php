@@ -86,7 +86,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      * @return string the rendered string
      * @api
      */
-    public function render($role, $packageKey = null, Account $account = null)
+    public function render()
     {
         if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
             return $this->renderThenChild();

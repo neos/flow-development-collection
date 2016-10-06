@@ -19,8 +19,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
 
-require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
-
 /**
  * Test for the Form view helper
  */
@@ -204,7 +202,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@controller]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[@action]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10) .
-            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) . chr(10) .
+            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) .
             '</div>' . chr(10) .
             'formContent';
         $this->tagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
@@ -263,7 +261,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@controller]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[@action]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10) .
-            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) . chr(10) .
+            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) .
             '</div>' . chr(10) .
             'formContent';
         $this->tagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
@@ -305,7 +303,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $viewHelper->expects($this->once())->method('renderEmptyHiddenFields')->will($this->returnValue('emptyHiddenFields'));
         $viewHelper->expects($this->once())->method('renderTrustedPropertiesField')->will($this->returnValue('trustedPropertiesField'));
 
-        $expectedResult = chr(10) . '<div style="display: none">hiddenIdentityFieldadditionalIdentityFieldshiddenReferrerFieldsemptyHiddenFieldstrustedPropertiesField' . chr(10) . '</div>' . chr(10) . 'formContent';
+        $expectedResult = chr(10) . '<div style="display: none">hiddenIdentityFieldadditionalIdentityFieldshiddenReferrerFieldsemptyHiddenFieldstrustedPropertiesField' . '</div>' . chr(10) . 'formContent';
         $this->tagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
 
         $viewHelper->render('index');

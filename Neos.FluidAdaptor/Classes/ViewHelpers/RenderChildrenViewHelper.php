@@ -114,7 +114,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      */
     protected function addArgumentsToTemplateVariableContainer(array $arguments)
     {
-        $templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
+        $templateVariableContainer = $this->getWidgetRenderingContext()->getVariableProvider();
         foreach ($arguments as $identifier => $value) {
             $templateVariableContainer->add($identifier, $value);
         }
@@ -128,7 +128,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      */
     protected function removeArgumentsFromTemplateVariableContainer(array $arguments)
     {
-        $templateVariableContainer = $this->getWidgetRenderingContext()->getTemplateVariableContainer();
+        $templateVariableContainer = $this->getWidgetRenderingContext()->getVariableProvider();
         foreach ($arguments as $identifier => $value) {
             $templateVariableContainer->remove($identifier);
         }

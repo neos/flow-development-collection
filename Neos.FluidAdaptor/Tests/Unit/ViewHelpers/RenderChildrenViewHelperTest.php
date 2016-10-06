@@ -49,7 +49,7 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHe
         $templateVariableContainer->expects($this->at(3))->method('remove')->with('k2');
 
         $renderingContext = $this->createMock(\Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface::class);
-        $renderingContext->expects($this->any())->method('getTemplateVariableContainer')->will($this->returnValue($templateVariableContainer));
+        $renderingContext->expects($this->any())->method('getVariableProvider')->will($this->returnValue($templateVariableContainer));
 
         $rootNode = $this->createMock(RootNode::class);
 
