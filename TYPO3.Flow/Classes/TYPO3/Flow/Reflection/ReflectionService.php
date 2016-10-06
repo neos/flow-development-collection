@@ -1157,7 +1157,7 @@ class ReflectionService
                 return false;
             }
 
-                    $scopeAnnotation = $this->getClassAnnotation($className, Flow\Scope::class);
+            $scopeAnnotation = $this->getClassAnnotation($className, Flow\Scope::class);
             if ($scopeAnnotation !== null && $scopeAnnotation->value !== 'prototype') {
                 throw new Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
             }
