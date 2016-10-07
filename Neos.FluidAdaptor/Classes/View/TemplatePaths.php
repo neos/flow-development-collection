@@ -233,7 +233,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $path = Files::getUnixStylePath($path);
-        $path = Files::getNormalizedPath($path);
+        if (is_dir($path)) {
+            $path = Files::getNormalizedPath($path);
+        }
+
         return $path;
     }
 
@@ -414,4 +417,30 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             ObjectAccess::setProperty($this, $optionName, $value);
         }
     }
+
+    /**
+     * Returns a unique identifier for the given file in the format
+     * <PackageKey>_<SubPackageKey>_<ControllerName>_<prefix>_<SHA1>
+     * The SH1 hash is a checksum that is based on the file path and last modification date
+     *
+     * @param string $pathAndFilename
+     * @param string $prefix
+     * @return string
+     */
+    protected function createIdentifierForFile($pathAndFilename, $prefix)
+    {
+        $templateModifiedTimestamp = 0;
+        $isStandardInput = $pathAndFilename === 'php://stdin';
+        $isFile = is_file($pathAndFilename);
+        if ($isStandardInput === false && $isFile === false) {
+            throw new InvalidTemplateResourceException(sprintf('The fluid file "%s" was not found.', $pathAndFilename), 1475831187);
+        }
+
+        if ($isStandardInput === false) {
+            $templateModifiedTimestamp = filemtime($pathAndFilename);
+        }
+
+        return sprintf('%s_%s', $prefix, sha1($pathAndFilename . '|' . $templateModifiedTimestamp));
+    }
+
 }

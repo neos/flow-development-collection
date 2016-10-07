@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\TemplatePaths;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
@@ -290,8 +291,8 @@ class StandaloneViewTest extends FunctionalTestCase
         $this->assertSame($expected, $actual, 'First rendering was not escaped.');
 
         // To avoid any side effects we create a separate accessible mock to find the cache identifier for the partial
-        $dummyTemplateView = $this->getAccessibleMock(StandaloneView::class, null, array($actionRequest, $this->standaloneViewNonce));
-        $partialCacheIdentifier = $dummyTemplateView->_call('createIdentifierForFile', __DIR__ . '/Fixtures/NestedRenderingConfiguration/Partials/Test.html', 'partial_Test');
+        $dummyTemplatePaths = $this->getAccessibleMock(TemplatePaths::class);
+        $partialCacheIdentifier = $dummyTemplatePaths->_call('createIdentifierForFile', __DIR__ . '/Fixtures/NestedRenderingConfiguration/Partials/Test.html', 'partial_Test');
         $templateCache = $this->objectManager->get(CacheManager::class)->getCache('Fluid_TemplateCache');
         $templateCache->remove($partialCacheIdentifier);
 
