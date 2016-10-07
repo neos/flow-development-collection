@@ -164,9 +164,6 @@ TYPO3\Flow\Http\Component\ComponentChain:
     1:
       setting: TYPO3.Flow.http.chain
 
-TYPO3\Flow\Http\HttpRequestHandlerInterface:
-  className: TYPO3\Flow\Http\RequestHandler
-
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #

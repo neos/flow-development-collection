@@ -215,12 +215,11 @@ using these instead of the low-level constructor method.
 .. warning::
 
 	You should only create a ``Request`` manually if you want to send out requests or if you know exactly what you are
-	doing. Creating a new ``Request`` will completely bypass all ``HTTP Components`` and might therefore lead to
+	doing. The created ``Request`` will not have any ``HTTP Components`` affect him and might therefore lead to
 	unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``Request`` providing
 	wrong protocol, host or client IP address.
-	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject a ``HttpRequestHandlerInterface`` and
-	get the ``Request`` and ``Response`` from there. Alternatively, you can also get the active ``RequestHandler`` from the
-	``Bootstrap``.
+	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject the ``Bootstrap`` and
+	get the ``HttpRequest`` and ``HttpResponse`` through the ``getActiveRequestHandler()``.
 
 create()
 ~~~~~~~~
@@ -246,14 +245,14 @@ In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
 	/**
-	 * @var HttpRequestHandlerInterface
+	 * @var Bootstrap
 	 * @Flow\Inject
 	 */
-	protected $requestHandler;
+	protected $bootstrap;
 
 	...
 
-	$httpRequest = $this->requestHandler->getHttpRequest();
+	$httpRequest = $this->bootstrap->getActiveRequestHandler()->getHttpRequest();
 	$actionRequest = new ActionRequest($httpRequest);
 
 Arguments
