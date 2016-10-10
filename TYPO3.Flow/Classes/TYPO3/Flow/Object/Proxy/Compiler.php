@@ -141,6 +141,7 @@ class Compiler
         if (in_array(substr($fullClassName, 0, 14), $this->blacklistedSubPackages)) {
             return false;
         }
+        // Annotation classes (like \TYPO3\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
         if ($classReflection->isFinal() && preg_match('/^\s?\*\s?\@Annotation\s/m', $classReflection->getDocComment()) === 1) {
             return false;
         }
