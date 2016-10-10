@@ -108,26 +108,25 @@ class InternalRequestEngine implements RequestEngineInterface
         $this->validatorResolver->reset();
 
         $response = new Http\Response();
-        $requestHandler->setHttpRequest($httpRequest);
-        $requestHandler->setHttpResponse($response);
+        $componentContext = new ComponentContext($httpRequest, $response);
+        $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
         $baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
-        $componentContext = new ComponentContext($httpRequest, $response);
 
         try {
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
-            $this->prepareErrorResponse($throwable, $response);
+            $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
         } catch (\Exception $exception) {
-            $this->prepareErrorResponse($exception, $response);
+            $this->prepareErrorResponse($exception, $componentContext->getHttpResponse());
         }
         $session = $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
         $this->persistenceManager->clearState();
-        return $response;
+        return $componentContext->getHttpResponse();
     }
 
     /**
