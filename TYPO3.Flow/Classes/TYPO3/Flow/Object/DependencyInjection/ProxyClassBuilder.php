@@ -122,8 +122,7 @@ class ProxyClassBuilder
             if ($className === '' || $this->compiler->hasCacheEntryForClass($className) === true) {
                 continue;
             }
-
-            if ($objectName !== $className || $this->reflectionService->isClassAbstract($className) || $this->reflectionService->isClassFinal($className)) {
+            if ($objectName !== $className || $this->reflectionService->isClassAbstract($className)) {
                 continue;
             }
             $proxyClass = $this->compiler->getProxyClass($className);

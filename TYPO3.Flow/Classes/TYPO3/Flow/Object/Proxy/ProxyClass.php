@@ -206,7 +206,12 @@ class ProxyClass
         $namespace = $this->namespace;
         $proxyClassName = $this->originalClassName;
         $originalClassName = $this->originalClassName . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
-        $abstractKeyword = $this->reflectionService->isClassAbstract($this->fullOriginalClassName) ? 'abstract ' : '';
+        $classModifier = '';
+        if ($this->reflectionService->isClassAbstract($this->fullOriginalClassName)) {
+            $classModifier = 'abstract ';
+        } elseif ($this->reflectionService->isClassFinal($this->fullOriginalClassName)) {
+            $classModifier = 'final ';
+        }
 
         $constantsCode = $this->renderConstantsCode();
         $propertiesCode = $this->renderPropertiesCode();
@@ -225,7 +230,7 @@ class ProxyClass
             "use TYPO3\\Flow\\Annotations as Flow;\n" .
             "\n" .
             $this->buildClassDocumentation() .
-            $abstractKeyword . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
+            $classModifier . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
             $traitsCode .
             $constantsCode .
             $propertiesCode .

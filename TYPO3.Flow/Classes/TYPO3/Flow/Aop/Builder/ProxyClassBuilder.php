@@ -202,7 +202,7 @@ class ProxyClassBuilder
     {
         $allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
         $possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
-        $actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation(\TYPO3\Flow\Annotations\Aspect::class);
+        $actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation(Flow\Aspect::class);
         sort($possibleTargetClassNames);
         sort($actualAspectClassNames);
 
@@ -282,12 +282,13 @@ class ProxyClassBuilder
         $proxyableClasses = array();
         foreach ($classNamesByPackage as $classNames) {
             foreach ($classNames as $className) {
-                if (!in_array(substr($className, 0, 15), $this->blacklistedSubPackages)) {
-                    if (!$this->reflectionService->isClassAnnotatedWith($className, \TYPO3\Flow\Annotations\Aspect::class) &&
-                        !$this->reflectionService->isClassFinal($className)) {
-                        $proxyableClasses[] = $className;
-                    }
+                if (in_array(substr($className, 0, 15), $this->blacklistedSubPackages)) {
+                    continue;
                 }
+                if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Aspect::class)) {
+                    continue;
+                }
+                $proxyableClasses[] = $className;
             }
         }
         return $proxyableClasses;

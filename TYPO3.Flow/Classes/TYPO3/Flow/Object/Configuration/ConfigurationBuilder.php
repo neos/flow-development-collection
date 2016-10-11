@@ -80,10 +80,6 @@ class ConfigurationBuilder
                     continue;
                 }
 
-                if ($this->reflectionService->isClassFinal($classOrInterfaceName)) {
-                    continue;
-                }
-
                 if (interface_exists($classOrInterfaceName)) {
                     $interfaceName = $classOrInterfaceName;
                     $implementationClassName = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);

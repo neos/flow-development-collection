@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  */
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Tests\Functional\Object\Fixtures\FinalClassWithDependencies;
+use TYPO3\Flow\Tests\Functional\Object\Fixtures\FinalClassWithDependenciesAndProxyAnnotation;
 use TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
+use TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -315,5 +318,14 @@ class DependencyInjectionTest extends FunctionalTestCase
     {
         $classWithTransitivePrototypeDependency = new ClassWithTransitivePrototypeDependency();
         $this->assertEquals('Hello World!', $classWithTransitivePrototypeDependency->getTestValue());
+    }
+
+    /**
+     * @test
+     */
+    public function dependencyInjectionWorksForFinalClasses()
+    {
+        $object = $this->objectManager->get(FinalClassWithDependencies::class);
+        $this->assertInstanceOf(SingletonClassA::class, $object->dependency);
     }
 }
