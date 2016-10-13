@@ -83,12 +83,13 @@ class ViewConfigurationManager
             }
 
             usort($matchingConfigurations, function ($configuration1, $configuration2) {
-                return $configuration1['weight'] > $configuration2['weight'];
+                return $configuration1['weight'] < $configuration2['weight'];
             });
 
             $viewConfiguration = [];
             foreach ($matchingConfigurations as $key => $matchingConfiguration) {
-                $viewConfiguration = Arrays::arrayMergeRecursiveOverrule($viewConfiguration, $matchingConfiguration['configuration']);
+                $configuration = Arrays::arrayMergeRecursiveOverrule($matchingConfiguration['configuration'], $viewConfiguration);
+                $viewConfiguration = Arrays::arrayMergeRecursiveOverrule($viewConfiguration, $configuration);
             }
             $this->cache->set($cacheIdentifier, $viewConfiguration);
         }
