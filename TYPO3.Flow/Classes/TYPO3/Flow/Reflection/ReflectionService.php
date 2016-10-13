@@ -671,6 +671,7 @@ class ReflectionService
      *
      * @param string $annotationClassName The annotation class name for a method annotation
      * @return array An array of class names
+     * @api
      */
     public function getClassesContainingMethodsAnnotatedWith($annotationClassName)
     {
@@ -679,6 +680,22 @@ class ReflectionService
         }
 
         return isset($this->classesByMethodAnnotations[$annotationClassName]) ? array_keys($this->classesByMethodAnnotations[$annotationClassName]) : [];
+    }
+
+    /**
+     * Returns all names of methods of the given class that are annotated with the given annotation class
+     *
+     * @param string $className Name of the class containing the method(s)
+     * @param string $annotationClassName The annotation class name for a method annotation
+     * @return array An array of method names
+     * @api
+     */
+    public function getMethodsAnnotatedWith($className, $annotationClassName)
+    {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+        return isset($this->classesByMethodAnnotations[$annotationClassName][$className]) ? $this->classesByMethodAnnotations[$annotationClassName][$className] : [];
     }
 
     /**
@@ -1380,7 +1397,11 @@ class ReflectionService
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $visibility;
 
         foreach ($this->getMethodAnnotations($className, $methodName) as $methodAnnotation) {
-            $this->classesByMethodAnnotations[get_class($methodAnnotation)][$className] = $methodName;
+            $annotationClassName = get_class($methodAnnotation);
+            if (!isset($this->classesByMethodAnnotations[$annotationClassName][$className])) {
+                $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
+            }
+            $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
         }
 
         $returnType = $method->getDeclaredReturnType();
