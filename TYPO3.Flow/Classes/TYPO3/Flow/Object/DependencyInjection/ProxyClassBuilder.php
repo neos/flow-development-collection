@@ -11,13 +11,16 @@ namespace TYPO3\Flow\Object\DependencyInjection;
  * source code.
  */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationArgument;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty;
+use TYPO3\Flow\Object\Exception as ObjectException;
+use TYPO3\Flow\Object\Proxy\ProxyClass;
+use TYPO3\Flow\Reflection\MethodReflection;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
@@ -56,11 +59,6 @@ class ProxyClassBuilder
      * @var array<\TYPO3\Flow\Object\Configuration\Configuration>
      */
     protected $objectConfigurations;
-
-    /**
-     * @var array
-     */
-    protected $classesWithCompileStaticAnnotation;
 
     /**
      * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
@@ -644,27 +642,27 @@ class ProxyClassBuilder
      * Compile the result of methods marked with CompileStatic into the proxy class
      *
      * @param string $className
-     * @param \TYPO3\Flow\Object\Proxy\ProxyClass $proxyClass
+     * @param ProxyClass $proxyClass
      * @return void
+     * @throws ObjectException
      */
-    protected function compileStaticMethods($className, $proxyClass)
+    protected function compileStaticMethods($className, ProxyClass $proxyClass)
     {
-        if ($this->classesWithCompileStaticAnnotation === null) {
-            $this->classesWithCompileStaticAnnotation = array_flip($this->reflectionService->getClassesContainingMethodsAnnotatedWith(\TYPO3\Flow\Annotations\CompileStatic::class));
-        }
-        if (!isset($this->classesWithCompileStaticAnnotation[$className])) {
-            return;
-        }
-
-        $methodNames = get_class_methods($className);
+        $methodNames = $this->reflectionService->getMethodsAnnotatedWith($className, Flow\CompileStatic::class);
         foreach ($methodNames as $methodName) {
-            if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, \TYPO3\Flow\Annotations\CompileStatic::class)) {
-                $compiledMethod = $proxyClass->getMethod($methodName);
-
-                $value = call_user_func(array($className, $methodName), $this->objectManager);
-                $compiledResult = var_export($value, true);
-                $compiledMethod->setMethodBody('return ' . $compiledResult . ';');
+            if (!$this->reflectionService->isMethodStatic($className, $methodName)) {
+                throw new ObjectException(sprintf('The method %s:%s() is annotated CompileStatic so it must be static', $className, $methodName), 1476348303);
             }
+            if ($this->reflectionService->isMethodPrivate($className, $methodName)) {
+                throw new ObjectException(sprintf('The method %s:%s() is annotated CompileStatic so it must not be private', $className, $methodName), 1476348306);
+            }
+            $reflectedMethod = new MethodReflection($className, $methodName);
+            $reflectedMethod->setAccessible(true);
+            $value = $reflectedMethod->invoke(null, $this->objectManager);
+            $compiledResult = var_export($value, true);
+
+            $compiledMethod = $proxyClass->getMethod($methodName);
+            $compiledMethod->setMethodBody('return ' . $compiledResult . ';');
         }
     }
 }
