@@ -647,6 +647,7 @@ class ProxyClassBuilder
      * @param string $className
      * @param \TYPO3\Flow\Object\Proxy\ProxyClass $proxyClass
      * @return void
+     * @throws \TYPO3\Flow\Object\Exception
      */
     protected function compileStaticMethods($className, $proxyClass)
     {
@@ -657,15 +658,24 @@ class ProxyClassBuilder
             return;
         }
 
-        $methodNames = get_class_methods($className);
-        foreach ($methodNames as $methodName) {
-            if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, \TYPO3\Flow\Annotations\CompileStatic::class)) {
-                $compiledMethod = $proxyClass->getMethod($methodName);
-
-                $value = call_user_func(array($className, $methodName), $this->objectManager);
-                $compiledResult = var_export($value, true);
-                $compiledMethod->setMethodBody('return ' . $compiledResult . ';');
+        $reflectionClass = new \ReflectionClass($className);
+        $methods = $reflectionClass->getMethods();
+        foreach ($methods as $method) {
+            $methodName = $method->getName();
+            if (!$this->reflectionService->isMethodAnnotatedWith($className, $methodName, \TYPO3\Flow\Annotations\CompileStatic::class)) {
+                continue;
             }
+            if (!$method->isStatic()) {
+                throw new \TYPO3\Flow\Object\Exception(sprintf('The method %s:%s() is annotated CompileStatic so it must be static', $className, $methodName), 1476348303);
+            }
+            if (!is_callable([$className, $methodName])) {
+                throw new \TYPO3\Flow\Object\Exception(sprintf('The method %s:%s() is annotated CompileStatic so it must be public', $className, $methodName), 1476348306);
+            }
+            $compiledMethod = $proxyClass->getMethod($methodName);
+
+            $value = call_user_func(array($className, $methodName), $this->objectManager);
+            $compiledResult = var_export($value, true);
+            $compiledMethod->setMethodBody('return ' . $compiledResult . ';');
         }
     }
 }
