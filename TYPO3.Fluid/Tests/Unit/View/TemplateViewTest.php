@@ -590,6 +590,32 @@ class TemplateViewTest extends UnitTestCase
     /**
      * @test
      */
+    public function getTemplateRootPathsReturnsPathesSortedByPosition()
+    {
+        $templateView = new TemplateView();
+
+        $templateRootPaths = [
+            'foo' => '/foo/bar',
+            'bar' => 'bar',
+            'baz' => ['value' => 'baz', 'position' => 'start'],
+            'bam' => ['value' => 'bam', 'position' => 'before bar']
+        ];
+        $templateView->setOption('templateRootPaths', $templateRootPaths);
+
+        $expectedResult = [
+            'baz' => 'baz',
+            'foo' => '/foo/bar',
+            'bam' => 'bam',
+            'bar' => 'bar'
+        ];
+
+        $actual = $templateView->getTemplateRootPaths();
+        $this->assertSame($expectedResult, $actual, 'The sorting was not applied correctly to template root pathes.');
+    }
+
+    /**
+     * @test
+     */
     public function getPartialRootPathsReturnsUserSpecifiedPartialPath()
     {
         $templateView = $this->getAccessibleMock(\TYPO3\Fluid\View\TemplateView::class, array('dummy'));
@@ -604,6 +630,32 @@ class TemplateViewTest extends UnitTestCase
     /**
      * @test
      */
+    public function getPartialRootPathsReturnsPathesSortedByPosition()
+    {
+        $templateView = $this->getAccessibleMock(\TYPO3\Fluid\View\TemplateView::class, array('dummy'));
+
+        $templateRootPaths = [
+            'foo' => '/foo/bar',
+            'bar' => 'bar' ,
+            'baz' => ['value' => 'baz', 'position' => 'start'],
+            'bam' => ['value' => 'bam', 'position' => 'before bar']
+        ];
+        $templateView->setOption('partialRootPaths', $templateRootPaths);
+
+        $expectedResult = [
+            'baz' => 'baz',
+            'foo' => '/foo/bar',
+            'bam' => 'bam',
+            'bar' => 'bar'
+        ];
+
+        $actual = $templateView->_call('getPartialRootPaths');
+        $this->assertSame($expectedResult, $actual, 'The sorting was not applied correctly to partial root pathes.');
+    }
+
+    /**
+     * @test
+     */
     public function getLayoutRootPathsReturnsUserSpecifiedPartialPaths()
     {
         $templateView = $this->getAccessibleMock(\TYPO3\Fluid\View\TemplateView::class, array('dummy'));
@@ -613,6 +665,58 @@ class TemplateViewTest extends UnitTestCase
 
         $actual = $templateView->_call('getLayoutRootPaths');
         $this->assertEquals($layoutRootPaths, $actual, 'A set layout root path was not returned correctly.');
+    }
+
+    /**
+     * @test
+     */
+    public function getLayoutRootPathsReturnsPathesSortedByPosition()
+    {
+        $templateView = $this->getAccessibleMock(\TYPO3\Fluid\View\TemplateView::class, array('dummy'));
+
+        $templateRootPaths = [
+            'foo' => '/foo/bar',
+            'bar' => 'bar' ,
+            'baz' => ['value' => 'baz', 'position' => 'start'],
+            'bam' => ['value' => 'bam', 'position' => 'before bar']
+        ];
+        $templateView->setOption('layoutRootPaths', $templateRootPaths);
+
+        $expectedResult = [
+            'baz' => 'baz',
+            'foo' => '/foo/bar',
+            'bam' => 'bam',
+            'bar' => 'bar'
+        ];
+
+        $actual = $templateView->_call('getLayoutRootPaths');
+        $this->assertSame($expectedResult, $actual, 'The sorting was not applied correctly to layout root pathes.');
+    }
+
+    /**
+     * @test
+     */
+    public function applyArraySorting()
+    {
+        $templateView = $this->getAccessibleMock(\TYPO3\Fluid\View\TemplateView::class, array('dummy'));
+
+        $array = [
+            'foo' => '/foo/bar',
+            'bar' => 'bar' ,
+            'baz' => ['value' => 'baz', 'position' => 'start'],
+            'bam' => ['value' => 'bam', 'position' => 'before bar']
+        ];
+
+        $expected = [
+            'baz' => 'baz',
+            'foo' => '/foo/bar',
+            'bam' => 'bam',
+            'bar' => 'bar'
+        ];
+
+        $actual = $templateView->_call('applyArraySorting', $array);
+
+        $this->assertSame($expected, $actual, 'The sorting was not applied correctly.');
     }
 
     /**

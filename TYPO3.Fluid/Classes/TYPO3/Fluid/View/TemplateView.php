@@ -13,6 +13,7 @@ namespace TYPO3\Fluid\View;
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
  * The main template view. Should be used as view if you want Fluid Templating
@@ -101,7 +102,7 @@ class TemplateView extends AbstractTemplateView
     public function getTemplateRootPaths()
     {
         if ($this->options['templateRootPaths'] !== null) {
-            return $this->options['templateRootPaths'];
+            return $this->applyArraySorting($this->options['templateRootPaths']);
         }
         /** @var $actionRequest \TYPO3\Flow\Mvc\ActionRequest */
         $actionRequest = $this->controllerContext->getRequest();
@@ -143,7 +144,7 @@ class TemplateView extends AbstractTemplateView
     protected function getPartialRootPaths()
     {
         if ($this->options['partialRootPaths'] !== null) {
-            return $this->options['partialRootPaths'];
+            return $this->applyArraySorting($this->options['partialRootPaths']);
         }
         /** @var $actionRequest \TYPO3\Flow\Mvc\ActionRequest */
         $actionRequest = $this->controllerContext->getRequest();
@@ -185,7 +186,7 @@ class TemplateView extends AbstractTemplateView
     protected function getLayoutRootPaths()
     {
         if ($this->options['layoutRootPaths'] !== null) {
-            return $this->options['layoutRootPaths'];
+            return $this->applyArraySorting($this->options['layoutRootPaths']);
         }
         /** @var $actionRequest \TYPO3\Flow\Mvc\ActionRequest */
         $actionRequest = $this->controllerContext->getRequest();
@@ -372,6 +373,23 @@ class TemplateView extends AbstractTemplateView
             }
         }
         throw new Exception\InvalidTemplateResourceException('The partial files "' . implode('", "', $paths) . '" could not be loaded.', 1225709595);
+    }
+
+    /**
+     * Apply positional array sorting to the given array and
+     *
+     * @param array $pathes
+     * @return array
+     */
+    protected function applyArraySorting($pathes)
+    {
+        $positionalArraySorter = new PositionalArraySorter($pathes);
+        return array_map(
+            function ($path) {
+                return (is_array($path) && array_key_exists('value', $path)) ? $path['value'] : $path;
+            },
+            $positionalArraySorter->toArray()
+        );
     }
 
     /**
