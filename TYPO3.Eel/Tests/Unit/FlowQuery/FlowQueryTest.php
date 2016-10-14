@@ -200,68 +200,68 @@ class FlowQueryTest extends UnitTestCase
             'Instanceof test works on attributes' => [
                 'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
                 'filter' => '[ isHidden instanceof boolean ]',
-                'expectedResult' => array($myObject5)
-            ),
+                'expectedResult' => [$myObject5]
+            ],
 
-            'Notinstanceof test works (1)' => array(
-                'sourceObjects' => array($myObject),
+            'Notinstanceof test works (1)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[!instanceof foo]',
-                'expectedResult' => array($myObject)
-            ),
-            'Notinstanceof test works (2)' => array(
-                'sourceObjects' => array($myObject),
+                'expectedResult' => [$myObject]
+            ],
+            'Notinstanceof test works (2)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[  !instanceof \stdClass  ]',
-                'expectedResult' => array()
-            ),
-            'Notinstanceof test works (with test for object)' => array(
-                'sourceObjects' => array($myObject),
+                'expectedResult' => []
+            ],
+            'Notinstanceof test works (with test for object)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[  !instanceof object  ]',
-                'expectedResult' => array()
-            ),
-            'Notinstanceof test works (with test for string)' => array(
-                'sourceObjects' => array('myString'),
+                'expectedResult' => []
+            ],
+            'Notinstanceof test works (with test for string)' => [
+                'sourceObjects' => ['myString'],
                 'filter' => '[  !instanceof string  ]',
-                'expectedResult' => array()
-            ),
+                'expectedResult' => []
+            ],
 
-            'Notinstanceof test works (with test for integer)' => array(
-                'sourceObjects' => array(42, '42', 400, 'foo'),
+            'Notinstanceof test works (with test for integer)' => [
+                'sourceObjects' => [42, '42', 400, 'foo'],
                 'filter' => '[  !instanceof integer  ]',
-                'expectedResult' => array('42', 'foo')
-            ),
+                'expectedResult' => ['42', 'foo']
+            ],
 
-            'Notinstanceof test works (with test for integer 2)' => array(
-                'sourceObjects' => array(42, '42', 400, 'foo'),
+            'Notinstanceof test works (with test for integer 2)' => [
+                'sourceObjects' => [42, '42', 400, 'foo'],
                 'filter' => '[  !instanceof int  ]',
-                'expectedResult' => array('42', 'foo')
-            ),
+                'expectedResult' => ['42', 'foo']
+            ],
 
-            'Notinstanceof test works (with test for boolean)' => array(
-                'sourceObjects' => array(false, '', true),
+            'Notinstanceof test works (with test for boolean)' => [
+                'sourceObjects' => [false, '', true],
                 'filter' => '[  !instanceof boolean  ]',
-                'expectedResult' => array('')
-            ),
+                'expectedResult' => ['']
+            ],
 
-            'Notinstanceof test works (with test for float)' => array(
-                'sourceObjects' => array(false, 42, 42.5, true),
+            'Notinstanceof test works (with test for float)' => [
+                'sourceObjects' => [false, 42, 42.5, true],
                 'filter' => '[  !instanceof float  ]',
-                'expectedResult' => array(false, 42, true)
-            ),
+                'expectedResult' => [false, 42, true]
+            ],
 
-            'Notinstanceof test works (with test for array)' => array(
-                'sourceObjects' => array(false, 42, 42.5, true, array('foo')),
+            'Notinstanceof test works (with test for array)' => [
+                'sourceObjects' => [false, 42, 42.5, true, ['foo']],
                 'filter' => '[  !instanceof array  ]',
-                'expectedResult' => array(false, 42, 42.5, true)
-            ),
+                'expectedResult' => [false, 42, 42.5, true]
+            ],
 
-            'Notinstanceof test works on attributes' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+            'Notinstanceof test works on attributes' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
                 'filter' => '[ isHidden !instanceof boolean ]',
-                'expectedResult' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject6)
-            ),
+                'expectedResult' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject6]
+            ],
 
-            'Begin query match' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+            'Begin query match' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[ myProperty ^= as ]',
                 'expectedResult' => [$myObject]
             ],
@@ -447,7 +447,7 @@ class FlowQueryTest extends UnitTestCase
         foreach ($expressions as $expression) {
             eval('$result = ' . $expression . ';');
             if (!$isFinal) {
-                $this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
+                $this->assertInstanceOf(FlowQuery::class, $result);
                 $result = iterator_to_array($result);
             }
             $this->assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
@@ -462,7 +462,6 @@ class FlowQueryTest extends UnitTestCase
         return [
             ['$query->children()'],
             ['$query->children("")'],
-
             ['$query->children("[foo]")'],
             ['$query->filter("foo")'],
             ['$query->children()->filter()'],

@@ -18,6 +18,8 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
+use TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -323,7 +325,7 @@ class RoutingTest extends FunctionalTestCase
                 '@controller' => 'ActionControllerTestA',
                 '@action' => 'second',
                 '@format' =>'html'
-            ),
+            ],
             false,
             ['POST', 'DELETE']
         );

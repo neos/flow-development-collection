@@ -49,7 +49,7 @@ class ValidationTest extends FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'Entity',
             '@format' =>'html'
-        ));
+        ]);
     }
 
     /**

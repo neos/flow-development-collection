@@ -15,9 +15,6 @@ use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Session;
 
-/**
- * Test suite for the Session Management
- */
 class SessionManagementTest extends FunctionalTestCase
 {
     /**
@@ -36,7 +33,7 @@ class SessionManagementTest extends FunctionalTestCase
             '@controller' => 'SessionTest',
             '@action' => 'sessionStart',
             '@format' =>'html'
-        ));
+        ]);
         $this->router->addRoute($route);
     }
 

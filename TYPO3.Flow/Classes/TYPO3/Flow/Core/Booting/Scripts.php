@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Core\Booting;
  * source code.
  */
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
@@ -22,26 +21,21 @@ use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Core\LockManager;
 use TYPO3\Flow\Error\Debugger;
 use TYPO3\Flow\Error\ErrorHandler;
-use TYPO3\Flow\Exception as FlowException;
-use TYPO3\Flow\Log\Logger;
 use TYPO3\Flow\Log\LoggerFactory;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\FileMonitor;
-use TYPO3\Flow\Object\CompileTimeObjectManager;
 use TYPO3\Flow\Object\ObjectManager;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
-use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use TYPO3\Flow\Utility;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -98,7 +92,7 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
     }
 
     /**
@@ -129,8 +123,8 @@ class Scripts
         }
 
         $bootstrap->getEarlyInstance(CacheManager::class)->flushCaches();
-        $environment = $bootstrap->getEarlyInstance(Environment::class);
-        Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
+        $environment = $bootstrap->getEarlyInstance(Utility\Environment::class);
+        Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
 
         echo 'Force-flushed caches for "' . $bootstrap->getContext() . '" context.' . PHP_EOL;
 
@@ -187,7 +181,7 @@ class Scripts
 
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-        $environment = new Environment($context);
+        $environment = new Utility\Environment($context);
         if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
             $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
             if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
@@ -204,7 +198,7 @@ class Scripts
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
 
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
-        $bootstrap->setEarlyInstance(Environment::class, $environment);
+        $bootstrap->setEarlyInstance(Utility\Environment::class, $environment);
     }
 
     /**
@@ -219,7 +213,7 @@ class Scripts
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         if (!isset($settings['log']['systemLogger']['logger'])) {
-            $settings['log']['systemLogger']['logger'] = Logger::class;
+            $settings['log']['systemLogger']['logger'] = \TYPO3\Flow\Log\Logger::class;
         }
         $loggerFactory = new LoggerFactory();
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
@@ -256,7 +250,7 @@ class Scripts
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $environment = $bootstrap->getEarlyInstance(Environment::class);
+        $environment = $bootstrap->getEarlyInstance(Utility\Environment::class);
 
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
@@ -286,24 +280,24 @@ class Scripts
 
         // The compile sub command will only be run if the code cache is completely empty:
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
+            Utility\OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+            Utility\OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
             self::executeCommand('typo3.flow:core:compile', $settings);
             if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
                 self::compileDoctrineProxies($bootstrap);
             }
 
             // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
+            $classLoader = $bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader');
             $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
         }
 
         // Check if code was updated, if not something went wrong
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
             if (DIRECTORY_SEPARATOR === '/') {
-                $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+                $phpBinaryPathAndFilename = '"' . escapeshellcmd(Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
             } else {
-                $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+                $phpBinaryPathAndFilename = escapeshellarg(Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
             }
             $command = sprintf('%s -c %s -v', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()));
             exec($command, $output, $result);
@@ -338,7 +332,7 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeCreate(Bootstrap $bootstrap)
     {
-        $objectManager = new CompileTimeObjectManager($bootstrap->getContext());
+        $objectManager = new \TYPO3\Flow\Object\CompileTimeObjectManager($bootstrap->getContext());
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
         Bootstrap::$staticObjectManager = $objectManager;
 
@@ -428,7 +422,7 @@ class Scripts
         $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
         $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
         $reflectionService->injectSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow'));
-        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
+        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Utility\Environment::class));
 
         $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
         $bootstrap->getObjectManager()->setInstance(ReflectionService::class, $reflectionService);
@@ -526,18 +520,6 @@ class Scripts
     }
 
     /**
-     * Initializes the persistence framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializePersistence(Bootstrap $bootstrap)
-    {
-        $persistenceManager = $bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
-        $persistenceManager->initialize();
-    }
-
-    /**
      * Initializes the session framework
      *
      * @param Bootstrap $bootstrap
@@ -551,16 +533,14 @@ class Scripts
     }
 
     /**
-     * Initialize the resource management component, setting up stream wrappers,
-     * publishing the public resources of all found packages, ...
+     * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeResources(Bootstrap $bootstrap)
     {
-        $resourceManager = $bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceManager');
-        $resourceManager->initialize();
+        StreamWrapperAdapter::initializeStreamWrapper($bootstrap->getObjectManager());
     }
 
     /**
@@ -616,7 +596,7 @@ class Scripts
 
         $escapedArguments = '';
         if ($commandArguments !== []) {
-            foreach ($commandArguments as $argument=>$argumentValue) {
+            foreach ($commandArguments as $argument => $argumentValue) {
                 $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
                 if (trim($argumentValue) !== '') {
                     $escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
@@ -654,9 +634,9 @@ class Scripts
             }
         }
         if (DIRECTORY_SEPARATOR === '/') {
-            $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+            $phpBinaryPathAndFilename = '"' . escapeshellcmd(Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
         } else {
-            $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+            $phpBinaryPathAndFilename = escapeshellarg(Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
         }
         $command .= $phpBinaryPathAndFilename;
         if (!isset($settings['core']['subRequestPhpIniPathAndFilename']) || $settings['core']['subRequestPhpIniPathAndFilename'] !== false) {

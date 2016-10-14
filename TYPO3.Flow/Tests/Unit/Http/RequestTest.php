@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Unit\Http;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Http;
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -35,6 +34,8 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = ['getKey1' => 'getValue1', 'getKey2' => 'getValue2'];
         $_POST = [];
         $_COOKIE = [];
@@ -88,6 +89,8 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
         $_GET = [];
         $_POST = [];
         $_COOKIE = [];
@@ -133,19 +136,19 @@ class RequestTest extends UnitTestCase
      */
     public function createUsesReasonableDefaultsForCreatingANewRequest()
     {
-        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals($uri, $request->getUri());
         $this->assertEquals('HTTP/1.1', $request->getVersion());
 
-        $uri = new Uri('https://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('https://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals($uri, $request->getUri());
 
-        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('POST', $request->getMethod());
@@ -157,7 +160,7 @@ class RequestTest extends UnitTestCase
      */
     public function settingVersionHasExpectedImplications()
     {
-        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
         $request->setVersion('HTTP/1.0');
 
@@ -222,7 +225,7 @@ class RequestTest extends UnitTestCase
      */
     public function methodCanBeOverridden($originalMethod, array $arguments, array $server, $expectedMethod)
     {
-        $uri = new Uri('http://flow.neos.io');
+        $uri = new Uri('http://flow.typo3.org');
         $request = Request::create($uri, $originalMethod, $arguments, [], $server);
         $this->assertEquals($expectedMethod, $request->getMethod());
     }
@@ -235,7 +238,7 @@ class RequestTest extends UnitTestCase
      */
     public function createSetsTheContentTypeHeaderToFormUrlEncodedByDefaultIfRequestMethodSuggestsIt()
     {
-        $uri = new Uri('http://flow.neos.io/foo');
+        $uri = new Uri('http://flow.typo3.org/foo');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
@@ -246,7 +249,7 @@ class RequestTest extends UnitTestCase
      */
     public function createActionRequestCreatesAnMvcRequestConnectedToTheParentRequest()
     {
-        $uri = new Uri('http://flow.neos.io');
+        $uri = new Uri('http://flow.typo3.org');
         $request = Request::create($uri);
 
         $subRequest = $request->createActionRequest();
@@ -273,7 +276,7 @@ class RequestTest extends UnitTestCase
      */
     public function setMethodAcceptsAnyRequestMethod($validMethod)
     {
-        $request = Request::create(new Uri('http://flow.neos.io'));
+        $request = Request::create(new Uri('http://flow.typo3.org'));
         $request->setMethod($validMethod);
         $this->assertSame($validMethod, $request->getMethod());
     }
@@ -308,7 +311,8 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.neos.io'));
+        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $actualContent = $request->getContent();
@@ -325,7 +329,8 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.neos.io'));
+        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $resource = $request->getContent(true);
@@ -344,7 +349,7 @@ class RequestTest extends UnitTestCase
 
         file_put_contents('vfs://Foo/content.txt', 'xy');
 
-        $request = Request::create(new Uri('http://flow.neos.io'));
+        $request = Request::create(new Uri('http://flow.typo3.org'));
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $request->getContent(true);
@@ -357,11 +362,11 @@ class RequestTest extends UnitTestCase
     public function renderHeadersReturnsRawHttpHeadersAccordingToTheRequestProperties()
     {
         $server = [
-                'HTTP_HOST' => 'dev.blog.rob',
-                'REQUEST_METHOD' => 'GET',
-                'REQUEST_URI' => '/foo/bar',
-                'SCRIPT_NAME' => '/index.php',
-                'PHP_SELF' => '/index.php',
+            'HTTP_HOST' => 'dev.blog.rob',
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/foo/bar',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
         ];
 
         $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', [], [], $server);
@@ -381,11 +386,11 @@ class RequestTest extends UnitTestCase
     public function toStringReturnsRawHttpRequestAccordingToTheRequestProperties()
     {
         $server = [
-                'HTTP_HOST' => 'dev.blog.rob',
-                'REQUEST_METHOD' => 'GET',
-                'REQUEST_URI' => '/foo/bar',
-                'SCRIPT_NAME' => '/index.php',
-                'PHP_SELF' => '/index.php',
+            'HTTP_HOST' => 'dev.blog.rob',
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/foo/bar',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
         ];
 
         $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', [], [], $server);
@@ -431,8 +436,8 @@ class RequestTest extends UnitTestCase
     {
         $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-            'HTTP_HOST' => 'flow.neos.io',
-            'SERVER_NAME' => 'neos.io',
+            'HTTP_HOST' => 'flow.typo3.org',
+            'SERVER_NAME' => 'typo3.org',
             'SERVER_ADDR' => '217.29.36.55',
             'SERVER_PORT' => 80,
             'REMOTE_ADDR' => '17.172.224.47',
@@ -442,7 +447,7 @@ class RequestTest extends UnitTestCase
             'PHP_SELF' => '/index.php',
         ];
 
-        $request = Request::create(new Uri('http://flow.neos.io'), 'GET', [], [], array_replace($defaultServerEnvironment, $serverEnvironment));
+        $request = Request::create(new Uri('http://flow.typo3.org'), 'GET', [], [], array_replace($defaultServerEnvironment, $serverEnvironment));
         $this->assertSame($expectedIpAddress, $request->getClientIpAddress());
     }
 
@@ -687,7 +692,9 @@ class RequestTest extends UnitTestCase
      */
     public function portInProxyHeaderIsAcknowledged()
     {
-        $_SERVER = array(
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+
+        $_SERVER = [
             'HTTP_HOST' => 'dev.blog.rob',
             'HTTP_X_FORWARDED_PORT' => 2727,
             'SERVER_NAME' => 'dev.blog.rob',
@@ -1098,7 +1105,7 @@ class RequestTest extends UnitTestCase
             ]
         ];
 
-        $request = $this->getAccessibleMock(Http\Request::class, ['dummy'], [], '', false);
+        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1158,7 +1165,7 @@ class RequestTest extends UnitTestCase
             ],
         ];
 
-        $request = $this->getAccessibleMock(Http\Request::class, ['dummy'], [], '', false);
+        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1189,7 +1196,7 @@ class RequestTest extends UnitTestCase
      */
     public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues)
     {
-        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
         $this->assertSame($expectedValues, $actualValues);
     }

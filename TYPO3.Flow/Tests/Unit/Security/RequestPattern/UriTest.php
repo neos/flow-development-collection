@@ -11,8 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Http;
 use TYPO3\Flow\Security\RequestPattern;
 
 /**

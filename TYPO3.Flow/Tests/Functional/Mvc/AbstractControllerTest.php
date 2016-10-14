@@ -14,9 +14,6 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
-/**
- * Functional tests for the ActionController
- */
 class AbstractControllerTest extends FunctionalTestCase
 {
     /**
@@ -39,7 +36,7 @@ class AbstractControllerTest extends FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'AbstractControllerTestA',
             '@format' =>'html'
-        ));
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
     }

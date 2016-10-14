@@ -27,6 +27,7 @@ use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
 use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Files;
 
@@ -132,10 +133,10 @@ class Bootstrap
         switch ($runlevel) {
             case self::RUNLEVEL_COMPILETIME:
                 $this->emitFinishedCompiletimeRun();
-            break;
+                break;
             case self::RUNLEVEL_RUNTIME:
                 $this->emitFinishedRuntimeRun();
-            break;
+                break;
         }
         $this->emitBootstrapShuttingDown($runlevel);
     }
@@ -241,7 +242,8 @@ class Bootstrap
         foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
             list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
             $packageKeyParts = explode('.', $packageKey);
-            for ($offset = 0; $offset < count($packageKeyParts); $offset++) {
+            $packageKeyPartsCount = count($packageKeyParts);
+            for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {
                 $possibleCommandControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
 
                 if (substr($fullControllerIdentifier, -2, 2) === ':*') {
@@ -330,8 +332,7 @@ class Bootstrap
         }
 
         $sequence->addStep(new Step('typo3.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'typo3.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('typo3.flow:persistence', [Scripts::class, 'initializePersistence']), 'typo3.flow:reflectionservice');
-        $sequence->addStep(new Step('typo3.flow:resources', [Scripts::class, 'initializeResources']), 'typo3.flow:persistence');
+        $sequence->addStep(new Step('typo3.flow:resources', [Scripts::class, 'initializeResources']), 'typo3.flow:reflectionservice');
         $sequence->addStep(new Step('typo3.flow:session', [Scripts::class, 'initializeSession']), 'typo3.flow:resources');
         return $sequence;
     }
@@ -400,7 +401,7 @@ class Bootstrap
             debug_print_backtrace();
             throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
         }
-        return $this->earlyInstances[\TYPO3\Flow\Object\ObjectManagerInterface::class];
+        return $this->earlyInstances[ObjectManagerInterface::class];
     }
 
     /**
@@ -514,7 +515,7 @@ class Bootstrap
             if (FLOW_SAPITYPE === 'CLI' && $rootPath === false) {
                 $rootPath = getcwd();
                 if (realpath(__DIR__) !== realpath($rootPath . '/Packages/Framework/TYPO3.Flow/Classes/Core')) {
-                    echo('Flow: Invalid root path. (Error #1301225173)' . PHP_EOL . 'You must start Flow from the root directory or set the environment variable FLOW_ROOTPATH correctly.' . PHP_EOL);
+                    echo('TYPO3 Flow: Invalid root path. (Error #1301225173)' . PHP_EOL . 'You must start TYPO3 Flow from the root directory or set the environment variable FLOW_ROOTPATH correctly.' . PHP_EOL);
                     exit(1);
                 }
             }

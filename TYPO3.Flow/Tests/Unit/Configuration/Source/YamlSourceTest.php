@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Configuration\Source;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Configuration\Source\YamlSource;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the YAML configuration source
@@ -115,7 +117,8 @@ class YamlSourceTest extends UnitTestCase
                 'Flow' => [
                     'something' => 'foo',
                     '@bar' => 1,
-                    'aboolean' => true
+                    'aboolean' => true,
+                    'Foo.Bar:Baz' => 'a quoted key'
                 ]
             ]
         ];

@@ -60,7 +60,7 @@ class AuthenticationTest extends FunctionalTestCase
             '@controller' => 'Restricted',
             '@action' => 'public',
             '@format' =>'html'
-        ));
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
 

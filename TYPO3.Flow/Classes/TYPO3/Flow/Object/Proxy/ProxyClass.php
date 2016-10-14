@@ -64,12 +64,17 @@ class ProxyClass
      *
      * @var array
      */
-    protected $interfaces = [];
+    protected $interfaces = ['\TYPO3\Flow\Object\Proxy\ProxyInterface'];
 
     /**
      * @var array
      */
-    protected $properties = array();
+    protected $traits = [];
+
+    /**
+     * @var array
+     */
+    protected $properties = [];
 
     /**
      * @var ReflectionService
@@ -83,7 +88,6 @@ class ProxyClass
      */
     public function __construct($fullOriginalClassName)
     {
-        $this->interfaces[] = '\\' . ProxyInterface::class;
         if (strpos($fullOriginalClassName, '\\') === false) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
@@ -170,7 +174,7 @@ class ProxyClass
      * Adds one or more interfaces to the "implements" section of the class definition.
      *
      * Note that the passed interface names must already have a leading backslash,
-     * for example "\Neos\Flow\Foo\BarInterface".
+     * for example "\TYPO3\Flow\Foo\BarInterface".
      *
      * @param array $interfaceNames Fully qualified names of the interfaces to introduce
      * @return void

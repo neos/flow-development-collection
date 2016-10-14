@@ -213,7 +213,7 @@ class ProxyMethod
             }
             $methodAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName);
             foreach ($methodAnnotations as $annotation) {
-                $methodDocumentation .= '	 * ' . \TYPO3\Flow\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
+                $methodDocumentation .= '     * ' . Compiler::renderAnnotation($annotation) . "\n";
             }
         }
 

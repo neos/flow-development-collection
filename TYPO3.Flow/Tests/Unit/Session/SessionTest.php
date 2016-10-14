@@ -67,7 +67,7 @@ class SessionTest extends UnitTestCase
         'session' => [
             'inactivityTimeout' => 3600,
             'name' => 'TYPO3_Flow_Session',
-            'garbageCollection' => array(
+            'garbageCollection' => [
                 'probability' => 1,
                 'maximumPerRun' => 1000,
             ],

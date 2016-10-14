@@ -10,15 +10,15 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Mvc;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Mvc;
 use TYPO3\Flow\Http;
-use TYPO3\Flow\Validation;
+use TYPO3\Flow\Validation\Validator\ValidatorInterface;
+use TYPO3\Flow\Validation\ValidatorResolver;
 
 /**
  * Testcase for the MVC Action Controller
@@ -173,8 +173,21 @@ class ActionControllerTest extends UnitTestCase
         $mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('initialize'));
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->with(ActionController::class, 'initializeAction')->will($this->returnValue(false));
-        $this->inject($this->actionController, 'reflectionService', $mockReflectionService);
+        $mockReflectionService->expects($this->any())->method('isMethodPublic')->will($this->returnCallback(function ($className, $methodName) {
+            if ($methodName === 'initializeAction') {
+                return false;
+            } else {
+                return true;
+            }
+        }));
+
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($classname) use ($mockReflectionService) {
+            if ($classname === ReflectionService::class) {
+                $this->returnValue($mockReflectionService);
+            }
+
+            return $this->createMock($classname);
+        }));
 
         $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
@@ -301,7 +314,7 @@ class ActionControllerTest extends UnitTestCase
             ]
         ];
 
-        $mockValidator = $this->createMock(Validation\Validator\ValidatorInterface::class);
+        $mockValidator = $this->createMock(ValidatorInterface::class);
 
         $parameterValidators = [
             'node' => $mockValidator
@@ -314,7 +327,7 @@ class ActionControllerTest extends UnitTestCase
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 
-        $mockValidatorResolver = $this->createMock(Validation\ValidatorResolver::class);
+        $mockValidatorResolver = $this->createMock(ValidatorResolver::class);
         $mockValidatorResolver->expects($this->any())->method('buildMethodArgumentsValidatorConjunctions')->will($this->returnValue($parameterValidators));
         $this->inject($this->actionController, 'validatorResolver', $mockValidatorResolver);
 

@@ -1123,8 +1123,8 @@ class ObjectSerializerTest extends UnitTestCase
 
         $expectedArrayProperty = [
             'key1' => 1,
-            'key2' => 'reconstituted object',
-        );
+            'key2' => 'reconstituted object'
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }

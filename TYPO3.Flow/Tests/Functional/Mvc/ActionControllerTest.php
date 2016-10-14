@@ -17,9 +17,6 @@ use TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
-/**
- * Functional tests for the ActionController
- */
 class ActionControllerTest extends FunctionalTestCase
 {
     /**
@@ -40,14 +37,14 @@ class ActionControllerTest extends FunctionalTestCase
             '@controller' => 'ActionControllerTestA',
             '@action' => 'first',
             '@format' =>'html'
-        ));
+        ]);
 
         $this->registerRoute('testb', 'test/mvc/actioncontrollertestb(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestB',
             '@format' =>'html'
-        ));
+        ]);
 
         $route = $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}(/{@action})', [
             '@package' => 'TYPO3.Flow',

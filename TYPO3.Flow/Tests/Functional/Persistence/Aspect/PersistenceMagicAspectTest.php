@@ -11,19 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Aspect;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogic;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogicAndInversedOrder;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithDateTimeProperty;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithSubValueObjectProperties;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithTransientProperties;
+use TYPO3\Flow\Persistence\Generic\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for PersistenceMagicAspect
- *
  */
 class PersistenceMagicAspectTest extends FunctionalTestCase
 {
