@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Twitter|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/flow-development-collection
@@ -30,9 +30,6 @@
 .. |Issues| image:: https://img.shields.io/github/issues/neos/flow-development-collection.svg
    :target: https://github.com/neos/flow-development-collection/issues
    :alt: Issues
-.. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
-   :target: http://translate.neos.io/
-   :alt: Translation
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
    :alt: Twitter
