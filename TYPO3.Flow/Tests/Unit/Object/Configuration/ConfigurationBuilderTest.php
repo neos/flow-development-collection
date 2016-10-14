@@ -16,12 +16,15 @@ use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationArgument;
 use TYPO3\Flow\Object\Configuration\ConfigurationBuilder;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Testcase for the object configuration builder
  *
  */
-class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ConfigurationBuilderTest extends UnitTestCase
 {
     /**
      * @test
@@ -31,7 +34,7 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
         $factoryObjectName = 'ConfigurationBuilderTest' . md5(uniqid(mt_rand(), true));
         eval('class ' . $factoryObjectName . ' { public function manufacture() {} } ');
 
-        $configurationArray = array();
+        $configurationArray = [];
         $configurationArray['scope'] = 'prototype';
         $configurationArray['className'] = __CLASS__;
         $configurationArray['factoryObjectName'] = $factoryObjectName;
@@ -40,16 +43,16 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
         $configurationArray['lifecycleShutdownMethodName'] = 'shutdownMethod';
         $configurationArray['autowiring'] = false;
 
-        $objectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('TestObject', __CLASS__);
-        $objectConfiguration->setScope(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
+        $objectConfiguration = new Configuration('TestObject', __CLASS__);
+        $objectConfiguration->setScope(Configuration::SCOPE_PROTOTYPE);
         $objectConfiguration->setClassName(__CLASS__);
         $objectConfiguration->setFactoryObjectName($factoryObjectName);
         $objectConfiguration->setFactoryMethodName('manufacture');
         $objectConfiguration->setLifecycleInitializationMethodName('initializationMethod');
         $objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');
-        $objectConfiguration->setAutowiring(\TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+        $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         $this->assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
     }
@@ -59,17 +62,17 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function argumentsOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions()
     {
-        $configurationArray = array();
+        $configurationArray = [];
         $configurationArray['arguments'][1]['object']['name'] = 'Foo';
         $configurationArray['arguments'][1]['object']['className'] = __CLASS__;
 
-        $argumentObjectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('Foo', __CLASS__);
+        $argumentObjectConfiguration = new Configuration('Foo', __CLASS__);
         $argumentObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ', argument "1"');
 
-        $objectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('TestObject', 'TestObject');
-        $objectConfiguration->setArgument(new \TYPO3\Flow\Object\Configuration\ConfigurationArgument(1, $argumentObjectConfiguration, \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT));
+        $objectConfiguration = new Configuration('TestObject', 'TestObject');
+        $objectConfiguration->setArgument(new ConfigurationArgument(1, $argumentObjectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT));
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -79,17 +82,17 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function propertiesOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions()
     {
-        $configurationArray = array();
+        $configurationArray = [];
         $configurationArray['properties']['theProperty']['object']['name'] = 'Foo';
         $configurationArray['properties']['theProperty']['object']['className'] = __CLASS__;
 
-        $propertyObjectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('Foo', __CLASS__);
+        $propertyObjectConfiguration = new Configuration('Foo', __CLASS__);
         $propertyObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ', property "theProperty"');
 
-        $objectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('TestObject', 'TestObject');
-        $objectConfiguration->setProperty(new \TYPO3\Flow\Object\Configuration\ConfigurationProperty('theProperty', $propertyObjectConfiguration, \TYPO3\Flow\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
+        $objectConfiguration = new Configuration('TestObject', 'TestObject');
+        $objectConfiguration->setProperty(new ConfigurationProperty('theProperty', $propertyObjectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT));
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -99,15 +102,15 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function itIsPossibleToPassArraysAsStraightArgumentOrPropertyValues()
     {
-        $configurationArray = array();
-        $configurationArray['properties']['straightValueProperty']['value'] = array('foo' => 'bar', 'object' => 'nö');
-        $configurationArray['arguments'][1]['value'] = array('foo' => 'bar', 'object' => 'nö');
+        $configurationArray = [];
+        $configurationArray['properties']['straightValueProperty']['value'] = ['foo' => 'bar', 'object' => 'nö'];
+        $configurationArray['arguments'][1]['value'] = ['foo' => 'bar', 'object' => 'nö'];
 
-        $objectConfiguration = new \TYPO3\Flow\Object\Configuration\Configuration('TestObject', 'TestObject');
-        $objectConfiguration->setProperty(new \TYPO3\Flow\Object\Configuration\ConfigurationProperty('straightValueProperty', array('foo' => 'bar', 'object' => 'nö')));
-        $objectConfiguration->setArgument(new \TYPO3\Flow\Object\Configuration\ConfigurationArgument(1, array('foo' => 'bar', 'object' => 'nö')));
+        $objectConfiguration = new Configuration('TestObject', 'TestObject');
+        $objectConfiguration->setProperty(new ConfigurationProperty('straightValueProperty', ['foo' => 'bar', 'object' => 'nö']));
+        $objectConfiguration->setArgument(new ConfigurationArgument(1, ['foo' => 'bar', 'object' => 'nö']));
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -118,8 +121,8 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidOptionResultsInException()
     {
-        $configurationArray = array('scoopy' => 'prototype');
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
+        $configurationArray = ['scoopy' => 'prototype'];
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
     }
 
@@ -129,19 +132,19 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function privatePropertyAnnotatedForInjectionThrowsException()
     {
-        $configurationArray = array();
-        $configurationArray['arguments'][1]['setting'] = 'TYPO3.Foo.Bar';
-        $configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Bar.Baz';
+        $configurationArray = [];
+        $configurationArray['arguments'][1]['setting'] = 'Neos.Foo.Bar';
+        $configurationArray['properties']['someProperty']['setting'] = 'Neos.Bar.Baz';
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
-        $dummyObjectConfiguration = array($configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__)];
 
-        $reflectionServiceMock = $this->createMock('\TYPO3\Flow\Reflection\ReflectionService');
+        $reflectionServiceMock = $this->createMock(ReflectionService::class);
         $reflectionServiceMock
                 ->expects($this->once())
                 ->method('getPropertyNamesByAnnotation')
-                ->with(__CLASS__, \TYPO3\Flow\Annotations\Inject::class)
-                ->will($this->returnValue(array('dummyProperty')));
+                ->with(__CLASS__, Flow\Inject::class)
+                ->will($this->returnValue(['dummyProperty']));
 
         $reflectionServiceMock
                 ->expects($this->once())
@@ -159,12 +162,12 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function errorOnGetClassMethodsThrowsException()
     {
-        $configurationArray = array();
+        $configurationArray = [];
         $configurationArray['properties']['someProperty']['object']['name'] = 'Foo';
         $configurationArray['properties']['someProperty']['object']['className'] = 'foobar';
 
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, array('dummy'));
-        $dummyObjectConfiguration = array($configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__));
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__)];
 
         $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
     }
@@ -174,15 +177,15 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseConfigurationArrayBuildsConfigurationPropertyForInjectedSetting()
     {
-        $configurationArray = array();
-        $configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Foo.Bar';
+        $configurationArray = [];
+        $configurationArray['properties']['someProperty']['setting'] = 'Neos.Foo.Bar';
 
         /** @var ConfigurationBuilder $configurationBuilder */
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, null);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, null);
         /** @var Configuration $builtObjectConfiguration */
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
-        $expectedConfigurationProperty = new ConfigurationProperty('someProperty', array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => 'TYPO3.Foo.Bar'), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+        $expectedConfigurationProperty = new ConfigurationProperty('someProperty', ['type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => 'Neos.Foo.Bar'], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
         $this->assertEquals($expectedConfigurationProperty, $builtObjectConfiguration->getProperties()['someProperty']);
     }
 
@@ -191,15 +194,15 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseConfigurationArrayBuildsConfigurationArgumentForInjectedSetting()
     {
-        $configurationArray = array();
-        $configurationArray['arguments'][1]['setting'] = 'TYPO3.Foo.Bar';
+        $configurationArray = [];
+        $configurationArray['arguments'][1]['setting'] = 'Neos.Foo.Bar';
 
         /** @var ConfigurationBuilder $configurationBuilder */
-        $configurationBuilder = $this->getAccessibleMock(\TYPO3\Flow\Object\Configuration\ConfigurationBuilder::class, null);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, null);
         /** @var Configuration $builtObjectConfiguration */
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
-        $expectedConfigurationArgument = new ConfigurationArgument(1, 'TYPO3.Foo.Bar', ConfigurationArgument::ARGUMENT_TYPES_SETTING);
+        $expectedConfigurationArgument = new ConfigurationArgument(1, 'Neos.Foo.Bar', ConfigurationArgument::ARGUMENT_TYPES_SETTING);
         $this->assertEquals($expectedConfigurationArgument, $builtObjectConfiguration->getArguments()[1]);
     }
 }

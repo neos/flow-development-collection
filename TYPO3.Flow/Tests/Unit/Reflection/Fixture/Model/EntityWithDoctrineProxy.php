@@ -35,7 +35,7 @@ class EntityWithDoctrineProxy extends Entity implements \Doctrine\ORM\Proxy\Prox
      *
      * @see \Doctrine\Common\Persistence\Proxy::__getLazyProperties
      */
-    public static $lazyPropertiesDefaults = array();
+    public static $lazyPropertiesDefaults = [];
 
 
     /**
@@ -53,7 +53,7 @@ class EntityWithDoctrineProxy extends Entity implements \Doctrine\ORM\Proxy\Prox
      */
     public function __load()
     {
-        $this->__initializer__ && $this->__initializer__->__invoke($this, '__load', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, '__load', []);
     }
 
     /**

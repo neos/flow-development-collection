@@ -13,7 +13,9 @@ namespace TYPO3\Flow\Tests\Unit\Http;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http;
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -33,13 +35,11 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-
-        $_GET = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
-        $_POST = array();
-        $_COOKIE = array();
-        $_FILES = array();
-        $_SERVER = array(
+        $_GET = ['getKey1' => 'getValue1', 'getKey2' => 'getValue2'];
+        $_POST = [];
+        $_COOKIE = [];
+        $_FILES = [];
+        $_SERVER = [
             'REDIRECT_FLOW_CONTEXT' => 'Development',
             'REDIRECT_FLOW_REWRITEURLS' => '1',
             'REDIRECT_STATUS' => '200',
@@ -72,7 +72,7 @@ class RequestTest extends UnitTestCase
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
             'REQUEST_TIME' => 1326472534,
-        );
+        ];
 
         $request = Request::createFromEnvironment();
 
@@ -88,13 +88,11 @@ class RequestTest extends UnitTestCase
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-
-        $_GET = array();
-        $_POST = array();
-        $_COOKIE = array();
-        $_FILES = array();
-        $_SERVER = array();
+        $_GET = [];
+        $_POST = [];
+        $_COOKIE = [];
+        $_FILES = [];
+        $_SERVER = [];
 
         $request = Request::createFromEnvironment();
 
@@ -108,10 +106,10 @@ class RequestTest extends UnitTestCase
      */
     public function constructRecognizesSslSessionIdAsIndicatorForSsl()
     {
-        $get = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
-        $post = array();
-        $files = array();
-        $server = array(
+        $get = ['getKey1' => 'getValue1', 'getKey2' => 'getValue2'];
+        $post = [];
+        $files = [];
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'SERVER_NAME' => 'dev.blog.rob',
             'SERVER_ADDR' => '127.0.0.1',
@@ -123,7 +121,7 @@ class RequestTest extends UnitTestCase
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
             'SSL_SESSION_ID' => '12345'
-        );
+        ];
 
         $request = new Request($get, $post, $files, $server);
         $this->assertEquals('https', $request->getUri()->getScheme());
@@ -135,19 +133,19 @@ class RequestTest extends UnitTestCase
      */
     public function createUsesReasonableDefaultsForCreatingANewRequest()
     {
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals($uri, $request->getUri());
         $this->assertEquals('HTTP/1.1', $request->getVersion());
 
-        $uri = new Uri('https://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('https://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals($uri, $request->getUri());
 
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('POST', $request->getMethod());
@@ -159,7 +157,7 @@ class RequestTest extends UnitTestCase
      */
     public function settingVersionHasExpectedImplications()
     {
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
         $request->setVersion('HTTP/1.0');
 
@@ -172,46 +170,46 @@ class RequestTest extends UnitTestCase
      */
     public function methodCanBeOverriddenDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'originalMethod' => 'GET',
-                'arguments' => array(),
-                'server' => array(),
+                'arguments' => [],
+                'server' => [],
                 'expectedMethod' => 'GET'
-            ),
-            array(
+            ],
+            [
                 'originalMethod' => 'GET',
-                'arguments' => array('__method' => 'POST'),
-                'server' => array(),
+                'arguments' => ['__method' => 'POST'],
+                'server' => [],
                 'expectedMethod' => 'GET'
-            ),
-            array(
+            ],
+            [
                 'originalMethod' => 'PUT',
-                'arguments' => array('__method' => 'POST'),
-                'server' => array(),
+                'arguments' => ['__method' => 'POST'],
+                'server' => [],
                 'expectedMethod' => 'PUT'
-            ),
-            array(
+            ],
+            [
                 'originalMethod' => 'POST',
-                'arguments' => array('__method' => 'PUT'),
-                'server' => array(),
+                'arguments' => ['__method' => 'PUT'],
+                'server' => [],
                 'expectedMethod' => 'PUT'
-            ),
+            ],
             // __method argument overrules HTTP_X_HTTP_METHOD_* headers
-            array(
+            [
                 'originalMethod' => 'POST',
-                'arguments' => array('__method' => 'DELETE'),
-                'server' => array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
+                'arguments' => ['__method' => 'DELETE'],
+                'server' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'],
                 'expectedMethod' => 'DELETE'
-            ),
+            ],
             // HTTP_X_HTTP_METHOD_OVERRIDE header overrules HTTP_X_HTTP_METHOD header
-            array(
+            [
                 'originalMethod' => 'POST',
-                'arguments' => array(),
-                'server' => array('HTTP_X_HTTP_METHOD' => 'DELETE', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
+                'arguments' => [],
+                'server' => ['HTTP_X_HTTP_METHOD' => 'DELETE', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'],
                 'expectedMethod' => 'PUT'
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -224,8 +222,8 @@ class RequestTest extends UnitTestCase
      */
     public function methodCanBeOverridden($originalMethod, array $arguments, array $server, $expectedMethod)
     {
-        $uri = new Uri('http://flow.typo3.org');
-        $request = Request::create($uri, $originalMethod, $arguments, array(), $server);
+        $uri = new Uri('http://flow.neos.io');
+        $request = Request::create($uri, $originalMethod, $arguments, [], $server);
         $this->assertEquals($expectedMethod, $request->getMethod());
     }
 
@@ -237,7 +235,7 @@ class RequestTest extends UnitTestCase
      */
     public function createSetsTheContentTypeHeaderToFormUrlEncodedByDefaultIfRequestMethodSuggestsIt()
     {
-        $uri = new Uri('http://flow.typo3.org/foo');
+        $uri = new Uri('http://flow.neos.io/foo');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
@@ -248,11 +246,11 @@ class RequestTest extends UnitTestCase
      */
     public function createActionRequestCreatesAnMvcRequestConnectedToTheParentRequest()
     {
-        $uri = new Uri('http://flow.typo3.org');
+        $uri = new Uri('http://flow.neos.io');
         $request = Request::create($uri);
 
         $subRequest = $request->createActionRequest();
-        $this->assertInstanceOf(\TYPO3\Flow\Mvc\ActionRequest::class, $subRequest);
+        $this->assertInstanceOf(ActionRequest::class, $subRequest);
         $this->assertSame($request, $subRequest->getParentRequest());
     }
 
@@ -261,12 +259,12 @@ class RequestTest extends UnitTestCase
      */
     public function requestMethods()
     {
-        return array(
-            array('GET'),
-            array('HEAD'),
-            array('POST'),
-            array('Anything')
-        );
+        return [
+            ['GET'],
+            ['HEAD'],
+            ['POST'],
+            ['Anything']
+        ];
     }
 
     /**
@@ -275,7 +273,7 @@ class RequestTest extends UnitTestCase
      */
     public function setMethodAcceptsAnyRequestMethod($validMethod)
     {
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $request->setMethod($validMethod);
         $this->assertSame($validMethod, $request->getMethod());
     }
@@ -287,16 +285,16 @@ class RequestTest extends UnitTestCase
      */
     public function getReturnsTheRequestUri()
     {
-        $server = array(
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/foo/bar',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
         $uri = new Uri('http://dev.blog.rob/foo/bar');
-        $request = new Request(array(), array(), array(), $server);
+        $request = new Request([], [], [], $server);
         $this->assertEquals($uri, $request->getUri());
     }
 
@@ -310,8 +308,7 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
-        $request->setContent(null);
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $actualContent = $request->getContent();
@@ -328,8 +325,7 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
-        $request->setContent(null);
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $resource = $request->getContent(true);
@@ -348,7 +344,7 @@ class RequestTest extends UnitTestCase
 
         file_put_contents('vfs://Foo/content.txt', 'xy');
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $request->getContent(true);
@@ -360,15 +356,15 @@ class RequestTest extends UnitTestCase
      */
     public function renderHeadersReturnsRawHttpHeadersAccordingToTheRequestProperties()
     {
-        $server = array(
+        $server = [
                 'HTTP_HOST' => 'dev.blog.rob',
                 'REQUEST_METHOD' => 'GET',
                 'REQUEST_URI' => '/foo/bar',
                 'SCRIPT_NAME' => '/index.php',
                 'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', array(), array(), $server);
+        $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', [], [], $server);
 
         $expectedHeaders =
             "PUT /?foo=bar HTTP/1.1\r\n" .
@@ -384,15 +380,15 @@ class RequestTest extends UnitTestCase
      */
     public function toStringReturnsRawHttpRequestAccordingToTheRequestProperties()
     {
-        $server = array(
+        $server = [
                 'HTTP_HOST' => 'dev.blog.rob',
                 'REQUEST_METHOD' => 'GET',
                 'REQUEST_URI' => '/foo/bar',
                 'SCRIPT_NAME' => '/index.php',
                 'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', array(), array(), $server);
+        $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', [], [], $server);
         $request->setContent('putArgument=first value');
         $expectedRawRequest =
             "PUT /?foo=bar HTTP/1.1\r\n" .
@@ -410,21 +406,21 @@ class RequestTest extends UnitTestCase
      */
     public function serverEnvironmentsForClientIpAddresses()
     {
-        return array(
-            array(array(), '17.172.224.47'),
-            array(array('HTTP_CLIENT_IP' => 'murks'), '17.172.224.47'),
-            array(array('HTTP_CLIENT_IP' => '17.149.160.49'), '17.149.160.49'),
-            array(array('HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '17.149.160.49'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '123.123.123.123'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'), '123.123.123.123'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'), '123.123.123.123'),
-            array(array('HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
-            array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
-        );
+        return [
+            [[], '17.172.224.47'],
+            [['HTTP_CLIENT_IP' => 'murks'], '17.172.224.47'],
+            [['HTTP_CLIENT_IP' => '17.149.160.49'], '17.149.160.49'],
+            [['HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '17.149.160.49'],
+            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '123.123.123.123'],
+            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'], '123.123.123.123'],
+            [['HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
+            [['HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
+            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'], '123.123.123.123'],
+            [['HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'], '209.85.148.101'],
+            [['HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
+            [['HTTP_FORWARDED' => '209.85.148.101'], '209.85.148.101'],
+            [['REMOTE_ADDR' => '127.0.0.1'], '127.0.0.1'],
+        ];
     }
 
     /**
@@ -433,10 +429,10 @@ class RequestTest extends UnitTestCase
      */
     public function getClientIpAddressReturnsTheIpAddressDerivedFromSeveralServerEnvironmentVariables(array $serverEnvironment, $expectedIpAddress)
     {
-        $defaultServerEnvironment = array(
+        $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-            'HTTP_HOST' => 'flow.typo3.org',
-            'SERVER_NAME' => 'typo3.org',
+            'HTTP_HOST' => 'flow.neos.io',
+            'SERVER_NAME' => 'neos.io',
             'SERVER_ADDR' => '217.29.36.55',
             'SERVER_PORT' => 80,
             'REMOTE_ADDR' => '17.172.224.47',
@@ -444,9 +440,9 @@ class RequestTest extends UnitTestCase
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = Request::create(new Uri('http://flow.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+        $request = Request::create(new Uri('http://flow.neos.io'), 'GET', [], [], array_replace($defaultServerEnvironment, $serverEnvironment));
         $this->assertSame($expectedIpAddress, $request->getClientIpAddress());
     }
 
@@ -455,16 +451,16 @@ class RequestTest extends UnitTestCase
      */
     public function acceptHeaderValuesAndCorrespondingListOfMediaTypes()
     {
-        return array(
-            array(null, array('*/*')),
-            array('', array('*/*')),
-            array('text/html', array('text/html')),
-            array('application/json; q=0.5, application/json; charset=UTF-8', array('application/json; charset=UTF-8', 'application/json')),
-            array('audio/*; q=0.2, audio/basic', array('audio/basic', 'audio/*')),
-            array('text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', array('text/html', 'text/x-c', 'text/x-dvi', 'text/plain')),
-            array('text/*, text/html, text/html;level=1, */*', array('text/html;level=1', 'text/html', 'text/*', '*/*')),
-            array('text/html;level=1, text/*, text/html, text/html;level=2, */*', array('text/html;level=1', 'text/html;level=2', 'text/html', 'text/*', '*/*')),
-        );
+        return [
+            [null, ['*/*']],
+            ['', ['*/*']],
+            ['text/html', ['text/html']],
+            ['application/json; q=0.5, application/json; charset=UTF-8', ['application/json; charset=UTF-8', 'application/json']],
+            ['audio/*; q=0.2, audio/basic', ['audio/basic', 'audio/*']],
+            ['text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', ['text/html', 'text/x-c', 'text/x-dvi', 'text/plain']],
+            ['text/*, text/html, text/html;level=1, */*', ['text/html;level=1', 'text/html', 'text/*', '*/*']],
+            ['text/html;level=1, text/*, text/html, text/html;level=2, */*', ['text/html;level=1', 'text/html;level=2', 'text/html', 'text/*', '*/*']],
+        ];
     }
 
     /**
@@ -487,14 +483,14 @@ class RequestTest extends UnitTestCase
      */
     public function preferedSupportedAndNegotiatedMediaTypes()
     {
-        return array(
-            array('text/html', array(), null),
-            array('text/plain', array('text/html', 'application/json'), null),
-            array('application/json; charset=UTF-8', array('text/html', 'application/json'), 'application/json'),
-            array(null, array('text/plain'), 'text/plain'),
-            array('', array('text/html', 'application/json'), 'text/html'),
-            array('application/flow, application/json', array('text/html', 'application/json'), 'application/json'),
-        );
+        return [
+            ['text/html', [], null],
+            ['text/plain', ['text/html', 'application/json'], null],
+            ['application/json; charset=UTF-8', ['text/html', 'application/json'], 'application/json'],
+            [null, ['text/plain'], 'text/plain'],
+            ['', ['text/html', 'application/json'], 'text/html'],
+            ['application/flow, application/json', ['text/html', 'application/json'], 'application/json'],
+        ];
     }
 
     /**
@@ -520,36 +516,36 @@ class RequestTest extends UnitTestCase
      */
     public function getBaseUriReturnsTheDetectedBaseUri()
     {
-        $server = array(
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/foo/bar',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = new Request(array(), array(), array(), $server);
+        $request = new Request([], [], [], $server);
         $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
-        $server = array(
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/foo/bar',
             'ORIG_SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = new Request(array(), array(), array(), $server);
+        $request = new Request([], [], [], $server);
         $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
-        $server = array(
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/foo/bar',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = new Request(array(), array(), array(), $server);
+        $request = new Request([], [], [], $server);
         $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
     }
 
@@ -558,17 +554,17 @@ class RequestTest extends UnitTestCase
      */
     public function getBaseUriReturnsThePresetBaseUriIfItHasBeenSet()
     {
-        $server = array(
+        $server = [
             'HTTP_HOST' => 'dev.blog.rob',
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/foo/bar',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $request = new Request(array(), array(), array(), $server);
+        $request = new Request([], [], [], $server);
 
-        $baseUri = new \TYPO3\Flow\Http\Uri('http://prod.blog.rob/');
+        $baseUri = new Uri('http://prod.blog.rob/');
         $request->setBaseUri($baseUri);
         $this->assertEquals('http://prod.blog.rob/', (string)$request->getBaseUri());
     }
@@ -578,11 +574,11 @@ class RequestTest extends UnitTestCase
      */
     public function variousArguments()
     {
-        return array(
-            array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array(), array(), array('baz' => 'quux', 'coffee' => 'due')),
-            array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('post' => 'var'), array(), array('baz' => 'quux', 'coffee' => 'due', 'post' => 'var')),
-            array('POST', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('post' => 'var'), array(), array('baz' => 'quux', 'coffee' => 'due', 'post' => 'var')),
-        );
+        return [
+            ['GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', [], [], ['baz' => 'quux', 'coffee' => 'due']],
+            ['GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', ['post' => 'var'], [], ['baz' => 'quux', 'coffee' => 'due', 'post' => 'var']],
+            ['POST', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', ['post' => 'var'], [], ['baz' => 'quux', 'coffee' => 'due', 'post' => 'var']],
+        ];
     }
 
     /**
@@ -591,7 +587,7 @@ class RequestTest extends UnitTestCase
      */
     public function getArgumentsReturnsGetAndPostArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments)
     {
-        $request = Request::create(new Uri($uriString), $method, $postArguments, array(), $filesArguments);
+        $request = Request::create(new Uri($uriString), $method, $postArguments, [], $filesArguments);
         $this->assertEquals($expectedArguments, $request->getArguments());
     }
 
@@ -691,8 +687,6 @@ class RequestTest extends UnitTestCase
      */
     public function portInProxyHeaderIsAcknowledged()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-
         $_SERVER = array(
             'HTTP_HOST' => 'dev.blog.rob',
             'HTTP_X_FORWARDED_PORT' => 2727,
@@ -702,9 +696,9 @@ class RequestTest extends UnitTestCase
             'REMOTE_ADDR' => '127.0.0.1',
             'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
             'REQUEST_TIME' => 1326472534
-        );
+        ];
 
-        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
+        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), [], [], [], $_SERVER);
         $this->assertSame(2727, $request->getPort());
 
         $_SERVER['SCRIPT_NAME'] = $scriptName;
@@ -743,12 +737,12 @@ class RequestTest extends UnitTestCase
      */
     public function isSecureReturnsTrueEvenIfTheSchemeIsHttpButTheRequestWasForwardedAndOriginallyWasHttps()
     {
-        $server = array(
+        $server = [
             'HTTP_X_FORWARDED_PROTO' => 'https',
             'HTTP_X_FORWARDED_PORT' => '443',
-        );
+        ];
 
-        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), $server);
+        $request = Request::create(new Uri('http://acme.com'), 'GET', [], [], $server);
         $this->assertEquals('https://acme.com', (string)$request->getUri());
         $this->assertEquals('https', $request->getUri()->getScheme());
         $this->assertTrue($request->isSecure());
@@ -759,12 +753,12 @@ class RequestTest extends UnitTestCase
      */
     public function isSecureReturnsFalseIfTheRequestWasForwardedAndOriginallyWasHttp()
     {
-        $server = array(
+        $server = [
             'HTTP_X_FORWARDED_PROTO' => 'http',
             'HTTP_X_FORWARDED_PORT' => '80',
-        );
+        ];
 
-        $request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), $server);
+        $request = Request::create(new Uri('https://acme.com'), 'GET', [], [], $server);
         $this->assertEquals('http://acme.com', (string)$request->getUri());
         $this->assertEquals('http', $request->getUri()->getScheme());
         $this->assertFalse($request->isSecure());
@@ -775,104 +769,104 @@ class RequestTest extends UnitTestCase
      */
     public function forwardHeaderTestsDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'forwardedProtocol' => null,
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com',
-            ),
+            ],
 
             // forwarded protocol overrules requested protocol
-            array(
+            [
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'https://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => null,
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'https://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => null,
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'http://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com',
-            ),
+            ],
 
             // forwarded port overrules requested port
-            array(
+            [
                 'forwardedProtocol' => null,
                 'forwardedPort' => 80,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => null,
                 'forwardedPort' => '8080',
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => null,
                 'forwardedPort' => 8080,
                 'requestUri' => 'http://acme.com:8000',
                 'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => null,
                 'forwardedPort' => '443',
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'https://acme.com',
-            ),
+            ],
 
             // forwarded protocol & port
-            array(
+            [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => 80,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => 8080,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'http://acme.com:8080',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => 443,
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'http://acme.com:443',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => 443,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'https://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => 443,
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'https://acme.com',
-            ),
-            array(
+            ],
+            [
                 'forwardedProtocol' => 'https',
                 'forwardedPort' => 80,
                 'requestUri' => 'https://acme.com',
                 'expectedUri' => 'https://acme.com:80',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -881,14 +875,14 @@ class RequestTest extends UnitTestCase
      */
     public function forwardHeaderTests($forwardedProtocol, $forwardedPort, $requestUri, $expectedUri)
     {
-        $server = array();
+        $server = [];
         if ($forwardedProtocol !== null) {
             $server['HTTP_X_FORWARDED_PROTO'] = $forwardedProtocol;
         }
         if ($forwardedPort !== null) {
             $server['HTTP_X_FORWARDED_PORT'] = $forwardedPort;
         }
-        $request = Request::create(new Uri($requestUri), 'GET', array(), array(), $server);
+        $request = Request::create(new Uri($requestUri), 'GET', [], [], $server);
         $this->assertEquals($expectedUri, (string)$request->getUri());
     }
 
@@ -920,191 +914,191 @@ class RequestTest extends UnitTestCase
      */
     public function untangleFilesArrayTransformsTheFilesSuperglobalIntoAMangeableForm()
     {
-        $convolutedFiles = array(
-            'a0' => array(
-                'name' => array(
+        $convolutedFiles = [
+            'a0' => [
+                'name' => [
                     'a1' => 'a.txt',
-                ),
-                'type' => array(
+                ],
+                'type' => [
                     'a1' => 'text/plain',
-                ),
-                'tmp_name' => array(
+                ],
+                'tmp_name' => [
                     'a1' => '/private/var/tmp/phpbqXsYt',
-                ),
-                'error' => array(
+                ],
+                'error' => [
                     'a1' => 0,
-                ),
-                'size' => array(
+                ],
+                'size' => [
                     'a1' => 100,
-                ),
-            ),
-            'b0' => array(
-                'name' => array(
+                ],
+            ],
+            'b0' => [
+                'name' => [
                     'b1' => 'b.txt',
-                ),
-                'type' => array(
+                ],
+                'type' => [
                     'b1' => 'text/plain',
-                ),
-                'tmp_name' => array(
+                ],
+                'tmp_name' => [
                     'b1' => '/private/var/tmp/phpvZ6oUD',
-                ),
-                'error' => array(
+                ],
+                'error' => [
                     'b1' => 0,
-                ),
-                'size' => array(
+                ],
+                'size' => [
                     'b1' => 200,
-                ),
-            ),
-            'c' => array(
+                ],
+            ],
+            'c' => [
                 'name' => 'c.txt',
                 'type' => 'text/plain',
                 'tmp_name' => '/private/var/tmp/phpS9KMNw',
                 'error' => 0,
                 'size' => 300,
-            ),
-            'd0' => array(
-                'name' => array(
-                    'd1' => array(
-                        'd2' => array(
+            ],
+            'd0' => [
+                'name' => [
+                    'd1' => [
+                        'd2' => [
                             'd3' => 'd.txt',
-                        ),
-                    ),
-                ),
-                'type' => array(
-                    'd1' => array(
-                        'd2' => array(
+                        ],
+                    ],
+                ],
+                'type' => [
+                    'd1' => [
+                        'd2' => [
                             'd3' => 'text/plain',
-                        ),
-                    ),
-                ),
-                'tmp_name' => array(
-                    'd1' => array(
-                        'd2' => array(
+                        ],
+                    ],
+                ],
+                'tmp_name' => [
+                    'd1' => [
+                        'd2' => [
                             'd3' => '/private/var/tmp/phprR3fax',
-                        ),
-                    ),
-                ),
-                'error' => array(
-                    'd1' => array(
-                        'd2' => array(
+                        ],
+                    ],
+                ],
+                'error' => [
+                    'd1' => [
+                        'd2' => [
                             'd3' => 0,
-                        ),
-                    ),
-                ),
-                'size' => array(
-                    'd1' => array(
-                        'd2' => array(
+                        ],
+                    ],
+                ],
+                'size' => [
+                    'd1' => [
+                        'd2' => [
                             'd3' => 400,
-                        ),
-                    ),
-                ),
-            ),
-            'e0' => array(
-                'name' => array(
-                    'e1' => array(
-                        'e2' => array(
+                        ],
+                    ],
+                ],
+            ],
+            'e0' => [
+                'name' => [
+                    'e1' => [
+                        'e2' => [
                             0 => 'e_one.txt',
                             1 => 'e_two.txt',
-                        ),
-                    ),
-                ),
-                'type' => array(
-                    'e1' => array(
-                        'e2' => array(
+                        ],
+                    ],
+                ],
+                'type' => [
+                    'e1' => [
+                        'e2' => [
                             0 => 'text/plain',
                             1 => 'text/plain',
-                        ),
-                    ),
-                ),
-                'tmp_name' => array(
-                    'e1' => array(
-                        'e2' => array(
+                        ],
+                    ],
+                ],
+                'tmp_name' => [
+                    'e1' => [
+                        'e2' => [
                             0 => '/private/var/tmp/php01fitB',
                             1 => '/private/var/tmp/phpUUB2cv',
-                        ),
-                    ),
-                ),
-                'error' => array(
-                    'e1' => array(
-                        'e2' => array(
+                        ],
+                    ],
+                ],
+                'error' => [
+                    'e1' => [
+                        'e2' => [
                             0 => 0,
                             1 => 0,
-                        ),
-                    ),
-                ),
-                'size' => array(
-                    'e1' => array(
-                        'e2' => array(
+                        ],
+                    ],
+                ],
+                'size' => [
+                    'e1' => [
+                        'e2' => [
                             0 => 510,
                             1 => 520,
-                        )
-                    )
-                )
-            )
-        );
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
-        $untangledFiles = array(
-            'a0' => array(
-                'a1' => array(
+        $untangledFiles = [
+            'a0' => [
+                'a1' => [
                     'name' => 'a.txt',
                     'type' => 'text/plain',
                     'tmp_name' => '/private/var/tmp/phpbqXsYt',
                     'error' => 0,
                     'size' => 100,
-                ),
-            ),
-            'b0' => array(
-                'b1' => array(
+                ],
+            ],
+            'b0' => [
+                'b1' => [
                     'name' => 'b.txt',
                     'type' => 'text/plain',
                     'tmp_name' => '/private/var/tmp/phpvZ6oUD',
                     'error' => 0,
                     'size' => 200,
-                )
-            ),
-            'c' => array(
+                ]
+            ],
+            'c' => [
                 'name' => 'c.txt',
                 'type' => 'text/plain',
                 'tmp_name' => '/private/var/tmp/phpS9KMNw',
                 'error' => 0,
                 'size' => 300,
-            ),
-            'd0' => array(
-                'd1' => array(
-                    'd2' => array(
-                        'd3' => array(
+            ],
+            'd0' => [
+                'd1' => [
+                    'd2' => [
+                        'd3' => [
                             'name' => 'd.txt',
                             'type' => 'text/plain',
                             'tmp_name' => '/private/var/tmp/phprR3fax',
                             'error' => 0,
                             'size' => 400,
-                        ),
-                    ),
-                ),
-            ),
-            'e0' => array(
-                'e1' => array(
-                    'e2' => array(
-                        0 => array(
+                        ],
+                    ],
+                ],
+            ],
+            'e0' => [
+                'e1' => [
+                    'e2' => [
+                        0 => [
                             'name' => 'e_one.txt',
                             'type' => 'text/plain',
                             'tmp_name' => '/private/var/tmp/php01fitB',
                             'error' => 0,
                             'size' => 510,
-                        ),
-                        1 => array(
+                        ],
+                        1 => [
                             'name' => 'e_two.txt',
                             'type' => 'text/plain',
                             'tmp_name' => '/private/var/tmp/phpUUB2cv',
                             'error' => 0,
                             'size' => 520,
-                        )
-                    )
-                )
-            )
-        );
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
-        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(Http\Request::class, ['dummy'], [], '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1115,56 +1109,56 @@ class RequestTest extends UnitTestCase
      */
     public function untangleFilesArrayDoesNotChangeArgumentsIfNoFileWasUploaded()
     {
-        $convolutedFiles = array(
-            'a0' => array(
-                'name' => array(
+        $convolutedFiles = [
+            'a0' => [
+                'name' => [
                     'a1' => '',
-                ),
-                'type' => array(
+                ],
+                'type' => [
                     'a1' => '',
-                ),
-                'tmp_name' => array(
+                ],
+                'tmp_name' => [
                     'a1' => '',
-                ),
-                'error' => array(
+                ],
+                'error' => [
                     'a1' => \UPLOAD_ERR_NO_FILE,
-                ),
-                'size' => array(
+                ],
+                'size' => [
                     'a1' => 0,
-                ),
-            ),
-            'b0' => array(
-                'name' => array(
+                ],
+            ],
+            'b0' => [
+                'name' => [
                     'b1' => 'b.txt',
-                ),
-                'type' => array(
+                ],
+                'type' => [
                     'b1' => 'text/plain',
-                ),
-                'tmp_name' => array(
+                ],
+                'tmp_name' => [
                     'b1' => '/private/var/tmp/phpvZ6oUD',
-                ),
-                'error' => array(
+                ],
+                'error' => [
                     'b1' => 0,
-                ),
-                'size' => array(
+                ],
+                'size' => [
                     'b1' => 200,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $untangledFiles = array(
-            'b0' => array(
-                'b1' => array(
+        $untangledFiles = [
+            'b0' => [
+                'b1' => [
                     'name' => 'b.txt',
                     'type' => 'text/plain',
                     'tmp_name' => '/private/var/tmp/phpvZ6oUD',
                     'error' => 0,
                     'size' => 200,
-                )
-            ),
-        );
+                ]
+            ],
+        ];
 
-        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(Http\Request::class, ['dummy'], [], '', false);
         $result = $request->_call('untangleFilesArray', $convolutedFiles);
 
         $this->assertSame($untangledFiles, $result);
@@ -1177,14 +1171,14 @@ class RequestTest extends UnitTestCase
      */
     public function qualityValues()
     {
-        return array(
-            array('text/html', array('text/html')),
-            array('audio/*; q=0.2, audio/basic', array('audio/basic', 'audio/*')),
-            array('application/json; charset=UTF-8, text/html; q=0.8', array('application/json; charset=UTF-8', 'text/html')),
-            array('text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', array('text/html', 'text/x-c', 'text/x-dvi', 'text/plain')),
-            array('text/html,application/xml;q=0.9,application/xhtml+xml,*/*;q=0.8', array('text/html', 'application/xhtml+xml', 'application/xml', '*/*')),
-            array('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', array('text/html', 'application/xhtml+xml', 'application/xml', '*/*')),
-        );
+        return [
+            ['text/html', ['text/html']],
+            ['audio/*; q=0.2, audio/basic', ['audio/basic', 'audio/*']],
+            ['application/json; charset=UTF-8, text/html; q=0.8', ['application/json; charset=UTF-8', 'text/html']],
+            ['text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', ['text/html', 'text/x-c', 'text/x-dvi', 'text/plain']],
+            ['text/html,application/xml;q=0.9,application/xhtml+xml,*/*;q=0.8', ['text/html', 'application/xhtml+xml', 'application/xml', '*/*']],
+            ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', ['text/html', 'application/xhtml+xml', 'application/xml', '*/*']],
+        ];
     }
 
     /**
@@ -1195,7 +1189,7 @@ class RequestTest extends UnitTestCase
      */
     public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues)
     {
-        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', false);
         $actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
         $this->assertSame($expectedValues, $actualValues);
     }
@@ -1227,13 +1221,13 @@ class RequestTest extends UnitTestCase
      */
     public function constructorCorrectlyStripsOffIndexPhpFromRequestUriDataProvider()
     {
-        return array(
-            array('host' => null, 'requestUri' => null, 'expectedUri' => 'http://localhost/'),
-            array('host' => null, 'requestUri' => '/index.php', 'expectedUri' => 'http://localhost/'),
-            array('host' => 'localhost', 'requestUri' => '/foo/bar/index.php', 'expectedUri' => 'http://localhost/foo/bar/index.php'),
-            array('host' => 'dev.blog.rob', 'requestUri' => '/index.phpx', 'expectedUri' => 'http://dev.blog.rob/x'),
-            array('host' => 'dev.blog.rob', 'requestUri' => '/index.php?someParameter=someValue', 'expectedUri' => 'http://dev.blog.rob/?someParameter=someValue'),
-        );
+        return [
+            ['host' => null, 'requestUri' => null, 'expectedUri' => 'http://localhost/'],
+            ['host' => null, 'requestUri' => '/index.php', 'expectedUri' => 'http://localhost/'],
+            ['host' => 'localhost', 'requestUri' => '/foo/bar/index.php', 'expectedUri' => 'http://localhost/foo/bar/index.php'],
+            ['host' => 'dev.blog.rob', 'requestUri' => '/index.phpx', 'expectedUri' => 'http://dev.blog.rob/x'],
+            ['host' => 'dev.blog.rob', 'requestUri' => '/index.php?someParameter=someValue', 'expectedUri' => 'http://dev.blog.rob/?someParameter=someValue'],
+        ];
     }
 
     /**
@@ -1245,11 +1239,11 @@ class RequestTest extends UnitTestCase
      */
     public function constructorCorrectlyStripsOffIndexPhpFromRequestUri($host, $requestUri, $expectedUri)
     {
-        $server = array(
+        $server = [
             'HTTP_HOST' => $host,
             'REQUEST_URI' => $requestUri
-        );
-        $request = new Request(array(), array(), array(), $server);
+        ];
+        $request = new Request([], [], [], $server);
         $this->assertEquals($expectedUri, (string)$request->getUri());
     }
 
@@ -1260,10 +1254,10 @@ class RequestTest extends UnitTestCase
      */
     public function constructorIgnoresHttpsHeader()
     {
-        $server = array(
+        $server = [
             'HTTP_HTTPS' => '1',
-        );
-        new Request(array(), array(), array(), $server);
+        ];
+        new Request([], [], [], $server);
 
         // dummy assertion to avoid PHPUnit warning
         $this->assertTrue(true);

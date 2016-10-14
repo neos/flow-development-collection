@@ -12,17 +12,20 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\Backend\ApcBackend;
+use TYPO3\Flow\Cache\Frontend;
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * Testcase for the APC cache backend
  *
  * @requires extension apc
  */
-class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ApcBackendTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $mockEnvironment;
 
@@ -40,7 +43,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         if (ini_get('apc.slam_defense') == 1) {
             $this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
         }
-        $this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
+        $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -120,7 +123,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
@@ -138,11 +141,11 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
-        $backend->set($identifier, $data, array('UnitTestTag%tag3'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tagX']);
+        $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
-        $this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
+        $this->assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
     /**
@@ -175,9 +178,9 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('BackendAPCTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('BackendAPCTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('BackendAPCTest3', $data, array('UnitTestTag%test'));
+        $backend->set('BackendAPCTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('BackendAPCTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('BackendAPCTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
@@ -210,13 +213,13 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $thisCache = $this->getMockBuilder(Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thisBackend->injectEnvironment($this->mockEnvironment);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $thatCache = $this->getMockBuilder(Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new ApcBackend(new ApplicationContext('Testing'));
         $thatBackend->injectEnvironment($this->mockEnvironment);
@@ -254,7 +257,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $backend = $this->setUpBackend();
 
-        $cache = new \TYPO3\Flow\Cache\Frontend\VariableFrontend('UnitTestCache', $backend);
+        $cache = new Frontend\VariableFrontend('UnitTestCache', $backend);
         $backend->setCache($cache);
 
         for ($i = 0; $i < 100; $i++) {
@@ -263,7 +266,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
             $cache->set($entryIdentifier, $data);
         }
 
-        $entries = array();
+        $entries = [];
         foreach ($cache->getIterator() as $entryIdentifier => $data) {
             $entries[$entryIdentifier] = $data;
         }
@@ -284,7 +287,7 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $cache = $this->getMockBuilder(Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $backend = new ApcBackend(new ApplicationContext('Testing'));
         $backend->injectEnvironment($this->mockEnvironment);
         $backend->setCache($cache);

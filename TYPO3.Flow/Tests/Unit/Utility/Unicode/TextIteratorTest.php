@@ -11,11 +11,14 @@ namespace TYPO3\Flow\Tests\Unit\Utility\Unicode;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Unicode\TextIterator;
+use TYPO3\Flow\Error;
+
 /**
  * Testcase for the TextIterator port
- *
  */
-class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class TextIteratorTest extends UnitTestCase
 {
     /**
      * Checks if a new instance with the default iterator type can be created
@@ -24,8 +27,8 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canCreateIteratorOfDefaultType()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string');
-        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $iterator);
+        $iterator = new TextIterator('Some string');
+        $this->assertInstanceOf(TextIterator::class, $iterator);
     }
 
     /**
@@ -35,8 +38,8 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function instantiatingCharacterIteratorWorks()
     {
-        $characterIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
-        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $characterIterator);
+        $characterIterator = new TextIterator('Some string', TextIterator::CHARACTER);
+        $this->assertInstanceOf(TextIterator::class, $characterIterator);
     }
 
     /**
@@ -46,8 +49,8 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function instantiatingWordIteratorWorks()
     {
-        $wordIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
-        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $wordIterator);
+        $wordIterator = new TextIterator('Some string', TextIterator::WORD);
+        $this->assertInstanceOf(TextIterator::class, $wordIterator);
     }
 
 
@@ -58,8 +61,8 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function instantiatingSentenceIteratorWorks()
     {
-        $sentenceIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
-        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $sentenceIterator);
+        $sentenceIterator = new TextIterator('Some string', TextIterator::SENTENCE);
+        $this->assertInstanceOf(TextIterator::class, $sentenceIterator);
     }
 
     /**
@@ -69,8 +72,8 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function instantiatingLineIteratorWorks()
     {
-        $lineIterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', \TYPO3\Flow\Utility\Unicode\TextIterator::LINE);
-        $this->assertInstanceOf(\TYPO3\Flow\Utility\Unicode\TextIterator::class, $lineIterator);
+        $lineIterator = new TextIterator('Some string', TextIterator::LINE);
+        $this->assertInstanceOf(TextIterator::class, $lineIterator);
     }
 
 
@@ -82,9 +85,9 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function instantiatingIteratorWithInvalidTypeThrowsError()
     {
         try {
-            new \TYPO3\Flow\Utility\Unicode\TextIterator('Some string', 948);
+            new TextIterator('Some string', 948);
             $this->fail('Constructor did not reject invalid TextIterator type.');
-        } catch (\TYPO3\Flow\Error\Exception $exception) {
+        } catch (Error\Exception $exception) {
             $this->assertContains('Invalid iterator type in TextIterator constructor', $exception->getMessage(), 'Wrong error message.');
         }
     }
@@ -96,7 +99,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function characterIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by character...', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by character...', TextIterator::CHARACTER);
         $iterator->rewind();
         $result = '';
         foreach ($iterator as $currentCharacter) {
@@ -112,7 +115,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function wordIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::WORD);
         $iterator->rewind();
         $result = '';
         foreach ($iterator as $currentWord) {
@@ -128,7 +131,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sentenceIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by sentence...', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by sentence...', TextIterator::SENTENCE);
         $iterator->rewind();
         $result = '';
         foreach ($iterator as $currentSentence) {
@@ -144,7 +147,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lineIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator("This is a test string. \nLet's iterate \nit by line...", \TYPO3\Flow\Utility\Unicode\TextIterator::LINE);
+        $iterator = new TextIterator("This is a test string. \nLet's iterate \nit by line...", TextIterator::LINE);
         $iterator->rewind();
         $result = '';
         foreach ($iterator as $currentLine) {
@@ -160,7 +163,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function offsetInCharacterIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by character...', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by character...', TextIterator::CHARACTER);
         foreach ($iterator as $currentCharacter) {
             if ($currentCharacter == 'L') {
                 break;
@@ -176,7 +179,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function offsetInWordIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::WORD);
         foreach ($iterator as $currentWord) {
             if ($currentWord == 'iterate') {
                 break;
@@ -192,7 +195,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function offsetInSentenceIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::SENTENCE);
         foreach ($iterator as $currentSentence) {
             if ($currentSentence == 'Let\'s iterate it by word.') {
                 break;
@@ -208,7 +211,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function firstBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word...', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::WORD);
         $iterator->next();
         $this->assertEquals($iterator->first(), 'This', 'Wrong element returned by first().');
     }
@@ -220,7 +223,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function lastBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word', TextIterator::WORD);
         $iterator->rewind();
         $this->assertEquals($iterator->last(), 'word', 'Wrong element returned by last().');
     }
@@ -232,9 +235,9 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getAllBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string.', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string.', TextIterator::WORD);
 
-        $expectedResult = array(
+        $expectedResult = [
             0 => 'This',
             1 => ' ',
             2 => 'is',
@@ -245,7 +248,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
             7 => ' ',
             8 => 'string',
             9 => '.',
-        );
+        ];
 
         $this->assertEquals($iterator->getAll(), $expectedResult, 'Wrong element returned by getAll().');
     }
@@ -257,7 +260,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isBoundaryInCharacterIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by character', \TYPO3\Flow\Utility\Unicode\TextIterator::CHARACTER);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by character', TextIterator::CHARACTER);
         $iterator->rewind();
         while ($iterator->valid()) {
             $this->assertFalse($iterator->isBoundary(), 'Character iteration has no boundary elements.');
@@ -272,7 +275,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isBoundaryInWordIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word', TextIterator::WORD);
         $iterator->rewind();
         $this->assertFalse($iterator->isBoundary(), 'This element was a boundary element.');
 
@@ -287,7 +290,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isBoundaryInSentenceIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by sentence', \TYPO3\Flow\Utility\Unicode\TextIterator::SENTENCE);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by sentence', TextIterator::SENTENCE);
         $iterator->rewind();
         $this->assertFalse($iterator->isBoundary(), 'This element was a boundary element.');
 
@@ -302,7 +305,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function isBoundaryInLineIterationBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator("This is a test string. \nLet\'s iterate \nit by line", \TYPO3\Flow\Utility\Unicode\TextIterator::LINE);
+        $iterator = new TextIterator("This is a test string. \nLet\'s iterate \nit by line", TextIterator::LINE);
         $iterator->rewind();
         $this->assertFalse($iterator->isBoundary(), 'This element was a boundary element.');
 
@@ -317,7 +320,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function followingBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word', TextIterator::WORD);
 
         $this->assertEquals($iterator->following(11), 14, 'Wrong offset for the following element returned.');
     }
@@ -329,7 +332,7 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function precedingBasicallyWorks()
     {
-        $iterator = new \TYPO3\Flow\Utility\Unicode\TextIterator('This is a test string. Let\'s iterate it by word', \TYPO3\Flow\Utility\Unicode\TextIterator::WORD);
+        $iterator = new TextIterator('This is a test string. Let\'s iterate it by word', TextIterator::WORD);
 
         $this->assertEquals($iterator->preceding(11), 10, 'Wrong offset for the preceding element returned.' . $iterator->preceding(11));
     }

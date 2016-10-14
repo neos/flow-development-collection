@@ -34,7 +34,7 @@ class DependencyProxy
     /**
      * @var array
      */
-    protected $propertyVariables = array();
+    protected $propertyVariables = [];
 
     /**
      * Constructs this proxy
@@ -96,6 +96,6 @@ class DependencyProxy
      */
     public function __call($methodName, array $arguments)
     {
-        return call_user_func_array(array($this->_activateDependency(), $methodName), $arguments);
+        return call_user_func_array([$this->_activateDependency(), $methodName], $arguments);
     }
 }

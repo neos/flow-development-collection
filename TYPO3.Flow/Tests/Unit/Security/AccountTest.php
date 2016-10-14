@@ -11,10 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * source code.
  */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
+use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Party\Domain\Service\PartyService;
 
 /**
  * Test case for the account
@@ -46,7 +49,7 @@ class AccountTest extends UnitTestCase
         $customerRole = new Role('TYPO3.Flow:Customer');
         $this->customerRole = $customerRole;
 
-        $mockPolicyService = $this->createMock(\TYPO3\Flow\Security\Policy\PolicyService::class);
+        $mockPolicyService = $this->createMock(PolicyService::class);
         $mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'TYPO3.Flow:Administrator':
@@ -67,7 +70,7 @@ class AccountTest extends UnitTestCase
             }
         }));
 
-        $this->account = $this->getAccessibleMock(\TYPO3\Flow\Security\Account::class, array('dummy'));
+        $this->account = $this->getAccessibleMock(Account::class, ['dummy']);
         $this->account->_set('policyService', $mockPolicyService);
     }
 
@@ -76,7 +79,7 @@ class AccountTest extends UnitTestCase
      */
     public function addRoleAddsRoleToAccountIfNotAssigned()
     {
-        $this->account->setRoles(array($this->administratorRole));
+        $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->customerRole);
         $this->assertCount(2, $this->account->getRoles());
     }
@@ -86,7 +89,7 @@ class AccountTest extends UnitTestCase
      */
     public function addRoleSkipsRoleIfAssigned()
     {
-        $this->account->setRoles(array($this->administratorRole));
+        $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->administratorRole);
 
         $this->assertCount(1, $this->account->getRoles());
@@ -97,7 +100,7 @@ class AccountTest extends UnitTestCase
      */
     public function removeRoleRemovesRoleFromAccountIfAssigned()
     {
-        $this->account->setRoles(array($this->administratorRole, $this->customerRole));
+        $this->account->setRoles([$this->administratorRole, $this->customerRole]);
         $this->account->removeRole($this->customerRole);
 
         $this->assertCount(1, $this->account->getRoles());
@@ -108,7 +111,7 @@ class AccountTest extends UnitTestCase
      */
     public function removeRoleSkipsRemovalIfRoleNotAssigned()
     {
-        $this->account->setRoles(array($this->administratorRole));
+        $this->account->setRoles([$this->administratorRole]);
         $this->account->removeRole($this->customerRole);
 
         $this->assertCount(1, $this->account->getRoles());
@@ -119,7 +122,7 @@ class AccountTest extends UnitTestCase
      */
     public function hasRoleWorks()
     {
-        $this->account->setRoles(array($this->administratorRole));
+        $this->account->setRoles([$this->administratorRole]);
 
         $this->assertTrue($this->account->hasRole($this->administratorRole));
         $this->assertFalse($this->account->hasRole($this->customerRole));
@@ -130,7 +133,7 @@ class AccountTest extends UnitTestCase
      */
     public function getRolesReturnsOnlyExistingRoles()
     {
-        $this->inject($this->account, 'roleIdentifiers', array('Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()));
+        $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
         $roles = $this->account->getRoles();
         $this->assertCount(1, $roles);
@@ -142,7 +145,7 @@ class AccountTest extends UnitTestCase
      */
     public function hasRoleReturnsFalseForAssignedButNonExistentRole()
     {
-        $this->inject($this->account, 'roleIdentifiers', array('Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()));
+        $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
         $this->assertTrue($this->account->hasRole($this->administratorRole));
         $this->assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
@@ -153,8 +156,8 @@ class AccountTest extends UnitTestCase
      */
     public function setRolesWorks()
     {
-        $roles = array($this->administratorRole, $this->customerRole);
-        $expectedRoles = array($this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole);
+        $roles = [$this->administratorRole, $this->customerRole];
+        $expectedRoles = [$this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole];
         $this->account->setRoles($roles);
 
         $this->assertSame($expectedRoles, $this->account->getRoles());
@@ -223,9 +226,9 @@ class AccountTest extends UnitTestCase
         $partyService = $this->createMock(Fixture\PartyService::class);
         $partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
 
-        $objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $objectManager->expects($this->once())->method('isRegistered')->with(\TYPO3\Party\Domain\Service\PartyService::class)->will($this->returnValue(true));
-        $objectManager->expects($this->once())->method('get')->with(\TYPO3\Party\Domain\Service\PartyService::class)->will($this->returnValue($partyService));
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->expects($this->once())->method('isRegistered')->with(PartyService::class)->will($this->returnValue(true));
+        $objectManager->expects($this->once())->method('get')->with(PartyService::class)->will($this->returnValue($partyService));
 
         $this->inject($account, 'objectManager', $objectManager);
 
@@ -255,9 +258,9 @@ class AccountTest extends UnitTestCase
         $partyService = $this->createMock(Fixture\PartyService::class);
         $partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
 
-        $objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $objectManager->expects($this->once())->method('isRegistered')->with(\TYPO3\Party\Domain\Service\PartyService::class)->will($this->returnValue(true));
-        $objectManager->expects($this->once())->method('get')->with(\TYPO3\Party\Domain\Service\PartyService::class)->will($this->returnValue($partyService));
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->expects($this->once())->method('isRegistered')->with(PartyService::class)->will($this->returnValue(true));
+        $objectManager->expects($this->once())->method('get')->with(PartyService::class)->will($this->returnValue($partyService));
 
         $this->inject($account, 'objectManager', $objectManager);
 

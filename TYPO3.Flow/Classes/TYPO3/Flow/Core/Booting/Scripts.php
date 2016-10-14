@@ -11,14 +11,36 @@ namespace TYPO3\Flow\Core\Booting;
  * source code.
  */
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheFactory;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Core\LockManager;
+use TYPO3\Flow\Error\Debugger;
+use TYPO3\Flow\Error\ErrorHandler;
+use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Log\Logger;
+use TYPO3\Flow\Log\LoggerFactory;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\FileMonitor;
+use TYPO3\Flow\Object\CompileTimeObjectManager;
+use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\Resource\Streams\StreamWrapperAdapter;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 
 /**
@@ -38,9 +60,9 @@ class Scripts
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
         require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Core/ClassLoader.php');
-        $classLoader = new \TYPO3\Flow\Core\ClassLoader($bootstrap->getContext());
-        spl_autoload_register(array($classLoader, 'loadClass'), true, true);
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class, $classLoader);
+        $classLoader = new ClassLoader($bootstrap->getContext());
+        spl_autoload_register([$classLoader, 'loadClass'], true, true);
+        $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             self::requireAutoloaderForPhpUnit();
             $classLoader->setConsiderTestsNamespace(true);
@@ -76,7 +98,7 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class), 'loadClass'));
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
     }
 
     /**
@@ -87,8 +109,8 @@ class Scripts
      */
     public static function initializeClassLoaderClassesCache(Bootstrap $bootstrap)
     {
-        $classesCache = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Object_Classes');
-        $bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class)->injectClassesCache($classesCache);
+        $classesCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Classes');
+        $bootstrap->getEarlyInstance(ClassLoader::class)->injectClassesCache($classesCache);
     }
 
     /**
@@ -101,20 +123,20 @@ class Scripts
     public static function forceFlushCachesIfNecessary(Bootstrap $bootstrap)
     {
         if (!isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
-            || !in_array($_SERVER['argv'][1], array('typo3.flow:cache:flush', 'flow:cache:flush'))
-            || !in_array($_SERVER['argv'][2], array('--force', '-f'))) {
+            || !in_array($_SERVER['argv'][1], ['typo3.flow:cache:flush', 'flow:cache:flush'])
+            || !in_array($_SERVER['argv'][2], ['--force', '-f'])) {
             return;
         }
 
-        $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->flushCaches();
-        $environment = $bootstrap->getEarlyInstance(\TYPO3\Flow\Utility\Environment::class);
-        \TYPO3\Flow\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
+        $bootstrap->getEarlyInstance(CacheManager::class)->flushCaches();
+        $environment = $bootstrap->getEarlyInstance(Environment::class);
+        Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
 
         echo 'Force-flushed caches for "' . $bootstrap->getContext() . '" context.' . PHP_EOL;
 
         // In production the site will be locked as this is a compiletime request so we need to take care to remove that lock again.
         if ($bootstrap->getContext()->isProduction()) {
-            $bootstrap->getEarlyInstance(\TYPO3\Flow\Core\LockManager::class)->unlockSite();
+            $bootstrap->getEarlyInstance(LockManager::class)->unlockSite();
         }
 
         exit(0);
@@ -128,7 +150,7 @@ class Scripts
      */
     public static function initializeSignalSlot(Bootstrap $bootstrap)
     {
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\SignalSlot\Dispatcher::class, new \TYPO3\Flow\SignalSlot\Dispatcher());
+        $bootstrap->setEarlyInstance(Dispatcher::class, new Dispatcher());
     }
 
     /**
@@ -140,9 +162,9 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
-        $packageManager = new \TYPO3\Flow\Package\PackageManager();
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class, $packageManager);
-        $packageManager->injectClassLoader($bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class));
+        $packageManager = new PackageManager();
+        $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
+        $packageManager->injectClassLoader($bootstrap->getEarlyInstance(ClassLoader::class));
         $packageManager->initialize($bootstrap);
     }
 
@@ -151,25 +173,25 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function initializeConfiguration(Bootstrap $bootstrap)
     {
         $context = $bootstrap->getContext();
-        $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
-        $configurationManager = new \TYPO3\Flow\Configuration\ConfigurationManager($context);
-        $configurationManager->injectConfigurationSource(new \TYPO3\Flow\Configuration\Source\YamlSource());
+        $configurationManager = new ConfigurationManager($context);
+        $configurationManager->injectConfigurationSource(new YamlSource());
         $configurationManager->loadConfigurationCache();
         $configurationManager->setPackages($packageManager->getActivePackages());
 
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-        $environment = new \TYPO3\Flow\Utility\Environment($context);
+        $environment = new Environment($context);
         if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
             $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
             if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
-                throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
+                throw new FlowException(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
             }
             $environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
         } else {
@@ -179,10 +201,10 @@ class Scripts
         $configurationManager->injectEnvironment($environment);
         $packageManager->injectSettings($settings);
 
-        $bootstrap->getSignalSlotDispatcher()->dispatch(\TYPO3\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady', array($configurationManager));
+        $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
 
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class, $configurationManager);
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Utility\Environment::class, $environment);
+        $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
+        $bootstrap->setEarlyInstance(Environment::class, $environment);
     }
 
     /**
@@ -193,17 +215,17 @@ class Scripts
      */
     public static function initializeSystemLogger(Bootstrap $bootstrap)
     {
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         if (!isset($settings['log']['systemLogger']['logger'])) {
-            $settings['log']['systemLogger']['logger'] = \TYPO3\Flow\Log\Logger::class;
+            $settings['log']['systemLogger']['logger'] = Logger::class;
         }
-        $loggerFactory = new \TYPO3\Flow\Log\LoggerFactory();
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Log\LoggerFactory::class, $loggerFactory);
+        $loggerFactory = new LoggerFactory();
+        $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
         $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class, $systemLogger);
-        $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
         $packageManager->injectSystemLogger($systemLogger);
     }
 
@@ -215,13 +237,13 @@ class Scripts
      */
     public static function initializeErrorHandling(Bootstrap $bootstrap)
     {
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-        $errorHandler = new \TYPO3\Flow\Error\ErrorHandler();
+        $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
-        $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
 
@@ -233,19 +255,19 @@ class Scripts
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $environment = $bootstrap->getEarlyInstance(\TYPO3\Flow\Utility\Environment::class);
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheManager = new \TYPO3\Flow\Cache\CacheManager();
-        $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $cacheManager = new CacheManager();
+        $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
-        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $cacheManager->injectEnvironment($environment);
 
-        $cacheFactory = new \TYPO3\Flow\Cache\CacheFactory($bootstrap->getContext(), $cacheManager, $environment);
+        $cacheFactory = new CacheFactory($bootstrap->getContext(), $cacheManager, $environment);
 
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class, $cacheManager);
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Cache\CacheFactory::class, $cacheFactory);
+        $bootstrap->setEarlyInstance(CacheManager::class, $cacheManager);
+        $bootstrap->setEarlyInstance(CacheFactory::class, $cacheFactory);
     }
 
     /**
@@ -253,14 +275,14 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
-        $objectConfigurationCache = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Object_Configuration');
+        $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         // The compile sub command will only be run if the code cache is completely empty:
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
@@ -272,24 +294,24 @@ class Scripts
             }
 
             // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader');
+            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
             $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
         }
 
         // Check if code was updated, if not something went wrong
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
             if (DIRECTORY_SEPARATOR === '/') {
-                $phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+                $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
             } else {
-                $phpBinaryPathAndFilename = escapeshellarg(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+                $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
             }
             $command = sprintf('%s -c %s -v', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()));
             exec($command, $output, $result);
             if ($result !== 0) {
                 if (!file_exists($phpBinaryPathAndFilename)) {
-                    throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
+                    throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
                 }
-                throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
+                throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
             }
             echo PHP_EOL . 'Flow: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
             exit(1);
@@ -302,7 +324,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function recompileClasses(Bootstrap $bootstrap)
     {
@@ -316,11 +338,11 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeCreate(Bootstrap $bootstrap)
     {
-        $objectManager = new \TYPO3\Flow\Object\CompileTimeObjectManager($bootstrap->getContext());
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Object\ObjectManagerInterface::class, $objectManager);
+        $objectManager = new CompileTimeObjectManager($bootstrap->getContext());
+        $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
         Bootstrap::$staticObjectManager = $objectManager;
 
-        $signalSlotDispatcher = $bootstrap->getEarlyInstance(\TYPO3\Flow\SignalSlot\Dispatcher::class);
+        $signalSlotDispatcher = $bootstrap->getEarlyInstance(Dispatcher::class);
         $signalSlotDispatcher->injectObjectManager($objectManager);
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
@@ -337,13 +359,13 @@ class Scripts
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
     {
         $objectManager = $bootstrap->getObjectManager();
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
-        $cacheManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class);
-        $systemLogger = $bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class);
-        $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
+        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
+        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
-        $objectManager->injectAllSettings($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+        $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
@@ -354,7 +376,7 @@ class Scripts
             $objectManager->setInstance($objectName, $instance);
         }
 
-        \TYPO3\Flow\Error\Debugger::injectObjectManager($objectManager);
+        Debugger::injectObjectManager($objectManager);
     }
 
     /**
@@ -365,22 +387,22 @@ class Scripts
      */
     public static function initializeObjectManager(Bootstrap $bootstrap)
     {
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $objectConfigurationCache = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Object_Configuration');
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
-        $objectManager = new \TYPO3\Flow\Object\ObjectManager($bootstrap->getContext());
+        $objectManager = new ObjectManager($bootstrap->getContext());
         Bootstrap::$staticObjectManager = $objectManager;
 
-        $objectManager->injectAllSettings($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+        $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->setObjects($objectConfigurationCache->get('objects'));
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
         }
 
-        $objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class)->injectObjectManager($objectManager);
-        \TYPO3\Flow\Error\Debugger::injectObjectManager($objectManager);
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Object\ObjectManagerInterface::class, $objectManager);
+        $objectManager->get(Dispatcher::class)->injectObjectManager($objectManager);
+        Debugger::injectObjectManager($objectManager);
+        $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
     }
 
     /**
@@ -391,25 +413,25 @@ class Scripts
      */
     public static function initializeReflectionService(Bootstrap $bootstrap)
     {
-        $cacheManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class);
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-        $reflectionService = new \TYPO3\Flow\Reflection\ReflectionService();
+        $reflectionService = new ReflectionService();
 
-        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class));
-        $reflectionService->injectClassLoader($bootstrap->getEarlyInstance(\TYPO3\Flow\Core\ClassLoader::class));
+        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $reflectionService->injectClassLoader($bootstrap->getEarlyInstance(ClassLoader::class));
         $reflectionService->injectSettings($settings);
-        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class));
+        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
         $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
         $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
         $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
-        $reflectionService->injectSettings($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow'));
-        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(\TYPO3\Flow\Utility\Environment::class));
+        $reflectionService->injectSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow'));
+        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
 
-        $bootstrap->setEarlyInstance(\TYPO3\Flow\Reflection\ReflectionService::class, $reflectionService);
-        $bootstrap->getObjectManager()->setInstance(\TYPO3\Flow\Reflection\ReflectionService::class, $reflectionService);
+        $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
+        $bootstrap->getObjectManager()->setInstance(ReflectionService::class, $reflectionService);
     }
 
     /**
@@ -427,15 +449,15 @@ class Scripts
     public static function initializeSystemFileMonitor(Bootstrap $bootstrap)
     {
         /** @var FileMonitor[] $fileMonitors */
-        $fileMonitors = array(
+        $fileMonitors = [
             'Flow_ClassFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ClassFiles', $bootstrap),
             'Flow_ConfigurationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ConfigurationFiles', $bootstrap),
             'Flow_TranslationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_TranslationFiles', $bootstrap)
-        );
+        ];
 
         $context = $bootstrap->getContext();
         /** @var PackageManagerInterface $packageManager */
-        $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
         /** @var PackageInterface $package */
         foreach ($packageManager->getActivePackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
@@ -487,20 +509,32 @@ class Scripts
      */
     protected static function compileDoctrineProxies(Bootstrap $bootstrap)
     {
-        $cacheManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class);
+        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $objectConfigurationCache = $cacheManager->getCache('Flow_Object_Configuration');
         $coreCache = $cacheManager->getCache('Flow_Core');
-        $systemLogger = $bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class);
-        $configurationManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
-            $coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
+            $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
             $systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
             self::executeCommand('typo3.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
             $objectConfigurationCache->set('doctrineProxyCodeUpToDate', true);
         }
+    }
+
+    /**
+     * Initializes the persistence framework
+     *
+     * @param Bootstrap $bootstrap
+     * @return void
+     */
+    public static function initializePersistence(Bootstrap $bootstrap)
+    {
+        $persistenceManager = $bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
+        $persistenceManager->initialize();
     }
 
     /**
@@ -512,19 +546,21 @@ class Scripts
     public static function initializeSession(Bootstrap $bootstrap)
     {
         if (FLOW_SAPITYPE === 'Web') {
-            $bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class)->resume();
+            $bootstrap->getObjectManager()->get(SessionInterface::class)->resume();
         }
     }
 
     /**
-     * Initialize the stream wrappers.
+     * Initialize the resource management component, setting up stream wrappers,
+     * publishing the public resources of all found packages, ...
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeResources(Bootstrap $bootstrap)
     {
-        StreamWrapperAdapter::initializeStreamWrapper($bootstrap->getObjectManager());
+        $resourceManager = $bootstrap->getObjectManager()->get('TYPO3\Flow\Resource\ResourceManager');
+        $resourceManager->initialize();
     }
 
     /**
@@ -536,12 +572,12 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return boolean TRUE if the command execution was successful (exit code = 0)
      * @api
-     * @throws \TYPO3\Flow\Core\Booting\Exception\SubProcessException if execution of the sub process failed
+     * @throws Exception\SubProcessException if execution of the sub process failed
      */
-    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = array())
+    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = array();
+        $output = [];
         // Output errors in response
         $command .= ' 2>&1';
         exec($command, $output, $result);
@@ -565,7 +601,7 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return string A command line command ready for being exec()uted
      */
-    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = array())
+    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildPhpCommand($settings);
 
@@ -579,8 +615,8 @@ class Scripts
         }
 
         $escapedArguments = '';
-        if ($commandArguments !== array()) {
-            foreach ($commandArguments as $argument => $argumentValue) {
+        if ($commandArguments !== []) {
+            foreach ($commandArguments as $argument=>$argumentValue) {
                 $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
                 if (trim($argumentValue) !== '') {
                     $escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
@@ -599,11 +635,11 @@ class Scripts
      */
     public static function buildPhpCommand(array $settings)
     {
-        $subRequestEnvironmentVariables = array(
+        $subRequestEnvironmentVariables = [
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
             'FLOW_PATH_TEMPORARY_BASE' => FLOW_PATH_TEMPORARY_BASE,
             'FLOW_CONTEXT' => $settings['core']['context']
-        );
+        ];
         if (isset($settings['core']['subRequestEnvironmentVariables'])) {
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
@@ -618,9 +654,9 @@ class Scripts
             }
         }
         if (DIRECTORY_SEPARATOR === '/') {
-            $phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+            $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
         } else {
-            $phpBinaryPathAndFilename = escapeshellarg(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+            $phpBinaryPathAndFilename = escapeshellarg(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
         }
         $command .= $phpBinaryPathAndFilename;
         if (!isset($settings['core']['subRequestPhpIniPathAndFilename']) || $settings['core']['subRequestPhpIniPathAndFilename'] !== false) {

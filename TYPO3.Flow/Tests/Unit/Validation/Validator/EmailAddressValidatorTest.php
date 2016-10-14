@@ -11,15 +11,17 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\EmailAddressValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the email address validator
  *
  */
-class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class EmailAddressValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\EmailAddressValidator::class;
+    protected $validatorClassName = EmailAddressValidator::class;
 
     /**
      * @test
@@ -44,13 +46,13 @@ class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function validAddresses()
     {
-        return array(
-            array('andreas.foerthner@netlogix.de'),
-            array('user@localhost.localdomain'),
-            array('info@guggenheim.museum'),
-            array('just@test.invalid'),
-            array('just+spam@test.de')
-        );
+        return [
+            ['andreas.foerthner@netlogix.de'],
+            ['user@localhost.localdomain'],
+            ['info@guggenheim.museum'],
+            ['just@test.invalid'],
+            ['just+spam@test.de']
+        ];
     }
 
     /**
@@ -69,17 +71,17 @@ class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function invalidAddresses()
     {
-        return array(
-            array('andreas.foerthner@'),
-            array('@neos.io'),
-            array('someone@neos.'),
-            array('local@192.168.2'),
-            array('local@192.168.270.1'),
-            array('foo@bar.com' . chr(0)),
-            array('foo@bar.org' . chr(10)),
-            array('andreas@foerthner@example.com'),
-            array('some@one.net ')
-        );
+        return [
+            ['andreas.foerthner@'],
+            ['@neos.io'],
+            ['someone@neos.'],
+            ['local@192.168.2'],
+            ['local@192.168.270.1'],
+            ['foo@bar.com' . chr(0)],
+            ['foo@bar.org' . chr(10)],
+            ['andreas@foerthner@example.com'],
+            ['some@one.net ']
+        ];
     }
 
     /**

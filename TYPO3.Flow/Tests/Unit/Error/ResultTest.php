@@ -11,30 +11,32 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Error;
+
 /**
  * Testcase for the Error Container object
- *
  */
-class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ResultTest extends UnitTestCase
 {
     /**
      *
-     * @var \TYPO3\Flow\Error\Result
+     * @var Error\Result
      */
     protected $result;
 
     public function setUp()
     {
-        $this->result = new \TYPO3\Flow\Error\Result();
+        $this->result = new Error\Result();
     }
 
     public function dataTypes()
     {
-        return array(
-            array('Error', 'Errors'),
-            array('Warning', 'Warnings'),
-            array('Notice', 'Notices')
-        );
+        return [
+            ['Error', 'Errors'],
+            ['Warning', 'Warnings'],
+            ['Notice', 'Notices']
+        ];
     }
 
     protected function getMockMessage($type)
@@ -53,7 +55,7 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->result->$addMethodName($message);
 
         $getterMethodName = 'get' . $dataTypeInPlural;
-        $this->assertEquals(array($message), $this->result->$getterMethodName());
+        $this->assertEquals([$message], $this->result->$getterMethodName());
     }
 
     /**
@@ -67,7 +69,7 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->result->forProperty('foo')->$addMethodName($message);
 
         $getterMethodName = 'get' . $dataTypeInPlural;
-        $this->assertEquals(array(), $this->result->$getterMethodName());
+        $this->assertEquals([], $this->result->$getterMethodName());
     }
 
     /**
@@ -92,7 +94,7 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function forPropertyShouldReturnSubResult()
     {
         $container2 = $this->result->forProperty('foo.bar');
-        $this->assertInstanceOf(\TYPO3\Flow\Error\Result::class, $container2);
+        $this->assertInstanceOf(Error\Result::class, $container2);
         $this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
     }
 
@@ -175,13 +177,13 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->result->$addMethodName($message5);
 
         $getMethodName = 'getFlattened' . $dataTypeInPlural;
-        $expected = array(
-            '' => array($message4, $message5),
-            'foo' => array($message3),
-            'foo.bar' => array($message1),
-            'foo.baz' => array($message2)
+        $expected = [
+            '' => [$message4, $message5],
+            'foo' => [$message3],
+            'foo.bar' => [$message1],
+            'foo.baz' => [$message2]
 
-        );
+        ];
         $this->assertEquals($expected, $this->result->$getMethodName());
     }
 
@@ -199,11 +201,11 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->result->forProperty('foo.baz')->$addMethodName($message2);
 
         $getMethodName = 'getFlattened' . $dataTypeInPlural;
-        $expected = array(
-            'foo.bar' => array($message1),
-            'foo.baz' => array($message2)
+        $expected = [
+            'foo.bar' => [$message1],
+            'foo.baz' => [$message2]
 
-        );
+        ];
         $this->assertEquals($expected, $this->result->$getMethodName());
     }
 
@@ -222,7 +224,7 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
         $error2 = $this->getMockMessage('Error');
         $error3 = $this->getMockMessage('Error');
 
-        $otherResult = new \TYPO3\Flow\Error\Result();
+        $otherResult = new Error\Result();
 
         $otherResult->addNotice($notice1);
         $otherResult->forProperty('foo.bar')->addNotice($notice2);
@@ -238,13 +240,13 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->result->merge($otherResult);
 
-        $this->assertSame(array($notice1), $this->result->getNotices(), 'Notices are not merged correctly without recursion');
-        $this->assertSame(array($notice3), $this->result->forProperty('foo')->getNotices(), 'Original sub-notices are overridden.');
-        $this->assertSame(array($notice2), $this->result->forProperty('foo')->forProperty('bar')->getNotices(), 'Sub-notices are not copied.');
+        $this->assertSame([$notice1], $this->result->getNotices(), 'Notices are not merged correctly without recursion');
+        $this->assertSame([$notice3], $this->result->forProperty('foo')->getNotices(), 'Original sub-notices are overridden.');
+        $this->assertSame([$notice2], $this->result->forProperty('foo')->forProperty('bar')->getNotices(), 'Sub-notices are not copied.');
 
-        $this->assertSame(array($warning2, $warning3, $warning1), $this->result->getWarnings());
+        $this->assertSame([$warning2, $warning3, $warning1], $this->result->getWarnings());
 
-        $this->assertSame(array($error3), $this->result->getErrors());
-        $this->assertSame(array($error1, $error2), $this->result->forProperty('foo')->getErrors());
+        $this->assertSame([$error3], $this->result->getErrors());
+        $this->assertSame([$error1, $error2], $this->result->forProperty('foo')->getErrors());
     }
 }

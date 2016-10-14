@@ -31,7 +31,7 @@ class ComponentChain implements ComponentInterface
     /**
      * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }
@@ -53,8 +53,8 @@ class ComponentChain implements ComponentInterface
                 continue;
             }
             $component->handle($componentContext);
-            if ($componentContext->getParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel') === true) {
-                $componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', null);
+            if ($componentContext->getParameter(ComponentChain::class, 'cancel') === true) {
+                $componentContext->setParameter(ComponentChain::class, 'cancel', null);
                 return;
             }
         }

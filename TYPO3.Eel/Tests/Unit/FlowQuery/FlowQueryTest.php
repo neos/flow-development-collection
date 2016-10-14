@@ -11,13 +11,21 @@ namespace TYPO3\Eel\Tests\Unit\FlowQuery;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\OperationResolver;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Eel\FlowQuery\Operations;
+
 /**
  * FlowQuery test
  */
-class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FlowQueryTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $mockPersistenceManager;
 
@@ -26,8 +34,8 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function constructWithFlowQueryIsIdempotent()
     {
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array('a', 'b', 'c'));
-        $wrappedQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($flowQuery);
+        $flowQuery = new FlowQuery(['a', 'b', 'c']);
+        $wrappedQuery = new FlowQuery($flowQuery);
 
         $this->assertEquals($flowQuery->getContext(), $wrappedQuery->getContext());
     }
@@ -40,10 +48,10 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $myObject = new \stdClass();
         $myObject2 = new \stdClass();
 
-        $query = $this->createFlowQuery(array($myObject, $myObject2));
-        $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->first());
-        $this->assertSame(array($myObject), $query->first()->get());
-        $this->assertSame(array($myObject), iterator_to_array($query->first()));
+        $query = $this->createFlowQuery([$myObject, $myObject2]);
+        $this->assertInstanceOf(FlowQuery::class, $query->first());
+        $this->assertSame([$myObject], $query->first()->get());
+        $this->assertSame([$myObject], iterator_to_array($query->first()));
     }
 
     /**
@@ -54,10 +62,10 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $myObject = new \stdClass();
         $myObject2 = new \stdClass();
 
-        $query = $this->createFlowQuery(array($myObject, $myObject2));
-        $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->last());
-        $this->assertSame(array($myObject2), $query->last()->get());
-        $this->assertSame(array($myObject2), iterator_to_array($query->last()));
+        $query = $this->createFlowQuery([$myObject, $myObject2]);
+        $this->assertInstanceOf(FlowQuery::class, $query->last());
+        $this->assertSame([$myObject2], $query->last()->get());
+        $this->assertSame([$myObject2], iterator_to_array($query->last()));
     }
 
     /**
@@ -69,14 +77,14 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $myObject2 = new \stdClass();
         $myObject3 = new \stdClass();
 
-        $query = $this->createFlowQuery(array($myObject, $myObject2, $myObject3));
-        $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $query->slice());
-        $this->assertSame(array($myObject, $myObject2, $myObject3), $query->slice()->get());
-        $this->assertSame(array($myObject, $myObject2, $myObject3), iterator_to_array($query->slice()));
-        $this->assertSame(array($myObject, $myObject2), $query->slice(0, 2)->get());
-        $this->assertSame(array($myObject, $myObject2), iterator_to_array($query->slice(0, 2)));
-        $this->assertSame(array($myObject3), $query->slice(2)->get());
-        $this->assertSame(array($myObject3), iterator_to_array($query->slice(2)));
+        $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
+        $this->assertInstanceOf(FlowQuery::class, $query->slice());
+        $this->assertSame([$myObject, $myObject2, $myObject3], $query->slice()->get());
+        $this->assertSame([$myObject, $myObject2, $myObject3], iterator_to_array($query->slice()));
+        $this->assertSame([$myObject, $myObject2], $query->slice(0, 2)->get());
+        $this->assertSame([$myObject, $myObject2], iterator_to_array($query->slice(0, 2)));
+        $this->assertSame([$myObject3], $query->slice(2)->get());
+        $this->assertSame([$myObject3], iterator_to_array($query->slice(2)));
     }
 
     /**
@@ -106,91 +114,91 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $myObject7 = new \stdClass();
         $myObject7->aNumber = 142;
 
-        return array(
-            'Property existance test works' => array(
-                'sourceObjects' => array($myObject, $myObject2),
+        return [
+            'Property existance test works' => [
+                'sourceObjects' => [$myObject, $myObject2],
                 'filter' => '[myProperty]',
-                'expectedResult' => array($myObject)
-            ),
-            'Multiple filters are combined with AND together' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3),
+                'expectedResult' => [$myObject]
+            ],
+            'Multiple filters are combined with AND together' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3],
                 'filter' => '[myProperty][myProperty2]',
-                'expectedResult' => array($myObject)
-            ),
-            'Multiple filters can be ORed together using comma' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+                'expectedResult' => [$myObject]
+            ],
+            'Multiple filters can be ORed together using comma' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[myProperty2], [name]',
-                'expectedResult' => array($myObject, $myObject4)
-            ),
-            'Exact matches are supported' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+                'expectedResult' => [$myObject, $myObject4]
+            ],
+            'Exact matches are supported' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[myProperty=asdf]',
-                'expectedResult' => array($myObject)
-            ),
-            'Boolean matches' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+                'expectedResult' => [$myObject]
+            ],
+            'Boolean matches' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
                 'filter' => '[isHidden=true]',
-                'expectedResult' => array($myObject5)
-            ),
-            'Integer matches' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+                'expectedResult' => [$myObject5]
+            ],
+            'Integer matches' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
                 'filter' => '[aNumber = 42]',
-                'expectedResult' => array($myObject6)
-            ),
+                'expectedResult' => [$myObject6]
+            ],
 
-            'Instanceof test works (1)' => array(
-                'sourceObjects' => array($myObject),
+            'Instanceof test works (1)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[instanceof foo]',
-                'expectedResult' => array()
-            ),
-            'Instanceof test works (2)' => array(
-                'sourceObjects' => array($myObject),
+                'expectedResult' => []
+            ],
+            'Instanceof test works (2)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[  instanceof \stdClass  ]',
-                'expectedResult' => array($myObject)
-            ),
-            'Instanceof test works (with test for object)' => array(
-                'sourceObjects' => array($myObject),
+                'expectedResult' => [$myObject]
+            ],
+            'Instanceof test works (with test for object)' => [
+                'sourceObjects' => [$myObject],
                 'filter' => '[  instanceof object  ]',
-                'expectedResult' => array($myObject)
-            ),
-            'Instanceof test works (with test for string)' => array(
-                'sourceObjects' => array('myString'),
+                'expectedResult' => [$myObject]
+            ],
+            'Instanceof test works (with test for string)' => [
+                'sourceObjects' => ['myString'],
                 'filter' => '[  instanceof string  ]',
-                'expectedResult' => array('myString')
-            ),
+                'expectedResult' => ['myString']
+            ],
 
-            'Instanceof test works (with test for integer)' => array(
-                'sourceObjects' => array(42, '42', 400, 'foo'),
+            'Instanceof test works (with test for integer)' => [
+                'sourceObjects' => [42, '42', 400, 'foo'],
                 'filter' => '[  instanceof integer  ]',
-                'expectedResult' => array(42, 400)
-            ),
+                'expectedResult' => [42, 400]
+            ],
 
-            'Instanceof test works (with test for integer 2)' => array(
-                'sourceObjects' => array(42, '42', 400, 'foo'),
+            'Instanceof test works (with test for integer 2)' => [
+                'sourceObjects' => [42, '42', 400, 'foo'],
                 'filter' => '[  instanceof int  ]',
-                'expectedResult' => array(42, 400)
-            ),
+                'expectedResult' => [42, 400]
+            ],
 
-            'Instanceof test works (with test for boolean)' => array(
-                'sourceObjects' => array(false, '', true),
+            'Instanceof test works (with test for boolean)' => [
+                'sourceObjects' => [false, '', true],
                 'filter' => '[  instanceof boolean  ]',
-                'expectedResult' => array(false, true)
-            ),
+                'expectedResult' => [false, true]
+            ],
 
-            'Instanceof test works (with test for float)' => array(
-                'sourceObjects' => array(false, 42, 42.5, true),
+            'Instanceof test works (with test for float)' => [
+                'sourceObjects' => [false, 42, 42.5, true],
                 'filter' => '[  instanceof float  ]',
-                'expectedResult' => array(42.5)
-            ),
+                'expectedResult' => [42.5]
+            ],
 
-            'Instanceof test works (with test for array)' => array(
-                'sourceObjects' => array(false, 42, 42.5, true, array('foo')),
+            'Instanceof test works (with test for array)' => [
+                'sourceObjects' => [false, 42, 42.5, true, ['foo']],
                 'filter' => '[  instanceof array  ]',
-                'expectedResult' => array(array('foo'))
-            ),
+                'expectedResult' => [['foo']]
+            ],
 
-            'Instanceof test works on attributes' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+            'Instanceof test works on attributes' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
                 'filter' => '[ isHidden instanceof boolean ]',
                 'expectedResult' => array($myObject5)
             ),
@@ -255,62 +263,62 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
             'Begin query match' => array(
                 'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
                 'filter' => '[ myProperty ^= as ]',
-                'expectedResult' => array($myObject)
-            ),
+                'expectedResult' => [$myObject]
+            ],
 
-            'End query match (1)' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+            'End query match (1)' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[ myProperty $= df ]',
-                'expectedResult' => array($myObject)
-            ),
-            'End query match (2)' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+                'expectedResult' => [$myObject]
+            ],
+            'End query match (2)' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[ myProperty $= a ]',
-                'expectedResult' => array($myObject3)
-            ),
+                'expectedResult' => [$myObject3]
+            ],
 
-            'In-Between Query Match' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+            'In-Between Query Match' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[ myProperty *= sd ]',
-                'expectedResult' => array($myObject)
-            ),
+                'expectedResult' => [$myObject]
+            ],
 
-            'Identifier match' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+            'Identifier match' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '#object-identifier-A1-B2',
-                'expectedResult' => array($myObject2)
-            ),
+                'expectedResult' => [$myObject2]
+            ],
 
-            'Not equals query match' => array(
-                'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+            'Not equals query match' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[ myProperty != asdf ]',
-                'expectedResult' => array($myObject2, $myObject3, $myObject4)
-            ),
+                'expectedResult' => [$myObject2, $myObject3, $myObject4]
+            ],
 
-            'Less than query match' => array(
-                'sourceObjects' => array($myObject6, $myObject7),
+            'Less than query match' => [
+                'sourceObjects' => [$myObject6, $myObject7],
                 'filter' => '[ aNumber < 50 ]',
-                'expectedResult' => array($myObject6)
-            ),
+                'expectedResult' => [$myObject6]
+            ],
 
-            'Less than or equal to query match' => array(
-                'sourceObjects' => array($myObject6, $myObject7),
+            'Less than or equal to query match' => [
+                'sourceObjects' => [$myObject6, $myObject7],
                 'filter' => '[ aNumber <= 42 ]',
-                'expectedResult' => array($myObject6)
-            ),
+                'expectedResult' => [$myObject6]
+            ],
 
-            'Greater than query match' => array(
-                'sourceObjects' => array($myObject6, $myObject7),
+            'Greater than query match' => [
+                'sourceObjects' => [$myObject6, $myObject7],
                 'filter' => '[ aNumber > 50 ]',
-                'expectedResult' => array($myObject7)
-            ),
+                'expectedResult' => [$myObject7]
+            ],
 
-            'Greater than or equal to query match' => array(
-                'sourceObjects' => array($myObject6, $myObject7),
+            'Greater than or equal to query match' => [
+                'sourceObjects' => [$myObject6, $myObject7],
                 'filter' => '[ aNumber >= 42 ]',
-                'expectedResult' => array($myObject6, $myObject7)
-            )
-        );
+                'expectedResult' => [$myObject6, $myObject7]
+            ]
+        ];
     }
 
     /**
@@ -321,7 +329,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $query = $this->createFlowQuery($sourceObjects);
         $filter = $query->filter($filterString);
-        $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $filter);
+        $this->assertInstanceOf(FlowQuery::class, $filter);
         $this->assertSame($expected, iterator_to_array($filter));
     }
 
@@ -379,54 +387,54 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $person4 = new \stdClass();
         $person4->name = 'Somebody without address';
 
-        return array(
-            'children() on empty array always returns empty flowquery object' => array(
-                'sourceObjects' => array(),
-                'expressions' => array(
+        return [
+            'children() on empty array always returns empty flowquery object' => [
+                'sourceObjects' => [],
+                'expressions' => [
                     '$query->children("foo[bar]")',
                     '$query->children("foo")',
                     '$query->children("[instanceof Something]")',
                     '$query->children()'
-                ),
-                'expectedResult' => array()
-            ),
-            'children() with property name filter returns all corresponding child objects' => array(
-                'sourceObjects' => array($person1, $person2, $person3, $person4),
-                'expressions' => array(
+                ],
+                'expectedResult' => []
+            ],
+            'children() with property name filter returns all corresponding child objects' => [
+                'sourceObjects' => [$person1, $person2, $person3, $person4],
+                'expressions' => [
                     '$query->children("address")',
                     '$query->children()->filter("address")',
-                ),
-                'expectedResult' => array($address1_1, $address2_1, $address3_1)
-            ),
+                ],
+                'expectedResult' => [$address1_1, $address2_1, $address3_1]
+            ],
 
-            'children() with property name and attribute filter returns all corresponding child objects' => array(
-                'sourceObjects' => array($person1, $person2, $person3, $person4),
-                'expressions' => array(
+            'children() with property name and attribute filter returns all corresponding child objects' => [
+                'sourceObjects' => [$person1, $person2, $person3, $person4],
+                'expressions' => [
                     '$query->children("address[country=Germany]")',
                     '$query->children("address")->filter("[country=Germany]")',
                     '$query->children()->filter("address[country=Germany]")',
-                ),
-                'expectedResult' => array($address2_1, $address3_1)
-            ),
-            'property() with property name returns object accessor on first object' => array(
-                'sourceObjects' => array($person1, $person2, $person3, $person4),
-                'expressions' => array(
+                ],
+                'expectedResult' => [$address2_1, $address3_1]
+            ],
+            'property() with property name returns object accessor on first object' => [
+                'sourceObjects' => [$person1, $person2, $person3, $person4],
+                'expressions' => [
                     '$query->property("address")'
-                ),
+                ],
                 'expectedResult' => $address1_1,
                 'isFinal' => true
-            ),
-            'property() with property name works with property paths' => array(
-                'sourceObjects' => array($person1, $person2, $person3, $person4),
-                'expressions' => array(
+            ],
+            'property() with property name works with property paths' => [
+                'sourceObjects' => [$person1, $person2, $person3, $person4],
+                'expressions' => [
                     '$query->property("address.street")'
-                ),
+                ],
                 'expectedResult' => 'SomeCopenhagenStreet',
                 'isFinal' => true
-            )
+            ]
             // TODO: children without filter removes elements which do not have target property set
             // TODO: duplicate objects are removed
-        );
+        ];
     }
 
     /**
@@ -439,7 +447,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         foreach ($expressions as $expression) {
             eval('$result = ' . $expression . ';');
             if (!$isFinal) {
-                $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $result);
+                $this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
                 $result = iterator_to_array($result);
             }
             $this->assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
@@ -451,23 +459,23 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function dataProviderForErrorQueries()
     {
-        return array(
-            array('$query->children()'),
-            array('$query->children("")'),
+        return [
+            ['$query->children()'],
+            ['$query->children("")'],
 
-            array('$query->children("[foo]")'),
-            array('$query->filter("foo")'),
-            array('$query->children()->filter()'),
-            array('$query->children()->filter("")'),
-            array('$query->children("")->filter()'),
-            array('$query->children("")->filter("")'),
-            array('$query->children()->filter("[foo]")'),
-            array('$query->children("foo")->filter("foo")'),
-            array('$query->children("[foo]")->filter("foo")'), // TODO should we allow this, implicitely turning it around?
-            array('$query->children("[foo]")->filter("[foo]")'),
-            array('$query->children("foo")->filter("foo[foo]")'),
-            array('$query->children("foo[foo]")->filter("foo[foo]")'),
-        );
+            ['$query->children("[foo]")'],
+            ['$query->filter("foo")'],
+            ['$query->children()->filter()'],
+            ['$query->children()->filter("")'],
+            ['$query->children("")->filter()'],
+            ['$query->children("")->filter("")'],
+            ['$query->children()->filter("[foo]")'],
+            ['$query->children("foo")->filter("foo")'],
+            ['$query->children("[foo]")->filter("foo")'], // TODO should we allow this, implicitely turning it around?
+            ['$query->children("[foo]")->filter("[foo]")'],
+            ['$query->children("foo")->filter("foo[foo]")'],
+            ['$query->children("foo[foo]")->filter("foo[foo]")'],
+        ];
     }
 
     /**
@@ -480,22 +488,22 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $x = new \stdClass();
         $x->foo = new \stdClass();
         $x->foo->foo = 'asdf';
-        $query = $this->createFlowQuery(array($x));
+        $query = $this->createFlowQuery([$x]);
         eval('$result = ' . $expression . ';');
-        $this->assertInstanceOf(\TYPO3\Eel\FlowQuery\FlowQuery::class, $result);
+        $this->assertInstanceOf(FlowQuery::class, $result);
         $result->getIterator(); // Throws exception
     }
 
     /**
      * @param array $elements
-     * @return \TYPO3\Eel\FlowQuery\FlowQuery
+     * @return FlowQuery
      */
     protected function createFlowQuery(array $elements)
     {
-        $flowQuery = $this->getAccessibleMock(\TYPO3\Eel\FlowQuery\FlowQuery::class, array('dummy'), array($elements));
+        $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
 
             // Set up mock persistence manager to return dummy object identifiers
-        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {
                 return $object->__identity;
@@ -503,37 +511,37 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase
         }));
 
         $mockPersistenceManager = $this->mockPersistenceManager;
-        $objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation
-            if ($className === \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation::class) {
-                \TYPO3\Flow\Reflection\ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, true);
+            if ($className === Operations\Object\FilterOperation::class) {
+                ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, true);
             }
             return $instance;
         }));
 
-        $operationResolver = $this->getAccessibleMock(\TYPO3\Eel\FlowQuery\OperationResolver::class, array('dummy'));
+        $operationResolver = $this->getAccessibleMock(OperationResolver::class, ['dummy']);
         $operationResolver->_set('objectManager', $objectManager);
 
-        $operationResolver->_set('finalOperationNames', array(
+        $operationResolver->_set('finalOperationNames', [
             'count' => 'count',
             'get' => 'get',
             'is' => 'is',
             'property' => 'property'
-        ));
+        ]);
 
-        $operationResolver->_set('operations', array(
-            'count' => array(300 => \TYPO3\Eel\FlowQuery\Operations\CountOperation::class),
-            'first' => array(300 => \TYPO3\Eel\FlowQuery\Operations\FirstOperation::class),
-            'last' => array(300 => \TYPO3\Eel\FlowQuery\Operations\LastOperation::class),
-            'slice' => array(300 => \TYPO3\Eel\FlowQuery\Operations\SliceOperation::class),
-            'get' => array(300 => \TYPO3\Eel\FlowQuery\Operations\GetOperation::class),
-            'is' => array(300 => \TYPO3\Eel\FlowQuery\Operations\IsOperation::class),
-            'filter' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation::class),
-            'children' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\ChildrenOperation::class),
-            'property' => array(300 => \TYPO3\Eel\FlowQuery\Operations\Object\PropertyOperation::class)
-        ));
+        $operationResolver->_set('operations', [
+            'count' => [300 => Operations\CountOperation::class],
+            'first' => [300 => Operations\FirstOperation::class],
+            'last' => [300 => Operations\LastOperation::class],
+            'slice' => [300 => Operations\SliceOperation::class],
+            'get' => [300 => Operations\GetOperation::class],
+            'is' => [300 => Operations\IsOperation::class],
+            'filter' => [300 => Operations\Object\FilterOperation::class],
+            'children' => [300 => Operations\Object\ChildrenOperation::class],
+            'property' => [300 => Operations\Object\PropertyOperation::class]
+        ]);
 
         $flowQuery->_set('operationResolver', $operationResolver);
         return $flowQuery;
