@@ -11,6 +11,7 @@ namespace TYPO3\Eel\Tests\Unit;
  * source code.
  */
 
+use TYPO3\Eel\Context;
 use TYPO3\Eel\InterpretedEvaluator;
 
 /**
@@ -19,7 +20,7 @@ use TYPO3\Eel\InterpretedEvaluator;
 class InterpretedEvaluatorTest extends AbstractEvaluatorTest
 {
     /**
-     * @return \TYPO3\Eel\Context
+     * @return Context
      */
     protected function createEvaluator()
     {

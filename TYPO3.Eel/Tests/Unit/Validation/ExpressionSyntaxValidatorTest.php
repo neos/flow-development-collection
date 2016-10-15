@@ -1,6 +1,7 @@
 <?php
 namespace TYPO3\Eel\Tests\Unit\Validation;
 
+use TYPO3\Eel\Validation\ExpressionSyntaxValidator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
 
@@ -12,7 +13,7 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
     /**
      * @var string
      */
-    protected $validatorClassName = \TYPO3\Eel\Validation\ExpressionSyntaxValidator::class;
+    protected $validatorClassName = ExpressionSyntaxValidator::class;
 
     /**
      * @test

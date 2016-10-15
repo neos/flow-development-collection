@@ -45,7 +45,7 @@ class Message
      * The message arguments. Will be replaced in the message body.
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * The severity of this message ('OK'), overwrite in your own implementation.
@@ -62,7 +62,7 @@ class Message
      * @param string $title optional title for the message
      * @api
      */
-    public function __construct($message, $code = null, array $arguments = array(), $title = '')
+    public function __construct($message, $code = null, array $arguments = [], $title = '')
     {
         $this->message = $message;
         $this->code = $code;
@@ -124,7 +124,7 @@ class Message
      */
     public function render()
     {
-        if ($this->arguments !== array()) {
+        if ($this->arguments !== []) {
             return vsprintf($this->message, $this->arguments);
         } else {
             return $this->message;
