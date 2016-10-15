@@ -252,8 +252,11 @@ Such a request is always bound to an ``Http\Request``::
 
 	...
 
-	$httpRequest = $this->bootstrap->getActiveRequestHandler()->getHttpRequest();
-	$actionRequest = new ActionRequest($httpRequest);
+  $requestHandler = $this->bootstrap->getActiveRequestHandler();
+  if ($requestHandler instanceof HttpRequestHandlerInterface) {
+    $actionRequest = new ActionRequest($requestHandler->getHttpRequest());
+    // ...
+  }
 
 Arguments
 ~~~~~~~~~
