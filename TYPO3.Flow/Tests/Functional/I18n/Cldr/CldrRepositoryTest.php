@@ -11,14 +11,19 @@ namespace TYPO3\Flow\Tests\Functional\I18n\Cldr;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+use TYPO3\Flow\I18n\Cldr\CldrRepository;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Utility\Files;
+
 /**
  * Testcase for the I18N CLDR Repository
  *
  */
-class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class CldrRepositoryTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     * @var CldrRepository
      */
     protected $cldrRepository;
 
@@ -33,7 +38,7 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->cldrRepository = $this->objectManager->get(\TYPO3\Flow\I18n\Cldr\CldrRepository::class);
+        $this->cldrRepository = $this->objectManager->get(CldrRepository::class);
 
         $this->cldrBasePath = $this->retrieveCldrBasePath();
     }
@@ -56,12 +61,12 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function modelIsReturnedCorrectlyForLocaleImplicatingChaining()
     {
-        $localeImplementingChaining = new \TYPO3\Flow\I18n\Locale('de_DE');
+        $localeImplementingChaining = new I18n\Locale('de_DE');
 
         $cldrModel = $this->cldrRepository->getModelForLocale($localeImplementingChaining);
 
-        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/root.xml')), 'sourcePaths', $cldrModel);
-        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de_DE.xml')), 'sourcePaths', $cldrModel);
-        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de.xml')), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/root.xml']), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de_DE.xml']), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de.xml']), 'sourcePaths', $cldrModel);
     }
 }

@@ -8,7 +8,7 @@ class PHPBuilder {
 	}
 
 	function __construct() {
-		$this->lines = array();
+		$this->lines = [];
 	}
 
 	function l() {
@@ -43,9 +43,9 @@ class PHPBuilder {
 		$entry = array_shift($args);
 
 		$block = new PHPBuilder();
-		call_user_func_array(array($block, 'l'), $args);
+		call_user_func_array([$block, 'l'], $args);
 
-		$this->lines[] = array($entry, $block->lines);
+		$this->lines[] = [$entry, $block->lines];
 
 		return $this;
 	}
@@ -119,7 +119,7 @@ class PHPBuilder {
 			$array = $this->lines;
 		}
 
-		$out = array();
+		$out = [];
 		foreach ($array as $line) {
 			if (is_array($line)) {
 				list($entry, $block) = $line;

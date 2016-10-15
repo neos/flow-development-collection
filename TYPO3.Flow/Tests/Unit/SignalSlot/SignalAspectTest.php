@@ -11,27 +11,30 @@ namespace TYPO3\Flow\Tests\Unit\SignalSlot;
  * source code.
  */
 
+use TYPO3\Flow\Aop\JoinPoint;
+use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\SignalSlot\SignalAspect;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the Signal Aspect
- *
  */
-class SignalAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SignalAspectTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function forwardSignalToDispatcherForwardsTheSignalsMethodArgumentsToTheDispatcher()
     {
-        $mockJoinPoint = $this->getMockBuilder(\TYPO3\Flow\Aop\JoinPoint::class)->disableOriginalConstructor()->getMock();
+        $mockJoinPoint = $this->getMockBuilder(JoinPoint::class)->disableOriginalConstructor()->getMock();
         $mockJoinPoint->expects($this->any())->method('getClassName')->will($this->returnValue('SampleClass'));
         $mockJoinPoint->expects($this->any())->method('getMethodName')->will($this->returnValue('emitSignal'));
-        $mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(array('arg1' => 'val1', 'arg2' => array('val2'))));
+        $mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(['arg1' => 'val1', 'arg2' => ['val2']]));
 
-        $mockDispatcher = $this->createMock(\TYPO3\Flow\SignalSlot\Dispatcher::class);
-        $mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'signal', array('arg1' => 'val1', 'arg2' => array('val2')));
+        $mockDispatcher = $this->createMock(Dispatcher::class);
+        $mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'signal', ['arg1' => 'val1', 'arg2' => ['val2']]);
 
-        $aspect = $this->getAccessibleMock(\TYPO3\Flow\SignalSlot\SignalAspect::class, array('dummy'));
+        $aspect = $this->getAccessibleMock(SignalAspect::class, ['dummy']);
         $aspect->_set('dispatcher', $mockDispatcher);
         $aspect->forwardSignalToDispatcher($mockJoinPoint);
     }

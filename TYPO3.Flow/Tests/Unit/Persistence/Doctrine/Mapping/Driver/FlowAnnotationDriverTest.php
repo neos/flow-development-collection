@@ -11,10 +11,15 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Security;
+use TYPO3\Party\Domain\Model;
+
 /**
  * Testcase for the Flow annotation driver
  */
-class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FlowAnnotationDriverTest extends UnitTestCase
 {
     /**
      * Data provider for testInferTableNameFromClassName
@@ -23,12 +28,13 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function classNameToTableNameMappings()
     {
-        return array(
-            array('SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'),
-            array(\TYPO3\Flow\Security\Policy\Role::class, 'typo3_flow_security_policy_role'),
-            array(\TYPO3\Flow\Security\Account::class, 'typo3_flow_security_account'),
-            array(\TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'typo3_flow_security_authorization_resource_securitypublish_861cb')
-        );
+        return [
+            [Model\Person::class, 'typo3_party_domain_model_person'],
+            ['SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'],
+            [Security\Policy\Role::class, 'typo3_flow_security_policy_role'],
+            [Security\Account::class, 'typo3_flow_security_account'],
+            ['TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'typo3_flow_security_authorization_resource_securitypublish_861cb']
+        ];
     }
 
     /**
@@ -37,7 +43,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testInferTableNameFromClassName($className, $tableName)
     {
-        $driver = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class, array('getMaxIdentifierLength'));
+        $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
         $driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue(64));
         $this->assertEquals($tableName, $driver->inferTableNameFromClassName($className));
     }
@@ -49,15 +55,15 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function classAndPropertyNameToJoinTableNameMappings()
     {
-        return array(
-            array(64, \TYPO3\Party\Domain\Model\Person::class, 'propertyName', 'typo3_party_domain_model_person_propertyname_join'),
-            array(64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'),
-            array(64, \TYPO3\Flow\Security\Policy\Role::class, 'propertyName', 'typo3_flow_security_policy_role_propertyname_join'),
-            array(64, \TYPO3\Flow\Security\Account::class, 'propertyName', 'typo3_flow_security_account_propertyname_join'),
-            array(64, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'),
-            array(30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3__861cb_propertyname_join'),
-            array(30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0')
-        );
+        return [
+            [64, Model\Person::class, 'propertyName', 'typo3_party_domain_model_person_propertyname_join'],
+            [64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'],
+            [64, Security\Policy\Role::class, 'propertyName', 'typo3_flow_security_policy_role_propertyname_join'],
+            [64, Security\Account::class, 'propertyName', 'typo3_flow_security_account_propertyname_join'],
+            [64, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'],
+            [30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3__861cb_propertyname_join'],
+            [30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0']
+        ];
     }
 
     /**
@@ -66,7 +72,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testInferJoinTableNameFromClassAndPropertyName($maxIdentifierLength, $className, $propertyName, $expectedTableName)
     {
-        $driver = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class, array('getMaxIdentifierLength'));
+        $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
         $driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue($maxIdentifierLength));
 
         $actualTableName = $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName);
@@ -79,14 +85,14 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getMaxIdentifierLengthAsksDoctrineForValue()
     {
-        $mockDatabasePlatform = $this->getMockForAbstractClass(\Doctrine\DBAL\Platforms\AbstractPlatform::class, array(), '', true, true, true, array('getMaxIdentifierLength'));
+        $mockDatabasePlatform = $this->getMockForAbstractClass('Doctrine\DBAL\Platforms\AbstractPlatform', [], '', true, true, true, ['getMaxIdentifierLength']);
         $mockDatabasePlatform->expects($this->atLeastOnce())->method('getMaxIdentifierLength')->will($this->returnValue(2048));
-        $mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
+        $mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
         $mockConnection->expects($this->atLeastOnce())->method('getDatabasePlatform')->will($this->returnValue($mockDatabasePlatform));
-        $mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
+        $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $mockEntityManager->expects($this->atLeastOnce())->method('getConnection')->will($this->returnValue($mockConnection));
 
-        $driver = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver::class, array('dummy'));
+        $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['dummy']);
         $driver->_set('entityManager', $mockEntityManager);
         $this->assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
     }

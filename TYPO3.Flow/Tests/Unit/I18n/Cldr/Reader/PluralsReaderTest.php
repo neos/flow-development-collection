@@ -11,16 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Cldr\Reader;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Cldr\Reader\PluralsReader;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
 
 /**
  * Testcase for the PluralsReader
- *
  */
-class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PluralsReaderTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader
+     * @var PluralsReader
      */
     protected $reader;
 
@@ -29,20 +31,20 @@ class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $samplePluralRulesData = array(
-            'pluralRules[@locales="ro mo"]' => array(
+        $samplePluralRulesData = [
+            'pluralRules[@locales="ro mo"]' => [
                 'pluralRule[@count="one"]' => 'n is 1',
                 'pluralRule[@count="few"]' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
-            ),
-        );
+            ],
+        ];
 
-        $mockModel = $this->getAccessibleMock(\TYPO3\Flow\I18n\Cldr\CldrModel::class, array('getRawArray'), array(array('fake/path')));
+        $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [['fake/path']]);
         $mockModel->expects($this->once())->method('getRawArray')->with('plurals')->will($this->returnValue($samplePluralRulesData));
 
-        $mockRepository = $this->createMock(\TYPO3\Flow\I18n\Cldr\CldrRepository::class);
+        $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
         $mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->at(0))->method('has')->with('rulesets')->will($this->returnValue(false));
         $mockCache->expects($this->at(1))->method('set')->with('rulesets');
         $mockCache->expects($this->at(2))->method('set')->with('rulesetsIndices');
@@ -60,13 +62,13 @@ class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function quantities()
     {
-        return array(
-            array(1, PluralsReader::RULE_ONE),
-            array(2, PluralsReader::RULE_FEW),
-            array(100, PluralsReader::RULE_OTHER),
-            array(101, PluralsReader::RULE_FEW),
-            array(101.1, PluralsReader::RULE_OTHER),
-        );
+        return [
+            [1, PluralsReader::RULE_ONE],
+            [2, PluralsReader::RULE_FEW],
+            [100, PluralsReader::RULE_OTHER],
+            [101, PluralsReader::RULE_FEW],
+            [101.1, PluralsReader::RULE_OTHER],
+        ];
     }
 
     /**
@@ -75,7 +77,7 @@ class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function returnsCorrectPluralForm($quantity, $pluralForm)
     {
-        $locale = new \TYPO3\Flow\I18n\Locale('mo');
+        $locale = new I18n\Locale('mo');
 
         $result = $this->reader->getPluralForm($quantity, $locale);
         $this->assertEquals($pluralForm, $result);

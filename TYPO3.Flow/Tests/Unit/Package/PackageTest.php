@@ -22,7 +22,6 @@ use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the package class
- *
  */
 class PackageTest extends UnitTestCase
 {
@@ -36,8 +35,8 @@ class PackageTest extends UnitTestCase
     public function setUp()
     {
         vfsStream::setup('Packages');
-        $this->mockPackageManager = $this->getMockBuilder(\TYPO3\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
-        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', array(), true);
+        $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
+        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', [], true);
     }
 
     /**
@@ -149,13 +148,13 @@ class PackageTest extends UnitTestCase
      */
     public function validPackageKeys()
     {
-        return array(
-            array('Doctrine.DBAL'),
-            array('TYPO3.Flow'),
-            array('RobertLemke.Flow.Twitter'),
-            array('Sumphonos.Stem'),
-            array('Schalke04.Soccer.MagicTrainer')
-        );
+        return [
+            ['Doctrine.DBAL'],
+            ['Neos.Flow'],
+            ['RobertLemke.Flow.Twitter'],
+            ['Sumphonos.Stem'],
+            ['Schalke04.Soccer.MagicTrainer']
+        ];
     }
 
     /**
@@ -176,11 +175,11 @@ class PackageTest extends UnitTestCase
      */
     public function invalidPackageKeys()
     {
-        return array(
-            array('TYPO3..Flow'),
-            array('RobertLemke.Flow. Twitter'),
-            array('Schalke*4')
-        );
+        return [
+            ['Neos..Flow'],
+            ['RobertLemke.Flow. Twitter'],
+            ['Schalke*4']
+        ];
     }
 
     /**
@@ -317,7 +316,7 @@ class PackageTest extends UnitTestCase
         $package = new Package($this->mockPackageManager, 'TYPO3.Flow', $packagePath);
         $documentations = $package->getPackageDocumentations();
 
-        $this->assertEquals(array(), $documentations);
+        $this->assertEquals([], $documentations);
     }
 
     /**
@@ -364,11 +363,11 @@ class PackageTest extends UnitTestCase
         file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Foo.php', '');
         file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Bar.php', '');
 
-        $expectedClassFilesArray = array(
+        $expectedClassFilesArray = [
             'Acme\MyPackage\Controller\FooController' => 'Classes/Acme/MyPackage/Controller/FooController.php',
             'Acme\MyPackage\Domain\Model\Foo' => 'Classes/Acme/MyPackage/Domain/Model/Foo.php',
             'Acme\MyPackage\Domain\Model\Bar' => 'Classes/Acme/MyPackage/Domain/Model/Bar.php',
-        );
+        ];
 
         $package = new Package($this->mockPackageManager, 'Acme.MyPackage', $packagePath, 'Classes');
         $actualClassFilesArray = $package->getClassFiles();
@@ -385,7 +384,7 @@ class PackageTest extends UnitTestCase
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
 
-        $package = new Package($this->createMock(\TYPO3\Flow\Package\PackageManager::class), 'Acme.MyPackage', $packagePath, 'Classes');
+        $package = new Package($this->createMock(PackageManager::class), 'Acme.MyPackage', $packagePath, 'Classes');
 
         $metaData = $package->getPackageMetaData();
         $this->assertEquals('flow-test', $metaData->getPackageType());

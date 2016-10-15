@@ -10,21 +10,23 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\SchemaGenerator;
 
 /**
  * Testcase for the Schema Generator
  *
  */
-class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SchemaGeneratorTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Utility\SchemaGenerator
+     * @var SchemaGenerator
      */
     private $configurationGenerator;
 
     public function setUp()
     {
-        $this->configurationGenerator = $this->getAccessibleMock(\TYPO3\Flow\Utility\SchemaGenerator::class, array('getError'));
+        $this->configurationGenerator = $this->getAccessibleMock(SchemaGenerator::class, ['getError']);
     }
 
     /**
@@ -32,14 +34,14 @@ class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function schemaGenerationForSimpleTypesDataProvider()
     {
-        return array(
-            array('string', array('type' => 'string')),
-            array(false, array('type' => 'boolean')),
-            array(true, array('type' => 'boolean')),
-            array(10.75, array('type' => 'number')),
-            array(1234, array('type' => 'integer')),
-            array(null, array('type' => 'null'))
-        );
+        return [
+            ['string', ['type' => 'string']],
+            [false, ['type' => 'boolean']],
+            [true, ['type' => 'boolean']],
+            [10.75, ['type' => 'number']],
+            [1234, ['type' => 'integer']],
+            [null, ['type' => 'null']]
+        ];
     }
 
     /**
@@ -57,11 +59,11 @@ class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function schemaGenerationForArrayOfTypesDataProvider()
     {
-        return array(
-            array(array('string'), array('type' => 'array', 'items' => array('type' => 'string'))),
-            array(array('string', 'foo', 'bar'), array('type' => 'array', 'items' => array('type' => 'string'))),
-            array(array('string', 'foo', 123),  array('type' => 'array', 'items' => array(array('type' => 'string'), array('type' => 'integer'))))
-        );
+        return [
+            [['string'], ['type' => 'array', 'items' => ['type' => 'string']]],
+            [['string', 'foo', 'bar'], ['type' => 'array', 'items' => ['type' => 'string']]],
+            [['string', 'foo', 123],  ['type' => 'array', 'items' => [['type' => 'string'], ['type' => 'integer']]]]
+        ];
     }
 
     /**

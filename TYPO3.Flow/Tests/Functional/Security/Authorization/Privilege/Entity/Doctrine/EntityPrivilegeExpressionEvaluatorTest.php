@@ -11,15 +11,18 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Do
  * source code.
  */
 
-use TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Eel;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  *
  */
-class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -32,7 +35,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
     }
@@ -44,17 +47,17 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
      */
     public function expressions()
     {
-        return array(
-            array(
+        return [
+            [
                 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name").equals("live")',
                 '(t0.name = \'live\')'
-            ),
+            ],
 
-            array(
+            [
                 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name") == "live"',
                 '(t0.name = \'live\')'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -65,7 +68,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
      */
     public function evaluatingSomeExpressionWorks($expression, $expectedSqlCode)
     {
-        $context = new \TYPO3\Eel\Context(new ConditionGenerator());
+        $context = new Eel\Context(new ConditionGenerator());
 
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate($expression, $context);
@@ -73,7 +76,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends \TYPO3\Flow\Tests\Functiona
         $entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class, $result['entityType']);
-        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(\TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class), 't0'));
+        $this->assertEquals(Fixtures\RestrictableEntity::class, $result['entityType']);
+        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(Fixtures\RestrictableEntity::class), 't0'));
     }
 }

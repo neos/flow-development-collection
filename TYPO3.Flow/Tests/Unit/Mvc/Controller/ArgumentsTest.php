@@ -13,13 +13,14 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\Argument;
+use TYPO3\Flow\Mvc\Exception\NoSuchArgumentException;
+use TYPO3\Flow\Error as FlowError;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the MVC Controller Arguments
- *
- * @covers \TYPO3\Flow\Mvc\Controller\Arguments
  */
-class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArgumentsTest extends UnitTestCase
 {
     /**
      * @test
@@ -80,7 +81,7 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
         try {
             $arguments->getArgument('someArgument');
             $this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
-        } catch (\TYPO3\Flow\Mvc\Exception\NoSuchArgumentException $exception) {
+        } catch (NoSuchArgumentException $exception) {
             $this->assertTrue(true);
         }
     }
@@ -106,7 +107,7 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
         $arguments->addNewArgument('second');
         $arguments->addNewArgument('third');
 
-        $expectedArgumentNames = array('first', 'second', 'third');
+        $expectedArgumentNames = ['first', 'second', 'third'];
         $this->assertEquals($expectedArgumentNames, $arguments->getArgumentNames(), 'Returned argument names were not as expected.');
     }
 
@@ -120,7 +121,7 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
         $arguments->addNewArgument('second')->setShortName('b');
         $arguments->addNewArgument('third')->setShortName('c');
 
-        $expectedShortNames = array('a', 'b', 'c');
+        $expectedShortNames = ['a', 'b', 'c'];
         $this->assertEquals($expectedShortNames, $arguments->getArgumentShortNames(), 'Returned argument short names were not as expected.');
     }
 
@@ -131,7 +132,7 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $arguments = new Arguments();
         $addedArgument = $arguments->addNewArgument('dummyName');
-        $this->assertInstanceOf(\TYPO3\Flow\Mvc\Controller\Argument::class, $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
+        $this->assertInstanceOf(Argument::class, $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
 
         $retrievedArgument = $arguments['dummyName'];
         $this->assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');
@@ -188,25 +189,25 @@ class ArgumentsTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getValidationResultsShouldFetchAllValidationResltsFromArguments()
     {
-        $error1 = new \TYPO3\Flow\Error\Error('Validation error', 1234);
-        $error2 = new \TYPO3\Flow\Error\Error('Validation error 2', 1235);
+        $error1 = new FlowError\Error('Validation error', 1234);
+        $error2 = new FlowError\Error('Validation error 2', 1235);
 
-        $results1 = new \TYPO3\Flow\Error\Result();
+        $results1 = new FlowError\Result();
         $results1->addError($error1);
 
-        $results2 = new \TYPO3\Flow\Error\Result();
+        $results2 = new FlowError\Result();
         $results2->addError($error2);
 
-        $argument1 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Argument::class)->setMethods(array('getValidationResults'))->setConstructorArgs(array('name1', 'string'))->getMock();
+        $argument1 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name1', 'string'])->getMock();
         $argument1->expects($this->once())->method('getValidationResults')->will($this->returnValue($results1));
 
-        $argument2 = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Argument::class)->setMethods(array('getValidationResults'))->setConstructorArgs(array('name2', 'string'))->getMock();
+        $argument2 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name2', 'string'])->getMock();
         $argument2->expects($this->once())->method('getValidationResults')->will($this->returnValue($results2));
 
-        $arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();
+        $arguments = new Arguments();
         $arguments->addArgument($argument1);
         $arguments->addArgument($argument2);
-        $this->assertSame(array('name1' => array($error1), 'name2' => array($error2)), $arguments->getValidationResults()->getFlattenedErrors());
+        $this->assertSame(['name1' => [$error1], 'name2' => [$error2]], $arguments->getValidationResults()->getFlattenedErrors());
     }
 
     /**

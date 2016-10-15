@@ -12,15 +12,17 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  * A repository for restrictable entities
  * @Flow\Scope("singleton")
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository
+class RestrictableEntityRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity::class;
+    const ENTITY_CLASSNAME = RestrictableEntity::class;
 }

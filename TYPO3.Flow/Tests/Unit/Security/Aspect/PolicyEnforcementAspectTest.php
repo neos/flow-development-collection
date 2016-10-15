@@ -11,45 +11,48 @@ namespace TYPO3\Flow\Tests\Unit\Security\Aspect;
  * source code.
  */
 
+use TYPO3\Flow\Aop\Advice\AdviceChain;
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Security;
 use TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the security policy enforcement aspect
- *
  */
-class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PolicyEnforcementAspectTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Aop\JoinPointInterface
+     * @var JoinPointInterface
      */
     protected $mockJoinPoint;
 
     /**
-     * @var \TYPO3\Flow\Aop\Advice\AdviceChain
+     * @var AdviceChain
      */
     protected $mockAdviceChain;
 
     /**
-     * @var \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement
+     * @var Security\Authorization\Interceptor\PolicyEnforcement
      */
     protected $mockPolicyEnforcementInterceptor;
 
     /**
-     * @var \TYPO3\Flow\Security\Context
+     * @var Security\Context
      */
     protected $mockSecurityContext;
 
     /**
-     * @var \TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect
+     * @var PolicyEnforcementAspect
      */
     protected $policyEnforcementAspect;
 
     public function setUp()
     {
-        $this->mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
-        $this->mockAdviceChain = $this->getMockBuilder(\TYPO3\Flow\Aop\Advice\AdviceChain::class)->disableOriginalConstructor()->getMock();
-        $this->mockPolicyEnforcementInterceptor = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement::class)->disableOriginalConstructor()->getMock();
-        $this->mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $this->mockJoinPoint = $this->getMockBuilder(JoinPointInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockAdviceChain = $this->getMockBuilder(AdviceChain::class)->disableOriginalConstructor()->getMock();
+        $this->mockPolicyEnforcementInterceptor = $this->getMockBuilder(Security\Authorization\Interceptor\PolicyEnforcement::class)->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext = $this->createMock(Security\Context::class);
         $this->policyEnforcementAspect = new PolicyEnforcementAspect($this->mockPolicyEnforcementInterceptor, $this->mockSecurityContext);
     }
 
