@@ -217,7 +217,7 @@ class DateTimeConverterTest extends UnitTestCase
         $mockMappingConfiguration
             ->expects($this->atLeastOnce())
             ->method('getConfigurationValue')
-            ->with(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class, \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
+            ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
             ->will($this->returnValue(null));
 
         $date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
@@ -437,8 +437,11 @@ class DateTimeConverterTest extends UnitTestCase
         $this->assertInstanceOf(\DateTime::class, $date);
         $dateAsString = isset($source['date']) ? strval($source['date']) : '';
         if ($dateFormat === null) {
-            $dateFormat = DateTimeConverter::DEFAULT_DATE_FORMAT;
-        }
+            if (ctype_digit($dateAsString)) {
+                $dateFormat = 'U';
+            } else {
+                $dateFormat = DateTimeConverter::DEFAULT_DATE_FORMAT;
+            }
         }
         $this->assertSame($dateAsString, $date->format($dateFormat));
     }
