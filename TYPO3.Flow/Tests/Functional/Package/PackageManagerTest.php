@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Tests\Functional\Package;
  * source code.
  */
 
+use TYPO3\Flow\Package\PackageManager;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -21,7 +24,7 @@ class PackageManagerTest extends FunctionalTestCase
 {
     /**
      *
-     * @var \TYPO3\Flow\Package\PackageManager
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -31,7 +34,7 @@ class PackageManagerTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->packageManager = $this->objectManager->get(\TYPO3\Flow\Package\PackageManagerInterface::class);
+        $this->packageManager = $this->objectManager->get(PackageManagerInterface::class);
     }
 
     /**
@@ -48,7 +51,7 @@ class PackageManagerTest extends FunctionalTestCase
      */
     public function getPackageOfObjectReturnsCorrectPackageForAnExistingProxyObject()
     {
-        $account = new \TYPO3\Flow\Security\Account();
+        $account = new Account();
         $package = $this->packageManager->getPackageOfObject($account);
         $this->assertSame('TYPO3.Flow', $package->getPackageKey());
     }

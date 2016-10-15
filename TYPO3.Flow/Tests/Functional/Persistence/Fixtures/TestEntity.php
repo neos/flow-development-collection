@@ -65,7 +65,7 @@ class TestEntity
     /**
      * @var array
      */
-    protected $arrayProperty = array();
+    protected $arrayProperty = [];
 
     /**
      * Constructor

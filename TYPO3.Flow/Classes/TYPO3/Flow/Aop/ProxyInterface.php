@@ -20,8 +20,8 @@ interface ProxyInterface extends \TYPO3\Flow\Object\Proxy\ProxyInterface
     /**
      * Invokes the joinpoint - calls the target methods.
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
+     * @param JoinPointInterface $joinPoint The join point
      * @return mixed Result of the target (ie. original) method
      */
-    public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
+    public function Flow_Aop_Proxy_invokeJoinPoint(JoinPointInterface $joinPoint);
 }

@@ -12,11 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Cli;
  */
 
 use TYPO3\Flow\Cli\Request;
+use TYPO3\Flow\Command\CacheCommandController;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the CLI Request class
  */
-class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase
+class RequestTest extends UnitTestCase
 {
     /**
      * @test
@@ -24,7 +26,7 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation()
     {
         $request = new Request();
-        $request->setControllerObjectName(\TYPO3\Flow\Command\CacheCommandController::class);
+        $request->setControllerObjectName(CacheCommandController::class);
         $request->setControllerCommandName('flush');
 
         $command = $request->getCommand();
@@ -37,14 +39,14 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject()
     {
         $request = new Request();
-        $request->setControllerObjectName(\TYPO3\Flow\Command\CacheCommandController::class);
+        $request->setControllerObjectName(CacheCommandController::class);
         $request->setControllerCommandName('flush');
         $request->getCommand();
 
-        $request->setControllerObjectName('TYPO3\Flow\Command\BeerCommandController');
+        $request->setControllerObjectName('Neos\Flow\Command\BeerCommandController');
         $request->setControllerCommandName('drink');
 
         $command = $request->getCommand();
-        $this->assertEquals('typo3.flow:beer:drink', $command->getCommandIdentifier());
+        $this->assertEquals('neos.flow:beer:drink', $command->getCommandIdentifier());
     }
 }

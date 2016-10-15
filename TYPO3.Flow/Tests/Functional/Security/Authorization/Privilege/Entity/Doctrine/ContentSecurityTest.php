@@ -11,13 +11,18 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Do
  * source code.
  */
 
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Tests\Functional\Security\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\Functional\Aop;
+use TYPO3\Flow\Security;
 
 /**
  * Testcase for content security using doctrine persistence
  *
  */
-class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class ContentSecurityTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -50,7 +55,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $testEntityDDoctrineRepository;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Aop\Fixtures\TestContext
+     * @var Aop\Fixtures\TestContext
      */
     protected $globalObjectTestContext;
 
@@ -60,14 +65,14 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->restrictableEntityDoctrineRepository = new Fixtures\RestrictableEntityDoctrineRepository();
         $this->testEntityADoctrineRepository = new Fixtures\TestEntityADoctrineRepository();
         $this->testEntityCDoctrineRepository = new Fixtures\TestEntityCDoctrineRepository();
         $this->testEntityDDoctrineRepository = new Fixtures\TestEntityDDoctrineRepository();
-        $this->globalObjectTestContext = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TestContext::class);
+        $this->globalObjectTestContext = $this->objectManager->get(Aop\Fixtures\TestContext::class);
     }
 
     /**
@@ -75,7 +80,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsAreAllowedToSeeHiddenRestrictableEntities()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+        $this->authenticateRoles(['TYPO3.Flow:Administrator']);
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -105,7 +110,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersAreNotAllowedToSeeHiddenRestrictableEntities()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $this->authenticateRoles(['TYPO3.Flow:Customer']);
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -135,7 +140,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersAreNotAllowedToSeeDeletedRestrictableEntities()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $this->authenticateRoles(['TYPO3.Flow:Customer']);
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $deletedEntity = new Fixtures\RestrictableEntity('deletedEntry');
@@ -165,7 +170,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsCanSeeDeletedRestrictableEntities()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+        $this->authenticateRoles(['TYPO3.Flow:Administrator']);
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $deletedEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -223,10 +228,10 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersCannotSeeOthersRestrictableEntites()
     {
-        $ownAccount = $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $ownAccount = $this->authenticateRoles(['TYPO3.Flow:Customer']);
         $ownAccount->setAccountIdentifier('ownAccount');
         $ownAccount->setAuthenticationProviderName('SomeProvider');
-        $otherAccount = new \TYPO3\Flow\Security\Account();
+        $otherAccount = new Security\Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($ownAccount);
@@ -261,10 +266,10 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsCanSeeOthersRestrictableEntites()
     {
-        $ownAccount = $this->authenticateRoles(array('TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer'));
+        $ownAccount = $this->authenticateRoles(['TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer']);
         $ownAccount->setAccountIdentifier('ownAccount');
         $ownAccount->setAuthenticationProviderName('SomeProvider');
-        $otherAccount = new \TYPO3\Flow\Security\Account();
+        $otherAccount = new Security\Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($ownAccount);
@@ -299,10 +304,10 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersCannotSeeRestrictableEntitesWhichAreOwnedByAndi()
     {
-        $account = $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $account = $this->authenticateRoles(['TYPO3.Flow:Customer']);
         $account->setAccountIdentifier('MyAccount');
         $account->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new \TYPO3\Flow\Security\Account();
+        $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($account);
@@ -337,10 +342,10 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsCanSeeRestrictableEntitesWhichAreOwnedByAndi()
     {
-        $account = $this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+        $account = $this->authenticateRoles(['TYPO3.Flow:Administrator']);
         $account->setAccountIdentifier('MyAccount');
         $account->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new \TYPO3\Flow\Security\Account();
+        $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($account);
@@ -375,7 +380,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersCannotSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $this->authenticateRoles(['TYPO3.Flow:Customer']);
 
         $testEntityB = new Fixtures\TestEntityB('Admin');
         $testEntityA = new Fixtures\TestEntityA($testEntityB);
@@ -394,8 +399,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 1);
 
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -407,7 +412,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsCanSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
-        $this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+        $this->authenticateRoles(['TYPO3.Flow:Administrator']);
 
         $testEntityB = new Fixtures\TestEntityB('Admin');
         $testEntityA = new Fixtures\TestEntityA($testEntityB);
@@ -426,8 +431,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 2);
 
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -439,12 +444,12 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function customersCannotSeeTestEntityAAssociatedToATestEntityBSomeoneElsesAccount()
     {
-        $cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
+        $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
-        $myAccount = $this->authenticateRoles(array('TYPO3.Flow:Customer'));
+        $myAccount = $this->authenticateRoles(['TYPO3.Flow:Customer']);
         $myAccount->setAccountIdentifier('MyAccount');
         $myAccount->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new \TYPO3\Flow\Security\Account();
+        $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($myAccount);
@@ -469,8 +474,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 1);
 
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -482,10 +487,10 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function administratorsCanSeeTestEntityAAssociatedToATestEntityBSomeoneElsesAccount()
     {
-        $myAccount = $this->authenticateRoles(array('TYPO3.Flow:Administrator'));
+        $myAccount = $this->authenticateRoles(['TYPO3.Flow:Administrator']);
         $myAccount->setAccountIdentifier('MyAccount');
         $myAccount->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new \TYPO3\Flow\Security\Account();
+        $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($myAccount);
@@ -510,8 +515,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 2);
 
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -547,8 +552,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 1);
 
-        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class));
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class));
+        $this->assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, Fixtures\TestEntityC::class));
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -575,8 +580,8 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 0);
 
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class));
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, Fixtures\TestEntityC::class));
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -587,14 +592,14 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function inOperatorWorksWithGlobalObjectAccess()
     {
-        $cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
+        $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
         $testEntityD1 = new Fixtures\TestEntityD();
         $testEntityD2 = new Fixtures\TestEntityD();
         $this->testEntityDDoctrineRepository->add($testEntityD1);
         $this->testEntityDDoctrineRepository->add($testEntityD2);
 
-        $this->globalObjectTestContext->setSecurityFixturesEntityDCollection(array($testEntityD1, $testEntityD2));
+        $this->globalObjectTestContext->setSecurityFixturesEntityDCollection([$testEntityD1, $testEntityD2]);
 
         $testEntityC = new Fixtures\TestEntityC();
         $testEntityC->setSimpleStringProperty('Basti');
@@ -609,7 +614,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
         $this->assertTrue(count($result) === 0);
 
-        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class));
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();

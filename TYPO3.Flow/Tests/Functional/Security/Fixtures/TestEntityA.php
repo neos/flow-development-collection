@@ -22,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class TestEntityA
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+     * @var TestEntityB
      * @ORM\OneToOne(inversedBy="relatedEntityA")
      */
     protected $relatedEntityB;
@@ -30,7 +30,7 @@ class TestEntityA
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+     * @param TestEntityB $relatedEntityB
      */
     public function __construct($relatedEntityB)
     {
@@ -38,7 +38,7 @@ class TestEntityA
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+     * @param TestEntityB $relatedEntityB
      */
     public function setRelatedEntityB($relatedEntityB)
     {
@@ -46,7 +46,7 @@ class TestEntityA
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+     * @return TestEntityB
      */
     public function getRelatedEntityB()
     {

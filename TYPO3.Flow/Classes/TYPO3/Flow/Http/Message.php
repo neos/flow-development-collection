@@ -21,7 +21,7 @@ class Message extends AbstractMessage
 {
     /**
      * Method stub to satisfy the prescribed presence in AbstractMessage
-     * @see \TYPO3\Flow\Http\AbstractMessage::getStartLine
+     * @see AbstractMessage::getStartLine
      */
     public function getStartLine()
     {

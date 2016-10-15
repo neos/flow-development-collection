@@ -12,13 +12,14 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 
 /**
  * A controller fixture
  *
  * @Flow\Scope("singleton")
  */
-class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class StandardController extends ActionController
 {
     /**
      * @return string
