@@ -522,7 +522,7 @@ class Bootstrap {
 			exit(1);
 		}
 		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
-			echo('Flow requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)' . PHP_EOL);
+			echo('Flow requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215791)' . PHP_EOL);
 			exit(1);
 		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
