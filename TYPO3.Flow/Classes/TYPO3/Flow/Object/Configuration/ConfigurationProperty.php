@@ -59,6 +59,11 @@ class ConfigurationProperty
     protected $lazyLoading = true;
 
     /**
+     * @var string
+     */
+    protected $presetName = null;
+
+    /**
      * Constructor - sets the name, type and value of the property
      *
      * @param string $name Name of the property
@@ -66,29 +71,16 @@ class ConfigurationProperty
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
      * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading
+     * @param string $presetName
      */
-    public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true)
-    {
-        $this->set($name, $value, $type, $objectConfiguration, $lazyLoading);
-    }
-
-    /**
-     * Sets the name, type and value of the property
-     *
-     * @param string $name Name of the property
-     * @param mixed $value Value of the property
-     * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-     * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
-     * @param boolean $lazyLoading
-     * @return void
-     */
-    public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true)
+    public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true, $presetName = null)
     {
         $this->name = $name;
         $this->value = $value;
         $this->type = $type;
         $this->objectConfiguration = $objectConfiguration;
         $this->lazyLoading = $lazyLoading;
+        $this->presetName = $presetName;
     }
 
     /**
@@ -160,5 +152,21 @@ class ConfigurationProperty
     public function isLazyLoading()
     {
         return $this->lazyLoading;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPresetName()
+    {
+        return $this->presetName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPreset()
+    {
+        return $this->presetName !== null;
     }
 }

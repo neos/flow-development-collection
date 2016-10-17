@@ -31,6 +31,11 @@ final class Inject
     public $lazy = true;
 
     /**
+     * @var string
+     */
+    public $preset;
+
+    /**
      * Path of a setting (without the package key) which should be injected into the property.
      * Example: session.name
      *
@@ -58,6 +63,9 @@ final class Inject
     {
         if (isset($values['lazy'])) {
             $this->lazy = (boolean)$values['lazy'];
+        }
+        if (isset($values['preset'])) {
+            $this->preset = (string)$values['preset'];
         }
         if (isset($values['setting'])) {
             $this->setting = (string)$values['setting'];

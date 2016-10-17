@@ -191,36 +191,10 @@ class ConfigurationBuilder
                     $objectConfiguration->setScope($this->parseScope($optionValue));
                 break;
                 case 'properties':
-                    if (is_array($optionValue)) {
-                        foreach ($optionValue as $propertyName => $propertyValue) {
-                            if (array_key_exists('value', $propertyValue)) {
-                                $property = new ConfigurationProperty($propertyName, $propertyValue['value'], ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
-                            } elseif (array_key_exists('object', $propertyValue)) {
-                                $property = $this->parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $objectConfiguration);
-                            } elseif (array_key_exists('setting', $propertyValue)) {
-                                $property = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $propertyValue['setting']), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
-                            } else {
-                                throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
-                            }
-                            $objectConfiguration->setProperty($property);
-                        }
-                    }
+                    $objectConfiguration->setProperties($this->parseProperties($optionValue, $objectConfiguration));
                 break;
                 case 'arguments':
-                    if (is_array($optionValue)) {
-                        foreach ($optionValue as $argumentName => $argumentValue) {
-                            if (array_key_exists('value', $argumentValue)) {
-                                $argument = new ConfigurationArgument($argumentName, $argumentValue['value'], ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-                            } elseif (array_key_exists('object', $argumentValue)) {
-                                $argument = $this->parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $configurationSourceHint);
-                            } elseif (array_key_exists('setting', $argumentValue)) {
-                                $argument = new ConfigurationArgument($argumentName, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
-                            } else {
-                                throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
-                            }
-                            $objectConfiguration->setArgument($argument);
-                        }
-                    }
+                    $objectConfiguration->setArguments($this->parseArguments($optionValue, $objectConfiguration));
                 break;
                 case 'className':
                 case 'factoryObjectName':
@@ -233,11 +207,89 @@ class ConfigurationBuilder
                 case 'autowiring':
                     $objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
                 break;
+                case 'presets':
+                    foreach ($optionValue as $presetName => $presetOptions) {
+                        $objectConfiguration->addPreset($this->parsePresetConfigurationArray($presetName, $presetOptions, $objectConfiguration));
+                    }
+                break;
                 default:
                     throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
             }
         }
         return $objectConfiguration;
+    }
+
+    /**
+     * @param string $presetName
+     * @param array $presetOptions
+     * @param Configuration $baseConfiguration
+     * @return ConfigurationPreset
+     * @throws InvalidObjectConfigurationException
+     */
+    protected function parsePresetConfigurationArray($presetName, array $presetOptions, Configuration $baseConfiguration)
+    {
+        $presetConfiguration = new ConfigurationPreset($presetName, $baseConfiguration);
+        foreach ($presetOptions as $optionName => $optionValue) {
+            switch ($optionName) {
+                case 'scope':
+                    $presetConfiguration->setScope($this->parseScope($optionValue));
+                break;
+                case 'properties':
+                    $presetConfiguration->setProperties($this->parseProperties($optionValue, $presetConfiguration));
+                break;
+                case 'arguments':
+                    $presetConfiguration->setArguments($this->parseArguments($optionValue, $presetConfiguration));
+                break;
+                case 'className':
+                case 'factoryObjectName':
+                case 'factoryMethodName':
+                case 'lifecycleInitializationMethodName':
+                case 'lifecycleShutdownMethodName':
+                    $methodName = 'set' . ucfirst($optionName);
+                    $presetConfiguration->$methodName(trim($optionValue));
+                break;
+                case 'autowiring':
+                    $presetConfiguration->setAutowiring($this->parseAutowiring($optionValue));
+                break;
+                default:
+                    throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" for preset "' . $presetName . '" (source: ' . $presetConfiguration->getConfigurationSourceHint() . ')', 1476707315);
+            }
+        }
+        return $presetConfiguration;
+    }
+
+    protected function parseProperties(array $propertiesArray, ConfigurationInterface $parentConfiguration)
+    {
+        $properties = [];
+        foreach ($propertiesArray as $propertyName => $propertyValue) {
+            if (array_key_exists('value', $propertyValue)) {
+                $properties[] = new ConfigurationProperty($propertyName, $propertyValue['value'], ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
+            } elseif (array_key_exists('object', $propertyValue)) {
+                $properties[] = $this->parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $parentConfiguration);
+            } elseif (array_key_exists('setting', $propertyValue)) {
+                $properties[] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $propertyValue['setting']), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+            } else {
+                throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $parentConfiguration->getConfigurationSourceHint() . ')', 1230563249);
+            }
+        }
+        return $properties;
+    }
+
+    protected function parseArguments(array $argumentsArray, ConfigurationInterface $parentConfiguration)
+    {
+        $arguments = [];
+        foreach ($argumentsArray as $argumentName => $argumentValue) {
+            if (array_key_exists('value', $argumentValue)) {
+                $arguments[] = new ConfigurationArgument($argumentName, $argumentValue['value'], ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+            } elseif (array_key_exists('object', $argumentValue)) {
+                $arguments[] = $this->parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $parentConfiguration);
+            } elseif (array_key_exists('setting', $argumentValue)) {
+                $arguments[] = new ConfigurationArgument($argumentName, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
+            } else {
+                throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $parentConfiguration->getConfigurationSourceHint() . ')', 1230563250);
+            }
+        }
+        return $arguments;
     }
 
     /**
@@ -287,11 +339,11 @@ class ConfigurationBuilder
      *
      * @param string $propertyName Name of the property
      * @param mixed $objectNameOrConfiguration Value of the "object" section of the property configuration - either a string or an array
-     * @param Configuration $parentObjectConfiguration The Configuration object this property belongs to
+     * @param ConfigurationInterface $parentObjectConfiguration The Configuration object this property belongs to
      * @return ConfigurationProperty A configuration property of type object
      * @throws InvalidObjectConfigurationException
      */
-    protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, Configuration $parentObjectConfiguration)
+    protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, ConfigurationInterface $parentObjectConfiguration)
     {
         if (is_array($objectNameOrConfiguration)) {
             if (isset($objectNameOrConfiguration['name'])) {
@@ -321,11 +373,11 @@ class ConfigurationBuilder
      *
      * @param string $argumentName Name of the argument
      * @param mixed $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
-     * @param string $configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+     * @param ConfigurationInterface $parentObjectConfiguration The Configuration object this property belongs to
      * @return ConfigurationArgument A configuration argument of type object
      * @throws InvalidObjectConfigurationException
      */
-    protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint)
+    protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, ConfigurationInterface $parentObjectConfiguration)
     {
         if (is_array($objectNameOrConfiguration)) {
             if (isset($objectNameOrConfiguration['name'])) {
@@ -335,10 +387,10 @@ class ConfigurationBuilder
                 if (isset($objectNameOrConfiguration['factoryObjectName'])) {
                     $objectName = null;
                 } else {
-                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object name in ' . $configurationSourceHint, 1417431742);
+                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object name in ' . $parentObjectConfiguration->getConfigurationSourceHint(), 1417431742);
                 }
             }
-            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
+            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', argument "' . $argumentName . '"');
             $argument = new ConfigurationArgument($argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
         } else {
             $argument = new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
@@ -473,7 +525,7 @@ class ConfigurationBuilder
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
                     } else {
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                        $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                        $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy, $injectAnnotation->preset);
                         $properties[$propertyName] = $configurationProperty;
                     }
                 }

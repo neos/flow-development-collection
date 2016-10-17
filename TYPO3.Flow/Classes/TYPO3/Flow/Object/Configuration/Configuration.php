@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class Configuration
+class Configuration implements ConfigurationInterface
 {
     const AUTOWIRING_MODE_OFF = 0;
     const AUTOWIRING_MODE_ON = 1;
@@ -98,6 +98,11 @@ class Configuration
      * @var string
      */
     protected $configurationSourceHint = '< unknown >';
+
+    /**
+     * @var ConfigurationPreset[]
+     */
+    protected $presets = [];
 
     /**
      * The constructor
@@ -440,5 +445,39 @@ class Configuration
     public function getConfigurationSourceHint()
     {
         return $this->configurationSourceHint;
+    }
+
+    /**
+     * @param ConfigurationPreset $presetConfiguration
+     */
+    public function addPreset(ConfigurationPreset $presetConfiguration)
+    {
+        $this->presets[$presetConfiguration->getPresetName()] = $presetConfiguration;
+    }
+
+    /**
+     * @param string $presetName
+     * @return bool
+     */
+    public function hasPreset($presetName)
+    {
+        return isset($this->presets[$presetName]);
+    }
+
+    /**
+     * @param string $presetName
+     * @return ConfigurationPreset
+     */
+    public function getPreset($presetName)
+    {
+        return $this->presets[$presetName];
+    }
+
+    /**
+     * @return ConfigurationPreset[]
+     */
+    public function getPresets()
+    {
+        return $this->presets;
     }
 }

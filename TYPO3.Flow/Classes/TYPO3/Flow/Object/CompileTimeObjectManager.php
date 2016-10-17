@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Object;
 
 use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Object\Configuration\ConfigurationInterface;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty as Property;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
@@ -339,36 +340,50 @@ class CompileTimeObjectManager extends ObjectManager
     protected function buildObjectsArray()
     {
         $objects = array();
+        /** @var Configuration $objectConfiguration */
         foreach ($this->objectConfigurations as $objectConfiguration) {
-            $objectName = $objectConfiguration->getObjectName();
-            $objects[$objectName] = array(
-                'l' => strtolower($objectName),
-                's' => $objectConfiguration->getScope(),
-                'p' => $objectConfiguration->getPackageKey()
-            );
-            if ($objectConfiguration->getClassName() !== $objectName) {
-                $objects[$objectName]['c'] = $objectConfiguration->getClassName();
-            }
-            if ($objectConfiguration->getFactoryObjectName() !== '') {
-                $objects[$objectName]['f'] = array(
-                    $objectConfiguration->getFactoryObjectName(),
-                    $objectConfiguration->getFactoryMethodName()
-                );
-
-                $objects[$objectName]['fa'] = array();
-                $factoryMethodArguments = $objectConfiguration->getArguments();
-                if (count($factoryMethodArguments) > 0) {
-                    foreach ($factoryMethodArguments as $index => $argument) {
-                        $objects[$objectName]['fa'][$index] = array(
-                            't' => $argument->getType(),
-                            'v' => $argument->getValue()
-                        );
-                    }
-                }
+            $objects[$objectConfiguration->getObjectName()] = $this->buildObjectArray($objectConfiguration);
+            foreach ($objectConfiguration->getPresets() as $presetConfiguration) {
+                $objects[$presetConfiguration->getObjectName()] = $this->buildObjectArray($presetConfiguration);
             }
         }
         $this->configurationCache->set('objects', $objects);
         return $objects;
+    }
+
+    /**
+     * @param ConfigurationInterface $objectConfiguration
+     * @return array
+     */
+    protected function buildObjectArray(ConfigurationInterface $objectConfiguration)
+    {
+        $objectName = $objectConfiguration->getObjectName();
+        $object = array(
+            'l' => strtolower($objectName),
+            's' => $objectConfiguration->getScope(),
+            'p' => $objectConfiguration->getPackageKey()
+        );
+        if ($objectConfiguration->getClassName() !== $objectName) {
+            $object['c'] = $objectConfiguration->getClassName();
+        }
+        if ($objectConfiguration->getFactoryObjectName() !== '') {
+            $object['f'] = array(
+                $objectConfiguration->getFactoryObjectName(),
+                $objectConfiguration->getFactoryMethodName()
+            );
+
+            $object['fa'] = array();
+            $factoryMethodArguments = $objectConfiguration->getArguments();
+            if (count($factoryMethodArguments) > 0) {
+                foreach ($factoryMethodArguments as $index => $argument) {
+                    $object['fa'][$index] = array(
+                        't' => $argument->getType(),
+                        'v' => $argument->getValue()
+                    );
+                }
+            }
+        }
+        return $object;
     }
 
     /**
