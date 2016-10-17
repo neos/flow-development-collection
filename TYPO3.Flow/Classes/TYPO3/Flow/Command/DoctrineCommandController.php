@@ -457,7 +457,7 @@ class DoctrineCommandController extends CommandController
             if ($selectedPackageIndex !== 0) {
                 /** @var Package $selectedPackage */
                 $selectedPackage = $packages[$selectedPackageIndex];
-            $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
+                $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
                 $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);

@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Tests;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Http\Component\ComponentContext;
+use TYPO3\Flow\Http;
 
 /**
  * A request handler which boots up Flow into a basic runtime level and then returns
@@ -39,14 +41,9 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
     protected $bootstrap;
 
     /**
-     * @var \TYPO3\Flow\Http\Request
+     * @var ComponentContext
      */
-    protected $httpRequest;
-
-    /**
-     * @var \TYPO3\Flow\Http\Response
-     */
-    protected $httpResponse;
+    protected $componentContext;
 
     /**
      * Constructor
@@ -59,9 +56,9 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
     }
 
     /**
-     * This request handler can handle CLI requests.
+     * This request handler can handle requests in Testing Context.
      *
-     * @return boolean If the request is a CLI request, TRUE otherwise FALSE
+     * @return boolean If the context is Testing, TRUE otherwise FALSE
      */
     public function canHandleRequest()
     {
@@ -100,7 +97,7 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
      */
     public function getHttpRequest()
     {
-        return $this->httpRequest;
+        return $this->getComponentContext()->getHttpRequest();
     }
 
     /**
@@ -111,7 +108,33 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
      */
     public function getHttpResponse()
     {
-        return $this->httpResponse;
+        return $this->getComponentContext()->getHttpResponse();
+    }
+
+    /**
+     * Allows to set the currently processed HTTP component chain context by the base functional
+     * test case.
+     *
+     * @param ComponentContext $context
+     * @return void
+     * @see InternalRequestEngine::sendRequest()
+     */
+    public function setComponentContext(ComponentContext $context)
+    {
+        $this->componentContext = $context;
+    }
+
+    /**
+     * Internal getter to ensure an existing ComponentContext.
+     *
+     * @return ComponentContext
+     */
+    protected function getComponentContext()
+    {
+        if ($this->componentContext === null) {
+            $this->componentContext = new ComponentContext(Http\Request::createFromEnvironment(), new Http\Response());
+        }
+        return $this->componentContext;
     }
 
     /**
@@ -120,11 +143,11 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
      *
      * @param \TYPO3\Flow\Http\Request $request
      * @return void
-     * @see InternalRequestEngine::sendRequest()
+     * @deprecated since Flow 3.3, use setComponentContext() instead
      */
     public function setHttpRequest(\TYPO3\Flow\Http\Request $request)
     {
-        $this->httpRequest = $request;
+        $this->getComponentContext()->replaceHttpRequest($request);
     }
 
     /**
@@ -133,10 +156,10 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
      *
      * @param \TYPO3\Flow\Http\Response $response
      * @return void
-     * @see InternalRequestEngine::sendRequest()
+     * @deprecated since Flow 3.3, use setComponentContext() instead
      */
     public function setHttpResponse(\TYPO3\Flow\Http\Response $response)
     {
-        $this->httpResponse = $response;
+        $this->getComponentContext()->replaceHttpResponse($response);
     }
 }

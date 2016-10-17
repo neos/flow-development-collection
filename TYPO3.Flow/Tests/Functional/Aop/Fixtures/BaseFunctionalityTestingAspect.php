@@ -212,4 +212,15 @@ class BaseFunctionalityTestingAspect
     {
         return 'This is so NaN';
     }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithFinalModifier->someMethod())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodOfFinalClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'nothing is ' . $originalValue . '!';
+    }
 }

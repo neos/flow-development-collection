@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Tests;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
@@ -422,8 +423,9 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->router->setRoutesConfiguration(null);
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $requestHandler->setHttpRequest(Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
-        $requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
+        $request = Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test'));
+        $componentContext = new ComponentContext($request, new \TYPO3\Flow\Http\Response());
+        $requestHandler->setComponentContext($componentContext);
     }
 
     /**
