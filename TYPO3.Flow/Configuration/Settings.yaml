@@ -138,7 +138,9 @@ TYPO3:
       #   position: 'after Some.Package'
       #
       routes: []
-
+      view:
+        # todo Add simple Flow view
+        defaultImplementation: null
     http:
 
       # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
@@ -699,7 +701,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'

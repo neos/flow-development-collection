@@ -426,6 +426,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param string $pathAndFilename
      * @param string $prefix
      * @return string
+     * @throws InvalidTemplateResourceException
      */
     protected function createIdentifierForFile($pathAndFilename, $prefix)
     {

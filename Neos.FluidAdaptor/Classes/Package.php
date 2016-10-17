@@ -12,8 +12,11 @@ namespace Neos\FluidAdaptor;
  */
 
 use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * The Fluid Package
@@ -38,10 +41,10 @@ class Package extends BasePackage
 
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
-            $dispatcher->connect(\TYPO3\Flow\Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
-                    $templateFileMonitor = \TYPO3\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
-                    $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
+                    $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
+                    $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
@@ -75,6 +78,6 @@ class Package extends BasePackage
             $templateCache = $bootstrap->getObjectManager()->get(CacheManager::class)->getCache('Fluid_TemplateCache');
             $templateCache->flush();
         };
-        $dispatcher->connect(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', $flushTemplates);
+        $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $flushTemplates);
     }
 }

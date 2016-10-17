@@ -7,3 +7,6 @@ TYPO3:
             'ajaxWidget':
               position: 'before routing'
               component: 'Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent'
+    mvc:
+      view:
+        defaultImplementation: 'Neos\FluidAdaptor\View\TemplateView'

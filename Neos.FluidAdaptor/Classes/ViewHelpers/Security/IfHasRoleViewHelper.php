@@ -77,12 +77,21 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 class IfHasRoleViewHelper extends AbstractConditionViewHelper
 {
     /**
+     * Initializes the "then" and "else" arguments
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('role', 'mixed', 'The role or role identifier.', true);
+        $this->registerArgument('packageKey', 'string', 'PackageKey of the package defining the role.', false, null);
+        $this->registerArgument('account', Account::class, 'If specified, this subject of this check is the given Account instead of the currently authenticated account', false, null);
+        $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
+        $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
+    }
+
+    /**
      * renders <f:then> child if the role could be found in the security context,
      * otherwise renders <f:else> child.
      *
-     * @param string $role The role or role identifier
-     * @param string $packageKey PackageKey of the package defining the role
-     * @param Account $account If specified, this subject of this check is the given Account instead of the currently authenticated account
      * @return string the rendered string
      * @api
      */
@@ -109,8 +118,8 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         $securityContext = $objectManager->get(Context::class);
 
         $role = $arguments['role'];
-        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
         $account = $arguments['account'];
+        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
 
         if (is_string($role)) {
             $roleIdentifier = $role;

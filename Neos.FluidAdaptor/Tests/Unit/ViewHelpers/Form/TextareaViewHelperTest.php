@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
 require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
@@ -39,7 +41,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCorrectlySetsTagName()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class);
+        $mockTagBuilder = $this->createMock(TagBuilder::class);
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('textarea');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -52,7 +54,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCorrectlySetsNameAttributeAndContent()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class);
+        $mockTagBuilder = $this->createMock(TagBuilder::class);
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('Current value');
@@ -84,7 +86,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderEscapesTextareaContent()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class);
+        $mockTagBuilder = $this->createMock(TagBuilder::class);
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some &lt;tag&gt; &amp; &quot;quotes&quot;');

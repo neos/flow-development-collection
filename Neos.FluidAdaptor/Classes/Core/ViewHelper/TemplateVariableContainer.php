@@ -25,6 +25,15 @@ use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
  */
 class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
 {
+/*    public function get($identifier)
+    {
+        $subject = parent::get($identifier);
+        if ($subject instanceof TemplateObjectAccessInterface) {
+            $subject = $subject->objectAccess();
+        }
+        return $subject;
+    }*/
+
     /**
      * Get a variable by dotted path expression, retrieving the
      * variable from nested arrays/objects one segment at a time.
@@ -38,18 +47,19 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
      */
     public function getByPath($path, array $accessors = [])
     {
-        $subject = $this->variables;
-
         $propertyPathSegments = explode('.', $path);
+        $firstPathSegment = array_shift($propertyPathSegments);
+        $subject = isset($this->variables[$firstPathSegment]) ? $this->variables[$firstPathSegment] : null;
+
         foreach ($propertyPathSegments as $propertyName) {
+            if ($subject === null) {
+                break;
+            }
+
             try {
                 $subject = ObjectAccess::getProperty($subject, $propertyName);
             } catch (PropertyNotAccessibleException $exception) {
                 $subject = null;
-            }
-
-            if ($subject === null) {
-                break;
             }
 
             if ($subject instanceof TemplateObjectAccessInterface) {
@@ -57,6 +67,34 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
             }
         }
 
+        if ($subject instanceof TemplateObjectAccessInterface) {
+            $subject = $subject->objectAccess();
+        }
+
+        if ($subject === null) {
+            $subject = $this->getBooleanValue($path);
+        }
+
         return $subject;
+    }
+
+    /**
+     * Tries to interpret the given path as boolean value, either returns the boolean value or null.
+     *
+     * @param $path
+     * @return boolean|null
+     */
+    protected function getBooleanValue($path) {
+        $normalizedPath = strtolower($path);
+
+        if (in_array($normalizedPath, ['true', 'on', 'yes'])) {
+            return true;
+        }
+
+        if (in_array($normalizedPath, ['false', 'off', 'no'])) {
+            return false;
+        }
+
+        return null;
     }
 }

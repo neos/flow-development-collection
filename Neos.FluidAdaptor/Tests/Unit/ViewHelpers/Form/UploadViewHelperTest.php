@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
 
 use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\Resource\Resource;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
@@ -65,7 +66,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class)->setMethods(array('setContent', 'render', 'addAttribute'))->getMock();
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setContent', 'render', 'addAttribute'))->getMock();
         $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'file');
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'someName');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('someName');

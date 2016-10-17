@@ -87,6 +87,6 @@ class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function changeTemplatePathAndFilenameForWidget()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        $this->assertEquals('Changed on Package Level', $response->getContent());
+        $this->assertEquals('Changed on Package Level', trim($response->getContent()));
     }
 }

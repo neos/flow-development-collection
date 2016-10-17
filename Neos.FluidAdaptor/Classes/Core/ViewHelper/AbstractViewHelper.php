@@ -102,7 +102,7 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
             return call_user_func_array([$this, 'render'], $renderMethodParameters);
         } catch (Exception $exception) {
             if ($this->objectManager->getContext()->isProduction()) {
-                $this->systemLogger->log('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')', LOG_ERR, ['exception' => $exception]);
+                $this->systemLogger->log('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',  LOG_ERR, ['exception' => $exception]);
                 return '';
             } else {
                 throw $exception;
@@ -184,6 +184,7 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
      * @param ObjectManagerInterface $objectManager
      * @return ArgumentDefinition[]
      * @throws \Neos\FluidAdaptor\Core\Exception
+     * @Flow\CompileStatic
      */
     public static function getRenderMethodArgumentDefinitions(ObjectManagerInterface $objectManager)
     {
@@ -221,7 +222,14 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
             if (isset($parameterInfo['defaultValue'])) {
                 $defaultValue = $parameterInfo['defaultValue'];
             }
-            $methodArgumentDefinitions[$parameterName] = [$parameterName, $dataType, $description, ($parameterInfo['optional'] === false), $defaultValue, true];
+            $methodArgumentDefinitions[$parameterName] = [
+                $parameterName,
+                $dataType,
+                $description,
+                ($parameterInfo['optional'] === false),
+                $defaultValue,
+                true
+            ];
             $i++;
         }
 

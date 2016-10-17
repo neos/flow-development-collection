@@ -236,7 +236,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Parser\Exception
+     * @expectedException \TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException
      */
     public function viewThrowsExceptionWhenUnknownViewHelperIsCalled()
     {
@@ -290,9 +290,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actual = trim($standaloneView->renderSection('test'));
         $this->assertSame($expected, $actual, 'First rendering was not escaped.');
 
-        // To avoid any side effects we create a separate accessible mock to find the cache identifier for the partial
-        $dummyTemplatePaths = $this->getAccessibleMock(TemplatePaths::class);
-        $partialCacheIdentifier = $dummyTemplatePaths->_call('createIdentifierForFile', __DIR__ . '/Fixtures/NestedRenderingConfiguration/Partials/Test.html', 'partial_Test');
+        $partialCacheIdentifier = $standaloneView->getTemplatePaths()->getPartialIdentifier('Test');
         $templateCache = $this->objectManager->get(CacheManager::class)->getCache('Fluid_TemplateCache');
         $templateCache->remove($partialCacheIdentifier);
 

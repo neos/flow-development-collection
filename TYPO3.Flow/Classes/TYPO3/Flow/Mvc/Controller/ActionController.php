@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
-use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -112,7 +111,13 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = TemplateView::class;
+    protected $defaultViewObjectName = null;
+
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="mvc.view.defaultImplementation")
+     * @var string
+     */
+    protected $defaultViewImplementation;
 
     /**
      * Name of the action method
@@ -535,20 +540,17 @@ class ActionController extends AbstractController
     protected function resolveView()
     {
         $viewsConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->request);
-
-        if (isset($viewsConfiguration['viewObjectName'])) {
-            $viewObjectName = $viewsConfiguration['viewObjectName'];
-        } elseif (($resolvedViewObjectName = $this->resolveViewObjectName()) !== false) {
-            $viewObjectName = $resolvedViewObjectName;
-        } elseif ($this->defaultViewObjectName !== '') {
+        $viewObjectName = $this->defaultViewImplementation;
+        if (!empty($this->defaultViewObjectName)) {
             $viewObjectName = $this->defaultViewObjectName;
         }
-
-        if (isset($viewsConfiguration['options'])) {
-            $view = $this->objectManager->get($viewObjectName, $viewsConfiguration['options']);
-        } else {
-            $view = $this->objectManager->get($viewObjectName);
+        $viewObjectName = $this->resolveViewObjectName() ?: $viewObjectName;
+        if (isset($viewsConfiguration['viewObjectName'])) {
+            $viewObjectName = $viewsConfiguration['viewObjectName'];
         }
+
+        $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
+        $view = $this->objectManager->get($viewObjectName, $viewOptions);
 
         if (!isset($view)) {
             throw new ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);

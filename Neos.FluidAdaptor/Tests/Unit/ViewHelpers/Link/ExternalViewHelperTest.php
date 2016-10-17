@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Link;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
@@ -36,7 +38,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
      */
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://www.some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -53,7 +55,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
      */
     public function renderAddsHttpPrefixIfSpecifiedUriDoesNotContainScheme()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://www.some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -70,7 +72,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
      */
     public function renderAddsSpecifiedSchemeIfUriDoesNotContainScheme()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'ftp://some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -87,7 +89,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
      */
     public function renderDoesNotAddEmptyScheme()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');

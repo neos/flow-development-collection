@@ -31,7 +31,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
     protected $mockFlashMessageContainer;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TagBuilder
+     * @var TagBuilder
      */
     protected $mockTagBuilder;
 

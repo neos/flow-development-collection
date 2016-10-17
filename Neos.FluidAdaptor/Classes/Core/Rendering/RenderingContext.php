@@ -11,6 +11,9 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
+use Neos\FluidAdaptor\Core\Parser\TemplateParser;
+use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
@@ -29,7 +32,8 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
- *
+ * A Fluid rendering context specifically to be used in conjunction with Flow.
+ * This knows about the ControllerContext and ObjectManager.
  */
 class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext implements RenderingContextInterface
 {
@@ -65,7 +69,7 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
 
     /**
      * @Flow\Inject
-     * @var \Neos\FluidAdaptor\Core\Cache\CacheAdaptor
+     * @var CacheAdaptor
      */
     protected $cache;
 
@@ -78,8 +82,9 @@ class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext
     public function __construct(ViewInterface $view, array $options = [])
     {
         parent::__construct($view);
+        $this->setTemplateParser(new TemplateParser());
         $this->setViewHelperResolver(new ViewHelperResolver());
-        $this->setTemplateProcessors([new NamespaceDetectionTemplateProcessor()]);
+        $this->setTemplateProcessors([new EscapingFlagProcessor(), new NamespaceDetectionTemplateProcessor()]);
         $this->setTemplatePaths(new TemplatePaths($options));
         $this->setVariableProvider(new TemplateVariableContainer());
     }

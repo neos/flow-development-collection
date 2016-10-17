@@ -16,6 +16,9 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\Package;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * Class ViewHelperResolver
@@ -27,7 +30,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
  * legacy mode is requested, this ViewHelperResolver is also
  * made capable of "mixing" two different ViewHelper namespaces
  * to effectively create aliases for the Fluid core ViewHelpers
- * to be loaded in the (TYPO3|Neos)\Fluid\ViewHelper scope as well.
+ * to be loaded in the (TYPO3|Neos) scope as well.
  *
  * @Flow\Scope("singleton")
  */
@@ -38,6 +41,12 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * @var ObjectManagerInterface
      */
     protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
 
     /**
      * Custom merged namespace for CMS Fluid adapter;
@@ -54,6 +63,20 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     public function __construct()
     {
         $this->setNamespaces($this->getDefaultNamespaces());
+    }
+
+    public function initializeObject($reason)
+    {
+        if ($reason === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
+            return;
+        }
+
+        /** @var Package $package */
+        foreach ($this->packageManager->getActivePackages() as $package) {
+            foreach ($package->getNamespaces() as $namespace) {
+                $this->addNamespace(strtolower($package->getPackageKey()), $namespace . '\\ViewHelpers');
+            }
+        }
     }
 
     /**
@@ -122,12 +145,26 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
             return;
         }
 
-        if (!array_key_exists($identifier, $this->namespaces)) {
-            $this->namespaces[$identifier] = $phpNamespace === null ? null : (array)$phpNamespace;
-        } elseif (is_array($phpNamespace)) {
-            $this->namespaces[$identifier] = array_unique(array_merge($this->namespaces[$identifier], $phpNamespace));
-        } elseif (!in_array($phpNamespace, $this->namespaces[$identifier])) {
-            $this->namespaces[$identifier][] = $phpNamespace;
+        if (!is_array($phpNamespace)) {
+            $this->addNamespaceInternal($identifier, $phpNamespace);
+            return;
         }
+
+        foreach ($phpNamespace as $namespace) {
+            $this->addNamespaceInternal($identifier, $namespace);
+        }
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $phpNamespace
+     */
+    protected function addNamespaceInternal($identifier, $phpNamespace)
+    {
+        if (!isset($this->namespaces[$identifier])) {
+            $this->namespaces[$identifier] = [];
+        }
+
+        $this->namespaces[$identifier] = array_unique(array_merge($this->namespaces[$identifier], [$phpNamespace]));
     }
 }

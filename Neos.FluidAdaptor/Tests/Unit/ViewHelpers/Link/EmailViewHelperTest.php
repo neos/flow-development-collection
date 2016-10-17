@@ -35,7 +35,7 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseT
      */
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class);
+        $mockTagBuilder = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class);
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'mailto:some@email.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -52,7 +52,7 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseT
      */
     public function renderSetsTagContentToEmailIfRenderChildrenReturnNull()
     {
-        $mockTagBuilder = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class);
+        $mockTagBuilder = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class);
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some@email.tld');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 

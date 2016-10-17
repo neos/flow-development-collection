@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+
 require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
 
 /**
@@ -36,7 +38,7 @@ class HiddenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(\Neos\FluidAdaptor\Core\ViewHelper\TagBuilder::class)->setMethods(array('setTagName', 'addAttribute'))->getMock();
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setTagName', 'addAttribute'))->getMock();
         $mockTagBuilder->expects($this->once())->method('setTagName')->with('input');
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'hidden');
         $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');

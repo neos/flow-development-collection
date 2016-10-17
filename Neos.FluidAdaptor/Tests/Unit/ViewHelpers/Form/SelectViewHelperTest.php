@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  */
 
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
@@ -146,7 +147,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function multipleSelectCreatesExpectedOptions()
     {
-        $this->tagBuilder = new \Neos\FluidAdaptor\Core\ViewHelper\TagBuilder();
+        $this->tagBuilder = new TagBuilder();
 
         $this->arguments['options'] = array(
             'value1' => 'label1',
@@ -175,7 +176,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function multipleSelectCreatesExpectedOptionsInObjectAccessorMode()
     {
-        $this->tagBuilder = new \Neos\FluidAdaptor\Core\ViewHelper\TagBuilder();
+        $this->tagBuilder = new TagBuilder();
 
         $user = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Sebastian', 'Düvel');
 
@@ -251,7 +252,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function multipleSelectOnDomainObjectsCreatesExpectedOptions()
     {
-        $this->tagBuilder = new \Neos\FluidAdaptor\Core\ViewHelper\TagBuilder();
+        $this->tagBuilder = new TagBuilder();
         $this->viewHelper->expects($this->exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
 
         $user_is = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
@@ -295,7 +296,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         ));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
-        $this->tagBuilder = new \Neos\FluidAdaptor\Core\ViewHelper\TagBuilder();
+        $this->tagBuilder = new TagBuilder();
         $this->viewHelper->expects($this->exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
 
         $user_is = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');

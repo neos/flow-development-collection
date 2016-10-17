@@ -15,7 +15,11 @@ use TYPO3Fluid\Fluid\Core\Parser\Patterns;
 use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
 /**
+ * Note: this detects Namespace declarations AND takes care of CDATA because the class in TYPO3Fluid does so as well.
  *
+ * Compared to TYPO3Fluid that just removes all CDATA sections from the template before parsing, this pre processor
+ * finds CDATA and base65 encodes those areas of the template and surrounds that with a call to the Base64DecodeViewHelper
+ * which results in the the CDATA section to be present in the final output without any changes from fluid.
  */
 class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor
 {

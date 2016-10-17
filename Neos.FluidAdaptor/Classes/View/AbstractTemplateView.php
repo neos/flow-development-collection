@@ -18,7 +18,7 @@ use TYPO3\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 
 /**
- *
+ * The abstract base of all Fluid views.
  */
 abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTemplateView implements ViewInterface
 {
@@ -111,8 +111,12 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @param array $options
      * @throws Exception
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = null)
     {
+        if ($options === null) {
+            $options = [];
+        }
+        
         $this->validateOptions($options);
         $this->setOptions($options);
 

@@ -11,6 +11,9 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+
 /**
  * Tag based view helper.
  * Should be used as the base class for all view helpers which output simple tags, as it provides some
@@ -37,7 +40,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     /**
      * Tag builder instance
      *
-     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder
+     * @var TagBuilder
      * @api
      */
     protected $tag = null;
@@ -51,17 +54,6 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     protected $tagName = 'div';
 
     /**
-     * Inject a TagBuilder
-     *
-     * @param TagBuilder $tagBuilder Tag builder
-     * @return void
-     */
-    public function injectTagBuilder(TagBuilder $tagBuilder)
-    {
-        $this->tag = $tagBuilder;
-    }
-
-    /**
      * Constructor
      *
      * @api
@@ -70,6 +62,17 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     {
         $this->registerArgument('additionalAttributes', 'array', 'Additional tag attributes. They will be added directly to the resulting HTML tag.', false);
         $this->registerArgument('data', 'array', 'Additional data-* attributes. They will each be added with a "data-" prefix.', false);
+        $this->setTagBuilder(new TagBuilder($this->tagName));
+    }
+
+    /**
+     * @param TagBuilder $tag
+     * @return void
+     */
+    public function setTagBuilder(TagBuilder $tag)
+    {
+        $this->tag = $tag;
+        $this->tag->setTagName($this->tagName);
     }
 
     /**
@@ -113,12 +116,13 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @param string $type Type of the tag attribute
      * @param string $description Description of tag attribute
      * @param boolean $required set to TRUE if tag attribute is required. Defaults to FALSE.
+     * @param mixed $defaultValue Optional, default value of attribute if one applies
      * @return void
      * @api
      */
-    protected function registerTagAttribute($name, $type, $description, $required = false)
+    protected function registerTagAttribute($name, $type, $description, $required = false, $defaultValue = null)
     {
-        $this->registerArgument($name, $type, $description, $required, null);
+        $this->registerArgument($name, $type, $description, $required, $defaultValue);
         self::$tagAttributes[get_class($this)][$name] = $name;
     }
 
@@ -140,5 +144,28 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
         $this->registerTagAttribute('accesskey', 'string', 'Keyboard shortcut to access this element');
         $this->registerTagAttribute('tabindex', 'integer', 'Specifies the tab order of this element');
         $this->registerTagAttribute('onclick', 'string', 'JavaScript evaluated for the onclick event');
+    }
+
+    /**
+     * Handles additional arguments, sorting out any data-
+     * prefixed tag attributes and assigning them. Then passes
+     * the unassigned arguments to the parent class' method,
+     * which in the default implementation will throw an error
+     * about "undeclared argument used".
+     *
+     * @param array $arguments
+     * @return void
+     */
+    public function handleAdditionalArguments(array $arguments)
+    {
+        $unassigned = array();
+        foreach ($arguments as $argumentName => $argumentValue) {
+            if (strpos($argumentName, 'data-') === 0) {
+                $this->tag->addAttribute($argumentName, $argumentValue);
+            } else {
+                $unassigned[$argumentName] = $argumentValue;
+            }
+        }
+        parent::handleAdditionalArguments($unassigned);
     }
 }
