@@ -450,9 +450,20 @@ class ProxyClassBuilder
                 throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
             }
         }
-        $propertyClassName = $this->objectConfigurations[$propertyObjectName]->getClassName();
-        if ($this->objectConfigurations[$propertyObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE && !$this->objectConfigurations[$propertyObjectName]->isCreatedByFactory()) {
-            $preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($this->objectConfigurations[$propertyObjectName]->getArguments()) . ')';
+
+        /** @var Configuration $objectConfiguration */
+        $objectConfiguration = $this->objectConfigurations[$propertyObjectName];
+        if ($propertyConfiguration->hasPreset()) {
+            $presetName = $propertyConfiguration->getPresetName();
+            if (!$objectConfiguration->hasPreset($presetName)) {
+                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException(sprintf('The preset "%s" configured for property "%s" in the object configuration of object "%s" is not defined.', $presetName, $propertyConfiguration->getName(), $objectConfiguration->getObjectName()), 1476537819);
+            }
+            $objectConfiguration =  $objectConfiguration->getPreset($presetName);
+            $propertyObjectName = $objectConfiguration->getObjectName();
+        }
+        $propertyClassName = $objectConfiguration->getClassName();
+        if ($objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE && !$objectConfiguration->isCreatedByFactory()) {
+            $preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($objectConfiguration->getArguments()) . ')';
         } else {
             $preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyObjectName . '\')';
         }
@@ -462,7 +473,7 @@ class ProxyClassBuilder
             return $result;
         }
 
-        if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+        if ($propertyConfiguration->isLazyLoading() && $objectConfiguration->getScope() !== Configuration::SCOPE_PROTOTYPE) {
             return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         } else {
             return array('    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
