@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\StringConverter;
 
 /**
@@ -35,7 +36,7 @@ class StringConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('string', 'integer', 'float', 'boolean', 'array', 'DateTime'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(array('string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('string', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
@@ -47,6 +48,29 @@ class StringConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
     }
+
+    /**
+     * @test
+     */
+    public function convertFromConvertsDateTimeObjects()
+    {
+        $date = new \DateTime('1980-12-13');
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration->setTypeConverterOption(StringConverter::class, StringConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
+        $this->assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
+    }
+
+    /**
+     * @test
+     */
+    public function convertFromConvertsDateTimeImmutableObjects()
+    {
+        $date = new \DateTimeImmutable('1980-12-13');
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration->setTypeConverterOption(StringConverter::class, StringConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
+        $this->assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
+    }
+
 
     /**
      * @test
