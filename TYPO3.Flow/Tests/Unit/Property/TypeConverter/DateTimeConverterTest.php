@@ -34,7 +34,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function checkMetadata()
     {
         $this->assertEquals(array('string', 'integer', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('DateTime', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(\DateTimeInterface::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
@@ -68,6 +68,14 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * @test
      */
+    public function canConvertFromReturnsTrueITargetTypeIsADateTimeImmutable()
+    {
+        $this->assertTrue($this->converter->canConvertFrom('', \DateTimeImmutable::class));
+    }
+
+    /**
+     * @test
+     */
     public function convertFromReturnsErrorIfGivenStringCantBeConverted()
     {
         $error = $this->converter->convertFrom('1980-12-13', 'DateTime');
@@ -83,6 +91,16 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $date = $this->converter->convertFrom($expectedResult, 'DateTime');
         $actualResult = $date->format('Y-m-d\TH:i:sP');
         $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function convertFromProperlyConvertsToDateTimeImmutable()
+    {
+        $expectedResult = '1980-12-13T20:15:07+01:23';
+        $date = $this->converter->convertFrom($expectedResult, \DateTimeImmutable::class);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $date);
     }
 
     /**
