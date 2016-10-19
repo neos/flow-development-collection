@@ -114,12 +114,14 @@ class ConfigurationBuilder
                 }
                 $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
-                if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
-                    throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
-                }
+                if (strpos(':', $objectName) !== false) {
+                    if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
+                        throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
+                    }
 
-                if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
-                    throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+                    if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
+                        throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+                    }
                 }
 
                 if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
@@ -472,7 +474,7 @@ class ConfigurationBuilder
                         $configurationPath = rtrim($packageKey . '.' . $injectAnnotation->setting, '.');
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, array('type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $configurationPath), ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
                     } else {
-                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                        $objectName = $injectAnnotation->name !== null ? $injectAnnotation->name : trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                         $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
                         $properties[$propertyName] = $configurationProperty;
                     }
