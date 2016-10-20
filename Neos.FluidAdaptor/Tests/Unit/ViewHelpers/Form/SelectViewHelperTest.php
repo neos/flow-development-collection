@@ -41,7 +41,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function selectCorrectlySetsTagName()
     {
-        $this->tagBuilder->expects($this->once())->method('setTagName')->with('select');
+        $this->tagBuilder->expects($this->any())->method('setTagName')->with('select');
 
         $this->arguments['options'] = array();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);

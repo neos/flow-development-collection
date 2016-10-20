@@ -40,11 +40,11 @@ class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setTagName', 'addAttribute', 'setContent'))->getMock();
-        $mockTagBuilder->expects($this->once())->method('setTagName')->with('button');
-        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'submit');
-        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', '');
-        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', '');
-        $mockTagBuilder->expects($this->at(4))->method('setContent')->with('Button Content');
+        $mockTagBuilder->expects($this->any())->method('setTagName')->with('button');
+        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'submit');
+        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', '');
+        $mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', '');
+        $mockTagBuilder->expects($this->at(5))->method('setContent')->with('Button Content');
 
         $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Button Content'));
 

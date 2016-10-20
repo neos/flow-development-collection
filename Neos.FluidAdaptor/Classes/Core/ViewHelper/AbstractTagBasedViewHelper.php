@@ -62,14 +62,14 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     {
         $this->registerArgument('additionalAttributes', 'array', 'Additional tag attributes. They will be added directly to the resulting HTML tag.', false);
         $this->registerArgument('data', 'array', 'Additional data-* attributes. They will each be added with a "data-" prefix.', false);
-        $this->setTagBuilder(new TagBuilder($this->tagName));
+        $this->tag = new TagBuilder($this->tagName);
     }
 
     /**
      * @param TagBuilder $tag
      * @return void
      */
-    public function setTagBuilder(TagBuilder $tag)
+    public function injectTagBuilder(TagBuilder $tag)
     {
         $this->tag = $tag;
         $this->tag->setTagName($this->tagName);

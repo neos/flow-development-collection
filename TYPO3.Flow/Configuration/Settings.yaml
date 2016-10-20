@@ -73,6 +73,8 @@ TYPO3:
 
         # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
         defaultRenderingOptions:
+          viewClassName: TYPO3\Flow\Mvc\View\SimpleTemplateView
+          viewOptions: []
           renderTechnicalDetails: FALSE
           logException: TRUE
 

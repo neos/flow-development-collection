@@ -7,3 +7,6 @@ Neos\FluidAdaptor\Core\Cache\CacheAdaptor:
         arguments:
           1:
             value: Fluid_TemplateCache
+
+TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder:
+  scope: prototype

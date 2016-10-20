@@ -44,8 +44,8 @@ use TYPO3\Flow\Reflection\ReflectionService;
  * the browser's Accept header and additional routing configuration is used to
  * determine the output format the controller should return.
  *
- * Depending on the action being called, a fitting view - by default a Fluid template
- * view - will be selected. By specifying patterns, custom view classes or an alternative
+ * Depending on the action being called, a fitting view - determined by configuration
+ * - will be selected. By specifying patterns, custom view classes or an alternative
  * controller / action to template path mapping can be defined.
  *
  * @api

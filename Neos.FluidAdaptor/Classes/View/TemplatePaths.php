@@ -174,7 +174,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @return string the full path which should be used. The path definitely exists.
      * @throws InvalidTemplateResourceException
      */
-    protected function getPartialPathAndFilename($partialName)
+    public function getPartialPathAndFilename($partialName)
     {
         $patternReplacementVariables = array_merge($this->patternReplacementVariables, [
             'partial' => $partialName,

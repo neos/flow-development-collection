@@ -42,7 +42,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsTagName()
     {
         $mockTagBuilder = $this->createMock(TagBuilder::class);
-        $mockTagBuilder->expects($this->once())->method('setTagName')->with('textarea');
+        $mockTagBuilder->expects($this->any())->method('setTagName')->with('textarea');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();

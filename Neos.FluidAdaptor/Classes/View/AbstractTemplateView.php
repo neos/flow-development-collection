@@ -116,7 +116,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         if ($options === null) {
             $options = [];
         }
-        
+
         $this->validateOptions($options);
         $this->setOptions($options);
 

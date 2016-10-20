@@ -13,11 +13,17 @@ namespace TYPO3\Flow\Error;
 
 use TYPO3\Flow\Cli\Response as CliResponse;
 use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Log\ThrowableLoggerInterface;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
-use Neos\FluidAdaptor\View\StandaloneView;
 
 require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Error/Exception.php');
 
@@ -124,9 +130,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      *
      * @param object $exception \Exception or \Throwable
      * @param array $renderingOptions Rendering options as defined in the settings
-     * @return StandaloneView
+     * @return ViewInterface
      */
-    protected function buildCustomFluidView($exception, array $renderingOptions)
+    protected function buildView($exception, array $renderingOptions)
     {
         $statusCode = 500;
         $referenceCode = null;
@@ -136,29 +142,61 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
         $statusMessage = Response::getStatusMessageByCode($statusCode);
 
-        $fluidView = new StandaloneView();
-        $fluidView->getRequest()->setControllerPackageKey('TYPO3.Flow');
-        $fluidView->setTemplatePathAndFilename($renderingOptions['templatePathAndFilename']);
-        if (isset($renderingOptions['layoutRootPath'])) {
-            $fluidView->setLayoutRootPath($renderingOptions['layoutRootPath']);
-        }
-        if (isset($renderingOptions['partialRootPath'])) {
-            $fluidView->setPartialRootPath($renderingOptions['partialRootPath']);
-        }
-        if (isset($renderingOptions['format'])) {
-            $fluidView->setFormat($renderingOptions['format']);
-        }
+        /** @var ViewInterface $view */
+        $view = new $renderingOptions['viewClassName']();
+        $view = $this->applyLegacyViewOptions($view, $renderingOptions);
+        array_walk($renderingOptions['viewOptions'], function ($value, $key) use ($view) { $view->setOption($key, $value); });
+
+        $httpRequest = Request::createFromEnvironment();
+        $request = new ActionRequest($httpRequest);
+        $request->setControllerPackageKey('TYPO3.Flow');
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($request);
+        $view->setControllerContext(new ControllerContext(
+            $request,
+            new Response(),
+            new Arguments(array()),
+            $uriBuilder
+        ));
+
         if (isset($renderingOptions['variables'])) {
-            $fluidView->assignMultiple($renderingOptions['variables']);
+            $view->assignMultiple($renderingOptions['variables']);
         }
-        $fluidView->assignMultiple(array(
+
+        $view->assignMultiple(array(
             'exception' => $exception,
             'renderingOptions' => $renderingOptions,
             'statusCode' => $statusCode,
             'statusMessage' => $statusMessage,
             'referenceCode' => $referenceCode
         ));
-        return $fluidView;
+
+        return $view;
+    }
+
+    /**
+     * Sets legacy "option" properties to the view for backwards compatibility.
+     *
+     * @param ViewInterface $view
+     * @param array $renderingOptions
+     * @return array
+     */
+    protected function applyLegacyViewOptions(ViewInterface $view, array $renderingOptions)
+    {
+        if (isset($renderingOptions['templatePathAndFilename'])) {
+            ObjectAccess::setProperty($view, 'templatePathAndFilename', $renderingOptions['templatePathAndFilename']);
+        }
+        if (isset($renderingOptions['layoutRootPath'])) {
+            ObjectAccess::setProperty($view, 'layoutRootPath', $renderingOptions['layoutRootPath']);
+        }
+        if (isset($renderingOptions['partialRootPath'])) {
+            ObjectAccess::setProperty($view, 'partialRootPath', $renderingOptions['partialRootPath']);
+        }
+        if (isset($renderingOptions['format'])) {
+            ObjectAccess::setProperty($view, 'format', $renderingOptions['format']);
+        }
+
+        return $view;
     }
 
     /**

@@ -36,7 +36,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBase
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
         $mockTagBuilder = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
-        $mockTagBuilder->expects($this->once())->method('setTagName')->with('a');
+        $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'someUri');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);

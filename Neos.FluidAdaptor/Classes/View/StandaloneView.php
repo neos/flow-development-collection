@@ -76,6 +76,7 @@ class StandaloneView extends AbstractTemplateView
      * Constructor
      *
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     * @param array $options
      */
     public function __construct(ActionRequest $request = null, array $options = [])
     {

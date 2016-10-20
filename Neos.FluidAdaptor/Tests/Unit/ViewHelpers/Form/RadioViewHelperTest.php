@@ -38,11 +38,11 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $this->mockTagBuilder->expects($this->once())->method('setTagName')->with('input');
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -57,11 +57,11 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderSetsCheckedAttributeIfSpecified()
     {
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -76,9 +76,9 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderIgnoresBoundPropertyIfCheckedIsSet()
     {
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -96,11 +96,11 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderCorrectlySetsCheckedAttributeIfCheckboxIsBoundToAPropertyOfTypeBoolean()
     {
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -117,10 +117,10 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderDoesNotAppendSquareBracketsToNameAttributeIfBoundToAPropertyOfTypeArray()
     {
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -137,11 +137,11 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     public function renderCorrectlySetsCheckedAttributeIfCheckboxIsBoundToAPropertyOfTypeString()
     {
-        $this->mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('type', 'radio');
-        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('name', 'foo');
+        $this->mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'radio');
+        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));

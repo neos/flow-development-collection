@@ -13,7 +13,6 @@
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
-        "typo3/fluid": "*",
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
         "doctrine/orm": "~2.5.0",
