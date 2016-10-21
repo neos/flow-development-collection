@@ -294,16 +294,6 @@ class DependencyInjectionTest extends FunctionalTestCase
     }
 
     /**
-     * // TODO: Should be removed with 3.2. Inject settings by Inject-Annotation is deprecated since 3.0
-     * @test
-     */
-    public function injectionViaInjectAnnotation()
-    {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
-        $this->assertSame('injected setting', $classWithInjectedConfiguration->getLegacySetting());
-    }
-
-    /**
      * This test verifies the behaviour described in FLOW-175.
      *
      * Please note that this issue occurs ONLY when creating an object
