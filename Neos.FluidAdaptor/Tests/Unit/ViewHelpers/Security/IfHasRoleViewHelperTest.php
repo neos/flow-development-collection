@@ -63,7 +63,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
                     break;
                 case PolicyService::class:
                     return $this->mockPolicyService;
-                    breaK;
+                    break;
             }
         });
 

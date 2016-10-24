@@ -443,5 +443,4 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
 
         return sprintf('%s_%s', $prefix, sha1($pathAndFilename . '|' . $templateModifiedTimestamp));
     }
-
 }

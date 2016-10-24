@@ -44,7 +44,6 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
      */
     public function preProcessSource($templateSource)
     {
-
         $matches = [];
         preg_match_all(self::$SCAN_PATTERN_ESCAPINGMODIFIER, $templateSource, $matches, PREG_SET_ORDER);
         if ($matches === []) {

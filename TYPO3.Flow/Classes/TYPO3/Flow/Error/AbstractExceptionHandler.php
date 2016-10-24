@@ -145,7 +145,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         /** @var ViewInterface $view */
         $view = new $renderingOptions['viewClassName']();
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
-        array_walk($renderingOptions['viewOptions'], function ($value, $key) use ($view) { $view->setOption($key, $value); });
+        array_walk($renderingOptions['viewOptions'], function ($value, $key) use ($view) {
+            $view->setOption($key, $value);
+        });
 
         $httpRequest = Request::createFromEnvironment();
         $request = new ActionRequest($httpRequest);

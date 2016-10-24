@@ -25,14 +25,18 @@ use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
  */
 class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
 {
-/*    public function get($identifier)
+    /**
+     * @param string $identifier
+     * @return mixed
+     */
+    public function get($identifier)
     {
         $subject = parent::get($identifier);
         if ($subject instanceof TemplateObjectAccessInterface) {
             $subject = $subject->objectAccess();
         }
         return $subject;
-    }*/
+    }
 
     /**
      * Get a variable by dotted path expression, retrieving the
@@ -48,8 +52,7 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
     public function getByPath($path, array $accessors = [])
     {
         $propertyPathSegments = explode('.', $path);
-        $firstPathSegment = array_shift($propertyPathSegments);
-        $subject = isset($this->variables[$firstPathSegment]) ? $this->variables[$firstPathSegment] : null;
+        $subject = $this->variables;
 
         foreach ($propertyPathSegments as $propertyName) {
             if ($subject === null) {
@@ -84,7 +87,8 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
      * @param $path
      * @return boolean|null
      */
-    protected function getBooleanValue($path) {
+    protected function getBooleanValue($path)
+    {
         $normalizedPath = strtolower($path);
 
         if (in_array($normalizedPath, ['true', 'on', 'yes'])) {
