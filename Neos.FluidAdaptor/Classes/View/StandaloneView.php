@@ -73,6 +73,17 @@ class StandaloneView extends AbstractTemplateView
     protected $request;
 
     /**
+     * Factory method to create an instance with given options.
+     *
+     * @param array $options
+     * @return StandaloneView
+     */
+    public static function createWithOptions(array $options)
+    {
+        return new static(null, $options);
+    }
+
+    /**
      * Constructor
      *
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.

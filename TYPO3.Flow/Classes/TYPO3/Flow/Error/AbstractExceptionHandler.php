@@ -25,8 +25,6 @@ use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
 
-require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Error/Exception.php');
-
 /**
  * An abstract exception handler
  */
@@ -142,12 +140,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
         $statusMessage = Response::getStatusMessageByCode($statusCode);
 
+        $viewClassName = $renderingOptions['viewClassName'];
+
         /** @var ViewInterface $view */
-        $view = new $renderingOptions['viewClassName']();
+        $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
-        array_walk($renderingOptions['viewOptions'], function ($value, $key) use ($view) {
-            $view->setOption($key, $value);
-        });
 
         $httpRequest = Request::createFromEnvironment();
         $request = new ActionRequest($httpRequest);

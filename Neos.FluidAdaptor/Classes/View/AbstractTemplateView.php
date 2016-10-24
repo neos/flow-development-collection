@@ -106,6 +106,17 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     protected $controllerContext;
 
     /**
+     * Factory method to create an instance with given options.
+     *
+     * @param array $options
+     * @return AbstractTemplateView
+     */
+    public static function createWithOptions(array $options)
+    {
+        return new static($options);
+    }
+
+    /**
      * Set default options based on the supportedOptions provided
      *
      * @param array $options
