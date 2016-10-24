@@ -102,7 +102,11 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
             return call_user_func_array([$this, 'render'], $renderMethodParameters);
         } catch (Exception $exception) {
             if ($this->objectManager->getContext()->isProduction()) {
-                $this->systemLogger->log('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',  LOG_ERR, ['exception' => $exception]);
+                $this->systemLogger->log(
+                    'A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
+                    LOG_ERR,
+                    ['exception' => $exception]
+                );
                 return '';
             } else {
                 throw $exception;
