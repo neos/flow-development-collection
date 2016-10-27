@@ -14,7 +14,10 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
+use TYPO3\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
 
 /**
  * Test case for the Hash Service
@@ -33,6 +36,25 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $cache;
 
     /**
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockObjectManager;
+
+    /**
+     * @var array
+     */
+    protected $mockSettings = [
+        'security' => [
+            'cryptography' => [
+                'hashingStrategies' => [
+                    'default' => 'TestStrategy',
+                    'TestStrategy' => TestHashingStrategy::class,
+                ]
+            ]
+        ]
+    ];
+
+    /**
      * Set up test dependencies
      *
      * @return void
@@ -42,8 +64,12 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new ApplicationContext('Testing')));
         $this->cache->initializeObject();
 
+        $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+
         $this->hashService = new HashService();
         $this->inject($this->hashService, 'cache', $this->cache);
+        $this->inject($this->hashService, 'objectManager', $this->mockObjectManager);
+        $this->hashService->injectSettings($this->mockSettings);
     }
 
     /**
@@ -108,54 +134,22 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hashPasswordWithoutStrategyIdentifierUsesConfiguredDefaultStrategy()
     {
-        $settings = array(
-            'security' => array(
-                'cryptography' => array(
-                    'hashingStrategies' => array(
-                        'default' => 'TestStrategy',
-                        'fallback' => 'LegacyStrategy',
-                        'TestStrategy' => \TYPO3\Flow\Test\TestStrategy::class,
-                        'LegacyStrategy' => \TYPO3\Flow\Test\LegacyStrategy::class
-                    )
-                )
-            )
-        );
-        $this->hashService->injectSettings($settings);
+        $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $mockStrategy = $this->createMock(\TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface::class);
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, true);
-
-        $mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Test\TestStrategy::class)->will($this->returnValue($mockStrategy));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will($this->returnValue($mockStrategy));
         $mockStrategy->expects($this->atLeastOnce())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
 
         $this->hashService->hashPassword('myTestPassword');
     }
 
     /**
-     * @test
+     * test
      */
-    public function validatePasswordWithoutStrategyIdentifierAndConfiguredFallbackUsesFallbackStrategy()
+    public function validatePasswordWithoutStrategyIdentifierUsesDefaultStrategy()
     {
-        $settings = array(
-            'security' => array(
-                'cryptography' => array(
-                    'hashingStrategies' => array(
-                        'default' => 'TestStrategy',
-                        'fallback' => 'LegacyStrategy',
-                        'TestStrategy' => \TYPO3\Flow\Test\TestStrategy::class,
-                        'LegacyStrategy' => \TYPO3\Flow\Test\LegacyStrategy::class
-                    )
-                )
-            )
-        );
-        $this->hashService->injectSettings($settings);
+        $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $mockStrategy = $this->createMock(\TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface::class);
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, true);
-
-        $mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\TYPO3\Flow\Test\LegacyStrategy::class)->will($this->returnValue($mockStrategy));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will($this->returnValue($mockStrategy));
         $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->will($this->returnValue(true));
 
         $this->hashService->validatePassword('myTestPassword', '---hashed-password---');
@@ -166,22 +160,9 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hashPasswordWillIncludeStrategyIdentifierInHashedPassword()
     {
-        $settings = array(
-            'security' => array(
-                'cryptography' => array(
-                    'hashingStrategies' => array(
-                        'TestStrategy' => \TYPO3\Flow\Test\TestStrategy::class
-                    )
-                )
-            )
-        );
-        $this->hashService->injectSettings($settings);
-
-        $mockStrategy = $this->createMock(\TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface::class);
+        $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
         $mockStrategy->expects($this->any())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, true);
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
 
         $result = $this->hashService->hashPassword('myTestPassword', 'TestStrategy');
         $this->assertEquals('TestStrategy=>---hashed-password---', $result);
@@ -189,24 +170,40 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
+     */
+    public function hashPasswordThrowsExceptionIfTheGivenHashingStrategyIsNotConfigured()
+    {
+        $this->hashService->hashPassword('myTestPassword', 'nonExistingHashingStrategy');
+    }
+
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Security\Exception\MissingConfigurationException
+     */
+    public function hashPasswordThrowsExceptionIfNoDefaultHashingStrategyIsConfigured()
+    {
+        $mockSettings = [
+            'security' => [
+                'cryptography' => [
+                    'hashingStrategies' => [
+                        'TestStrategy' => TestHashingStrategy::class,
+                    ]
+                ]
+            ]
+        ];
+        $this->hashService->injectSettings($mockSettings);
+        $this->hashService->hashPassword('myTestPassword');
+    }
+
+    /**
+     * @test
      */
     public function validatePasswordWillUseStrategyIdentifierFromHashedPassword()
     {
-        $settings = array(
-            'security' => array(
-                'cryptography' => array(
-                    'hashingStrategies' => array(
-                        'TestStrategy' => \TYPO3\Flow\Test\TestStrategy::class
-                    )
-                )
-            )
-        );
-        $this->hashService->injectSettings($settings);
-
-        $mockStrategy = $this->createMock(\TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface::class);
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, true);
+        $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
 
         $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will($this->returnValue(true));
 
