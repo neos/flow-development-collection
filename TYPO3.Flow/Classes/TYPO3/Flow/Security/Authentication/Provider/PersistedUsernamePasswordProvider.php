@@ -86,7 +86,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 
         if ($account === null) {
-            $this->hashService->validatePassword($credentials['password'], 'bcrypt=>$2a$~FLOW DUMMY PASSWORD TO AVOID TIMING ATTACKS~');
+            $this->hashService->validatePassword($credentials['password'], 'bcrypt=>$2a$14$DummySaltToPreventTim,.ingAttacksOnThisProvider');
             return;
         }
 
