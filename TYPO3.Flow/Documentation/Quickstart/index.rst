@@ -106,7 +106,7 @@ group. On a Linux machine this can be done by typing:
 
 *command line*::
 
-    sudo usermod -a -G _www john
+    sudo usermod -a -G www-data john
 
 On a Mac you can add a user to the web group with the following command:
 
@@ -425,7 +425,7 @@ can you imagine what they do? ::
 
     use Acme\Demo\Domain\Model\CoffeeBean;
     use Acme\Demo\Domain\Repository\CoffeeBeanRepository;
-    
+
     class CoffeeBeanController extends ActionController {
 
         /**
