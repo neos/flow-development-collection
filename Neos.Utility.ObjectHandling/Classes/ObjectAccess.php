@@ -67,7 +67,7 @@ abstract class ObjectAccess
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
         }
-        if (!is_string($propertyName) && !is_integer($propertyName)) {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
         }
 
@@ -98,12 +98,10 @@ abstract class ObjectAccess
             return null;
         }
         if (is_array($subject)) {
-            if (array_key_exists($propertyName, $subject)) {
-                $propertyExists = true;
-                return $subject[$propertyName];
-            }
-            return null;
-        } elseif (!is_object($subject)) {
+            $propertyExists = array_key_exists($propertyName, $subject);
+            return $propertyExists ? $subject[$propertyName] : null;
+        }
+        if (!is_object($subject)) {
             return null;
         }
 
@@ -115,20 +113,19 @@ abstract class ObjectAccess
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
-            } elseif (property_exists($subject, $propertyName)) {
-                return $subject->$propertyName;
-            } else {
-                throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
             }
+            if (property_exists($subject, $propertyName)) {
+                return $subject->$propertyName;
+            }
+            throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
         }
 
         if ($subject instanceof \stdClass) {
             if (array_key_exists($propertyName, get_object_vars($subject))) {
                 return $subject->$propertyName;
-            } else {
-                $propertyExists = false;
-                return null;
             }
+            $propertyExists = false;
+            return null;
         }
 
         $cacheIdentifier = $className . '|' . $propertyName;
@@ -137,14 +134,13 @@ abstract class ObjectAccess
         if (isset(self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'])) {
             $method = self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'];
             return $subject->$method();
-        } elseif (isset(self::$propertyGetterCache[$cacheIdentifier]['publicProperty'])) {
+        }
+        if (isset(self::$propertyGetterCache[$cacheIdentifier]['publicProperty'])) {
             return $subject->$propertyName;
         }
 
-        if (($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage)) {
-            if (isset($subject[$propertyName])) {
-                return $subject[$propertyName];
-            }
+        if (($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage) && $subject->offsetExists($propertyName)) {
+            return $subject->offsetGet($propertyName);
         }
 
         $propertyExists = false;
@@ -234,7 +230,7 @@ abstract class ObjectAccess
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
-        if (!is_string($propertyName) && !is_integer($propertyName)) {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
         }
 
@@ -287,14 +283,18 @@ abstract class ObjectAccess
         if (!isset(self::$gettablePropertyNamesCache[$className])) {
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
-                    if (substr($methodName, 0, 2) === 'is' && strlen($methodName) > 2) {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
-                    }
-                    if (substr($methodName, 0, 3) === 'get' && strlen($methodName) > 3) {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
-                    }
-                    if (substr($methodName, 0, 3) === 'has' && strlen($methodName) > 3) {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+                    $methodNameLength = strlen($methodName);
+                    if ($methodNameLength > 2) {
+                        if (strpos($methodName, 'is') === 0) {
+                            $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+                        } elseif ($methodNameLength > 3) {
+                            $methodNamePrefix = substr($methodName, 0, 3);
+                            if ($methodNamePrefix === 'get') {
+                                $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+                            } elseif ($methodNamePrefix === 'has') {
+                                $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+                            }
+                        }
                     }
                 }
             }
@@ -355,9 +355,7 @@ abstract class ObjectAccess
         }
 
         $className = TypeHandling::getTypeForValue($object);
-        if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
-            return true;
-        } elseif (array_search($propertyName, array_keys(get_class_vars($className))) !== false) {
+        if (($object instanceof \stdClass && array_key_exists($propertyName, get_object_vars($object))) || array_key_exists($propertyName, get_class_vars($className))) {
             return true;
         }
         return is_callable([$object, self::buildSetterMethodName($propertyName)]);
@@ -376,23 +374,15 @@ abstract class ObjectAccess
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
         }
-        if ($object instanceof \ArrayAccess && isset($object[$propertyName]) === true) {
-            return true;
-        } elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
+        if (($object instanceof \ArrayAccess && $object->offsetExists($propertyName)) || ($object instanceof \stdClass && array_key_exists($propertyName, get_object_vars($object)))) {
             return true;
         }
         $uppercasePropertyName = ucfirst($propertyName);
-        if (is_callable([$object, 'get' . $uppercasePropertyName])) {
-            return true;
-        }
-        if (is_callable([$object, 'is' . $uppercasePropertyName])) {
-            return true;
-        }
-        if (is_callable([$object, 'has' . $uppercasePropertyName])) {
+        if (is_callable([$object, 'get' . $uppercasePropertyName]) || is_callable([$object, 'is' . $uppercasePropertyName]) || is_callable([$object, 'has' . $uppercasePropertyName])) {
             return true;
         }
         $className = TypeHandling::getTypeForValue($object);
-        return (array_search($propertyName, array_keys(get_class_vars($className))) !== false);
+        return array_key_exists($propertyName, get_class_vars($className));
     }
 
     /**
