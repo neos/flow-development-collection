@@ -12,11 +12,12 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the Object configuration via Objects.yaml
  */
-class ConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class ConfigurationTest extends FunctionalTestCase
 {
     /**
      * See the configuration in Testing/Objects.yaml
@@ -24,7 +25,7 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function configuredObjectDWillGetAssignedObjectFWithCorrectlyConfiguredConstructorValue()
     {
-        $instance = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassD::class);
+        $instance = $this->objectManager->get(Fixtures\PrototypeClassD::class);
         /** @var $instanceE Fixtures\PrototypeClassE */
         $instanceE = ObjectAccess::getProperty($instance, 'objectE', true);
         $this->assertEquals('The constructor set value', $instanceE->getNullValue());

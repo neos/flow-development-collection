@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * A boot sequence, consisting of individual steps, each of them initializing a
@@ -29,7 +30,7 @@ class Sequence
     /**
      * @var array
      */
-    protected $steps = array();
+    protected $steps = [];
 
     /**
      * @param string $identifier
@@ -44,7 +45,7 @@ class Sequence
      * by $previousStepIdentifier. If no previous step is specified, the new step
      * is added to the list of steps executed right at the start of the sequence.
      *
-     * @param \TYPO3\Flow\Core\Booting\Step $step The new step to add
+     * @param Step $step The new step to add
      * @param string $previousStepIdentifier The preceding step
      * @return void
      */
@@ -58,7 +59,7 @@ class Sequence
      *
      * @param string $stepIdentifier
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public function removeStep($stepIdentifier)
     {
@@ -72,7 +73,7 @@ class Sequence
             }
         }
         if ($removedOccurrences === 0) {
-            throw new \TYPO3\Flow\Exception(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
+            throw new FlowException(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
         }
     }
 
@@ -95,16 +96,16 @@ class Sequence
      * Invokes a single step of this sequence and also invokes all steps registered
      * to be executed after the given step.
      *
-     * @param \TYPO3\Flow\Core\Booting\Step $step The step to invoke
+     * @param Step $step The step to invoke
      * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
      * @return void
      */
     protected function invokeStep(Step $step, Bootstrap $bootstrap)
     {
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', array($step, $this->identifier));
+        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', [$step, $this->identifier]);
         $identifier = $step->getIdentifier();
         $step($bootstrap);
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', array($step, $this->identifier));
+        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', [$step, $this->identifier]);
         if (isset($this->steps[$identifier])) {
             foreach ($this->steps[$identifier] as $followingStep) {
                 $this->invokeStep($followingStep, $bootstrap);

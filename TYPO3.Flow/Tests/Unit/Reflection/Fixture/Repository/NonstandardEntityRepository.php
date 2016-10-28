@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity;
 
 /**
  * A repository claiming responsibility for a model that cannot be matched
@@ -19,10 +21,10 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class NonstandardEntityRepository extends \TYPO3\Flow\Persistence\Repository
+class NonstandardEntityRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Reflection\Fixture\Model\Entity::class;
+    const ENTITY_CLASSNAME = Entity::class;
 }

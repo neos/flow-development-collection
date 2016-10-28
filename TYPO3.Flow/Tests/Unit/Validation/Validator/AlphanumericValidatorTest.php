@@ -11,15 +11,17 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\AlphanumericValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the alphanumeric validator
  *
  */
-class AlphanumericValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class AlphanumericValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\AlphanumericValidator::class;
+    protected $validatorClassName = AlphanumericValidator::class;
 
     /**
      * @test

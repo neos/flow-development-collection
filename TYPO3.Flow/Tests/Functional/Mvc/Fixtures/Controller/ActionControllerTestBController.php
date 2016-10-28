@@ -12,13 +12,14 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 
 /**
  * An action controller test fixture
  *
  * @Flow\Scope("singleton")
  */
-class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class ActionControllerTestBController extends ActionController
 {
     public function initializeAction()
     {
@@ -26,7 +27,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @param TestObjectArgument $argument
      * @Flow\IgnoreValidation(argumentName="$argument")
      * @return string
      */
@@ -36,7 +37,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @param TestObjectArgument $argument
      * @return string
      */
     public function requiredObjectAction(TestObjectArgument $argument)
@@ -45,7 +46,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @param TestObjectArgument $argument
      * @return string
      */
     public function optionalObjectAction(TestObjectArgument $argument = null)
@@ -57,7 +58,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @param TestObjectArgument $argument
      * @Flow\ValidationGroups({"notValidatedGroup"})
      * @return string
      */
@@ -67,7 +68,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+     * @param TestObjectArgument $argument
      * @Flow\ValidationGroups({"validatedGroup"})
      * @return string
      */

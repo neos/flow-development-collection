@@ -30,7 +30,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $this->configurationManager = $this->objectManager->get(ConfigurationManager::class);
     }
 
     /**
@@ -38,8 +38,8 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function singletonObjectsCanBeInjectedIntoConstructorsOfSingletonObjects()
     {
-        $objectA = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
-        $objectB = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB::class);
+        $objectA = $this->objectManager->get(Fixtures\SingletonClassA::class);
+        $objectB = $this->objectManager->get(Fixtures\SingletonClassB::class);
 
         $this->assertSame($objectB, $objectA->getObjectB());
     }
@@ -49,11 +49,11 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments()
     {
-        $objectC = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
         // Note: The "requiredArgument" and "thirdOptionalArgument" are defined in the Objects.yaml of the Flow package (testing context)
         $this->assertSame('this is required', $objectC->requiredArgument);
-        $this->assertEquals(array('thisIs' => array('anArray' => 'asProperty')), $objectC->thirdOptionalArgument);
+        $this->assertEquals(['thisIs' => ['anArray' => 'asProperty']], $objectC->thirdOptionalArgument);
     }
 
     /**
@@ -61,12 +61,12 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured()
     {
-        $objectC = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
         // Note: The arguments are defined in the Objects.yaml of the Flow package (testing context)
         $this->assertSame('a defined string', $objectC->getProtectedStringPropertySetViaObjectsYaml());
         $this->assertSame(42.101010, $objectC->getProtectedFloatPropertySetViaObjectsYaml());
-        $this->assertSame(array('iAm' => array('aConfigured' => 'arrayValue')), $objectC->getProtectedArrayPropertySetViaObjectsYaml());
+        $this->assertSame(['iAm' => ['aConfigured' => 'arrayValue']], $objectC->getProtectedArrayPropertySetViaObjectsYaml());
         $this->assertTrue($objectC->getProtectedBooleanTruePropertySetViaObjectsYaml());
         $this->assertFalse($objectC->getProtectedBooleanFalsePropertySetViaObjectsYaml());
     }
@@ -76,10 +76,10 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function ifItExistsASetterIsUsedToInjectPrimitiveTypePropertiesFromConfiguration()
     {
-        $objectC = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
         // Note: The argument is defined in the Objects.yaml of the Flow package (testing context)
-        $this->assertSame(array('has' => 'some default value', 'and' => 'something from Objects.yaml'), $objectC->getProtectedArrayPropertyWithSetterSetViaObjectsYaml());
+        $this->assertSame(['has' => 'some default value', 'and' => 'something from Objects.yaml'], $objectC->getProtectedArrayPropertyWithSetterSetViaObjectsYaml());
     }
 
     /**
@@ -87,9 +87,9 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function propertiesAreReinjectedIfTheObjectIsUnserialized()
     {
-        $className = \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA::class;
+        $className = Fixtures\PrototypeClassA::class;
 
-        $singletonA = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA::class);
+        $singletonA = $this->objectManager->get(Fixtures\SingletonClassA::class);
 
         $prototypeA = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
         $this->assertSame($singletonA, $prototypeA->getSingletonA());
@@ -100,9 +100,9 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation()
     {
-        $prototypeA = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface::class);
+        $prototypeA = $this->objectManager->get(Fixtures\PrototypeClassAishInterface::class);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA::class, $prototypeA);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $prototypeA);
         $this->assertSame('value defined in Objects.yaml', $prototypeA->getSomeProperty());
     }
 
@@ -111,7 +111,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings()
     {
-        $objectC = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
         // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
         $this->assertSame('setting injected singleton value', $objectC->settingsArgument);
@@ -122,7 +122,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function singletonCanHandleInjectedPrototypeWithSettingArgument()
     {
-        $objectD = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD::class);
+        $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
 
         // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
         $this->assertSame('setting injected property value', $objectD->prototypeClassC->settingsArgument);
@@ -133,7 +133,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function singletonCanHandleInjectedPrototypeWithCustomFactory()
     {
-        $objectD = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD::class);
+        $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
 
         // Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
         $this->assertNotNull($objectD->prototypeClassA);
@@ -145,7 +145,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function singletonCanHandleConstructorArgumentWithCustomFactory()
     {
-        $objectG = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassG::class);
+        $objectG = $this->objectManager->get(Fixtures\SingletonClassG::class);
 
         // Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
         $this->assertNotNull($objectG->prototypeA);
@@ -157,7 +157,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce()
     {
-        $prototypeDsub = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassDsub::class);
+        $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
         $this->assertSame(1, $prototypeDsub->injectionRuns);
     }
 
@@ -168,7 +168,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function injectedPropertiesAreAvailableInInitializeObjectEvenIfTheClassHasBeenExtended()
     {
-        $prototypeDsub = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassDsub::class);
+        $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
         $this->assertFalse($prototypeDsub->injectedPropertyWasUnavailable);
     }
 
@@ -177,7 +177,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function constructorsOfSingletonObjectsAcceptNullArguments()
     {
-        $objectF = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassF::class);
+        $objectF = $this->objectManager->get(Fixtures\SingletonClassF::class);
 
         $this->assertNull($objectF->getNullValue());
     }
@@ -187,7 +187,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     public function constructorsOfPrototypeObjectsAcceptNullArguments()
     {
-        $objectE = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassE::class, null);
+        $objectE = $this->objectManager->get(Fixtures\PrototypeClassE::class, null);
 
         $this->assertNull($objectE->getNullValue());
     }
@@ -198,7 +198,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     public function injectionOfObjectFromSameNamespace()
     {
         $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
-        $classB = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB::class);
+        $classB = $this->objectManager->get(Fixtures\SingletonClassB::class);
         $this->assertSame($classB, $nonNamespacedDependencies->getSingletonClassB());
     }
 
@@ -208,7 +208,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     public function injectionOfObjectFromSubNamespace()
     {
         $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
-        $aClassFromSubNamespace = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SubNamespace\AnotherClass::class);
+        $aClassFromSubNamespace = $this->objectManager->get(Fixtures\SubNamespace\AnotherClass::class);
         $this->assertSame($aClassFromSubNamespace, $nonNamespacedDependencies->getClassFromSubNamespace());
     }
 

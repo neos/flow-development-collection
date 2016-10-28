@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Advice;
  * Implementation of the After Returning Advice.
  *
  */
-class AfterReturningAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice
+class AfterReturningAdvice extends AbstractAdvice
 {
 }

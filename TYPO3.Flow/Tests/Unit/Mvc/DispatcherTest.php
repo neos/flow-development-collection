@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use TYPO3\Flow\Cli\Request;
 use TYPO3\Flow\Http\Response as HttpResponse;
 use TYPO3\Flow\Http\Request as HttpRequest;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
@@ -20,6 +21,8 @@ use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Authentication\EntryPointInterface;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Authorization\FirewallInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
@@ -91,38 +94,38 @@ class DispatcherTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->dispatcher = $this->getMockBuilder(\TYPO3\Flow\Mvc\Dispatcher::class)->disableOriginalConstructor()->setMethods(array('resolveController'))->getMock();
+        $this->dispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->setMethods(['resolveController'])->getMock();
 
-        $this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
 
-        $this->mockParentRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockParentRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockParentRequest));
 
-        $this->mockMainRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockMainRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(HttpRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-        $this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(HttpResponse::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockController = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerInterface::class)->setMethods(array('processRequest'))->getMock();
+        $this->mockController = $this->getMockBuilder(ControllerInterface::class)->setMethods(['processRequest'])->getMock();
         $this->dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($this->mockController));
 
-        $this->mockSecurityContext = $this->getMockBuilder(\TYPO3\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockFirewall = $this->createMock(\TYPO3\Flow\Security\Authorization\FirewallInterface::class);
+        $this->mockFirewall = $this->getMockBuilder(FirewallInterface::class)->getMock();
 
-        $this->mockSecurityLogger = $this->createMock(\TYPO3\Flow\Log\SecurityLoggerInterface::class);
+        $this->mockSecurityLogger = $this->getMockBuilder(SecurityLoggerInterface::class)->getMock();
 
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
         $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) {
-            if ($className === \TYPO3\Flow\Security\Context::class) {
+            if ($className === Context::class) {
                 return $this->mockSecurityContext;
-            } elseif ($className === \TYPO3\Flow\Security\Authorization\FirewallInterface::class) {
+            } elseif ($className === FirewallInterface::class) {
                 return $this->mockFirewall;
-            } elseif ($className === \TYPO3\Flow\Log\SecurityLoggerInterface::class) {
+            } elseif ($className === SecurityLoggerInterface::class) {
                 return $this->mockSecurityLogger;
             }
             return null;
@@ -177,7 +180,7 @@ class DispatcherTest extends UnitTestCase
     public function dispatchContinuesWithNextRequestFoundInAForwardException()
     {
         /** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $nextRequest */
-        $nextRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $nextRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $nextRequest->expects($this->atLeastOnce())->method('isDispatched')->will($this->returnValue(true));
 
         $this->mockParentRequest->expects($this->atLeastOnce())->method('isDispatched')->will($this->returnValue(false));
@@ -211,8 +214,8 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchDoesNotBlockCliRequests()
     {
-        /** @var \TYPO3\Flow\Cli\Request|\PHPUnit_Framework_MockObject_MockObject $mockCliRequest */
-        $mockCliRequest = $this->getMockBuilder(\TYPO3\Flow\Cli\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockCliRequest */
+        $mockCliRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $mockCliRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
         $this->mockSecurityContext->expects($this->never())->method('areAuthorizationChecksDisabled')->will($this->returnValue(true));
@@ -254,7 +257,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array()));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([]));
 
         $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
 
@@ -268,9 +271,9 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockAuthenticationToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockAuthenticationToken->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue(null));
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken)));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockAuthenticationToken]));
 
         $this->mockSecurityContext->expects($this->never())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
@@ -289,11 +292,11 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockEntryPoint = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
+        $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
 
-        $mockAuthenticationToken = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
+        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockAuthenticationToken->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken)));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockAuthenticationToken]));
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
@@ -312,15 +315,15 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
-        $mockAuthenticationToken1 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
-        $mockEntryPoint1 = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
+        $mockAuthenticationToken1 = $this->getMockBuilder(TokenInterface::class)->getMock();
+        $mockEntryPoint1 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $mockAuthenticationToken1->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint1));
 
-        $mockAuthenticationToken2 = $this->createMock(\TYPO3\Flow\Security\Authentication\TokenInterface::class);
-        $mockEntryPoint2 = $this->createMock(\TYPO3\Flow\Security\Authentication\EntryPointInterface::class);
+        $mockAuthenticationToken2 = $this->getMockBuilder(TokenInterface::class)->getMock();
+        $mockEntryPoint2 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $mockAuthenticationToken2->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint2));
 
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockAuthenticationToken1, $mockAuthenticationToken2)));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockAuthenticationToken1, $mockAuthenticationToken2]));
 
         $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
 
@@ -351,17 +354,17 @@ class DispatcherTest extends UnitTestCase
      */
     public function resolveControllerReturnsTheControllerSpecifiedInTheRequest()
     {
-        $mockController = $this->createMock(\TYPO3\Flow\Mvc\Controller\ControllerInterface::class);
+        $mockController = $this->createMock(ControllerInterface::class);
 
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo(\TYPO3\TestPackage\SomeController::class))->will($this->returnValue($mockController));
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('Flow\TestPackage\SomeController'))->will($this->returnValue($mockController));
 
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->setMethods(array('getControllerPackageKey', 'getControllerObjectName'))->getMock();
-        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(\TYPO3\TestPackage\SomeController::class));
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
+        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('Flow\TestPackage\SomeController'));
 
         /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
-        $dispatcher = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Dispatcher::class, null);
+        $dispatcher = $this->getAccessibleMock(Dispatcher::class, null);
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
@@ -376,14 +379,14 @@ class DispatcherTest extends UnitTestCase
         $mockController = $this->createMock('stdClass');
 
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo(\TYPO3\TestPackage\SomeController::class))->will($this->returnValue($mockController));
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('Flow\TestPackage\SomeController'))->will($this->returnValue($mockController));
 
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->setMethods(array('getControllerPackageKey', 'getControllerObjectName'))->getMock();
-        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(\TYPO3\TestPackage\SomeController::class));
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
+        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('Flow\TestPackage\SomeController'));
 
         /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
-        $dispatcher = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Dispatcher::class, array('dummy'));
+        $dispatcher = $this->getAccessibleMock(Dispatcher::class, ['dummy']);
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
@@ -395,12 +398,12 @@ class DispatcherTest extends UnitTestCase
      */
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotExist()
     {
-        $mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->setMethods(array('getControllerObjectName', 'getHttpRequest'))->getMock();
+        $mockHttpRequest = $this->getMockBuilder(HttpRequest::class)->disableOriginalConstructor()->getMock();
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName', 'getHttpRequest'])->getMock();
         $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $dispatcher = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Dispatcher::class, array('dummy'));
+        $dispatcher = $this->getAccessibleMock(Dispatcher::class, ['dummy']);
 
         $dispatcher->_call('resolveController', $mockRequest);
     }
