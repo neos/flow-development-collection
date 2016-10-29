@@ -26,7 +26,7 @@ class SingletonClassEsub extends SingletonClassE
     protected $objectB;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+     * @param SingletonClassB $objectB
      */
     public function injectObjectB(SingletonClassB $objectB)
     {

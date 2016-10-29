@@ -18,12 +18,12 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
 use TYPO3\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the Hash Service
- *
  */
-class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
+class HashServiceTest extends UnitTestCase
 {
     /**
      * @var HashService

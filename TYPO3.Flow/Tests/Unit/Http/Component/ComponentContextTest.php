@@ -11,9 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use TYPO3\Flow\Http\Component\ComponentContext;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -22,26 +20,26 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class ComponentContextTest extends UnitTestCase
 {
     /**
-     * @var ComponentContext
+     * @var Http\Component\ComponentContext
      */
     protected $componentContext;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Response|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
 
-        $this->componentContext = new ComponentContext($this->mockHttpRequest, $this->mockHttpResponse);
+        $this->componentContext = new Http\Component\ComponentContext($this->mockHttpRequest, $this->mockHttpResponse);
     }
 
     /**
@@ -57,8 +55,8 @@ class ComponentContextTest extends UnitTestCase
      */
     public function replaceHttpRequestReplacesTheCurrentRequest()
     {
-        /** @var Request $mockNewHttpRequest */
-        $mockNewHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var Http\Request $mockNewHttpRequest */
+        $mockNewHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpRequest($mockNewHttpRequest);
         $this->assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
     }
@@ -76,8 +74,8 @@ class ComponentContextTest extends UnitTestCase
      */
     public function replaceHttpResponseReplacesTheCurrentResponse()
     {
-        /** @var Response $mockNewHttpResponse */
-        $mockNewHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        /** @var Http\Response $mockNewHttpResponse */
+        $mockNewHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpResponse($mockNewHttpResponse);
         $this->assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
     }

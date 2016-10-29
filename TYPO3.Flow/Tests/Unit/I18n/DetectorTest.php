@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\I18n;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
+
 /**
  * Testcase for the Locale Detector
- *
  */
-class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DetectorTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Detector
+     * @var I18n\Detector
      */
     protected $detector;
 
@@ -31,24 +33,24 @@ class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase
             $args = func_get_args();
             $localeIdentifier = (string)$args[0];
 
-            if (in_array($localeIdentifier, array('en_US_POSIX', 'en_Shaw'))) {
-                return new \TYPO3\Flow\I18n\Locale('en');
+            if (in_array($localeIdentifier, ['en_US_POSIX', 'en_Shaw'])) {
+                return new I18n\Locale('en');
             } elseif ($localeIdentifier === 'en_GB') {
-                return new \TYPO3\Flow\I18n\Locale('en_GB');
+                return new I18n\Locale('en_GB');
             } elseif ($localeIdentifier === 'sr_RS') {
-                return new \TYPO3\Flow\I18n\Locale('sr');
+                return new I18n\Locale('sr');
             } else {
                 return null;
             }
         };
 
-        $mockLocaleCollection = $this->createMock(\TYPO3\Flow\I18n\LocaleCollection::class);
+        $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
-        $mockLocalizationService = $this->createMock(\TYPO3\Flow\I18n\Service::class);
-        $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new \TYPO3\Flow\I18n\Configuration('sv_SE')));
+        $mockLocalizationService = $this->createMock(I18n\Service::class);
+        $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new I18n\Configuration('sv_SE')));
 
-        $this->detector = $this->getAccessibleMock(\TYPO3\Flow\I18n\Detector::class, array('dummy'));
+        $this->detector = $this->getAccessibleMock(I18n\Detector::class, ['dummy']);
         $this->detector->_set('localeBasePath', 'vfs://Foo/');
         $this->detector->injectLocaleCollection($mockLocaleCollection);
         $this->detector->injectLocalizationService($mockLocalizationService);
@@ -61,11 +63,11 @@ class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sampleHttpAcceptLanguageHeaders()
     {
-        return array(
-            array('pl, en-gb;q=0.8, en;q=0.7', new \TYPO3\Flow\I18n\Locale('en_GB')),
-            array('de, *;q=0.8', new \TYPO3\Flow\I18n\Locale('sv_SE')),
-            array('pl, de;q=0.5, sr-rs;q=0.1', new \TYPO3\Flow\I18n\Locale('sr')),
-        );
+        return [
+            ['pl, en-gb;q=0.8, en;q=0.7', new I18n\Locale('en_GB')],
+            ['de, *;q=0.8', new I18n\Locale('sv_SE')],
+            ['pl, de;q=0.5, sr-rs;q=0.1', new I18n\Locale('sr')],
+        ];
     }
 
     /**
@@ -85,11 +87,11 @@ class DetectorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sampleLocaleIdentifiers()
     {
-        return array(
-            array('en_GB', new \TYPO3\Flow\I18n\Locale('en_GB')),
-            array('en_US_POSIX', new \TYPO3\Flow\I18n\Locale('en')),
-            array('en_Shaw', new \TYPO3\Flow\I18n\Locale('en')),
-        );
+        return [
+            ['en_GB', new I18n\Locale('en_GB')],
+            ['en_US_POSIX', new I18n\Locale('en')],
+            ['en_Shaw', new I18n\Locale('en')],
+        ];
     }
 
     /**

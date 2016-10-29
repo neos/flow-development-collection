@@ -24,19 +24,19 @@ class PhpAnalyzerTest extends UnitTestCase
      */
     public function sampleClasses()
     {
-        return array(
-            array('phpCode' => '', 'namespace' => null, 'className' => null, 'fqn' => null),
-            array('phpCode' => 'namespace Foo;', 'namespace' => null, 'className' => null, 'fqn' => null),
-            array('phpCode' => 'class Bar {}', 'namespace' => null, 'className' => null, 'fqn' => null),
-            array('phpCode' => '<?php class {}', 'namespace' => null, 'className' => null, 'fqn' => null),
+        return [
+            ['phpCode' => '', 'namespace' => null, 'className' => null, 'fqn' => null],
+            ['phpCode' => 'namespace Foo;', 'namespace' => null, 'className' => null, 'fqn' => null],
+            ['phpCode' => 'class Bar {}', 'namespace' => null, 'className' => null, 'fqn' => null],
+            ['phpCode' => '<?php class {}', 'namespace' => null, 'className' => null, 'fqn' => null],
 
-            array('phpCode' => '<?php class SomeClass {}', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
-            array('phpCode' => '<?php namespace Foo\Bar; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
+            ['phpCode' => '<?php class SomeClass {}', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'],
+            ['phpCode' => '<?php namespace Foo\Bar; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'],
 
-            array('phpCode' => '<?php namespace \Foo\Bar\; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
-            array('phpCode' => '<?php ' . chr(13) . '  namespace  Foo\Bar {' . chr(13) . '	 class    SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'),
-            array('phpCode' => 'foo <?php class SomeClass', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'),
-        );
+            ['phpCode' => '<?php namespace \Foo\Bar\; class SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'],
+            ['phpCode' => '<?php ' . chr(13) . '  namespace  Foo\Bar {' . chr(13) . '	 class    SomeClass {}', 'namespace' => 'Foo\Bar', 'className' => 'SomeClass', 'fqn' => 'Foo\Bar\SomeClass'],
+            ['phpCode' => 'foo <?php class SomeClass', 'namespace' => null, 'className' => 'SomeClass', 'fqn' => 'SomeClass'],
+        ];
     }
 
     /**

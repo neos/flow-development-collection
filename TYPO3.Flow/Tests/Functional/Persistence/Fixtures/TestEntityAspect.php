@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * An aspect for testing aop within entities
@@ -22,10 +23,10 @@ class TestEntityAspect
 {
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity->sayHello())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function concreteMethodInAbstractClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function concreteMethodInAbstractClassAdvice(JoinPointInterface $joinPoint)
     {
         $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return $result . ' Andi!';

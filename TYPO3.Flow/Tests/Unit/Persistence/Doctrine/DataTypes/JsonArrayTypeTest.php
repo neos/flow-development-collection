@@ -11,14 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine\DataTypes;
 * source code.
 */
 
-/**
- * Testcase for \TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType
- *
-*/
-class JsonArrayTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
+use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use TYPO3\Flow\Tests\UnitTestCase;
+
+class JsonArrayTypeTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType|\PHPUnit_Framework_MockObject_MockObject
+     * @var JsonArrayType|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $jsonArrayTypeMock;
 
@@ -32,7 +31,7 @@ class JsonArrayTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->jsonArrayTypeMock = $this->getMockBuilder('TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType')
+        $this->jsonArrayTypeMock = $this->getMockBuilder(JsonArrayType::class)
             ->setMethods(['initializeDependencies'])
             ->disableOriginalConstructor()
             ->getMock();

@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
 class PrototypeClassD
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     * @var SingletonClassB
      */
     protected $objectB;
 
@@ -41,10 +41,10 @@ class PrototypeClassD
     public $injectedPropertyWasUnavailable = false;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+     * @param SingletonClassB $objectB
      * @return void
      */
-    public function injectObjectB(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB)
+    public function injectObjectB(SingletonClassB $objectB)
     {
         $this->injectionRuns++;
         $this->objectB = $objectB;

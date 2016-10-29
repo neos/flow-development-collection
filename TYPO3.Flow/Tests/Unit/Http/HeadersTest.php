@@ -25,9 +25,9 @@ class HeadersTest extends UnitTestCase
      */
     public function headerFieldsCanBeSpecifiedToTheConstructor()
     {
-        $headers = new Headers(array('User-Agent' => 'Espresso Machine', 'Server' => array('Foo', 'Bar')));
+        $headers = new Headers(['User-Agent' => 'Espresso Machine', 'Server' => ['Foo', 'Bar']]);
         $this->assertSame('Espresso Machine', $headers->get('User-Agent'));
-        $this->assertSame(array('Foo', 'Bar'), $headers->get('Server'));
+        $this->assertSame(['Foo', 'Bar'], $headers->get('Server'));
         $this->assertTrue($headers->has('Server'));
     }
 
@@ -36,10 +36,10 @@ class HeadersTest extends UnitTestCase
      */
     public function createFromServerCreatesFieldsFromSpecifiedServerSuperglobal()
     {
-        $server = array(
+        $server = [
             'HTTP_FOO' => 'Robusta',
             'HTTP_BAR_BAZ' => 'Arabica',
-        );
+        ];
 
         $headers = Headers::createFromServer($server);
 
@@ -52,10 +52,10 @@ class HeadersTest extends UnitTestCase
      */
     public function createFromServerSimulatesAuthorizationHeaderIfPHPAuthVariablesArePresent()
     {
-        $server = array(
+        $server = [
             'PHP_AUTH_USER' => 'robert',
             'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)',
-        );
+        ];
 
         $headers = Headers::createFromServer($server);
 
@@ -81,9 +81,9 @@ class HeadersTest extends UnitTestCase
     public function headerFieldsCanExistMultipleTimes()
     {
         $headers = new Headers();
-        $headers->set('X-Flow-Powered', 'Flow');
-        $headers->set('X-Flow-Powered', 'TYPO3', false);
-        $this->assertSame(array('Flow', 'TYPO3'), $headers->get('X-Flow-Powered'));
+        $headers->set('X-Powered-By', 'Flow');
+        $headers->set('X-Powered-By', 'Neos', false);
+        $this->assertSame(['Flow', 'Neos'], $headers->get('X-Powered-By'));
     }
 
     /**
@@ -92,7 +92,7 @@ class HeadersTest extends UnitTestCase
     public function getReturnsNullForNonExistingHeader()
     {
         $headers = new Headers();
-        $headers->set('X-Flow-Powered', 'Flow');
+        $headers->set('X-Powered-By', 'Flow');
         $this->assertFalse($headers->has('X-Empowered-By'));
         $this->assertNull($headers->get('X-Empowered-By'));
     }
@@ -102,10 +102,10 @@ class HeadersTest extends UnitTestCase
      */
     public function getAllReturnsAllHeaderFields()
     {
-        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
+        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' =>'myhost.com'];
         $headers = new Headers($specifiedFields);
 
-        $expectedFields = array('X-Coffee' => array('Arabica'), 'Host' => array('myhost.com'));
+        $expectedFields = ['X-Coffee' => ['Arabica'], 'Host' => ['myhost.com']];
         $this->assertEquals($expectedFields, $headers->getAll());
     }
 
@@ -114,12 +114,12 @@ class HeadersTest extends UnitTestCase
      */
     public function getAllAddsCacheControlHeaderIfCacheDirectivesHaveBeenSet()
     {
-        $expectedFields = array('Last-Modified' => array('Tue, 24 May 2012 12:00:00 +0000'));
+        $expectedFields = ['Last-Modified' => ['Tue, 24 May 2012 12:00:00 +0000']];
         $headers = new Headers($expectedFields);
 
         $this->assertEquals($expectedFields, $headers->getAll());
 
-        $expectedFields['Cache-Control'] = array('public, max-age=60');
+        $expectedFields['Cache-Control'] = ['public, max-age=60'];
         $headers->setCacheControlDirective('public');
         $headers->setCacheControlDirective('max-age', 60);
         $this->assertEquals($expectedFields, $headers->getAll());
@@ -154,13 +154,13 @@ class HeadersTest extends UnitTestCase
      */
     public function removeRemovesTheSpecifiedHeader()
     {
-        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' => 'myhost.com');
+        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
         $headers = new Headers($specifiedFields);
 
         $headers->remove('X-Coffee');
         $headers->remove('X-This-Does-Not-Exist-Anyway');
 
-        $this->assertEquals(array('Host' => array('myhost.com')), $headers->getAll());
+        $this->assertEquals(['Host' => ['myhost.com']], $headers->getAll());
     }
 
     /**
@@ -192,11 +192,11 @@ class HeadersTest extends UnitTestCase
      */
     public function getCookiesReturnsAllCookies()
     {
-        $cookies = array(
+        $cookies = [
             'Dark-Chocolate-Chip' => new Cookie('Dark-Chocolate-Chip'),
             'Pecan-Maple-Choc' => new Cookie('Pecan-Maple-Choc'),
             'Coffee-Fudge-Mess' => new Cookie('Coffee-Fudge-Mess'),
-        );
+        ];
 
         $headers = new Headers();
         $headers->setCookie($cookies['Dark-Chocolate-Chip']);
@@ -215,7 +215,7 @@ class HeadersTest extends UnitTestCase
     public function cookiesCanBeSetThroughTheCookieHeader()
     {
         $headers = new Headers();
-        $headers->set('Cookie', array('cookie1=the+value+number+1; cookie2=the+value+number+2;  Cookie-Thing3="' . urlencode('Fön + x = \'test\'') . '"'));
+        $headers->set('Cookie', ['cookie1=the+value+number+1; cookie2=the+value+number+2;  Cookie-Thing3="' . urlencode('Fön + x = \'test\'') . '"']);
 
         $this->assertTrue($headers->hasCookie('cookie1'));
         $this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
@@ -234,7 +234,7 @@ class HeadersTest extends UnitTestCase
     public function cookiesWithEmptyNameAreIgnored()
     {
         $headers = new Headers();
-        $headers->set('Cookie', array('cookie1=the+value+number+1; =foo'));
+        $headers->set('Cookie', ['cookie1=the+value+number+1; =foo']);
 
         $this->assertTrue($headers->hasCookie('cookie1'));
         $this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
@@ -245,16 +245,16 @@ class HeadersTest extends UnitTestCase
      */
     public function cacheControlHeaders()
     {
-        return array(
-            array('public', 'public'),
-            array('private', 'private'),
-            array('no-cache', 'no-cache'),
-            array('private="X-Flow-Powered"', 'private="X-Flow-Powered"'),
-            array('no-cache= "X-Flow-Powered" ', 'no-cache="X-Flow-Powered"'),
-            array('max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'),
-            array('private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'),
-            array('max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate')
-        );
+        return [
+            ['public', 'public'],
+            ['private', 'private'],
+            ['no-cache', 'no-cache'],
+            ['private="X-Flow-Powered"', 'private="X-Flow-Powered"'],
+            ['no-cache= "X-Flow-Powered" ', 'no-cache="X-Flow-Powered"'],
+            ['max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'],
+            ['private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'],
+            ['max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate']
+        ];
     }
 
     /**
@@ -427,21 +427,21 @@ class HeadersTest extends UnitTestCase
      */
     public function cacheDirectivesAndExampleValues()
     {
-        return array(
-            array('public', true),
-            array('private', true),
-            array('private', 'X-Flow'),
-            array('no-cache', true),
-            array('no-cache', 'X-Flow'),
-            array('max-age', 60),
-            array('s-maxage', 120),
-            array('must-revalidate', true),
-            array('proxy-revalidate', true),
-            array('no-store', true),
-            array('no-transform', true),
-            array('must-revalidate', true),
-            array('proxy-revalidate', true)
-        );
+        return [
+            ['public', true],
+            ['private', true],
+            ['private', 'X-Flow'],
+            ['no-cache', true],
+            ['no-cache', 'X-Flow'],
+            ['max-age', 60],
+            ['s-maxage', 120],
+            ['must-revalidate', true],
+            ['proxy-revalidate', true],
+            ['no-store', true],
+            ['no-transform', true],
+            ['must-revalidate', true],
+            ['proxy-revalidate', true]
+        ];
     }
 
     /**
