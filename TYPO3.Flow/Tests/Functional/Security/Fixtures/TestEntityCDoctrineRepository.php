@@ -13,16 +13,18 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 use Doctrine\ORM\Query;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Doctrine\Repository;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  * @Flow\Scope("singleton")
  */
-class TestEntityCDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository
+class TestEntityCDoctrineRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC::class;
+    const ENTITY_CLASSNAME = TestEntityC::class;
 
     /**
      * Returns all TestEntityC objects from persistence

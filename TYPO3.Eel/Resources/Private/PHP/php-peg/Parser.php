@@ -57,7 +57,7 @@ class Parser {
 
 		$this->depth = 0;
 
-		$this->regexps = array();
+		$this->regexps = [];
 	}
 
 	function whitespace() {
@@ -101,7 +101,7 @@ class Parser {
 			}
 
 			foreach ($this->typestack($node['_matchrule']) as $type) {
-				$callback = array($this, "{$type}_DLR{$value}");
+				$callback = [$this, "{$type}_DLR{$value}"];
 				if (is_callable($callback)) {
 					$rv = call_user_func($callback);
 					if ($rv !== FALSE) {
@@ -139,15 +139,15 @@ class Parser {
 	}
 
 	function construct($matchrule, $name, $arguments = null) {
-		$result = array('_matchrule' => $matchrule, 'name' => $name, 'text' => '');
+		$result = ['_matchrule' => $matchrule, 'name' => $name, 'text' => ''];
 		if ($arguments) {
 			$result = array_merge($result, $arguments);
 		}
 
 		foreach ($this->typestack($matchrule) as $type) {
-			$callback = array($this, "{$type}__construct");
+			$callback = [$this, "{$type}__construct"];
 			if (is_callable($callback)) {
-				call_user_func_array($callback, array(&$result));
+				call_user_func_array($callback, [&$result]);
 				break;
 			}
 		}
@@ -157,9 +157,9 @@ class Parser {
 
 	function finalise(&$result) {
 		foreach ($this->typestack($result['_matchrule']) as $type) {
-			$callback = array($this, "{$type}__finalise");
+			$callback = [$this, "{$type}__finalise"];
 			if (is_callable($callback)) {
-				call_user_func_array($callback, array(&$result));
+				call_user_func_array($callback, [&$result]);
 				break;
 			}
 		}
@@ -173,16 +173,16 @@ class Parser {
 		$storecalled = false;
 
 		foreach ($this->typestack($result['_matchrule']) as $type) {
-			$callback = array($this, $storetag ? "{$type}_{$storetag}" : "{$type}_{$subres['name']}");
+			$callback = [$this, $storetag ? "{$type}_{$storetag}" : "{$type}_{$subres['name']}"];
 			if (is_callable($callback)) {
-				call_user_func_array($callback, array(&$result, $subres));
+				call_user_func_array($callback, [&$result, $subres]);
 				$storecalled = true;
 				break;
 			}
 
-			$globalcb = array($this, "{$type}_STR");
+			$globalcb = [$this, "{$type}_STR"];
 			if (is_callable($globalcb)) {
-				call_user_func_array($globalcb, array(&$result, $subres));
+				call_user_func_array($globalcb, [&$result, $subres]);
 				$storecalled = true;
 				break;
 			}
@@ -194,7 +194,7 @@ class Parser {
 			}
 			else {
 				if (isset($result[$storetag]['text'])) {
-					$result[$storetag] = array($result[$storetag]);
+					$result[$storetag] = [$result[$storetag]];
 				}
 				$result[$storetag][] = $subres;
 			}
@@ -221,8 +221,8 @@ class Packrat extends Parser {
 		}
 
 		$this->packstatebase = str_repeat("\xFF", strlen($string) * 3);
-		$this->packstate = array();
-		$this->packres = array();
+		$this->packstate = [];
+		$this->packres = [];
 	}
 
 	function packhas($key, $pos) {
@@ -275,7 +275,7 @@ class FalseOnlyPackrat extends Parser {
 		parent::__construct($string);
 
 		$this->packstatebase = str_repeat('.', strlen($string));
-		$this->packstate = array();
+		$this->packstate = [];
 	}
 
 	function packhas($key, $pos) {

@@ -15,7 +15,6 @@ use TYPO3\Flow\Utility\Unicode\Functions;
 
 /**
  * Testcase for the PHP6 Functions backport
- *
  */
 class FunctionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -229,11 +228,11 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
     public function parse_urlWorksWithUTF8Chars()
     {
         $url = 'http://www.mysite.org/he/פרויקטים/ByYear.html';
-        $expected = array(
+        $expected = [
             'scheme' => 'http',
             'host' => 'www.mysite.org',
             'path' => '/he/פרויקטים/ByYear.html'
-        );
+        ];
         $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 

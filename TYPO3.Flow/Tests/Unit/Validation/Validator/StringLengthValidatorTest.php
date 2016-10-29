@@ -11,18 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\StringLengthValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the string length validator
  *
  */
-class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class StringLengthValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\StringLengthValidator::class;
+    protected $validatorClassName = StringLengthValidator::class;
 
     /**
-     * @var \TYPO3\Flow\Validation\Validator\StringLengthValidator
+     * @var StringLengthValidator
      */
     protected $validator;
 
@@ -47,7 +49,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorForAStringShorterThanMaxLengthAndLongerThanMinLength()
     {
-        $this->validatorOptions(array('minimum' => 0, 'maximum' => 50));
+        $this->validatorOptions(['minimum' => 0, 'maximum' => 50]);
         $this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
     }
 
@@ -56,7 +58,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsErrorForAStringShorterThanThanMinLength()
     {
-        $this->validatorOptions(array('minimum' => 50, 'maximum' => 100));
+        $this->validatorOptions(['minimum' => 50, 'maximum' => 100]);
         $this->assertTrue($this->validator->validate('this is a very short string')->hasErrors());
     }
 
@@ -65,7 +67,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsErrorsForAStringLongerThanThanMaxLength()
     {
-        $this->validatorOptions(array('minimum' => 5, 'maximum' => 10));
+        $this->validatorOptions(['minimum' => 5, 'maximum' => 10]);
         $this->assertTrue($this->validator->validate('this is a very short string')->hasErrors());
     }
 
@@ -74,7 +76,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorsForAStringLongerThanThanMinLengthAndMaxLengthNotSpecified()
     {
-        $this->validatorOptions(array('minimum' => 5));
+        $this->validatorOptions(['minimum' => 5]);
         $this->assertFalse($this->validator->validate('this is a very short string')->hasErrors());
     }
 
@@ -83,7 +85,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorsForAStringShorterThanThanMaxLengthAndMinLengthNotSpecified()
     {
-        $this->validatorOptions(array('maximum' => 100));
+        $this->validatorOptions(['maximum' => 100]);
         $this->assertFalse($this->validator->validate('this is a very short string')->hasErrors());
     }
 
@@ -92,7 +94,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorsForAStringLengthEqualToMaxLengthAndMinLengthNotSpecified()
     {
-        $this->validatorOptions(array('maximum' => 10));
+        $this->validatorOptions(['maximum' => 10]);
         $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
@@ -101,7 +103,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorForAStringLengthEqualToMinLengthAndMaxLengthNotSpecified()
     {
-        $this->validatorOptions(array('minimum' => 10));
+        $this->validatorOptions(['minimum' => 10]);
         $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
@@ -110,7 +112,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorIfMinLengthAndMaxLengthAreEqualAndTheGivenStringMatchesThisValue()
     {
-        $this->validatorOptions(array('minimum' => 10, 'maximum' => 10));
+        $this->validatorOptions(['minimum' => 10, 'maximum' => 10]);
         $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
@@ -119,7 +121,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorsfTheStringLengthIsEqualToMaxLength()
     {
-        $this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
+        $this->validatorOptions(['minimum' => 1, 'maximum' => 10]);
         $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
@@ -128,7 +130,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorReturnsNoErrorIfTheStringLengthIsEqualToMinLength()
     {
-        $this->validatorOptions(array('minimum' => 10, 'maximum' => 100));
+        $this->validatorOptions(['minimum' => 10, 'maximum' => 100]);
         $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
@@ -138,8 +140,8 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength()
     {
-        $this->validator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\StringLengthValidator::class)->disableOriginalConstructor()->setMethods(array('addError'))->getMock();
-        $this->validatorOptions(array('minimum' => 101, 'maximum' => 100));
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validatorOptions(['minimum' => 101, 'maximum' => 100]);
         $this->validator->validate('1234567890');
     }
 
@@ -148,7 +150,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorInsertsAnErrorObjectIfValidationFails()
     {
-        $this->validatorOptions(array('minimum' => 50, 'maximum' => 100));
+        $this->validatorOptions(['minimum' => 50, 'maximum' => 100]);
 
         $this->assertEquals(1, count($this->validator->validate('this is a very short string')->getErrors()));
     }
@@ -158,8 +160,8 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod()
     {
-        $this->validator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\StringLengthValidator::class)->disableOriginalConstructor()->setMethods(array('addError'))->getMock();
-        $this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
 
@@ -180,8 +182,8 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function validateReturnsErrorsIfTheGivenObjectCanNotBeConvertedToAString()
     {
-        $this->validator = $this->getMockBuilder(\TYPO3\Flow\Validation\Validator\StringLengthValidator::class)->disableOriginalConstructor()->setMethods(array('addError'))->getMock();
-        $this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
 
@@ -200,7 +202,7 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function validateRegardsMultibyteStringsCorrectly()
     {
-        $this->validatorOptions(array('maximum' => 8));
+        $this->validatorOptions(['maximum' => 8]);
         $this->assertFalse($this->validator->validate('überlang')->hasErrors());
     }
 }

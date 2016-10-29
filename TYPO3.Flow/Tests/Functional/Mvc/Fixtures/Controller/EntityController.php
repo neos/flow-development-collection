@@ -16,6 +16,7 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\TypeConverter\DateTimeConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 
 /**
  * A TestEntity controller fixture
@@ -24,12 +25,12 @@ class EntityController extends ActionController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+     * @var TestEntityRepository
      */
     protected $testEntityRepository;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $entity
+     * @param TestEntity $entity
      * @return string
      */
     public function showAction(TestEntity $entity)

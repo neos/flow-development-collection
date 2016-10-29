@@ -14,12 +14,18 @@ namespace TYPO3\Flow\Object\DependencyInjection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\CompileTimeObjectManager;
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationArgument;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty;
 use TYPO3\Flow\Object\Exception as ObjectException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\Object\Proxy\ObjectSerializationTrait;
 use TYPO3\Flow\Object\Proxy\ProxyClass;
 use TYPO3\Flow\Reflection\MethodReflection;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -31,76 +37,76 @@ use TYPO3\Flow\Utility\Arrays;
 class ProxyClassBuilder
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * @var \TYPO3\Flow\Object\Proxy\Compiler
+     * @var Compiler
      */
     protected $compiler;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
+     * @var ConfigurationManager
      */
     protected $configurationManager;
 
     /**
-     * @var \TYPO3\Flow\Object\CompileTimeObjectManager
+     * @var CompileTimeObjectManager
      */
     protected $objectManager;
 
     /**
-     * @var array<\TYPO3\Flow\Object\Configuration\Configuration>
+     * @var array<Configuration>
      */
     protected $objectConfigurations;
 
     /**
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
+     * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
 
     /**
-     * @param \TYPO3\Flow\Object\Proxy\Compiler $compiler
+     * @param Compiler $compiler
      * @return void
      */
-    public function injectCompiler(\TYPO3\Flow\Object\Proxy\Compiler $compiler)
+    public function injectCompiler(Compiler $compiler)
     {
         $this->compiler = $compiler;
     }
 
     /**
-     * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
+     * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager)
     {
         $this->configurationManager = $configurationManager;
     }
 
     /**
-     * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+     * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
 
     /**
-     * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
+     * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -137,7 +143,7 @@ class ProxyClassBuilder
 
             $setRelatedEntitiesCode = '';
             if (!$this->reflectionService->hasMethod($className, '__sleep')) {
-                $proxyClass->addTraits(['\TYPO3\Flow\Object\Proxy\ObjectSerializationTrait']);
+                $proxyClass->addTraits(['\\' . ObjectSerializationTrait::class]);
                 $sleepMethod = $proxyClass->getMethod('__sleep');
                 $sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
 
@@ -147,12 +153,12 @@ class ProxyClassBuilder
             $wakeupMethod = $proxyClass->getMethod('__wakeup');
             $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
             $wakeupMethod->addPreParentCallCode($setRelatedEntitiesCode);
-            $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
+            $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
             $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration));
 
             $injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
             if ($injectPropertiesCode !== '') {
-                $proxyClass->addTraits(['\TYPO3\Flow\Object\DependencyInjection\PropertyInjectionTrait']);
+                $proxyClass->addTraits(['\\' . PropertyInjectionTrait::class]);
                 $proxyClass->getMethod('Flow_Proxy_injectProperties')->addPreParentCallCode($injectPropertiesCode);
                 $proxyClass->getMethod('Flow_Proxy_injectProperties')->overrideMethodVisibility('private');
                 $wakeupMethod->addPreParentCallCode("        \$this->Flow_Proxy_injectProperties();\n");
@@ -162,7 +168,7 @@ class ProxyClassBuilder
                 $constructorPostCode .= '        }' . "\n";
             }
 
-            $constructorPostCode .= $this->buildLifecycleInitializationCode($objectConfiguration, \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+            $constructorPostCode .= $this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
             $constructorPostCode .= $this->buildLifecycleShutdownCode($objectConfiguration);
 
             $constructor = $proxyClass->getConstructor();
@@ -214,7 +220,7 @@ class ProxyClassBuilder
         $className = $objectConfiguration->getClassName();
         $code = '';
         if ($this->reflectionService->hasMethod($className, '__sleep') === false) {
-            $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\Flow\Annotations\Transient');
+            $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
             $propertyVarTags = [];
             foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
                 $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
@@ -234,15 +240,15 @@ class ProxyClassBuilder
      *
      * @param Configuration $objectConfiguration
      * @return string The built code
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws ObjectException\UnknownObjectException
      */
     protected function buildConstructorInjectionCode(Configuration $objectConfiguration)
     {
-        $assignments = array();
+        $assignments = [];
 
         $argumentConfigurations = $objectConfiguration->getArguments();
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
-        $argumentNumberToOptionalInfo = array();
+        $argumentNumberToOptionalInfo = [];
         foreach ($constructorParameterInfo as $parameterInfo) {
             $argumentNumberToOptionalInfo[($parameterInfo['position'] + 1)] = $parameterInfo['optional'];
         }
@@ -284,19 +290,19 @@ class ProxyClassBuilder
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             if (!isset($this->objectConfigurations[$argumentValue])) {
-                                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
+                                throw new ObjectException\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
                             }
                             $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
-                    break;
+                        break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
-                    break;
+                        break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $assignments[$argumentPosition] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
-                    break;
+                        break;
                 }
             }
         }
@@ -328,12 +334,12 @@ class ProxyClassBuilder
      *
      * @param Configuration $objectConfiguration (needed to produce helpful exception message)
      * @return string The built code
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws ObjectException\UnknownObjectException
      */
     protected function buildPropertyInjectionCode(Configuration $objectConfiguration)
     {
-        $commands = array();
-        $injectedProperties = array();
+        $commands = [];
+        $injectedProperties = [];
         foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
             /* @var $propertyConfiguration ConfigurationProperty */
             if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
@@ -349,7 +355,7 @@ class ProxyClassBuilder
                         $commands = array_merge($commands, $this->buildPropertyInjectionCodeByString($objectConfiguration, $propertyConfiguration, $propertyName, $propertyValue));
                     }
 
-                break;
+                    break;
                 case ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
                     if (is_string($propertyValue)) {
                         $preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
@@ -365,10 +371,10 @@ class ProxyClassBuilder
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
                     $configurationType = $propertyValue['type'];
                     if (!in_array($configurationType, $this->configurationManager->getAvailableConfigurationTypes())) {
-                        throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $configurationType . '".', 1420736211);
+                        throw new ObjectException\UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $configurationType . '".', 1420736211);
                     }
                     $commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfigurationTypeAndPath($objectConfiguration, $propertyName, $configurationType, $propertyValue['path']));
-                break;
+                    break;
             }
             $injectedProperties[] = $propertyName;
         }
@@ -390,7 +396,7 @@ class ProxyClassBuilder
      * @param string $propertyName Name of the property to inject
      * @param Configuration $propertyConfiguration Configuration of the object to inject
      * @return array PHP code
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws ObjectException\UnknownObjectException
      */
     protected function buildPropertyInjectionCodeByConfiguration(Configuration $objectConfiguration, $propertyName, Configuration $propertyConfiguration)
     {
@@ -402,7 +408,7 @@ class ProxyClassBuilder
         } else {
             if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
                 $configurationSource = $objectConfiguration->getConfigurationSourceHint();
-                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
+                throw new ObjectException\UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
             }
             if ($this->objectConfigurations[$propertyClassName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
                 $preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($propertyConfiguration->getArguments()) . ')';
@@ -427,7 +433,7 @@ class ProxyClassBuilder
      * @param string $propertyName Name of the property to inject
      * @param string $propertyObjectName Object name of the object to inject
      * @return array PHP code
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws ObjectException\UnknownObjectException
      */
     public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, ConfigurationProperty $propertyConfiguration, $propertyName, $propertyObjectName)
     {
@@ -442,12 +448,12 @@ class ProxyClassBuilder
         if (!isset($this->objectConfigurations[$propertyObjectName])) {
             $configurationSource = $objectConfiguration->getConfigurationSourceHint();
             if (!isset($propertyObjectName[0])) {
-                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Malformed DocComent block for a property in class "' . $className . '".', 1360171313);
+                throw new ObjectException\UnknownObjectException('Malformed DocComent block for a property in class "' . $className . '".', 1360171313);
             }
             if ($propertyObjectName[0] === '\\') {
-                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object name "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
+                throw new ObjectException\UnknownObjectException('The object name "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
             } else {
-                throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
+                throw new ObjectException\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
             }
         }
         $propertyClassName = $this->objectConfigurations[$propertyObjectName]->getClassName();
@@ -465,7 +471,7 @@ class ProxyClassBuilder
         if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
             return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         } else {
-            return array('    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
+            return ['    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
         }
     }
 
@@ -491,7 +497,7 @@ class ProxyClassBuilder
         if ($result !== null) {
             return $result;
         }
-        return array('    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
+        return ['    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
     }
 
     /**
@@ -527,14 +533,14 @@ class ProxyClassBuilder
     {
         $setterMethodName = 'inject' . ucfirst($propertyName);
         if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-            return array('    $this->' . $setterMethodName . '(' . $preparedSetterArgument . ');');
+            return ['    $this->' . $setterMethodName . '(' . $preparedSetterArgument . ');'];
         }
         $setterMethodName = 'set' . ucfirst($propertyName);
         if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-            return array('    $this->' . $setterMethodName . '(' . $preparedSetterArgument . ');');
+            return ['    $this->' . $setterMethodName . '(' . $preparedSetterArgument . ');'];
         }
         if (!property_exists($className, $propertyName)) {
-            return array();
+            return [];
         }
         return null;
     }
@@ -586,7 +592,7 @@ class ProxyClassBuilder
      */
     protected function buildMethodParametersCode(array $argumentConfigurations)
     {
-        $preparedArguments = array();
+        $preparedArguments = [];
 
         foreach ($argumentConfigurations as $argument) {
             if ($argument === null) {
@@ -611,15 +617,15 @@ class ProxyClassBuilder
                             }
                             $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
-                    break;
+                        break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $preparedArguments[] = var_export($argumentValue, true);
-                    break;
+                        break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
-                    break;
+                        break;
                 }
             }
         }

@@ -11,10 +11,13 @@ namespace TYPO3\Flow\Tests\Functional\Http;
  * source code.
  */
 
+use TYPO3\Flow\Http\RequestHandler;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for the HTTP Request Handler
  */
-class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class RequestHandlerTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -38,16 +41,16 @@ class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
             return;
         }
 
-        $_SERVER = array(
+        $_SERVER = [
             'HTTP_HOST' => 'localhost',
             'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => '',
             'REQUEST_URI' => '/typo3/flow/test/http/foo',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
-        $requestHandler = $this->getAccessibleMock(\TYPO3\Flow\Http\RequestHandler::class, array('boot'), array(self::$bootstrap));
+        $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['boot'], [self::$bootstrap]);
         $requestHandler->exit = function () {
         };
         $requestHandler->handleRequest();

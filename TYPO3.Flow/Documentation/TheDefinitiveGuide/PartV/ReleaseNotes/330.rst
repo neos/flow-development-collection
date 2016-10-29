@@ -78,6 +78,10 @@ Please note that the default configuration is very open to retain backwards comp
 
 There is no migration as the default configuration should maintain the same functionality as previous versions (that being to allow all kinds of proxy headers).
 
+.. warning::
+
+If you used ``Request::createFromEnvironment()`` to create URLs in your custom code you must retrieve the ``Request`` object from the ``RequestHandler`` from now on. Otherwise you might run into malformed URLs like `https://acme.com:80` (depending on your environment).
+
 More consistent translation behavior
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

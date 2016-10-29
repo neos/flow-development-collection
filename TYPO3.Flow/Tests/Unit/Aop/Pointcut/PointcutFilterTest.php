@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Aop\Pointcut;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Aop;
+
 /**
  * Testcase for the Pointcut Filter
- *
  */
-class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PointcutFilterTest extends UnitTestCase
 {
     /**
      * @test
@@ -28,10 +30,10 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $methodDeclaringClassName = 'Baz';
         $pointcutQueryIdentifier = 42;
 
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
         $pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
     }
@@ -46,13 +48,13 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $methodDeclaringClassName = 'Baz';
         $pointcutQueryIdentifier = 42;
 
-        $mockPointcut = $this->getMockBuilder(\TYPO3\Flow\Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->setMethods(array('matches'))->getMock();
+        $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
         $mockPointcut->expects($this->once())->method('matches')->with($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)->will($this->returnValue('the result'));
 
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
         $this->assertSame('the result', $pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
     }
@@ -62,15 +64,15 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getRuntimeEvaluationsDefinitionReturnsTheDefinitionArrayFromThePointcut()
     {
-        $mockPointcut = $this->getMockBuilder(\TYPO3\Flow\Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
-        $mockPointcut->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('evaluations')));
+        $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
+        $mockPointcut->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['evaluations']));
 
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
-        $this->assertEquals(array('evaluations'), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
+        $this->assertEquals(['evaluations'], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
     }
 
     /**
@@ -78,12 +80,12 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getRuntimeEvaluationsDefinitionReturnsAnEmptyArrayIfThePointcutDoesNotExist()
     {
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
-        $this->assertEquals(array(), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
+        $this->assertEquals([], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
     }
 
     /**
@@ -91,16 +93,16 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reduceTargetClassNamesAsksTheResolvedPointcutToReduce()
     {
-        $mockPointcut = $this->getMockBuilder(\TYPO3\Flow\Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
+        $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
         $mockPointcut->expects($this->once())->method('reduceTargetClassNames')->will($this->returnValue('someResult'));
 
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 
-        $this->assertEquals('someResult', $pointcutFilter->reduceTargetClassNames(new \TYPO3\Flow\Aop\Builder\ClassNameIndex()));
+        $this->assertEquals('someResult', $pointcutFilter->reduceTargetClassNames(new Aop\Builder\ClassNameIndex()));
     }
 
     /**
@@ -108,13 +110,13 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reduceTargetClassNamesReturnsTheInputClassNameIndexIfThePointcutCouldNotBeResolved()
     {
-        $mockProxyClassBuilder = $this->getMockBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(array('findPointcut'))->getMock();
+        $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
         $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
 
-        $pointcutFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
+        $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 
-        $inputClassNameIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $inputClassNameIndex = new Aop\Builder\ClassNameIndex();
 
         $this->assertSame($inputClassNameIndex, $pointcutFilter->reduceTargetClassNames($inputClassNameIndex));
     }

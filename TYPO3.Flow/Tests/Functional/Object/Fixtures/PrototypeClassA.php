@@ -23,7 +23,7 @@ class PrototypeClassA implements PrototypeClassAishInterface
 {
     /**
      * @Flow\Transient
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
+     * @var SingletonClassA
      */
     protected $singletonA;
 
@@ -33,16 +33,16 @@ class PrototypeClassA implements PrototypeClassAishInterface
     protected $someProperty;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
+     * @param SingletonClassA $singletonA
      * @return void
      */
-    public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA)
+    public function injectSingletonA(SingletonClassA $singletonA)
     {
         $this->singletonA = $singletonA;
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
+     * @return SingletonClassA The singleton class A
      */
     public function getSingletonA()
     {

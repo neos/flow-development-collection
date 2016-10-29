@@ -12,16 +12,19 @@ namespace TYPO3\Flow\Aop\Pointcut;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Aop\Exception;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * A simple class filter which fires on class names defined by a regular expression
  *
  * @Flow\Proxy(false)
  */
-class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+class PointcutClassNameFilter implements PointcutFilterInterface
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -50,10 +53,10 @@ class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
     /**
      * Injects the reflection service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
+     * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -66,17 +69,17 @@ class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if the class matches, otherwise FALSE
-     * @throws \TYPO3\Flow\Aop\Exception
+     * @throws Exception
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
     {
         try {
             $matchResult = preg_match($this->classFilterExpression, $className);
         } catch (\Exception $exception) {
-            throw new \TYPO3\Flow\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
+            throw new Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
         }
         if ($matchResult === false) {
-            throw new \TYPO3\Flow\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
+            throw new Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
         }
         return ($matchResult === 1);
     }
@@ -98,16 +101,16 @@ class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
         if (!preg_match('/^([^\.\(\)\{\}\[\]\?\+\$\!\|]+)/', $this->originalExpressionString, $matches)) {
             return $classNameIndex;
