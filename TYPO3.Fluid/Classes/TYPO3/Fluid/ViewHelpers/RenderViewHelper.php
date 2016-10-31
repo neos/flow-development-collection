@@ -11,7 +11,9 @@ namespace TYPO3\Fluid\ViewHelpers;
  * source code.
  */
 
+use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 
 /**
  * A ViewHelper to render a section or a specified partial in a template.
@@ -69,14 +71,47 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * Using the reserved keyword "_all", all available variables will be passed along to the partial
  * </output>
  *
+ *
+ * <code title="Passing variables to a partial using the argument ViewHelper">
+ * <f:render partial="somePartial" arguments="{foo: 'fooValue', bar: 'barValue'}">
+ *     <f:argument name="baz">
+ *          <div>This is just a <b>simple snippet</b> to demonstrate the idea.</div>
+ *     </f:argument>
+ *     <f:argument name="foo">Overwrites the argument foo.</f:argument>
+ * </f:render>
+ * </code>
+ * <output>
+ * the content of the partial "somePartial".
+ * Available variables passed to the partial are foo, bar, baz.
+ * </output>
+ *
  * @api
  */
-class RenderViewHelper extends AbstractViewHelper
+class RenderViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface
 {
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
+
+    /**
+     * An array containing child nodes
+     *
+     * @var array<\TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode>
+     */
+    private $childNodes = [];
+
+    /**
+     * Setter for ChildNodes - as defined in ChildNodeAccessInterface
+     *
+     * @param array $childNodes Child nodes of this syntax tree node
+     *
+     * @return void
+     */
+    public function setChildNodes(array $childNodes)
+    {
+        $this->childNodes = $childNodes;
+    }
 
     /**
      * Renders the content.
@@ -88,8 +123,9 @@ class RenderViewHelper extends AbstractViewHelper
      * @return string
      * @api
      */
-    public function render($section = null, $partial = null, $arguments = array(), $optional = false)
+    public function render($section = null, $partial = null, $arguments = [], $optional = false)
     {
+        $arguments = $this->loadArgumentChildrenIntoArguments($arguments);
         $arguments = $this->loadSettingsIntoArguments($arguments);
 
         if ($partial !== null) {
@@ -101,9 +137,34 @@ class RenderViewHelper extends AbstractViewHelper
     }
 
     /**
+     * Loads the "argument" child nodes.
+     *
+     * @param array $arguments
+     *
+     * @return array
+     */
+    protected function loadArgumentChildrenIntoArguments(array $arguments)
+    {
+        foreach ($this->childNodes as $childNode) {
+            if ($childNode instanceof ViewHelperNode
+                && $childNode->getViewHelperClassName() === ArgumentViewHelper::class
+            ) {
+                $childNodeArguments = $childNode->getArguments();
+                if (isset($childNodeArguments['name'])) {
+                    $argumentName = $childNodeArguments['name']->getText();
+                    $arguments[$argumentName] = $childNode->evaluate($this->renderingContext);
+                }
+            }
+        }
+
+        return $arguments;
+    }
+
+    /**
      * If $arguments['settings'] is not set, it is loaded from the TemplateVariableContainer (if it is available there).
      *
      * @param array $arguments
+     *
      * @return array
      */
     protected function loadSettingsIntoArguments($arguments)
