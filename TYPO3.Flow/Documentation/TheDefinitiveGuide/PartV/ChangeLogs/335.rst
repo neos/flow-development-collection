@@ -1,0 +1,183 @@
+`3.3.5 (2016-11-01) <https://github.com/neos/flow-development-collection/releases/tag/3.3.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[TASK] Do not instantiate all available TypeConverters <https://github.com/neos/flow-development-collection/pull/3>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Previously the `PropertyMapper` would instantiate all
+available TypeConverter implementations to build a map of possible
+sources and targets. This is now done during compiletime so that
+only instances of TypeConverters are created that have the required
+source and target types.
+
+* Resolves: `NEOS-1288 <https://jira.neos.io/browse/NEOS-1288>`_
+* Packages: ``Flow``
+
+`TASK: Update Installation Doc <https://github.com/neos/flow-development-collection/pull/643>`_
+-----------------------------------------------------------------------------------------------
+
+Changing the web group name for the installation instructions on linux from the mac web group name to a more common linux one.
+
+* Packages: ``Flow``
+
+`TASK: Don’t list memcache as possible backend for Session handling <https://github.com/neos/flow-development-collection/pull/675>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Since memcache backend does not implement the IterableBackendInterface it can not be used for session handling
+
+* Packages: ``Eel`` ``Flow``
+
+`TASK: Add warning about breaking change in 3.3 <https://github.com/neos/flow-development-collection/pull/657>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: InternalRequestEngine and functional tests respect ComponentContext <https://github.com/neos/flow-development-collection/pull/515>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Before the functional test request handler would always return the `Request`
+and `Response` instances that it got injected independent of any Http
+Components that might have run in between.
+
+Likewise the InternalRequestEngine would only work on the `Response` object
+it creates when sending, which could not be the instance that is actually
+returned from the ComponentChain.
+
+This change makes both use a ComponentContext to allow the ComponentChain to
+override instances of the `Request` and `Response` safely without unexpected
+results.
+
+Also, this marks the `FunctionalTestRequestHandler` methods `setHttpRequest`
+and `setHttpResponse` as deprecated.
+
+Related to #499
+
+* Packages: ``Flow``
+
+`TASK: Refactor classes to use relative namespaces in Flow / AOP <https://github.com/neos/flow-development-collection/pull/465>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces to use statements for TYPO3 Eel <https://github.com/neos/flow-development-collection/pull/464>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactor legacy array syntax
+
+* Packages: ``Eel``
+
+`TASK: Refactor absolute namespaces in Flow / Core classes <https://github.com/neos/flow-development-collection/pull/475>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Object <https://github.com/neos/flow-development-collection/pull/483>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / HTTP and Error classes <https://github.com/neos/flow-development-collection/pull/476>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Test Classes <https://github.com/neos/flow-development-collection/pull/497>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Folders Persistence and Property
+Also refactored legacy array synt
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests Log - Package <https://github.com/neos/flow-development-collection/pull/507>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/511>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Configuration - I18n
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unitests Aop - Cli <https://github.com/neos/flow-development-collection/pull/510>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/509>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Session - Validator
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/508>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+ Resource - Security
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/506>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Persistence - Reflection
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Tests <https://github.com/neos/flow-development-collection/pull/501>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Refactor functional tests: Resource to Validation.
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Test Classes <https://github.com/neos/flow-development-collection/pull/495>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Refactors AOP to Object classes.
+Also refactored legacy array syntax
+
+* Packages: ``Flow``
+
+`BUGFIX: Temporary files are correctly moved across volumes <https://github.com/neos/flow-development-collection/pull/502>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+PHP throws a operation not permitted warning when using rename across
+volumes, which happens e.g. if you have FLOW_PATH_TEMPORARY_BASE pointing
+to a different (more performant) volume.
+
+From the php documentation:
+
+> More explicitly, rename() may still return (bool) true, despite the warnings that result from the underlying calls to chown() or chmod(). This behavior can be misleading absent a deeper understanding of the underlying mechanics. To rename across filesystems, PHP "fakes it" by calling copy(), unlink(), chown(), and chmod() (not necessarily in that order). See PHP bug #50676 for more information.
+> 
+> On UNIX-like operating systems, filesystems may be mounted with an explicit uid and/or gid (for example, with mount options "uid=someuser,gid=somegroup"). Attempting to call rename() with such a destination filesystem will cause an "Operation not permitted" warning, even though the file is indeed renamed and rename() returns (bool) true.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.4...3.3.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
