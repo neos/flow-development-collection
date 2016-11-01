@@ -1,0 +1,362 @@
+`3.0.10 (2016-11-01) <https://github.com/neos/flow-development-collection/releases/tag/3.0.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`[TASK] Do not instantiate all available TypeConverters <https://github.com/neos/flow-development-collection/pull/3>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Previously the `PropertyMapper` would instantiate all
+available TypeConverter implementations to build a map of possible
+sources and targets. This is now done during compiletime so that
+only instances of TypeConverters are created that have the required
+source and target types.
+
+* Resolves: `NEOS-1288 <https://jira.neos.io/browse/NEOS-1288>`_
+* Packages: ``Flow``
+
+`TASK: Refactor classes to use relative namespaces in Flow / AOP <https://github.com/neos/flow-development-collection/pull/465>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces to use statements for TYPO3 Eel <https://github.com/neos/flow-development-collection/pull/464>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactor legacy array syntax
+
+* Packages: ``Eel``
+
+`TASK: Refactor absolute namespaces in Flow / Core classes <https://github.com/neos/flow-development-collection/pull/475>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Object <https://github.com/neos/flow-development-collection/pull/483>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / HTTP and Error classes <https://github.com/neos/flow-development-collection/pull/476>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Test Classes <https://github.com/neos/flow-development-collection/pull/497>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Folders Persistence and Property
+Also refactored legacy array synt
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests Log - Package <https://github.com/neos/flow-development-collection/pull/507>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/511>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Configuration - I18n
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unitests Aop - Cli <https://github.com/neos/flow-development-collection/pull/510>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/509>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Session - Validator
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/508>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+ Resource - Security
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Unit Tests <https://github.com/neos/flow-development-collection/pull/506>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Persistence - Reflection
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Tests <https://github.com/neos/flow-development-collection/pull/501>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Refactor functional tests: Resource to Validation.
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Functional Test Classes <https://github.com/neos/flow-development-collection/pull/495>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Refactors AOP to Object classes.
+Also refactored legacy array syntax
+
+* Packages: ``Flow``
+
+`BUGFIX: Temporary files are correctly moved across volumes <https://github.com/neos/flow-development-collection/pull/502>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+PHP throws a operation not permitted warning when using rename across
+volumes, which happens e.g. if you have FLOW_PATH_TEMPORARY_BASE pointing
+to a different (more performant) volume.
+
+From the php documentation:
+
+> More explicitly, rename() may still return (bool) true, despite the warnings that result from the underlying calls to chown() or chmod(). This behavior can be misleading absent a deeper understanding of the underlying mechanics. To rename across filesystems, PHP "fakes it" by calling copy(), unlink(), chown(), and chmod() (not necessarily in that order). See PHP bug #50676 for more information.
+> 
+> On UNIX-like operating systems, filesystems may be mounted with an explicit uid and/or gid (for example, with mount options "uid=someuser,gid=somegroup"). Attempting to call rename() with such a destination filesystem will cause an "Operation not permitted" warning, even though the file is indeed renamed and rename() returns (bool) true.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / SignalSlot and Utility <https://github.com/neos/flow-development-collection/pull/491>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Validation classes <https://github.com/neos/flow-development-collection/pull/492>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Security classes <https://github.com/neos/flow-development-collection/pull/489>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Reflection classes <https://github.com/neos/flow-development-collection/pull/487>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Remove references to typo3.org <https://github.com/neos/flow-development-collection/pull/498>`_
+------------------------------------------------------------------------------------------------------
+
+Replaces references to typo3.org with matching references to neos.io.
+
+* Packages: ``Flow``
+
+`TASK: Refactor namespaces in Flow / I18n classes <https://github.com/neos/flow-development-collection/pull/480>`_
+------------------------------------------------------------------------------------------------------------------
+
+Additionally refactor legacy array syntax
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Property Classes <https://github.com/neos/flow-development-collection/pull/486>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Persistence <https://github.com/neos/flow-development-collection/pull/485>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Package classes <https://github.com/neos/flow-development-collection/pull/484>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Command classes <https://github.com/neos/flow-development-collection/pull/469>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Additionally refactor legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Log and Monitor <https://github.com/neos/flow-development-collection/pull/482>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Mvc <https://github.com/neos/flow-development-collection/pull/481>`_
+------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Configuration classes <https://github.com/neos/flow-development-collection/pull/470>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactor legacy array syntax
+
+* Packages: ``Flow``
+
+`TASK: Improve StringHelper documentation <https://github.com/neos/flow-development-collection/pull/472>`_
+----------------------------------------------------------------------------------------------------------
+
+Adds missing PHPDoc to StringHelper functions and add more examples.
+
+* Packages: ``Eel``
+
+`TASK: Refactor namespaces in Flow / Cli classes <https://github.com/neos/flow-development-collection/pull/468>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Session classes <https://github.com/neos/flow-development-collection/pull/490>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Resource Classes <https://github.com/neos/flow-development-collection/pull/488>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor Flow / Cache classes code style <https://github.com/neos/flow-development-collection/pull/467>`_
+----------------------------------------------------------------------------------------------------------------
+
+Remove absolute namespaces and legacy array syntax
+
+* Packages: ``Flow``
+
+`BUGFIX: ArrayFromObjectConverter correctly converts object properties with property name <https://github.com/neos/flow-development-collection/pull/432>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Before the `ArrayFromObjectConverter` lost the property name of object properties when converting child properties.
+
+* Packages: ``Flow``
+
+`TASK: Adjust unit tests to use "real mocks" <https://github.com/neos/flow-development-collection/pull/429>`_
+-------------------------------------------------------------------------------------------------------------
+
+Mocking a "virtual" class is no longer allowed, so we use fixture classes.
+
+* Packages: ``Flow``
+
+`BUGFIX: Require latest version of neos/composer-plugin <https://github.com/neos/flow-development-collection/pull/414>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Require version 2.x of the `composer-plugin` package. Previous versions
+use the `excludeClasses` setting which has been deprecated with Flow 3.0.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix Property Mapper determination for the ObjectConverter <https://github.com/neos/flow-development-collection/pull/397>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+When mapping a plain object with the `ObjectConverter`, root namespace 
+properties like `\\DateTime` do not find a converter. This is because
+the leading backslash is not removed by the `ObjectConverter` (i.e. we
+looked for a `\\DateTimeConverter` instead of the `DateTimeConverter`
+
+* Packages: ``Flow``
+
+`BUGFIX: Input field name for multiple checkbox is generated correctly <https://github.com/neos/flow-development-collection/pull/386>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Checkboxes that were bound to collection properties or had the `multiple` attribute set,
+were generating invalid input field names like this:
+
+```
+<input type="checkbox" name="post[tags][__identity][]" ...>
+```
+
+Since the internal identity is not required for checkboxes, it is stripped from the generated name.
+Also, any such checkboxes now avoid generating an empty value hidden field, as this will at most
+lead to empty values being additionally submitted to the collection property.
+
+FLOW-419 #close
+
+* Packages: ``Fluid``
+
+`BUGFIX: Use Unix paths in InstallerScripts <https://github.com/neos/flow-development-collection/pull/400>`_
+------------------------------------------------------------------------------------------------------------
+
+The Files utility used by InstallerScripts will use these constants
+to transform an absolute path to a relative one. As the compared path
+will always be a Unix path, the path to replace needs to be completely
+Unix as well to make replacing working. This prevents "mkdir(): invalid
+arguments" errors on Windows.
+
+Similar to neos/flow-development-collection#399 , but then for the 3.0
+version.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow SliceOperation to work on \\Iterator <https://github.com/neos/flow-development-collection/pull/398>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The Eel slice operation only works with arrays so far. Since the FlowQuery
+context can be anything that implements `\\Iterator`, we now convert iterators
+to arrays if they are passed in as the context.
+
+* Packages: ``Eel`` ``Flow``
+
+`BUGFIX: Check if array is \`\`null\`\` at the beginning of JSON conversion <https://github.com/neos/flow-development-collection/pull/395>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Prevent an exception to be thrown if the array passed for conversion is `null`.
+
+* Packages: ``Flow``
+
+`TASK: Fix documentation about Privilege Parameters <https://github.com/neos/flow-development-collection/pull/392>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Fixes the `Policy.yaml` examples in the Privilege Parameters section of the Security chapter.
+
+FLOW-459 #close
+
+* Packages: ``Flow``
+
+`BUGFIX: FlowException is no imported <https://github.com/neos/flow-development-collection/pull/391>`_
+------------------------------------------------------------------------------------------------------
+
+This change fixes a missing class import introduced with PR #376 into the 2.3 branch.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.9...3.0.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
