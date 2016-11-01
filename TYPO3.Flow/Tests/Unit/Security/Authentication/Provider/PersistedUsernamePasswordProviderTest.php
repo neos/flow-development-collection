@@ -87,8 +87,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($this->mockAccount));
 
-        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
-        $this->mockToken->expects($this->once())->method('setAuthenticationStatus')->with(Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(['username' => 'admin', 'password' => 'password']));
+        $this->mockToken->expects($this->at(2))->method('setAuthenticationStatus')->with(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+        $this->mockToken->expects($this->at(3))->method('setAuthenticationStatus')->with(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+        $this->mockToken->expects($this->at(4))->method('setAuthenticationStatus')->with(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $this->mockToken->expects($this->once())->method('setAccount')->with($this->mockAccount);
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
@@ -115,8 +117,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($this->mockAccount));
 
-        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'wrong password')));
-        $this->mockToken->expects($this->once())->method('setAuthenticationStatus')->with(Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(['username' => 'admin', 'password' => 'wrong password']));
+        $this->mockToken->expects($this->at(2))->method('setAuthenticationStatus')->with(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+        $this->mockToken->expects($this->at(3))->method('setAuthenticationStatus')->with(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
