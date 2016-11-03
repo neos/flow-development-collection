@@ -102,7 +102,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function setMethod($method)
     {
-        $this->method = $method;
+        $this->method = strtoupper($method);
     }
 
     /**
@@ -331,21 +331,39 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
+        \TYPO3\Flow\var_dump((string)$this->uri);
+        if ((string)$this->uri === (string)$uri) {
+            return $this;
+        }
+        \TYPO3\Flow\var_dump((string)$uri);
+
         $newRequest = clone $this;
         $newRequest->uri = $uri;
 
-        $host = $uri->getHost();
+
         if ($preserveHost === false) {
-            if ($host !== '') {
-                $newRequest->setHeader('Host', $host);
-            }
-        } else {
-            if (($newRequest->hasHeader('Host') === false || trim($newRequest->getHeader('Host')) === '')  && $host !== '') {
-                $newRequest->setHeader('Host', $host);
-            }
+            $newRequest->updateHostFromUri();
         }
 
         return $newRequest;
+    }
+
+    /**
+     * Update the current Host header based on the current Uri
+     */
+    private function updateHostFromUri()
+    {
+        $host = $this->uri->getHost();
+
+        if ($host == '') {
+            return;
+        }
+
+        if (($port = $this->uri->getPort()) !== null) {
+            $host .= ':' . $port;
+        }
+
+        $this->setHeader('Host', $host);
     }
 
     /**
