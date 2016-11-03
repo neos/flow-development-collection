@@ -797,9 +797,30 @@ class Request extends BaseRequest implements ServerRequestInterface
         return $cookies;
     }
 
+    /**
+     * Return an instance with the specified cookies.
+     *
+     * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
+     * be compatible with the structure of $_COOKIE. Typically, this data will
+     * be injected at instantiation.
+     *
+     * This method MUST NOT update the related Cookie header of the request
+     * instance, nor related values in the server params.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated cookie values.
+     *
+     * @param array $cookies Array of key/value pairs representing cookies.
+     * @return static
+     */
     public function withCookieParams(array $cookies)
     {
-        // TODO: Implement withCookieParams() method.
+        $newRequest = clone $this;
+        foreach ($cookies as $name => $value) {
+            $newRequest->headers->setCookie(new Cookie($name, $value));
+        }
+        return $newRequest;
     }
 
     public function getQueryParams()
