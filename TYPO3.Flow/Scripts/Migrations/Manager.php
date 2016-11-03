@@ -261,10 +261,10 @@ class Manager
         if ($appliedMigrationIdentifiers === array()) {
             return null;
         }
-        if (!isset($this->currentPackageData['composerManifest']->extra)) {
-            $this->currentPackageData['composerManifest']->extra = new \stdClass();
+        if (!isset($this->currentPackageData['composerManifest']['extra'])) {
+            $this->currentPackageData['composerManifest']['extra'] = [];
         }
-        $this->currentPackageData['composerManifest']->extra->{'applied-flow-migrations'} = array_unique($appliedMigrationIdentifiers);
+        $this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'] = array_unique($appliedMigrationIdentifiers);
         $this->writeComposerManifest();
 
         $this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'] = array_values(array_unique($appliedMigrationIdentifiers));
