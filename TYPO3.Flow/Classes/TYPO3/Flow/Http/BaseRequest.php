@@ -349,11 +349,12 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     }
 
     /**
-     * When this Request is cloned also Uri and BaseUri must be cloned.
+     * When this Request is cloned also Headers, Uri and BaseUri must be cloned.
      */
     public function __clone()
     {
         parent::__clone();
+        $this->headers = clone $this->headers;
         $this->uri = clone $this->uri;
         $this->baseUri = clone $this->baseUri;
     }
