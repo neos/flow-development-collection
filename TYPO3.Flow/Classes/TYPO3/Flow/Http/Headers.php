@@ -238,7 +238,7 @@ class Headers
     /**
      * Returns all cookies
      *
-     * @return array
+     * @return Cookie[]
      * @api
      */
     public function getCookies()

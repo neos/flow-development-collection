@@ -778,9 +778,23 @@ class Request extends BaseRequest implements ServerRequestInterface
         return MediaTypes::trimMediaType($rawMediaType);
     }
 
+    /**
+     * Retrieve cookies.
+     *
+     * Retrieves cookies sent by the client to the server.
+     *
+     * The data MUST be compatible with the structure of the $_COOKIE
+     * superglobal.
+     *
+     * @return array
+     */
     public function getCookieParams()
     {
-        // TODO: Implement getCookieParams() method.
+        $cookies = [];
+        foreach ($this->headers->getCookies() as $cookie) {
+            $cookies[$cookie->getName()] = $cookie->getValue();
+        };
+        return $cookies;
     }
 
     public function withCookieParams(array $cookies)
