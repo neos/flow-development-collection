@@ -223,7 +223,7 @@ class Uri implements UriInterface
      */
     public function getHost()
     {
-        return $this->host;
+        return trim($this->host);
     }
 
     /**
