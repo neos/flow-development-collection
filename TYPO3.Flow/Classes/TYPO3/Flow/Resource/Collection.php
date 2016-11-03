@@ -167,7 +167,7 @@ class Collection implements CollectionInterface
 
         // TODO: Implement filter manipulation here:
         // foreach ($objects as $object) {
-        // 	$object->openStream(function() { return fopen('/tmp/test.txt', 'rb');});
+        // 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
         // }
 
         return $objects;
