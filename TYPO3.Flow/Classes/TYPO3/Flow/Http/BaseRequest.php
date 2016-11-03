@@ -331,9 +331,19 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        // TODO: Implement withUri() method.
         $newRequest = clone $this;
         $newRequest->uri = $uri;
+
+        $host = $uri->getHost();
+        if ($preserveHost === false) {
+            if ($host !== '') {
+                $newRequest->setHeader('Host', $host);
+            }
+        } else {
+            if (($newRequest->hasHeader('Host') === false || trim($newRequest->getHeader('Host')) === '')  && $host !== '') {
+                $newRequest->setHeader('Host', $host);
+            }
+        }
 
         return $newRequest;
     }
