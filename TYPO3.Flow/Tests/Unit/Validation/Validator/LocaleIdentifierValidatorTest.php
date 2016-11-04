@@ -11,15 +11,17 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\LocaleIdentifierValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the locale identifier validator
  *
  */
-class LocaleIdentifierValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class LocaleIdentifierValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\LocaleIdentifierValidator::class;
+    protected $validatorClassName = LocaleIdentifierValidator::class;
 
     /**
      * @test

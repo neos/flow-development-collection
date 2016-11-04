@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Http;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error as FlowError;
+use TYPO3\Flow\Utility\Unicode;
 
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986
@@ -75,7 +77,7 @@ class Uri
      * Array representation of the URI query
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * Fragment / anchor, if one was specified.
@@ -98,8 +100,8 @@ class Uri
 
         $parseUrlException = null;
         try {
-            $uriParts = \TYPO3\Flow\Utility\Unicode\Functions::parse_url($uriString);
-        } catch (\TYPO3\Flow\Error\Exception $exception) {
+            $uriParts = Unicode\Functions::parse_url($uriString);
+        } catch (FlowError\Exception $exception) {
             $parseUrlException = $exception;
         }
         if (is_array($uriParts)) {

@@ -12,16 +12,20 @@ namespace TYPO3\Flow\Aop\Pointcut;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Aop\Exception;
+use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * A class type filter which fires on class or interface names
  *
  * @Flow\Proxy(false)
  */
-class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+class PointcutClassTypeFilter implements PointcutFilterInterface
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -41,14 +45,14 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
      * The constructor - initializes the class type filter with the class or interface name
      *
      * @param string $interfaceOrClassName Interface or a class name to match against
-     * @throws \TYPO3\Flow\Aop\Exception
+     * @throws Exception
      */
     public function __construct($interfaceOrClassName)
     {
         $this->interfaceOrClassName = $interfaceOrClassName;
         if (!interface_exists($this->interfaceOrClassName)) {
             if (!class_exists($this->interfaceOrClassName)) {
-                throw new \TYPO3\Flow\Aop\Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
+                throw new Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
             }
             $this->isInterface = false;
         }
@@ -57,10 +61,10 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
     /**
      * Injects the reflection service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
+     * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -100,16 +104,16 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
         if (interface_exists($this->interfaceOrClassName)) {
             $classNames = $this->reflectionService->getAllImplementationClassNamesForInterface($this->interfaceOrClassName);
@@ -117,9 +121,9 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
             $classNames = $this->reflectionService->getAllSubClassNamesForClass($this->interfaceOrClassName);
             $classNames[] = $this->interfaceOrClassName;
         } else {
-            $classNames = array();
+            $classNames = [];
         }
-        $filteredIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $filteredIndex = new ClassNameIndex();
         $filteredIndex->setClassNames($classNames);
 
         return $classNameIndex->intersect($filteredIndex);

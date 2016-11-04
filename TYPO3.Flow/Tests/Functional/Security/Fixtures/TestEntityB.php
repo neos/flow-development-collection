@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Account;
 
 /**
  * An entity for tests
@@ -27,13 +28,13 @@ class TestEntityB
     protected $stringValue;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
+     * @var TestEntityA
      * @ORM\OneToOne(mappedBy="relatedEntityB")
      */
     protected $relatedEntityA;
 
     /**
-     * @var \TYPO3\Flow\Security\Account
+     * @var Account
      * @ORM\ManyToOne
      */
     protected $ownerAccount;
@@ -65,7 +66,7 @@ class TestEntityB
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA $relatedEntityA
+     * @param TestEntityA $relatedEntityA
      */
     public function setRelatedEntityA($relatedEntityA)
     {
@@ -73,7 +74,7 @@ class TestEntityB
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA
+     * @return TestEntityA
      */
     public function getRelatedEntityA()
     {
@@ -81,7 +82,7 @@ class TestEntityB
     }
 
     /**
-     * @param \TYPO3\Flow\Security\Account $ownerAccount
+     * @param Account $ownerAccount
      */
     public function setOwnerAccount($ownerAccount)
     {
@@ -89,7 +90,7 @@ class TestEntityB
     }
 
     /**
-     * @return \TYPO3\Flow\Security\Account
+     * @return Account
      */
     public function getOwnerAccount()
     {

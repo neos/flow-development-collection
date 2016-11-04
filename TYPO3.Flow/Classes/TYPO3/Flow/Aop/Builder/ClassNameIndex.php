@@ -25,7 +25,7 @@ class ClassNameIndex
      * Indexed array by class name
      * @var array
      */
-    protected $classNames = array();
+    protected $classNames = [];
 
     /**
      * Constructor. Note: If you pass a data array here, make sure
@@ -33,7 +33,7 @@ class ClassNameIndex
      *
      * @param array $classNames Array with class names as keys
      */
-    public function __construct(array $classNames = array())
+    public function __construct(array $classNames = [])
     {
         $this->classNames = $classNames;
     }
@@ -47,7 +47,7 @@ class ClassNameIndex
      */
     public function setClassNames(array $classNames)
     {
-        $this->classNames = count($classNames) > 0 ? array_combine($classNames, array_fill(0, count($classNames), true)) : array();
+        $this->classNames = count($classNames) > 0 ? array_combine($classNames, array_fill(0, count($classNames), true)) : [];
     }
 
     /**

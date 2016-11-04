@@ -20,7 +20,7 @@ use TYPO3\Eel\CompilingEvaluator;
 class CompilingEvaluatorTest extends AbstractEvaluatorTest
 {
     /**
-     * @return \TYPO3\Eel\Context
+     * @return Context
      */
     protected function createEvaluator()
     {
@@ -43,11 +43,11 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
      *
      * @param mixed $expected
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      */
     protected function assertEvaluated($expected, $expression, $context)
     {
-        $evaluator = $this->getAccessibleMock(\TYPO3\Eel\CompilingEvaluator::class, array('dummy'));
+        $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy']);
         // note, this is not a public method. We should expect expressions coming in here to be trimmed already.
         $code = $evaluator->_call('generateEvaluatorCode', trim($expression));
         $this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');

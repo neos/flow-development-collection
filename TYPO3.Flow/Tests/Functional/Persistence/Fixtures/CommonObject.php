@@ -16,8 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Class CommonObject
  * Representation of an object handled as "\Doctrine\DBAL\Types\Type::OBJECT"
- *
- * @package TYPO3\Flow\Tests\Functional\Persistence\Fixtures
  */
 class CommonObject
 {
