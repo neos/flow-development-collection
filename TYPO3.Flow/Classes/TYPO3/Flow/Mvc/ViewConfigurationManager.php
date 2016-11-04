@@ -66,32 +66,25 @@ class ViewConfigurationManager
 
             $requestMatcher = new RequestMatcher($request);
             $context = new Context($requestMatcher);
-            $matchingConfigurations = [];
+
+            $viewConfiguration = [];
+            $highestWeight = -1;
             foreach ($configurations as $order => $configuration) {
                 $requestMatcher->resetWeight();
                 if (!isset($configuration['requestFilter'])) {
-                    $matchingConfigurations[$order]['configuration'] = $configuration;
-                    $matchingConfigurations[$order]['weight'] = $order;
+                    $weight = $order;
                 } else {
                     $result = $this->eelEvaluator->evaluate($configuration['requestFilter'], $context);
                     if ($result === false) {
                         continue;
                     }
-                    $matchingConfigurations[$order]['configuration'] = $configuration;
-                    $matchingConfigurations[$order]['weight'] = $requestMatcher->getWeight() + $order;
+                    $weight = $requestMatcher->getWeight() + $order;
+                }
+                if ($weight > $highestWeight) {
+                    $viewConfiguration = $configuration;
+                    $highestWeight = $weight;
                 }
             }
-
-            usort($matchingConfigurations, function ($configuration1, $configuration2) {
-                return $configuration1['weight'] < $configuration2['weight'];
-            });
-            
-            if (count($matchingConfigurations) > 0) {
-                $viewConfiguration = array_shift($matchingConfigurations)['configuration'];
-            } else {
-                $viewConfiguration = [];
-            }
-
             $this->cache->set($cacheIdentifier, $viewConfiguration);
         }
 
