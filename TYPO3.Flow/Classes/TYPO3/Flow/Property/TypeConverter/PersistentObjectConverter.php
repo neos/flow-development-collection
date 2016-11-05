@@ -273,7 +273,18 @@ class PersistentObjectConverter extends ObjectConverter
      */
     protected function setIdentity($object, $identity)
     {
-        ObjectAccess::setProperty($object, 'Persistence_Object_Identifier', $identity, true);
+        $classSchema = $this->reflectionService->getClassSchema(TypeHandling::getTypeForValue($object));
+        $identityProperties = $classSchema->getIdentityProperties();
+        $identityPropertyCount = count($identityProperties);
+        if ($identityPropertyCount === 1 && (is_string($identity) || is_integer($identity))) {
+            ObjectAccess::setProperty($object, reset($identityProperties), $identity, true);
+        }
+
+        if (is_array($identity) && count($identity) === $identityPropertyCount) {
+            foreach ($identityProperties as $propertyName) {
+                ObjectAccess::setProperty($object, $propertyName, $identity[$propertyName], true);
+            }
+        }
     }
 
     /**
