@@ -178,6 +178,49 @@ class PropertyMapperTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function findEligibleConverterWithHighestPrioritySkipsConvertersWithNegativePriorities()
+    {
+        $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
+        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-1));
+
+        $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
+        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-2));
+
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $mockTypeConverters = [
+            $internalTypeConverter1,
+            $internalTypeConverter2,
+        ];
+        $this->assertNull($propertyMapper->_call('findEligibleConverterWithHighestPriority', $mockTypeConverters, 'foo', 'string'));
+    }
+
+    /**
+     * @test
+     * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
+     */
+    public function findTypeConverterThrowsExceptionIfAllMatchingConvertersHaveNegativePriorities()
+    {
+        $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
+        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-1));
+
+        $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
+        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-2));
+
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper->_set('typeConverters', [
+            'string' => [
+                'string' => [
+                    -1 => $internalTypeConverter1,
+                    -2 => $internalTypeConverter2
+                ],
+            ],
+        ]);
+        $propertyMapper->_call('findTypeConverter', 'foo', 'string', $this->mockConfiguration);
+    }
+
+    /**
      * @return array
      */
     public function dataProviderForObjectTypeConverters()
