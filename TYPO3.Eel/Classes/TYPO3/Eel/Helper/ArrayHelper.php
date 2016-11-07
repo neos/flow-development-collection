@@ -334,6 +334,20 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     *  Exchanges all keys with their associated values in an array
+     *
+     * Note that the values of array need to be valid keys, i.e. they need to be either integer or string.
+     * If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
+     *
+     * @param array $array
+     */
+    public function flip(array $array)
+    {
+        $newArray = array_flip($array);
+        return $newArray;
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
