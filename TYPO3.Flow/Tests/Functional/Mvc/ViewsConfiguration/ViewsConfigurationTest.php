@@ -39,6 +39,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\ViewsConfiguration\Fixtures',
             '@controller' => 'ViewsConfigurationTestA',
+            '@action' => 'first',
             '@format' => 'html'
         ]);
 

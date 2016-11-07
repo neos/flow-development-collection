@@ -43,7 +43,8 @@ class ActionControllerTest extends FunctionalTestCase
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestB',
-            '@format' =>'html'
+            '@action' => 'first',
+            '@format' => 'html'
         ]);
 
         $route = $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}(/{@action})', [

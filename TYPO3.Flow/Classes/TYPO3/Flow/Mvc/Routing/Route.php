@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException;
+use TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException;
 use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -636,7 +637,12 @@ class Route
                     }
             }
             $routePart->setName($routePartName);
-            $routePart->setOptional($currentRoutePartIsOptional);
+            if ($currentRoutePartIsOptional) {
+                $routePart->setOptional(true);
+                if ($routePart instanceof DynamicRoutePartInterface && !$routePart->hasDefaultValue()) {
+                    throw new InvalidRouteSetupException(sprintf('There is no default value specified for the optional route part "{%s}" of route "%s", but all dynamic optional route parts need a default.', $routePartName, $this->getName()), 1477140679);
+                }
+            }
             $routePart->setLowerCase($this->lowerCase);
             if (isset($this->routePartsConfiguration[$routePartName]['options'])) {
                 $routePart->setOptions($this->routePartsConfiguration[$routePartName]['options']);
