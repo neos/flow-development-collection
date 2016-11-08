@@ -2,22 +2,18 @@
 namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 /*
- * This file is part of the TYPO3 CMS project.
+ * This file is part of the Neos.FluidAdaptor package.
  *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * (c) Contributors of the Neos Project - www.neos.io
  *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
  */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Package;
-use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
@@ -49,7 +45,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     protected $packageManager;
 
     /**
-     * Custom merged namespace for CMS Fluid adapter;
+     * Custom merged namespace for Neos Fluid adapter;
      * will look for classes in both namespaces starting
      * from the bottom.
      *

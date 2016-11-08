@@ -23,7 +23,7 @@ use TYPO3\Flow\I18n;
 abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
 {
     /**
-     * @var \TYPO3\Flow\I18n\Service
+     * @var I18n\Service
      */
     protected $localizationService;
 

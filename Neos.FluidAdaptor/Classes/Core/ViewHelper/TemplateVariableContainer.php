@@ -70,10 +70,6 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
             }
         }
 
-        if ($subject instanceof TemplateObjectAccessInterface) {
-            $subject = $subject->objectAccess();
-        }
-
         if ($subject === null) {
             $subject = $this->getBooleanValue($path);
         }

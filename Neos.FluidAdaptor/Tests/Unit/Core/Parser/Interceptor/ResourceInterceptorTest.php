@@ -13,21 +13,18 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Parser\Interceptor;
 
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Testcase for Interceptor\ResourceInterceptor
  *
  */
-class ResourceInterceptorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ResourceInterceptorTest extends UnitTestCase
 {
     /**
      * @test
@@ -115,7 +112,7 @@ class ResourceInterceptorTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $originalText = $part1 . $part2 . $part3;
         $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(array('evaluateChildNodes'))->setConstructorArgs(array($originalText))->getMock();
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(\Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface::class)));
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $interceptor->setDefaultPackageKey('Acme.Demo');

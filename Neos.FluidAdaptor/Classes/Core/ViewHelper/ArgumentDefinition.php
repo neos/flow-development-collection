@@ -11,12 +11,14 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition as FluidArgumentDefinition;
+
 /**
  * Argument definition of each view helper argument
  *
  * @deprecated use \TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition
  */
-class ArgumentDefinition extends \TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition
+class ArgumentDefinition extends FluidArgumentDefinition
 {
     /**
      * TRUE if it is a method parameter

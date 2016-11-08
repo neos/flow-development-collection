@@ -10,9 +10,10 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * The WidgetContext stores all information a widget needs to know about the
@@ -69,8 +70,6 @@ class WidgetContext
     /**
      * The child nodes of the Widget ViewHelper.
      * Only available inside non-AJAX requests.
-     *
-     * TODO: rename to something more meaningful.
      *
      * @var RootNode
      * @Flow\Transient

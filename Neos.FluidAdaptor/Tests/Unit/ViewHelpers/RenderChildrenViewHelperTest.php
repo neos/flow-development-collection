@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  */
 
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
@@ -48,7 +49,7 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHe
         $templateVariableContainer->expects($this->at(2))->method('remove')->with('k1');
         $templateVariableContainer->expects($this->at(3))->method('remove')->with('k2');
 
-        $renderingContext = $this->createMock(\Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface::class);
+        $renderingContext = $this->createMock(RenderingContextInterface::class);
         $renderingContext->expects($this->any())->method('getVariableProvider')->will($this->returnValue($templateVariableContainer));
 
         $rootNode = $this->createMock(RootNode::class);

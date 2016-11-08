@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 
 /**
  * @api
@@ -141,7 +142,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      */
     public function setChildNodes(array $childNodes)
     {
-        $rootNode = new \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode();
+        $rootNode = new RootNode();
 
         foreach ($childNodes as $childNode) {
             $rootNode->addChildNode($childNode);
@@ -187,11 +188,11 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Initiate a sub request to $this->controller. Make sure to fill $this->controller
      * via Dependency Injection.
-     *
      * @return Response the response of this request.
+     * @throws Exception\InvalidControllerException
      * @throws Exception\MissingControllerException
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-     * @throws \TYPO3\Flow\Mvc\Exception\InfiniteLoopException
+     * @throws InfiniteLoopException
+     * @throws StopActionException
      * @api
      */
     protected function initiateSubRequest()
@@ -204,9 +205,9 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         }
 
         /** @var $subRequest ActionRequest */
-        $subRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $this->controllerContext->getRequest());
+        $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
         /** @var $subResponse Response */
-        $subResponse = $this->objectManager->get(\TYPO3\Flow\Http\Response::class, $this->controllerContext->getResponse());
+        $subResponse = $this->objectManager->get(Response::class, $this->controllerContext->getResponse());
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
@@ -286,7 +287,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     public function resetState()
     {
         if ($this->ajaxWidget) {
-            $this->widgetContext = $this->objectManager->get(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class);
+            $this->widgetContext = $this->objectManager->get(WidgetContext::class);
         }
     }
 }

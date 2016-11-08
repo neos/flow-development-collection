@@ -10,6 +10,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Component\Exception as ComponentException;
 use TYPO3\Flow\Http\Request;

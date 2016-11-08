@@ -11,15 +11,12 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
-
 /**
- * Extended interface for rendering contexts in a Flow environment.
+ * Interface for rendering contexts that are Flow aware.
  *
  * @see \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface
  */
-interface RenderingContextInterface extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface
+interface FlowAwareRenderingContextInterface
 {
     /**
      * @return ObjectManagerInterface

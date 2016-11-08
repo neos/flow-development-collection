@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Testcase for AbstractWidgetViewHelper
@@ -141,7 +142,7 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $rootNode->addChildNode($node2);
         $rootNode->addChildNode($node3);
 
-        $renderingContext = $this->createMock(\Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface::class);
+        $renderingContext = $this->createMock(RenderingContextInterface::class);
         $this->viewHelper->_set('renderingContext', $renderingContext);
 
         $this->viewHelper->setChildNodes(array($node1, $node2, $node3));

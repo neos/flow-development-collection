@@ -29,13 +29,14 @@ use TYPO3Fluid\Fluid\Core\Parser\Configuration;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * A Fluid rendering context specifically to be used in conjunction with Flow.
  * This knows about the ControllerContext and ObjectManager.
  */
-class RenderingContext extends \TYPO3Fluid\Fluid\Core\Rendering\RenderingContext implements RenderingContextInterface
+class RenderingContext extends FluidRenderingContext implements FlowAwareRenderingContextInterface
 {
     /**
      * List of class names implementing ExpressionNodeInterface

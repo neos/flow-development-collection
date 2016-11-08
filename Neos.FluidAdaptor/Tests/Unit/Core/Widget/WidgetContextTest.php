@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Testcase for WidgetContext
@@ -85,7 +86,7 @@ class WidgetContextTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function viewHelperChildNodesCanBeReadAgain()
     {
         $viewHelperChildNodes = $this->createMock(RootNode::class);
-        $renderingContext = $this->createMock(\Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface::class);
+        $renderingContext = $this->createMock(RenderingContextInterface::class);
 
         $this->widgetContext->setViewHelperChildNodes($viewHelperChildNodes, $renderingContext);
         $this->assertSame($viewHelperChildNodes, $this->widgetContext->getViewHelperChildNodes());

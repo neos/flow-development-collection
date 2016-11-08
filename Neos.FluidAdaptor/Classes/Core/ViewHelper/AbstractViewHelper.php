@@ -11,20 +11,21 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelper;
 
 /**
  * The abstract base class for all view helpers.
  *
  * @api
  */
-abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+abstract class AbstractViewHelper extends FluidAbstractViewHelper
 {
     /**
      * Controller Context to use
@@ -53,7 +54,7 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
         $this->renderingContext = $renderingContext;
         $this->templateVariableContainer = $renderingContext->getVariableProvider();
         $this->viewHelperVariableContainer = $renderingContext->getViewHelperVariableContainer();
-        if ($renderingContext instanceof RenderingContext) {
+        if ($renderingContext instanceof FlowAwareRenderingContextInterface) {
             $this->controllerContext = $renderingContext->getControllerContext();
         }
     }
@@ -136,7 +137,7 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
      * @param string $description Description of the argument
      * @param boolean $required If TRUE, argument is required. Defaults to FALSE.
      * @param mixed $defaultValue Default value of argument
-     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper $this, to allow chaining.
+     * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */
@@ -159,7 +160,7 @@ abstract class AbstractViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\Abst
      * @param string $description Description of the argument
      * @param boolean $required If TRUE, argument is required. Defaults to FALSE.
      * @param mixed $defaultValue Default value of argument
-     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper $this, to allow chaining.
+     * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */

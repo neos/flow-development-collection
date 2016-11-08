@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
  */
 
 use TYPO3Fluid\Fluid\Core\Parser\Patterns;
+use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor as FluidNamespaceDetectionTemplateProcessor;
 use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
 /**
@@ -21,7 +22,7 @@ use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
  * finds CDATA and base65 encodes those areas of the template and surrounds that with a call to the Base64DecodeViewHelper
  * which results in the the CDATA section to be present in the final output without any changes from fluid.
  */
-class NamespaceDetectionTemplateProcessor extends \TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor
+class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplateProcessor
 {
     /**
      * Extension of the default pattern for dynamic tags including namespaces with uppercase letters.
