@@ -1,11 +1,12 @@
---------------------------
-Fluid Templating Framework
---------------------------
+------------------------
+Fluid Templating Adaptor
+------------------------
 
 .. note:: This repository is a **read-only subsplit** of a package that is part of the
-          Flow framework (learn more on `flow.typo3.org <http://flow.typo3.org/>`_).
+          Flow framework (learn more on `flow.neos.io <http://flow.neos.io/>`_).
 
-Fluid is a next-generation templating framework for Neos and Flow.
+Fluid is a templating framework originally developed for Flow and Neos, now developed
+independently.
 
 If you want to use the Flow framework, please have a look at the `Flow documentation
 <http://flowframework.readthedocs.org/en/stable/>`_
