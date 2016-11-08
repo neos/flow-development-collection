@@ -153,7 +153,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $view->setControllerContext(new ControllerContext(
             $request,
             new Response(),
-            new Arguments(array()),
+            new Arguments([]),
             $uriBuilder
         ));
 
@@ -161,7 +161,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             $view->assignMultiple($renderingOptions['variables']);
         }
 
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'exception' => $exception,
             'renderingOptions' => $renderingOptions,
             'statusCode' => $statusCode,
@@ -177,7 +177,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      *
      * @param ViewInterface $view
      * @param array $renderingOptions
-     * @return array
+     * @return ViewInterface
      */
     protected function applyLegacyViewOptions(ViewInterface $view, array $renderingOptions)
     {
