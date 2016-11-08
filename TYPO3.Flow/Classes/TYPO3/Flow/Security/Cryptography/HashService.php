@@ -146,7 +146,7 @@ class HashService
     public function hashPassword($password, $strategyIdentifier = 'default')
     {
         /** @var $passwordHashingStrategy PasswordHashingStrategyInterface */
-        list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, false);
+        list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
         $hashedPasswordAndSalt = $passwordHashingStrategy->hashPassword($password, $this->getEncryptionKey());
         return $strategyIdentifier . '=>' . $hashedPasswordAndSalt;
     }
@@ -167,7 +167,7 @@ class HashService
         }
 
         /** @var $passwordHashingStrategy PasswordHashingStrategyInterface */
-        list($passwordHashingStrategy, ) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, true);
+        list($passwordHashingStrategy, ) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
         return $passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->getEncryptionKey());
     }
 
@@ -175,25 +175,20 @@ class HashService
      * Get a password hashing strategy
      *
      * @param string $strategyIdentifier
-     * @param boolean $validating TRUE if the password is validated, FALSE if the password is hashed
      * @return array<PasswordHashingStrategyInterface> and string
      * @throws MissingConfigurationException
      */
-    protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default', $validating)
+    protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default')
     {
         if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
             return [$this->passwordHashingStrategies[$strategyIdentifier], $strategyIdentifier];
         }
 
         if ($strategyIdentifier === 'default') {
-            if ($validating && isset($this->strategySettings['fallback'])) {
-                $strategyIdentifier = $this->strategySettings['fallback'];
-            } else {
-                if (!isset($this->strategySettings['default'])) {
-                    throw new MissingConfigurationException('No default hashing strategy configured', 1320758427);
-                }
-                $strategyIdentifier = $this->strategySettings['default'];
+            if (!isset($this->strategySettings['default'])) {
+                throw new MissingConfigurationException('No default hashing strategy configured', 1320758427);
             }
+            $strategyIdentifier = $this->strategySettings['default'];
         }
 
         if (!isset($this->strategySettings[$strategyIdentifier])) {

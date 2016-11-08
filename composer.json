@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0.0",
         "typo3fluid/fluid": "^1.0",
         "ext-mbstring": "*",
         "ext-zlib": "*",

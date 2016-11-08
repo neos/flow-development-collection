@@ -20,19 +20,19 @@ class ClassWithLazyDependencies
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
+     * @var SingletonClassA
      */
     public $lazyA;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     * @var SingletonClassB
      */
     public $lazyB;
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC
+     * @var SingletonClassC
      */
     public $eagerC;
 }

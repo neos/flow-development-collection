@@ -35,7 +35,7 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(2, $this->converter->getPriority(), 'Priority does not match');
     }
@@ -45,14 +45,14 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     public function canConvertFromDataProvider()
     {
-        return array(
-            array('targetType' => 'SomeTargetType', 'expectedResult' => false),
-            array('targetType' => 'array', 'expectedResult' => false),
+        return [
+            ['targetType' => 'SomeTargetType', 'expectedResult' => false],
+            ['targetType' => 'array', 'expectedResult' => false],
 
-            array('targetType' => 'array<string>', 'expectedResult' => true),
-            array('targetType' => 'array<Some\Element\Type>', 'expectedResult' => true),
-            array('targetType' => '\array<\int>', 'expectedResult' => true),
-        );
+            ['targetType' => 'array<string>', 'expectedResult' => true],
+            ['targetType' => 'array<Some\Element\Type>', 'expectedResult' => true],
+            ['targetType' => '\array<\int>', 'expectedResult' => true],
+        ];
     }
 
     /**
@@ -61,7 +61,7 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     public function canConvertFromTests($targetType, $expectedResult)
     {
-        $actualResult = $this->converter->canConvertFrom(array(), $targetType);
+        $actualResult = $this->converter->canConvertFrom([], $targetType);
         if ($expectedResult === true) {
             $this->assertTrue($actualResult);
         } else {

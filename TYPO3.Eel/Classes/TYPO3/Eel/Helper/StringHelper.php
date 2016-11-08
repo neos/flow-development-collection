@@ -271,7 +271,7 @@ class StringHelper implements ProtectedContextAwareInterface
     public function split($string, $separator = null, $limit = null)
     {
         if ($separator === null) {
-            return array($string);
+            return [$string];
         }
         if ($separator === '') {
             $result = str_split($string);

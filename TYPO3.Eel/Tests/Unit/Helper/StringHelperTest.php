@@ -12,25 +12,26 @@ namespace TYPO3\Eel\Tests\Unit;
  */
 
 use TYPO3\Eel\Helper\StringHelper;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Tests for StringHelper
  */
-class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class StringHelperTest extends UnitTestCase
 {
     public function substrExamples()
     {
-        return array(
-            'positive start and length lower count' => array('Hello, World!', 7, 5, 'World'),
-            'start equal to count' => array('Foo', 3, 42, ''),
-            'start greater than count' => array('Foo', 42, 5, ''),
-            'start negative' => array('Hello, World!', -6, 5, 'World'),
-            'start negative larger than abs(count)' => array('Hello, World!', -42, 5, 'Hello'),
-            'start positive and length omitted' => array('Hello, World!', 7, null, 'World!'),
-            'start positive and length is 0' => array('Hello, World!', 7, 0, ''),
-            'start positive and length is negative' => array('Hello, World!', 7, -1, ''),
-            'unicode content is extracted' => array('Öaßaä', 2, 1, 'ß')
-        );
+        return [
+            'positive start and length lower count' => ['Hello, World!', 7, 5, 'World'],
+            'start equal to count' => ['Foo', 3, 42, ''],
+            'start greater than count' => ['Foo', 42, 5, ''],
+            'start negative' => ['Hello, World!', -6, 5, 'World'],
+            'start negative larger than abs(count)' => ['Hello, World!', -42, 5, 'Hello'],
+            'start positive and length omitted' => ['Hello, World!', 7, null, 'World!'],
+            'start positive and length is 0' => ['Hello, World!', 7, 0, ''],
+            'start positive and length is negative' => ['Hello, World!', 7, -1, ''],
+            'unicode content is extracted' => ['Öaßaä', 2, 1, 'ß']
+        ];
     }
 
     /**
@@ -46,16 +47,16 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function substringExamples()
     {
-        return array(
-            'start equals end' => array('Hello, World!', 7, 7, ''),
-            'end omitted' => array('Hello, World!', 7, null, 'World!'),
-            'negative start' => array('Hello, World!', -7, null, 'Hello, World!'),
-            'negative end' => array('Hello, World!', 5, -5, 'Hello'),
-            'start greater than end' => array('Hello, World!', 5, 0, 'Hello'),
-            'start greater than count' => array('Hello, World!', 15, 0, 'Hello, World!'),
-            'end greater than count' => array('Hello, World!', 7, 15, 'World!'),
-            'unicode content is extracted' => array('Öaßaä', 2, 3, 'ß')
-        );
+        return [
+            'start equals end' => ['Hello, World!', 7, 7, ''],
+            'end omitted' => ['Hello, World!', 7, null, 'World!'],
+            'negative start' => ['Hello, World!', -7, null, 'Hello, World!'],
+            'negative end' => ['Hello, World!', 5, -5, 'Hello'],
+            'start greater than end' => ['Hello, World!', 5, 0, 'Hello'],
+            'start greater than count' => ['Hello, World!', 15, 0, 'Hello, World!'],
+            'end greater than count' => ['Hello, World!', 7, 15, 'World!'],
+            'unicode content is extracted' => ['Öaßaä', 2, 3, 'ß']
+        ];
     }
 
     /**
@@ -71,12 +72,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function charAtExamples()
     {
-        return array(
-            'index in string' => array('Hello, World!', 5, ','),
-            'index greater than count' => array('Hello, World!', 42, ''),
-            'index negative' => array('Hello, World!', -1, ''),
-            'unicode content can be accessed' => array('Öaßaü', 2, 'ß')
-        );
+        return [
+            'index in string' => ['Hello, World!', 5, ','],
+            'index greater than count' => ['Hello, World!', 42, ''],
+            'index negative' => ['Hello, World!', -1, ''],
+            'unicode content can be accessed' => ['Öaßaü', 2, 'ß']
+        ];
     }
 
     /**
@@ -92,12 +93,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function endsWithExamples()
     {
-        return array(
-            'search matched' => array('To be, or not to be, that is the question.', 'question.', null, true),
-            'search not matched' => array('To be, or not to be, that is the question.', 'to be', null, false),
-            'search with position' => array('To be, or not to be, that is the question.', 'to be', 19, true),
-            'unicode content can be searched' => array('Öaßaü', 'aü', null, true)
-        );
+        return [
+            'search matched' => ['To be, or not to be, that is the question.', 'question.', null, true],
+            'search not matched' => ['To be, or not to be, that is the question.', 'to be', null, false],
+            'search with position' => ['To be, or not to be, that is the question.', 'to be', 19, true],
+            'unicode content can be searched' => ['Öaßaü', 'aü', null, true]
+        ];
     }
 
     /**
@@ -113,18 +114,18 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function indexOfExamples()
     {
-        return array(
-            'match at start' => array('Blue Whale', 'Blue', null, 0),
-            'no match' => array('Blute', 'Blue', null, -1),
-            'from index at start' => array('Blue Whale', 'Whale', 0, 5),
-            'from index at begin of match' => array('Blue Whale', 'Whale', 5, 5),
-            'from index after match' => array('Blue Whale', 'Whale', 6, -1),
-            'empty search' => array('Blue Whale', '', null, 0),
-            'empty search with from index' => array('Blue Whale', '', 9, 9),
-            'empty search with from index larger than count' => array('Blue Whale', '', 11, 10),
-            'case sensitive match' => array('Blue Whale', 'blue', null, -1),
-            'unicode content is matched' => array('Öaßaü', 'ßa', null, 2)
-        );
+        return [
+            'match at start' => ['Blue Whale', 'Blue', null, 0],
+            'no match' => ['Blute', 'Blue', null, -1],
+            'from index at start' => ['Blue Whale', 'Whale', 0, 5],
+            'from index at begin of match' => ['Blue Whale', 'Whale', 5, 5],
+            'from index after match' => ['Blue Whale', 'Whale', 6, -1],
+            'empty search' => ['Blue Whale', '', null, 0],
+            'empty search with from index' => ['Blue Whale', '', 9, 9],
+            'empty search with from index larger than count' => ['Blue Whale', '', 11, 10],
+            'case sensitive match' => ['Blue Whale', 'blue', null, -1],
+            'unicode content is matched' => ['Öaßaü', 'ßa', null, 2]
+        ];
     }
 
     /**
@@ -140,13 +141,13 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function lastIndexOfExamples()
     {
-        return array(
-            'match last occurence' => array('canal', 'a', null, 3),
-            'match with from index' => array('canal', 'a', 2, 1),
-            'no match with from index too low' => array('canal', 'a', 0, -1),
-            'no match' => array('canal', 'x', null, -1),
-            'unicode content is matched' => array('Öaßaü', 'a', null, 3)
-        );
+        return [
+            'match last occurence' => ['canal', 'a', null, 3],
+            'match with from index' => ['canal', 'a', 2, 1],
+            'no match with from index too low' => ['canal', 'a', 0, -1],
+            'no match' => ['canal', 'x', null, -1],
+            'unicode content is matched' => ['Öaßaü', 'a', null, 3]
+        ];
     }
 
     /**
@@ -162,9 +163,9 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function pregMatchExamples()
     {
-        return array(
-            'matches' => array('For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', array('Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1'))
-        );
+        return [
+            'matches' => ['For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']]
+        ];
     }
 
     /**
@@ -180,12 +181,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function pregReplaceExamples()
     {
-        return array(
-            'replace non-alphanumeric characters' => array('Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'),
-            'no match' => array('canal', '/x/', 'y', 'canal'),
-            'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü'),
-            'references' => array('2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016')
-        );
+        return [
+            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'],
+            'no match' => ['canal', '/x/', 'y', 'canal'],
+            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', 'Ögü'],
+            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016']
+        ];
     }
 
     /**
@@ -201,10 +202,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function pregSplitExamples()
     {
-        return array(
-            'matches' => array('foo bar   baz', '/\s+/', null, array('foo', 'bar', 'baz')),
-            'matches with limit' => array('first second third', '/\s+/', 2, array('first', 'second third'))
-        );
+        return [
+            'matches' => ['foo bar   baz', '/\s+/', null, ['foo', 'bar', 'baz']],
+            'matches with limit' => ['first second third', '/\s+/', 2, ['first', 'second third']]
+        ];
     }
 
     /**
@@ -220,11 +221,11 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function replaceExamples()
     {
-        return array(
-            'replace' => array('canal', 'ana', 'oo', 'cool'),
-            'no match' => array('canal', 'x', 'y', 'canal'),
-            'unicode replacement' => array('Öaßaü', 'aßa', 'g', 'Ögü')
-        );
+        return [
+            'replace' => ['canal', 'ana', 'oo', 'cool'],
+            'no match' => ['canal', 'x', 'y', 'canal'],
+            'unicode replacement' => ['Öaßaü', 'aßa', 'g', 'Ögü']
+        ];
     }
 
     /**
@@ -241,12 +242,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function splitExamples()
     {
-        return array(
-            'split' => array('My hovercraft is full of eels', ' ', null, array('My', 'hovercraft', 'is', 'full', 'of', 'eels')),
-            'NULL separator' => array('The bad parts', null, null, array('The bad parts')),
-            'empty separator' => array('Foo', '', null, array('F', 'o', 'o')),
-            'empty separator with limit' => array('Foo', '', 2, array('F', 'o'))
-        );
+        return [
+            'split' => ['My hovercraft is full of eels', ' ', null, ['My', 'hovercraft', 'is', 'full', 'of', 'eels']],
+            'NULL separator' => ['The bad parts', null, null, ['The bad parts']],
+            'empty separator' => ['Foo', '', null, ['F', 'o', 'o']],
+            'empty separator with limit' => ['Foo', '', 2, ['F', 'o']]
+        ];
     }
 
     /**
@@ -262,13 +263,13 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function startsWithExamples()
     {
-        return array(
-            'search matched' => array('To be, or not to be, that is the question.', 'To be', null, true),
-            'search not matched' => array('To be, or not to be, that is the question.', 'not to be', null, false),
-            'search with position' => array('To be, or not to be, that is the question.', 'that is', 21, true),
-            'search with duplicate match' => array('to be, or not to be, that is the question.', 'to be', null, true),
-            'unicode content can be searched' => array('Öaßaü', 'Öa', null, true)
-        );
+        return [
+            'search matched' => ['To be, or not to be, that is the question.', 'To be', null, true],
+            'search not matched' => ['To be, or not to be, that is the question.', 'not to be', null, false],
+            'search with position' => ['To be, or not to be, that is the question.', 'that is', 21, true],
+            'search with duplicate match' => ['to be, or not to be, that is the question.', 'to be', null, true],
+            'unicode content can be searched' => ['Öaßaü', 'Öa', null, true]
+        ];
     }
 
     /**
@@ -284,10 +285,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function firstLetterToUpperCaseExamples()
     {
-        return array(
-            'lowercase' => array('foo', 'Foo'),
-            'firstLetterUpperCase' => array('Foo', 'Foo')
-        );
+        return [
+            'lowercase' => ['foo', 'Foo'],
+            'firstLetterUpperCase' => ['Foo', 'Foo']
+        ];
     }
 
     /**
@@ -303,10 +304,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function firstLetterToLowerCaseExamples()
     {
-        return array(
-            'lowercase' => array('foo', 'foo'),
-            'firstLetterUpperCase' => array('Foo', 'foo')
-        );
+        return [
+            'lowercase' => ['foo', 'foo'],
+            'firstLetterUpperCase' => ['Foo', 'foo']
+        ];
     }
 
     /**
@@ -322,9 +323,9 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function toLowerCaseExamples()
     {
-        return array(
-            'lowercase' => array('Foo bAr BaZ', 'foo bar baz')
-        );
+        return [
+            'lowercase' => ['Foo bAr BaZ', 'foo bar baz']
+        ];
     }
 
     /**
@@ -340,9 +341,9 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function toUpperCaseExamples()
     {
-        return array(
-            'uppercase' => array('Foo bAr BaZ', 'FOO BAR BAZ')
-        );
+        return [
+            'uppercase' => ['Foo bAr BaZ', 'FOO BAR BAZ']
+        ];
     }
 
     /**
@@ -358,12 +359,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function isBlankExamples()
     {
-        return array(
-            'string with whitespace' => array('  	', true),
-            'string with characters' => array(' abc ', false),
-            'empty string' => array('', true),
-            'NULL string' => array(null, true)
-        );
+        return [
+            'string with whitespace' => ['  	', true],
+            'string with characters' => [' abc ', false],
+            'empty string' => ['', true],
+            'NULL string' => [null, true]
+        ];
     }
 
     /**
@@ -379,12 +380,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function trimExamples()
     {
-        return array(
-            'string with whitespace' => array('  	', null, ''),
-            'string with characters and whitespace' => array(" Foo Bar \n", null, 'Foo Bar'),
-            'empty string' => array('', null, ''),
-            'trim with charlist' => array('< abc >', '<>', ' abc ')
-        );
+        return [
+            'string with whitespace' => ['  	', null, ''],
+            'string with characters and whitespace' => [" Foo Bar \n", null, 'Foo Bar'],
+            'empty string' => ['', null, ''],
+            'trim with charlist' => ['< abc >', '<>', ' abc ']
+        ];
     }
 
     /**
@@ -400,25 +401,25 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function typeConversionExamples()
     {
-        return array(
-            'string numeric value' => array('toString', 42, '42'),
-            'string true boolean value' => array('toString', true, '1'),
-            'string false boolean value' => array('toString', false, ''),
+        return [
+            'string numeric value' => ['toString', 42, '42'],
+            'string true boolean value' => ['toString', true, '1'],
+            'string false boolean value' => ['toString', false, ''],
 
-            'integer numeric value' => array('toInteger', '42', 42),
-            'integer empty value' => array('toInteger', '', 0),
-            'integer invalid value' => array('toInteger', 'x12', 0),
+            'integer numeric value' => ['toInteger', '42', 42],
+            'integer empty value' => ['toInteger', '', 0],
+            'integer invalid value' => ['toInteger', 'x12', 0],
 
-            'float numeric value' => array('toFloat', '3.141', 3.141),
-            'float invalid value' => array('toFloat', 'x1.0', 0.0),
-            'float exp notation' => array('toFloat', '4.0e8', 4.0e8),
+            'float numeric value' => ['toFloat', '3.141', 3.141],
+            'float invalid value' => ['toFloat', 'x1.0', 0.0],
+            'float exp notation' => ['toFloat', '4.0e8', 4.0e8],
 
-            'boolean true' => array('toBoolean', 'true', true),
-            'boolean 1' => array('toBoolean', '1', true),
-            'boolean false' => array('toBoolean', 'false', false),
-            'boolean 0' => array('toBoolean', '0', false),
-            'boolean anything' => array('toBoolean', 'xz', false)
-        );
+            'boolean true' => ['toBoolean', 'true', true],
+            'boolean 1' => ['toBoolean', '1', true],
+            'boolean false' => ['toBoolean', 'false', false],
+            'boolean 0' => ['toBoolean', '0', false],
+            'boolean anything' => ['toBoolean', 'xz', false]
+        ];
     }
 
     /**
@@ -434,11 +435,11 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function stripTagsExamples()
     {
-        return array(
-            'strip tags' => array('<a href="#">here</a>', null, 'here'),
-            'strip tags with allowed tags' => array('<p><strong>important text</strong></p>', '<strong>', '<strong>important text</strong>'),
-            'strip tags with multiple allowed tags' => array('<div><p><strong>important text</strong></p></div>', '<strong>, <p>', '<p><strong>important text</strong></p>')
-        );
+        return [
+            'strip tags' => ['<a href="#">here</a>', null, 'here'],
+            'strip tags with allowed tags' => ['<p><strong>important text</strong></p>', '<strong>', '<strong>important text</strong>'],
+            'strip tags with multiple allowed tags' => ['<div><p><strong>important text</strong></p></div>', '<strong>, <p>', '<p><strong>important text</strong></p>']
+        ];
     }
 
     /**
@@ -464,10 +465,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function htmlSpecialCharsExamples()
     {
-        return array(
-            'encode entities' => array('Foo &amp; Bar', null, 'Foo &amp;amp; Bar'),
-            'preserve entities' => array('Foo &amp; <a href="#">Bar</a>', true, 'Foo &amp; &lt;a href="#"&gt;Bar&lt;/a&gt;')
-        );
+        return [
+            'encode entities' => ['Foo &amp; Bar', null, 'Foo &amp;amp; Bar'],
+            'preserve entities' => ['Foo &amp; <a href="#">Bar</a>', true, 'Foo &amp; &lt;a href="#"&gt;Bar&lt;/a&gt;']
+        ];
     }
 
     /**
@@ -483,43 +484,43 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function cropExamples()
     {
-        return array(
-            'standard options' => array(
+        return [
+            'standard options' => [
                 'methodName' => 'crop',
                 'maximumCharacters' => 18,
                 'suffixString' => '...',
                 'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
                 'expected' => 'Kasper Skårhøj imp...'
-            ),
-            'crop at word' => array(
+            ],
+            'crop at word' => [
                 'methodName' => 'cropAtWord',
                 'maximumCharacters' => 18,
                 'suffixString' => '...',
                 'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
                 'expected' => 'Kasper Skårhøj ...'
-            ),
-            'crop at sentence' => array(
+            ],
+            'crop at sentence' => [
                 'methodName' => 'cropAtSentence',
                 'maximumCharacters' => 80,
                 'suffixString' => '...',
                 'text' => 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.',
                 'expected' => 'Kasper Skårhøj implemented the original version of the crop function. ...'
-            ),
-            'prefixCanBeChanged' => array(
+            ],
+            'prefixCanBeChanged' => [
                 'methodName' => 'crop',
                 'maximumCharacters' => 15,
                 'suffixString' => '!',
                 'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
                 'expected' => 'Kasper Skårhøj !'
-            ),
-            'subject is not modified if run without options' => array(
+            ],
+            'subject is not modified if run without options' => [
                 'methodName' => 'crop',
                 'maximumCharacters' => null,
                 'suffixString' => null,
                 'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
                 'expected' => 'Kasper Skårhøj implemented the original version of the crop function.'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -545,12 +546,12 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function lengthExamples()
     {
-        return array(
-            'null' => array(null, 0),
-            'empty' => array('', 0),
-            'non-empty' => array('Foo', 3),
-            'UTF-8' => array('Cäche Flüsh', 11)
-        );
+        return [
+            'null' => [null, 0],
+            'empty' => ['', 0],
+            'non-empty' => ['Foo', 3],
+            'UTF-8' => ['Cäche Flüsh', 11]
+        ];
     }
 
     /**

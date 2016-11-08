@@ -12,15 +12,16 @@ namespace TYPO3\Flow\Tests\Functional\I18n;
  */
 
 use TYPO3\Flow\I18n;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the I18N translations
  *
  */
-class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class TranslatorTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Translator
+     * @var I18n\Translator
      */
     protected $translator;
 
@@ -30,7 +31,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->translator = $this->objectManager->get(\TYPO3\Flow\I18n\Translator::class);
+        $this->translator = $this->objectManager->get(I18n\Translator::class);
     }
 
     /**
@@ -38,12 +39,12 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function idAndLocaleForTranslation()
     {
-        return array(
-            array('authentication.username', new I18n\Locale('en'), 'Username'),
-            array('authentication.username', new I18n\Locale('de_CH'), 'Benutzername'),
-            array('update', new I18n\Locale('en'), 'Update'),
-            array('update', new I18n\Locale('de'), 'Aktualisieren')
-        );
+        return [
+            ['authentication.username', new I18n\Locale('en'), 'Username'],
+            ['authentication.username', new I18n\Locale('de_CH'), 'Benutzername'],
+            ['update', new I18n\Locale('en'), 'Update'],
+            ['update', new I18n\Locale('de'), 'Aktualisieren']
+        ];
     }
 
     /**
@@ -52,7 +53,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function simpleTranslationByIdWorks($id, $locale, $translation)
     {
-        $result = $this->translator->translateById($id, array(), null, $locale, 'Main', 'TYPO3.Flow');
+        $result = $this->translator->translateById($id, [], null, $locale, 'Main', 'TYPO3.Flow');
         $this->assertEquals($translation, $result);
     }
 
@@ -61,10 +62,10 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function labelAndLocaleForTranslation()
     {
-        return array(
-            array('Update', new I18n\Locale('en'), 'Update'),
-            array('Update', new I18n\Locale('de'), 'Aktualisieren')
-        );
+        return [
+            ['Update', new I18n\Locale('en'), 'Update'],
+            ['Update', new I18n\Locale('de'), 'Aktualisieren']
+        ];
     }
 
     /**
@@ -73,7 +74,7 @@ class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function simpleTranslationByLabelWorks($label, $locale, $translation)
     {
-        $result = $this->translator->translateByOriginalLabel($label, array(), null, $locale, 'Main', 'TYPO3.Flow');
+        $result = $this->translator->translateByOriginalLabel($label, [], null, $locale, 'Main', 'TYPO3.Flow');
         $this->assertEquals($translation, $result);
     }
 

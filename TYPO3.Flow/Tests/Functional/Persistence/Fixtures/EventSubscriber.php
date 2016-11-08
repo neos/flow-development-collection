@@ -35,7 +35,7 @@ class EventSubscriber implements \Doctrine\Common\EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(Events::preFlush, Events::onFlush, Events::postFlush);
+        return [Events::preFlush, Events::onFlush, Events::postFlush];
     }
 
     public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args)

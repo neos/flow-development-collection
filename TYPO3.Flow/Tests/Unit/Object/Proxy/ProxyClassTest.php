@@ -11,58 +11,60 @@ namespace TYPO3\Flow\Tests\Unit\Object\Proxy;
  * source code.
  */
 
-/**
- *
- */
-class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
+use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\Object\Proxy\ProxyClass;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
+
+class ProxyClassTest extends UnitTestCase
 {
     /**
      * @return array
      */
     public function proxyClassesDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'originalClassName' => '\Acme\Namespace\ClassName',
-                'originalClassAnnotations' => array(),
+                'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
-                'originalClassConstants' => array(array('name' => 'TEST_CONSTANT', 'value' => '1')),
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
                 'expectedProxyCode' => "namespace \Acme\Namespace;\n" .
-            "\n" .
-            "use Doctrine\\ORM\\Mapping as ORM;\n" .
-            "use TYPO3\\Flow\\Annotations as Flow;\n" .
-            "\n" .
-            'class ClassName extends ClassName' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "    const TEST_CONSTANT = 1;\n\n" .
-            '}',
-            ),
-            array(
+                    "\n" .
+                    "use Doctrine\\ORM\\Mapping as ORM;\n" .
+                    "use TYPO3\\Flow\\Annotations as Flow;\n" .
+                    "\n" .
+                    'class ClassName extends ClassName' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+                    "    const TEST_CONSTANT = 1;\n\n" .
+                    '}',
+            ],
+            [
                 'originalClassName' => '\ClassWithoutNamespace',
-                'originalClassAnnotations' => array(),
+                'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
-                'originalClassConstants' => array(array('name' => 'TEST_CONSTANT', 'value' => '1')),
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
                 'expectedProxyCode' =>
-            "use Doctrine\\ORM\\Mapping as ORM;\n" .
-            "use TYPO3\\Flow\\Annotations as Flow;\n" .
-            "\n" .
-            'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "    const TEST_CONSTANT = 1;\n\n" .
-            '}',
-            ),
-            array(
+                    "use Doctrine\\ORM\\Mapping as ORM;\n" .
+                    "use TYPO3\\Flow\\Annotations as Flow;\n" .
+                    "\n" .
+                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+                    "    const TEST_CONSTANT = 1;\n\n" .
+                    '}',
+            ],
+            [
                 'originalClassName' => 'ClassWithoutNamespace',
-                'originalClassAnnotations' => array(),
+                'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
-                'originalClassConstants' => array(array('name' => 'TEST_CONSTANT', 'value' => '1')),
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
                 'expectedProxyCode' =>
-            "use Doctrine\\ORM\\Mapping as ORM;\n" .
-            "use TYPO3\\Flow\\Annotations as Flow;\n" .
-            "\n" .
-            'class ClassWithoutNamespace extends ClassWithoutNamespace' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
-            "    const TEST_CONSTANT = 1;\n\n" .
-            '}',
-            ),
-        );
+                    "use Doctrine\\ORM\\Mapping as ORM;\n" .
+                    "use TYPO3\\Flow\\Annotations as Flow;\n" .
+                    "\n" .
+                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\Object\Proxy\ProxyInterface {\n\n" .
+                    "    const TEST_CONSTANT = 1;\n\n" .
+                    '}',
+            ],
+        ];
     }
 
     /**
@@ -71,11 +73,11 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
     {
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('isClassAbstract')->will($this->returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
         $mockReflectionService->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($originalClassAnnotations));
 
-        $mockProxyClass = $this->getAccessibleMock(\TYPO3\Flow\Object\Proxy\ProxyClass::class, array('buildClassDocumentation'), array($originalClassName), '', true);
+        $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);
         $mockProxyClass->expects($this->any())->method('buildClassDocumentation')->will($this->returnValue($originalClassDocumentation));
         $mockProxyClass->injectReflectionService($mockReflectionService);
         foreach ($originalClassConstants as $originalClassConstant) {

@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Object\Proxy;
  * Representation of a constructor method within a proxy class
  *
  */
-class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod
+class ProxyConstructor extends ProxyMethod
 {
     /**
      * Name of the original method

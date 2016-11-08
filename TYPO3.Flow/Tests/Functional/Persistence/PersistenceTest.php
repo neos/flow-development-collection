@@ -11,20 +11,20 @@ namespace TYPO3\Flow\Tests\Functional\Persistence;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Tools\SchemaTool;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Persistence\Doctrine\QueryResult;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntityRepository;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for persistence
  *
  */
-class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistenceTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -32,12 +32,12 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var TestEntityRepository
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
 
     /**
-     * @var ExtendedTypesEntityRepository
+     * @var Fixtures\ExtendedTypesEntityRepository
      */
     protected $extendedTypesEntityRepository;
 
@@ -47,11 +47,11 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->testEntityRepository = new TestEntityRepository();
-        $this->extendedTypesEntityRepository = new ExtendedTypesEntityRepository();
+        $this->testEntityRepository = new Fixtures\TestEntityRepository();
+        $this->extendedTypesEntityRepository = new Fixtures\ExtendedTypesEntityRepository();
     }
 
     /**
@@ -75,7 +75,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->insertExampleEntity();
 
         $allResults = $this->testEntityRepository->findAll();
-        $this->assertInstanceOf(\TYPO3\Flow\Persistence\Doctrine\QueryResult::class, $allResults);
+        $this->assertInstanceOf(QueryResult::class, $allResults);
         $this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
 
         $allResultsArray = $allResults->toArray();
@@ -134,7 +134,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aClonedEntityWillGetANewIdentifier()
     {
-        $testEntity = new TestEntity();
+        $testEntity = new Fixtures\TestEntity();
         $firstIdentifier = $this->persistenceManager->getIdentifierByObject($testEntity);
 
         $clonedEntity = clone $testEntity;
@@ -147,18 +147,18 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup()
     {
-        $testEntityLyingInsideTheArray = new TestEntity();
+        $testEntityLyingInsideTheArray = new Fixtures\TestEntity();
         $testEntityLyingInsideTheArray->setName('Flow');
 
-        $arrayProperty = array(
-            'some' => array(
-                'nestedArray' => array(
+        $arrayProperty = [
+            'some' => [
+                'nestedArray' => [
                     'key' => $testEntityLyingInsideTheArray
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $testEntityWithArrayProperty = new TestEntity();
+        $testEntityWithArrayProperty = new Fixtures\TestEntity();
         $testEntityWithArrayProperty->setName('dummy');
         $testEntityWithArrayProperty->setArrayProperty($arrayProperty);
 
@@ -184,9 +184,9 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier()
     {
-        $expectedEntity = new TestEntity();
+        $expectedEntity = new Fixtures\TestEntity();
         $uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
-        $actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
+        $actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, TestEntity::class);
         $this->assertSame($expectedEntity, $actualEntity);
     }
 
@@ -195,12 +195,12 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function valueObjectsWithTheSameValueAreOnlyPersistedOnce()
     {
-        $valueObject1 = new TestValueObject('sameValue');
-        $valueObject2 = new TestValueObject('sameValue');
+        $valueObject1 = new Fixtures\TestValueObject('sameValue');
+        $valueObject2 = new Fixtures\TestValueObject('sameValue');
 
-        $testEntity1 = new TestEntity();
+        $testEntity1 = new Fixtures\TestEntity();
         $testEntity1->setRelatedValueObject($valueObject1);
-        $testEntity2 = new TestEntity();
+        $testEntity2 = new Fixtures\TestEntity();
         $testEntity2->setRelatedValueObject($valueObject2);
 
         $this->testEntityRepository->add($testEntity1);
@@ -219,8 +219,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function alreadyPersistedValueObjectsAreCorrectlyReused()
     {
-        $valueObject1 = new TestValueObject('sameValue');
-        $testEntity1 = new TestEntity();
+        $valueObject1 = new Fixtures\TestValueObject('sameValue');
+        $testEntity1 = new Fixtures\TestEntity();
         $testEntity1->setRelatedValueObject($valueObject1);
 
         $this->testEntityRepository->add($testEntity1);
@@ -228,12 +228,12 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $valueObject2 = new TestValueObject('sameValue');
-        $testEntity2 = new TestEntity();
+        $valueObject2 = new Fixtures\TestValueObject('sameValue');
+        $testEntity2 = new Fixtures\TestEntity();
         $testEntity2->setRelatedValueObject($valueObject2);
 
-        $valueObject3 = new TestValueObject('sameValue');
-        $testEntity3 = new TestEntity();
+        $valueObject3 = new Fixtures\TestValueObject('sameValue');
+        $testEntity3 = new Fixtures\TestEntity();
         $testEntity3->setRelatedValueObject($valueObject3);
 
         $this->testEntityRepository->add($testEntity2);
@@ -253,16 +253,16 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function embeddedValueObjectsAreActuallyEmbedded()
     {
-        /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
-        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
-        $classMetaData = $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        /* @var $entityManager ObjectManager */
+        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $schemaTool = new SchemaTool($entityManager);
+        $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
         $schema = $schemaTool->getSchemaFromMetadata(array($classMetaData));
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
 
-        $valueObject = new TestEmbeddedValueObject('someValue');
-        $testEntity = new TestEntity();
+        $valueObject = new Fixtures\TestEmbeddedValueObject('someValue');
+        $testEntity = new Fixtures\TestEntity();
         $testEntity->setEmbeddedValueObject($valueObject);
 
         $this->testEntityRepository->add($testEntity);
@@ -270,7 +270,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /* @var $testEntity TestEntity */
+        /* @var $testEntity Fixtures\TestEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         $this->assertEquals('someValue', $testEntity->getEmbeddedValueObject()->getValue());
     }
@@ -321,8 +321,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         // only with the Object Identifier
         $this->persistenceManager->clearState();
 
-        $entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
-        $lazyLoadedEntity = $entityManager->getReference(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $theObjectIdentifier);
+        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $lazyLoadedEntity = $entityManager->getReference(Fixtures\TestEntity::class, $theObjectIdentifier);
         $lazyLoadedEntity->setName('a');
         $this->testEntityRepository->update($lazyLoadedEntity);
         $this->persistenceManager->persistAll();
@@ -356,7 +356,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->removeExampleEntities();
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
-        $eventSubscriber = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber::class);
+        $eventSubscriber = $this->objectManager->get(Fixtures\EventSubscriber::class);
         $this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
         $this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
         $this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
@@ -370,7 +370,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->removeExampleEntities();
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
-        $eventSubscriber = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener::class);
+        $eventSubscriber = $this->objectManager->get(Fixtures\EventListener::class);
         $this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
         $this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
         $this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
@@ -382,7 +382,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
     {
-        $testEntity = new TestEntity();
+        $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
         $this->persistenceManager->persistAll(true);
@@ -398,7 +398,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
 
-        /** @var TestEntity $testEntity */
+        /** @var Fixtures\TestEntity $testEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         $testEntity->setName('Another name');
         $this->testEntityRepository->update($testEntity);
@@ -410,7 +410,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet()
     {
-        $testEntity = new TestEntity();
+        $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
 
@@ -424,16 +424,16 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function extendedTypesEntityIsIsReconstitutedWithProperties()
     {
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
 
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
         $this->assertNull($persistedExtendedTypesEntity->getCommonObject(), 'Common Object');
         $this->assertNull($persistedExtendedTypesEntity->getDateTime(), 'DateTime');
         $this->assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
@@ -441,8 +441,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->assertNull($persistedExtendedTypesEntity->getTime(), 'Time');
 
         // These types always returns an array, never NULL, even if the property is nullable
-        $this->assertEquals(array(), $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
-        $this->assertEquals(array(), $persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
+        $this->assertEquals([], $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
+        $this->assertEquals([], $persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
     }
 
     /**
@@ -450,25 +450,25 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function commonObjectIsPersistedAndIsReconstituted()
     {
-        if ($this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.persistence.backendOptions.driver') === 'pdo_pgsql') {
+        if ($this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.persistence.backendOptions.driver') === 'pdo_pgsql') {
             $this->markTestSkipped('Doctrine ORM on PostgreSQL cannot store serialized data, thus storing objects with Type::OBJECT would fail. See http://www.doctrine-project.org/jira/browse/DDC-3241');
         }
 
-        $commonObject = new CommonObject();
+        $commonObject = new Fixtures\CommonObject();
         $commonObject->setFoo('foo');
 
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setCommonObject($commonObject);
 
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf(Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
         $this->assertEquals('foo', $persistedExtendedTypesEntity->getCommonObject()->getFoo());
     }
 
@@ -477,18 +477,18 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function jsonArrayIsPersistedAndIsReconstituted()
     {
-        $extendedTypesEntity = new ExtendedTypesEntity();
-        $extendedTypesEntity->setJsonArray(array('foo' => 'bar'));
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
+        $extendedTypesEntity->setJsonArray(['foo' => 'bar']);
 
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals(array('foo' => 'bar'), $persistedExtendedTypesEntity->getJsonArray());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertEquals(['foo' => 'bar'], $persistedExtendedTypesEntity->getJsonArray());
     }
 
     /**
@@ -501,20 +501,20 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         ini_set('date.timezone', 'Arctic/Longyearbyen');
 
         $dateTimeTz = new \DateTime('2008-11-16 19:03:30', new \DateTimeZone('UTC'));
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setDateTime($dateTimeTz);
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
         // Restore test env timezone
         ini_restore('date.timezone');
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTime());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
         $this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
         $this->assertEquals('Arctic/Longyearbyen', $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
     }
@@ -525,16 +525,16 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function dateTimeIsPersistedAndIsReconstituted()
     {
         $dateTimeTz = new \DateTime('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setDateTime($dateTimeTz);
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTime());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
         $this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
         $this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
     }
@@ -555,20 +555,20 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         ini_set('date.timezone', 'Arctic/Longyearbyen');
 
         $dateTimeTz = new \DateTime('2008-11-16 19:03:30', new \DateTimeZone('UTC'));
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setDateTimeTz($dateTimeTz);
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
         // Restore test env timezone
         ini_restore('date.timezone');
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf(\DateTime::class, $persistedExtendedTypesEntity->getDateTimeTz());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTimeTz());
         $this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeTz()->getTimestamp());
         $this->assertEquals(ini_get('datetime.timezone'), $persistedExtendedTypesEntity->getDateTimeTz()->getTimezone()->getName());
     }
@@ -579,15 +579,15 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function dateIsPersistedAndIsReconstituted()
     {
         $dateTime = new \DateTime('2008-11-16 19:03:30');
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setDate($dateTime);
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
         $this->assertEquals('2008-11-16', $persistedExtendedTypesEntity->getDate()->format('Y-m-d'));
     }
 
@@ -597,15 +597,15 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function timeIsPersistedAndIsReconstituted()
     {
         $dateTime = new \DateTime('2008-11-16 19:03:30');
-        $extendedTypesEntity = new ExtendedTypesEntity();
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setTime($dateTime);
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
         $this->assertEquals('19:03:30', $persistedExtendedTypesEntity->getTime()->format('H:i:s'));
     }
 
@@ -614,18 +614,18 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function simpleArrayIsPersistedAndIsReconstituted()
     {
-        $extendedTypesEntity = new ExtendedTypesEntity();
-        $extendedTypesEntity->setSimpleArray(array('foo' => 'bar'));
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
+        $extendedTypesEntity->setSimpleArray(['foo' => 'bar']);
 
         $this->persistenceManager->add($extendedTypesEntity);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /**  @var ExtendedTypesEntity $persistedExtendedTypesEntity */
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals(array('bar'), $persistedExtendedTypesEntity->getSimpleArray());
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertEquals(['bar'], $persistedExtendedTypesEntity->getSimpleArray());
     }
 
     /**
@@ -637,7 +637,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
 
-        /** @var TestEntity $testEntity */
+        /** @var Fixtures\TestEntity $testEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         $testEntity->setName('Another name');
         $this->testEntityRepository->update($testEntity);
@@ -651,7 +651,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     protected function insertExampleEntity($name = 'Flow')
     {
-        $testEntity = new TestEntity();
+        $testEntity = new Fixtures\TestEntity();
         $testEntity->setName($name);
         $this->testEntityRepository->add($testEntity);
 
@@ -674,16 +674,16 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function doctrineEmbeddablesAreActuallyEmbedded()
     {
-        /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
-        $entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
-        $metaData = $entityManager->getClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+        /* @var $entityManager ObjectManager */
+        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $schemaTool = new SchemaTool($entityManager);
+        $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');
         $schema = $schemaTool->getSchemaFromMetadata(array($metaData));
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'), 'Database schema does not contain embedded value field');
 
-        $embeddable = new TestEmbeddable('someValue');
-        $testEntity = new TestEntity();
+        $embeddable = new Fixtures\TestEmbeddable('someValue');
+        $testEntity = new Fixtures\TestEntity();
         $testEntity->setEmbedded($embeddable);
 
         $this->testEntityRepository->add($testEntity);
@@ -691,7 +691,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /* @var $testEntity TestEntity */
+        /* @var $testEntity Fixtures\TestEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         $this->assertEquals('someValue', $testEntity->getEmbedded()->getValue());
     }

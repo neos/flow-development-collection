@@ -11,10 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for the HTTP browser
  */
-class BrowserTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class BrowserTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -30,13 +32,13 @@ class BrowserTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->registerRoute(
             'Functional Test - Http::Client::BrowserTest',
             'test/http/redirecting(/{@action})',
-            array(
+            [
                 '@package' => 'TYPO3.Flow',
                 '@subpackage' => 'Tests\Functional\Http\Fixtures',
                 '@controller' => 'Redirecting',
                 '@action' => 'fromHere',
                 '@format' => 'html'
-            )
+            ]
         );
     }
 
