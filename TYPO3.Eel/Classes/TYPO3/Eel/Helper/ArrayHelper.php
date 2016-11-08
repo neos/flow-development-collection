@@ -340,6 +340,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
      *
      * @param array $array
+     * @return array The array with flipped keys and values
      */
     public function flip(array $array)
     {
