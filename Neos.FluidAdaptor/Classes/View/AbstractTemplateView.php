@@ -191,9 +191,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
     {
-        $renderingContext = $this->getCurrentRenderingContext();
-
-        if ($renderingContext === null) {
+        if ($this->getCurrentParsedTemplate() === null) {
             return $this->renderStandaloneSection($sectionName, $variables, $ignoreUnknown);
         }
 

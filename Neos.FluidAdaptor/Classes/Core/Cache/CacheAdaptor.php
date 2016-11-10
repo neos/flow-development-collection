@@ -14,6 +14,8 @@ namespace Neos\FluidAdaptor\Core\Cache;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3Fluid\Fluid\Core\Cache\FluidCacheInterface;
+use TYPO3Fluid\Fluid\Core\Cache\FluidCacheWarmerInterface;
+use TYPO3Fluid\Fluid\Core\Cache\StandardCacheWarmer;
 
 /**
  * @Flow\Scope("singleton")
@@ -68,5 +70,18 @@ class CacheAdaptor implements FluidCacheInterface
         } else {
             return $this->flowCache->flush();
         }
+    }
+
+    /**
+     * Get an instance of FluidCacheWarmerInterface which
+     * can warm up template files that would normally be
+     * cached on-the-fly to this FluidCacheInterface
+     * implementaion.
+     *
+     * @return FluidCacheWarmerInterface
+     */
+    public function getCacheWarmer()
+    {
+        return new StandardCacheWarmer();
     }
 }
