@@ -27,6 +27,21 @@ use TYPO3\Flow\Utility\Files;
 class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
 {
     /**
+     * @var string
+     */
+    protected $templateRootPathPattern;
+
+    /**
+     * @var string
+     */
+    protected $layoutRootPathPattern;
+
+    /**
+     * @var string
+     */
+    protected $partialRootPathPattern;
+
+    /**
      * A map of key => values to be replaced in path patterns.
      *
      * @var string[]
@@ -61,11 +76,105 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
+     * @return string
+     */
+    public function getTemplateRootPathPattern(): string
+    {
+        return $this->templateRootPathPattern;
+    }
+
+    /**
+     * @param string $templateRootPathPattern
+     */
+    public function setTemplateRootPathPattern(string $templateRootPathPattern)
+    {
+        $this->templateRootPathPattern = $templateRootPathPattern;
+    }
+
+    /**
+     * @param string $layoutRootPathPattern
+     */
+    public function setLayoutRootPathPattern(string $layoutRootPathPattern)
+    {
+        $this->layoutRootPathPattern = $layoutRootPathPattern;
+    }
+
+    /**
+     * @param string $partialRootPathPattern
+     */
+    public function setPartialRootPathPattern(string $partialRootPathPattern)
+    {
+        $this->partialRootPathPattern = $partialRootPathPattern;
+    }
+
+    /**
      * @param string $templateRootPath
      */
     public function setTemplateRootPath($templateRootPath)
     {
         $this->templateRootPaths = [$templateRootPath];
+    }
+
+    /**
+     * Resolves the template root to be used inside other paths.
+     *
+     * @return array Path(s) to template root directory
+     */
+    public function getTemplateRootPaths()
+    {
+        if ($this->templateRootPaths !== []) {
+            return $this->templateRootPaths;
+        }
+
+        if ($this->templateRootPathPattern === null) {
+            return [];
+        }
+
+        $templateRootPath = $this->templateRootPathPattern;
+        if (isset($this->patternReplacementVariables['packageKey'])) {
+            $templateRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $templateRootPath);
+        }
+
+        return [$templateRootPath];
+    }
+
+    /**
+     * @return array
+     */
+    public function getLayoutRootPaths()
+    {
+        if ($this->layoutRootPaths !== []) {
+            return $this->layoutRootPaths;
+        }
+
+        if ($this->layoutRootPathPattern === null) {
+            return [];
+        }
+
+        $layoutRootPath = $this->layoutRootPathPattern;
+        if (isset($this->patternReplacementVariables['packageKey'])) {
+            $layoutRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $layoutRootPath);
+        }
+
+        return [$layoutRootPath];
+    }
+
+    public function getPartialRootPaths()
+    {
+        if ($this->partialRootPaths !== []) {
+            return $this->partialRootPaths;
+        }
+
+        if ($this->partialRootPathPattern === null) {
+            return [];
+        }
+
+        $partialRootPath = $this->partialRootPathPattern;
+        if (isset($this->patternReplacementVariables['packageKey'])) {
+            $partialRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $partialRootPath);
+        }
+
+        return [$partialRootPath];
     }
 
     /**
@@ -118,7 +227,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
 
         $action = ucfirst($action);
 
-        $paths = $this->templateRootPaths;
+        $paths = $this->getTemplateRootPaths();
         if (isset($this->options['templatePathAndFilenamePattern'])) {
             $paths = $this->expandGenericPathPattern($this->options['templatePathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'controllerName' => $controller,
@@ -155,9 +264,12 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
         $layoutName = ucfirst($layoutName);
 
-        $paths = $this->expandGenericPathPattern($this->options['layoutPathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
-            'layout' => $layoutName
-        ]), true, true);
+        $paths = $this->getLayoutRootPaths();
+        if (isset($this->options['layoutPathAndFilenamePattern'])) {
+            $paths = $this->expandGenericPathPattern($this->options['layoutPathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
+                'layout' => $layoutName
+            ]), true, true);
+        }
 
         foreach ($paths as $layoutPathAndFilename) {
             if (is_file($layoutPathAndFilename)) {

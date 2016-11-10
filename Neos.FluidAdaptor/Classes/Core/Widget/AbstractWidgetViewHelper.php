@@ -19,7 +19,9 @@ use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
 /**
  * @api
@@ -289,5 +291,19 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         if ($this->ajaxWidget) {
             $this->widgetContext = $this->objectManager->get(WidgetContext::class);
         }
+    }
+
+    /**
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $compiler->disable();
+        return "''";
     }
 }
