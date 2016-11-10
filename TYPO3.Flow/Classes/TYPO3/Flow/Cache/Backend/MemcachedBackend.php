@@ -39,8 +39,10 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class MemcachedBackend extends AbstractBackend implements TaggableBackendInterface
+class MemcachedBackend extends AbstractBackend implements TaggableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * Max bucket size, (1024*1024)-42 bytes
      * @var int

@@ -41,8 +41,10 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * @api
  */
-class ApcBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class ApcBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * A prefix to seperate stored data from other data possible stored in the APC
      * @var string

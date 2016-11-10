@@ -43,8 +43,10 @@ use TYPO3\Flow\Cache\Exception as CacheException;
  *
  * @api
  */
-class RedisBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
+class RedisBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     const MIN_REDIS_VERSION = '2.6.0';
 
     /**

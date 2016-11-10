@@ -18,8 +18,10 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-class PdoBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class PdoBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * @var string
      */
