@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use TYPO3\Flow\Cache\Exception as CacheException;
-use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * RequireOnceFromValueTrait
@@ -34,7 +33,7 @@ trait RequireOnceFromValueTrait
     public function requireOnce($entryIdentifier)
     {
         $value = trim($this->get($entryIdentifier));
-        if ($value === ''){
+        if ($value === '') {
             return false;
         }
         $hash = md5($value);
