@@ -107,8 +107,6 @@ class SimpleFileBackendTest extends BaseTestCase
             5
         );
 
-        $mockCacheManager = $this->getMockBuilder(\TYPO3\Flow\Cache\CacheManager::class)->disableOriginalConstructor()->getMock();
-
         $entryIdentifier = 'BackendFileTest';
 
         $backend = $this->getMockBuilder(SimpleFileBackend::class)->setMethods(['setTag', 'writeCacheFile'])->disableOriginalConstructor()->getMock();
@@ -164,23 +162,6 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend = $this->getSimpleFileBackend([], $mockPhpCacheFrontend);
         $this->assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
-    }
-
-    /**
-     * @test
-     */
-    public function aDifferentDefaultCacheDirectoryIsUsedForPersistentCaches()
-    {
-        $this->mockCacheManager->expects($this->atLeastOnce())->method('isCachePersistent')->will($this->returnValue(true));
-
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
-
-        // We need to create the directory here because vfs doesn't support touch() which is used by
-        // createDirectoryRecursively() in the setCache method.
-        mkdir('vfs://Temporary/Directory/Cache');
-
-        $simpleFileBackend = $this->getSimpleFileBackend();
-        $this->assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/SomeCache/', $simpleFileBackend->getCacheDirectory());
     }
 
     /**
