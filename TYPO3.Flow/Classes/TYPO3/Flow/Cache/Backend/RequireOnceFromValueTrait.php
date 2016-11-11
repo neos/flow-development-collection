@@ -36,11 +36,10 @@ trait RequireOnceFromValueTrait
         if ($value === '') {
             return false;
         }
-        $hash = md5($value);
-        if (isset($this->_requiredEntryIdentifiers[$hash])) {
+        if (isset($this->_requiredEntryIdentifiers[$entryIdentifier])) {
             return false;
         }
-        $this->_requiredEntryIdentifiers[$hash] = true;
-        return include_once('data:text/plain;base64,' . base64_encode($value));
+        $this->_requiredEntryIdentifiers[$entryIdentifier] = true;
+        return include('data:text/plain;base64,' . base64_encode($value));
     }
 }
