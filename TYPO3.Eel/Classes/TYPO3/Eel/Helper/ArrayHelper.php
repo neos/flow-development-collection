@@ -344,8 +344,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function flip(array $array)
     {
-        $newArray = array_flip($array);
-        return $newArray;
+        return array_flip($array);
     }
 
     /**
