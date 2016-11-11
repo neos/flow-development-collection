@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -15,8 +15,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the Transient Memory Backend

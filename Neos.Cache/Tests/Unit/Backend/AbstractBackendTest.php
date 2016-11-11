@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -15,7 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
+use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the abstract cache backend

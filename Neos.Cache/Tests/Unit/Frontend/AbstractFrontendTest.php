@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Frontend;
+namespace Neos\Cache\Tests\Unit\Frontend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -13,9 +13,9 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Tests\BaseTestCase;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the abstract cache frontend
@@ -29,7 +29,7 @@ class AbstractFrontendTest extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->setMethods(array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'))->disableOriginalConstructor()->getMock();
+        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -41,7 +41,6 @@ class AbstractFrontendTest extends BaseTestCase
             $cache = new StringFrontend($identifier, $this->mockBackend);
             $this->assertInstanceOf(StringFrontend::class, $cache);
         }
-
     }
 
     /**
@@ -75,7 +74,6 @@ class AbstractFrontendTest extends BaseTestCase
             ->getMock();
         $cache->flush();
     }
-
 
     /**
      * @test

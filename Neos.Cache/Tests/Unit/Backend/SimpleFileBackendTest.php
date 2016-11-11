@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -13,12 +13,12 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
+use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Test case for the SimpleFileBackend
@@ -45,10 +45,10 @@ class SimpleFileBackendTest extends BaseTestCase
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
             ->setMethods(null)
             ->setConstructorArgs([
-            __DIR__ . '~Testing',
-            'vfs://Temporary/Directory/',
-            1024
-        ])->getMock();
+                __DIR__ . '~Testing',
+                'vfs://Temporary/Directory/',
+                1024
+            ])->getMock();
 
         $this->mockCacheFrontend = $this->createMock(FrontendInterface::class);
     }
@@ -69,6 +69,7 @@ class SimpleFileBackendTest extends BaseTestCase
         } else {
             $simpleFileBackend->setCache($mockCacheFrontend);
         }
+
         return $simpleFileBackend;
     }
 

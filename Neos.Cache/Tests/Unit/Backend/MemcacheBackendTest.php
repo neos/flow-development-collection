@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once('MemcachedBackendTest.php');
 

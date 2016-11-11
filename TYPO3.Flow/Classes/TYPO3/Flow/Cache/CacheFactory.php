@@ -11,12 +11,12 @@ namespace TYPO3\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\CacheFactoryInterface;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
 use TYPO3\Flow\Cache\Backend\FlowSpecificBackendInterface;
-use Neos\Cache\Backend\SimpleFileBackend;
 use TYPO3\Flow\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Object\ObjectManagerInterface;

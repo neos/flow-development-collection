@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -14,7 +14,9 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 
 use Neos\Cache\Backend\RedisBackend;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
+use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * Testcase for the redis cache backend
@@ -51,12 +53,12 @@ class RedisBackendTest extends BaseTestCase
         }
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
-        $this->cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
+        $this->cache = $this->createMock(FrontendInterface::class);
         $this->cache->expects($this->any())
             ->method('getIdentifier')
             ->will($this->returnValue('Foo_Cache'));
 
-        $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
+        $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
@@ -188,6 +190,7 @@ class RedisBackendTest extends BaseTestCase
      * @test
      * @dataProvider writingOperationsProvider
      * @expectedException \RuntimeException
+     * @param string $method
      */
     public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
     {

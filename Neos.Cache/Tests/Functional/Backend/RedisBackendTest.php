@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Functional\Backend;
+namespace Neos\Cache\Tests\Functional\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -13,10 +13,10 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\RedisBackend;
+use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the redis cache backend
@@ -26,6 +26,7 @@ use TYPO3\Flow\Cache\Tests\BaseTestCase;
  * no side effects on non-related cache entries.
  *
  * Tests require Redis listening on 127.0.0.1:6379.
+ *
  * @requires extension redis
  */
 class RedisBackendTest extends BaseTestCase
@@ -42,6 +43,7 @@ class RedisBackendTest extends BaseTestCase
 
     /**
      * Set up test case
+     *
      * @return void
      */
     public function setUp()
@@ -68,6 +70,7 @@ class RedisBackendTest extends BaseTestCase
 
     /**
      * Tear down test case
+     *
      * @return void
      */
     public function tearDown()

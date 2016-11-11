@@ -15,9 +15,9 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\ApcBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the APC cache backend
@@ -283,6 +283,7 @@ class ApcBackendTest extends BaseTestCase
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
+
         return $backend;
     }
 

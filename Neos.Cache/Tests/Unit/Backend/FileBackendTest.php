@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -13,13 +13,13 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Tests\BaseTestCase;
+use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Frontend\AbstractFrontend;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
-use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
  * Test case for the cache to file backend

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests;
+namespace Neos\Cache\Tests;
 
 /*
  * This file is part of the Neos.Cache package.
