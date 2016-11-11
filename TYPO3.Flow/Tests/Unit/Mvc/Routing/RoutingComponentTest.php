@@ -54,17 +54,17 @@ class RoutingComponentTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->routingComponent = new RoutingComponent(array());
+        $this->routingComponent = new RoutingComponent([]);
 
-        $this->mockRouter = $this->getMockBuilder(\TYPO3\Flow\Mvc\Routing\Router::class)->getMock();
-        $this->mockConfigurationManager = $this->getMockBuilder(\TYPO3\Flow\Configuration\ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockRouter = $this->getMockBuilder(Router::class)->getMock();
+        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->mockRouter, 'configurationManager', $this->mockConfigurationManager);
 
         $this->inject($this->routingComponent, 'router', $this->mockRouter);
 
-        $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
     }
 
@@ -73,10 +73,10 @@ class RoutingComponentTest extends UnitTestCase
      */
     public function handleStoresRouterMatchResultsInTheComponentContext()
     {
-        $mockMatchResults = array('someRouterMatchResults');
+        $mockMatchResults = ['someRouterMatchResults'];
 
         $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($this->mockHttpRequest)->will($this->returnValue($mockMatchResults));
-        $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults', $mockMatchResults);
+        $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);
 
         $this->routingComponent->handle($this->mockComponentContext);
     }

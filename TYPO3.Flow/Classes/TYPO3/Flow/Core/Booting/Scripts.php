@@ -42,6 +42,7 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Lock\Lock;
 use TYPO3\Flow\Utility\Lock\LockManager;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use TYPO3\Flow\Exception as FlowException;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -78,7 +79,7 @@ class Scripts
         }
 
         $classLoader = new ClassLoader($bootstrap->getContext(), $initialClassLoaderMappings);
-        spl_autoload_register(array($classLoader, 'loadClass'), true, true);
+        spl_autoload_register([$classLoader, 'loadClass'], true, true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             self::requireAutoloaderForPhpUnit();
@@ -115,7 +116,7 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        AnnotationRegistry::registerLoader(array($bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass'));
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
     }
 
     /**
@@ -140,8 +141,8 @@ class Scripts
     public static function forceFlushCachesIfNecessary(Bootstrap $bootstrap)
     {
         if (!isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
-            || !in_array($_SERVER['argv'][1], array('typo3.flow:cache:flush', 'flow:cache:flush'))
-            || !in_array($_SERVER['argv'][2], array('--force', '-f'))) {
+            || !in_array($_SERVER['argv'][1], ['typo3.flow:cache:flush', 'flow:cache:flush'])
+            || !in_array($_SERVER['argv'][2], ['--force', '-f'])) {
             return;
         }
 
@@ -196,7 +197,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function initializeConfiguration(Bootstrap $bootstrap)
     {
@@ -214,7 +215,7 @@ class Scripts
         if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
             $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
             if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
-                throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
+                throw new FlowException(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the TYPO3.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
             }
             $environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
         } else {
@@ -231,7 +232,7 @@ class Scripts
 
         $packageManager->injectSettings($settings);
 
-        $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', array($configurationManager));
+        $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
 
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
         $bootstrap->setEarlyInstance(Environment::class, $environment);
@@ -311,7 +312,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
@@ -330,7 +331,7 @@ class Scripts
             }
 
             // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader');
+            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
             $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
         }
 
@@ -345,9 +346,9 @@ class Scripts
             exec($command, $output, $result);
             if ($result !== 0) {
                 if (!file_exists($phpBinaryPathAndFilename)) {
-                    throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
+                    throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
                 }
-                throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
+                throw new FlowException(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
             }
             echo PHP_EOL . 'Flow: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
             exit(1);
@@ -360,7 +361,7 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws \TYPO3\Flow\Exception
+     * @throws FlowException
      */
     public static function recompileClasses(Bootstrap $bootstrap)
     {
@@ -485,11 +486,11 @@ class Scripts
     public static function initializeSystemFileMonitor(Bootstrap $bootstrap)
     {
         /** @var FileMonitor[] $fileMonitors */
-        $fileMonitors = array(
+        $fileMonitors = [
             'Flow_ClassFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ClassFiles', $bootstrap),
             'Flow_ConfigurationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ConfigurationFiles', $bootstrap),
             'Flow_TranslationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_TranslationFiles', $bootstrap)
-        );
+        ];
 
         $context = $bootstrap->getContext();
         /** @var PackageManagerInterface $packageManager */
@@ -580,7 +581,7 @@ class Scripts
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
-            $coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
+            $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
             $systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
             self::executeCommand('typo3.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
@@ -621,12 +622,12 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return boolean TRUE if the command execution was successful (exit code = 0)
      * @api
-     * @throws \TYPO3\Flow\Core\Booting\Exception\SubProcessException if execution of the sub process failed
+     * @throws Exception\SubProcessException if execution of the sub process failed
      */
-    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = array())
+    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = array();
+        $output = [];
         // Output errors in response
         $command .= ' 2>&1';
         exec($command, $output, $result);
@@ -671,7 +672,7 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return string A command line command ready for being exec()uted
      */
-    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = array())
+    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildPhpCommand($settings);
 
@@ -685,7 +686,7 @@ class Scripts
         }
 
         $escapedArguments = '';
-        if ($commandArguments !== array()) {
+        if ($commandArguments !== []) {
             foreach ($commandArguments as $argument => $argumentValue) {
                 $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
                 if (trim($argumentValue) !== '') {
@@ -705,11 +706,11 @@ class Scripts
      */
     public static function buildPhpCommand(array $settings)
     {
-        $subRequestEnvironmentVariables = array(
+        $subRequestEnvironmentVariables = [
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
             'FLOW_PATH_TEMPORARY_BASE' => FLOW_PATH_TEMPORARY_BASE,
             'FLOW_CONTEXT' => $settings['core']['context']
-        );
+        ];
         if (isset($settings['core']['subRequestEnvironmentVariables'])) {
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }

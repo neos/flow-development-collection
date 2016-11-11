@@ -13,6 +13,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
+use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
@@ -23,7 +24,7 @@ use TYPO3\Flow\Cache\Tests\BaseTestCase;
 class AbstractBackendTest extends BaseTestCase
 {
     /**
-     * @var \Neos\Cache\Backend\AbstractBackend
+     * @var AbstractBackend
      */
     protected $backend;
 
@@ -32,7 +33,7 @@ class AbstractBackendTest extends BaseTestCase
      */
     public function setUp()
     {
-        class_exists(\Neos\Cache\Backend\AbstractBackend::class);
+        class_exists(AbstractBackend::class);
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
             class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {

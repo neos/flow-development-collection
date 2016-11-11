@@ -33,7 +33,7 @@ class DoctrineCommandController extends CommandController
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * @Flow\Inject
@@ -97,9 +97,9 @@ class DoctrineCommandController extends CommandController
         } else {
             $this->outputLine('Mapping validation FAILED!');
             foreach ($classesAndErrors as $className => $errors) {
-                $this->outputLine('  %s', array($className));
+                $this->outputLine('  %s', [$className]);
                 foreach ($errors as $errorMessage) {
-                    $this->outputLine('    %s', array($errorMessage));
+                    $this->outputLine('    %s', [$errorMessage]);
                 }
             }
             $this->quit(1);
@@ -121,18 +121,16 @@ class DoctrineCommandController extends CommandController
      */
     public function createCommand($output = null)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $this->doctrineService->createSchema($output);
-            if ($output === null) {
-                $this->outputLine('Created database schema.');
-            } else {
-                $this->outputLine('Wrote schema creation SQL to file "' . $output . '".');
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        $this->doctrineService->createSchema($output);
+        if ($output === null) {
+            $this->outputLine('Created database schema.');
+        } else {
+            $this->outputLine('Wrote schema creation SQL to file "' . $output . '".');
         }
     }
 
@@ -151,18 +149,16 @@ class DoctrineCommandController extends CommandController
      */
     public function updateCommand($unsafeMode = false, $output = null)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $this->doctrineService->updateSchema(!$unsafeMode, $output);
-            if ($output === null) {
-                $this->outputLine('Executed a database schema update.');
-            } else {
-                $this->outputLine('Wrote schema update SQL to file "' . $output . '".');
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        $this->doctrineService->updateSchema(!$unsafeMode, $output);
+        if ($output === null) {
+            $this->outputLine('Executed a database schema update.');
+        } else {
+            $this->outputLine('Wrote schema update SQL to file "' . $output . '".');
         }
     }
 
@@ -183,7 +179,7 @@ class DoctrineCommandController extends CommandController
     {
         $info = $this->doctrineService->getEntityStatus();
 
-        if ($info === array()) {
+        if ($info === []) {
             $this->output('You do not have any mapped Doctrine ORM entities according to the current configuration. ');
             $this->outputLine('If you have entities or mapping files you should check your mapping configuration for errors.');
         } else {
@@ -236,22 +232,20 @@ class DoctrineCommandController extends CommandController
      */
     public function dqlCommand($depth = 3, $hydrationMode = 'array', $offset = null, $limit = null)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            $dqlStatements = $this->request->getExceedingArguments();
-            $hydrationModeConstant = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationMode));
-            if (!defined($hydrationModeConstant)) {
-                throw new \InvalidArgumentException('Hydration mode "' . $hydrationMode . '" does not exist. It should be either: object, array, scalar or single-scalar.');
-            }
-
-            foreach ($dqlStatements as $dql) {
-                $resultSet = $this->doctrineService->runDql($dql, constant($hydrationModeConstant), $offset, $limit);
-                Debug::dump($resultSet, $depth);
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        $dqlStatements = $this->request->getExceedingArguments();
+        $hydrationModeConstant = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationMode));
+        if (!defined($hydrationModeConstant)) {
+            throw new \InvalidArgumentException('Hydration mode "' . $hydrationMode . '" does not exist. It should be either: object, array, scalar or single-scalar.');
+        }
+
+        foreach ($dqlStatements as $dql) {
+            $resultSet = $this->doctrineService->runDql($dql, constant($hydrationModeConstant), $offset, $limit);
+            Debug::dump($resultSet, $depth);
         }
     }
 
@@ -271,17 +265,15 @@ class DoctrineCommandController extends CommandController
      */
     public function migrationStatusCommand($showMigrations = false, $showDescriptions = false)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            if ($showDescriptions) {
-                $showMigrations = true;
-            }
-            $this->outputLine($this->doctrineService->getMigrationStatus($showMigrations, $showDescriptions));
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
+
+        if ($showDescriptions) {
+            $showMigrations = true;
+        }
+        $this->outputLine($this->doctrineService->getMigrationStatus($showMigrations, $showDescriptions));
     }
 
     /**
@@ -302,30 +294,28 @@ class DoctrineCommandController extends CommandController
      */
     public function migrateCommand($version = null, $output = null, $dryRun = false, $quiet = false)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            try {
-                $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-                if ($result == '') {
-                    if (!$quiet) {
-                        $this->outputLine('No migration was necessary.');
-                    }
-                } elseif ($output === null) {
-                    $this->outputLine($result);
-                } else {
-                    if (!$quiet) {
-                        $this->outputLine('Wrote migration SQL to file "' . $output . '".');
-                    }
-                }
-
-                $this->emitAfterDatabaseMigration();
-            } catch (\Exception $exception) {
-                $this->handleException($exception);
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        try {
+            $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
+            if ($result == '') {
+                if (!$quiet) {
+                    $this->outputLine('No migration was necessary.');
+                }
+            } elseif ($output === null) {
+                $this->outputLine($result);
+            } else {
+                if (!$quiet) {
+                    $this->outputLine('Wrote migration SQL to file "' . $output . '".');
+                }
+            }
+
+            $this->emitAfterDatabaseMigration();
+        } catch (\Exception $exception) {
+            $this->handleException($exception);
         }
     }
 
@@ -354,17 +344,15 @@ class DoctrineCommandController extends CommandController
      */
     public function migrationExecuteCommand($version, $direction = 'up', $output = null, $dryRun = false)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no path is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            try {
-                $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
-            } catch (\Exception $exception) {
-                $this->handleException($exception);
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        try {
+            $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+        } catch (\Exception $exception) {
+            $this->handleException($exception);
         }
     }
 
@@ -386,20 +374,18 @@ class DoctrineCommandController extends CommandController
      */
     public function migrationVersionCommand($version, $add = false, $delete = false)
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no host is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['host'] !== null) {
-            if ($add === false && $delete === false) {
-                throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
-            }
-            try {
-                $this->doctrineService->markAsMigrated($version, $add ?: false);
-            } catch (MigrationException $exception) {
-                $this->outputLine($exception->getMessage());
-                $this->quit(1);
-            }
-        } else {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
+            $this->quit(1);
+        }
+
+        if ($add === false && $delete === false) {
+            throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
+        }
+        try {
+            $this->doctrineService->markAsMigrated($version, $add ?: false);
+        } catch (MigrationException $exception) {
+            $this->outputLine($exception->getMessage());
             $this->quit(1);
         }
     }
@@ -409,6 +395,7 @@ class DoctrineCommandController extends CommandController
      *
      * If $diffAgainstCurrent is TRUE (the default), it generates a migration file
      * with the diff between current DB structure and the found mapping metadata.
+     *
      * Otherwise an empty migration skeleton is generated.
      *
      * Only includes tables/sequences matching the $filterExpression regexp when
@@ -434,7 +421,7 @@ class DoctrineCommandController extends CommandController
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no host is set, skip this step, assuming no DB is needed
-        if ($this->settings['backendOptions']['driver'] === null || $this->settings['backendOptions']['host'] === null) {
+        if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
@@ -470,7 +457,7 @@ class DoctrineCommandController extends CommandController
             if ($selectedPackageIndex !== 0) {
                 /** @var Package $selectedPackage */
                 $selectedPackage = $packages[$selectedPackageIndex];
-                $targetPathAndFilename = Files::concatenatePaths(array($selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)));
+                $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
                 $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);
@@ -498,5 +485,15 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('The exception details have been logged to the Flow system log.');
         $this->systemLogger->logException($exception);
         $this->quit(1);
+    }
+
+    protected function isDatabaseConfigured()
+    {
+        // "driver" is used only for Doctrine, thus we (mis-)use it here
+        if ($this->settings['backendOptions']['driver'] === null) {
+            return false;
+        }
+
+        return true;
     }
 }

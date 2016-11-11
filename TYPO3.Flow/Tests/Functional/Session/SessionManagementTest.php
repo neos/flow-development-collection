@@ -12,11 +12,10 @@ namespace TYPO3\Flow\Tests\Functional\Session;
  */
 
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Session;
 
-/**
- * Test suite for the Session Management
- */
-class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class SessionManagementTest extends FunctionalTestCase
 {
     /**
      * @return void
@@ -28,13 +27,13 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $route = new Route();
         $route->setName('Functional Test - Session::SessionTest');
         $route->setUriPattern('test/session(/{@action})');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Session\Fixtures',
             '@controller' => 'SessionTest',
             '@action' => 'sessionStart',
-            '@format' => 'html'
-        ));
+            '@format' =>'html'
+        ]);
         $this->router->addRoute($route);
     }
 
@@ -43,8 +42,8 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function objectManagerAlwaysReturnsTheSameSessionIfInterfaceIsSpecified()
     {
-        $session1 = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
-        $session2 = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $session1 = $this->objectManager->get(Session\SessionInterface::class);
+        $session2 = $this->objectManager->get(Session\SessionInterface::class);
         $this->assertSame($session1, $session2);
     }
 
@@ -53,8 +52,8 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function objectManagerAlwaysReturnsANewSessionInstanceIfClassNameIsSpecified()
     {
-        $session1 = $this->objectManager->get(\TYPO3\Flow\Session\Session::class);
-        $session2 = $this->objectManager->get(\TYPO3\Flow\Session\Session::class);
+        $session1 = $this->objectManager->get(Session\Session::class);
+        $session2 = $this->objectManager->get(Session\Session::class);
         $this->assertNotSame($session1, $session2);
     }
 
@@ -66,9 +65,9 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function getCurrentSessionReturnsTheCurrentlyActiveSession()
     {
-        $injectedSession = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
-        $sessionManager = $this->objectManager->get(\TYPO3\Flow\Session\SessionManagerInterface::class);
-        $otherInjectedSession = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $injectedSession = $this->objectManager->get(Session\SessionInterface::class);
+        $sessionManager = $this->objectManager->get(Session\SessionManagerInterface::class);
+        $otherInjectedSession = $this->objectManager->get(Session\SessionInterface::class);
 
         $retrievedSession = $sessionManager->getCurrentSession();
         $this->assertSame($injectedSession, $retrievedSession);
@@ -86,7 +85,7 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aSessionCanBeStartedInAFunctionalTest()
     {
-        $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $session = $this->objectManager->get(Session\SessionInterface::class);
         $session->start();
         // dummy assertion to avoid PHPUnit warning
         $this->assertTrue(true);
@@ -102,9 +101,9 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'));
+        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'));
+        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
     }
 }

@@ -11,15 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\BooleanValueValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the true validator
- *
  */
-class BooleanValueValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class BooleanValueValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\BooleanValueValidator::class;
+    protected $validatorClassName = BooleanValueValidator::class;
 
     /**
      * @test
@@ -50,7 +51,7 @@ class BooleanValueValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
      */
     public function validateReturnsNoErrorIfTheGivenValueIsFalseAndExpectedValueIsFalse()
     {
-        $this->validatorOptions(array('expectedValue' => false));
+        $this->validatorOptions(['expectedValue' => false]);
         $this->assertFalse($this->validator->validate(false)->hasErrors());
     }
 

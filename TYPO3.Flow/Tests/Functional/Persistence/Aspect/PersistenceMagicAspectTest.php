@@ -11,20 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Aspect;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogic;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithDateTimeProperty;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithSubValueObjectProperties;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithTransientProperties;
+use TYPO3\Flow\Persistence\Generic\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for PersistenceMagicAspect
- *
  */
-class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistenceMagicAspectTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -37,7 +31,7 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
     }
@@ -47,7 +41,7 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aspectIntroducesUuidIdentifierToEntities()
     {
-        $entity = new AnnotatedIdentitiesEntity();
+        $entity = new Fixtures\AnnotatedIdentitiesEntity();
         $this->assertStringMatchesFormat('%x%x%x%x%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x%x%x%x%x', $this->persistenceManager->getIdentifierByObject($entity));
     }
 
@@ -56,7 +50,7 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aspectDoesNotIntroduceUuidIdentifierToEntitiesWithCustomIdProperties()
     {
-        $entity = new AnnotatedIdEntity();
+        $entity = new Fixtures\AnnotatedIdEntity();
         $this->assertNull($this->persistenceManager->getIdentifierByObject($entity));
     }
 
@@ -65,7 +59,7 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aspectFlagsClonedEntities()
     {
-        $entity = new AnnotatedIdEntity();
+        $entity = new Fixtures\AnnotatedIdEntity();
         $clonedEntity = clone $entity;
         $this->assertObjectNotHasAttribute('Flow_Persistence_clone', $entity);
         $this->assertObjectHasAttribute('Flow_Persistence_clone', $clonedEntity);
@@ -77,7 +71,7 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function valueHashIsGeneratedForValueObjects()
     {
-        $valueObject = new TestValueObject('value');
+        $valueObject = new Fixtures\TestValueObject('value');
 
         $this->assertObjectHasAttribute('Persistence_Object_Identifier', $valueObject);
         $this->assertNotEmpty($this->persistenceManager->getIdentifierByObject($valueObject));
@@ -94,11 +88,11 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
     public function sameValueObjectDataProvider()
     {
-        return array(
-            array(new TestValueObject('value'), new TestValueObject('value')),
-            array(new TestValueObjectWithConstructorLogic('val', 'val'), new TestValueObjectWithConstructorLogic(' val', 'val ')),
-            array(new TestValueObjectWithConstructorLogic('moreThan5Chars', 'alsoMoreButDoesntMatter'), new TestValueObjectWithConstructorLogic('  moreThan5Chars  ', '        alsoMoreButDoesntMatter '))
-        );
+        return [
+            [new Fixtures\TestValueObject('value'), new Fixtures\TestValueObject('value')],
+            [new Fixtures\TestValueObjectWithConstructorLogic('val', 'val'), new Fixtures\TestValueObjectWithConstructorLogic(' val', 'val ')],
+            [new Fixtures\TestValueObjectWithConstructorLogic('moreThan5Chars', 'alsoMoreButDoesntMatter'), new Fixtures\TestValueObjectWithConstructorLogic('  moreThan5Chars  ', '        alsoMoreButDoesntMatter ')]
+        ];
     }
 
     /**
@@ -112,11 +106,11 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
     public function differentValueObjectDataProvider()
     {
-        return array(
-            array(new TestValueObject('value1'), new TestValueObject('value2')),
-            array(new TestValueObject(''), new TestValueObject(null)),
-            array(new TestValueObjectWithConstructorLogic('chars', ' value2IsJustTrimmed        '), new TestValueObjectWithConstructorLogic('chars ', '        value2IsJustTrimmed '))
-        );
+        return [
+            [new Fixtures\TestValueObject('value1'), new Fixtures\TestValueObject('value2')],
+            [new Fixtures\TestValueObject(''), new Fixtures\TestValueObject(null)],
+            [new Fixtures\TestValueObjectWithConstructorLogic('chars', ' value2IsJustTrimmed        '), new Fixtures\TestValueObjectWithConstructorLogic('chars ', '        value2IsJustTrimmed ')]
+        ];
     }
 
     /**
@@ -124,8 +118,8 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function valueHashMustBeUniqueForEachClassIndependentOfPropertiesOrValues()
     {
-        $valueObject1 = new TestValueObjectWithConstructorLogic('value1', 'value2');
-        $valueObject2 = new TestValueObjectWithConstructorLogicAndInversedPropertyOrder('value2', 'value1');
+        $valueObject1 = new Fixtures\TestValueObjectWithConstructorLogic('value1', 'value2');
+        $valueObject2 = new Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder('value2', 'value1');
 
         $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
@@ -135,8 +129,8 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function transientPropertiesAreDisregardedForValueHashGeneration()
     {
-        $valueObject1 = new TestValueObjectWithTransientProperties('value1', 'thisDoesntRegardPersistenceWhatSoEver');
-        $valueObject2 = new TestValueObjectWithTransientProperties('value1', 'reallyThisPropertyIsTransient');
+        $valueObject1 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'thisDoesntRegardPersistenceWhatSoEver');
+        $valueObject2 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'reallyThisPropertyIsTransient');
 
         $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
@@ -146,9 +140,9 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function dateTimeIsDifferentDependingOnTheTimeZone()
     {
-        $valueObject1 = new TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
-        $valueObject2 = new TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('CEST')));
-        $valueObject3 = new TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
+        $valueObject1 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
+        $valueObject2 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('CEST')));
+        $valueObject3 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
 
         $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
         $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));
@@ -159,13 +153,13 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function subValueObjectsAreIncludedInTheValueHash()
     {
-        $subValueObject1 = new TestValueObject('value');
-        $subValueObject2 = new TestValueObject('value');
-        $subValueObject3 = new TestValueObject('value2');
+        $subValueObject1 = new Fixtures\TestValueObject('value');
+        $subValueObject2 = new Fixtures\TestValueObject('value');
+        $subValueObject3 = new Fixtures\TestValueObject('value2');
 
-        $valueObject1 = new TestValueObjectWithSubValueObjectProperties($subValueObject1, 'test');
-        $valueObject2 = new TestValueObjectWithSubValueObjectProperties($subValueObject2, 'test');
-        $valueObject3 = new TestValueObjectWithSubValueObjectProperties($subValueObject3, 'test');
+        $valueObject1 = new Fixtures\TestValueObjectWithSubValueObjectProperties($subValueObject1, 'test');
+        $valueObject2 = new Fixtures\TestValueObjectWithSubValueObjectProperties($subValueObject2, 'test');
+        $valueObject3 = new Fixtures\TestValueObjectWithSubValueObjectProperties($subValueObject3, 'test');
 
         $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
         $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));

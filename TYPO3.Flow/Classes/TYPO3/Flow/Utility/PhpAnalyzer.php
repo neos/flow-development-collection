@@ -65,7 +65,7 @@ class PhpAnalyzer
      */
     public function extractNamespace()
     {
-        $namespaceParts = array();
+        $namespaceParts = [];
         $tokens = token_get_all($this->phpCode);
         $numberOfTokens = count($tokens);
         for ($i = 0; $i < $numberOfTokens; $i++) {
@@ -89,7 +89,7 @@ class PhpAnalyzer
             }
             break;
         }
-        if ($namespaceParts === array()) {
+        if ($namespaceParts === []) {
             return null;
         }
         return implode('\\', $namespaceParts);

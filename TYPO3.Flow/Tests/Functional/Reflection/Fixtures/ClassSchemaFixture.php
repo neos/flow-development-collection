@@ -28,7 +28,7 @@ class ClassSchemaFixture
     /**
      * @var array
      */
-    protected $things = array();
+    protected $things = [];
 
     /**
      * @return string

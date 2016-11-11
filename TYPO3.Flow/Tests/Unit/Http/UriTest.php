@@ -12,12 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  */
 
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the URI class
  *
  */
-class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
+class UriTest extends UnitTestCase
 {
     /**
      * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -37,7 +38,7 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
             $uri->getPort() === 8080 &&
             $uri->getPath() == '/path1/path2/index.php' &&
             $uri->getQuery() == 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
-            $uri->getArguments() == array('argument1' => 'value1', 'argument2' => 'value2', 'argument3' => array('subargument1' => 'subvalue1')) &&
+            $uri->getArguments() == ['argument1' => 'value1', 'argument2' => 'value2', 'argument3' => ['subargument1' => 'subvalue1']] &&
             $uri->getFragment() == 'anchor'
         );
         $this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
@@ -48,14 +49,14 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function uriStrings()
     {
-        return array(
-            array('http://flow.typo3.org/x'),
-            array('http://flow.typo3.org/foo/bar?baz=1&quux=true'),
-            array('https://robert@localhost/arabica/coffee.html'),
-            array('http://127.0.0.1/bar.baz.com/foo.js'),
-            array('http://localhost:8080?foo=bar'),
-            array('http://localhost:443#hashme!x'),
-        );
+        return [
+            ['http://flow.neos.io/x'],
+            ['http://flow.neos.io/foo/bar?baz=1&quux=true'],
+            ['https://robert@localhost/arabica/coffee.html'],
+            ['http://127.0.0.1/bar.baz.com/foo.js'],
+            ['http://localhost:8080?foo=bar'],
+            ['http://localhost:443#hashme!x'],
+        ];
     }
 
     /**
@@ -88,12 +89,12 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function toStringOmitsStandardPorts()
     {
-        $uri = new Uri('http://flow.typo3.org');
-        $this->assertSame('http://flow.typo3.org', (string)$uri);
+        $uri = new Uri('http://flow.neos.io');
+        $this->assertSame('http://flow.neos.io', (string)$uri);
         $this->assertSame(80, $uri->getPort());
 
-        $uri = new Uri('https://flow.typo3.org');
-        $this->assertSame('https://flow.typo3.org', (string)$uri);
+        $uri = new Uri('https://flow.neos.io');
+        $this->assertSame('https://flow.neos.io', (string)$uri);
         $this->assertSame(443, $uri->getPort());
     }
 
@@ -102,15 +103,15 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function constructorParsesArgumentsWithSpecialCharactersCorrectly()
     {
-        $uriString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
+        $uriString = 'http://www.neos.io/path1/?argumentäöü1=' . urlencode('valueåø€œ');
         $uri = new Uri($uriString);
 
         $check = (
             $uri->getScheme() == 'http' &&
-            $uri->getHost() == 'www.typo3.com' &&
+            $uri->getHost() == 'www.neos.io' &&
             $uri->getPath() == '/path1/' &&
             $uri->getQuery() == 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93' &&
-            $uri->getArguments() == array('argumentäöü1' => 'valueåø€œ')
+            $uri->getArguments() == ['argumentäöü1' => 'valueåø€œ']
         );
         $this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
     }
@@ -120,10 +121,10 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hostTestUris()
     {
-        return array(
-            array('http://www.typo3.org/about/project', 'www.typo3.org'),
-            array('http://flow.typo3.org/foo', 'flow.typo3.org')
-        );
+        return [
+            ['http://www.neos.io/about/project', 'www.neos.io'],
+            ['http://flow.neos.io/foo', 'flow.neos.io']
+        ];
     }
 
     /**

@@ -26,7 +26,7 @@ class ApcBackend extends \Neos\Cache\Backend\ApcBackend implements FlowSpecificB
      * @param ApplicationContext $context Flow's application context
      * @param array $options Configuration options - depends on the actual backend
      */
-    public function __construct(ApplicationContextt $context, array $options = [])
+    public function __construct(ApplicationContext $context, array $options = [])
     {
         $this->context = $context;
         $environmentConfiguration = $this->createEnvironmentConfiguration($context);

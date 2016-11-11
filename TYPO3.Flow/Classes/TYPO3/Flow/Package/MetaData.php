@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Package;
  * The default Package MetaData implementation
  *
  */
-class MetaData implements \TYPO3\Flow\Package\MetaDataInterface
+class MetaData implements MetaDataInterface
 {
     /**
      * @var array
@@ -182,10 +182,10 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface
     /**
      * Add a party
      *
-     * @param \TYPO3\Flow\Package\MetaData\AbstractParty $party
+     * @param MetaData\AbstractParty $party
      * @return void
      */
-    public function addParty(\TYPO3\Flow\Package\MetaData\AbstractParty $party)
+    public function addParty(MetaData\AbstractParty $party)
     {
         $this->parties[] = $party;
     }
@@ -217,10 +217,10 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface
     /**
      * Add a constraint
      *
-     * @param \TYPO3\Flow\Package\MetaData\AbstractConstraint $constraint The constraint to add
+     * @param MetaData\AbstractConstraint $constraint The constraint to add
      * @return void
      */
-    public function addConstraint(\TYPO3\Flow\Package\MetaData\AbstractConstraint $constraint)
+    public function addConstraint(MetaData\AbstractConstraint $constraint)
     {
         $this->constraints[$constraint->getConstraintType()][] = $constraint;
     }

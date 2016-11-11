@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Aop\Builder;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Exception;
 
 /**
  * A method interceptor build for constructors with advice.
@@ -19,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
  */
-class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder
+class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuilder
 {
     /**
      * Builds interception PHP code for an adviced constructor
@@ -28,12 +29,12 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\Abstr
      * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
      * @param string $targetClassName Name of the target class to build the interceptor for
      * @return string PHP code of the interceptor
-     * @throws \TYPO3\Flow\Aop\Exception
+     * @throws Exception
      */
     public function build($methodName, array $interceptedMethods, $targetClassName)
     {
         if ($methodName !== '__construct') {
-            throw new \TYPO3\Flow\Aop\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+            throw new Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
         }
 
         $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];

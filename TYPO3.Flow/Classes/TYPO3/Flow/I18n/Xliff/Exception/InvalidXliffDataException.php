@@ -10,12 +10,13 @@ namespace TYPO3\Flow\I18n\Xliff\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\I18n\Exception\InvalidXmlFileException;
 
 /**
  * An "Invalid XLIFF Data" exception
  *
  * @api
  */
-class InvalidXliffDataException extends \TYPO3\Flow\I18n\Exception\InvalidXmlFileException
+class InvalidXliffDataException extends InvalidXmlFileException
 {
 }

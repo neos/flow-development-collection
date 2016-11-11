@@ -14,67 +14,73 @@ namespace TYPO3\Flow\Tests\Unit\Session;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Session\Exception\SessionNotStartedException;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Http;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Unit tests for the Flow Session implementation
  */
-class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SessionTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Http\Request
+     * @var Http\Request
      */
     protected $httpRequest;
 
     /**
-     * @var \TYPO3\Flow\Http\Response
+     * @var Http\Response
      */
     protected $httpResponse;
 
     /**
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSecurityContext;
 
     /**
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $mockBootstrap;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $mockObjectManager;
 
     /**
      * @var array
      */
-    protected $settings = array(
-        'session' => array(
+    protected $settings = [
+        'session' => [
             'inactivityTimeout' => 3600,
-            'name' => \TYPO3_Flow_Session::class,
-            'garbageCollection' => array(
+            'name' => 'TYPO3_Flow_Session',
+            'garbageCollection' => [
                 'probability' => 1,
                 'maximumPerRun' => 1000,
-            ),
-            'cookie' => array(
+            ],
+            'cookie' => [
                 'lifetime' => 0,
                 'path' => '/',
                 'secure' => false,
                 'httponly' => true,
                 'domain' => null
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     /**
      * @return void
@@ -85,20 +91,20 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         vfsStream::setup('Foo');
 
-        $this->httpRequest = Request::create(new Uri('http://localhost'));
-        $this->httpResponse = new Response();
+        $this->httpRequest = Http\Request::create(new Http\Uri('http://localhost'));
+        $this->httpResponse = new Http\Response();
 
-        $mockRequestHandler = $this->createMock(\TYPO3\Flow\Http\RequestHandler::class, array(), array(), '', false, false);
+        $mockRequestHandler = $this->createMock(Http\RequestHandler::class);
         $mockRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
         $mockRequestHandler->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->httpResponse));
 
-        $this->mockBootstrap = $this->createMock(\TYPO3\Flow\Core\Bootstrap::class, array(), array(), '', false, false);
+        $this->mockBootstrap = $this->createMock(Bootstrap::class);
         $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
 
-        $this->mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class, array(), array(), '', false, false);
+        $this->mockSecurityContext = $this->createMock(Context::class);
 
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class, array(), array(), '', false, false);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Security\Context::class)->will($this->returnValue($this->mockSecurityContext));
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->will($this->returnValue($this->mockSecurityContext));
     }
 
     /**
@@ -129,7 +135,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function remoteSessionUsesStorageIdentifierPassedToConstructor()
     {
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
+        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
 
         $metaDataCache = $this->createCache('Meta');
         $storageCache = $this->createCache('Storage');
@@ -199,7 +205,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $sessionInfo = $metaDataCache->get($sessionIdentifier);
         $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-        $metaDataCache->set($sessionIdentifier, $sessionInfo, array($sessionInfo['storageIdentifier'], 'session'), 0);
+        $metaDataCache->set($sessionIdentifier, $sessionInfo, [$sessionInfo['storageIdentifier'], 'session'], 0);
         $this->assertFalse($session->canBeResumed());
     }
 
@@ -247,8 +253,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $session->resume();
 
-        $this->assertTrue($this->httpResponse->hasCookie(\TYPO3_Flow_Session::class));
-        $this->assertEquals($sessionIdentifier, $this->httpResponse->getCookie(\TYPO3_Flow_Session::class)->getValue());
+        $this->assertTrue($this->httpResponse->hasCookie('TYPO3_Flow_Session'));
+        $this->assertEquals($sessionIdentifier, $this->httpResponse->getCookie('TYPO3_Flow_Session')->getValue());
     }
 
     /**
@@ -286,7 +292,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $session->start();
 
-        $cookie = $this->httpResponse->getCookie(\TYPO3_Flow_Session::class);
+        $cookie = $this->httpResponse->getCookie('TYPO3_Flow_Session');
         $this->assertNotNull($cookie);
         $this->assertEquals($session->getId(), $cookie->getValue());
     }
@@ -297,7 +303,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function startThrowsAnExceptionIfIncompatibleRequestHandlerIsUsed()
     {
-        $mockBootstrap = $this->createMock(\TYPO3\Flow\Core\Bootstrap::class);
+        $mockBootstrap = $this->createMock(Bootstrap::class);
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue(new \stdClass()));
 
         $session = new Session();
@@ -325,7 +331,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         try {
             $session->getId();
             $this->fail('No exception thrown although the session was not started yet.');
-        } catch (\TYPO3\Flow\Session\Exception\SessionNotStartedException $e) {
+        } catch (SessionNotStartedException $e) {
             $session->start();
             $this->assertEquals(32, strlen($session->getId()));
         }
@@ -372,7 +378,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function renewIdThrowsExceptionIfCalledOnRemoteSession()
     {
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
+        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -444,7 +450,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $sessionIdentifier = $session->getId();
         $session->close();
 
-        $requestCookie = new Cookie($this->settings['session']['name'], $sessionIdentifier, 0, 100, 'other', '/');
+        $requestCookie = new Http\Cookie($this->settings['session']['name'], $sessionIdentifier, 0, 100, 'other', '/');
         $this->httpRequest->setCookie($requestCookie);
 
         $session = new Session();
@@ -580,7 +586,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $metaDataCache = $this->createCache('Meta');
         $storageCache = $this->createCache('Storage');
 
-        $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        /** @var Session $session */
+        $session = $this->getAccessibleMock(Session::class, array('dummy'));
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -669,7 +676,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $retrievedSessions = $sessionManager->getSessionsByTag('SampleTag');
         $this->assertSame($taggedSessionId, $retrievedSessions[0]->getId());
-        $this->assertEquals(array('SampleTag', 'AnotherTag'), $retrievedSessions[0]->getTags());
+        $this->assertEquals(['SampleTag', 'AnotherTag'], $retrievedSessions[0]->getTags());
     }
 
     /**
@@ -680,8 +687,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $metaDataCache = $this->createCache('Meta');
         $storageCache = $this->createCache('Storage');
 
-        $sessions = array();
-        $sessionIDs = array();
+        $sessions = [];
+        $sessionIDs = [];
         for ($i = 0; $i < 5; $i++) {
             $session = new Session();
             $this->inject($session, 'bootstrap', $this->mockBootstrap);
@@ -747,7 +754,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $session->resume();
 
-        $this->assertEquals(array('SampleTag', 'AnotherTag'), $session->getTags());
+        $this->assertEquals(['SampleTag', 'AnotherTag'], $session->getTags());
     }
 
     /**
@@ -792,7 +799,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $taggedSession->removeTag('DoesntExistButDoesNotAnyHarm');
 
-        $this->assertEquals(array('AnotherTag', 'YetAnotherTag'), array_values($taggedSession->getTags()));
+        $this->assertEquals(['AnotherTag', 'YetAnotherTag'], array_values($taggedSession->getTags()));
     }
 
     /**
@@ -856,7 +863,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function closeAndShutdownObjectDoNotCloseARemoteSession()
     {
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
+        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -895,14 +902,14 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         $token->setAccount($account);
 
         $this->mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(true));
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue([$token]));
 
         $session->close();
 
-        $this->httpRequest->setCookie($this->httpResponse->getCookie(\TYPO3_Flow_Session::class));
+        $this->httpRequest->setCookie($this->httpResponse->getCookie('TYPO3_Flow_Session'));
 
         $session->resume();
-        $this->assertEquals(array('MyProvider:admin'), $session->getData(\TYPO3_Flow_Security_Accounts::class));
+        $this->assertEquals(['MyProvider:admin'], $session->getData('TYPO3_Flow_Security_Accounts'));
     }
 
     /**
@@ -1007,7 +1014,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
 
-        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
+        $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -1031,7 +1038,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function autoExpireRemovesAllSessionDataOfTheExpiredSession()
     {
-        $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        /** @var Session $session */
+        $session = $this->getAccessibleMock(Session::class, ['dummy']);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -1057,7 +1065,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $sessionInfo = $metaDataCache->get($sessionIdentifier);
         $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-        $metaDataCache->set($sessionIdentifier, $sessionInfo, array($storageIdentifier, 'session'), 0);
+        $metaDataCache->set($sessionIdentifier, $sessionInfo, [$storageIdentifier, 'session'], 0);
 
         // canBeResumed implicitly calls autoExpire():
         $this->assertFalse($session->canBeResumed(), 'canBeResumed');
@@ -1101,7 +1109,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $sessionInfo1 = $metaDataCache->get($sessionIdentifier1);
         $sessionInfo1['lastActivityTimestamp'] = time() - 4000;
-        $metaDataCache->set($sessionIdentifier1, $sessionInfo1, array('session'), 0);
+        $metaDataCache->set($sessionIdentifier1, $sessionInfo1, ['session'], 0);
 
         // Because we change the timeout post factum, the previously valid session
         // now expires:
@@ -1109,7 +1117,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         // Create a second session which should remove the first expired session
         // implicitly by calling autoExpire()
-        $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
+        /** @var Session $session */
+        $session = $this->getAccessibleMock(Session::class, ['dummy']);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -1181,7 +1190,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
         // No sessions need to be removed:
         $this->assertSame(0, $session->collectGarbage());
 
-        $metaDataCache->set('_garbage-collection-running', true, array(), 120);
+        $metaDataCache->set('_garbage-collection-running', true, [], 120);
 
         // Session garbage collection is omitted:
         $this->assertFalse($session->collectGarbage());
@@ -1207,6 +1216,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->inject($session, 'metaDataCache', $metaDataCache);
             $this->inject($session, 'storageCache', $storageCache);
             $session->injectSettings($settings);
+            $this->inject($session, 'systemLogger', $this->createMock(SystemLoggerInterface::class));
             $session->initializeObject();
 
             $session->start();
@@ -1216,10 +1226,9 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase
 
             $sessionInfo = $metaDataCache->get($sessionIdentifier);
             $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-            $metaDataCache->set($sessionIdentifier, $sessionInfo, array('session'), 0);
+            $metaDataCache->set($sessionIdentifier, $sessionInfo, ['session'], 0);
         }
 
-        $this->inject($session, 'systemLogger', $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class));
         $this->assertLessThanOrEqual(5, $session->collectGarbage());
     }
 

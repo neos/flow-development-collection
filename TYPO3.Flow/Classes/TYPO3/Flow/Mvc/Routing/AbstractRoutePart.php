@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  * abstract Route Part
  *
  */
-abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInterface
+abstract class AbstractRoutePart implements RoutePartInterface
 {
     /**
      * Name of the Route Part
@@ -57,7 +57,7 @@ abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInt
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Sets name of the Route Part.

@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+
 /**
  * A contract for a Cache Backend
  *
@@ -21,11 +23,11 @@ interface BackendInterface
     /**
      * Sets a reference to the cache frontend which uses this backend
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+     * @param FrontendInterface $cache The frontend for this backend
      * @return void
      * @api
      */
-    public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache);
+    public function setCache(FrontendInterface $cache);
 
     /**
      * Returns the internally used, prefixed entry identifier for the given public

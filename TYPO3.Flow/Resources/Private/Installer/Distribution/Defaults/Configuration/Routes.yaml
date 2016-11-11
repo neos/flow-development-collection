@@ -8,19 +8,6 @@
 #                                                                        #
 
 ##
-# Subroutes from the Welcome package.
-#
-# If the package "Welcome" is installed, its fallback route will point to an
-# informative welcome screen.
-
--
-  name: 'Welcome'
-  uriPattern: '<WelcomeSubroutes>'
-  subRoutes:
-    WelcomeSubroutes:
-      package: TYPO3.Welcome
-
-##
 # Flow subroutes
 #
 

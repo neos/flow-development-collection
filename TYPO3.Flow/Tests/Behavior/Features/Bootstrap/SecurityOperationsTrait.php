@@ -2,10 +2,19 @@
 namespace TYPO3\Flow\Tests\Behavior\Features\Bootstrap;
 
 use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\RequestHandler;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security;
+use TYPO3\Flow\Security\Authentication\AuthenticationProviderManager;
+use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 
@@ -45,13 +54,13 @@ trait SecurityOperationsTrait
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
-        $configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
-        $configurations = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
+        unset($configurations[ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
+        ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
-        $policyService = $this->objectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($policyService, 'initialized', false, true);
+        $policyService = $this->objectManager->get(PolicyService::class);
+        ObjectAccess::setProperty($policyService, 'initialized', false, true);
     }
 
     /**
@@ -102,12 +111,12 @@ trait SecurityOperationsTrait
             $instance = $this->objectManager->get($className);
 
             try {
-                $result = call_user_func_array(array($instance, $methodName), Arrays::trimExplode(',', $arguments));
+                $result = call_user_func_array([$instance, $methodName], Arrays::trimExplode(',', $arguments));
                 if ($not === 'not') {
                     Assert::fail('Method should not be callable');
                 }
                 return $result;
-            } catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -127,21 +136,21 @@ trait SecurityOperationsTrait
         if ($this->securityInitialized === true) {
             return;
         }
-        $this->privilegeManager = $this->objectManager->get(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $this->privilegeManager = $this->objectManager->get(PrivilegeManagerInterface::class);
         $this->privilegeManager->setOverrideDecision(null);
 
-        $this->policyService = $this->objectManager->get(\TYPO3\Flow\Security\Policy\PolicyService::class);
+        $this->policyService = $this->objectManager->get(PolicyService::class);
 
-        $this->authenticationManager = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\AuthenticationProviderManager::class);
+        $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
 
-        $this->testingProvider = $this->objectManager->get(\TYPO3\Flow\Security\Authentication\Provider\TestingProvider::class);
+        $this->testingProvider = $this->objectManager->get(TestingProvider::class);
         $this->testingProvider->setName('TestingProvider');
 
-        $this->securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
+        $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
         $httpRequest = Request::createFromEnvironment();
         $this->mockActionRequest = new ActionRequest($httpRequest);
-        $this->mockActionRequest->setControllerObjectName(\TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController::class);
+        $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);
 
         $this->securityInitialized = true;
@@ -152,16 +161,16 @@ trait SecurityOperationsTrait
      * The created account is returned for further modification, for example for attaching a Party object to it.
      *
      * @param array $roleNames A list of roles the new account should have
-     * @return Account The created account
+     * @return Security\Accountt The created account
      */
     protected function authenticateRoles(array $roleNames)
     {
         // FIXME this is currently needed in order to correctly import the roles. Otherwise RepositoryInterface::isConnected() returns FALSE and importing is skipped in PolicyService::initializeRolesFromPolicy()
-        $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class)->countAll();
+        $this->objectManager->get(Security\AccountRepository::class)->countAll();
 
-        $account = new Account();
+        $account = new Security\Account();
         $account->setAccountIdentifier('TestAccount');
-        $roles = array();
+        $roles = [];
         foreach ($roleNames as $roleName) {
             $roles[] = $this->policyService->getRole($roleName);
         }
@@ -174,10 +183,10 @@ trait SecurityOperationsTrait
     /**
      * Prepares the environment for and conducts an account authentication
      *
-     * @param Account $account
+     * @param Security\Account $account
      * @return void
      */
-    protected function authenticateAccount(Account $account)
+    protected function authenticateAccount(Security\Account $account)
     {
         $this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $this->testingProvider->setAccount($account);

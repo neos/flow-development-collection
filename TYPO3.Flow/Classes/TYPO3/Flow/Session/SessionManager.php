@@ -80,12 +80,12 @@ class SessionManager implements SessionManagerInterface
     /**
      * Returns all active sessions, even remote ones.
      *
-     * @return array<\TYPO3\Flow\Session\SessionInterface>
+     * @return array<SessionInterface>
      * @api
      */
     public function getActiveSessions()
     {
-        $activeSessions = array();
+        $activeSessions = [];
         foreach ($this->metaDataCache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
             $session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
             $activeSessions[] = $session;
@@ -102,7 +102,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function getSessionsByTag($tag)
     {
-        $taggedSessions = array();
+        $taggedSessions = [];
         foreach ($this->metaDataCache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
             $session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
             $taggedSessions[] = $session;

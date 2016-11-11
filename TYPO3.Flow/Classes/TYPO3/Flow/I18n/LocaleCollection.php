@@ -29,9 +29,9 @@ class LocaleCollection
      *
      * The values are Locale objects, and the keys are these locale's tags.
      *
-     * @var array<\TYPO3\Flow\I18n\Locale>
+     * @var array<Locale>
      */
-    protected $localeCollection = array();
+    protected $localeCollection = [];
 
     /**
      * This array contains a parent Locale objects for given locale.
@@ -40,24 +40,24 @@ class LocaleCollection
      * the value which is a parent Locale object. If it's not set, there is no
      * parent for given locale, or no parent was searched before.
      *
-     * @var array<\TYPO3\Flow\I18n\Locale>
+     * @var array<Locale>
      */
-    protected $localeParentCollection = array();
+    protected $localeParentCollection = [];
 
     /**
      * Adds a locale to the collection.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale The Locale to be inserted
+     * @param Locale $locale The Locale to be inserted
      * @return boolean FALSE when same locale was already inserted before
      */
-    public function addLocale(\TYPO3\Flow\I18n\Locale $locale)
+    public function addLocale(Locale $locale)
     {
         if (isset($this->localeCollection[(string)$locale])) {
             return false;
         }
 
         // We need to invalidate the parent's array as it could be inaccurate
-        $this->localeParentCollection = array();
+        $this->localeParentCollection = [];
 
         $this->localeCollection[(string)$locale] = $locale;
         return true;
@@ -77,10 +77,10 @@ class LocaleCollection
      * Note: to find a best-matching locale to one which doesn't exist in the
      * system, please use findBestMatchingLocale() method of this class.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale The Locale to search parent for
-     * @return mixed Existing \TYPO3\Flow\I18n\Locale instance or NULL on failure
+     * @param Locale $locale The Locale to search parent for
+     * @return mixed Existing Locale instance or NULL on failure
      */
-    public function getParentLocaleOf(\TYPO3\Flow\I18n\Locale $locale)
+    public function getParentLocaleOf(Locale $locale)
     {
         $localeIdentifier = (string)$locale;
 
@@ -109,10 +109,10 @@ class LocaleCollection
      * Returns Locale object which represents one of locales installed and which
      * is most similar to the "template" Locale object given as parameter.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale The "template" locale to be matched
-     * @return mixed Existing \TYPO3\Flow\I18n\Locale instance on success, NULL on failure
+     * @param Locale $locale The "template" locale to be matched
+     * @return mixed Existing Locale instance on success, NULL on failure
      */
-    public function findBestMatchingLocale(\TYPO3\Flow\I18n\Locale $locale)
+    public function findBestMatchingLocale(Locale $locale)
     {
         $localeIdentifier = (string)$locale;
 

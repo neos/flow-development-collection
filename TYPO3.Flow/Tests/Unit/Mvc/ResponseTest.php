@@ -11,18 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\Response;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the MVC Generic Response
- *
  */
-class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ResponseTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function toStringReturnsContentOfResponse()
     {
-        $response = new \TYPO3\Flow\Mvc\Response();
+        $response = new Response();
         $response->setContent('SomeContent');
 
         $expected = 'SomeContent';

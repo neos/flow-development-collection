@@ -30,7 +30,7 @@ class SchemaGenerator
      */
     public function generate($value)
     {
-        $schema = array();
+        $schema = [];
         switch (gettype($value)) {
             case 'NULL':
                 $schema['type'] = 'null';
@@ -67,7 +67,7 @@ class SchemaGenerator
      */
     protected function generateDictionarySchema(array $dictionaryValue)
     {
-        $schema = array('type' => 'dictionary', 'properties' => array());
+        $schema = ['type' => 'dictionary', 'properties' => []];
         ksort($dictionaryValue);
         foreach ($dictionaryValue as $name => $subvalue) {
             $schema['properties'][$name] = $this->generate($subvalue);
@@ -83,8 +83,8 @@ class SchemaGenerator
      */
     protected function generateArraySchema(array $arrayValue)
     {
-        $schema = array('type' => 'array');
-        $subSchemas = array();
+        $schema = ['type' => 'array'];
+        $subSchemas = [];
         foreach ($arrayValue as $subValue) {
             $subSchemas[] = $this->generate($subValue);
         }
@@ -100,13 +100,13 @@ class SchemaGenerator
      */
     protected function generateStringSchema($stringValue)
     {
-        $schema = array('type' => 'string');
+        $schema = ['type' => 'string'];
         $schemaValidator = new SchemaValidator();
         $detectedFormat = null;
 
-        $detectableFormats = array('uri','email','ip-address','class-name','interface-name');
+        $detectableFormats = ['uri','email','ip-address','class-name','interface-name'];
         foreach ($detectableFormats as $testFormat) {
-            $testSchema = array('type' => 'string', 'format' => $testFormat);
+            $testSchema = ['type' => 'string', 'format' => $testFormat];
             $result = $schemaValidator->validate($stringValue, $testSchema);
             if ($result->hasErrors() === false) {
                 $detectedFormat = $testFormat;
@@ -127,7 +127,7 @@ class SchemaGenerator
      */
     protected function filterDuplicatesFromArray(array $values)
     {
-        $uniqueItems = array();
+        $uniqueItems = [];
         foreach ($values as $value) {
             $uniqueItems[md5(serialize($value))] = $value;
         }

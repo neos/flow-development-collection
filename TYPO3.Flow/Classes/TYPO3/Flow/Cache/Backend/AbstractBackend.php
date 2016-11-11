@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 
 use Neos\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * An abstract caching backend
@@ -30,36 +32,32 @@ abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend imple
 
 
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * Constructs this backend
      *
-     * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
+     * @param ApplicationContext $context Flow's application context
      * @param array $options Configuration options - depends on the actual backend
      * @param EnvironmentConfiguration $environmentConfiguration
      * @deprecated Use AbstractBackend instead
      * @api
      */
-    public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array(), EnvironmentConfiguration $environmentConfiguration = null)
+    public function __construct(ApplicationContext $context, array $options = [], EnvironmentConfiguration $environmentConfiguration = null)
     {
+        parent::__construct($environmentConfiguration, $options);
         $this->context = $context;
-        $this->environmentConfiguration = $environmentConfiguration;
-
-        if (is_array($options) || $options instanceof \Iterator) {
-            $this->setProperties($options);
-        }
     }
 
     /**
      * Injects the Environment object
      *
-     * @param \TYPO3\Flow\Utility\Environment $environment
+     * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment)
+    public function injectEnvironment(Environment $environment)
     {
         $this->environment = $environment;
     }

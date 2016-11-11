@@ -47,7 +47,7 @@ abstract class Arrays
     public static function trimExplode($delimiter, $string, $onlyNonEmptyValues = true)
     {
         $chunksArr = explode($delimiter, $string);
-        $newChunksArr = array();
+        $newChunksArr = [];
         foreach ($chunksArr as $value) {
             if ($onlyNonEmptyValues === false || strcmp('', trim($value))) {
                 $newChunksArr[] = trim($value);
@@ -70,14 +70,14 @@ abstract class Arrays
      */
     public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = false, $emptyValuesOverride = true)
     {
-        $data = array(&$firstArray, $secondArray);
+        $data = [&$firstArray, $secondArray];
         $entryCount = 1;
         for ($i = 0; $i < $entryCount; $i++) {
             $firstArrayInner = &$data[$i * 2];
             $secondArrayInner = $data[$i * 2 + 1];
             foreach ($secondArrayInner as $key => $value) {
                 if (isset($firstArrayInner[$key]) && is_array($firstArrayInner[$key])) {
-                    if ((!$emptyValuesOverride || $value !== array()) && is_array($value)) {
+                    if ((!$emptyValuesOverride || $value !== []) && is_array($value)) {
                         $data[] = &$firstArrayInner[$key];
                         $data[] = $value;
                         $entryCount++;
@@ -92,7 +92,7 @@ abstract class Arrays
                     } else {
                         if ($emptyValuesOverride || !empty($value)) {
                             $firstArrayInner[$key] = $value;
-                        } elseif (!isset($firstArrayInner[$key]) && $value === array()) {
+                        } elseif (!isset($firstArrayInner[$key]) && $value === []) {
                             $firstArrayInner[$key] = $value;
                         }
                     }
@@ -114,7 +114,7 @@ abstract class Arrays
      */
     public static function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray)
     {
-        $data = array(&$firstArray, $secondArray);
+        $data = [&$firstArray, $secondArray];
         $entryCount = 1;
         for ($i = 0; $i < $entryCount; $i++) {
             $firstArrayInner = &$data[$i * 2];
@@ -234,7 +234,7 @@ abstract class Arrays
             $subject[$key] = $value;
         } else {
             if (!isset($subject[$key]) || !is_array($subject[$key])) {
-                $subject[$key] = array();
+                $subject[$key] = [];
             }
             $subject[$key] = self::setValueByPath($subject[$key], $path, $value);
         }
@@ -323,7 +323,7 @@ abstract class Arrays
         foreach ($result as $key => $value) {
             if (is_array($value)) {
                 $result[$key] = self::removeEmptyElementsRecursively($value);
-                if ($result[$key] === array()) {
+                if ($result[$key] === []) {
                     unset($result[$key]);
                 }
             } elseif ($value === null) {

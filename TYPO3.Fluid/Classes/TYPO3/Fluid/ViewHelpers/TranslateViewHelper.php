@@ -87,7 +87,7 @@ class TranslateViewHelper extends AbstractViewHelper
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
      * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
      * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-     * @param string $source Name of file with translations
+     * @param string $source Name of file with translations (use / as a directory separator)
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $locale An identifier of locale to use (NULL for use the default locale)

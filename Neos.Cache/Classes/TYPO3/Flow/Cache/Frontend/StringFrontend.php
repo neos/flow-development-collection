@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Cache\Frontend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 
 /**

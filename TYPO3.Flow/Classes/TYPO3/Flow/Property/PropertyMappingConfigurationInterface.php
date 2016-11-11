@@ -53,7 +53,7 @@ interface PropertyMappingConfigurationInterface
      * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!
      *
      * @param string $propertyName
-     * @return \TYPO3\Flow\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
+     * @return PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
      * @api
      */
     public function getConfigurationFor($propertyName);
@@ -79,7 +79,7 @@ interface PropertyMappingConfigurationInterface
     /**
      * This method can be used to explicitely force a TypeConverter to be used for this Configuration.
      *
-     * @return \TYPO3\Flow\Property\TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
+     * @return TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
      * @api
      */
     public function getTypeConverter();

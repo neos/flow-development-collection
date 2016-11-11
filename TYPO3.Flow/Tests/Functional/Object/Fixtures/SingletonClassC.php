@@ -26,7 +26,7 @@ class SingletonClassC
     public $requiredArgument;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA
+     * @var InterfaceA
      */
     public $interfaceAImplementation;
 
@@ -48,7 +48,7 @@ class SingletonClassC
     /**
      * @var array
      */
-    protected $protectedArrayPropertySetViaObjectsYaml = array();
+    protected $protectedArrayPropertySetViaObjectsYaml = [];
 
     /**
      * @var boolean
@@ -63,18 +63,18 @@ class SingletonClassC
     /**
      * @var array
      */
-    protected $protectedArrayPropertyWithSetterSetViaObjectsYaml = array('has' => 'some default value');
+    protected $protectedArrayPropertyWithSetterSetViaObjectsYaml = ['has' => 'some default value'];
 
     /**
      * @param string $requiredArgument
-     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
+     * @param InterfaceA $interfaceAImplementation
      * @param string $settingsArgument
      * @param boolean $optionalArgument
      * @param integer $alsoOptionalArgument
      * @param array $thirdOptionalArgument
      * @param string $fourthOptionalArgument
      */
-    public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = false, $alsoOptionalArgument = null, $thirdOptionalArgument = array(), $fourthOptionalArgument = '')
+    public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = false, $alsoOptionalArgument = null, $thirdOptionalArgument = [], $fourthOptionalArgument = '')
     {
         $this->requiredArgument = $requiredArgument;
         $this->interfaceAImplementation = $interfaceAImplementation;

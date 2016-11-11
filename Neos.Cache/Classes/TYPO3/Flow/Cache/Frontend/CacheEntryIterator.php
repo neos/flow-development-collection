@@ -21,20 +21,20 @@ use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
 class CacheEntryIterator implements \Iterator
 {
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
+     * @var FrontendInterface
      */
     protected $frontend;
 
     /**
-     * @var \TYPO3\Flow\Cache\Backend\IterableBackendInterface
+     * @var IterableBackendInterface
      */
     protected $backend;
 
     /**
      * Constructs this Iterator
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $frontend Frontend of the cache to iterate over
-     * @param \TYPO3\Flow\Cache\Backend\IterableBackendInterface $backend Backend of the cache
+     * @param FrontendInterface $frontend Frontend of the cache to iterate over
+     * @param IterableBackendInterface $backend Backend of the cache
      * @param integer $chunkSize Determines the number of entries fetched by the backend at once (for future use)
      */
     public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend, $chunkSize = null)

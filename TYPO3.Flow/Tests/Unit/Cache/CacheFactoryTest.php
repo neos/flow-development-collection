@@ -11,24 +11,24 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
  * source code.
  */
 
+use Neos\Cache\EnvironmentConfiguration;
+use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Cache\Backend\NullBackend;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
-use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
-use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility;
 
 /**
  * Test case for the Cache Factory
- *
  */
 class CacheFactoryTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Utility\Environment
      */
     protected $mockEnvironment;
 
@@ -49,24 +49,24 @@ class CacheFactoryTest extends UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->mockEnvironment = $this->createMock(\TYPO3\Flow\Utility\Environment::class);
+        $this->mockEnvironment = $this->createMock(Utility\Environment::class);
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
         $this->mockEnvironment->expects($this->any())->method('getContext')->will($this->returnValue(new ApplicationContext('Testing')));
 
         $this->mockCacheManager = $this->getMockBuilder(CacheManager::class)
-                                        ->setMethods(['registerCache', 'isCachePersistent'])
-                                        ->disableOriginalConstructor()
-                                        ->getMock();
+            ->setMethods(['registerCache', 'isCachePersistent'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
 
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
-                                            ->setConstructorArgs([
-                                                __DIR__ . '~Testing',
-                                                'vfs://Foo/',
-                                                255
-                                            ])
-                                            ->getMock();
+            ->setConstructorArgs([
+                __DIR__ . '~Testing',
+                'vfs://Foo/',
+                255
+            ])
+            ->getMock();
     }
 
     /**

@@ -11,12 +11,15 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
  * source code.
  */
 
+use TYPO3\Flow\Http\Client\CurlEngine;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for the HTTP client internal request engine
  *
  * @requires extension curl
  */
-class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class CurlEngineTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -29,18 +32,18 @@ class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $curlEngine = $this->objectManager->get(\TYPO3\Flow\Http\Client\CurlEngine::class);
+        $curlEngine = $this->objectManager->get(CurlEngine::class);
         $this->browser->setRequestEngine($curlEngine);
     }
 
     /**
-     * Check if the Curl Engine can send a GET request to neos.io
+     * Check if the Curl Engine can send a GET request to www.neos.io
      *
      * @test
      */
     public function getRequestReturnsResponse()
     {
-        $response = $this->browser->request('https://www.neos.io');
+        $response = $this->browser->request('http://www.neos.io');
         $this->assertContains('This website is powered by Neos', $response->getContent());
     }
 }

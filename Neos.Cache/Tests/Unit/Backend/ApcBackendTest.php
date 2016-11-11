@@ -16,6 +16,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\ApcBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cache\Tests\BaseTestCase;
 
 /**
@@ -249,7 +250,7 @@ class ApcBackendTest extends BaseTestCase
     {
         $backend = $this->setUpBackend();
 
-        $cache = new \TYPO3\Flow\Cache\Frontend\VariableFrontend('UnitTestCache', $backend);
+        $cache = new VariableFrontend('UnitTestCache', $backend);
         $backend->setCache($cache);
 
         for ($i = 0; $i < 100; $i++) {
@@ -279,7 +280,7 @@ class ApcBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->createMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(FrontendInterface::class);
         $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         return $backend;

@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0.0",
         "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -14,13 +14,13 @@
         "ext-reflection": "*",
         "ramsey/uuid": "^3.0.0",
         "paragonie/random_compat": "^1.0",
-        "doctrine/orm": "~2.4.0",
+        "doctrine/orm": "~2.5.0",
         "doctrine/migrations": "~1.3.0",
         "doctrine/dbal": "~2.5.0",
         "symfony/yaml": "~2.8.0",
         "symfony/dom-crawler": "~2.8.0",
         "symfony/console": "~2.8",
-        "neos/composer-plugin": "^1.0.1"
+        "neos/composer-plugin": "^2.0.0"
     },
     "replace": {
         "neos/cache": "self.version",
@@ -115,7 +115,7 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~4.8 || ~5.2.0",
-        "doctrine/orm": "~2.4.0"
+        "mikey179/vfsstream": "~1.6"
     },
     "autoload-dev": {
         "psr-4": {

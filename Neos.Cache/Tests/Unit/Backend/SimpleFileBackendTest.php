@@ -167,6 +167,23 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
+     */
+    public function aDifferentDefaultCacheDirectoryIsUsedForPersistentCaches()
+    {
+        $this->mockCacheManager->expects($this->atLeastOnce())->method('isCachePersistent')->will($this->returnValue(true));
+
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
+
+        // We need to create the directory here because vfs doesn't support touch() which is used by
+        // createDirectoryRecursively() in the setCache method.
+        mkdir('vfs://Temporary/Directory/Cache');
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $this->assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/SomeCache/', $simpleFileBackend->getCacheDirectory());
+    }
+
+    /**
+     * @test
      * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
      */
     public function setThrowsExceptionIfDataIsNotAString()

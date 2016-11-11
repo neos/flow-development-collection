@@ -11,11 +11,12 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * source code.
  */
 
+use TYPO3\Flow\Object\Proxy\ProxyInterface;
+
 /**
  * Proxy of the implementation of dummy interface number 1 for the Reflection tests
- *
  */
-class ProxyOfImplementationOfDummyInterface1 extends ImplementationOfDummyInterface1 implements \TYPO3\Flow\Object\Proxy\ProxyInterface
+class ProxyOfImplementationOfDummyInterface1 extends ImplementationOfDummyInterface1 implements ProxyInterface
 {
     /**
      * A stub to satisfy the Flow Proxy Interface

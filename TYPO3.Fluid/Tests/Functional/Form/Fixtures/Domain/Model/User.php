@@ -29,6 +29,16 @@ class User
     protected $emailAddress;
 
     /**
+     * @var Location
+     */
+    protected $location;
+
+    public function __construct()
+    {
+        $this->location = new Location();
+    }
+
+    /**
      * @return string
      */
     public function getEmailAddress()
@@ -42,5 +52,21 @@ class User
     public function setEmailAddress($email)
     {
         $this->emailAddress = $email;
+    }
+
+    /**
+     * @return Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param Location $location
+     */
+    public function setLocation(Location $location)
+    {
+        $this->location = $location;
     }
 }
