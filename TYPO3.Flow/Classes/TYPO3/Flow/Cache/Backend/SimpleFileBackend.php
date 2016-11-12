@@ -255,7 +255,23 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 
-        return @unlink($pathAndFilename);
+        if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
+            // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
+            // In the worst case, the unlink will just fail due to concurrent access and the caller needs to deal with that.
+            return @unlink($pathAndFilename);
+        }
+
+        $file = @fopen($pathAndFilename, 'r');
+        if ($file === false) {
+            return false;
+        }
+        $result = false;
+        if (flock($file, LOCK_EX) !== false) {
+            $result = unlink($pathAndFilename);
+            flock($file, LOCK_UN);
+        }
+        fclose($file);
+        return $result;
     }
 
     /**
