@@ -1810,6 +1810,19 @@ abstract class MediaTypes
     }
 
     /**
+     * Returns a Media Type based on the file content
+     *
+     * @param string $fileContent The file content do determine the media type from
+     * @return string The IANA Internet Media Type
+     */
+    public static function getMediaTypeFromFileContent($fileContent)
+    {
+        $fileInfo = new \finfo(FILEINFO_MIME);
+        $mediaType = self::trimMediaType($fileInfo->buffer($fileContent));
+        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? $mediaType : 'application/octet-stream';
+    }
+
+    /**
      * Returns the primary filename extension based on the given Media Type.
      *
      * @param string $mediaType The IANA Internet Media Type, for example "text/html"

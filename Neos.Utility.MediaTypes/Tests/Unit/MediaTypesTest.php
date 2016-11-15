@@ -50,6 +50,29 @@ class MediaTypesTest extends UnitTestCase
     /**
      * Data Provider
      */
+    public function filesAndMediaTypes()
+    {
+        return [
+            ['', 'application/octet-stream'],
+            ['Text.txt', 'text/plain'],
+            ['Neos.png', 'image/png'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider filesAndMediaTypes
+     */
+    public function getMediaTypeFromFilename($filename, $expectedMediaType)
+    {
+        $filePath = __DIR__ . '/Fixtures/' . $filename;
+        $fileContent = file_exists($filePath) ? file_get_contents($filePath) : '';
+        $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
+    }
+
+    /**
+     * Data Provider
+     */
     public function mediaTypesAndFilenames()
     {
         return [
