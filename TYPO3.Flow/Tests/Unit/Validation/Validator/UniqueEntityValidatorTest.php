@@ -10,9 +10,9 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
 use TYPO3\Flow\Validation\Validator\UniqueEntityValidator;
 
 /**
@@ -20,7 +20,7 @@ use TYPO3\Flow\Validation\Validator\UniqueEntityValidator;
  */
 class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\UniqueEntityValidator::class;
+    protected $validatorClassName = UniqueEntityValidator::class;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -48,37 +48,42 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454270
      */
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358454270);
         $this->validator->validate('a string');
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotReflectedAtAll()
     {
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
 
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotAFlowEntity()
     {
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
 
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358960500
      */
     public function validatorThrowsExceptionIfSetupPropertiesAreNotPresentInActualClass()
     {
@@ -90,12 +95,13 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->with('propertyWhichDoesntExist')
             ->will($this->returnValue(false));
 
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358960500);
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358459831
      */
     public function validatorThrowsExceptionIfThereIsNoIdentityProperty()
     {
@@ -105,12 +111,13 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->method('getIdentityProperties')
             ->will($this->returnValue([]));
 
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358459831);
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358501745
      */
     public function validatorThrowsExceptionOnMultipleOrmIdAnnotations()
     {
@@ -125,7 +132,6 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
             ->will($this->returnValue(['dummy array', 'with more than', 'one count']));
 
-        $this->setExpectedException(InvalidValidationOptionsException::class, '', 1358501745);
         $this->validator->validate(new \StdClass());
     }
 
