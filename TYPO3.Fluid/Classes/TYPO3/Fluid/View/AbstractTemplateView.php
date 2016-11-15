@@ -14,7 +14,7 @@ namespace TYPO3\Fluid\View;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\View\AbstractView;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3\Fluid\Core\Parser\Configuration;
 use TYPO3\Fluid\Core\Parser\Interceptor\Escape as EscapeInterceptor;

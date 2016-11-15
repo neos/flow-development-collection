@@ -32,7 +32,7 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $widgetContext;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -58,7 +58,7 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->widgetContext = $this->createMock(\TYPO3\Fluid\Core\Widget\WidgetContext::class);
         $this->viewHelper->injectWidgetContext($this->widgetContext);
 
-        $this->objectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->objectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
         $this->viewHelper->injectObjectManager($this->objectManager);
 
         $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();

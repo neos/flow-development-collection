@@ -13,7 +13,8 @@ namespace TYPO3\Fluid\ViewHelpers\Form;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Fluid\ViewHelpers\FormViewHelper;
 
 /**
  * A view helper which generates an <input type="file"> HTML element.
@@ -126,7 +127,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
      * Returns a previously uploaded resource, or the resource specified via "value" argument if no resource has been uploaded before
      * If errors occurred during property mapping for this property, NULL is returned
      *
-     * @return \TYPO3\Flow\Resource\Resource or NULL if no resource was uploaded and the "value" argument is not set
+     * @return PersistentResource or NULL if no resource was uploaded and the "value" argument is not set
      */
     protected function getUploadedResource()
     {
@@ -141,10 +142,10 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
         if ($resource === null) {
             return null;
         }
-        if ($resource instanceof Resource) {
+        if ($resource instanceof PersistentResource) {
             return $resource;
         }
-        return $this->propertyMapper->convert($resource, \TYPO3\Flow\Resource\Resource::class);
+        return $this->propertyMapper->convert($resource, PersistentResource::class);
     }
 
     /**
@@ -159,7 +160,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get(\TYPO3\Fluid\ViewHelpers\FormViewHelper::class, 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }

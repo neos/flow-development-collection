@@ -13,9 +13,9 @@ namespace TYPO3\Fluid\ViewHelpers\Uri;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\Resource\Exception;
-use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\Exception;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception\InvalidVariableException;
 
@@ -40,7 +40,7 @@ use TYPO3\Fluid\Core\ViewHelper\Exception\InvalidVariableException;
  * (depending on domain)
  * </output>
  *
- * <code title="Resource URI">
+ * <code title="Static resource URI">
  * {f:uri.resource(path: 'resource://DifferentPackage/Public/gfx/SomeImage.png')}
  * </code>
  * <output>
@@ -48,7 +48,7 @@ use TYPO3\Fluid\Core\ViewHelper\Exception\InvalidVariableException;
  * (depending on domain)
  * </output>
  *
- * <code title="Resource object">
+ * <code title="Persistent resource object">
  * <img src="{f:uri.resource(resource: myImage.resource)}" />
  * </code>
  * <output>
@@ -77,13 +77,13 @@ class ResourceViewHelper extends AbstractViewHelper
      *
      * @param string $path The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
      * @param string $package Target package key. If not set, the current package key will be used
-     * @param Resource $resource If specified, this resource object is used instead of the path and package information
+     * @param PersistentResource $resource If specified, this resource object is used instead of the path and package information
      * @param boolean $localize Whether resource localization should be attempted or not
      * @return string The absolute URI to the resource
      * @throws InvalidVariableException
      * @api
      */
-    public function render($path = null, $package = null, Resource $resource = null, $localize = true)
+    public function render($path = null, $package = null, PersistentResource $resource = null, $localize = true)
     {
         if ($resource !== null) {
             $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);

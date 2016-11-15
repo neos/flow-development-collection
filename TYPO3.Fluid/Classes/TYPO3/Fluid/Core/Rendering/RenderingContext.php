@@ -12,7 +12,7 @@ namespace TYPO3\Fluid\Core\Rendering;
  */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 

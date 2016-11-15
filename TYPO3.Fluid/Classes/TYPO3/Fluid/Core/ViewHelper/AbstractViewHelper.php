@@ -13,7 +13,7 @@ namespace TYPO3\Fluid\Core\ViewHelper;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3\Fluid\Core\Parser;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode;
@@ -441,7 +441,7 @@ abstract class AbstractViewHelper
     /**
      * Returns a map of render method parameters.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param \TYPO3\Flow\ObjectManagement\ObjectManagerInterface $objectManager
      * @return array Array of render method parameters
      * @Flow\CompileStatic
      */
@@ -459,7 +459,7 @@ abstract class AbstractViewHelper
     /**
      * Returns a map of render method tag values.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param \TYPO3\Flow\ObjectManagement\ObjectManagerInterface $objectManager
      * @return array An array of tags and their values or an empty array if no tags were found
      * @Flow\CompileStatic
      */

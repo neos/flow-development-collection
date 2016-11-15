@@ -14,7 +14,7 @@ namespace TYPO3\Fluid\Tests\Unit\Core\Widget;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\Dispatcher;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -88,7 +88,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
         $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
 
         $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();

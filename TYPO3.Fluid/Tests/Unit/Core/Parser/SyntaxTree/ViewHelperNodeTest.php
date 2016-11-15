@@ -12,7 +12,7 @@ namespace TYPO3\Fluid\Tests\Unit\Core\Parser\SyntaxTree;
  */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Fluid\Core\Parser\Fixtures\ChildNodeAccessFacetViewHelper;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode;
@@ -63,7 +63,7 @@ class ViewHelperNodeTest extends UnitTestCase
     {
         $this->renderingContext = new RenderingContext();
 
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
         $this->inject($this->renderingContext, 'objectManager', $this->mockObjectManager);
 
         $this->templateVariableContainer = $this->getMockBuilder(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer::class)->disableOriginalConstructor()->getMock();

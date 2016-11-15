@@ -12,7 +12,7 @@ namespace TYPO3\Fluid\Core\Parser;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ArrayNode;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\BooleanNode;

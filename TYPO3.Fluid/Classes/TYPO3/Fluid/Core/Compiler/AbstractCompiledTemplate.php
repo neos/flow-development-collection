@@ -13,7 +13,7 @@ namespace TYPO3\Fluid\Core\Compiler;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
 use TYPO3\Fluid\Core\Parser\ParsedTemplateInterface;
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;

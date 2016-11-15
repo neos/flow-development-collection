@@ -11,7 +11,7 @@ namespace TYPO3\Fluid\Core\Parser\Interceptor;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3\Fluid\Core\Parser\ParsingState;
@@ -29,8 +29,8 @@ use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
  * mirrored by Flow.
  *
  * Currently the supported URIs are of the form
- *  [../]Public/Some/<Path/To/Resource> (will use current package)
- *  [../]<PackageKey>/Resources/Public/<Path/To/Resource> (will use given package)
+ *  [../]Public/Some/<Path/To/ResourceObject> (will use current package)
+ *  [../]<PackageKey>/Resources/Public/<Path/To/ResourceObject> (will use given package)
  *
  */
 class Resource implements InterceptorInterface
