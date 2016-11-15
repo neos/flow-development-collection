@@ -33,7 +33,7 @@ A *Storage* is configured via ``Settings.yaml``:
       resource:
         storages:
           defaultPersistentResourcesStorage:
-            storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+            storage: 'TYPO3\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
             storageOptions:
               path: '%FLOW_PATH_DATA%Persistent/Resources/'
 
@@ -69,14 +69,14 @@ persistent storage above is configured like this:
       resource:
         targets:
           localWebDirectoryPersistentResourcesTarget:
-            target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+            target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
             targetOptions:
               path: '%FLOW_PATH_WEB%_Resources/Persistent/'
               baseUri: '_Resources/Persistent/'
 
 This configures the ``Target`` named ``localWebDirectoryPersistentResourcesTarget``. Resources using this
 target will be published into the the given ``path`` which is inside the public web folder of Flow.
-The class ``TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget`` is the implementation responsible for
+The class ``TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget`` is the implementation responsible for
 publishing the resources and providing public URIs to it. From the name you can guess that it creates
 symlinks to the resources stored on the local filesystem to save space. Other ``Target`` implementations
 could publish the resources to CDNs or other external locations that are publicly accessible.
@@ -93,7 +93,7 @@ The option for your Target you need to set in this case is ``subdivideHashPathSe
       resource:
         targets:
           localWebDirectoryPersistentResourcesTarget:
-            target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+            target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
             targetOptions:
               path: '%FLOW_PATH_WEB%_Resources/Persistent/'
               baseUri: '_Resources/Persistent/'
@@ -166,7 +166,7 @@ provides a simple API method for this purpose:
 
 		/**
 		 * @Flow\Inject
-		 * @var \TYPO3\Flow\Resource\ResourceManager
+		 * @var \TYPO3\Flow\ResourceManagement\ResourceManager
 		 */
 		protected $resourceManager;
 
@@ -320,8 +320,8 @@ Or you can define it in your property mapping configuration like this::
 	$propertyMappingConfiguration
 		->forProperty('originalResource')
 		->setTypeConverterOption(
-			\TYPO3\Flow\Resource\ResourceTypeConverter::class,
-			\TYPO3\Flow\Resource\ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
+			\TYPO3\Flow\ResourceManagement\ResourceTypeConverter::class,
+			\TYPO3\Flow\ResourceManagement\ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
 			'images'
 		);
 

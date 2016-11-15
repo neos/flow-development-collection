@@ -125,7 +125,7 @@ Resources
 
   Public
     Contains public resources for the package. All files in this directory
-    will be mirrored into Flow's *Web* directory by the Resource Manager
+    will be mirrored into Flow's *Web* directory by the ResourceManager
     (and therefore become accessible from the web). They will be delivered to
     the client directly without further processing.
 
