@@ -228,7 +228,6 @@ abstract class AbstractMigration
      * The patterns are used as is, no quoting is done. A closure can be given for
      * the $replacement variable. It should return a string and is given an
      * array of matches as parameter.
-
      *
      * @param string $search
      * @param string|\Closure $replacement

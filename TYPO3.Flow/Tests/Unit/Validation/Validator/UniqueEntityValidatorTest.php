@@ -20,7 +20,7 @@ use TYPO3\Flow\Validation\Validator\UniqueEntityValidator;
  */
 class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\UniqueEntityValidator';
+    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\UniqueEntityValidator::class;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject

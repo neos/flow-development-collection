@@ -33,7 +33,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
             ['SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'],
             [Security\Policy\Role::class, 'typo3_flow_security_policy_role'],
             [Security\Account::class, 'typo3_flow_security_account'],
-            ['TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'typo3_flow_security_authorization_resource_securitypublish_861cb']
+            [\TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'typo3_flow_security_authorization_resource_securitypublish_861cb']
         ];
     }
 
@@ -60,9 +60,9 @@ class FlowAnnotationDriverTest extends UnitTestCase
             [64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'],
             [64, Security\Policy\Role::class, 'propertyName', 'typo3_flow_security_policy_role_propertyname_join'],
             [64, Security\Account::class, 'propertyName', 'typo3_flow_security_account_propertyname_join'],
-            [64, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'],
-            [30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3__861cb_propertyname_join'],
-            [30, 'TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0']
+            [64, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3_flow_security_authorization_resour_861cb_propertyname_join'],
+            [30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'typo3__861cb_propertyname_join'],
+            [30, \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'somePrettyLongPropertyNameWhichMustBeShortened', 'typo3_flow_security_auth_6aad0']
         ];
     }
 

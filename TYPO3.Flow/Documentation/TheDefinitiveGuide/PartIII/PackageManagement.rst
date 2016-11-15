@@ -303,7 +303,7 @@ it does not need to exist.
 			$bootstrap->registerRequestHandler(new \Acme\Demo\Quux\RequestHandler($bootstrap));
 
 			$dispatcher = $bootstrap->getSignalSlotDispatcher();
-			$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', 'Acme\Demo\Baz', 'fooBar');
+			$dispatcher->connect(\TYPO3\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', \Acme\Demo\Baz::class, 'fooBar');
 		}
 	}
 	?>

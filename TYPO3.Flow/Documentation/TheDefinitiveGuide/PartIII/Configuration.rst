@@ -166,7 +166,7 @@ method.
 .. code-block:: php
 
     $dispatcher = $bootstrap->getSignalSlotDispatcher();
-    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+    $dispatcher->connect(\TYPO3\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady',
         function ($configurationManager) {
             $configurationManager->registerConfigurationType('Views');
         }
@@ -185,7 +185,7 @@ constants in ``ConfigurationManager``.
 .. code-block:: php
 
     $dispatcher = $bootstrap->getSignalSlotDispatcher();
-    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+    $dispatcher->connect(\TYPO3\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady',
         function ($configurationManager) {
             $configurationManager->registerConfigurationType(
                 'CustomObjects',
@@ -206,7 +206,7 @@ configuration filenames.
 .. code-block:: php
 
     $dispatcher = $bootstrap->getSignalSlotDispatcher();
-    $dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+    $dispatcher->connect(\TYPO3\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady',
         function (ConfigurationManager $configurationManager) {
             $configurationManager->registerConfigurationType(
                 'Models',

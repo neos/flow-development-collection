@@ -114,7 +114,7 @@ class SimpleFileBackendTest extends UnitTestCase
 
         $entryIdentifier = 'BackendFileTest';
 
-        $backend = $this->getMockBuilder('TYPO3\Flow\Cache\Backend\SimpleFileBackend')->setMethods(array('setTag', 'writeCacheFile'))->disableOriginalConstructor()->getMock();
+        $backend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\SimpleFileBackend::class)->setMethods(array('setTag', 'writeCacheFile'))->disableOriginalConstructor()->getMock();
         $backend->expects($this->once())->method('writeCacheFile')->willReturn(false);
         $backend->injectCacheManager($mockCacheManager);
         $backend->injectEnvironment($mockEnvironment);

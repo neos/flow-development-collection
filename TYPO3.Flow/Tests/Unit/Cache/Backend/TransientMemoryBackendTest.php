@@ -173,7 +173,7 @@ class TransientMemoryBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesAllCacheEntries()
     {
-        $cache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\FrontendInterface')->disableOriginalConstructor()->getMock();
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $backend = new \TYPO3\Flow\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
         $backend->setCache($cache);
 

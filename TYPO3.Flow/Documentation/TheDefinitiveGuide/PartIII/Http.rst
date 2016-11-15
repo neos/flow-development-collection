@@ -189,7 +189,7 @@ For example if one wants to handle an AJAX request and prevent the default dispa
 	public function handle(ComponentContext $componentContext) {
 		// check if the request should be handled and return otherwise
 
-		$componentContext->setParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', TRUE);
+		$componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', TRUE);
 	}
 
 Note that component chains can be nested. By default the three sub chains ``preprocess``, ``process`` and ``postprocess``

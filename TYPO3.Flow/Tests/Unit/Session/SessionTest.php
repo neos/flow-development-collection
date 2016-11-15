@@ -585,7 +585,7 @@ class SessionTest extends UnitTestCase
         $metaDataCache = $this->createCache('Meta');
         $storageCache = $this->createCache('Storage');
 
-        $session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', array('dummy'));
+        $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, array('dummy'));
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
@@ -1114,7 +1114,7 @@ class SessionTest extends UnitTestCase
 
         // Create a second session which should remove the first expired session
         // implicitly by calling autoExpire()
-        $session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', ['dummy']);
+        $session = $this->getAccessibleMock(\TYPO3\Flow\Session\Session::class, ['dummy']);
         $this->inject($session, 'bootstrap', $this->mockBootstrap);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));

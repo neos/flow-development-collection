@@ -474,7 +474,7 @@ in the concrete Action Controller implementation::
 		/**
 		 * @var string
 		 */
-		protected $defaultViewObjectName = 'TYPO3\Flow\Mvc\View\JsonView';
+		protected $defaultViewObjectName = \TYPO3\Flow\Mvc\View\JsonView::class;
 
 		# …
 	}
@@ -488,8 +488,8 @@ to view mapping feature can be used::
 		 * @var string
 		 */
 		protected $viewFormatToObjectNameMap = array(
-			'html' => 'TYPO3\Fluid\View\TemplateView',
-			'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+			'html' => \TYPO3\Fluid\View\TemplateView::class,
+			'json' => \TYPO3\Flow\Mvc\View\JsonView::class
 		);
 
 		/**

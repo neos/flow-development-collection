@@ -21,7 +21,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         parent::setUp();
 
-        $this->mockBackend = $this->getMockBuilder('TYPO3\Flow\Cache\Backend\AbstractBackend')->setMethods(array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'))->disableOriginalConstructor()->getMock();
+        $this->mockBackend = $this->getMockBuilder(\TYPO3\Flow\Cache\Backend\AbstractBackend::class)->setMethods(array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'))->disableOriginalConstructor()->getMock();
     }
 
     /**
