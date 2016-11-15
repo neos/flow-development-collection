@@ -114,14 +114,21 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
             } catch (I18nException $exception) {
                 throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
             }
-        } else {
-            $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
-            if ($currencySign !== '' && $prependCurrency === false) {
-                $output .= ($separateCurrency === true ?  ' ' : '') . $currencySign;
-            } elseif ($currencySign !== '' && $prependCurrency === true) {
-                $output = $currencySign . ($separateCurrency === true ?  ' ' : '') . $output;
-            }
+
+            return $output;
         }
+
+        $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+        if (empty($currencySign)) {
+            return $output;
+        }
+        if ($prependCurrency === true) {
+            $output = $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
+
+            return $output;
+        }
+        $output .= ($separateCurrency === true ? ' ' : '') . $currencySign;
+
         return $output;
     }
 }
