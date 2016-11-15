@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
 use TYPO3\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;

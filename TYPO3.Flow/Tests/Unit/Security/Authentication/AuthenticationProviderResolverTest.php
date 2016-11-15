@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
 use TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver;
 use TYPO3\Flow\Security\Authentication\Provider\ValidShortName;
 use TYPO3\Flow\Tests\UnitTestCase;

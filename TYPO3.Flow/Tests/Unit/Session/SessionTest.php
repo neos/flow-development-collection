@@ -16,7 +16,7 @@ use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\Exception\SessionNotStartedException;
 use TYPO3\Flow\Session\Session;

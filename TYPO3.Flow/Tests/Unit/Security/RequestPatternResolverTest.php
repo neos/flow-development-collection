@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
 use TYPO3\Flow\Security\RequestPattern\ValidShortName;
 use TYPO3\Flow\Security\RequestPatternResolver;
 use TYPO3\Flow\Tests\UnitTestCase;

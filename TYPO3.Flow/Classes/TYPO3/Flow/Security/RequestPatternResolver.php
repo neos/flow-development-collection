@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The request pattern resolver. It resolves the class name of a request pattern based on names.

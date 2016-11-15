@@ -15,7 +15,7 @@ namespace TYPO3\Flow\Aop;
  * Contract and marker interface for the AOP Proxy classes
  *
  */
-interface ProxyInterface extends \TYPO3\Flow\Object\Proxy\ProxyInterface
+interface ProxyInterface extends \TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface
 {
     /**
      * Invokes the joinpoint - calls the target methods.

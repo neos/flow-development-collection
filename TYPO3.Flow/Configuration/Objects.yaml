@@ -195,18 +195,18 @@ TYPO3\Flow\Mvc\ViewConfigurationManager:
           1:
             value: Flow_Mvc_ViewConfigurations
 #                                                                          #
-# Object                                                                   #
+# ObjectManagement                                                         #
 #                                                                          #
 
-TYPO3\Flow\Object\ObjectManagerInterface:
-  className: TYPO3\Flow\Object\ObjectManager
+TYPO3\Flow\ObjectManagement\ObjectManagerInterface:
+  className: TYPO3\Flow\ObjectManagement\ObjectManager
   scope: singleton
   autowiring: off
 
-TYPO3\Flow\Object\ObjectManager:
+TYPO3\Flow\ObjectManagement\ObjectManager:
   autowiring: off
 
-TYPO3\Flow\Object\CompileTimeObjectManager:
+TYPO3\Flow\ObjectManagement\CompileTimeObjectManager:
   autowiring: off
 
 #                                                                          #
@@ -259,10 +259,10 @@ TYPO3\Flow\Property\PropertyMapper:
             value: Flow_PropertyMapper
 
 #                                                                          #
-# Resource                                                                 #
+# ResourceManagement                                                       #
 #                                                                          #
 
-TYPO3\Flow\Resource\ResourceManager:
+TYPO3\Flow\ResourceManagement\ResourceManager:
   properties:
     statusCache:
       object:
@@ -333,7 +333,7 @@ TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter
   scope: singleton
   properties:
     objectManager:
-      object: TYPO3\Flow\Object\ObjectManagerInterface
+      object: TYPO3\Flow\ObjectManagement\ObjectManagerInterface
 
 TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator:
   properties:

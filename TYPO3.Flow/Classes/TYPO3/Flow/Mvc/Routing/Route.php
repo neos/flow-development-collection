@@ -17,7 +17,7 @@ use TYPO3\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException;
 use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;

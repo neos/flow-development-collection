@@ -17,7 +17,7 @@ TYPO3\Flow\Http\Client\Browser:
       object: TYPO3\Flow\Http\Client\InternalRequestEngine
 
 #
-# Security and Resource handling need specialized testing classes:
+# Security and PersistentResource handling need specialized testing classes:
 #
 TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
   className: TYPO3\Flow\Security\Authorization\TestingPrivilegeManager
@@ -25,7 +25,7 @@ TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface:
 #
 # Configuration of fixture classes:
 #
-TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC:
   properties:
     protectedStringPropertySetViaObjectsYaml:
       value: 'a defined string'
@@ -47,18 +47,18 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
     6:
       value: { 'thisIs': { 'anArray': 'asProperty' } }
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
-  factoryObjectName: TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface:
+  factoryObjectName: TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAFactory
   arguments:
     1:
       value: 'value defined in Objects.yaml'
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassC:
   arguments:
     1:
       setting: TYPO3.Flow.tests.functional.dependencyInjection.prototypeConstructorArgument
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassD:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassD:
   properties:
     'objectE':
       object:
@@ -66,22 +66,22 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassD:
           1:
             value: 'The constructor set value'
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassF:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassF:
   arguments:
     1:
       value: ~
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassG:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassG:
   arguments:
     1:
       object:
-        factoryObjectName: TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
+        factoryObjectName: TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAFactory
         arguments:
           1:
             value: 'Constructor injection with factory'
 
-TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175\OuterPrototype:
+TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype:
   arguments:
     1:
       object:
-        name: TYPO3\Flow\Tests\Functional\Object\Fixtures\Flow175\Greeter
+        name: TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\Greeter

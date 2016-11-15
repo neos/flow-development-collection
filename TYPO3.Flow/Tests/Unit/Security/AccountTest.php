@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;

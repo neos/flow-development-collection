@@ -34,7 +34,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
     /**
      * A functional instance of the Object Manager, for use in concrete test cases.
      *
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      * @api
      */
     protected $objectManager;
@@ -136,7 +136,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->cleanupPersistentResourcesDirectory();
-        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Resource\ResourceManager::class);
+        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\ResourceManagement\ResourceManager::class);
         $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
@@ -253,9 +253,9 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
 
         self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Http\Client\InternalRequestEngine::class);
         self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceTypeConverter::class), 'convertedResources', array());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', array());
 
         $this->cleanupPersistentResourcesDirectory();
         $this->emitFunctionalTestTearDown();

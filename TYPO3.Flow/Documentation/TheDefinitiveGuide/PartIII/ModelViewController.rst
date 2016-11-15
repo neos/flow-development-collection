@@ -780,8 +780,8 @@ Upload Handling
 ---------------
 
 The handling of file uploads is pretty straight forward. Files are handled
-internally as ``Resource`` objects and thus, storing an uploaded file is just a
-matter of declaring a property of type ``Resource`` in the respective model.
+internally as ``PersistentResource`` objects and thus, storing an uploaded file is just a
+matter of declaring a property of type ``PersistentResource`` in the respective model.
 
 There is a full example explaining file uploads in the
 :doc:`chapter about resource management <ResourceManagement>`.

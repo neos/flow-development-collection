@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Resource\Resource as ResourceObject;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 
 /**
  * Testcase for the Array converter
@@ -36,7 +36,7 @@ class ArrayConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['array', 'string', ResourceObject::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['array', 'string', PersistentResource::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
