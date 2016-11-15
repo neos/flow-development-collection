@@ -12,7 +12,7 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  */
 
 use TYPO3\Flow\Utility\Unicode\TextIterator;
-use \TYPO3\Flow\Utility\Unicode;
+use TYPO3\Flow\Utility\Unicode;
 
 /**
  * Testcase for the TextIterator port

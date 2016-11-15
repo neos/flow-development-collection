@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use \TYPO3\Flow\Cache\Exception as CacheException;
+use TYPO3\Flow\Cache\Exception as CacheException;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
