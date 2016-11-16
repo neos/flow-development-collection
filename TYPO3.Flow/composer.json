@@ -23,8 +23,8 @@
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
         "neos/error-messages": "*",
+        "neos/cache": "*",
 
-        "typo3/fluid": "*",
         "typo3/eel": "*",
 
         "ramsey/uuid": "^3.0.0",

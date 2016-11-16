@@ -63,4 +63,12 @@ interface ViewInterface
      * @api
      */
     public function render();
+
+    /**
+     * Factory method to create an instance with given options.
+     *
+     * @param array $options
+     * @return ViewInterface
+     */
+    public static function createWithOptions(array $options);
 }

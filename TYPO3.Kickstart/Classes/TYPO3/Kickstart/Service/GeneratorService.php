@@ -12,6 +12,7 @@ namespace TYPO3\Kickstart\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use Neos\FluidAdaptor\View\StandaloneView;
 
 /**
  * Service for the Kickstart generator
@@ -30,12 +31,6 @@ class GeneratorService
      * @Flow\Inject
      */
     protected $packageManager;
-
-    /**
-     * @var \TYPO3\Fluid\Core\Parser\TemplateParser
-     * @Flow\Inject
-     */
-    protected $templateParser;
 
     /**
      * @var \TYPO3\Kickstart\Utility\Inflector
@@ -442,34 +437,13 @@ class GeneratorService
      * @param string $templatePathAndFilename
      * @param array $contextVariables
      * @return string
-     * @throws \TYPO3\Fluid\Core\Exception
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
     protected function renderTemplate($templatePathAndFilename, array $contextVariables)
     {
-        $templateSource = \TYPO3\Flow\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
-        if ($templateSource === false) {
-            throw new \TYPO3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
-        }
-        $parsedTemplate = $this->templateParser->parse($templateSource);
-
-        $renderingContext = $this->buildRenderingContext($contextVariables);
-
-        return $parsedTemplate->render($renderingContext);
-    }
-
-    /**
-     * Build the rendering context
-     *
-     * @param array $contextVariables
-     * @return \TYPO3\Fluid\Core\Rendering\RenderingContext
-     */
-    protected function buildRenderingContext(array $contextVariables)
-    {
-        $renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
-
-        $renderingContext->injectTemplateVariableContainer(new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer($contextVariables));
-        $renderingContext->injectViewHelperVariableContainer(new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer());
-
-        return $renderingContext;
+        $standaloneView = new StandaloneView();
+        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
+        $standaloneView->assignMultiple($contextVariables);
+        return $standaloneView->render();
     }
 }

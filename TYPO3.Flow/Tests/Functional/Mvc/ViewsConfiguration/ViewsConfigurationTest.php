@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
@@ -89,7 +90,11 @@ class ViewsConfigurationTest extends FunctionalTestCase
      */
     public function changeTemplatePathAndFilenameForWidget()
     {
+        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageActive('Neos.FluidAdaptor') === false) {
+            $this->markTestSkipped('No Fluid adaptor installed');
+        }
+
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        $this->assertEquals('Changed on Package Level', $response->getContent());
+        $this->assertEquals('Changed on Package Level', trim($response->getContent()));
     }
 }

@@ -488,7 +488,7 @@ to view mapping feature can be used::
 		 * @var string
 		 */
 		protected $viewFormatToObjectNameMap = array(
-			'html' => \TYPO3\Fluid\View\TemplateView::class,
+			'html' => \Neos\FluidAdaptor\View\TemplateView::class,
 			'json' => \TYPO3\Flow\Mvc\View\JsonView::class
 		);
 
