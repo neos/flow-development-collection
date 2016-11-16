@@ -125,14 +125,16 @@ class PersistenceManager extends AbstractPersistenceManager
         $validationResult = $validator->validate($object);
         if ($validationResult->hasErrors()) {
             $errorMessages = '';
+            $errorCount = 0;
             $allErrors = $validationResult->getFlattenedErrors();
             foreach ($allErrors as $path => $errors) {
                 $errorMessages .= $path . ':' . PHP_EOL;
                 foreach ($errors as $error) {
+                    $errorCount++;
                     $errorMessages .= (string)$error . PHP_EOL;
                 }
             }
-            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
         }
     }
 
