@@ -11,7 +11,7 @@ namespace TYPO3\Kickstart\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Wrapper for PHPs ucfirst function.

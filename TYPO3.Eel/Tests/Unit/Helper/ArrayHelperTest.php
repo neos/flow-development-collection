@@ -424,4 +424,24 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $splicedArray = $helper->splice([0, 1, 2, 3, 4, 5], 2, 2);
         $this->assertEquals([0, 1, 4, 5], $splicedArray);
     }
+
+    public function flipExamples()
+    {
+        return [
+            'array with values' => [['a', 'b', 'c'], ['a' => 0, 'b' => 1, 'c' => 2]],
+            'array with key and values' => [['foo' => 'bar', 24 => 42, 'i' => 181, 42 => 'Neos'], ['bar' => 'foo', 42 => 24, 181 => 'i', 'Neos' => 42]]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider flipExamples
+     */
+    public function flipWorks($array, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->flip($array);
+
+        $this->assertEquals($expected, $result);
+    }
 }
