@@ -101,13 +101,10 @@ class SessionManagementTest extends FunctionalTestCase
      */
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
-        // As the session name can be configured it depends on the application and therefore we need to fetch it here.
-        $configuredSessionName = $this->objectManager->get(ConfigurationManager::class)->getConfiguration('Settings', 'TYPO3.Flow.session.name');
+        $response = $this->browser->request('http://localhost/test/session');
+        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie($configuredSessionName), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
-
-        $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie($configuredSessionName), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
     }
 }
