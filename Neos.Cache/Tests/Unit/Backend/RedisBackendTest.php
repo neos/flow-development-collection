@@ -64,7 +64,7 @@ class RedisBackendTest extends BaseTestCase
             255
         ])->getMock();
 
-        $this->backend = new RedisBackend($mockEnvironmentConfiguration, [], $this->redis);
+        $this->backend = new RedisBackend($mockEnvironmentConfiguration, ['redis' => $this->redis]);
         $this->backend->setCache($this->cache);
     }
 
