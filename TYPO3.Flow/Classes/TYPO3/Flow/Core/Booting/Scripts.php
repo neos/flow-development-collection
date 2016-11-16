@@ -284,16 +284,24 @@ class Scripts
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
+        /** @var ConfigurationManager $configurationManager */
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
+
+        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'TYPO3\Flow\Cache\CacheFactoryInterface');
+        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
+
+        /** @var CacheFactory $cacheFactory */
+        $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment);
 
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
         $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $cacheManager->injectEnvironment($environment);
+        $cacheManager->injectCacheFactory($cacheFactory);
 
-        $cacheFactory = new CacheFactory($bootstrap->getContext(), $cacheManager, $environment);
+        $cacheFactory->injectCacheManager($cacheManager);
 
         $bootstrap->setEarlyInstance(CacheManager::class, $cacheManager);
         $bootstrap->setEarlyInstance(CacheFactory::class, $cacheFactory);

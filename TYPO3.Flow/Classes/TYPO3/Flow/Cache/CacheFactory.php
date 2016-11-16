@@ -11,20 +11,26 @@ namespace TYPO3\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\Backend\SimpleFileBackend;
+use Neos\Cache\CacheFactoryInterface;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
+use TYPO3\Flow\Cache\Backend\FlowSpecificBackendInterface;
+use TYPO3\Flow\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Environment;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
- * a certain cache backend. After creation of the new cache, the cache object
- * is registered at the cache manager.
+ * a certain cache backend. In a Flow context you should use the CacheManager to
+ * get a Cache.
  *
  * @Flow\Scope("singleton")
  * @api
  */
-class CacheFactory
+class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInterface
 {
     /**
      * The current Flow context ("Production", "Development" etc.)
@@ -46,41 +52,122 @@ class CacheFactory
     protected $environment;
 
     /**
-     * Constructs this cache factory
-     *
-     * @param ApplicationContext $context The current Flow context
-     * @param CacheManager $cacheManager
-     * @param Environment $environment
+     * @var EnvironmentConfiguration
      */
-    public function __construct(ApplicationContext $context, CacheManager $cacheManager, Environment $environment)
+    protected $environmentConfiguration;
+
+    /**
+     * @param CacheManager $cacheManager
+     * @Flow\Autowiring(enabled=false)
+     */
+    public function injectCacheManager(CacheManager $cacheManager)
     {
-        $this->context = $context;
         $this->cacheManager = $cacheManager;
-        $this->cacheManager->injectCacheFactory($this);
-        $this->environment = $environment;
     }
 
     /**
-     * Factory method which creates the specified cache along with the specified kind of backend.
-     * After creating the cache, it will be registered at the cache manager.
+     * @param EnvironmentConfiguration $environmentConfiguration
+     * @Flow\Autowiring(enabled=false)
+     */
+    public function injectEnvironmentConfiguration(EnvironmentConfiguration $environmentConfiguration)
+    {
+        $this->environmentConfiguration = $environmentConfiguration;
+    }
+
+    /**
+     * Constructs this cache factory
      *
-     * @param string $cacheIdentifier The name / identifier of the cache to create
-     * @param string $cacheObjectName Object name of the cache frontend
-     * @param string $backendObjectName Object name of the cache backend
-     * @param array $backendOptions (optional) Array of backend options
-     * @param boolean $persistent If the new cache should be marked as "persistent"
-     * @return Frontend\FrontendInterface The created cache frontend
-     * @throws Exception\InvalidBackendException
-     * @throws Exception\InvalidCacheException
-     * @api
+     * @param ApplicationContext $context The current Flow context
+     * @param Environment $environment
+     * @Flow\Autowiring(enabled=false)
+     */
+    public function __construct(ApplicationContext $context, Environment $environment)
+    {
+        $this->context = $context;
+        $this->environment = $environment;
+
+        $environmentConfiguration = new EnvironmentConfiguration(
+            FLOW_PATH_ROOT . '~' . (string)$environment->getContext(),
+            $environment->getPathToTemporaryDirectory(),
+            PHP_MAXPATHLEN
+        );
+
+        parent::__construct($environmentConfiguration);
+    }
+
+    /**
+     * @param string $cacheIdentifier
+     * @param string $cacheObjectName
+     * @param string $backendObjectName
+     * @param array $backendOptions
+     * @param boolean $persistent
+     * @return Frontend\FrontendInterface
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
     {
-        $backend = new $backendObjectName($this->context, $backendOptions);
-        if (!$backend instanceof Backend\BackendInterface) {
-            throw new Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $persistent);
+        $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
+        $backend->setCache($cache);
+
+        return $cache;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
+    {
+        $cache = parent::instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
+
+        if (is_callable([$cache, 'initializeObject'])) {
+            $cache->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         }
+
+        return $cache;
+    }
+
+    /**
+     * @param string $backendObjectName
+     * @param array $backendOptions
+     * @param boolean $persistent
+     * @return FlowAbstractBackend|Backend\BackendInterface
+     * @throws Exception\InvalidBackendException
+     */
+    protected function instantiateBackend($backendObjectName, $backendOptions, $persistent = false)
+    {
+        if (
+            $persistent &&
+            is_a($backendObjectName, SimpleFileBackend::class, true) &&
+            (!isset($backendOptions['cacheDirectory']) || $backendOptions['cacheDirectory'] === '') &&
+            (!isset($backendOptions['baseDirectory']) || $backendOptions['baseDirectory'] === '')
+        ) {
+            $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
+        }
+
+        if (is_a($backendObjectName, FlowSpecificBackendInterface::class, true)) {
+            return $this->instantiateFlowSpecificBackend($backendObjectName, $backendOptions);
+        }
+
+        return parent::instantiateBackend($backendObjectName, $backendOptions);
+    }
+
+    /**
+     * @param string $backendObjectName
+     * @param array $backendOptions
+     * @return FlowAbstractBackend
+     * @throws Exception\InvalidBackendException
+     */
+    protected function instantiateFlowSpecificBackend($backendObjectName, $backendOptions)
+    {
+        $backend = new $backendObjectName($this->context, $backendOptions);
+
+        if (!$backend instanceof Backend\BackendInterface) {
+            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+        }
+
+        /** @var FlowAbstractBackend $backend */
         $backend->injectEnvironment($this->environment);
+
         if (is_callable([$backend, 'injectCacheManager'])) {
             $backend->injectCacheManager($this->cacheManager);
         }
@@ -88,16 +175,6 @@ class CacheFactory
             $backend->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         }
 
-        $cache = new $cacheObjectName($cacheIdentifier, $backend);
-        if (!$cache instanceof Frontend\FrontendInterface) {
-            throw new Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
-        }
-
-        $this->cacheManager->registerCache($cache, $persistent);
-
-        if (is_callable([$cache, 'initializeObject'])) {
-            $cache->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-        }
-        return $cache;
+        return $backend;
     }
 }

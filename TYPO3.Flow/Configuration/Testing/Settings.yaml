@@ -39,6 +39,9 @@ TYPO3:
     object:
       registerFunctionalTestClasses: true
 
+    session:
+      name: 'Flow_Testing_Session'
+
     persistence:
       backendOptions:
         driver: 'pdo_sqlite'

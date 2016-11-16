@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
+use Neos\Cache\Backend\TransientMemoryBackend;
+use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
@@ -61,7 +61,7 @@ class HashServiceTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new ApplicationContext('Testing')));
+        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN)));
         $this->cache->initializeObject();
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
