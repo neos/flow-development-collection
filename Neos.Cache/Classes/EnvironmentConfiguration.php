@@ -17,20 +17,6 @@ namespace Neos\Cache;
 class EnvironmentConfiguration
 {
     /**
-     * The maximum allowed length of a path.
-     *
-     * @var integer
-     */
-    protected $maximumPathLength = PHP_MAXPATHLEN;
-
-    /**
-     * Base path for any file based caches.
-     *
-     * @var string
-     */
-    protected $fileCacheBasePath;
-
-    /**
      * A identifier for this installation,
      * all applications with the same identifier would share entries
      * of caches that are used by multiple installations.
@@ -41,6 +27,20 @@ class EnvironmentConfiguration
      * @var string
      */
     protected $applicationIdentifier;
+
+    /**
+     * Base path for any file based caches.
+     *
+     * @var string
+     */
+    protected $fileCacheBasePath;
+
+    /**
+     * The maximum allowed length of a path.
+     *
+     * @var integer
+     */
+    protected $maximumPathLength = PHP_MAXPATHLEN;
 
     /**
      * EnvironmentConfiguration constructor.
