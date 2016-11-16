@@ -23,6 +23,7 @@
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
         "neos/error-messages": "*",
+        "neos/cache": "*",
 
         "typo3/eel": "*",
 
