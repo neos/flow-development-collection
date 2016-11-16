@@ -77,6 +77,14 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  * (depending on the value of {someNumber})
  * </output>
  *
+ * Note: This ViewHelper is intended to help you with formatting numbers into monetary units.
+ * Complex calculations and/or conversions should be done before the number is passed.
+ *
+ * Also be aware that if the ``locale`` is set, all arguments except for the currency sign (which
+ * then becomes mandatory) are ignored and the CLDR (Common Locale Data Repository) is used for formatting.
+ * Fore more information about localization see section ``Internationalization & Localization Framework`` in the
+ * Flow documentation.
+ *
  * @api
  */
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
