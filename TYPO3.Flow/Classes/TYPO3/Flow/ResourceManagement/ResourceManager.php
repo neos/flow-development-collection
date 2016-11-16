@@ -397,7 +397,8 @@ class ResourceManager
         if ($resource === null) {
             throw new Exception(sprintf('Could not determine persistent resource URI for "%s" because no PersistentResource object with that SHA1 hash could be found.', $resourceHash), 1375347691);
         }
-        return $target->getPublicPersistentResourceUri($resourceHash);
+
+        return $target->getPublicPersistentResourceUri($resource);
     }
 
     /**
