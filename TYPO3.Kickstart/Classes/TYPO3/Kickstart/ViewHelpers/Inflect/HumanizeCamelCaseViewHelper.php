@@ -26,7 +26,7 @@ use TYPO3\Flow\Annotations as Flow;
  * Camel cased model name
  *
  */
-class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class HumanizeCamelCaseViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var \TYPO3\Kickstart\Utility\Inflector

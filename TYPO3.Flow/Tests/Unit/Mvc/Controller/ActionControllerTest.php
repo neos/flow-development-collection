@@ -12,11 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  */
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Mvc\View\SimpleTemplateView;
 use TYPO3\Flow\Mvc;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Http;
+use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 use TYPO3\Flow\Validation\ValidatorResolver;
 
@@ -110,12 +112,8 @@ class ActionControllerTest extends UnitTestCase
      */
     public function resolveViewReturnsViewResolvedByResolveViewObjectName()
     {
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
-
-        $mockView = $this->createMock(Mvc\View\ViewInterface::class);
-        $this->mockObjectManager->expects($this->once())->method('get')->with('ResolvedObjectName')->will($this->returnValue($mockView));
-
-        $this->assertSame($mockView, $this->actionController->_call('resolveView'));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(SimpleTemplateView::class));
+        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
@@ -124,12 +122,8 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewReturnsDefaultViewIfNoViewObjectNameCouldBeResolved()
     {
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
-
-        $mockView = $this->createMock(Mvc\View\ViewInterface::class);
-        $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
-        $this->mockObjectManager->expects($this->once())->method('get')->with('ViewDefaultObjectName')->will($this->returnValue($mockView));
-
-        $this->assertSame($mockView, $this->actionController->_call('resolveView'));
+        $this->actionController->_set('defaultViewObjectName', SimpleTemplateView::class);
+        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
@@ -263,25 +257,7 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
     {
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
-
         $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
-        $invalidView = new \stdClass();
-        $this->mockObjectManager->expects($this->once())->method('get')->with('ViewDefaultObjectName')->will($this->returnValue($invalidView));
-
-        $this->actionController->_call('resolveView');
-    }
-
-    /**
-     * @test
-     * @expectedException \TYPO3\Flow\Mvc\Exception\ViewNotFoundException
-     */
-    public function resolveViewThrowsExceptionIfViewCouldNotBeResolved()
-    {
-        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
-
-        $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
-        $this->mockObjectManager->expects($this->once())->method('get')->with('ViewDefaultObjectName')->will($this->returnValue(null));
-
         $this->actionController->_call('resolveView');
     }
 

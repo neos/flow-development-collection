@@ -73,6 +73,8 @@ TYPO3:
 
         # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
         defaultRenderingOptions:
+          viewClassName: TYPO3\Flow\Mvc\View\SimpleTemplateView
+          viewOptions: []
           renderTechnicalDetails: FALSE
           logException: TRUE
 
@@ -138,7 +140,9 @@ TYPO3:
       #   position: 'after Some.Package'
       #
       routes: []
-
+      view:
+        # todo Add simple Flow view
+        defaultImplementation: null
     http:
 
       # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
@@ -694,7 +698,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
@@ -704,13 +708,13 @@ TYPO3:
         title: 'Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/FluidViewHelperReference.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Flow:FlowValidators':
         title: 'Flow Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'

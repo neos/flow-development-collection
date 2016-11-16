@@ -12,10 +12,7 @@ namespace TYPO3\Flow;
  */
 
 use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Fluid\Core\Parser\TemplateParser;
 
 /**
  * The Flow Package
@@ -115,15 +112,6 @@ class Package extends BasePackage
             $configurationManager->registerConfigurationType('Views', Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
         });
         $dispatcher->connect(\TYPO3\Flow\Command\CacheCommandController::class, 'warmupCaches', \TYPO3\Flow\Configuration\ConfigurationManager::class, 'warmup');
-
-        $dispatcher->connect(\TYPO3\Fluid\Core\Parser\TemplateParser::class, 'initializeNamespaces', function (TemplateParser $templateParser) use ($bootstrap) {
-            /** @var PackageManagerInterface $packageManager */
-            $packageManager = $bootstrap->getEarlyInstance(\TYPO3\Flow\Package\PackageManagerInterface::class);
-            /** @var PackageInterface $package */
-            foreach ($packageManager->getActivePackages() as $package) {
-                $templateParser->registerNamespace(strtolower($package->getPackageKey()), $package->getNamespace() . '\\ViewHelpers');
-            }
-        });
 
         $dispatcher->connect(\TYPO3\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher) {
             $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Cache\CacheManager::class, 'flushCaches');

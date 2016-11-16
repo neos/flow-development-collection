@@ -7,6 +7,7 @@
     "type": "neos-package-collection",
     "require": {
         "php": ">=7.0.0",
+        "typo3fluid/fluid": "^2.0.4",
         "ext-mbstring": "*",
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -24,6 +25,7 @@
     },
     "replace": {
         "neos/error-messages": "self.version",
+        "neos/fluid-adaptor": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -35,7 +37,6 @@
         "neos/utility-unicode": "self.version",
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
-        "typo3/fluid": "self.version",
         "typo3/kickstart": "self.version"
     },
     "suggest": {
@@ -73,14 +74,14 @@
             "TYPO3\\Flow": [
                 "TYPO3.Flow/Classes"
             ],
-            "TYPO3\\Fluid": [
-                "TYPO3.Fluid/Classes"
-            ],
             "TYPO3\\Kickstart": [
                 "TYPO3.Kickstart/Classes"
             ]
         },
         "psr-4": {
+            "Neos\\FluidAdaptor\\": [
+                "Neos.FluidAdaptor/Classes/"
+            ],
             "TYPO3\\Flow\\Core\\Migrations\\": [
                 "TYPO3.Flow/Scripts/Migrations"
             ]

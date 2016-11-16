@@ -420,6 +420,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->browser = new \TYPO3\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \TYPO3\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
+        $this->router->setRoutesConfiguration(null);
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $request = Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test'));

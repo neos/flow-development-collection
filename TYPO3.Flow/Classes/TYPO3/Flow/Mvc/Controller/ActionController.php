@@ -28,7 +28,6 @@ use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Fluid\View\TemplateView;
 
 /**
  * An HTTP based multi-action controller.
@@ -45,8 +44,8 @@ use TYPO3\Fluid\View\TemplateView;
  * the browser's Accept header and additional routing configuration is used to
  * determine the output format the controller should return.
  *
- * Depending on the action being called, a fitting view - by default a Fluid template
- * view - will be selected. By specifying patterns, custom view classes or an alternative
+ * Depending on the action being called, a fitting view - determined by configuration
+ * - will be selected. By specifying patterns, custom view classes or an alternative
  * controller / action to template path mapping can be defined.
  *
  * @api
@@ -112,7 +111,13 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = TemplateView::class;
+    protected $defaultViewObjectName = null;
+
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="mvc.view.defaultImplementation")
+     * @var string
+     */
+    protected $defaultViewImplementation;
 
     /**
      * Name of the action method
@@ -535,27 +540,22 @@ class ActionController extends AbstractController
     protected function resolveView()
     {
         $viewsConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->request);
-
-        if (isset($viewsConfiguration['viewObjectName'])) {
-            $viewObjectName = $viewsConfiguration['viewObjectName'];
-        } elseif (($resolvedViewObjectName = $this->resolveViewObjectName()) !== false) {
-            $viewObjectName = $resolvedViewObjectName;
-        } elseif ($this->defaultViewObjectName !== '') {
+        $viewObjectName = $this->defaultViewImplementation;
+        if (!empty($this->defaultViewObjectName)) {
             $viewObjectName = $this->defaultViewObjectName;
         }
-
-        if (isset($viewsConfiguration['options'])) {
-            $view = $this->objectManager->get($viewObjectName, $viewsConfiguration['options']);
-        } else {
-            $view = $this->objectManager->get($viewObjectName);
+        $viewObjectName = $this->resolveViewObjectName() ?: $viewObjectName;
+        if (isset($viewsConfiguration['viewObjectName'])) {
+            $viewObjectName = $viewsConfiguration['viewObjectName'];
         }
 
-        if (!isset($view)) {
-            throw new ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);
+        if (!is_a($viewObjectName, ViewInterface::class, true)) {
+            throw new ViewNotFoundException(sprintf('View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
+                $viewObjectName, $this->request->getControllerActionName(), get_class($this)), 1355153188);
         }
-        if (!$view instanceof ViewInterface) {
-            throw new ViewNotFoundException(sprintf('View has to be of type ViewInterface, got "%s" in action "%s" of controller "%s"', get_class($view), $this->request->getControllerActionName(), get_class($this)), 1355153188);
-        }
+
+        $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
+        $view = $viewObjectName::createWithOptions($viewOptions);
 
         return $view;
     }
