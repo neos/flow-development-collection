@@ -82,7 +82,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'DateTime';
+    protected $targetType = \DateTimeInterface::class;
 
     /**
      * @var integer
@@ -117,7 +117,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string $targetType must be "DateTime"
      * @param array $convertedChildProperties not used currently
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return \DateTime
+     * @return \DateTime|Error
      * @throws TypeConverterException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)

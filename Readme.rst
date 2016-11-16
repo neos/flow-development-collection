@@ -27,8 +27,8 @@
 .. |Forum| image:: https://img.shields.io/badge/forum-Discourse-39c6ff.svg
    :target: https://discuss.neos.io/
    :alt: Discussion Forum
-.. |Issues| image:: https://img.shields.io/badge/issues-Jira-39c6ff.svg
-   :target: https://jira.neos.io/browse/FLOW
+.. |Issues| image:: https://img.shields.io/github/issues/neos/flow-development-collection.svg
+   :target: https://github.com/neos/flow-development-collection/issues
    :alt: Issues
 .. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
    :target: http://translate.neos.io/
@@ -41,7 +41,7 @@
 Flow development collection
 ---------------------------
 
-This repository is a collection of packages for the Flow framework (learn more on http://flow.typo3.org/).
+This repository is a collection of packages for the Flow framework (learn more on http://flow.neos.io/).
 The repository is used for development and all pull requests should go into it.
 
 If you want to use the Flow framework, please have a look at the documentation: https://flowframework.readthedocs.org/en/latest/

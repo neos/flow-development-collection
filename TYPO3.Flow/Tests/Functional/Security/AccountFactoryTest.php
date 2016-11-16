@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Tests\Functional\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\AccountFactory;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the account factory
  *
  */
-class AccountFactoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class AccountFactoryTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -35,9 +37,9 @@ class AccountFactoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName()
     {
-        $factory = new \TYPO3\Flow\Security\AccountFactory();
+        $factory = new AccountFactory();
 
-        $actualAccount = $factory->createAccountWithPassword('username', 'password', array('TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer'), 'OtherProvider');
+        $actualAccount = $factory->createAccountWithPassword('username', 'password', ['TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer'], 'OtherProvider');
 
         $this->assertEquals('username', $actualAccount->getAccountIdentifier());
         $this->assertEquals('OtherProvider', $actualAccount->getAuthenticationProviderName());

@@ -15,7 +15,7 @@ class Flags {
 
 	function __construct($parent = NULL) {
 		$this->parent = $parent;
-		$this->flags = array();
+		$this->flags = [];
 	}
 
 	function __set($k, $v) {
@@ -96,10 +96,10 @@ class PHPWriter {
 		return PHPBuilder::build()
 			->l('$' . $id . ' = NULL;')
 			->b('do',
-				$code->replace(array(
+				$code->replace([
 					'MBREAK' => '$' . $id . ' = TRUE; break;',
 					'FBREAK' => '$' . $id . ' = FALSE; break;'
-				))
+                ])
 			)
 			->l('while(0);')
 			->b('if( $' . $id . ' === TRUE )', 'MATCH')
@@ -154,7 +154,7 @@ abstract class Token extends PHPWriter {
 			$code = PHPBuilder::build()
 				->l(
 					$this->save($id),
-					$code->replace(array('FAIL' => $this->restore($id, true)))
+					$code->replace(['FAIL' => $this->restore($id, true)])
 				);
 		}
 
@@ -162,12 +162,12 @@ abstract class Token extends PHPWriter {
 			$code = PHPBuilder::build()
 				->b('while (true)',
 					$this->save($id),
-					$code->replace(array(
+					$code->replace([
 						'MATCH' => NULL,
 						'FAIL' =>
 						$this->restore($id, true)
 							->l('break;')
-					))
+                    ])
 				)
 				->l(
 				'MATCH'
@@ -181,12 +181,12 @@ abstract class Token extends PHPWriter {
 				)
 				->b('while (true)',
 					$this->save($id),
-					$code->replace(array(
+					$code->replace([
 						'MATCH' => NULL,
 						'FAIL' =>
 						$this->restore($id, true)
 							->l('break;')
-					)),
+                    ]),
 					'$count += 1;'
 				)
 				->b('if ($count > 0)', 'MATCH')
@@ -197,14 +197,14 @@ abstract class Token extends PHPWriter {
 			$code = PHPBuilder::build()
 				->l(
 					$this->save($id),
-					$code->replace(array(
+					$code->replace([
 						'MATCH' =>
 						$this->restore($id)
 							->l('MATCH'),
 						'FAIL' =>
 						$this->restore($id)
 							->l('FAIL')
-					))
+                    ])
 				);
 		}
 
@@ -212,14 +212,14 @@ abstract class Token extends PHPWriter {
 			$code = PHPBuilder::build()
 				->l(
 					$this->save($id),
-					$code->replace(array(
+					$code->replace([
 						'MATCH' =>
 						$this->restore($id)
 							->l('FAIL'),
 						'FAIL' =>
 						$this->restore($id)
 							->l('MATCH')
-					))
+                    ])
 				);
 		}
 
@@ -227,7 +227,7 @@ abstract class Token extends PHPWriter {
 			$code = PHPBuilder::build()
 				->l(
 					'$stack[] = $result; $result = $this->construct( $matchrule, "' . $this->tag . '" );',
-					$code->replace(array(
+					$code->replace([
 						'MATCH' => PHPBuilder::build()
 							->l(
 							'$subres = $result; $result = array_pop($stack);',
@@ -239,7 +239,7 @@ abstract class Token extends PHPWriter {
 							'$result = array_pop($stack);',
 							'FAIL'
 						)
-					))
+                    ])
 				);
 		}
 
@@ -273,7 +273,7 @@ abstract class TokenExpressionable extends TokenTerminal {
 	}
 
 	function match_code($value) {
-		$value = preg_replace_callback(self::$expression_rx, array($this, 'expression_replace'), $value);
+		$value = preg_replace_callback(self::$expression_rx, [$this, 'expression_replace'], $value);
 		return parent::match_code($value);
 	}
 }
@@ -328,7 +328,7 @@ class TokenWhitespace extends TokenTerminal {
 	// The $value default parameter is NOT used, it is just added to conform to interface
 	function match_code($value = NULL) {
 		$code = parent::match_code('');
-		return $this->value ? $code->replace(array('FAIL' => NULL)) : $code;
+		return $this->value ? $code->replace(['FAIL' => NULL]) : $code;
 	}
 }
 
@@ -411,10 +411,10 @@ class TokenSequence extends Token {
 		$code = PHPBuilder::build();
 		foreach ($this->value as $token) {
 			$code->l(
-				$token->compile()->replace(array(
+				$token->compile()->replace([
 					'MATCH' => NULL,
 					'FAIL' => 'FBREAK'
-				))
+                ])
 			);
 		}
 		$code->l('MBREAK');
@@ -426,7 +426,7 @@ class TokenSequence extends Token {
 class TokenOption extends Token {
 
 	function __construct($opt1, $opt2) {
-		parent::__construct('option', array($opt1, $opt2));
+		parent::__construct('option', [$opt1, $opt2]);
 	}
 
 	function match_code() {
@@ -438,10 +438,10 @@ class TokenOption extends Token {
 
 		foreach ($this->value as $opt) {
 			$code->l(
-				$opt->compile()->replace(array(
+				$opt->compile()->replace([
 					'MATCH' => 'MBREAK',
 					'FAIL' => NULL
-				)),
+                ]),
 				$this->restore($id)
 			);
 		}
@@ -556,7 +556,7 @@ class Rule extends PHPWriter {
 			}
 		}
 
-		$this->arguments = array();
+		$this->arguments = [];
 
 		if ($specmatch['arguments']) {
 			preg_match_all(self::$argument_rx, $specmatch['arguments'], $arguments, PREG_SET_ORDER);
@@ -577,7 +577,7 @@ class Rule extends PHPWriter {
 				user_error('Replace matcher, but not on an extends rule', E_USER_ERROR);
 			}
 
-			$this->replacements = array();
+			$this->replacements = [];
 			preg_match_all(self::$replacement_rx, $specmatch['rule'], $replacements, PREG_SET_ORDER);
 
 			$rule = $this->extends->rule;
@@ -598,7 +598,7 @@ class Rule extends PHPWriter {
 
 		// Parse out the functions
 
-		$this->functions = array();
+		$this->functions = [];
 
 		$active_function = NULL;
 
@@ -623,7 +623,7 @@ class Rule extends PHPWriter {
 			$this->parsed = new TokenRegex($rule);
 		}
 		else {
-			$tokens = array();
+			$tokens = [];
 			$this->tokenize($rule, $tokens);
 			$this->parsed = (count($tokens) == 1 ? array_pop($tokens) : new TokenSequence($tokens));
 		}
@@ -724,7 +724,7 @@ class Rule extends PHPWriter {
 						break;
 
 					case '(':
-						$subtokens = array();
+						$subtokens = [];
 						$o = $this->tokenize($str, $subtokens, $o);
 						$tokens[] = $t = new TokenSequence($subtokens);
 						$pending->apply_if_present($t);
@@ -734,7 +734,7 @@ class Rule extends PHPWriter {
 
 					case '|':
 						$option1 = $tokens;
-						$option2 = array();
+						$option2 = [];
 						$o = $this->tokenize($str, $option2, $o);
 
 						$option1 = (count($option1) == 1) ? $option1[0] : new TokenSequence($option1);
@@ -742,7 +742,7 @@ class Rule extends PHPWriter {
 
 						$pending->apply_if_present($option2);
 
-						$tokens = array(new TokenOption($option1, $option2));
+						$tokens = [new TokenOption($option1, $option2)];
 						return $o;
 
 					default:
@@ -761,7 +761,7 @@ class Rule extends PHPWriter {
 		$function_name = $this->function_name($this->name);
 
 		// Build the typestack
-		$typestack = array();
+		$typestack = [];
 		$class = $this;
 		do {
 			$typestack[] = $this->function_name($class->name);
@@ -788,18 +788,18 @@ class Rule extends PHPWriter {
 
 		$match->b("function match_{$function_name} (\$stack = array())",
 			'$matchrule = "' . $function_name . '"; $result = $this->construct($matchrule, $matchrule, ' . $arguments . ');',
-			$this->parsed->compile()->replace(array(
+			$this->parsed->compile()->replace([
 				'MATCH' => 'return $this->finalise($result);',
 				'FAIL' => 'return FALSE;'
-			))
+            ])
 		);
 
-		$functions = array();
+		$functions = [];
 		foreach ($this->functions as $name => $function) {
 			$function_name = $this->function_name(preg_match('/^_/', $name) ? $this->name . $name : $this->name . '_' . $name);
-			$functions[] = implode(PHP_EOL, array(
+			$functions[] = implode(PHP_EOL, [
 				'function ' . $function_name . ' ' . $function
-			));
+            ]);
 		}
 
 		// print_r( $match ) ; return '' ;
@@ -809,7 +809,7 @@ class Rule extends PHPWriter {
 
 class RuleSet {
 
-	public $rules = array();
+	public $rules = [];
 
 	function addRule($indent, $lines, &$out) {
 		$rule = new Rule($this, $lines);
@@ -823,8 +823,8 @@ class RuleSet {
 	function compile($indent, $rulestr) {
 		$indentrx = '@^' . preg_quote($indent) . '@';
 
-		$out = array();
-		$block = array();
+		$out = [];
+		$block = [];
 
 		foreach (preg_split('/\r\n|\r|\n/', $rulestr) as $line) {
 			// Ignore blank lines
@@ -856,7 +856,7 @@ class RuleSet {
 				if (count($block)) {
 					$this->addRule($indent, $block, $out);
 				}
-				$block = array($line);
+				$block = [$line];
 			}
 		}
 
@@ -872,7 +872,7 @@ class RuleSet {
 
 class ParserCompiler {
 
-	static $parsers = array();
+	static $parsers = [];
 
 	static $debug = false;
 
@@ -900,11 +900,11 @@ class ParserCompiler {
 					// NOP - dont output
 					return '';
 				case '!insert_autogen_warning':
-					return $indent . implode(PHP_EOL . $indent, array(
+					return $indent . implode(PHP_EOL . $indent, [
 						'/*',
 						'WARNING: This file has been machine generated. Do not edit it, or your changes will be overwritten next time it is compiled.',
 						'*/'
-					)) . PHP_EOL;
+                    ]) . PHP_EOL;
 				case '!debug':
 					self::$debug = true;
 					return '';
@@ -927,7 +927,7 @@ class ParserCompiler {
 			\*/                                        # The comment end
 		@mx';
 
-		return preg_replace_callback($rx, array('PhpPeg\ParserCompiler', 'create_parser'), $string);
+		return preg_replace_callback($rx, ['PhpPeg\ParserCompiler', 'create_parser'], $string);
 	}
 
 	static function cli($args) {

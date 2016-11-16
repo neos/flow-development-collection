@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Aop\Pointcut;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
 
 /**
  * The contract for an AOP Pointcut Filter class
@@ -49,8 +50,8 @@ interface PointcutFilterInterface
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex An index of class names
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex The filtered result, with pointcuts possibly covered by this filter
+     * @param ClassNameIndex $classNameIndex An index of class names
+     * @return ClassNameIndex The filtered result, with pointcuts possibly covered by this filter
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex);
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex);
 }

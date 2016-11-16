@@ -318,6 +318,10 @@ class PropertyMapper
             }
 
             /** @var TypeConverterInterface $converter */
+            if ($converter->getPriority() < 0) {
+                continue;
+            }
+
             if ($converter->canConvertFrom($source, $targetType)) {
                 return $converter;
             }

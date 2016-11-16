@@ -33,10 +33,10 @@ class ReflectionServiceTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->reflectionService = $this->getAccessibleMock(\TYPO3\Flow\Reflection\ReflectionService::class, null);
+        $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
 
-        $this->mockAnnotationReader = $this->getMockBuilder(\Doctrine\Common\Annotations\Reader::class)->disableOriginalConstructor()->getMock();
-        $this->mockAnnotationReader->expects($this->any())->method('getClassAnnotations')->will($this->returnValue(array()));
+        $this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
+        $this->mockAnnotationReader->expects($this->any())->method('getClassAnnotations')->will($this->returnValue([]));
         $this->inject($this->reflectionService, 'annotationReader', $this->mockAnnotationReader);
     }
 
@@ -55,7 +55,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function reflectClassThrowsExceptionForFilesWithNoClass()
     {
-        $this->reflectionService->_call('reflectClass', 'TYPO3\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass');
+        $this->reflectionService->_call('reflectClass', Fixture\FileWithNoClass::class);
     }
 
     /**
@@ -64,7 +64,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename()
     {
-        $this->reflectionService->_call('reflectClass', \TYPO3\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent::class);
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithDifferentNameDifferent::class);
     }
 
     /**
@@ -72,7 +72,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function isTagIgnoredReturnsTrueForIgnoredTags()
     {
-        $settings = array('reflection' => array('ignoredTags' => array('ignored' => true)));
+        $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];
         $this->reflectionService->injectSettings($settings);
 
         $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
@@ -83,7 +83,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function isTagIgnoredReturnsFalseForTagsThatAreNotIgnored()
     {
-        $settings = array('reflection' => array('ignoredTags' => array('notignored' => false)));
+        $settings = ['reflection' => ['ignoredTags' => ['notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
         $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
@@ -94,7 +94,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function isTagIgnoredReturnsFalseForTagsThatAreNotConfigured()
     {
-        $settings = array('reflection' => array('ignoredTags' => array('ignored' => true, 'notignored' => false)));
+        $settings = ['reflection' => ['ignoredTags' => ['ignored' => true, 'notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
         $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
@@ -105,7 +105,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function isTagIgnoredWorksWithOldConfiguration()
     {
-        $settings = array('reflection' => array('ignoredTags' => array('ignored')));
+        $settings = ['reflection' => ['ignoredTags' => ['ignored']]];
         $this->reflectionService->injectSettings($settings);
 
         $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));

@@ -11,7 +11,12 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FizzleException;
+use TYPO3\Eel\FlowQuery\FizzleParser;
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * "children" operation working on generic objects. It iterates over all
@@ -19,7 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
  * filter expression that has to be specified as argument or in a following
  * filter operation.
  */
-class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
+class ChildrenOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
@@ -31,12 +36,12 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the filter expression to use (in index 0)
      * @return void
-     * @throws \TYPO3\Eel\FlowQuery\FizzleException
+     * @throws FizzleException
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (count($flowQuery->getContext()) === 0) {
             return;
@@ -46,20 +51,20 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
             if ($flowQuery->peekOperationName() === 'filter') {
                 $filterOperation = $flowQuery->popOperation();
                 if (count($filterOperation['arguments']) === 0 || empty($filterOperation['arguments'][0])) {
-                    throw new \TYPO3\Eel\FlowQuery\FizzleException('Filter() needs arguments if it follows an empty children(): children().filter()', 1332489382);
+                    throw new FizzleException('Filter() needs arguments if it follows an empty children(): children().filter()', 1332489382);
                 }
                 $selectorAndFilter = $filterOperation['arguments'][0];
             } else {
-                throw new \TYPO3\Eel\FlowQuery\FizzleException('children() needs at least a Property Name filter specified, or must be followed by filter().', 1332489399);
+                throw new FizzleException('children() needs at least a Property Name filter specified, or must be followed by filter().', 1332489399);
             }
         } else {
             $selectorAndFilter = $arguments[0];
         }
 
-        $parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($selectorAndFilter);
+        $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
 
         if (count($parsedFilter['Filters']) === 0) {
-            throw new \TYPO3\Eel\FlowQuery\FizzleException('filter needs to be specified in children()', 1332489416);
+            throw new FizzleException('filter needs to be specified in children()', 1332489416);
         } elseif (count($parsedFilter['Filters']) === 1) {
             $filter = $parsedFilter['Filters'][0];
 
@@ -67,14 +72,14 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
                 $this->evaluatePropertyNameFilter($flowQuery, $filter['PropertyNameFilter']);
                 if (isset($filter['AttributeFilters'])) {
                     foreach ($filter['AttributeFilters'] as $attributeFilter) {
-                        $flowQuery->pushOperation('filter', array($attributeFilter['text']));
+                        $flowQuery->pushOperation('filter', [$attributeFilter['text']]);
                     }
                 }
             } elseif (isset($filter['AttributeFilters'])) {
-                throw new \TYPO3\Eel\FlowQuery\FizzleException('children() must have a property name filter and cannot only have an attribute filter.', 1332489432);
+                throw new FizzleException('children() must have a property name filter and cannot only have an attribute filter.', 1332489432);
             }
         } else {
-            throw new \TYPO3\Eel\FlowQuery\FizzleException('children() only supports a single filter group right now, i.e. nothing of the form "filter1, filter2"', 1332489489);
+            throw new FizzleException('children() only supports a single filter group right now, i.e. nothing of the form "filter1, filter2"', 1332489489);
         }
     }
 
@@ -82,16 +87,16 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
      * Evaluate the property name filter by traversing to the child object. We only support
      * nested objects right now
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $query
+     * @param FlowQuery $query
      * @param string $propertyNameFilter
      * @return void
      */
-    protected function evaluatePropertyNameFilter(\TYPO3\Eel\FlowQuery\FlowQuery $query, $propertyNameFilter)
+    protected function evaluatePropertyNameFilter(FlowQuery $query, $propertyNameFilter)
     {
-        $resultObjects = array();
-        $resultObjectHashes = array();
+        $resultObjects = [];
+        $resultObjectHashes = [];
         foreach ($query->getContext() as $element) {
-            $subProperty = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyNameFilter);
+            $subProperty = ObjectAccess::getPropertyPath($element, $propertyNameFilter);
             if (is_object($subProperty) || is_array($subProperty)) {
                 if (is_array($subProperty) || $subProperty instanceof \Traversable) {
                     foreach ($subProperty as $childElement) {

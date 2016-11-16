@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A Step within a Sequence
@@ -43,10 +44,10 @@ class Step
     /**
      * Invokes / executes this step
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+     * @param Bootstrap $bootstrap
      * @return void
      */
-    public function __invoke(\TYPO3\Flow\Core\Bootstrap $bootstrap)
+    public function __invoke(Bootstrap $bootstrap)
     {
         call_user_func($this->callback, $bootstrap);
     }

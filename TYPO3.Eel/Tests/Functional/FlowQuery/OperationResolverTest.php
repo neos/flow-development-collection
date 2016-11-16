@@ -1,13 +1,17 @@
 <?php
 namespace TYPO3\Eel\Tests\Functional\FlowQuery;
 
+use TYPO3\Eel\FlowQuery\OperationResolver;
+use TYPO3\Eel\FlowQuery\OperationResolverInterface;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Test cases for operation resolver
  */
-class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class OperationResolverTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\Eel\FlowQuery\OperationResolverInterface
+     * @var OperationResolverInterface
      */
     protected $operationResolver;
 
@@ -15,7 +19,7 @@ class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->operationResolver = $this->objectManager->get(\TYPO3\Eel\FlowQuery\OperationResolver::class);
+        $this->operationResolver = $this->objectManager->get(OperationResolver::class);
     }
 
     /**
@@ -39,6 +43,6 @@ class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function higherPriorityOverridesLowerPriority()
     {
-        $this->assertInstanceOf(\TYPO3\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority::class, $this->operationResolver->resolveOperation('exampleFinalOperation', array()));
+        $this->assertInstanceOf(Fixtures\ExampleFinalOperationWithHigherPriority::class, $this->operationResolver->resolveOperation('exampleFinalOperation', []));
     }
 }

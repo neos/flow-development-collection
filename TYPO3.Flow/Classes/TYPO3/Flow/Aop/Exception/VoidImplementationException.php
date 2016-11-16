@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Aop\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Aop\Exception;
 
 /**
  * A "Void Implementation" Exception
  *
  * @api
  */
-class VoidImplementationException extends \TYPO3\Flow\Aop\Exception
+class VoidImplementationException extends Exception
 {
 }

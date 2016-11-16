@@ -10,12 +10,14 @@ namespace TYPO3\Flow\Tests\Functional\SignalSlot;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\SignalSlot\Dispatcher;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Test suite for Signal Slot
  *
  */
-class SignalSlotTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class SignalSlotTest extends FunctionalTestCase
 {
     /**
      * @test
@@ -24,8 +26,8 @@ class SignalSlotTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         $subClass = new Fixtures\SubClass();
 
-        $dispatcher = $this->objectManager->get(\TYPO3\Flow\SignalSlot\Dispatcher::class);
-        $dispatcher->connect(\TYPO3\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass::class, 'something', $subClass, 'somethingSlot');
+        $dispatcher = $this->objectManager->get(Dispatcher::class);
+        $dispatcher->connect(Fixtures\SubClass::class, 'something', $subClass, 'somethingSlot');
 
         $subClass->triggerSomethingSignalFromSubClass();
         $this->assertTrue($subClass->slotWasCalled, 'from sub class');

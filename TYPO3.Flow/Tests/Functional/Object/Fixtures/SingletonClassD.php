@@ -22,13 +22,13 @@ class SingletonClassD
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC
+     * @var PrototypeClassC
      */
     public $prototypeClassC;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+     * @var PrototypeClassAishInterface
      */
     public $prototypeClassA;
 }

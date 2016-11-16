@@ -11,6 +11,8 @@ namespace TYPO3\Eel\FlowQuery;
  * source code.
  */
 
-class FlowQueryException extends \TYPO3\Flow\Exception
+use TYPO3\Flow\Exception;
+
+class FlowQueryException extends Exception
 {
 }

@@ -282,7 +282,7 @@ class ValidatorResolver
             if ($classSchema !== null && $classSchema->isAggregateRoot()) {
                 $objectValidator = new AggregateBoundaryValidator(array());
             } else {
-            $objectValidator = new GenericObjectValidator([]);
+                $objectValidator = new GenericObjectValidator([]);
             }
             $conjunctionValidator->addValidator($objectValidator);
             foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {

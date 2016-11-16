@@ -137,7 +137,7 @@ class FileSystemTarget implements TargetInterface
         foreach ($this->options as $key => $value) {
             $isOptionSet = $this->setOption($key, $value);
             if (!$isOptionSet) {
-                    throw new TargetException(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
+                throw new TargetException(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
             }
         }
 

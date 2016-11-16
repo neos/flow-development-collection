@@ -20,20 +20,20 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     public function concatExamples()
     {
-        return array(
-            'alpha and numeric values' => array(
-                array(array('a', 'b', 'c'), array(1, 2, 3)),
-                array('a', 'b', 'c', 1, 2, 3)
-            ),
-            'variable arguments' => array(
-                array(array('a', 'b', 'c'), array(1, 2, 3), array(4, 5, 6)),
-                array('a', 'b', 'c', 1, 2, 3, 4, 5, 6)
-            ),
-            'mixed arguments' => array(
-                array(array('a', 'b', 'c'), 1, array(2, 3)),
-                array('a', 'b', 'c', 1, 2, 3)
-            )
-        );
+        return [
+            'alpha and numeric values' => [
+                [['a', 'b', 'c'], [1, 2, 3]],
+                ['a', 'b', 'c', 1, 2, 3]
+            ],
+            'variable arguments' => [
+                [['a', 'b', 'c'], [1, 2, 3], [4, 5, 6]],
+                ['a', 'b', 'c', 1, 2, 3, 4, 5, 6]
+            ],
+            'mixed arguments' => [
+                [['a', 'b', 'c'], 1, [2, 3]],
+                ['a', 'b', 'c', 1, 2, 3]
+            ]
+        ];
     }
 
     /**
@@ -43,17 +43,17 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function concatWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array(array($helper, 'concat'), $arguments);
+        $result = call_user_func_array([$helper, 'concat'], $arguments);
         $this->assertEquals($expected, $result);
     }
 
     public function joinExamples()
     {
-        return array(
-            'words with default separator' => array(array('a', 'b', 'c'), null, 'a,b,c'),
-            'words with custom separator' => array(array('a', 'b', 'c'), ', ', 'a, b, c'),
-            'empty array' => array(array(), ', ', ''),
-        );
+        return [
+            'words with default separator' => [['a', 'b', 'c'], null, 'a,b,c'],
+            'words with custom separator' => [['a', 'b', 'c'], ', ', 'a, b, c'],
+            'empty array' => [[], ', ', ''],
+        ];
     }
 
     /**
@@ -73,14 +73,14 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function sliceExamples()
     {
-        return array(
-            'positive begin without end' => array(array('a', 'b', 'c', 'd', 'e'), 2, null, array('c', 'd', 'e')),
-            'negative begin without end' => array(array('a', 'b', 'c', 'd', 'e'), -2, null, array('d', 'e')),
-            'positive begin and end' => array(array('a', 'b', 'c', 'd', 'e'), 1, 3, array('b', 'c')),
-            'positive begin with negative end' => array(array('a', 'b', 'c', 'd', 'e'), 1, -2, array('b', 'c')),
-            'zero begin with negative end' => array(array('a', 'b', 'c', 'd', 'e'), 0, -1, array('a', 'b', 'c', 'd')),
-            'empty array' => array(array(), 1, -2, array()),
-        );
+        return [
+            'positive begin without end' => [['a', 'b', 'c', 'd', 'e'], 2, null, ['c', 'd', 'e']],
+            'negative begin without end' => [['a', 'b', 'c', 'd', 'e'], -2, null, ['d', 'e']],
+            'positive begin and end' => [['a', 'b', 'c', 'd', 'e'], 1, 3, ['b', 'c']],
+            'positive begin with negative end' => [['a', 'b', 'c', 'd', 'e'], 1, -2, ['b', 'c']],
+            'zero begin with negative end' => [['a', 'b', 'c', 'd', 'e'], 0, -1, ['a', 'b', 'c', 'd']],
+            'empty array' => [[], 1, -2, []],
+        ];
     }
 
     /**
@@ -100,11 +100,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function reverseExamples()
     {
-        return array(
-            'empty array' => array(array(), array()),
-            'numeric indices' => array(array('a', 'b', 'c'), array('c', 'b', 'a')),
-            'string keys' => array(array('foo' => 'bar', 'bar' => 'baz'), array('bar' => 'baz', 'foo' => 'bar')),
-        );
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [['a', 'b', 'c'], ['c', 'b', 'a']],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['bar' => 'baz', 'foo' => 'bar']],
+        ];
     }
 
     /**
@@ -121,11 +121,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function keysExamples()
     {
-        return array(
-            'empty array' => array(array(), array()),
-            'numeric indices' => array(array('a', 'b', 'c'), array(0, 1, 2)),
-            'string keys' => array(array('foo' => 'bar', 'bar' => 'baz'), array('foo', 'bar')),
-        );
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [['a', 'b', 'c'], [0, 1, 2]],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['foo', 'bar']],
+        ];
     }
 
     /**
@@ -142,10 +142,10 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function lengthExamples()
     {
-        return array(
-            'empty array' => array(array(), 0),
-            'array with values' => array(array('a', 'b', 'c'), 3)
-        );
+        return [
+            'empty array' => [[], 0],
+            'array with values' => [['a', 'b', 'c'], 3]
+        ];
     }
 
     /**
@@ -162,11 +162,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function indexOfExamples()
     {
-        return array(
-            'empty array' => array(array(), 42, null, -1),
-            'array with values' => array(array('a', 'b', 'c', 'b'), 'b', null, 1),
-            'with offset' => array(array('a', 'b', 'c', 'b'), 'b', 2, 3)
-        );
+        return [
+            'empty array' => [[], 42, null, -1],
+            'array with values' => [['a', 'b', 'c', 'b'], 'b', null, 1],
+            'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3]
+        ];
     }
 
     /**
@@ -187,10 +187,10 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function isEmptyExamples()
     {
-        return array(
-            'empty array' => array(array(), true),
-            'array with values' => array(array('a', 'b', 'c'), false)
-        );
+        return [
+            'empty array' => [[], true],
+            'array with values' => [['a', 'b', 'c'], false]
+        ];
     }
 
     /**
@@ -207,11 +207,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function firstExamples()
     {
-        return array(
-            'empty array' => array(array(), false),
-            'numeric indices' => array(array('a', 'b', 'c'), 'a'),
-            'string keys' => array(array('foo' => 'bar', 'bar' => 'baz'), 'bar'),
-        );
+        return [
+            'empty array' => [[], false],
+            'numeric indices' => [['a', 'b', 'c'], 'a'],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], 'bar'],
+        ];
     }
 
     /**
@@ -228,11 +228,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function lastExamples()
     {
-        return array(
-            'empty array' => array(array(), false),
-            'numeric indices' => array(array('a', 'b', 'c'), 'c'),
-            'string keys' => array(array('foo' => 'bar', 'bar' => 'baz'), 'baz'),
-        );
+        return [
+            'empty array' => [[], false],
+            'numeric indices' => [['a', 'b', 'c'], 'c'],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], 'baz'],
+        ];
     }
 
     /**
@@ -249,11 +249,11 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function randomExamples()
     {
-        return array(
-            'empty array' => array(array(), false),
-            'numeric indices' => array(array('a', 'b', 'c'), true),
-            'string keys' => array(array('foo' => 'bar', 'bar' => 'baz'), true),
-        );
+        return [
+            'empty array' => [[], false],
+            'numeric indices' => [['a', 'b', 'c'], true],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], true],
+        ];
     }
 
     /**
@@ -270,12 +270,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function sortExamples()
     {
-        return array(
-            'empty array' => array(array(), array()),
-            'numeric indices' => array(array('z', '7d', 'i', '7', 'm', 8, 3, 'q'), array(3, '7', '7d', 8, 'i', 'm', 'q', 'z')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), array('foo' => 'bar', 'bar' => 'baz', 'baz' => 'foo')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), array('k' => 53, 76, '84216', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc')),
-        );
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q'], [3, '7', '7d', 8, 'i', 'm', 'q', 'z']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'bar' => 'baz', 'baz' => 'foo']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['k' => 53, 76, '84216', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc']],
+        ];
     }
 
     /**
@@ -291,12 +291,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function shuffleExamples()
     {
-        return array(
-            'empty array' => array(array()),
-            'numeric indices' => array(array('z', '7d', 'i', '7', 'm', 8, 3, 'q')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53)),
-        );
+        return [
+            'empty array' => [[]],
+            'numeric indices' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+        ];
     }
 
     /**
@@ -312,12 +312,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function popExamples()
     {
-        return array(
-            'empty array' => array(array(), array()),
-            'numeric indices' => array(array('z', '7d', 'i', '7'), array('z', '7d', 'i')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), array('foo' => 'bar', 'baz' => 'foo')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76)),
-        );
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 'i']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76]],
+        ];
     }
 
     /**
@@ -333,12 +333,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function pushExamples()
     {
-        return array(
-            'empty array' => array(array(), 42, 'foo', array(42, 'foo')),
-            'numeric indices' => array(array('z', '7d', 'i', '7'), 42, 'foo', array('z', '7d', 'i', '7', 42, 'foo')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), 42, 'foo', array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz', 42, 'foo')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), 42, 'foo', array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53, 42, 'foo')),
-        );
+        return [
+            'empty array' => [[], 42, 'foo', [42, 'foo']],
+            'numeric indices' => [['z', '7d', 'i', '7'], 42, 'foo', ['z', '7d', 'i', '7', 42, 'foo']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 42, 'foo', ['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz', 42, 'foo']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 42, 'foo', ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53, 42, 'foo']],
+        ];
     }
 
     /**
@@ -354,12 +354,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function shiftExamples()
     {
-        return array(
-            'empty array' => array(array(), array()),
-            'numeric indices' => array(array('z', '7d', 'i', '7'), array('7d', 'i', '7')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), array('baz' => 'foo', 'bar' => 'baz')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), array('foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53)),
-        );
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [['z', '7d', 'i', '7'], ['7d', 'i', '7']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['baz' => 'foo', 'bar' => 'baz']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+        ];
     }
 
     /**
@@ -375,12 +375,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function unshiftExamples()
     {
-        return array(
-            'empty array' => array(array(), 'abc', 42, array(42, 'abc')),
-            'numeric indices' => array(array('z', '7d', 'i', '7'), 'abc', 42, array(42, 'abc', 'z', '7d', 'i', '7')),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), 'abc', 42, array(42, 'abc', 'foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz')),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), 'abc', 42, array(42, 'abc', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53)),
-        );
+        return [
+            'empty array' => [[], 'abc', 42, [42, 'abc']],
+            'numeric indices' => [['z', '7d', 'i', '7'], 'abc', 42, [42, 'abc', 'z', '7d', 'i', '7']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 'abc', 42, [42, 'abc', 'foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 'abc', 42, [42, 'abc', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+        ];
     }
 
     /**
@@ -396,12 +396,12 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function spliceExamples()
     {
-        return array(
-            'empty array' => array(array(), array(42, 'abc', 'TYPO3'), 2, 2, 42, 'abc', 'TYPO3'),
-            'numeric indices' => array(array('z', '7d', 'i', '7'), array('z', '7d', 42, 'abc', 'TYPO3'), 2, 2, 42, 'abc', 'TYPO3'),
-            'string keys' => array(array('foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'), array('foo' => 'bar', 'baz' => 'foo', 42, 'abc', 'TYPO3'), 2, 2, 42, 'abc', 'TYPO3'),
-            'mixed keys' => array(array('bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53), array('bar', 'foo', 42, 'abc', 'TYPO3', '84216', 76, 'k' => 53), 2, 2, 42, 'abc', 'TYPO3'),
-        );
+        return [
+            'empty array' => [[], [42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
+            'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo', 42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', 'foo', 42, 'abc', 'TYPO3', '84216', 76, 'k' => 53], 2, 2, 42, 'abc', 'TYPO3'],
+        ];
     }
 
     /**
@@ -421,7 +421,27 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function spliceNoReplacements()
     {
         $helper = new ArrayHelper();
-        $splicedArray = $helper->splice(array(0, 1, 2, 3, 4, 5), 2, 2);
-        $this->assertEquals(array(0, 1, 4, 5), $splicedArray);
+        $splicedArray = $helper->splice([0, 1, 2, 3, 4, 5], 2, 2);
+        $this->assertEquals([0, 1, 4, 5], $splicedArray);
+    }
+
+    public function flipExamples()
+    {
+        return [
+            'array with values' => [['a', 'b', 'c'], ['a' => 0, 'b' => 1, 'c' => 2]],
+            'array with key and values' => [['foo' => 'bar', 24 => 42, 'i' => 181, 42 => 'Neos'], ['bar' => 'foo', 42 => 24, 181 => 'i', 'Neos' => 42]]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider flipExamples
+     */
+    public function flipWorks($array, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->flip($array);
+
+        $this->assertEquals($expected, $result);
     }
 }
