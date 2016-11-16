@@ -269,7 +269,7 @@ class Manager
         Tools::writeComposerManifest($this->currentPackageData['composerManifest'], $composerFilePathAndName);
 
         if ($commitChanges) {
-            $commitMessage = '[TASK] Import core migration log to composer.json' . chr(10) . chr(10);
+            $commitMessage = 'TASK: Import core migration log to composer.json' . chr(10) . chr(10);
             $commitMessage .= wordwrap('This commit imports the core migration log to the "extra" section of the composer manifest.', 72);
 
             list($returnCode, $output) = Git::commitAll($this->currentPackageData['path'], $commitMessage);
@@ -309,7 +309,7 @@ class Manager
     protected function commitMigration(AbstractMigration $migration, $commitMessageNotice = null)
     {
         $migrationIdentifier = $migration->getIdentifier();
-        $commitMessageSubject = sprintf('[TASK] Apply migration %s', $migrationIdentifier);
+        $commitMessageSubject = sprintf('TASK: Apply migration %s', $migrationIdentifier);
         if (!Git::isWorkingCopyRoot($this->currentPackageData['path'])) {
             $commitMessageSubject .= sprintf(' to package "%s"', $this->currentPackageData['packageKey']);
         }
