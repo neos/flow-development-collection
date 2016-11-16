@@ -23,7 +23,7 @@
 
 # Set a custom Template for a Widget, but only if it's executed inside TYPO3.Flow
 -
-  requestFilter: 'parentRequest.isPackage("TYPO3.Flow") && isPackage("TYPO3.Fluid") && isSubPackage("Tests\Functional\Core\Fixtures\ViewHelpers")'
+  requestFilter: 'parentRequest.isPackage("TYPO3.Flow") && isPackage("Neos.FluidAdaptor") && isSubPackage("Tests\Functional\Core\Fixtures\ViewHelpers")'
   options:
     templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnPackageLevel.html
 
