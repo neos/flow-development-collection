@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Session;
  * source code.
  */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Session;
