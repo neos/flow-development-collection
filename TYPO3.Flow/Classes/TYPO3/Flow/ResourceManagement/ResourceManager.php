@@ -596,24 +596,6 @@ class ResourceManager
     }
 
     /**
-     * Registers a Stream Wrapper Adapter for the resource:// scheme.
-     *
-     * @return void
-     */
-    protected function initializeStreamWrapper()
-    {
-        $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
-        foreach ($streamWrapperClassNames as $streamWrapperClassName) {
-            $scheme = $streamWrapperClassName::getScheme();
-            if (in_array($scheme, stream_get_wrappers())) {
-                stream_wrapper_unregister($scheme);
-            }
-            stream_wrapper_register($scheme, StreamWrapperAdapter::class);
-            StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
-        }
-    }
-
-    /**
      * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
      * move it outside of upload folder if open_basedir is enabled and check the filename.
      *
