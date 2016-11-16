@@ -16,8 +16,10 @@ use TYPO3\Flow\Package\Package;
 use TYPO3\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3\Fluid\Core\Parser\ParsingState;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\NodeInterface;
+use TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode;
 use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper;
 
 /**
  * This interceptor looks for URIs pointing to package resources and in place
@@ -29,11 +31,11 @@ use TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
  * mirrored by Flow.
  *
  * Currently the supported URIs are of the form
- *  [../]Public/Some/<Path/To/ResourceObject> (will use current package)
- *  [../]<PackageKey>/Resources/Public/<Path/To/ResourceObject> (will use given package)
+ *  [../]Public/Some/<Path/To/Resource> (will use current package)
+ *  [../]<PackageKey>/Resources/Public/<Path/To/Resource> (will use given package)
  *
  */
-class Resource implements InterceptorInterface
+class ResourceInterceptor implements InterceptorInterface
 {
     /**
      * Split a text at what seems to be a package resource URI.
@@ -51,7 +53,7 @@ class Resource implements InterceptorInterface
     /**
      * Is the text at hand a resource URI and what are path/package?
      * @var string
-     * @see \TYPO3\Flow\Pckage\Package::PATTERN_MATCH_PACKAGEKEY
+     * @see \TYPO3\Flow\Package\Package::PATTERN_MATCH_PACKAGEKEY
      */
     const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 
@@ -109,25 +111,25 @@ class Resource implements InterceptorInterface
             return $node;
         }
         $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $node = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\RootNode::class);
+        $node = $this->objectManager->get(RootNode::class);
         foreach ($textParts as $part) {
             $matches = array();
             if (preg_match(self::PATTERN_MATCH_RESOURCE_URI, $part, $matches)) {
                 $arguments = array(
-                    'path' => $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $matches['Path'])
+                    'path' => $this->objectManager->get(TextNode::class, $matches['Path'])
                 );
                 if (isset($matches['Package']) && preg_match(Package::PATTERN_MATCH_PACKAGEKEY, $matches['Package'])) {
-                    $arguments['package'] = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $matches['Package']);
+                    $arguments['package'] = $this->objectManager->get(TextNode::class, $matches['Package']);
                 } elseif ($this->defaultPackageKey !== null) {
-                    $arguments['package'] = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $this->defaultPackageKey);
+                    $arguments['package'] = $this->objectManager->get(TextNode::class, $this->defaultPackageKey);
                 }
-                $viewHelper = $this->objectManager->get(\TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper::class);
+                $viewHelper = $this->objectManager->get(ResourceViewHelper::class);
                 /** @var $viewHelperNode ViewHelperNode */
-                $viewHelperNode = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $viewHelper, $arguments);
+                $viewHelperNode = $this->objectManager->get(ViewHelperNode::class, $viewHelper, $arguments);
                 $node->addChildNode($viewHelperNode);
             } else {
                 /** @var $textNode TextNode */
-                $textNode = $this->objectManager->get(\TYPO3\Fluid\Core\Parser\SyntaxTree\TextNode::class, $part);
+                $textNode = $this->objectManager->get(TextNode::class, $part);
                 $node->addChildNode($textNode);
             }
         }
