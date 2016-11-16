@@ -29,12 +29,12 @@ class ProxyClassTest extends UnitTestCase
                 'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
-                'expectedProxyCode' => "namespace \Acme\Namespace;\n" .
+                'expectedProxyCode' => "namespace \\Acme\\Namespace;\n" .
                     "\n" .
                     "use Doctrine\\ORM\\Mapping as ORM;\n" .
                     "use TYPO3\\Flow\\Annotations as Flow;\n" .
                     "\n" .
-                    'class ClassName extends ClassName' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface {\n\n" .
+                    'class ClassName extends ClassName' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\TYPO3\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
                     '}',
             ],
@@ -47,7 +47,7 @@ class ProxyClassTest extends UnitTestCase
                     "use Doctrine\\ORM\\Mapping as ORM;\n" .
                     "use TYPO3\\Flow\\Annotations as Flow;\n" .
                     "\n" .
-                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface {\n\n" .
+                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\TYPO3\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
                     '}',
             ],
@@ -60,7 +60,7 @@ class ProxyClassTest extends UnitTestCase
                     "use Doctrine\\ORM\\Mapping as ORM;\n" .
                     "use TYPO3\\Flow\\Annotations as Flow;\n" .
                     "\n" .
-                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface {\n\n" .
+                    'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\TYPO3\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
                     '}',
             ],
