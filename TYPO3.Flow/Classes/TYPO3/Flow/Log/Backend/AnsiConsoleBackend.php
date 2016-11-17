@@ -40,7 +40,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     /**
      * @var array
      */
-    protected $tagFormats = array();
+    protected $tagFormats = [];
 
     /**
      * @var boolean
@@ -57,14 +57,16 @@ class AnsiConsoleBackend extends ConsoleBackend
     public function open()
     {
         parent::open();
-        $this->tagFormats = array(
-            'success' => self::FG_GREEN . '|' . self::END,
-            'info' => self::FG_WHITE . '|' . self::END,
-            'notice' => self::FG_YELLOW . '|' . self::END,
-            'debug' => self::FG_GRAY . '|' . self::END,
-            'error' => self::FG_WHITE . self::BG_RED . '|' . self::END,
-            'warning' => self::FG_BLACK . self::BG_YELLOW . '|' . self::END
-        );
+        $this->tagFormats = [
+            'emergency' => self::FG_BLACK . self::BG_RED . '|' . self::END,
+            'alert' => self::FG_BLACK . self::BG_YELLOW . '|' . self::END,
+            'critical' => self::FG_BLACK . self::BG_CYAN . '|' . self::END,
+            'error' => self::FG_RED . '|' . self::END,
+            'warning' => self::FG_YELLOW . '|' . self::END,
+            'notice' => self::FG_WHITE . '|' . self::END,
+            'info' => self::FG_GREEN . '|' . self::END,
+            'debug' => self::FG_BLUE . '|' . self::END,
+        ];
     }
 
     /**

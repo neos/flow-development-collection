@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Mvc\View;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\TypeHandling;
 
 /**
@@ -19,15 +22,15 @@ use TYPO3\Flow\Utility\TypeHandling;
  *
  * @api
  */
-class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
+class JsonView extends AbstractView
 {
     /**
      * Supported options
      * @var array
      */
-    protected $supportedOptions = array(
-        'jsonEncodingOptions' => array(0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer')
-    );
+    protected $supportedOptions = [
+        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer']
+    ];
 
     /**
      * Definition for the class name exposure configuration,
@@ -46,7 +49,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
     const EXPOSE_CLASSNAME_UNQUALIFIED = 2;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var ControllerContext
      */
     protected $controllerContext;
 
@@ -55,7 +58,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
      *
      * @var array
      */
-    protected $variablesToRender = array('value');
+    protected $variablesToRender = ['value'];
 
     /**
      * The rendering configuration for this JSON view which
@@ -155,10 +158,10 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
      *
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      * @Flow\Inject
      */
     protected $persistenceManager;
@@ -213,9 +216,9 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
         if (count($this->variablesToRender) === 1) {
             $variableName = current($this->variablesToRender);
             $valueToRender = isset($this->variables[$variableName]) ? $this->variables[$variableName] : null;
-            $configuration = isset($this->configuration[$variableName]) ? $this->configuration[$variableName] : array();
+            $configuration = isset($this->configuration[$variableName]) ? $this->configuration[$variableName] : [];
         } else {
-            $valueToRender = array();
+            $valueToRender = [];
             foreach ($this->variablesToRender as $variableName) {
                 $valueToRender[$variableName] = isset($this->variables[$variableName]) ? $this->variables[$variableName] : null;
             }
@@ -235,7 +238,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
     protected function transformValue($value, array $configuration)
     {
         if (is_array($value) || $value instanceof \ArrayAccess) {
-            $array = array();
+            $array = [];
             foreach ($value as $key => $element) {
                 if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
                     $array[$key] = $this->transformValue($element, $configuration['_descendAll']);
@@ -246,7 +249,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
                     if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) {
                         continue;
                     }
-                    $array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
+                    $array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : []);
                 }
             }
             return $array;
@@ -272,9 +275,9 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
         if ($object instanceof \DateTimeInterface) {
             return $object->format(\DateTime::ISO8601);
         } else {
-            $propertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($object);
+            $propertyNames = ObjectAccess::getGettablePropertyNames($object);
 
-            $propertiesToRender = array();
+            $propertiesToRender = [];
             foreach ($propertyNames as $propertyName) {
                 if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
                     continue;
@@ -283,7 +286,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView
                     continue;
                 }
 
-                $propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
+                $propertyValue = ObjectAccess::getProperty($object, $propertyName);
 
                 if (!is_array($propertyValue) && !is_object($propertyValue)) {
                     $propertiesToRender[$propertyName] = $propertyValue;

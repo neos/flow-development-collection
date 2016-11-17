@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Authorization\InterceptorInterface;
 
 /**
  * This security interceptor invokes the authentication of the authentication tokens in the security context.
@@ -19,19 +21,19 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class RequireAuthentication implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+class RequireAuthentication implements InterceptorInterface
 {
     /**
-     * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+     * @var AuthenticationManagerInterface
      */
     protected $authenticationManager = null;
 
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+     * @param AuthenticationManagerInterface $authenticationManager The authentication Manager
      */
-    public function __construct(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager)
+    public function __construct(AuthenticationManagerInterface $authenticationManager)
     {
         $this->authenticationManager = $authenticationManager;
     }

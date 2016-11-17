@@ -41,3 +41,10 @@ Operations
 * `get()`
 * `count($filter)`
 * `is($filter)`
+
+Further documentation
+---------------------
+
+Further documentation can be found at
+http://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Eel.html
+

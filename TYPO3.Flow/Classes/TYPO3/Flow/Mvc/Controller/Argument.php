@@ -12,6 +12,10 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 
 /**
  * A controller argument
@@ -29,12 +33,14 @@ class Argument
     /**
      * Short name of this argument
      * @var string
+     * @deprecated Will be removed for next major Flow version.
      */
     protected $shortName = null;
 
     /**
      * Short help message for this argument
      * @var string
+     * @deprecated Will be removed for next major Flow version.
      */
     protected $shortHelpMessage = null;
 
@@ -64,24 +70,24 @@ class Argument
 
     /**
      * A custom validator, used supplementary to the base validation
-     * @var \TYPO3\Flow\Validation\Validator\ValidatorInterface
+     * @var ValidatorInterface
      */
     protected $validator = null;
 
     /**
      * The validation results. This can be asked if the argument has errors.
-     * @var \TYPO3\Flow\Error\Result
+     * @var Result
      */
     protected $validationResults = null;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
+     * @var MvcPropertyMappingConfiguration
      */
     protected $propertyMappingConfiguration;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
@@ -120,9 +126,10 @@ class Argument
      * Sets the short name of this argument.
      *
      * @param string $shortName A "short name" - a single character
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
      * @throws \InvalidArgumentException if $shortName is not a character
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function setShortName($shortName)
     {
@@ -138,6 +145,7 @@ class Argument
      *
      * @return string This argument's short name
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function getShortName()
     {
@@ -147,11 +155,12 @@ class Argument
     /**
      * Sets the data type of this argument that is also used for property mapping.
      * @param string $dataType
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
+     * @deprecated Will be removed for next major Flow version. Set the DataType via constructor.
      */
     public function setDataType($dataType)
     {
-        $this->dataType = \TYPO3\Flow\Utility\TypeHandling::normalizeType($dataType);
+        $this->dataType = TypeHandling::normalizeType($dataType);
         return $this;
     }
 
@@ -170,7 +179,7 @@ class Argument
      * Marks this argument to be required
      *
      * @param boolean $required TRUE if this argument should be required
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
      * @api
      */
     public function setRequired($required)
@@ -195,9 +204,10 @@ class Argument
      * used elsewhere, too.
      *
      * @param string $message A short help message
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
      * @throws \InvalidArgumentException
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function setShortHelpMessage($message)
     {
@@ -213,6 +223,7 @@ class Argument
      *
      * @return string The short help message
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function getShortHelpMessage()
     {
@@ -223,7 +234,7 @@ class Argument
      * Sets the default value of the argument
      *
      * @param mixed $defaultValue Default value
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
      * @api
      */
     public function setDefaultValue($defaultValue)
@@ -246,11 +257,11 @@ class Argument
     /**
      * Sets a custom validator which is used supplementary to the base validation
      *
-     * @param \TYPO3\Flow\Validation\Validator\ValidatorInterface $validator The actual validator object
-     * @return \TYPO3\Flow\Mvc\Controller\Argument Returns $this (used for fluent interface)
+     * @param ValidatorInterface $validator The actual validator object
+     * @return Argument Returns $this (used for fluent interface)
      * @api
      */
-    public function setValidator(\TYPO3\Flow\Validation\Validator\ValidatorInterface $validator)
+    public function setValidator(ValidatorInterface $validator)
     {
         $this->validator = $validator;
         return $this;
@@ -259,7 +270,7 @@ class Argument
     /**
      * Returns the set validator
      *
-     * @return \TYPO3\Flow\Validation\Validator\ValidatorInterface The set validator, NULL if none was set
+     * @return ValidatorInterface The set validator, NULL if none was set
      * @api
      */
     public function getValidator()
@@ -271,7 +282,7 @@ class Argument
      * Sets the value of this argument.
      *
      * @param mixed $rawValue The value of this argument
-     * @return \TYPO3\Flow\Mvc\Controller\Argument $this
+     * @return Argument $this
      */
     public function setValue($rawValue)
     {
@@ -307,13 +318,13 @@ class Argument
     /**
      * Return the Property Mapping Configuration used for this argument; can be used by the initialize*action to modify the Property Mapping.
      *
-     * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
+     * @return MvcPropertyMappingConfiguration
      * @api
      */
     public function getPropertyMappingConfiguration()
     {
         if ($this->propertyMappingConfiguration === null) {
-            $this->propertyMappingConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
+            $this->propertyMappingConfiguration = new MvcPropertyMappingConfiguration();
         }
         return $this->propertyMappingConfiguration;
     }
@@ -321,6 +332,7 @@ class Argument
     /**
      * @return boolean TRUE if the argument is valid, FALSE otherwise
      * @api
+     * @deprecated Will be removed for next major Flow version.
      */
     public function isValid()
     {

@@ -16,6 +16,7 @@ use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
 use TYPO3\Flow\Resource\Target\TargetInterface;
+use TYPO3\Flow\Resource\Exception as ResourceException;
 
 /**
  * A resource collection
@@ -44,7 +45,7 @@ class Collection implements CollectionInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceRepository
+     * @var ResourceRepository
      */
     protected $resourceRepository;
 
@@ -104,12 +105,12 @@ class Collection implements CollectionInterface
      *
      * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @return Resource A resource object representing the imported resource
-     * @throws Exception
+     * @throws ResourceException
      */
     public function importResource($source)
     {
         if (!$this->storage instanceof WritableStorageInterface) {
-            throw new Exception(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1375197288);
+            throw new ResourceException(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1375197288);
         }
         return $this->storage->importResource($source, $this->name);
     }
@@ -127,12 +128,12 @@ class Collection implements CollectionInterface
      *
      * @param string $content The actual content to import
      * @return Resource A resource object representing the imported resource
-     * @throws Exception
+     * @throws ResourceException
      */
     public function importResourceFromContent($content)
     {
         if (!$this->storage instanceof WritableStorageInterface) {
-            throw new Exception(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1381155740);
+            throw new ResourceException(sprintf('Could not import resource into collection "%s" because its storage "%s" is a read-only storage.', $this->name, $this->storage->getName()), 1381155740);
         }
         return $this->storage->importResourceFromContent($content, $this->name);
     }
@@ -150,17 +151,18 @@ class Collection implements CollectionInterface
     /**
      * Returns all internal data objects of the storage attached to this collection.
      *
-     * @return array<\TYPO3\Flow\Resource\Storage\Object>
+     * @param callable $callback Function called after each object
+     * @return \Generator<Storage\Object>
      */
-    public function getObjects()
+    public function getObjects(callable $callback = null)
     {
-        $objects = array();
-        if ($this->storage instanceof PackageStorage && $this->pathPatterns !== array()) {
+        $objects = [];
+        if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects = array_merge($objects, $this->storage->getObjectsByPathPattern($pathPattern));
+                $objects = array_merge($objects, $this->storage->getObjectsByPathPattern($pathPattern, $callback));
             }
         } else {
-            $objects = $this->storage->getObjectsByCollection($this);
+            $objects = $this->storage->getObjectsByCollection($this, $callback);
         }
 
         // TODO: Implement filter manipulation here:

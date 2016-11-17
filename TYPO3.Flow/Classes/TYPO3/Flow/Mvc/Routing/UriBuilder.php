@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Mvc\Routing;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -34,20 +37,20 @@ class UriBuilder
     protected $environment;
 
     /**
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var ActionRequest
      */
     protected $request;
 
     /**
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * Arguments which have been used for building the last URI
      * @var array
      */
-    protected $lastArguments = array();
+    protected $lastArguments = [];
 
     /**
      * @var string
@@ -73,7 +76,7 @@ class UriBuilder
     /**
      * @var array
      */
-    protected $argumentsToBeExcludedFromQueryString = array();
+    protected $argumentsToBeExcludedFromQueryString = [];
 
     /**
      * @var string
@@ -83,12 +86,12 @@ class UriBuilder
     /**
      * Sets the current request and resets the UriBuilder
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request
+     * @param ActionRequest $request
      * @return void
      * @api
      * @see reset()
      */
-    public function setRequest(\TYPO3\Flow\Mvc\ActionRequest $request)
+    public function setRequest(ActionRequest $request)
     {
         $this->request = $request;
         $this->reset();
@@ -97,7 +100,7 @@ class UriBuilder
     /**
      * Gets the current request
      *
-     * @return \TYPO3\Flow\Mvc\ActionRequest
+     * @return ActionRequest
      */
     public function getRequest()
     {
@@ -110,7 +113,7 @@ class UriBuilder
      * array('prefix1' => array('foo' => 'bar')) gets "&prefix1[foo]=bar"
      *
      * @param array $arguments
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setArguments(array $arguments)
@@ -132,7 +135,7 @@ class UriBuilder
      * If specified, adds a given HTML anchor to the URI (#...)
      *
      * @param string $section
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setSection($section)
@@ -154,7 +157,7 @@ class UriBuilder
      * Specifies the format of the target (e.g. "html" or "xml")
      *
      * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setFormat($format)
@@ -176,7 +179,7 @@ class UriBuilder
      * If set, the URI is prepended with the current base URI. Defaults to FALSE.
      *
      * @param boolean $createAbsoluteUri
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setCreateAbsoluteUri($createAbsoluteUri)
@@ -199,7 +202,7 @@ class UriBuilder
      * If this is set to FALSE, relative paths are created as it used to be the default behavior before Flow 2.0.
      *
      * @param boolean $createRelativePaths
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setCreateRelativePaths($createRelativePaths)
@@ -221,7 +224,7 @@ class UriBuilder
      * If set, the current query parameters will be merged with $this->arguments. Defaults to FALSE.
      *
      * @param boolean $addQueryString
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setAddQueryString($addQueryString)
@@ -244,7 +247,7 @@ class UriBuilder
      * Only active if addQueryString is set
      *
      * @param array $argumentsToBeExcludedFromQueryString
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString)
@@ -277,17 +280,17 @@ class UriBuilder
      * Resets all UriBuilder options to their default value.
      * Note: This won't reset the Request that is attached to this UriBuilder (@see setRequest())
      *
-     * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function reset()
     {
-        $this->arguments = array();
+        $this->arguments = [];
         $this->section = '';
         $this->format = null;
         $this->createAbsoluteUri = false;
         $this->addQueryString = false;
-        $this->argumentsToBeExcludedFromQueryString = array();
+        $this->argumentsToBeExcludedFromQueryString = [];
 
         return $this;
     }
@@ -303,12 +306,12 @@ class UriBuilder
      * @return string the rendered URI
      * @api
      * @see build()
-     * @throws \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException if $actionName parameter is empty
+     * @throws Exception\MissingActionNameException if $actionName parameter is empty
      */
-    public function uriFor($actionName, $controllerArguments = array(), $controllerName = null, $packageKey = null, $subPackageKey = null)
+    public function uriFor($actionName, $controllerArguments = [], $controllerName = null, $packageKey = null, $subPackageKey = null)
     {
         if ($actionName === null || $actionName === '') {
-            throw new \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
+            throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
         }
         $controllerArguments['@action'] = strtolower($actionName);
         if ($controllerName !== null) {
@@ -345,15 +348,15 @@ class UriBuilder
      * )
      *
      * @param array $arguments arguments
-     * @param \TYPO3\Flow\Mvc\RequestInterface $currentRequest
+     * @param RequestInterface $currentRequest
      * @return array arguments with namespace
      */
-    protected function addNamespaceToArguments(array $arguments, \TYPO3\Flow\Mvc\RequestInterface $currentRequest)
+    protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
     {
         while (!$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
-                $arguments = array($argumentNamespace => $arguments);
+                $arguments = [$argumentNamespace => $arguments];
             }
             $currentRequest = $currentRequest->getParentRequest();
         }
@@ -367,7 +370,7 @@ class UriBuilder
      * @return string The URI
      * @api
      */
-    public function build(array $arguments = array())
+    public function build(array $arguments = [])
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
         $arguments = $this->mergeArgumentsWithRequestArguments($arguments);
@@ -409,13 +412,13 @@ class UriBuilder
     {
         if ($this->request !== $this->request->getMainRequest()) {
             $subRequest = $this->request;
-            while ($subRequest instanceof \TYPO3\Flow\Mvc\ActionRequest) {
+            while ($subRequest instanceof ActionRequest) {
                 $requestArguments = (array)$subRequest->getArguments();
 
                 // Reset arguments for the request that is bound to this UriBuilder instance
                 if ($subRequest === $this->request) {
                     if ($this->addQueryString === false) {
-                        $requestArguments = array();
+                        $requestArguments = [];
                     } else {
                         foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
                             unset($requestArguments[$argumentToBeExcluded]);
@@ -466,7 +469,7 @@ class UriBuilder
                 unset($requestArguments[$argumentToBeExcluded]);
             }
 
-            if ($requestArguments !== array()) {
+            if ($requestArguments !== []) {
                 $arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
             }
         }
@@ -478,12 +481,12 @@ class UriBuilder
      * Get the path of the argument namespaces of all parent requests.
      * Example: mainrequest.subrequest.subsubrequest
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request
+     * @param ActionRequest $request
      * @return string
      */
     protected function getRequestNamespacePath($request)
     {
-        if (!$request instanceof \TYPO3\Flow\Http\Request) {
+        if (!$request instanceof Request) {
             $parentPath = $this->getRequestNamespacePath($request->getParentRequest());
             return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
         }

@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Persistence\Generic;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 
 /**
  * A lazy loading variant of \SplObjectStorage
@@ -22,18 +23,18 @@ class LazySplObjectStorage extends \SplObjectStorage
      * The identifiers of the objects contained in the \SplObjectStorage
      * @var array
      */
-    protected $objectIdentifiers = array();
+    protected $objectIdentifiers = [];
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
-     * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
+     * @param PersistenceManagerInterface $persistenceManager
      * @return void
      */
-    public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager)
+    public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
     }
@@ -57,7 +58,7 @@ class LazySplObjectStorage extends \SplObjectStorage
             foreach ($this->objectIdentifiers as $identifier) {
                 try {
                     parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
-                } catch (\TYPO3\Flow\Persistence\Generic\Exception\InvalidObjectDataException $exception) {
+                } catch (Exception\InvalidObjectDataException $exception) {
                     // when security query rewriting holds back an object here, we skip it...
                 }
             }

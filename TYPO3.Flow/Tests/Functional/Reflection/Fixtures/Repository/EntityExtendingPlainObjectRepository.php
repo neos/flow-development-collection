@@ -12,10 +12,11 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence;
 
 /**
  * @Flow\Scope("singleton")
  */
-class EntityExtendingPlainObjectRepository extends \TYPO3\Flow\Persistence\Repository
+class EntityExtendingPlainObjectRepository extends Persistence\Repository
 {
 }

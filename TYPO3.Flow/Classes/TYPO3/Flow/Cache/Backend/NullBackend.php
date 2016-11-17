@@ -11,117 +11,25 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-// @codeCoverageIgnoreStart
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
- * A caching backend which forgets everything immediately
- *
- * @api
+ * @deprecated Use \Neos\Cache\Backend\NullBackend instead
  */
-class NullBackend extends AbstractBackend implements PhpCapableBackendInterface, TaggableBackendInterface
+class NullBackend extends \Neos\Cache\Backend\NullBackend implements FlowSpecificBackendInterface
 {
-    /**
-     * Acts as if it would save data
-     *
-     * @param string $entryIdentifier ignored
-     * @param string $data ignored
-     * @param array $tags ignored
-     * @param integer $lifetime ignored
-     * @return void
-     * @api
-     */
-    public function set($entryIdentifier, $data, array $tags = array(), $lifetime = null)
-    {
-    }
+    use BackendCompatibilityTrait;
 
     /**
-     * Returns False
+     * Constructs this backend
      *
-     * @param string $entryIdentifier ignored
-     * @return boolean FALSE
-     * @api
+     * @param ApplicationContext $context Flow's application context
+     * @param array $options Configuration options - depends on the actual backend
      */
-    public function get($entryIdentifier)
+    public function __construct(ApplicationContext $context, array $options = [])
     {
-        return false;
-    }
-
-    /**
-     * Returns False
-     *
-     * @param string $entryIdentifier ignored
-     * @return boolean FALSE
-     * @api
-     */
-    public function has($entryIdentifier)
-    {
-        return false;
-    }
-
-    /**
-     * Does nothing
-     *
-     * @param string $entryIdentifier ignored
-     * @return boolean FALSE
-     * @api
-     */
-    public function remove($entryIdentifier)
-    {
-        return false;
-    }
-
-    /**
-     * Returns an empty array
-     *
-     * @param string $tag ignored
-     * @return array An empty array
-     * @api
-     */
-    public function findIdentifiersByTag($tag)
-    {
-        return array();
-    }
-
-    /**
-     * Does nothing
-     *
-     * @return void
-     * @api
-     */
-    public function flush()
-    {
-    }
-
-    /**
-     * Does nothing
-     *
-     * @param string $tag ignored
-     * @return void
-     * @api
-     */
-    public function flushByTag($tag)
-    {
-    }
-
-    /**
-     * Does nothing
-     *
-     * @return void
-     * @api
-     */
-    public function collectGarbage()
-    {
-    }
-
-    /**
-     * Does nothing
-     *
-     * @param string $identifier An identifier which describes the cache entry to load
-     * @return void
-     * @api
-     */
-    public function requireOnce($identifier)
-    {
+        $this->context = $context;
+        $environmentConfiguration = $this->createEnvironmentConfiguration($context);
+        parent::__construct($environmentConfiguration, $options);
     }
 }
-// @codeCoverageIgnoreEnd

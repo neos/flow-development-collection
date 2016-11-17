@@ -22,24 +22,24 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class LogicalOr extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+class LogicalOr extends Constraint
 {
     /**
-     * @var \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+     * @var Constraint
      */
     protected $constraint1;
 
     /**
-     * @var \TYPO3\Flow\Persistence\Generic\Qom\Constraint
+     * @var Constraint
      */
     protected $constraint2;
 
     /**
      *
-     * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint1
-     * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint2
+     * @param Constraint $constraint1
+     * @param Constraint $constraint2
      */
-    public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint2)
+    public function __construct(Constraint $constraint1, Constraint $constraint2)
     {
         $this->constraint1 = $constraint1;
         $this->constraint2 = $constraint2;
@@ -48,7 +48,7 @@ class LogicalOr extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
     /**
      * Gets the first constraint.
      *
-     * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint; non-null
+     * @return Constraint the constraint; non-null
      * @api
      */
     public function getConstraint1()
@@ -59,7 +59,7 @@ class LogicalOr extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint
     /**
      * Gets the second constraint.
      *
-     * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint; non-null
+     * @return Constraint the constraint; non-null
      * @api
      */
     public function getConstraint2()

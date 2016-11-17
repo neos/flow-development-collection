@@ -11,18 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  * source code.
  */
 
+use TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the Pbkdf2HashingStrategy
- *
  */
-class Pbkdf2HashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
+class Pbkdf2HashingStrategyTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function hashPasswordWithMatchingPasswordAndParametersSucceeds()
     {
-        $strategy = new \TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
+        $strategy = new Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
         $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'));
@@ -35,13 +37,13 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hashAndValidatePasswordWithNotMatchingPasswordOrParametersFails()
     {
-        $strategy = new \TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
+        $strategy = new Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
         $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different password should not match');
         $this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'SomeSalt'), 'Different static salt should not match');
 
-        $strategy = new \TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy(8, 99, 64, 'sha256');
+        $strategy = new Pbkdf2HashingStrategy(8, 99, 64, 'sha256');
         $this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different iteration should not match');
     }
 }

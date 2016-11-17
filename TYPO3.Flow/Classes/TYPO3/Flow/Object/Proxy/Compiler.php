@@ -13,6 +13,10 @@ namespace TYPO3\Flow\Object\Proxy;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use TYPO3\Flow\Object\CompileTimeObjectManager;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\BaseTestCase;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
@@ -31,40 +35,40 @@ class Compiler
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
-     * @var \TYPO3\Flow\Object\CompileTimeObjectManager
+     * @var CompileTimeObjectManager
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
+     * @var PhpFrontend
      */
     protected $classesCache;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
      * @var array
      */
-    protected $proxyClasses = array();
+    protected $proxyClasses = [];
 
     /**
      * Hardcoded list of Flow sub packages (first 14 characters) which must be immune proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
+    protected $blacklistedSubPackages = ['TYPO3\Flow\Aop', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti'];
 
     /**
      * The final map of proxy classes that end up in the cache.
      *
      * @var array
      */
-    protected $storedProxyClasses = array();
+    protected $storedProxyClasses = [];
 
     /**
      * Injects the Flow settings
@@ -78,10 +82,10 @@ class Compiler
     }
 
     /**
-     * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
+     * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -89,20 +93,20 @@ class Compiler
     /**
      * Injects the cache for storing the renamed original classes and proxy classes
      *
-     * @param \TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache
+     * @param PhpFrontend $classesCache
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectClassesCache(\TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache)
+    public function injectClassesCache(PhpFrontend $classesCache)
     {
         $this->classesCache = $classesCache;
     }
 
     /**
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
+     * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -116,11 +120,11 @@ class Compiler
      * If the class is not proxable, FALSE will be returned
      *
      * @param string $fullClassName Name of the original class
-     * @return \TYPO3\Flow\Object\Proxy\ProxyClass|boolean
+     * @return ProxyClass|boolean
      */
     public function getProxyClass($fullClassName)
     {
-        if (interface_exists($fullClassName) || in_array(\TYPO3\Flow\Tests\BaseTestCase::class, class_parents($fullClassName))) {
+        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
             return false;
         }
 
@@ -133,12 +137,16 @@ class Compiler
             return false;
         }
 
-        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, \TYPO3\Flow\Annotations\Proxy::class);
+        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class);
         if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
             return false;
         }
 
         if (in_array(substr($fullClassName, 0, 14), $this->blacklistedSubPackages)) {
+            return false;
+        }
+        // Annotation classes (like \TYPO3\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
+        if ($classReflection->isFinal() && preg_match('/^\s?\*\s?\@Annotation\s/m', $classReflection->getDocComment()) === 1) {
             return false;
         }
 
@@ -227,12 +235,12 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $classCode = $this->stripOpeningPhpTag($classCode);
 
         $classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
-        $classCode = preg_replace_callback('/^([a-z\s]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix) {
+        $classCode = preg_replace_callback('/^([a-z\s]*?)(final\s+)?(interface|class)\s+([a-zA-Z0-9_]+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
             $classNameAccordingToFileName = basename($pathAndFilename, '.php');
-            if ($matches[3] !== $classNameAccordingToFileName) {
-                throw new Exception('The name of the class "' . $matches[3] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
+            if ($matches[4] !== $classNameAccordingToFileName) {
+                throw new Exception('The name of the class "' . $matches[4] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
             }
-            return $matches[1] . $matches[2] . ' ' . $matches[3] . $classNameSuffix;
+            return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
@@ -265,7 +273,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $annotationAsString = '@\\' . get_class($annotation);
 
         $optionNames = get_class_vars(get_class($annotation));
-        $optionsAsStrings = array();
+        $optionsAsStrings = [];
         foreach ($optionNames as $optionName => $optionDefault) {
             $optionValue = $annotation->$optionName;
             $optionValueAsString = '';
@@ -291,7 +299,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
             }
         }
-        return $annotationAsString . ($optionsAsStrings !== array() ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
+        return $annotationAsString . ($optionsAsStrings !== [] ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
     }
 
     /**
@@ -302,7 +310,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      */
     protected static function renderOptionArrayValueAsString(array $optionValue)
     {
-        $values = array();
+        $values = [];
         foreach ($optionValue as $k => $v) {
             $value = '';
             if (is_string($k)) {

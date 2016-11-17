@@ -13,8 +13,12 @@ namespace TYPO3\Flow\Mvc\Routing;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 
@@ -26,25 +30,25 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
 class RouterCachingService
 {
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      * @Flow\Inject
      */
     protected $routeCache;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      * @Flow\Inject
      */
     protected $resolveCache;
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      * @Flow\Inject
      */
     protected $persistenceManager;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      * @Flow\Inject
      */
     protected $systemLogger;
@@ -101,7 +105,8 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
+        $tags = $this->generateRouteTags($httpRequest->getRelativePath(), $matchResults);
+        $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $tags);
     }
 
     /**
@@ -128,6 +133,7 @@ class RouterCachingService
      */
     public function storeResolvedUriPath($uriPath, array $routeValues)
     {
+        $uriPath = trim($uriPath, '/');
         $routeValues = $this->convertObjectsToHashes($routeValues);
         if ($routeValues === null) {
             return;
@@ -135,8 +141,29 @@ class RouterCachingService
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
         if ($cacheIdentifier !== null) {
-            $this->resolveCache->set($cacheIdentifier, $uriPath, $this->extractUuids($routeValues));
+            $tags = $this->generateRouteTags($uriPath, $routeValues);
+            $this->resolveCache->set($cacheIdentifier, $uriPath, $tags);
         }
+    }
+
+    /**
+     * @param string $uriPath
+     * @param array $routeValues
+     * @return array
+     */
+    protected function generateRouteTags($uriPath, $routeValues)
+    {
+        $uriPath = trim($uriPath, '/');
+        $tags = $this->extractUuids($routeValues);
+        $path = '';
+        $uriPath = explode('/', $uriPath);
+        foreach ($uriPath as $uriPathSegment) {
+            $path .= '/' . $uriPathSegment;
+            $path = trim($path, '/');
+            $tags[] = md5($path);
+        }
+
+        return $tags;
     }
 
     /**
@@ -160,6 +187,18 @@ class RouterCachingService
     {
         $this->routeCache->flushByTag($tag);
         $this->resolveCache->flushByTag($tag);
+    }
+
+    /**
+     * Flushes 'findMatchResults' caches that are tagged with the given $uriPath
+     *
+     * @param string $uriPath
+     * @return void
+     */
+    public function flushCachesForUriPath($uriPath)
+    {
+        $uriPathTag = md5(trim($uriPath, '/'));
+        $this->flushCachesByTag($uriPathTag);
     }
 
     /**
@@ -233,7 +272,7 @@ class RouterCachingService
     protected function buildResolveCacheIdentifier(array $routeValues)
     {
         Arrays::sortKeysRecursively($routeValues);
-        return md5(http_build_query($routeValues));
+        return md5(trim(http_build_query($routeValues), '/'));
     }
 
     /**
@@ -245,7 +284,7 @@ class RouterCachingService
      */
     protected function extractUuids(array $values)
     {
-        $uuids = array();
+        $uuids = [];
         foreach ($values as $value) {
             if (is_string($value)) {
                 if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {

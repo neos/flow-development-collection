@@ -59,6 +59,23 @@ class Request extends AbstractMessage
     protected $inputStreamUri = 'php://input';
 
     /**
+     * PSR-7
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * PSR-7 Attribute containing the resolved trusted client IP address as string
+     */
+    const ATTRIBUTE_CLIENT_IP = 'clientIpAddress';
+
+    /**
+     * PSR-7 Attribute containing a boolean whether the request is from a trusted proxy
+     */
+    const ATTRIBUTE_TRUSTED_PROXY = 'fromTrustedProxy';
+
+    /**
      * Constructs a new Request object based on the given environment data.
      *
      * @param array $get Data similar to that which is typically provided by $_GET
@@ -72,6 +89,7 @@ class Request extends AbstractMessage
     public function __construct(array $get, array $post, array $files, array $server)
     {
         $this->headers = Headers::createFromServer($server);
+        $this->setAttribute(self::ATTRIBUTE_CLIENT_IP, isset($server['REMOTE_ADDR']) ? $server['REMOTE_ADDR'] : null);
         $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
         if ($method === 'POST') {
             if (isset($post['__method'])) {
@@ -84,11 +102,7 @@ class Request extends AbstractMessage
         }
         $this->setMethod($method);
 
-        if ($this->headers->has('X-Forwarded-Proto')) {
-            $protocol = $this->headers->get('X-Forwarded-Proto');
-        } else {
-            $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
-        }
+        $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
         $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
         $requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
         if (substr($requestUri, 0, 10) === '/index.php') {
@@ -96,11 +110,7 @@ class Request extends AbstractMessage
         }
         $this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
-        if ($this->headers->has('X-Forwarded-Port')) {
-            $this->uri->setPort($this->headers->get('X-Forwarded-Port'));
-        } elseif ($this->headers->has('X-Forwarded-Proto')) {
-            $this->uri->setPort($protocol === 'https' ? 443 : 80);
-        } elseif (isset($server['SERVER_PORT'])) {
+        if (isset($server['SERVER_PORT'])) {
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
@@ -119,14 +129,14 @@ class Request extends AbstractMessage
      * @return Request
      * @api
      */
-    public static function create(Uri $uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array())
+    public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [])
     {
         $get = $uri->getArguments();
         $post = $arguments;
 
         $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
 
-        $defaultServerEnvironment = array(
+        $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
             'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uri->getPort() !== null ? ':' . $uri->getPort() : ''),
             'SERVER_NAME' => $uri->getHost(),
@@ -137,24 +147,24 @@ class Request extends AbstractMessage
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-        );
+        ];
 
         if ($uri->getScheme() === 'https') {
             $defaultServerEnvironment['HTTPS'] = 'on';
             $defaultServerEnvironment['SERVER_PORT'] = $uri->getPort() ?: 443;
         }
 
-        if (in_array($method, array('POST', 'PUT', 'DELETE'))) {
+        if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
             $defaultServerEnvironment['HTTP_CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         }
 
-        $query = $uri->getQuery();
+        $query = (string)$uri->getQuery();
         $fragment = $uri->getFragment();
-        $overrideValues = array(
+        $overrideValues = [
             'REQUEST_URI' => $uri->getPath() . ($query !== '' ? '?' . $query : '') . ($fragment !== '' ? '#' . $fragment : ''),
             'REQUEST_METHOD' => $method,
             'QUERY_STRING' => $query
-        );
+        ];
         $server = array_replace($defaultServerEnvironment, $server, $overrideValues);
 
         return new static($get, $post, $files, $server);
@@ -173,6 +183,18 @@ class Request extends AbstractMessage
         $request = new static($_GET, $_POST, $_FILES, $_SERVER);
         $request->setContent(null);
         return $request;
+    }
+
+    /**
+     * Creates a deep clone
+     */
+    public function __clone()
+    {
+        $this->uri = clone $this->uri;
+        if ($this->baseUri !== null) {
+            $this->baseUri = clone $this->baseUri;
+        }
+        $this->headers = clone $this->headers;
     }
 
     /**
@@ -275,7 +297,7 @@ class Request extends AbstractMessage
      */
     public function isMethodSafe()
     {
-        return (in_array($this->method, array('GET', 'HEAD')));
+        return (in_array($this->method, ['GET', 'HEAD']));
     }
 
     /**
@@ -373,6 +395,129 @@ class Request extends AbstractMessage
     }
 
     /**
+     * PSR-7
+     *
+     * Retrieve server parameters.
+     *
+     * Retrieves data related to the incoming request environment,
+     * typically derived from PHP's $_SERVER superglobal. The data IS NOT
+     * REQUIRED to originate from $_SERVER.
+     *
+     * @return array
+     */
+    public function getServerParams()
+    {
+        return $this->server;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Retrieve attributes derived from the request.
+     *
+     * The request "attributes" may be used to allow injection of any
+     * parameters derived from the request: e.g., the results of path
+     * match operations; the results of decrypting cookies; the results of
+     * deserializing non-form-encoded message bodies; etc. Attributes
+     * will be application and request specific, and CAN be mutable.
+     *
+     * @return mixed[] Attributes derived from the request.
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Retrieve a single derived request attribute.
+     *
+     * Retrieves a single derived request attribute as described in
+     * getAttributes(). If the attribute has not been previously set, returns
+     * the default value as provided.
+     *
+     * This method obviates the need for a hasAttribute() method, as it allows
+     * specifying a default value to return if the attribute is not found.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $default Default value to return if the attribute does not exist.
+     * @return mixed
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (isset($this->attributes[$name])) {
+            return $this->attributes[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Return an instance with the specified derived request attribute.
+     *
+     * This method allows setting a single derived request attribute as
+     * described in getAttributes().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated attribute.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     * @return self
+     */
+    public function withAttribute($name, $value)
+    {
+        $request = clone $this;
+        $request->setAttribute($name, $value);
+        return $request;
+    }
+
+    /**
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     */
+    protected function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    /**
+     * PSR-7
+     *
+     * Return an instance that removes the specified derived request attribute.
+     *
+     * This method allows removing a single derived request attribute as
+     * described in getAttributes().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that removes
+     * the attribute.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @return self
+     */
+    public function withoutAttribute($name)
+    {
+        $request = clone $this;
+        $request->unsetAttribute($name);
+        return $request;
+    }
+
+    /**
+     * @param string $name The attribute name.
+     */
+    protected function unsetAttribute($name)
+    {
+        unset($this->attributes[$name]);
+    }
+
+    /**
      * Returns the best guess of the client's IP address.
      *
      * Note that, depending on the actual source used, IP addresses can be spoofed
@@ -418,7 +563,7 @@ class Request extends AbstractMessage
     {
         $rawValues = $this->headers->get('Accept');
         if (empty($rawValues)) {
-            return array('*/*');
+            return ['*/*'];
         }
         $acceptedMediaTypes = self::parseContentNegotiationQualityValues($rawValues);
         return $acceptedMediaTypes;
@@ -565,12 +710,12 @@ class Request extends AbstractMessage
      */
     protected function untangleFilesArray(array $convolutedFiles)
     {
-        $untangledFiles = array();
+        $untangledFiles = [];
 
-        $fieldPaths = array();
+        $fieldPaths = [];
         foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
             if (!is_array($fieldInformation['error'])) {
-                $fieldPaths[] = array($firstLevelFieldName);
+                $fieldPaths[] = [$firstLevelFieldName];
             } else {
                 $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
                 array_walk($newFieldPaths,
@@ -586,7 +731,7 @@ class Request extends AbstractMessage
             if (count($fieldPath) === 1) {
                 $fileInformation = $convolutedFiles[$fieldPath{0}];
             } else {
-                $fileInformation = array();
+                $fileInformation = [];
                 foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
                     $fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
                 }
@@ -607,7 +752,7 @@ class Request extends AbstractMessage
      */
     protected function calculateFieldPaths(array $structure, $firstLevelFieldName = null)
     {
-        $fieldPaths = array();
+        $fieldPaths = [];
         if (is_array($structure)) {
             foreach ($structure as $key => $subStructure) {
                 $fieldPath = ($firstLevelFieldName !== null ? $firstLevelFieldName . '/' : '') . $key;
@@ -634,13 +779,13 @@ class Request extends AbstractMessage
     {
         $acceptedTypes = array_map(
             function ($acceptType) {
-                    $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
-                    return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
+                $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
+                return [$typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : '')];
             }, preg_split('/,\s*/', $rawValues)
         );
 
-        $flattenedAcceptedTypes = array();
-        $valuesWithoutQualityValue = array(array(), array(), array(), array());
+        $flattenedAcceptedTypes = [];
+        $valuesWithoutQualityValue = [[], [], [], []];
         foreach ($acceptedTypes as $typeAndQuality) {
             if ($typeAndQuality[1] === '') {
                 $parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
@@ -648,7 +793,7 @@ class Request extends AbstractMessage
                     $valuesWithoutQualityValue[3][$typeAndQuality[0]] = true;
                 } elseif ($parsedType['subtype'] === '*') {
                     $valuesWithoutQualityValue[2][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['parameters'] === array()) {
+                } elseif ($parsedType['parameters'] === []) {
                     $valuesWithoutQualityValue[1][$typeAndQuality[0]] = true;
                 } else {
                     $valuesWithoutQualityValue[0][$typeAndQuality[0]] = true;
@@ -695,7 +840,7 @@ class Request extends AbstractMessage
 
     /**
      * Parses a RFC 2616 Media Type and returns its parts in an associative array.
-     * @see \TYPO3\Flow\Utility\MediaTypes::parseMediaType()
+     * @see MediaTypes::parseMediaType()
      *
      * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
      * @return array An associative array with parsed information
@@ -708,7 +853,7 @@ class Request extends AbstractMessage
 
     /**
      * Checks if the given media range and the media type match.
-     * @see \TYPO3\Flow\Utility\MediaTypes::mediaRangeMatches()
+     * @see MediaTypes::mediaRangeMatches()
      *
      * @param string $mediaRange The media range, for example "text/*"
      * @param string $mediaType The media type to match against, for example "text/html"

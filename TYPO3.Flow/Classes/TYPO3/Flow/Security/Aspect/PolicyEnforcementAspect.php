@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Security\Aspect;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
 use TYPO3\Flow\Security\Context;
 
@@ -28,18 +27,18 @@ class PolicyEnforcementAspect
     /**
      * The policy enforcement interceptor
      *
-     * @var \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement
+     * @var PolicyEnforcement
      */
     protected $policyEnforcementInterceptor;
 
     /**
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      */
     protected $securityContext;
 
     /**
-     * @param \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
-     * @param \TYPO3\Flow\Security\Context $securityContext
+     * @param PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
+     * @param Context $securityContext
      */
     public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext)
     {

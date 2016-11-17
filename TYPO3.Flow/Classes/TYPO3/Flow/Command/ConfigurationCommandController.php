@@ -69,23 +69,23 @@ class ConfigurationCommandController extends CommandController
             }
             $typeAndPath = $type . ($path ? ': ' . $path : '');
             if ($configuration === null) {
-                $this->outputLine('<b>Configuration "%s" was empty!</b>', array($typeAndPath));
+                $this->outputLine('<b>Configuration "%s" was empty!</b>', [$typeAndPath]);
             } else {
                 $yaml = Yaml::dump($configuration, 99);
-                $this->outputLine('<b>Configuration "%s":</b>', array($typeAndPath));
+                $this->outputLine('<b>Configuration "%s":</b>', [$typeAndPath]);
                 $this->outputLine();
                 $this->outputLine($yaml . chr(10));
             }
         } else {
             if ($type !== null) {
-                $this->outputLine('<b>Configuration type "%s" was not found!</b>', array($type));
+                $this->outputLine('<b>Configuration type "%s" was not found!</b>', [$type]);
             }
             $this->outputLine('<b>Available configuration types:</b>');
             foreach ($availableConfigurationTypes as $availableConfigurationType) {
                 $this->outputLine('  ' . $availableConfigurationType);
             }
             $this->outputLine();
-            $this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', array($this->getFlowInvocationString()));
+            $this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', [$this->getFlowInvocationString()]);
             $this->outputLine('      shows the configuration of the specified type.');
         }
     }
@@ -101,7 +101,7 @@ class ConfigurationCommandController extends CommandController
         $this->outputLine();
 
         foreach ($this->configurationManager->getAvailableConfigurationTypes() as $type) {
-            $this->outputFormatted('- %s', array($type));
+            $this->outputFormatted('- %s', [$type]);
         }
     }
 
@@ -131,12 +131,12 @@ class ConfigurationCommandController extends CommandController
         }
         $this->outputLine();
 
-        $validatedSchemaFiles = array();
+        $validatedSchemaFiles = [];
         try {
             $result = $this->configurationSchemaValidator->validate($type, $path, $validatedSchemaFiles);
         } catch (SchemaValidationException $exception) {
             $this->outputLine('<b>Exception:</b>');
-            $this->outputFormatted($exception->getMessage(), array(), 4);
+            $this->outputFormatted($exception->getMessage(), [], 4);
             $this->quit(2);
             return;
         }
@@ -149,11 +149,11 @@ class ConfigurationCommandController extends CommandController
             $this->outputLine();
             if ($result->hasNotices()) {
                 $notices = $result->getFlattenedNotices();
-                $this->outputLine('<b>%d notices:</b>', array(count($notices)));
+                $this->outputLine('<b>%d notices:</b>', [count($notices)]);
                 /** @var Notice $notice */
                 foreach ($notices as $path => $pathNotices) {
                     foreach ($pathNotices as $notice) {
-                        $this->outputLine(' - %s -> %s', array($path, $notice->render()));
+                        $this->outputLine(' - %s -> %s', [$path, $notice->render()]);
                     }
                 }
                 $this->outputLine();
@@ -162,11 +162,11 @@ class ConfigurationCommandController extends CommandController
 
         if ($result->hasErrors()) {
             $errors = $result->getFlattenedErrors();
-            $this->outputLine('<b>%d errors were found:</b>', array(count($errors)));
+            $this->outputLine('<b>%d errors were found:</b>', [count($errors)]);
             /** @var Error $error */
             foreach ($errors as $path => $pathErrors) {
                 foreach ($pathErrors as $error) {
-                    $this->outputLine(' - %s -> %s', array($path, $error->render()));
+                    $this->outputLine(' - %s -> %s', [$path, $error->render()]);
                 }
             }
             $this->quit(1);

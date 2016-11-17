@@ -13,21 +13,25 @@ namespace TYPO3\Flow\Session;
 
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
 use TYPO3\Flow\Cache\Exception\InvalidBackendException;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Object\Proxy\ProxyInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Http;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * A modular session implementation based on the caching framework.
  *
  * You may access the currently active session in userland code. In order to do this,
- * inject TYPO3\Flow\Session\SessionInterface and NOT just TYPO3\Flow\Session\Session.
+ * inject SessionInterface and NOT just the Session object.
  * The former will be a unique instance (singleton) representing the current session
  * while the latter would be a completely new session instance!
  *
@@ -38,7 +42,7 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  * a possibly existing session automatically. If a session could be resumed during
  * that phase already, calling start() at a later stage will be a no-operation.
  *
- * @see \TYPO3\Flow\Session\SessionManager
+ * @see SessionManager
  */
 class Session implements SessionInterface
 {
@@ -46,12 +50,12 @@ class Session implements SessionInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      * @Flow\Inject
      */
     protected $systemLogger;
@@ -60,7 +64,7 @@ class Session implements SessionInterface
      * Meta data cache for this session
      *
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $metaDataCache;
 
@@ -68,7 +72,7 @@ class Session implements SessionInterface
      * Storage cache for this session
      *
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $storageCache;
 
@@ -76,7 +80,7 @@ class Session implements SessionInterface
      * Bootstrap for retrieving the current HTTP request
      *
      * @Flow\Inject
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
@@ -111,7 +115,7 @@ class Session implements SessionInterface
     protected $sessionCookieHttpOnly = true;
 
     /**
-     * @var \TYPO3\Flow\Http\Cookie
+     * @var Http\Cookie
      */
     protected $sessionCookie;
 
@@ -128,7 +132,7 @@ class Session implements SessionInterface
     /**
      * @var array
      */
-    protected $tags = array();
+    protected $tags = [];
 
     /**
      * @var integer
@@ -174,12 +178,12 @@ class Session implements SessionInterface
     protected $remote = false;
 
     /**
-     * @var \TYPO3\Flow\Http\Request
+     * @var Http\Request
      */
     protected $request;
 
     /**
-     * @var \TYPO3\Flow\Http\Response
+     * @var Http\Response
      */
     protected $response;
 
@@ -199,7 +203,7 @@ class Session implements SessionInterface
      * @param array $tags A list of tags set for this session
      * @throws \InvalidArgumentException
      */
-    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = array())
+    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
     {
         if ($sessionIdentifier !== null) {
             if ($storageIdentifier === null || $lastActivityTimestamp === null) {
@@ -236,7 +240,7 @@ class Session implements SessionInterface
 
     /**
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidBackendException
+     * @throws InvalidBackendException
      */
     public function initializeObject()
     {
@@ -276,21 +280,21 @@ class Session implements SessionInterface
      *
      * @return void
      * @api
-     * @throws \TYPO3\Flow\Session\Exception\InvalidRequestHandlerException
+     * @throws Exception\InvalidRequestHandlerException
      */
     public function start()
     {
         if ($this->request === null) {
             $requestHandler = $this->bootstrap->getActiveRequestHandler();
             if (!$requestHandler instanceof HttpRequestHandlerInterface) {
-                throw new \TYPO3\Flow\Session\Exception\InvalidRequestHandlerException('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', 1364367520);
+                throw new Exception\InvalidRequestHandlerException('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', 1364367520);
             }
             $this->initializeHttpAndCookie($requestHandler);
         }
         if ($this->started === false) {
             $this->sessionIdentifier = Algorithms::generateRandomString(32);
             $this->storageIdentifier = Algorithms::generateUUID();
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+            $this->sessionCookie = new Http\Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
             $this->response->setCookie($this->sessionCookie);
             $this->lastActivityTimestamp = $this->now;
             $this->started = true;
@@ -350,14 +354,14 @@ class Session implements SessionInterface
                         $objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
                         if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
                             $this->objectManager->setInstance($objectName, $object);
-                            $this->objectManager->get(\TYPO3\Flow\Session\Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
+                            $this->objectManager->get(Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
                         }
                     }
                 }
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->storageCache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
+                $this->storageCache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
@@ -370,13 +374,13 @@ class Session implements SessionInterface
      * Returns the current session identifier
      *
      * @return string The current session identifier
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function getId()
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.)', 1351171517);
+            throw new Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.)', 1351171517);
         }
         return $this->sessionIdentifier;
     }
@@ -386,17 +390,17 @@ class Session implements SessionInterface
      * to the new session.
      *
      * @return string The new session ID
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
-     * @throws \TYPO3\Flow\Session\Exception\OperationNotSupportedException
+     * @throws Exception\SessionNotStartedException
+     * @throws Exception\OperationNotSupportedException
      * @api
      */
     public function renewId()
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
+            throw new Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
         }
         if ($this->remote === true) {
-            throw new \TYPO3\Flow\Session\Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
+            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
         }
 
         $this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
@@ -412,12 +416,12 @@ class Session implements SessionInterface
      *
      * @param string $key An identifier for the content stored in the session.
      * @return mixed The contents associated with the given key
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      */
     public function getData($key)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
+            throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
         return $this->storageCache->get($this->storageIdentifier . md5($key));
     }
@@ -427,12 +431,12 @@ class Session implements SessionInterface
      *
      * @param string $key Entry identifier of the session data
      * @return boolean
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      */
     public function hasKey($key)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
+            throw new Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
         }
         return $this->storageCache->has($this->storageIdentifier . md5($key));
     }
@@ -443,19 +447,19 @@ class Session implements SessionInterface
      * @param string $key The key under which the data should be stored
      * @param mixed $data The data to be stored
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception\DataNotSerializableException
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\DataNotSerializableException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function putData($key, $data)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to create a session data entry, but the session has not been started yet.', 1351162259);
+            throw new Exception\SessionNotStartedException('Tried to create a session data entry, but the session has not been started yet.', 1351162259);
         }
         if (is_resource($data)) {
-            throw new \TYPO3\Flow\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
+            throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->storageCache->set($this->storageIdentifier . md5($key), $data, array($this->storageIdentifier), 0);
+        $this->storageCache->set($this->storageIdentifier . md5($key), $data, [$this->storageIdentifier], 0);
     }
 
     /**
@@ -466,13 +470,13 @@ class Session implements SessionInterface
      * time. For a remote session, the unix timestamp will be returned.
      *
      * @return integer unix timestamp
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function getLastActivityTimestamp()
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the last activity timestamp of a session which has not been started yet.', 1354290378);
+            throw new Exception\SessionNotStartedException('Tried to retrieve the last activity timestamp of a session which has not been started yet.', 1354290378);
         }
         return $this->lastActivityTimestamp;
     }
@@ -485,14 +489,14 @@ class Session implements SessionInterface
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @throws \InvalidArgumentException
      * @api
      */
     public function addTag($tag)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
+            throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
         if (!$this->metaDataCache->isValidTag($tag)) {
             throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
@@ -507,13 +511,13 @@ class Session implements SessionInterface
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function removeTag($tag)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355150140);
+            throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355150140);
         }
         $index = array_search($tag, $this->tags);
         if ($index !== false) {
@@ -526,13 +530,13 @@ class Session implements SessionInterface
      * Returns the tags this session has been tagged with.
      *
      * @return array The tags or an empty array if there aren't any
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function getTags()
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve tags from a session which has not been started yet.', 1355141501);
+            throw new Exception\SessionNotStartedException('Tried to retrieve tags from a session which has not been started yet.', 1355141501);
         }
         return $this->tags;
     }
@@ -541,12 +545,12 @@ class Session implements SessionInterface
      * Updates the last activity time to "now".
      *
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      */
     public function touch()
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to touch a session, but the session has not been started yet.', 1354284318);
+            throw new Exception\SessionNotStartedException('Tried to touch a session, but the session has not been started yet.', 1354284318);
         }
 
         // Only makes sense for remote sessions because the currently active session
@@ -573,14 +577,13 @@ class Session implements SessionInterface
      *
      * @param string $reason A reason for destroying the session – used by the LoggingAspect
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception
-     * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+     * @throws Exception\SessionNotStartedException
      * @api
      */
     public function destroy($reason = null)
     {
         if ($this->started !== true) {
-            throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to destroy a session which has not been started yet.', 1351162668);
+            throw new Exception\SessionNotStartedException('Tried to destroy a session which has not been started yet.', 1351162668);
         }
         if ($this->remote !== true) {
             if (!$this->response->hasCookie($this->sessionCookieName)) {
@@ -594,7 +597,7 @@ class Session implements SessionInterface
         $this->started = false;
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
-        $this->tags = array();
+        $this->tags = [];
         $this->request = null;
     }
 
@@ -615,7 +618,7 @@ class Session implements SessionInterface
         }
 
         $sessionRemovalCount = 0;
-        $this->metaDataCache->set('_garbage-collection-running', true, array(), 120);
+        $this->metaDataCache->set('_garbage-collection-running', true, [], 120);
 
         foreach ($this->metaDataCache->getIterator() as $sessionIdentifier => $sessionInfo) {
             if ($sessionIdentifier === '_garbage-collection-running') {
@@ -654,7 +657,7 @@ class Session implements SessionInterface
             if ($this->metaDataCache->has($this->sessionIdentifier)) {
                 // Security context can't be injected and must be retrieved manually
                 // because it relies on this very session object:
-                $securityContext = $this->objectManager->get(\TYPO3\Flow\Security\Context::class);
+                $securityContext = $this->objectManager->get(Context::class);
                 if ($securityContext->isInitialized()) {
                     $this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
                 }
@@ -664,9 +667,9 @@ class Session implements SessionInterface
             }
             $this->started = false;
 
-            $decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
+            $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
             $factor = ($decimals > -1) ? $decimals * 10 : 1;
-            if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+            if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
                 $this->collectGarbage();
             }
         }
@@ -694,25 +697,25 @@ class Session implements SessionInterface
     /**
      * Initialize request, response and session cookie
      *
-     * @param \TYPO3\Flow\Http\HttpRequestHandlerInterface $requestHandler
+     * @param HttpRequestHandlerInterface $requestHandler
      * @return void
-     * @throws \TYPO3\Flow\Session\Exception\InvalidRequestResponseException
+     * @throws Exception\InvalidRequestResponseException
      */
     protected function initializeHttpAndCookie(HttpRequestHandlerInterface $requestHandler)
     {
         $this->request = $requestHandler->getHttpRequest();
         $this->response = $requestHandler->getHttpResponse();
 
-        if (!$this->request instanceof Request || !$this->response instanceof Response) {
+        if (!$this->request instanceof Http\Request || !$this->response instanceof Http\Response) {
             $className = get_class($requestHandler);
             $requestMessage = 'the request was ' . (is_object($this->request) ? 'of type ' . get_class($this->request) : gettype($this->request));
             $responseMessage = 'and the response was ' . (is_object($this->response) ? 'of type ' . get_class($this->response) : gettype($this->response));
-            throw new \TYPO3\Flow\Session\Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
+            throw new Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
         }
 
         if ($this->request->hasCookie($this->sessionCookieName)) {
             $sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+            $this->sessionCookie = new Http\Cookie($this->sessionCookieName, $sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
         }
     }
 
@@ -730,19 +733,20 @@ class Session implements SessionInterface
      * Note that if a session is started after tokens have been authenticated, the
      * session will NOT be tagged with authenticated accounts.
      *
-     * @param array<\TYPO3\Flow\Security\Authentication\TokenInterface>
+     * @param array<TokenInterface>
      * @return void
      */
     protected function storeAuthenticatedAccountsInfo(array $tokens)
     {
-        $accountProviderAndIdentifierPairs = array();
+        $accountProviderAndIdentifierPairs = [];
+        /** @var TokenInterface $token */
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {
                 $accountProviderAndIdentifierPairs[$account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = true;
             }
         }
-        if ($accountProviderAndIdentifierPairs !== array()) {
+        if ($accountProviderAndIdentifierPairs !== []) {
             $this->putData('TYPO3_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
         }
     }
@@ -761,11 +765,11 @@ class Session implements SessionInterface
      */
     protected function writeSessionMetaDataCacheEntry()
     {
-        $sessionInfo = array(
+        $sessionInfo = [
             'lastActivityTimestamp' => $this->lastActivityTimestamp,
             'storageIdentifier' => $this->storageIdentifier,
             'tags' => $this->tags
-        );
+        ];
 
         $tagsForCacheEntry = array_map(function ($tag) {
             return Session::TAG_PREFIX . $tag;

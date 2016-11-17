@@ -10,9 +10,12 @@ namespace TYPO3\Flow\Tests\Functional\Validation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /**
  * Testcase for the Flow Validation Framework
@@ -26,7 +29,7 @@ class ValidationTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
 
@@ -36,18 +39,18 @@ class ValidationTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
 
-        $this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
+        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
 
-        $this->registerRoute('post', 'test/validation/entity/{@action}', array(
+        $this->registerRoute('post', 'test/validation/entity/{@action}', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'Entity',
-            '@format' => 'html'
-        ));
+            '@format' =>'html'
+        ]);
     }
 
     /**
@@ -64,11 +67,11 @@ class ValidationTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
-        $validArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'long enough name'));
+        $validArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'long enough name']];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $validArguments);
         $this->assertSame('Entity "long enough name" updated', $response->getContent());
 
-        $invalidArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'xx'));
+        $invalidArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'xx']];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
         $this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
     }
@@ -93,7 +96,7 @@ class ValidationTest extends FunctionalTestCase
         $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
         $subEntityIdentifier = $this->persistenceManager->getIdentifierByObject($subEntity);
 
-        $invalidArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'long enough name', 'subEntities' => array(array('__identity' => $subEntityIdentifier, 'content' => ''))));
+        $invalidArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'long enough name', 'subEntities' => [['__identity' => $subEntityIdentifier, 'content' => '']]]];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
         $this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.subEntities.0.content:  This property is required.' . PHP_EOL, $response->getContent());
     }
@@ -119,17 +122,54 @@ class ValidationTest extends FunctionalTestCase
         $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
         $subEntityIdentifier = $this->persistenceManager->getIdentifierByObject($subEntity);
 
+        $invalidArguments = [
+            'entity' => [
+                '__identity' => $entityIdentifier,
+                'name' => 'xx',
+                'subEntities' => [[
+                    '__identity' => $subEntityIdentifier,
+                    'content' => 'some valid content'
+                ]]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
+        $this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validationIsStoppedAtAggregateBoundaries()
+    {
+        $relatedEntity = new TestEntity();
+        $relatedEntity->setName('Spy');
+        $this->testEntityRepository->add($relatedEntity);
+
+        $entity = new TestEntity();
+        $entity->setName('Some Name');
+        $entity->setRelatedEntity($relatedEntity);
+        $this->testEntityRepository->add($entity);
+
+        $this->persistenceManager->persistAll();
+
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($relatedEntity);
+        /* @var $entityManager \Doctrine\ORM\EntityManagerInterface */
+        $entityManager = ObjectAccess::getProperty($this->persistenceManager, 'entityManager', true);
+        $dql = 'UPDATE ' . TestEntity::class . " e SET e.name = 'xx' WHERE e.Persistence_Object_Identifier = '$entityIdentifier'";
+        $query = $entityManager->createQuery($dql);
+        $query->getScalarResult();
+        $this->persistenceManager->clearState();
+
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+
         $invalidArguments = array(
             'entity' => array(
                 '__identity' => $entityIdentifier,
-                'name' => 'xx',
-                'subEntities' => array(array(
-                    '__identity' => $subEntityIdentifier,
-                    'content' => 'some valid content'
-                ))
+                'name' => 'Some other Name'
             )
         );
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-        $this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertNotSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.relatedEntity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

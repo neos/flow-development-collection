@@ -13,13 +13,19 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
+use TYPO3\Flow\Resource\Publishing\MessageCollector;
+use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Resource\ResourceRepository;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+
+use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
  * Resource command controller for the TYPO3.Flow package
@@ -59,6 +65,12 @@ class ResourceCommandController extends CommandController
     protected $objectManager;
 
     /**
+     * @Flow\Inject
+     * @var MessageCollector
+     */
+    protected $messageCollector;
+
+    /**
      * Publish resources
      *
      * This command publishes the resources of the given or - if none was specified, all - resource collections
@@ -73,23 +85,34 @@ class ResourceCommandController extends CommandController
             if ($collection === null) {
                 $collections = $this->resourceManager->getCollections();
             } else {
-                $collections = array();
+                $collections = [];
                 $collections[$collection] = $this->resourceManager->getCollection($collection);
                 if ($collections[$collection] === null) {
-                    $this->outputLine('Collection "%s" does not exist.', array($collection));
+                    $this->outputLine('Collection "%s" does not exist.', [$collection]);
                     $this->quit(1);
                 }
             }
 
             foreach ($collections as $collection) {
                 /** @var CollectionInterface $collection */
-                $this->outputLine('Publishing resources of collection "%s"', array($collection->getName()));
-                $collection->publish();
+                $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
+                $target = $collection->getTarget();
+                $target->publishCollection($collection, function ($iteration) {
+                    $this->clearState($iteration);
+                });
+            }
+
+            if ($this->messageCollector->hasMessages()) {
+                $this->outputLine();
+                $this->outputLine('The resources were published, but a few inconsistencies were detected. You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
+                $this->messageCollector->flush(function (Message $notification) {
+                    $this->outputLine($notification->getSeverity() . ': ' . $notification->getMessage());
+                });
             }
         } catch (Exception $exception) {
             $this->outputLine();
             $this->outputLine('An error occurred while publishing resources (see full description below). You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
-            $this->outputLine('%s (Exception code: %s)', array(get_class($exception), $exception->getCode()));
+            $this->outputLine('%s (Exception code: %s)', [get_class($exception), $exception->getCode()]);
             $this->outputLine($exception->getMessage());
             $this->quit(1);
         }
@@ -178,14 +201,18 @@ class ResourceCommandController extends CommandController
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
-        $brokenResources = array();
+        $brokenResources = [];
         $relatedAssets = new \SplObjectStorage();
-        foreach ($this->resourceRepository->findAll() as $resource) {
+        $relatedThumbnails = new \SplObjectStorage();
+        $iterator = $this->resourceRepository->findAllIterator();
+        foreach ($this->resourceRepository->iterate($iterator, function ($iteration) {
+            $this->clearState($iteration);
+        }) as $resource) {
             $this->output->progressAdvance(1);
-            /* @var \TYPO3\Flow\Resource\Resource $resource */
+            /* @var Resource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $resource;
+                $brokenResources[] = $resource->getSha1();
             }
         }
 
@@ -193,47 +220,79 @@ class ResourceCommandController extends CommandController
         $this->outputLine();
 
         if ($mediaPackagePresent && count($brokenResources) > 0) {
-            $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
-            /* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
+            /* @var AssetRepository $assetRepository */
+            $assetRepository = $this->objectManager->get(AssetRepository::class);
+            /* @var ThumbnailRepository $thumbnailRepository */
+            $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
 
-            foreach ($brokenResources as $resource) {
+            foreach ($brokenResources as $key => $resourceSha1) {
+                $resource = $this->resourceRepository->findOneBySha1($resourceSha1);
+                $brokenResources[$key] = $resource;
                 $assets = $assetRepository->findByResource($resource);
                 if ($assets !== null) {
                     $relatedAssets[$resource] = $assets;
+                }
+                $thumbnails = $thumbnailRepository->findByResource($resource);
+                if ($assets !== null) {
+                    $relatedThumbnails[$resource] = $thumbnails;
                 }
             }
         }
 
         if (count($brokenResources) > 0) {
-            $this->outputLine('<b>Found %s broken resource(s):</b>', array(count($brokenResources)));
+            $this->outputLine('<b>Found %s broken resource(s):</b>', [count($brokenResources)]);
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
-                $this->outputLine('%s (%s) %s', array($resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()));
+                $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
                 if (isset($relatedAssets[$resource])) {
                     foreach ($relatedAssets[$resource] as $asset) {
-                        $this->outputLine(' -> %s (%s)', array(get_class($asset), $asset->getIdentifier()));
+                        $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
                     }
                 }
             }
             $response = null;
-            while (!in_array($response, array('y', 'n', 'c'))) {
+            while (!in_array($response, ['y', 'n', 'c'])) {
                 $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n/c) </comment>');
             }
 
             switch ($response) {
                 case 'y':
-                    foreach ($brokenResources as $resource) {
+                    $brokenAssetCounter = 0;
+                    $brokenThumbnailCounter = 0;
+                    foreach ($brokenResources as $sha1 => $resource) {
+                        $this->outputLine('- delete %s (%s) from "%s" collection', [
+                            $resource->getFilename(),
+                            $resource->getSha1(),
+                            $resource->getCollectionName()
+                        ]);
                         $resource->disableLifecycleEvents();
-                        $this->persistenceManager->remove($resource);
+                        $this->resourceRepository->remove($resource);
                         if (isset($relatedAssets[$resource])) {
                             foreach ($relatedAssets[$resource] as $asset) {
                                 $assetRepository->remove($asset);
+                                $brokenAssetCounter++;
                             }
                         }
+                        if (isset($relatedThumbnails[$resource])) {
+                            foreach ($relatedThumbnails[$resource] as $thumbnail) {
+                                $thumbnailRepository->remove($thumbnail);
+                                $brokenThumbnailCounter++;
+                            }
+                        }
+                        $this->persistenceManager->persistAll();
                     }
-                    $this->outputLine('Removed %s resource object(s) from the database.', array(count($brokenResources)));
-                break;
+                    $brokenResourcesCounter = count($brokenResources);
+                    if ($brokenResourcesCounter > 0) {
+                        $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
+                    }
+                    if ($brokenAssetCounter > 0) {
+                        $this->outputLine('Removed %s asset object(s) from the database.', [$brokenAssetCounter]);
+                    }
+                    if ($brokenThumbnailCounter > 0) {
+                        $this->outputLine('Removed %s thumbnail object(s) from the database.', [$brokenThumbnailCounter]);
+                    }
+                    break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
                 break;
@@ -242,6 +301,19 @@ class ResourceCommandController extends CommandController
                     $this->quit(0);
                 break;
             }
+        }
+    }
+
+    /**
+     * This method is used internal as a callback method to clear doctrine states
+     *
+     * @param integer $iteration
+     * @return void
+     */
+    protected function clearState($iteration)
+    {
+        if ($iteration % 1000 === 0) {
+            $this->persistenceManager->clearState();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -57,9 +58,9 @@ interface OperationInterface
      *
      * If the operation is final, evaluate should directly return the operation result.
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return mixed|null if the operation is final, the return value
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments);
+    public function evaluate(FlowQuery $flowQuery, array $arguments);
 }

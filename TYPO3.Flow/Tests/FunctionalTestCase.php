@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Tests;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
@@ -344,7 +345,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
      * @param array $defaults An array of defaults declarations
      * @param boolean $appendExceedingArguments If exceeding arguments may be appended
      * @param array $httpMethods An array of accepted http methods
-     * @return void
+     * @return Route
      * @api
      */
     protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = false, array $httpMethods = null)
@@ -358,6 +359,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             $route->setHttpMethods($httpMethods);
         }
         $this->router->addRoute($route);
+        return $route;
     }
 
     /**
@@ -385,7 +387,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             'HTTP_CONNECTION' => 'keep-alive',
             'PATH' => '/usr/bin:/bin:/usr/sbin:/sbin',
             'SERVER_SIGNATURE' => '',
-            'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/5.5.1',
+            'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/7.0.12',
             'SERVER_NAME' => 'localhost',
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => '80',
@@ -418,10 +420,12 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->browser = new \TYPO3\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \TYPO3\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
+        $this->router->setRoutesConfiguration(null);
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $requestHandler->setHttpRequest(Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
-        $requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
+        $request = Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test'));
+        $componentContext = new ComponentContext($request, new \TYPO3\Flow\Http\Response());
+        $requestHandler->setComponentContext($componentContext);
     }
 
     /**

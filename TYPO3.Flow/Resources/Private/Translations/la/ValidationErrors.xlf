@@ -117,22 +117,22 @@
 			<target xml:lang="la-LA">crwdns211:0{0,number}crwdnd211:0{1,number}crwdne211:0</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
-          <source/>
-          <target xml:lang="la-LA"/>
+          <source>This field must contain at least {0,number} character</source>
+          <target xml:lang="la-LA">crwdns769:0{0,number}crwdne769:0</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
-          <source/>
-          <target xml:lang="la-LA"/>
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="la-LA">crwdns769:1{0,number}crwdne769:1</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
-          <source/>
-          <target xml:lang="la-LA"/>
+          <source>This text may not exceed {0,number} character</source>
+          <target xml:lang="la-LA">crwdns770:0{0,number}crwdne770:0</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
-          <source/>
-          <target xml:lang="la-LA"/>
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="la-LA">crwdns770:1{0,number}crwdne770:1</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->

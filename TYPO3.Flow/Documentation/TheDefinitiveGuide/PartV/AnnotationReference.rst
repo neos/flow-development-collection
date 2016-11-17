@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2015-08-18
+This reference was automatically generated from code on 2016-08-30
 
 
 .. _`Flow Annotation Reference: After`:
@@ -348,6 +348,8 @@ Arguments
 
 * ``interfaceName`` (string): The interface name to introduce.
 
+* ``traitName`` (string): The trait name to introduce
+
 
 
 
@@ -558,6 +560,13 @@ of a value object.
 
 :Applicable to: Class
 
+
+
+
+Arguments
+*********
+
+* ``embedded`` (boolean): Whether the value object should be embedded.
 
 
 

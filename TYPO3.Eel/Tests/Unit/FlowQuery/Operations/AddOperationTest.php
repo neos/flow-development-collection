@@ -11,6 +11,7 @@ namespace TYPO3\Eel\Tests\Unit\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AddOperation;
 
 /**
@@ -25,18 +26,18 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addWithFlowQueryArgumentAppendsToCurrentContext()
     {
-        $mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
-        $mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+        $object1 = new \stdClass();
+        $object2 = new \stdClass();
 
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
+        $flowQuery = new FlowQuery([$object1]);
 
-        $flowQueryArgument = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode2));
-        $arguments = array($flowQueryArgument);
+        $flowQueryArgument = new FlowQuery([$object2]);
+        $arguments = [$flowQueryArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($mockNode1, $mockNode2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -46,18 +47,18 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addWithNodeArgumentAppendsToCurrentContext()
     {
-        $mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
-        $mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+        $object1 = new \stdClass();
+        $object2 = new \stdClass();
 
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
+        $flowQuery = new FlowQuery([$object1]);
 
-        $nodeArgument = $mockNode2;
-        $arguments = array($nodeArgument);
+        $nodeArgument = $object2;
+        $arguments = [$nodeArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($mockNode1, $mockNode2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -67,17 +68,17 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addWithArrayArgumentAppendsToCurrentContext()
     {
-        $mockNode1 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
-        $mockNode2 = $this->getMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
+        $object1 = new \stdClass();
+        $object2 = new \stdClass();
 
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array($mockNode1));
+        $flowQuery = new FlowQuery([$object1]);
 
-        $arrayArgument = array($mockNode2);
-        $arguments = array($arrayArgument);
+        $arrayArgument = [$object2];
+        $arguments = [$arrayArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($mockNode1, $mockNode2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 }

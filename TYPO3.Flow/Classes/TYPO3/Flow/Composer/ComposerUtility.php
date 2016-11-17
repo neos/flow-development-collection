@@ -174,4 +174,15 @@ class ComposerUtility
 
         return $manifest;
     }
+
+    /**
+     * Flushes the internal caches for manifest files and composer lock.
+     *
+     * @return void
+     */
+    public static function flushCaches()
+    {
+        static::$composerLockCache = [];
+        static::$composerManifestCache = [];
+    }
 }

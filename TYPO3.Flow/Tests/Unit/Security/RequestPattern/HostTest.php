@@ -12,25 +12,28 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  */
 
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Security\RequestPattern\Host;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the URI request pattern
  */
-class HostTest extends \TYPO3\Flow\Tests\UnitTestCase
+class HostTest extends UnitTestCase
 {
     /**
      * Data provider with URIs and host patterns
      */
     public function uriAndHostPatterns()
     {
-        return array(
-            array('http://typo3.org/index.php', 'typo3.*', true, 'Assert that wildcard matches.'),
-            array('http://typo3.org/index.php', 'flow.typo3.org', false, 'Assert that subdomains don\'t match.'),
-            array('http://typo3.org/index.php', '*typo3.org', true, 'Assert that prefix wildcard matches.'),
-            array('http://typo3.org/index.php', '*.typo3.org', false, 'Assert that subdomain wildcard doesn\'t match.'),
-            array('http://flow.typo3.org/', '*.typo3.org', true, 'Assert that subdomain wildcard matches.'),
-            array('http://flow.typo3.org/', 'neos.typo3.org', false, 'Assert that different subdomain doesn\'t match.'),
-        );
+        return [
+            ['http://neos.io/index.php', 'neos.*', true, 'Assert that wildcard matches.'],
+            ['http://www.neos.io/index.php', 'flow.neos.io', false, 'Assert that subdomains don\'t match.'],
+            ['http://www.neos.io/index.php', '*www.neos.io', true, 'Assert that prefix wildcard matches.'],
+            ['http://www.neos.io/index.php', '*.www.neos.io', false, 'Assert that subdomain wildcard doesn\'t match.'],
+            ['http://flow.neos.io/', '*.neos.io', true, 'Assert that subdomain wildcard matches.'],
+            ['http://flow.neos.io/', 'www.neos.io', false, 'Assert that different subdomain doesn\'t match.'],
+        ];
     }
 
     /**
@@ -39,10 +42,9 @@ class HostTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requestMatchingBasicallyWorks($uri, $pattern, $expected, $message)
     {
-        $request = Request::create(new \TYPO3\Flow\Http\Uri($uri))->createActionRequest();
+        $request = Request::create(new Uri($uri))->createActionRequest();
 
-        $requestPattern = new \TYPO3\Flow\Security\RequestPattern\Host();
-        $requestPattern->setPattern($pattern);
+        $requestPattern = new Host(['hostPattern' => $pattern]);
 
         $this->assertEquals($expected, $requestPattern->matchRequest($request), $message);
     }

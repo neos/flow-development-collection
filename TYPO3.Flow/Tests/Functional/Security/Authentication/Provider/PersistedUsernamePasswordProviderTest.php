@@ -13,14 +13,14 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authentication\Provider;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Security;
 
 /**
  * Testcase for the persisted username and password provider
- *
  */
-class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 {
-
     protected $testableSecurityEnabled = true;
 
     /**
@@ -29,19 +29,20 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
     protected $persistedUsernamePasswordProvider;
 
     /**
-     * @var \TYPO3\Flow\Security\AccountFactory
+     * @var Security\AccountFactory
      */
     protected $accountFactory;
 
     /**
-     * @var \TYPO3\Flow\Security\AccountRepository
+     * @var Security\AccountRepository
      */
     protected $accountRepository;
 
     /**
-     * @var \TYPO3\Flow\Security\Authentication\Token\UsernamePassword
+     * @var Security\Authentication\Token\UsernamePassword
      */
     protected $authenticationToken;
+
 
 
     public function setUp()
@@ -49,11 +50,10 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
         parent::setUp();
 
         $this->persistedUsernamePasswordProvider = new PersistedUsernamePasswordProvider('myTestProvider');
-        $this->accountFactory = new \TYPO3\Flow\Security\AccountFactory();
-        $this->accountRepository = new \TYPO3\Flow\Security\AccountRepository();
+        $this->accountFactory = new Security\AccountFactory();
+        $this->accountRepository = new Security\AccountRepository();
 
-        $authenticationTokenProxyClass = $this->buildAccessibleProxy(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class);
-        $this->authenticationToken = new $authenticationTokenProxyClass();
+        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, array('dummy'));
 
         $account = $this->accountFactory->createAccountWithPassword('username', 'password', array(), 'myTestProvider');
         $this->accountRepository->add($account);

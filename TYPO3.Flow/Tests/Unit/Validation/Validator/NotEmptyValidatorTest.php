@@ -11,15 +11,17 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the not empty validator
  *
  */
-class NotEmptyValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class NotEmptyValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\NotEmptyValidator::class;
+    protected $validatorClassName = NotEmptyValidator::class;
 
     /**
      * @test
@@ -50,7 +52,7 @@ class NotEmptyValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
      */
     public function notEmptyValidatorReturnsErrorForAnEmptyArray()
     {
-        $this->assertTrue($this->validator->validate(array())->hasErrors());
+        $this->assertTrue($this->validator->validate([])->hasErrors());
     }
 
     /**

@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
 use TYPO3\Flow\Utility\PositionalArraySorter;
@@ -125,13 +124,13 @@ class ConfigurationManager
      *
      * @var array
      */
-    protected $configurationTypes = array(
-        self::CONFIGURATION_TYPE_CACHES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => false),
-        self::CONFIGURATION_TYPE_OBJECTS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => false),
-        self::CONFIGURATION_TYPE_ROUTES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => false),
-        self::CONFIGURATION_TYPE_POLICY => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => false),
-        self::CONFIGURATION_TYPE_SETTINGS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => false)
-    );
+    protected $configurationTypes = [
+        self::CONFIGURATION_TYPE_CACHES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => false],
+        self::CONFIGURATION_TYPE_OBJECTS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => false],
+        self::CONFIGURATION_TYPE_ROUTES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => false],
+        self::CONFIGURATION_TYPE_POLICY => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => false],
+        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => false]
+    ];
 
     /**
      * The application context of the configuration to manage
@@ -147,17 +146,12 @@ class ConfigurationManager
      *
      * @var array
      */
-    protected $orderedListOfContextNames = array();
+    protected $orderedListOfContextNames = [];
 
     /**
      * @var Source\YamlSource
      */
     protected $configurationSource;
-
-    /**
-     * @var Environment
-     */
-    protected $environment;
 
     /**
      * @var string
@@ -169,16 +163,16 @@ class ConfigurationManager
      *
      * @var array
      */
-    protected $configurations = array(
-        self::CONFIGURATION_TYPE_SETTINGS => array(),
-    );
+    protected $configurations = [
+        self::CONFIGURATION_TYPE_SETTINGS => [],
+    ];
 
     /**
      * Active packages to load the configuration for
      *
      * @var array<TYPO3\Flow\Package\PackageInterface>
      */
-    protected $packages = array();
+    protected $packages = [];
 
     /**
      * @var boolean
@@ -193,6 +187,13 @@ class ConfigurationManager
     protected $subRoutesRecursionLevel = 0;
 
     /**
+     * An absolute file path to store configuration caches in. If null no cache will be active.
+     *
+     * @var string
+     */
+    protected $temporaryDirectoryPath;
+
+    /**
      * Constructs the configuration manager
      *
      * @param ApplicationContext $context The application context to fetch configuration for
@@ -201,7 +202,7 @@ class ConfigurationManager
     {
         $this->context = $context;
 
-        $orderedListOfContextNames = array();
+        $orderedListOfContextNames = [];
         $currentContext = $context;
         do {
             $orderedListOfContextNames[] = (string)$currentContext;
@@ -223,14 +224,13 @@ class ConfigurationManager
     }
 
     /**
-     * Injects the environment
+     * Set an absolute file path to store configuration caches in. If null no cache will be active.
      *
-     * @param Environment $environment
-     * @return void
+     * @param string $temporaryDirectoryPath
      */
-    public function injectEnvironment(Environment $environment)
+    public function setTemporaryDirectoryPath($temporaryDirectoryPath)
     {
-        $this->environment = $environment;
+        $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
 
     /**
@@ -301,18 +301,18 @@ class ConfigurationManager
      */
     public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, $allowSplitSource = false)
     {
-        $configurationProcessingTypes = array(
+        $configurationProcessingTypes = [
             self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
             self::CONFIGURATION_PROCESSING_TYPE_OBJECTS,
             self::CONFIGURATION_PROCESSING_TYPE_POLICY,
             self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
             self::CONFIGURATION_PROCESSING_TYPE_SETTINGS,
             self::CONFIGURATION_PROCESSING_TYPE_APPEND
-        );
+        ];
         if (!in_array($configurationProcessingType, $configurationProcessingTypes)) {
             throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s"', $configurationProcessingType, $configurationType), 1365496111);
         }
-        $this->configurationTypes[$configurationType] = array('processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource);
+        $this->configurationTypes[$configurationType] = ['processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource];
     }
 
     /**
@@ -341,7 +341,7 @@ class ConfigurationManager
     public function getConfiguration($configurationType, $configurationPath = null)
     {
         $configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
-        $configuration = array();
+        $configuration = [];
         switch ($configurationProcessingType) {
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
@@ -356,8 +356,8 @@ class ConfigurationManager
             break;
 
             case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
-                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === array()) {
-                    $this->configurations[$configurationType] = array();
+                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === []) {
+                    $this->configurations[$configurationType] = [];
                     $this->loadConfiguration($configurationType, $this->packages);
                 }
                 if (isset($this->configurations[$configurationType])) {
@@ -366,8 +366,12 @@ class ConfigurationManager
             break;
 
             case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                $this->loadConfiguration($configurationType, $this->packages);
-                $configuration = &$this->configurations[$configurationType];
+                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === []) {
+                    $this->loadConfiguration($configurationType, $this->packages);
+                }
+                if (isset($this->configurations[$configurationType])) {
+                    $configuration = &$this->configurations[$configurationType];
+                }
             break;
         }
 
@@ -430,15 +434,15 @@ class ConfigurationManager
                 if (isset($packages['TYPO3.Flow'])) {
                     $flowPackage = $packages['TYPO3.Flow'];
                     unset($packages['TYPO3.Flow']);
-                    $packages = array_merge(array('TYPO3.Flow' => $flowPackage), $packages);
+                    $packages = array_merge(['TYPO3.Flow' => $flowPackage], $packages);
                     unset($flowPackage);
                 }
 
-                $settings = array();
+                $settings = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $packageKey => $package) {
                     if (Arrays::getValueByPath($settings, $packageKey) === null) {
-                        $settings = Arrays::setValueByPath($settings, $packageKey, array());
+                        $settings = Arrays::setValueByPath($settings, $packageKey, []);
                     }
                     $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
                 }
@@ -452,7 +456,7 @@ class ConfigurationManager
                     $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
 
-                if ($this->configurations[$configurationType] !== array()) {
+                if ($this->configurations[$configurationType] !== []) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $settings);
                 } else {
                     $this->configurations[$configurationType] = $settings;
@@ -461,7 +465,7 @@ class ConfigurationManager
                 $this->configurations[$configurationType]['TYPO3']['Flow']['core']['context'] = (string)$this->context;
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                $this->configurations[$configurationType] = array();
+                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $packageKey => $package) {
                     $configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
@@ -477,13 +481,13 @@ class ConfigurationManager
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 if ($this->context->isTesting()) {
-                    $testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy';
+                    $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';
                     if ($this->configurationSource->has($testingPolicyPathAndFilename)) {
                         $this->configurations[$configurationType] = $this->configurationSource->load($testingPolicyPathAndFilename);
                         break;
                     }
                 }
-                $this->configurations[$configurationType] = array();
+                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
@@ -503,7 +507,7 @@ class ConfigurationManager
                 }
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-                $this->configurations[$configurationType] = array();
+                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -520,7 +524,7 @@ class ConfigurationManager
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 // load main routes
-                $this->configurations[$configurationType] = array();
+                $this->configurations[$configurationType] = [];
                 foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
                 }
@@ -531,7 +535,7 @@ class ConfigurationManager
                 $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
-                $this->configurations[$configurationType] = array();
+                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -574,7 +578,11 @@ class ConfigurationManager
      */
     public function flushConfigurationCache()
     {
-        $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+        $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
+        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         $cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
         if (is_file($cachePathAndFilename)) {
             if (unlink($cachePathAndFilename) === false) {
@@ -582,7 +590,6 @@ class ConfigurationManager
             }
             OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
         }
-        $this->configurations = array(self::CONFIGURATION_TYPE_SETTINGS => array());
     }
 
     /**
@@ -594,7 +601,16 @@ class ConfigurationManager
      */
     protected function saveConfigurationCache()
     {
-        $configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+        // Make sure that all configuration types are loaded before writing configuration caches.
+        foreach (array_keys($this->configurationTypes) as $configurationType) {
+            $this->getConfiguration($configurationType);
+        }
+
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
+
+        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         if (!file_exists($configurationCachePath)) {
             Files::createDirectoryRecursively($configurationCachePath);
         }
@@ -635,24 +651,58 @@ EOD;
         foreach ($configurations as $key => $configuration) {
             if (is_array($configuration)) {
                 $this->postProcessConfiguration($configurations[$key]);
-            } elseif (is_string($configuration)) {
-                $matches = array();
-                preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
-                if (count($matches[1]) > 0) {
-                    foreach ($matches[1] as $match) {
-                        if (defined($match)) {
-                            if ($configurations[$key] === '%' . $match . '%') {
-                                // the constant expression spans the complete directive, assign directly to keep type
-                                $configurations[$key] = constant($match);
-                            } else {
-                                // the constant is only a substring of the directive, replace that part accordingly
-                                $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
-                            }
-                        }
-                    }
-                }
+            }
+            if (!is_string($configuration)) {
+                continue;
+            }
+            $configurations[$key] = $this->replaceVariablesInValue($configuration);
+        }
+    }
+
+    /**
+     * Replaces variables (in the format %CONSTANT% or %ENV::ENVIRONMENT_VARIABLE)
+     * in the given (configuration) value string.
+     *
+     * @param string $value
+     * @return mixed
+     */
+    protected function replaceVariablesInValue($value)
+    {
+        $matches = [];
+        $replacements = [];
+
+        preg_match_all('/
+            (?P<fullMatch>%             # an expression is indicated by %
+            (?P<expression>
+            (?:(?:\\\?[\d\w_\\\]+\:\:)  # either a class name followed by ::
+            |                           # or
+            (?:(?P<prefix>[a-z]+)\:)    # a prefix followed by : (like "env:")
+            )?
+            (?P<name>[A-Z_0-9]+))       # the actual variable name in all upper
+            %)                          # concluded by %
+        /mx', $value, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $matchGroup) {
+            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
+                $replacements[$matchGroup['fullMatch']] = getenv($matchGroup['name']);
+            }
+
+            if (defined($matchGroup['expression'])) {
+                $replacements[$matchGroup['fullMatch']] = constant($matchGroup['expression']);
             }
         }
+
+        $replacementCount = count($replacements);
+        if ($replacementCount === 0) {
+            return $value;
+        }
+
+        if ($replacementCount === 1 && array_keys($replacements)[0] === $value) {
+            // the replacement spans the complete directive, assign directly to keep CONSTANT/ENV variable type
+            return reset($replacements);
+        }
+
+        return str_replace(array_keys($replacements), $replacements, $value);
     }
 
     /**
@@ -665,13 +715,13 @@ EOD;
      */
     protected function mergeRoutesWithSubRoutes(array &$routesConfiguration)
     {
-        $mergedRoutesConfiguration = array();
+        $mergedRoutesConfiguration = [];
         foreach ($routesConfiguration as $routeConfiguration) {
             if (!isset($routeConfiguration['subRoutes'])) {
                 $mergedRoutesConfiguration[] = $routeConfiguration;
                 continue;
             }
-            $mergedSubRoutesConfiguration = array($routeConfiguration);
+            $mergedSubRoutesConfiguration = [$routeConfiguration];
             foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
                 if (!isset($subRouteOptions['package'])) {
                     throw new Exception\ParseErrorException(sprintf('Missing package configuration for SubRoute in Route "%s".', (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route')), 1318414040);
@@ -685,7 +735,7 @@ EOD;
                 if (isset($subRouteOptions['suffix'])) {
                     $subRouteFilename .= '.' . $subRouteOptions['suffix'];
                 }
-                $subRouteConfiguration = array();
+                $subRouteConfiguration = [];
                 foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
                     $subRouteFilePathAndName = $package->getConfigurationPath() . $contextName . '/' . $subRouteFilename;
                     $subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
@@ -718,8 +768,8 @@ EOD;
      */
     protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey, array $subRouteOptions)
     {
-        $variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : array();
-        $mergedSubRoutesConfigurations = array();
+        $variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : [];
+        $mergedSubRoutesConfigurations = [];
         foreach ($subRoutesConfiguration as $subRouteConfiguration) {
             foreach ($routesConfiguration as $routeConfiguration) {
                 $mergedSubRouteConfiguration = $subRouteConfiguration;
@@ -730,9 +780,9 @@ EOD;
                 }
                 if ($mergedSubRouteConfiguration['uriPattern'] !== '') {
                     $mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($mergedSubRouteConfiguration['uriPattern'], $variables);
-                    $mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($routeConfiguration['uriPattern'], array($subRouteKey => $mergedSubRouteConfiguration['uriPattern']));
+                    $mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => $mergedSubRouteConfiguration['uriPattern']]);
                 } else {
-                    $mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], array($subRouteKey => '')), '/');
+                    $mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => '']), '/');
                 }
                 if (isset($mergedSubRouteConfiguration['defaults'])) {
                     foreach ($mergedSubRouteConfiguration['defaults'] as $key => $defaultValue) {
@@ -830,14 +880,14 @@ EOD;
      */
     protected function validatePolicyConfiguration(array $policyConfiguration, PackageInterface $package)
     {
-        $errors = array();
+        $errors = [];
         if (isset($policyConfiguration['resources'])) {
             $errors[] = 'deprecated "resources" options';
         }
         if (isset($policyConfiguration['acls'])) {
             $errors[] = 'deprecated "acls" options';
         }
-        if ($errors !== array()) {
+        if ($errors !== []) {
             throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)), 1415717875);
         }
     }

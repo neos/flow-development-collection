@@ -16,10 +16,10 @@ Additionally it's possible to gain information about what arguments a method
 expects, and whether these are required or optional.
 
 
-Reflection in TYPO3 Flow
-========================
+Reflection in Flow
+==================
 
-TYPO3 Flow provides a powerful extension to PHP's own basic reflection
+Flow provides a powerful extension to PHP's own basic reflection
 functionality, not only adding more capabilities, but also speeding up
 reflection massively. It makes heavy use of the annotations (tags) found in the
 documentation blocks, which is another important reason why you should exercise care
@@ -30,7 +30,7 @@ about a correct formatting and respecting some rules when applying these.
   A specific description about these DocComment formatting requirements is
   available in the `Coding Guidelines`.
 
-The reflection of TYPO3 Flow is handled via the *Reflection Service* which can be
+The reflection of Flow is handled via the *Reflection Service* which can be
 injected as usual.
 
 *Example: defining and accessing simple reflection information* ::
@@ -194,7 +194,7 @@ itself! So complying with the walkthrough, the following approach is possible::
 
 	$classAnnotation = $this->reflectionService->getClassAnnotation(
 		'Magrathea\Erp\Domain\Model\CustomizedGoodsOrder',
-		'Magrathea\Erp\Annotations\Reportable')
+		'Magrathea\Erp\Annotations\Reportable'
 	);
 	$classAnnotation instanceof \Magrathea\Erp\Annotations\Reportable;
 	$classAnnotation->reportName === 'OrderReport';

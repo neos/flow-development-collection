@@ -15,7 +15,6 @@ namespace TYPO3\Flow\Tests\Functional\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
@@ -61,25 +60,24 @@ class BehatHelperCommandController extends CommandController
         $testHelper = $this->objectManager->get($testHelperObjectName);
 
         $rawMethodArguments = $this->request->getExceedingArguments();
-        $mappedArguments = array();
-        $rawMethodArgumentsCount = count($rawMethodArguments);
-        for ($i = 0; $i < $rawMethodArgumentsCount; $i += 2) {
-            $mappedArguments[] = $this->propertyMapper->convert($rawMethodArguments[$i + 1], $rawMethodArguments[$i]);
+        $mappedArguments = [];
+        for ($i = 0; $i < count($rawMethodArguments); $i+=2) {
+            $mappedArguments[] = $this->propertyMapper->convert($rawMethodArguments[$i+1], $rawMethodArguments[$i]);
         }
 
         $result = null;
         try {
             if ($withoutSecurityChecks === true) {
                 $this->securityContext->withoutAuthorizationChecks(function () use ($testHelper, $methodName, $mappedArguments, &$result) {
-                    $result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
+                    $result = call_user_func_array([$testHelper, $methodName], $mappedArguments);
                 });
             } else {
-                $result = call_user_func_array(array($testHelper, $methodName), $mappedArguments);
+                $result = call_user_func_array([$testHelper, $methodName], $mappedArguments);
             }
         } catch (\Exception $exception) {
-            $this->outputLine('EXCEPTION: %s %d %s in %s:%s %s', array(get_class($exception), $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString()));
+            $this->outputLine('EXCEPTION: %s %d %s in %s:%s %s', [get_class($exception), $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString()]);
             return;
         }
-        $this->output('SUCCESS: %s', array($result));
+        $this->output('SUCCESS: %s', [$result]);
     }
 }

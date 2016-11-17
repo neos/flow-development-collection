@@ -15,6 +15,9 @@ DateTime:
 # Cache                                                                    #
 #                                                                          #
 
+Neos\Cache\CacheFactoryInterface:
+  className: TYPO3\Flow\Cache\CacheFactory
+
 TYPO3\Flow\Cache\CacheFactory:
   arguments:
     1:
@@ -243,6 +246,20 @@ TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger:
             value: 'TYPO3\Flow\Log\Backend\FileBackend'
           4:
             setting: TYPO3.Flow.log.sqlLogger.backendOptions
+
+#
+# Property
+#
+
+TYPO3\Flow\Property\PropertyMapper:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_PropertyMapper
 
 #                                                                          #
 # Resource                                                                 #

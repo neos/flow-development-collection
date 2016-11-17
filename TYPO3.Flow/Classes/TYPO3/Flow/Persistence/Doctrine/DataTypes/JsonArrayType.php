@@ -2,9 +2,9 @@
 namespace TYPO3\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types;
 use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -13,7 +13,9 @@ use TYPO3\Flow\Utility\TypeHandling;
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
  *
- * TOOD: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
+ * TODO: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
+ *
+ * @Flow\Proxy(false)
  */
 class JsonArrayType extends DoctrineJsonArrayType
 {
@@ -78,7 +80,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      */
     public function getMappedDatabaseTypes(AbstractPlatform $platform)
     {
-        return array('jsonb');
+        return ['jsonb'];
     }
 
     /**
@@ -118,13 +120,12 @@ class JsonArrayType extends DoctrineJsonArrayType
      */
     public function convertToDatabaseValue($array, AbstractPlatform $platform)
     {
-        $this->initializeDependencies();
-
-        $this->encodeObjectReferences($array);
-
         if ($array === null) {
             return null;
         }
+
+        $this->initializeDependencies();
+        $this->encodeObjectReferences($array);
 
         return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
     }
@@ -139,8 +140,8 @@ class JsonArrayType extends DoctrineJsonArrayType
     protected function initializeDependencies()
     {
         if ($this->persistenceManager === null) {
-            $this->persistenceManager = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
-            $this->reflectionService = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
+            $this->persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
+            $this->reflectionService = Bootstrap::$staticObjectManager->get(ReflectionService::class);
         }
     }
 
@@ -187,11 +188,11 @@ class JsonArrayType extends DoctrineJsonArrayType
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
             if ($value instanceof \DateTimeInterface) {
-                $value = array(
+                $value = [
                     'date' => $value->format('Y-m-d H:i:s.u'),
                     'timezone' => $value->format('e'),
                     'dateFormat' => 'Y-m-d H:i:s.u'
-                );
+                ];
             } elseif ($value instanceof \SplObjectStorage) {
                 throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
             } elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
@@ -200,15 +201,15 @@ class JsonArrayType extends DoctrineJsonArrayType
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
             } elseif ($this->persistenceManager->isNewObject($value) === false
                 && (
-                    $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\Entity::class)
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\ValueObject::class)
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
+                    $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \Doctrine\ORM\Mapping\Entity::class)
                 )
             ) {
-                $value = array(
+                $value = [
                     '__flow_object_type' => $propertyClassName,
                     '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
-                );
+                ];
             }
         }
     }

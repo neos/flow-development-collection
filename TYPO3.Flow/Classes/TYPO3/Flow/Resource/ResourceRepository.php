@@ -11,9 +11,15 @@ namespace TYPO3\Flow\Resource;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 
 /**
  * Resource Repository
@@ -22,14 +28,26 @@ use TYPO3\Flow\Persistence\Repository;
  * provided by Resource Manager instead.
  *
  * @Flow\Scope("singleton")
- * @see \TYPO3\Flow\Resource\ResourceManager
+ * @see ResourceManager
  */
 class ResourceRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Resource\Resource::class;
+    const ENTITY_CLASSNAME = PersistentResource::class;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManager
+     */
+    protected $entityManager;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @var \SplObjectStorage
@@ -53,7 +71,7 @@ class ResourceRepository extends Repository
 
     /**
      * @param object $object
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function add($object)
     {
@@ -106,12 +124,69 @@ class ResourceRepository extends Repository
     }
 
     /**
+     * Allow to iterate on an IterableResult and return a Generator
+     *
+     * This methos is useful for batch processing huge result set. The callback
+     * is executed after every iteration. It can be used to clear the state of
+     * the persistence layer.
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            $object = current($object);
+            yield $object;
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+            $iteration++;
+        }
+    }
+
+    /**
+     * Finds all objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findAllIterator()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('Resource')
+            ->from($this->getEntityClassName(), 'Resource')
+            ->getQuery()->iterate();
+    }
+
+    /**
+     * Finds all objects by collection name and return an IterableResult
+     *
+     * @param string $collectionName
+     * @return IterableResult
+     */
+    public function findByCollectionNameIterator($collectionName)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('Resource')
+            ->from($this->getEntityClassName(), 'Resource')
+            ->where('Resource.collectionName = :collectionName')
+            ->setParameter(':collectionName', $collectionName)
+            ->getQuery()->iterate();
+    }
+
+    /**
      * Finds other resources which are referring to the same resource data and filename
      *
-     * @param Resource $resource The resource used for finding similar resources
+     * @param PersistentResource $resource The resource used for finding similar resources
      * @return QueryResultInterface The result, including the given resource
      */
-    public function findSimilarResources(Resource $resource)
+    public function findSimilarResources(PersistentResource $resource)
     {
         $query = $this->createQuery();
         $query->matching(
@@ -147,7 +222,7 @@ class ResourceRepository extends Repository
      * Find one resource by SHA1
      *
      * @param string $sha1Hash
-     * @return Resource
+     * @return PersistentResource
      */
     public function findOneBySha1($sha1Hash)
     {

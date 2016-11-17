@@ -25,7 +25,7 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  *
  * @api
  */
-class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
+class PropertyValue extends DynamicOperand
 {
     /**
      * @var string

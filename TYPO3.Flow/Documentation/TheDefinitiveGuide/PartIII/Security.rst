@@ -9,10 +9,10 @@ Security
 Security Framework
 ==================
 
-All tasks related to security of a TYPO3 Flow application are handled centrally by the security
+All tasks related to security of a Flow application are handled centrally by the security
 framework. Besides other functionality, this includes especially features like
 authentication, authorization, channel security and a powerful policy component. This
-chapter describes how you can use TYPO3 Flow's security features and how they work internally.
+chapter describes how you can use Flow's security features and how they work internally.
 
 Security context
 ----------------
@@ -26,7 +26,7 @@ Authentication
 ==============
 
 One of the main things people associate with security is authentication. That means to
-identify your communication partner - the one sending a request to TYPO3 Flow. Therefore the
+identify your communication partner - the one sending a request to Flow. Therefore the
 framework provides an infrastructure to easily use different mechanisms for such a
 plausibility proof. The most important achievement of the provided infrastructure is its
 flexible extensibility. You can easily write your own authentication mechanisms and
@@ -38,7 +38,7 @@ details are explained in the section  :ref:`Implementing your own authentication
 Using the authentication controller
 -----------------------------------
 
-First, let's see how you can use TYPO3 Flow's authentication features. There is a base
+First, let's see how you can use Flow's authentication features. There is a base
 controller in the security package: the
 :abbr:`AbstractAuthenticationController (\\TYPO3\\Flow\\Security\\Authentication\\Controller\\AbstractAuthenticationController)`,
 which already contains almost everything you need to authenticate an account. This controller has
@@ -212,7 +212,7 @@ Authentication manager and provider
 
 After the tokens have been initialized the original request will be processed by the
 resolved controller. Usually this is done by your authentication controller inheriting the
-AbstractAuthenticationController of TYPO3 Flow, which will call the authentication manager to authenticate the tokens.
+AbstractAuthenticationController of Flow, which will call the authentication manager to authenticate the tokens.
 In turn the authentication manager calls all authentication providers in the configured order. A
 provider implements a specific authentication mechanism and is therefore responsible for
 a specific token type. E.g. the already mentioned ``PersistedUsernamePasswordProvider``
@@ -236,15 +236,15 @@ Policy section for details).
 Account management
 ------------------
 
-In the previous section you have seen, how accounts can be authenticated in TYPO3 Flow. What
+In the previous section you have seen, how accounts can be authenticated in Flow. What
 was concealed so far is, how these accounts are created or what is exactly meant by the
-word "account". First of all let's define what accounts are in TYPO3 Flow and how they are used
+word "account". First of all let's define what accounts are in Flow and how they are used
 for authentication. Following the OASIS CIQ V3.0 [#]_ specification, an account used for
 authentication is separated from a user or more
 general a party. The advantage of this separation is the possibility of one user having
 more than one account. E.g. a user could have an account for the ``UsernamePassword``
 provider and one account connected to an LDAP authentication provider. Another scenario
-would be to have different accounts for different parts of your TYPO3 Flow application. Read
+would be to have different accounts for different parts of your Flow application. Read
 the next section :ref:`Advanced authentication configuration` to see how this can be
 accomplished.
 
@@ -273,7 +273,7 @@ the authentication status of this token.
 .. note::
 
   The ``DefaultProvider`` authentication provider used in the examples is not shipped
-  with TYPO3 Flow, you have to configure all available authentication providers in your application.
+  with Flow, you have to configure all available authentication providers in your application.
 
 Creating accounts
 ~~~~~~~~~~~~~~~~~
@@ -298,7 +298,7 @@ The ``PersistedUsernamePasswordProvider`` uses the
 example above, the given plaintext password will be securely hashed by the ``HashService``.
 The hashing is the main magic happening in the ``AccountFactory`` and the reason why we don't
 create  the account object directly. If you want to learn more about secure password hashing
-in TYPO3 Flow, you should read the section about :ref:`Cryptography` below. You can also see, that there
+in Flow, you should read the section about :ref:`Cryptography` below. You can also see, that there
 is an array of roles added to the account. This is used by the policy system and will be
 explained in the according section below.
 
@@ -428,17 +428,29 @@ configuration:
             keyName: 'AdminKey'
             authenticateRoles: ['Acme.SomePackage:Administrator']
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
-            ip: '192.168.178.0/24'
+            'Acme.SomePackage:AdministrationArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\AdministrationArea\.*'
+            'Acme.SomePackage:LocalNetwork':
+              pattern: 'Ip'
+              patternOptions:
+                'cidrPattern': '192.168.178.0/24'
         'MyLDAPProvider':
           provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            'Acme.SomePackage:AdministrationArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\AdministrationArea\.*'
         DefaultProvider:
           provider: 'PersistedUsernamePasswordProvider'
           requestPatterns:
-            controllerObjectName: 'TYPO3\MyApplication\UserArea\.*'
+            'Acme.SomePackage:UserArea':
+              pattern: 'ControllerObjectName'
+              patternOptions:
+                'controllerObjectNamePattern': 'Acme\SomePackage\UserArea\.*'
 
 Look at the new configuration option ``requestPatterns``. This enables or disables an
 authentication provider, depending on given patterns. The patterns will look into the
@@ -471,32 +483,27 @@ controllers will be authenticated by the default username/password provider.
 
 :title:`Available request patterns`
 
-+----------------------+------------------------+------------------------------------------+
-| Request Pattern      | Match criteria         | Configuration options                    |
-+======================+========================+==========================================+
-| controllerObjectName | Matches on the object  | Expects one regular expression, to       |
-|                      | name of the controller | match on the object name.                |
-|                      | that has been resolved |                                          |
-|                      | by the MVC dispatcher  | For example.:                            |
-|                      | for the current .      |                                          |
-|                      | request                | ``My\Application\AdministrationArea\.*`` |
-+----------------------+------------------------+------------------------------------------+
-| uri                  | Matches on the uri     | Expects one regular expression, to       |
-|                      | of the current request.| match on the request uri.                |
-|                      |                        |                                          |
-|                      |                        | For example.:                            |
-|                      |                        |                                          |
-|                      |                        | ``/admin/.*``                            |
-+----------------------+------------------------+------------------------------------------+
-| host                 | Matches on the host    | Expects one wildcard expression, to      |
-|                      | part of the current    | match on the hostname, e.g.              |
-|                      | request                | ``*.mydomain.com``                       |
-+----------------------+------------------------+------------------------------------------+
-| ip                   | Matches on the user ip | Expects one CIDR expression, to match    |
-|                      | address of the current | on the source ip, e.g.                   |
-|                      | request                | ``192.168.178.0/24`` or                  |
-|                      |                        | ``fd9e:21a7:a92c:2323::/96``             |
-+----------------------+------------------------+------------------------------------------+
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Request Pattern      | Match criteria                                | Configuration options                    | Description                                                      |
++======================+===============================================+==========================================+==================================================================+
+| ControllerObjectName | Matches on the object name of the controller  | ``controllerObjectNamePattern``          | A regular expression to match on the object name, for example:   |
+|                      | that has been resolved by the MVC dispatcher  |                                          |                                                                  |
+|                      | for the current request                       |                                          | ``controllerObjectNamePattern: 'My\Package\Controller\Admin\.*`` |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Uri                  | Matches on the URI of the current request     | ``uriPattern``                           | A regular expression to match on the URI, for example:           |
+|                      | of the current request                        |                                          |                                                                  |
+|                      |                                               |                                          | ``uriPattern: '/admin/.*``                                       |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Host                 | Matches on the host part of the current       | ``hostPattern``                          | A wildcard expression to match on the hostname, for example:     |
+|                      | request                                       |                                          |                                                                  |
+|                      |                                               |                                          | ``hostPattern: '*.mydomain.com'`` or                             |
+|                      |                                               |                                          | ``hostPattern: 'www.mydomain.*'``                                |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+| Ip                   | Matches on the user IP address of the current | ``cidrPattern``                          | A CIDR expression to match on the source IP, for example:        |
+|                      | request                                       |                                          |                                                                  |
+|                      |                                               |                                          | ``cidrPattern: '192.168.178.0/24'`` or                           |
+|                      |                                               |                                          | ``cidrPattern: 'fd9e:21a7:a92c:2323::/96'``                      |
++----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
 
 Authentication entry points
 ---------------------------
@@ -529,7 +536,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
 .. note::
 
-  Prior to TYPO3 Flow version 1.2 the option ``routeValues`` was not supported by the WebRedirect
+  Prior to Flow version 1.2 the option ``routeValues`` was not supported by the WebRedirect
   entry point. Instead you could provide the option ``uri`` containing a relative or absolute
   URI to redirect to. This is still possible, but we recommend to use ``routeValues`` in
   order to make your configuration more independent from the routing configuration.
@@ -544,7 +551,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
   If a request has been intercepted by an ``AuthenticationRequired`` exception, this
   request will be stored in the security context. By this, the authentication process
-  can resume this request afterwards. Have a look at the TYPO3 Flow authentication controller
+  can resume this request afterwards. Have a look at the Flow authentication controller
   if you want to see this feature in action.
 
 :title:`Available authentication entry points`
@@ -573,12 +580,12 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 |              | form.                     |                                             |
 +--------------+---------------------------+---------------------------------------------+
 
-.. _Authentication mechanisms shipped with TYPO3 Flow:
+.. _Authentication mechanisms shipped with Flow:
 
-Authentication mechanisms shipped with TYPO3 Flow
--------------------------------------------------
+Authentication mechanisms shipped with Flow
+-------------------------------------------
 
-This section explains the details of each authentication mechanism shipped with TYPO3 Flow.
+This section explains the details of each authentication mechanism shipped with Flow.
 Mainly the configuration options and usage will be exposed, if you want to know more about
 the entire authentication process and how the components will work together, please have a
 look in the previous sections.
@@ -604,11 +611,11 @@ the username value as account identifier and fetch the credentials source.
 
 .. tip::
 
-  You should always use the TYPO3 Flow hash service to generate hashes! This will make sure
+  You should always use the Flow hash service to generate hashes! This will make sure
   that you really have secure hashes.
 
 The provider will try to authenticate the
-token by asking the TYPO3 Flow hash service to verify the hashed password against the given
+token by asking the Flow hash service to verify the hashed password against the given
 plaintext password from the token.
 If you want to know more about accounts and how you can create them, look in the
 corresponding section above.
@@ -713,7 +720,7 @@ that implements the interface
 Authorization
 =============
 
-This section covers the authorization features of TYPO3 Flow and how those can be leveraged in
+This section covers the authorization features of Flow and how those can be leveraged in
 order to configure fine grained access rights.
 
 .. note::
@@ -727,7 +734,7 @@ order to configure fine grained access rights.
   command when upgrading from a previous version.
 
 Privileges
-----------------------------
+----------
 
 In a complex web application there are different elements you might want to protect.
 This could be the permission to execute certain actions or the retrieval of certain data that has been
@@ -740,10 +747,10 @@ below.
 .. _Access Control Lists:
 
 Defining Privileges (Policies)
-========================================
+==============================
 
 This section will introduce the recommended and default way of connecting authentication
-with authorization. In TYPO3 Flow policies are defined in a declarative way. This is very powerful and gives
+with authorization. In Flow policies are defined in a declarative way. This is very powerful and gives
 you the possibility to change the security policy of your application without touching any PHP code.
 The policy system deals with two major objects, which are explained below: ``Roles`` and ``Privilege Targets``.
 All policy definitions are configured in the ``Policy.yaml`` files.
@@ -801,7 +808,7 @@ called.
 In the section about authentication roles have been introduced. Roles are
 attached to a user's security context by the authentication system, to determine which privileges should be granted to
 her. I.e. the access rights of a user are decoupled from the user object itself, making it
-a lot more flexible, if you want to change them. In TYPO3 Flow roles are defined in the
+a lot more flexible, if you want to change them. In Flow roles are defined in the
 ``Policy.yaml`` files, and are unique within your package namespace. The full identifier
 for a role would be ``<PackageKey>:<RoleName>``.
 
@@ -831,7 +838,7 @@ The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
 ``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
 ``Acme.MyPackage:Customer`` role.
 
-TYPO3 Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
+Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
 configure yourself. This role will also be present, if no account is authenticated.
 
 Likewise, the magic role ``TYPO3.Flow:Anonymous`` is added to the security context if no user
@@ -850,27 +857,27 @@ extends our roles definition accordingly:
     'Acme.MyPackage:Administrator’:
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+          permission: GRANT
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.adminAction'
+          permission: GRANT
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+          permission: GRANT
 
     'Acme.MyPackage:Customer':
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.customerAction'
+          permission: GRANT
 
     'Acme.MyPackage:PrivilegedCustomer':
       parentRoles: ['Acme.MyPackage:Customer']
       privileges:
         -
-        privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
-        permission: GRANT
+          privilegeTarget: 'Acme.MyPackage:RestrictedController.editOwnPost'
+          permission: GRANT
 
 
 This will end up in ``Administrators`` being able to call all the methods matched by the
@@ -895,7 +902,7 @@ permissions to whitelist access to them for certain roles. The use of a DENY per
 resort for edge cases. Be careful, there is no way to override a DENY permission, if you use it anyways!
 
 Using privilege parameters
-------------------------------------
+--------------------------
 
 To explain the usage of privilege parameters, imagine the following scenario: there is an invoice service which requires
 the approval of invoices with an amount greater than 100 Euros. Depending on the invoice amount different roles are
@@ -913,22 +920,22 @@ allowed to approve an invoice or not. The respective MethodPrivilege could look 
       'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros':
         matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > 1000))'
 
-    roles:
-      'Acme.MyPackage:Employee':
-        privileges:
-          -
+  roles:
+    'Acme.MyPackage:Employee':
+      privileges:
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
           permission: GRANT
-          -
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
           permission: DENY
 
-      'Acme.MyPackage:CEO':
-        privileges:
-          -
+    'Acme.MyPackage:CEO':
+      privileges:
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater100Euros'
           permission: GRANT
-          -
+        -
           privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoiceGreater1000Euros'
           permission: GRANT
 
@@ -944,32 +951,35 @@ The following Policy expresses the exact same functionality as above:
 
       'Acme.MyPackage:InvoiceService.ApproveInvoice':
         matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > {amount}))'
+        parameters:
+          amount:
+            className: 'TYPO3\Flow\Security\Authorization\Privilege\Parameter\StringPrivilegeParameter'
 
     roles:
       'Acme.MyPackage:Employee':
         privileges:
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 100
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 100
             permission: GRANT
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 1000
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 1000
             permission: DENY
 
       'Acme.MyPackage:CEO':
         privileges:
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 100
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 100
             permission: GRANT
           -
-          privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
-          parameters:
-            amount: 1000
+            privilegeTarget: 'Acme.MyPackage:InvoiceService.ApproveInvoice'
+            parameters:
+              amount: 1000
             permission: GRANT
 
 As you can see we saved one privilege target definition. The specific amount will not be defined in the privilege target
@@ -985,9 +995,9 @@ which protects the invocation of certain methods. By controlling, which
 methods are allowed to be called and which not, it can be globally
 ensured, that no unprivileged action will be executed at any time. This
 is what you would usually do, by adding an access check at the beginning
-of your privileged method. In TYPO3 Flow, there is the opportunity to enforce
+of your privileged method. In Flow, there is the opportunity to enforce
 these checks without touching the actual method at all. Obviously
-TYPO3 Flow's AOP features are used to realize this completely new perspective
+Flow's AOP features are used to realize this completely new perspective
 on authorization. If you want to learn more about AOP, please refer to
 the corresponding chapter in this reference.
 
@@ -995,17 +1005,17 @@ First, let's have a look at the following sequence diagram to get an overview of
 happening when an authorization decision is formed and enforced:
 
 .. figure:: Images/Security_BasicAuthorizationProcess.png
-  :alt: How an authorization decision is formed and enforced in TYPO3 Flow
+  :alt: How an authorization decision is formed and enforced in Flow
   :class: screenshot-fullsize
 
-  How an authorization decision is formed and enforced in TYPO3 Flow
+  How an authorization decision is formed and enforced in Flow
 
 As already said, the whole authorization starts with an intercepted method, or in other
 words with a method that should be protected and only be callable by privileged users. In
 the chapter about AOP you've already read, that every method interception is implemented
 in a so called advice, which resides in an aspect class. Here we are: the
 ``TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect``. Inside this aspect there is the
-``enforcePolicy()`` advice, which hands over to TYPO3 Flow's authorization components.
+``enforcePolicy()`` advice, which hands over to Flow's authorization components.
 
 The next thing to be called is a security interceptor. This interceptor calls the
 authentication manager before it continues with the authorization process, to make sure
@@ -1021,7 +1031,7 @@ permissions according to the privilege evaluation strategy explained in the prev
 Content security (EntityPrivilege)
 ==================================
 
-To restrict the retrieval of Doctrine entities stored in the database, TYPO3 Flow ships the generic EntityPrivilege.
+To restrict the retrieval of Doctrine entities stored in the database, Flow ships the generic EntityPrivilege.
 This privilege type enables you to hide certain entities from certain users. By rewriting the queries issued by the
 Doctrine ORM, persisted entities a users is not granted to read, are simply not returned from the database. For the
 respective user it looks like these entities are not existing at all.
@@ -1062,9 +1072,13 @@ entities. The following examples, taken from the functional tests, show some mor
     'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
       matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
 
+.. warning:: When using class inheritance for your entities, entity privileges will only work with the root entity type.
+   For example, if your entity ``Acme\MyPackage\EntityB`` extends ``Acme\MyPackage\EntityA``, the expression
+   ``isType("Acme\MyPackage\EntityB")`` will never match. This is a limitation of the underlying Doctrine filter API.
+
 
 Internal workings of entity restrictions (EntityPrivilege)
-----------------------------------------------------------------------
+----------------------------------------------------------
 
 Internally the Doctrine filter API is used to add additional SQL constraints to all queries issued by the ORM against
 the database. This also ensures to rewrite queries done while lazy loading objects, or DQL statements. The responsible
@@ -1080,7 +1094,7 @@ all privilege targets that are not granted to the current user.
 
 
 Creating your custom privilege
-==================================
+==============================
 
 Creating your own privilege type usually has one of the two purposes:
 # You want to define the existing privileges with your own domain specific language (DSL).
@@ -1269,10 +1283,10 @@ level of security right at the beginning of the whole framework run, which means
 that a minimal amount of potentially insecure code will be executed before that.
 
 .. figure:: Images/Security_FilterFirewall.png
-  :alt: Blocking request with TYPO3 Flow's filter firewall
+  :alt: Blocking request with Flow's filter firewall
   :class: screenshot-fullsize
 
-  Blocking request with TYPO3 Flow's filter firewall
+  Blocking request with Flow's filter firewall
 
 Blocking requests with the firewall is not a big thing at all, basically a request filter object is
 called, which consists of a request pattern and a security interceptor. The simple rule
@@ -1280,14 +1294,14 @@ is: if the pattern matches on the request, the interceptor is invoked.
 :ref:`Request Patterns` are also used by the authentication components and are explained
 in detail there. Talking about security interceptors: you already know the policy
 enforcement interceptor, which triggers the authorization process. Here is a table of
-available interceptors, shipped with TYPO3 Flow:
+available interceptors, shipped with Flow:
 
 .. note::
 
   Of course you can implement your own interceptor. Just make sure to implement the
   interface: ``TYPO3\Flow\Security\Authorization\InterceptorInterface``.
 
-:title:`TYPO3 Flow's built-in security interceptors`
+:title:`Flow's built-in security interceptors`
 
 +-----------------------+---------------------------------------+
 | Security interceptor  | Invocation action                     |
@@ -1315,25 +1329,31 @@ firewall configuration will look like:
           rejectAll: FALSE
 
           filters:
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/.*'
+            'Some.Package:AllowedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/.*'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'URI'
-              patternValue: '/some/url/blocked.*'
+            'Some.Package:BlockedUris':
+              pattern:  'Uri'
+              patternOptions:
+                'uriPattern': '\/some\/url\/blocked.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Host'
-              patternValue: 'static.mydomain.*'
+            'Some.Package:BlockedHosts':
+              pattern:  'Host'
+              patternOptions:
+                'hostPattern': 'static.mydomain.*'
               interceptor:  'AccessDeny'
-            -
-              patternType:  'Ip'
-              patternValue: '192.168.178.0/24'
+            'Some.Package:AllowedIps':
+              pattern:  'Ip'
+              patternOptions:
+                'cidrPattern': '192.168.178.0/24'
               interceptor:  'AccessGrant'
-            -
-              patternType:  'Acme\MyPackage\Security\MyOwnRequestPattern'
-              patternValue: 'some pattern value'
+            'Some.Package:CustomPattern':
+              pattern:  'Acme\MyPackage\Security\MyOwnRequestPattern'
+              patternOptions:
+                'someOption': 'some value'
+                'someOtherOption': 'some other value'
               interceptor:  'Acme\MyPackage\Security\MyOwnSecurityInterceptor'
 
 As you can see, you can easily use your own implementations for request patterns and
@@ -1373,7 +1393,7 @@ general you can retrieve the token by callding ``getCsrfProtectionToken`` on the
 Channel security
 ================
 
-Currently channel security is not a specific feature of TYPO3 Flow. Instead you have to make sure to transfer sensitive
+Currently channel security is not a specific feature of Flow. Instead you have to make sure to transfer sensitive
 data, like passwords, over a secure channel. This is e.g. to use an SSL connection.
 
 .. _Cryptography:
@@ -1385,7 +1405,7 @@ Hash service
 ------------
 
 Creating cryptographically secure hashes is a crucial part to many security related tasks. To make sure the hashes are
-built correctly TYPO3 Flow provides a central hash service ``TYPO3\Flow\Security\Cryptography\HashService``, which
+built correctly Flow provides a central hash service ``TYPO3\Flow\Security\Cryptography\HashService``, which
 brings well tested hashing algorithms to the developer. We highly recommend to use this service to make sure hashes are
 securely created.
 
@@ -1395,7 +1415,7 @@ methods for hashing passwords with different hashing strategies.
 RSA wallet service
 ------------------
 
-TYPO3 Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
+Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
 service is to store private keys securely within the application by only exposing the public key via API. The default
 implementation shipped with Flow is based on the openssl functions shipped with PHP:
 ``TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp``.
@@ -1412,7 +1432,7 @@ To use existing keys the following commands can be used to import keys to be sto
 -----
 
 .. [#] The details about the ``PersistedUsernamePasswordProvider`` provider are explained
-  below, in the section about :ref:`Authentication mechanisms shipped with TYPO3 Flow`.
+  below, in the section about :ref:`Authentication mechanisms shipped with Flow`.
 
 .. [#] If you don't know any credentials, you'll have to read the section about
   :ref:`Account management`
@@ -1422,7 +1442,7 @@ To use existing keys the following commands can be used to import keys to be sto
 
 .. [#] The specification can be downloaded from
   `http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq`_. The implementation of
-  this specification resides in the "Party" package, which is part of the official TYPO3 Flow
+  this specification resides in the "Party" package, which is part of the official Neos
   distribution.
 
 .. [#] The ``AccountRepository`` provides a convenient find method called

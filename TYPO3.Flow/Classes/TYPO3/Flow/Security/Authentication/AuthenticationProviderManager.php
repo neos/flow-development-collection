@@ -18,6 +18,7 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Security\Exception;
+use TYPO3\Flow\Security\RequestPatternInterface;
 use TYPO3\Flow\Security\RequestPatternResolver;
 use TYPO3\Flow\Session\SessionInterface;
 
@@ -63,18 +64,14 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $requestPatternResolver;
 
     /**
-     * Array of \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface objects
-     *
      * @var array
      */
-    protected $providers = array();
+    protected $providers = [];
 
     /**
-     * Array of \TYPO3\Flow\Security\Authentication\TokenInterface objects
-     *
      * @var array
      */
-    protected $tokens = array();
+    protected $tokens = [];
 
     /**
      * @var boolean
@@ -131,11 +128,21 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Returns clean tokens this manager is responsible for.
      * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
      *
-     * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
+     * @return array Array of TokenInterface this manager is responsible for
      */
     public function getTokens()
     {
         return $this->tokens;
+    }
+
+    /**
+     * Returns all configured authentication providers
+     *
+     * @return array Array of \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface
+     */
+    public function getProviders()
+    {
+        return $this->providers;
     }
 
     /**
@@ -147,8 +154,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
      *
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception
-     * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+     * @throws Exception
+     * @throws AuthenticationRequiredException
      */
     public function authenticate()
     {
@@ -296,7 +303,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             if ($providerObjectName === null) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
             }
-            $providerOptions = array();
+            $providerOptions = [];
             if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
                 $providerOptions = $providerConfiguration['providerOptions'];
             }
@@ -319,12 +326,33 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
 
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
-                $requestPatterns = array();
-                foreach ($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
+                $requestPatterns = [];
+                foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+                    // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
+                    if ($patternConfiguration === null) {
+                        continue;
+                    }
+
+                    // The following check is needed for backwards compatibility:
+                    // Previously the request pattern configuration was just a key/value where the value was passed to the setPattern() method
+                    if (is_string($patternConfiguration)) {
+                        $patternType = $patternName;
+                        $patternOptions = [];
+                    } else {
+                        $patternType = $patternConfiguration['pattern'];
+                        $patternOptions = isset($patternConfiguration['patternOptions']) ? $patternConfiguration['patternOptions'] : [];
+                    }
                     $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
-                    /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
-                    $requestPattern = new $patternClassName;
-                    $requestPattern->setPattern($patternConfiguration);
+                    $requestPattern = new $patternClassName($patternOptions);
+                    if (!$requestPattern instanceof RequestPatternInterface) {
+                        throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "TYPO3:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
+                    }
+
+                    // The following check needed for backwards compatibility:
+                    // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
+                    if (is_string($patternConfiguration) && is_callable([$requestPattern, 'setPattern'])) {
+                        $requestPattern->setPattern($patternConfiguration);
+                    }
                     $requestPatterns[] = $requestPattern;
                 }
                 if ($tokenInstance !== null) {
@@ -346,7 +374,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     throw new Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\Flow\Security\Authentication\EntryPoint!', 1236767282);
                 }
 
-                /** @var $entryPoint \TYPO3\Flow\Security\Authentication\EntryPointInterface */
+                /** @var $entryPoint EntryPointInterface */
                 $entryPoint = new $entryPointClassName();
                 if (isset($providerConfiguration['entryPointOptions'])) {
                     $entryPoint->setOptions($providerConfiguration['entryPointOptions']);

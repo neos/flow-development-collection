@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /**
  * A sample entity for tests
@@ -28,19 +29,41 @@ class SubEntity extends SuperEntity
     protected $parentEntity;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity
+     * @var \DateTime
+     * @ORM\Column(nullable=true)
+     */
+    protected $date;
+
+    /**
+     * @param TestEntity $parentEntity
      * @return void
      */
-    public function setParentEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity)
+    public function setParentEntity(TestEntity $parentEntity)
     {
         $this->parentEntity = $parentEntity;
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
+     * @return TestEntity
      */
     public function getParentEntity()
     {
         return $this->parentEntity;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
     }
 }

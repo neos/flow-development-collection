@@ -19,16 +19,16 @@ namespace TYPO3\Flow\Persistence;
 class EmptyQueryResult implements QueryResultInterface
 {
     /**
-     * @var \TYPO3\Flow\Persistence\QueryInterface
+     * @var QueryInterface
      */
     protected $query;
 
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Persistence\QueryInterface $query
+     * @param QueryInterface $query
      */
-    public function __construct(\TYPO3\Flow\Persistence\QueryInterface $query)
+    public function __construct(QueryInterface $query)
     {
         $this->query = $query;
     }
@@ -36,7 +36,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns a clone of the query object
      *
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function getQuery()
@@ -63,7 +63,7 @@ class EmptyQueryResult implements QueryResultInterface
      */
     public function toArray()
     {
-        return array();
+        return [];
     }
 
     /**

@@ -2,15 +2,15 @@
 Signals and Slots
 =================
 
-.. sectionauthor:: Karsten Dambekalns <karsten@typo3.org>
+.. sectionauthor:: Karsten Dambekalns <karsten@neos.io>
 
 The concept of *signals* and *slots* has been introduced by the Qt toolkit and allows
 for easy implementation of the Observer pattern in software.
 
 A *signal*, which contains event information as it makes sense in the case at hand, can be
 emitted (sent) by any part of the code and is received by one or more *slots*, which can be
-any function in TYPO3 Flow. Almost no registration, deregistration or invocation code need be
-written, because TYPO3 Flow automatically generates the needed infrastructure using AOP.
+any function in Flow. Almost no registration, deregistration or invocation code need be
+written, because Flow automatically generates the needed infrastructure using AOP.
 
 Defining and Using Signals
 ==========================
@@ -25,7 +25,7 @@ annotate it with a ``Signal`` annotation:
 	 * @return void
 	 * @Flow\Signal
 	 */
-	protected function emitCommentCreated(Comment $comment) {} 
+	protected function emitCommentCreated(Comment $comment) {}
 
 The method signature can be freely defined to fit the needs of the event that is to be
 signalled. Whatever parameters are defined will be handed over to any slots
@@ -65,17 +65,17 @@ non-slot method.
 *Example: A method that can be used as a slot* ::
 
 	/**
- 	 * @param Comment $comment
+	 * @param Comment $comment
 	 * @return void
 	 */
 	public function sendNewCommentNotification(Comment $comment) {
 		$mail = new \TYPO3\SwiftMailer\Message();
 		$mail->setFrom(array('john@doe.org ' => 'John Doe'))
-			->setTo(array('karsten@typo3.org ' => 'Karsten Dambekalns'))
+			->setTo(array('karsten@neos.io ' => 'Karsten Dambekalns'))
 			->setSubject('New comment')
 			->setBody($comment->getContent())
 			->send();
-	} 
+	}
 
 Depending on the wiring there might be an extra parameter being given to the slot that
 contains the class name and method name of the signal emitter, separated by ``::``.
@@ -89,7 +89,7 @@ slots, but also wiring any other signal to any other slot is possible. You shoul
 little careful when wiring your own or even other package's signals to slots in other
 packages, as the results could be non-obvious to someone using your package.
 
-When TYPO3 Flow initializes, it runs the ``boot()`` method in a package's ``Package`` class. This
+When Flow initializes, it runs the ``boot()`` method in a package's ``Package`` class. This
 is the place to wire signals to slots as needed for your package:
 
 *Example: Wiring signals and slots together* ::
@@ -106,7 +106,7 @@ is the place to wire signals to slots as needed for your package:
 			'Some\Package\Controller\CommentController', 'commentCreated',
 			'Some\Package\Service\Notification', 'sendNewCommentNotification'
 		);
-	} 
+	}
 
 The first pair of parameters given to ``connect()`` identifies the signal you want to
 wire, the second pair the slot.

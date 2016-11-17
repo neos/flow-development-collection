@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Aop;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Pointcut\Pointcut;
 
 /**
  * An aspect is represented by class tagged with the "aspect" annotation.
@@ -45,25 +46,32 @@ class AspectContainer
      * An array of \TYPO3\Flow\Aop\Advisor objects
      * @var array
      */
-    protected $advisors = array();
+    protected $advisors = [];
 
     /**
      * An array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
      * @var array
      */
-    protected $interfaceIntroductions = array();
+    protected $interfaceIntroductions = [];
 
     /**
      * An array of \TYPO3\Flow\Aop\PropertyIntroduction objects
      * @var array
      */
-    protected $propertyIntroductions = array();
+    protected $propertyIntroductions = [];
+
+    /**
+     * An array of \TYPO3\Flow\Aop\TraitIntroduction objects
+     *
+     * @var array
+     */
+    protected $traitIntroductions = array();
 
     /**
      * An array of explicitly declared \TYPO3\Flow\Pointcut objects
      * @var array
      */
-    protected $pointcuts = array();
+    protected $pointcuts = [];
 
     /**
      * @var \TYPO3\Flow\Aop\Builder\ClassNameIndex
@@ -121,6 +129,16 @@ class AspectContainer
     }
 
     /**
+     * Returns the trait introductions which were defined in the aspect
+     *
+     * @return array Array of \TYPO3\Flow\Aop\TraitIntroduction objects
+     */
+    public function getTraitIntroductions()
+    {
+        return $this->traitIntroductions;
+    }
+
+    /**
      * Returns the pointcuts which were declared in the aspect. This
      * does not contain the pointcuts which were made out of the pointcut
      * expressions for the advisors!
@@ -135,10 +153,10 @@ class AspectContainer
     /**
      * Adds an advisor to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\Advisor $advisor The advisor to add
+     * @param Advisor $advisor The advisor to add
      * @return void
      */
-    public function addAdvisor(\TYPO3\Flow\Aop\Advisor $advisor)
+    public function addAdvisor(Advisor $advisor)
     {
         $this->advisors[] = $advisor;
     }
@@ -146,10 +164,10 @@ class AspectContainer
     /**
      * Adds an introduction declaration to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\InterfaceIntroduction $introduction
+     * @param InterfaceIntroduction $introduction
      * @return void
      */
-    public function addInterfaceIntroduction(\TYPO3\Flow\Aop\InterfaceIntroduction $introduction)
+    public function addInterfaceIntroduction(InterfaceIntroduction $introduction)
     {
         $this->interfaceIntroductions[] = $introduction;
     }
@@ -157,21 +175,32 @@ class AspectContainer
     /**
      * Adds an introduction declaration to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\PropertyIntroduction $introduction
+     * @param PropertyIntroduction $introduction
      * @return void
      */
-    public function addPropertyIntroduction(\TYPO3\Flow\Aop\PropertyIntroduction $introduction)
+    public function addPropertyIntroduction(PropertyIntroduction $introduction)
     {
         $this->propertyIntroductions[] = $introduction;
     }
 
     /**
-     * Adds a pointcut (from a pointcut declaration) to this aspect container
+     * Adds an introduction declaration to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut to add
+     * @param TraitIntroduction $introduction
      * @return void
      */
-    public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut)
+    public function addTraitIntroduction(TraitIntroduction $introduction)
+    {
+        $this->traitIntroductions[] = $introduction;
+    }
+
+    /**
+     * Adds a pointcut (from a pointcut declaration) to this aspect container
+     *
+     * @param Pointcut $pointcut The pointcut to add
+     * @return void
+     */
+    public function addPointcut(Pointcut $pointcut)
     {
         $this->pointcuts[] = $pointcut;
     }
@@ -193,6 +222,9 @@ class AspectContainer
         }
         foreach ($this->propertyIntroductions as $propertyIntroduction) {
             $result->applyUnion($propertyIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+        }
+        foreach ($this->traitIntroductions as $traitIntroduction) {
+            $result->applyUnion($traitIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
         }
         $this->cachedTargetClassNameCandidates = $result;
         return $result;

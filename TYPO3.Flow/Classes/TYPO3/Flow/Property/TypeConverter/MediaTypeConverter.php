@@ -29,7 +29,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
     /**
      * @var string
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
@@ -53,11 +53,11 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      * @return array
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $mediaType = null;
         if ($configuration !== null) {
-            $mediaType = $configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
+            $mediaType = $configuration->getConfigurationValue(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
         }
         if ($mediaType === null) {
             $mediaType = MediaTypeConverterInterface::DEFAULT_MEDIA_TYPE;
@@ -78,9 +78,9 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
     {
         $mediaTypeParts = MediaTypes::parseMediaType($mediaType);
         if (!isset($mediaTypeParts['subtype']) || $mediaTypeParts['subtype'] === '') {
-            return array();
+            return [];
         }
-        $result = array();
+        $result = [];
         switch ($mediaTypeParts['subtype']) {
             case 'json':
             case 'x-json':
@@ -88,7 +88,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
             case 'x-javascript':
                 $result = json_decode($requestBody, true);
                 if ($result === null) {
-                    return array();
+                    return [];
                 }
             break;
             case 'xml':
@@ -98,7 +98,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                     libxml_disable_entity_loader($entityLoaderValue);
                 } catch (\Exception $exception) {
                     libxml_disable_entity_loader($entityLoaderValue);
-                    return array();
+                    return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);
             break;

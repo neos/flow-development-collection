@@ -2,9 +2,7 @@
 Property Mapping
 ================
 
-.. sectionauthor:: Sebastian Kurfürst <sebastian@typo3.org>
-
-.. TODOs: extract TypeConverter reference from PHPDoc
+.. sectionauthor:: Sebastian Kurfürst <sebastian@neos.io>
 
 The Property Mappers task is to convert *simple types*, like arrays, strings, numbers,
 to objects. This is most prominently needed in the MVC framework: When a request
@@ -178,7 +176,7 @@ The following configuration options exist:
   date format::
 
 	$propertyMappingConfiguration->setTypeConverterOption(
-		'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 		'Y-m-d'
 	);
@@ -208,7 +206,7 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 	$propertyMappingConfiguration
 		->forProperty('birthDate')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 			'Y-m-d'
 		);
@@ -222,9 +220,20 @@ the path syntax supports an asterisk as a placeholder::
 	$propertyMappingConfiguration
 		->forProperty('items.*')
 		->setTypeConverterOption(
-			'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 			TRUE
+		);
+
+This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
+on large collections::
+
+	$propertyMappingConfiguration
+		->forProperty('persons.*.birthDate')
+		->setTypeConvertOption(
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::class,
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+			'Y-m-d'
 		);
 
 .. admonition:: Property Mapping Configuration in the MVC stack
@@ -245,7 +254,7 @@ the path syntax supports an asterisk as a placeholder::
 			$commentConfiguration->allowAllProperties();
 			$commentConfiguration
 				->setTypeConverterOption(
-				'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 				TRUE
 			);
@@ -311,6 +320,14 @@ Second, you need to configure the the PersistentObjectConverter using the two op
 must be used to explicitly activate the modification or creation of objects. By
 default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,
 but does not create new ones or modifies existing ones.
+
+.. note::
+
+	The only exception to this rule are Value Objects, which may always be created newly by default,
+	as this makes sense as of their nature. If you have a use case where the user may not
+	create new Value Objects, for example because he may only choose from a fixed list, you can
+	however explicitly disallow creation by setting the appropriate property's
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
 
 
 Default Configuration
@@ -401,6 +418,7 @@ each ``TypeConverter`` which influence the resolving process:
   If two type converters have the same source and target type, precedence
   is given to the one with higher priority. All standard TypeConverters
   have a priority lower than 100.
+  A priority of -1 disables automatic resolution for the given TypeConverter!
 
 ``canConvertFrom($source, $targetType)``
   Is called as last check, when source and target types fit together. Here, the
@@ -413,7 +431,7 @@ When a type converter has to be found, the following algorithm is applied:
 
 2. The inheritance hierarchy of the target type is traversed in reverse order (from
    most specific to generic) until a TypeConverter is found. If two type converters
-   work on the same class, the one with highest priority is used.
+   work on the same class, the one with highest positive priority is used.
 
 3. If no type converter could be found for the direct inheritance hierarchy, it is
    checked if there is a TypeConverter for one of the interfaces the target class
@@ -440,7 +458,7 @@ instead of implementing ``TypeConverterInterface``.
 Besides, good starting points for own type converters are the ``DateTimeConverter``
 or the ``IntegerConverter``. If you write your own type converter, you should set
 it to a priority greater than 100, to make sure it is used before the standard
-converters by TYPO3 Flow.
+converters by Flow.
 
 TypeConverters should not contain any internal state, as they are re-used by the
 property mapper, even recursively during the same run.
@@ -474,3 +492,9 @@ possibilities what can be returned in ``convertFrom()``:
 	Inside a type converter it is not allowed to use an (injected) instance
 	of ``TYPO3\Flow\Property\PropertyMapper`` because it can lead to an
 	infinite recursive invocation.
+
+.. note::
+
+	With version 4.0 TypeConverters with a negative priority will be skipped by the
+	``PropertyMapper`` by default. The ``PropertyMappingConfiguration`` can be used to
+	explicitly use such converter anyways.

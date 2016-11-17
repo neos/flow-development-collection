@@ -22,7 +22,11 @@ use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -34,26 +38,26 @@ class EntityManagerFactory
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * Injects the Flow settings, the persistence part is kept
@@ -78,12 +82,13 @@ class EntityManagerFactory
      * Factory method which creates an EntityManager.
      *
      * @return EntityManager
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function create()
     {
         $config = new Configuration();
         $config->setClassMetadataFactoryName(Mapping\ClassMetadataFactory::class);
+        $this->applySecondLevelCacheSettingsToConfiguration($this->settings['doctrine']['secondLevelCache'], $config);
 
         $cache = new CacheAdapter();
         // must use ObjectManager in compile phase...
@@ -108,14 +113,19 @@ class EntityManagerFactory
 
         $eventManager = $this->buildEventManager();
 
-        $flowAnnotationDriver = $this->objectManager->get(Mapping\Driver\FlowAnnotationDriver::class);
+        $flowAnnotationDriver = $this->objectManager->get(FlowAnnotationDriver::class);
         $config->setMetadataDriverImpl($flowAnnotationDriver);
 
-        $proxyDirectory = Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
+        $proxyDirectory = Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']);
         Files::createDirectoryRecursively($proxyDirectory);
         $config->setProxyDir($proxyDirectory);
-        $config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
+        $config->setProxyNamespace(Proxies::class);
         $config->setAutoGenerateProxyClasses(false);
+
+        // Set default host to 127.0.0.1 if there is no host configured but a dbname
+        if (empty($this->settings['backendOptions']['host']) && !empty($this->settings['backendOptions']['dbname'])) {
+            $this->settings['backendOptions']['host'] = '127.0.0.1';
+        }
 
         // The following code tries to connect first, if that succeeds, all is well. If not, the platform is fetched directly from the
         // driver - without version checks to the database server (to which no connection can be made) - and is added to the config
@@ -159,7 +169,7 @@ class EntityManagerFactory
      * Add configured event subscribers and listeners to the event manager
      *
      * @return EventManager
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     protected function buildEventManager()
     {
@@ -201,5 +211,41 @@ class EntityManagerFactory
         if (isset($configuredSettings['customDatetimeFunctions'])) {
             $doctrineConfiguration->setCustomDatetimeFunctions($configuredSettings['customDatetimeFunctions']);
         }
+    }
+
+    /**
+     * Apply configured settings regarding Doctrine's second level cache.
+     *
+     * @param array $configuredSettings
+     * @param Configuration $doctrineConfiguration
+     * @return void
+     */
+    protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
+    {
+        if (!isset($configuredSettings['enable']) || $configuredSettings['enable'] !== true) {
+            return;
+        }
+
+        $doctrineConfiguration->setSecondLevelCacheEnabled();
+        $regionsConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration()->getRegionsConfiguration();
+        if (isset($configuredSettings['defaultLifetime'])) {
+            $regionsConfiguration->setDefaultLifetime($configuredSettings['defaultLifetime']);
+        }
+        if (isset($configuredSettings['defaultLockLifetime'])) {
+            $regionsConfiguration->setDefaultLockLifetime($configuredSettings['defaultLockLifetime']);
+        }
+
+        if (isset($configuredSettings['regions']) && is_array($configuredSettings['regions'])) {
+            foreach ($configuredSettings['regions'] as $regionName => $regionLifetime) {
+                $regionsConfiguration->setLifetime($regionName, $regionLifetime);
+            }
+        }
+
+        $cache = new CacheAdapter();
+        // must use ObjectManager in compile phase...
+        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
+
+        $factory = new \Doctrine\ORM\Cache\DefaultCacheFactory($regionsConfiguration, $cache);
+        $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
     }
 }

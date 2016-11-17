@@ -13,11 +13,11 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
-/**
- * Functional tests for the ActionController
- */
-class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class ActionControllerTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -31,28 +31,34 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $this->registerRoute('testa', 'test/mvc/actioncontrollertesta(/{@action})', array(
+        $this->registerRoute('testa', 'test/mvc/actioncontrollertesta(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestA',
             '@action' => 'first',
-            '@format' => 'html'
-        ));
+            '@format' =>'html'
+        ]);
 
-        $this->registerRoute('testb', 'test/mvc/actioncontrollertestb(/{@action})', array(
+        $this->registerRoute('testb', 'test/mvc/actioncontrollertestb(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'ActionControllerTestB',
+            '@action' => 'first',
             '@format' => 'html'
-        ));
+        ]);
 
-        $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}', array(
+        $route = $this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'Entity',
             '@action' => 'show',
             '@format' => 'html'
-        ));
+        ]);
+        $route->setRoutePartsConfiguration([
+            'entity' => [
+                'objectType' => 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity'
+            ]
+        ]);
     }
 
     /**
@@ -99,8 +105,8 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function defaultTemplateIsResolvedAndUsedAccordingToConventions()
     {
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@typo3.org');
-        $this->assertEquals('Fourth action <b>example@typo3.org</b>', $response->getContent());
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@neos.io');
+        $this->assertEquals('Fourth action <b>example@neos.io</b>', $response->getContent());
     }
 
     /**
@@ -154,12 +160,12 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function ignoreValidationAnnotationsAreObservedForPost()
     {
-        $arguments = array(
-            'argument' => array(
+        $arguments = [
+            'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/showobjectargument', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
@@ -195,12 +201,12 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function objectArgumentsAreValidatedByDefault()
     {
-        $arguments = array(
-            'argument' => array(
+        $arguments = [
+            'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/requiredobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredObjectAction().' . PHP_EOL;
@@ -212,12 +218,12 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function optionalObjectArgumentsAreValidatedByDefault()
     {
-        $arguments = array(
-            'argument' => array(
+        $arguments = [
+            'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalObjectAction().' . PHP_EOL;
@@ -240,12 +246,12 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function notValidatedGroupObjectArgumentsAreNotValidated()
     {
-        $arguments = array(
-            'argument' => array(
+        $arguments = [
+            'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
@@ -257,12 +263,12 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function validatedGroupObjectArgumentsAreValidated()
     {
-        $arguments = array(
-            'argument' => array(
+        $arguments = [
+            'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
@@ -334,12 +340,47 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function argumentTests($action, $argument, $expectedResult)
     {
-        $arguments = array(
+        $arguments = [
             'argument' => $argument,
-        );
+        ];
 
         $uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
         $response = $this->browser->request($uri, 'POST', $arguments);
         $this->assertTrue(strpos(trim($response->getContent()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getContent()));
+    }
+
+    /**
+     * @test
+     */
+    public function trustedPropertiesConfigurationDoesNotIgnoreWildcardConfigurationInController()
+    {
+        $entity = new TestEntity();
+        $entity->setName('Foo');
+        $this->persistenceManager->add($entity);
+        $identifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+        $trustedPropertiesService = new MvcPropertyMappingConfigurationService();
+        $trustedProperties = $trustedPropertiesService->generateTrustedPropertiesToken(['entity[__identity]', 'entity[subEntities][0][content]', 'entity[subEntities][0][date]', 'entity[subEntities][1][content]', 'entity[subEntities][1][date]']);
+
+        $form = [
+            'entity' => [
+                '__identity' => $identifier,
+                'subEntities' => [
+                    [
+                        'content' => 'Bar',
+                        'date' => '1.1.2016'
+                    ],
+                    [
+                        'content' => 'Baz',
+                        'date' => '30.12.2016'
+                    ]
+                ]
+            ],
+            '__trustedProperties' => $trustedProperties
+        ];
+        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST', $form);
+
+        $response = $this->browser->sendRequest($request);
+        $this->assertSame('Entity "Foo" updated', $response->getContent());
     }
 }

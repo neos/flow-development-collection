@@ -11,6 +11,7 @@ namespace TYPO3\Flow\I18n\Cldr;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 
 /**
  * A model representing data from one or few CLDR files.
@@ -31,7 +32,7 @@ class CldrModel
     protected $cldrBasePath = 'resource://TYPO3.Flow/Private/I18n/CLDR/Sources/';
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $cache;
 
@@ -43,7 +44,7 @@ class CldrModel
     protected $cacheKey;
 
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\CldrParser
+     * @var CldrParser
      */
     protected $cldrParser;
 
@@ -78,19 +79,19 @@ class CldrModel
     /**
      * Injects the Flow_I18n_Cldr_CldrModelCache cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+     * @param VariableFrontend $cache
      * @return void
      */
-    public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache)
+    public function injectCache(VariableFrontend $cache)
     {
         $this->cache = $cache;
     }
 
     /**
-     * @param \TYPO3\Flow\I18n\Cldr\CldrParser $parser
+     * @param CldrParser $parser
      * @return void
      */
-    public function injectParser(\TYPO3\Flow\I18n\Cldr\CldrParser $parser)
+    public function injectParser(CldrParser $parser)
     {
         $this->cldrParser = $parser;
     }
@@ -127,7 +128,7 @@ class CldrModel
      *
      * @param string $path A path to the node to get
      * @return mixed Array or string of matching data, or FALSE on failure
-     * @see \TYPO3\Flow\I18n\Cldr\CldrParser
+     * @see CldrParser
      */
     public function getRawData($path)
     {
@@ -157,8 +158,8 @@ class CldrModel
      *
      * @param string $path A path to the node to get
      * @return mixed Array of matching data, or FALSE on failure
-     * @see \TYPO3\Flow\I18n\Cldr\CldrParser
-     * @see \TYPO3\Flow\I18n\Cldr\CldrModel::getRawData()
+     * @see CldrParser
+     * @see CldrModel::getRawData()
      */
     public function getRawArray($path)
     {
@@ -205,7 +206,7 @@ class CldrModel
             return false;
         }
 
-        $filteredData = array();
+        $filteredData = [];
         foreach ($data as $nodeString => $children) {
             if ($this->getNodeName($nodeString) === $nodeName) {
                 $filteredData[$nodeString] = $children;
@@ -277,7 +278,7 @@ class CldrModel
      */
     protected function parseFiles(array $sourcePaths)
     {
-        $parsedFiles = array();
+        $parsedFiles = [];
 
         foreach ($sourcePaths as $sourcePath) {
             $parsedFiles[] = $this->cldrParser->getParsedData($sourcePath);
@@ -332,7 +333,7 @@ class CldrModel
      * @param mixed $data Part of internal array to resolve aliases for (string if leaf, array otherwise)
      * @param string $currentPath Path to currently analyzed part of data
      * @return mixed Modified (or unchanged) $data
-     * @throws \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
+     * @throws Exception\InvalidCldrDataException When found alias tag which has unexpected structure
      */
     protected function resolveAliases($data, $currentPath)
     {

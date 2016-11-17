@@ -1,0 +1,29 @@
+{
+  "name": "neos/utility-objecthandling",
+  "description": "Flow array/object property and type utilities",
+  "type": "library",
+  "homepage": "http://flow.typo3.org",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.8 || ~5.2.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "TYPO3\\Flow\\Reflection": "Classes",
+      "TYPO3\\Flow\\Utility": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Neos\\Utility\\ObjectHandling\\Tests\\": "Tests"
+    }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Neos.Utility.ObjectHandling"
+    }
+  }
+}

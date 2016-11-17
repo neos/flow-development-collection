@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Object\Proxy;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * Representation of a method within a proxy class
@@ -66,7 +67,7 @@ class ProxyMethod
     public $methodBody = '';
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -85,10 +86,10 @@ class ProxyMethod
     /**
      * Injects the Reflection Service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
+     * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -152,11 +153,15 @@ class ProxyMethod
 
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
+        $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
+        $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
+
+
         $code = '';
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")\n    {\n";
+                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {
@@ -198,7 +203,7 @@ class ProxyMethod
 
         if ($this->reflectionService->hasMethod($className, $methodName)) {
             $methodTags = $this->reflectionService->getMethodTagsValues($className, $methodName);
-            $allowedTags = array('param', 'return', 'throws');
+            $allowedTags = ['param', 'return', 'throws'];
             foreach ($methodTags as $tag => $values) {
                 if (in_array($tag, $allowedTags)) {
                     if (count($values) === 0) {
@@ -212,7 +217,7 @@ class ProxyMethod
             }
             $methodAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName);
             foreach ($methodAnnotations as $annotation) {
-                $methodDocumentation .= '     * ' . \TYPO3\Flow\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
+                $methodDocumentation .= '     * ' . Compiler::renderAnnotation($annotation) . "\n";
             }
         }
 
@@ -247,6 +252,8 @@ class ProxyMethod
                 if ($addTypeAndDefaultValue) {
                     if ($methodParameterInfo['array'] === true) {
                         $methodParameterTypeName = 'array';
+                    } elseif ($methodParameterInfo['scalarDeclaration']) {
+                        $methodParameterTypeName = $methodParameterInfo['type'];
                     } else {
                         $methodParameterTypeName = ($methodParameterInfo['class'] === null) ? '' : '\\' . $methodParameterInfo['class'];
                     }

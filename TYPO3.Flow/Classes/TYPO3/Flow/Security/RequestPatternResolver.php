@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * The request pattern resolver. It resolves the class name of a request pattern based on names.
@@ -21,16 +22,16 @@ use TYPO3\Flow\Annotations as Flow;
 class RequestPatternResolver
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
+     * @param ObjectManagerInterface $objectManager The object manager
      */
-    public function __construct(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -40,7 +41,7 @@ class RequestPatternResolver
      *
      * @param string $name The (short) name of the pattern
      * @return string The class name of the request pattern, NULL if no class was found.
-     * @throws \TYPO3\Flow\Security\Exception\NoRequestPatternFoundException
+     * @throws Exception\NoRequestPatternFoundException
      */
     public function resolveRequestPatternClass($name)
     {
@@ -54,6 +55,6 @@ class RequestPatternResolver
             return $resolvedObjectName;
         }
 
-        throw new \TYPO3\Flow\Security\Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
+        throw new Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
     }
 }

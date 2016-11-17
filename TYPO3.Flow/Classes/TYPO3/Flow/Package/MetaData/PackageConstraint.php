@@ -11,19 +11,20 @@ namespace TYPO3\Flow\Package\MetaData;
  * source code.
  */
 
+use TYPO3\Flow\Package\MetaDataInterface;
 
 /**
  * Package constraint meta model
  *
  */
-class PackageConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint
+class PackageConstraint extends AbstractConstraint
 {
     /**
      * @return string The constraint scope
-     * @see \TYPO3\Flow\Package\MetaData\Constraint::getConstraintScope()
+     * @see Constraint::getConstraintScope()
      */
     public function getConstraintScope()
     {
-        return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;
+        return MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;
     }
 }

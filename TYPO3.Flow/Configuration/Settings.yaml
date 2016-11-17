@@ -36,8 +36,12 @@ TYPO3:
       context: ''
 
       # Key of the "main" package of the application. This package's meta data is used for displaying the application
-      # name, version etc. in the ./flow command line help and where else needed.
+      # version and possibly other metadata in the X-Flow-Powered HTTP header, ./flow command line help and where else needed.
       applicationPackageKey: 'TYPO3.Flow'
+
+      # Human-readable name of the "main" package of the application. This name is displayed in the X-Flow-Powered
+      # HTTP header, in the ./flow command line help and where else needed.
+      applicationName: 'Flow'
 
       # Path and filename of the PHP binary
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
@@ -69,6 +73,8 @@ TYPO3:
 
         # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
         defaultRenderingOptions:
+          viewClassName: TYPO3\Flow\Mvc\View\SimpleTemplateView
+          viewOptions: []
           renderTechnicalDetails: FALSE
           logException: TRUE
 
@@ -134,8 +140,22 @@ TYPO3:
       #   position: 'after Some.Package'
       #
       routes: []
-
+      view:
+        # todo Add simple Flow view
+        defaultImplementation: null
     http:
+
+      # Defines the "application token" which is sent by in HTTP Response "X-Flow-Powered" headers.
+      #
+      # The value can be one of:
+      #
+      # - "Off" (no application token header is sent)
+      # - "ApplicationName" (the application name only, determined via the TYPO3.Flow.core.applicationKey setting)
+      # - "MajorVersion" (the application name + major version, e.g. "Neos/2"
+      # - "MinorVersion" (the application name + minor version, e.g. "Neos/2.1"
+      #
+      applicationToken: 'MinorVersion'
+
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
       # "Http\Request->getBaseUri()".
@@ -152,7 +172,10 @@ TYPO3:
 
         'preprocess':
           position: 'before process'
-          chain: []
+          chain:
+            'trustedProxies':
+              position: 'start'
+              component: 'TYPO3\Flow\Http\Component\TrustedProxiesComponent'
 
         'process':
           chain:
@@ -167,6 +190,30 @@ TYPO3:
             'standardsCompliance':
               position: 'end'
               component: 'TYPO3\Flow\Http\Component\StandardsComplianceComponent'
+
+      trustedProxies:
+
+        # Defines Proxy servers which are trusted for setting request headers
+        # By default all proxies are trusted ('*')
+        # If you have some reverse proxies or CDN running in front of your server, you should provide
+        # an array list of those servers' addresses or address ranges (in CIDR notation) here.
+        #
+        # If you do definitely not have any reverse proxy or CDN in front of your server, you should not
+        # trust any proxies and set this option to "[]", ie. an empty list.
+        #
+        # proxies:
+        #   - '216.246.40.0/24'
+        #   - '216.246.100.0/24'
+        proxies: '*'
+
+        # Defines request headers which are trusted from proxies to override important request information
+        # Each value can be a single header or a comma separated list of headers
+        headers:
+          # This is a list mainly for backwards-compatibility. You should only set a single header, e.g. 'X-Forwarded-For'
+          clientIp: 'Client-Ip,X-Forwarded-For,X-Forwarded,X-Cluster-Client-Ip,Forwarded-For,Forwarded'
+          host: 'X-Forwarded-Host'
+          port: 'X-Forwarded-Port'
+          proto: 'X-Forwarded-Proto'
 
     log:
 
@@ -222,6 +269,30 @@ TYPO3:
         # The locales identifiers to use in their desired order
         order: []
 
+      scan:
+        # You can list any paths that you want to include in scanning for locales relative to the "Resources"
+        # directory of each package. Setting a path to FALSE will skip scanning this folder.
+        # Additionally, you can define patterns that you want to further skip inside the scanned paths.
+        #
+        # Example:
+        #   includePaths:
+        #     '/Public/': TRUE
+        #     '/Private/images/': TRUE
+        #   excludePatterns:
+        #     '/node_modules/': TRUE
+        #
+        #   This will scan all of the Public Resources folder, as well as the 'images' sub-folder inside the Private
+        #   Resources, except any 'node_modules' sub-folder in either one.
+        includePaths:
+          '/Public/': TRUE
+          '/Private/': TRUE
+
+        excludePatterns:
+          '/node_modules/': TRUE
+          '/bower_components/': TRUE
+          # skip folders starting with a dot (e.g. '.git', '.sass-cache', etc.)
+          '/\..*/': TRUE
+
     object:
 
       # If enabled, the Object Manager will - additionally to the class files found
@@ -254,14 +325,16 @@ TYPO3:
       # Option for the PackageManager::Create to map the packagesPath by package type
       packagesPathByType:
         'typo3-flow-package': 'Application'
+        'neos-package': 'Application'
         'typo3-flow-framework': 'Framework'
+        'neos-framework': 'Framework'
 
     persistence:
 
       # Options for the default Doctrine persistence
       backendOptions:
         driver: 'pdo_mysql'
-        host: '127.0.0.1'
+        host: NULL
         dbname: NULL
         user: NULL
         password: NULL
@@ -289,6 +362,18 @@ TYPO3:
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
         eventListeners: []
+
+        secondLevelCache: []
+
+        # List of regular expressions table names are matched against in the doctrine service
+        # to prevent them from creating corresponding migrations.
+        #
+        # Example:
+        # '^autogenerated_.*': TRUE
+        # '^acme_package_.*: TRUE
+        # (would skip tables starting with "autogenerated_" or "acme_package_" when calling doctrine:migrationgenerate)
+        migrations:
+          ignoredTables: []
 
     reflection:
 
@@ -392,6 +477,9 @@ TYPO3:
             baseUri: '_Resources/Static/Packages/'
             extensionBlacklist: *uploadExtensionBlacklist
 
+            # If the symlinks should be relative instead of absolute
+            #relativeSymlinks: false
+
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
           target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
@@ -402,6 +490,9 @@ TYPO3:
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: false
+
+            # If the symlinks should be relative instead of absolute
+            #relativeSymlinks: false
 
     security:
 
@@ -414,21 +505,22 @@ TYPO3:
         # The filter configuration for the firewall. Here is an example configuration array:
         #
         # filters:
-        #   -
-        #     patternType:  URL
-        #     patternValue: /some/url/.*
+        #   'Some.Package:SomeFilter':
+        #     pattern: 'Uri'
+        #     patternOptions:
+        #       'uriPattern': '\/some\/url\/.*'
         #     interceptor:  AccessGrant
-        #   -
-        #     patternType:  URL
-        #     patternValue: /some/url/blocked.*
+        #   'Some.Package:AnotherFilter':
+        #     pattern: 'Some\Request\Pattern\ClassName'
+        #     patternOptions:
+        #       'foo': 'bar'
         #     interceptor:  AccessDeny
         #
         # If the objects are in the namespace "\TYPO3\Flow\Security" it is enough to specify
         # the last name of the class name, e.g. AccessGrant
         filters:
-          -
-            patternType: CsrfProtection
-            patternValue:
+          'TYPO3.Flow:CsrfProtection':
+            pattern: 'CsrfProtection'
             interceptor: AccessDeny
 
       authentication:
@@ -446,12 +538,15 @@ TYPO3:
         # case the user is not logged in, the web redirect entry point, which redirects her
         # to the login action that displays the authentication form.
         #
-        #  AdminInterfaceProvider:
+        #  'AdminInterfaceProvider':
         #    provider: 'PersistedUsernamePasswordProvider'
         #    providerOptions:
         #      fooBar: 'baz'
         #    requestPatterns:
-        #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
+        #      'AdminControllers':
+        #        pattern: 'ControllerObjectName'
+        #        patternOptions:
+        #          'controllerObjectNamePattern': 'TYPO3\Admin\Controller\.*'
         #    entryPoint: 'WebRedirect'
         #    entryPointOptions:
         #      routeValues:
@@ -500,11 +595,6 @@ TYPO3:
           # The default strategy will be used to hash or validate passwords if no specific strategy is given
           default: bcrypt
 
-          # If a fallback strategy is configured, it will be used to validate passwords without a strategy identifier.
-          # This should be configured to the hashing strategy that was used before strategy identifiers were introduced
-          # with Flow 1.1 (pbkdf2 by default) to allow for a seamless migration.
-          fallback: pbkdf2
-
           pbkdf2: TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy
           bcrypt: TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy
           saltedmd5: TYPO3\Flow\Security\Cryptography\SaltedMd5HashingStrategy
@@ -546,8 +636,6 @@ TYPO3:
       # A specific name for the session, used in the session cookie.
       # The session name must be alphanumerical and must contain at least one
       # character – not only numbers.
-      #
-      # If left empty, the session name will be determined from the base URL.
       name: 'TYPO3_Flow_Session'
 
       # Configuration for handling of expired sessions
@@ -612,7 +700,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
@@ -622,13 +710,13 @@ TYPO3:
         title: 'Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/FluidViewHelperReference.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Flow:FlowValidators':
         title: 'Flow Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/TYPO3.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'

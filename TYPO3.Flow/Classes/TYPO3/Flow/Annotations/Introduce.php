@@ -33,6 +33,13 @@ final class Introduce
     public $interfaceName;
 
     /**
+     * The trait name to introduce
+     *
+     * @var string
+     */
+    public $traitName;
+
+    /**
      * @param array $values
      * @throws \InvalidArgumentException
      */
@@ -45,6 +52,9 @@ final class Introduce
 
         if (isset($values['interfaceName'])) {
             $this->interfaceName = $values['interfaceName'];
+        }
+        if (isset($values['traitName'])) {
+            $this->traitName = $values['traitName'];
         }
     }
 }
