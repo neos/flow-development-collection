@@ -33,7 +33,6 @@ before_install:
   - git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd flow-development-distribution
 install:
-  - phpenv config-rm xdebug.ini
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
