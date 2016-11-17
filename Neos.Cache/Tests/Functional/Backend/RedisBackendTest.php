@@ -112,6 +112,22 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function setDoesNotAddMultipleEntries()
+    {
+        $this->backend->set('some_entry', 'foo');
+        $this->backend->set('some_entry', 'bar');
+
+        $entryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $entryValue) {
+            $entryIdentifiers[] = $entryIdentifier;
+        }
+
+        $this->assertEquals(['some_entry'], $entryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
     public function cacheIsIterable()
     {
         for ($i = 0; $i < 100; $i++) {
@@ -165,6 +181,23 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagRemovesEntries()
+    {
+        $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
+
+        $this->backend->flushByTag('tag1');
+
+        $entryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $entryValue) {
+            $entryIdentifiers[] = $entryIdentifier;
+        }
+
+        $this->assertEquals([], $entryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
     public function flushFlushesCache()
     {
         for ($i = 0; $i < 10; $i++) {
@@ -199,5 +232,21 @@ class RedisBackendTest extends BaseTestCase
             $actualEntries[] = $key;
         }
         $this->assertCount(9, $actualEntries);
+    }
+
+    /**
+     * @test
+     */
+    public function expiredEntriesAreSkippedWhenIterating()
+    {
+        $this->backend->set('entry1', 'foo', [], 1);
+        sleep(2);
+        $this->assertFalse($this->backend->has('entry1'));
+
+        $actualEntries = [];
+        foreach ($this->backend as $key => $value) {
+            $actualEntries[] = $key;
+        }
+        $this->assertEmpty($actualEntries, 'Entries should be empty');
     }
 }
