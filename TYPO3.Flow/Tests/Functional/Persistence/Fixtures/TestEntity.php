@@ -63,9 +63,20 @@ class TestEntity
     protected $description = 'This is some text';
 
     /**
+     * @var TestEmbeddedValueObject
+     */
+    protected $embeddedValueObject;
+
+    /**
      * @var array
      */
-    protected $arrayProperty = array();
+    protected $arrayProperty = [];
+
+    /**
+     * @var TestEmbeddable
+     * @ORM\Embedded(class="TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable")
+     */
+    protected $embedded;
 
     /**
      * Constructor
@@ -73,6 +84,8 @@ class TestEntity
     public function __construct()
     {
         $this->subEntities = new ArrayCollection();
+        $this->embedded = new TestEmbeddable('');
+        $this->embeddedValueObject = new TestEmbeddedValueObject();
     }
 
     /**
@@ -199,5 +212,38 @@ class TestEntity
     public function getRelatedValueObject()
     {
         return $this->relatedValueObject;
+    }
+
+    /**
+     * @return TestEmbeddable
+     */
+    public function getEmbedded()
+    {
+        return $this->embedded;
+    }
+
+    /**
+     * @param TestEmbeddable $embedded
+     */
+    public function setEmbedded($embedded)
+    {
+        $this->embedded = $embedded;
+    }
+
+    /**
+     * @param TestEmbeddedValueObject $embeddedValueObject
+     * @return void
+     */
+    public function setEmbeddedValueObject($embeddedValueObject)
+    {
+        $this->embeddedValueObject = $embeddedValueObject;
+    }
+
+    /**
+     * @return TestEmbeddedValueObject
+     */
+    public function getEmbeddedValueObject()
+    {
+        return $this->embeddedValueObject;
     }
 }

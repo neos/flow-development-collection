@@ -1,13 +1,14 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 3.x based
-applications to TYPO3 Flow 3.y.
+This file contains instructions for upgrading your Flow 3.2 based
+applications to TYPO3 Flow 3.3.
 
 What has changed
 ----------------
 
-TBD
+The most important change relevant for upgrading is https://github.com/neos/flow-development-collection/pull/130
+Make sure to run code migrations and check the changed provider patterns.
 
 Upgrading your Packages
 -----------------------
@@ -72,7 +73,7 @@ Famous last words
 In a nutshell, running::
 
  ./flow core:migrate
- ./flow doctrine:migrationgenerate
+ ./flow doctrine:migrate
 
 in *Development Context*, padded with some manual checking and adjustments needs to be done.
 That should result in a working package.

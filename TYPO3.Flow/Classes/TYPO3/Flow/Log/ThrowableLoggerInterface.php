@@ -36,5 +36,5 @@ interface ThrowableLoggerInterface extends LoggerInterface
      * @return void
      * @api
      */
-    public function logThrowable(\Throwable $throwable, array $additionalData = array());
+    public function logThrowable(\Throwable $throwable, array $additionalData = []);
 }

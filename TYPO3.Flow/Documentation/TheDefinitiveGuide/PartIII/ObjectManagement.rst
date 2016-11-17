@@ -1321,7 +1321,7 @@ and so on, the performance in production context can be improved::
 	 * @return array Array of method parameters by action name
 	 * @Flow\CompileStatic
 	 */
-	static public function getActionMethodParameters($objectManager) {
+	static protected function getActionMethodParameters($objectManager) {
 		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
 		$className = get_called_class();
 		$methodParameters = $reflectionService->getMethodParameters($className, get_class_methods($className));

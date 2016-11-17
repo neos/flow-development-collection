@@ -11,22 +11,24 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Validation\Validator\AbstractValidator;
+
 /**
  * Testcase for the Abstract Validator
- *
  */
-class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractValidatorTest extends UnitTestCase
 {
     protected $validator;
 
     public function setUp()
     {
-        $this->validator = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Validation\Validator\AbstractValidator::class, array(), '', false);
-        $this->validator->_set('supportedOptions', array(
-            'placeHolder'    => array('default', 'Desc', 'mixed', false),
-            'secondPlaceHolder' => array('default', 'Desc', 'mixed'),
-            'thirdPlaceHolder'  => array('default', 'Desc', 'mixed', true),
-        ));
+        $this->validator = $this->getAccessibleMockForAbstractClass(AbstractValidator::class, [], '', false);
+        $this->validator->_set('supportedOptions', [
+            'placeHolder'    => ['default', 'Desc', 'mixed', false],
+            'secondPlaceHolder' => ['default', 'Desc', 'mixed'],
+            'thirdPlaceHolder'  => ['default', 'Desc', 'mixed', true],
+        ]);
     }
 
     /**
@@ -34,9 +36,9 @@ class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function abstractValidatorConstructWithRequiredOptionShouldNotFail()
     {
-        $this->validator->__construct(array( 'thirdPlaceHolder' => 'dummy' ));
+        $this->validator->__construct(['thirdPlaceHolder' => 'dummy']);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Validation\Validator\AbstractValidator::class, $this->validator);
+        $this->assertInstanceOf(AbstractValidator::class, $this->validator);
     }
 
     /**
@@ -45,6 +47,6 @@ class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function abstractValidatorConstructWithoutRequiredOptionShouldFail()
     {
-        $this->validator->__construct(array());
+        $this->validator->__construct([]);
     }
 }

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Cli;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Command\HelpCommandController;
 use TYPO3\Flow\Mvc\Exception\CommandException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException;
@@ -115,7 +116,7 @@ class RequestBuilder
     public function build($commandLine)
     {
         $request = new Request();
-        $request->setControllerObjectName(\TYPO3\Flow\Command\HelpCommandController::class);
+        $request->setControllerObjectName(HelpCommandController::class);
 
         if (is_array($commandLine) === true) {
             $rawCommandLineArguments = $commandLine;

@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-07-20
+The following reference was automatically generated from code on 2016-07-28
 
 
 .. _`Flow Command Reference: TYPO3.FLOW`:
@@ -564,15 +564,8 @@ The use of
 
 would only create a migration touching tables starting with "acme_com".
 
-It is also possible to set a default filter expression within the settings.
-
-TYPO3:
-Flow:
-persistence:
-doctrine:
-migrations:
-generate:
-defaultFilterExpression: '/^acme_com/'
+Note: A filter-expression will overrule any filter configured through the
+TYPO3.Flow.persistence.doctrine.migrations.ignoredTables setting
 
 
 
@@ -1424,7 +1417,7 @@ Arguments
 ^^^^^^^^^
 
 ``--php-namespace``
-  Namespace of the Fluid ViewHelpers without leading backslash (for example 'TYPO3\Fluid\ViewHelpers'). NOTE: Quote and/or escape this argument as needed to avoid backslashes from being interpreted!
+  Namespace of the Fluid ViewHelpers without leading backslash (for example 'Neos\FluidAdaptor\ViewHelpers'). NOTE: Quote and/or escape this argument as needed to avoid backslashes from being interpreted!
 
 
 

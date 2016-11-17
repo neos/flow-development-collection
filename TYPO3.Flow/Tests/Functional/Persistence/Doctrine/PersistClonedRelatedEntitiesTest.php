@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for persisting cloned related entities
  */
-class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -24,7 +26,7 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
 
@@ -34,10 +36,10 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
+        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
     }
 
     /**
@@ -45,9 +47,9 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
      */
     public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -66,6 +68,39 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
 
         $clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
         $clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $clonedLoadedEntity);
+        $this->assertInstanceOf(Fixtures\TestEntity::class, $clonedLoadedEntity);
+    }
+
+    /**
+     * @test
+     */
+    public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded()
+    {
+        $this->markTestSkipped('This is possibly a bug of Doctrine');
+        $entity = new Fixtures\TestEntity();
+        $entity->setName('Andi');
+        $relatedEntity = new Fixtures\TestEntity();
+        $relatedEntity->setName('Robert');
+        $embedded = new Fixtures\TestEmbeddable('Foo');
+        $relatedEntity->setEmbedded($embedded);
+        $valueObject = new Fixtures\TestValueObject('Bar');
+        $relatedEntity->setRelatedValueObject($valueObject);
+        $entity->setRelatedEntity($relatedEntity);
+
+        $clonedRelatedEntity = clone $entity->getRelatedEntity();
+        $this->assertNotNull($clonedRelatedEntity->getEmbedded(), 'Unproxied clone embedded is null');
+
+        $this->testEntityRepository->add($entity);
+        $this->testEntityRepository->add($relatedEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+        $loadedEntity = $this->testEntityRepository->findByIdentifier($entityIdentifier);
+
+        $clonedRelatedEntity = clone $loadedEntity->getRelatedEntity();
+        $this->assertNotNull($clonedRelatedEntity->getRelatedValueObject(), 'Proxied clone value object is null');
+        $this->assertNotNull($clonedRelatedEntity->getEmbedded(), 'Proxied clone embedded is null');
+        $this->assertEquals('Foo', $clonedRelatedEntity->getEmbedded()->getValue());
     }
 }

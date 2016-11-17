@@ -15,7 +15,6 @@ use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * Testcase for the Utility\TypeHandling class
- *
  */
 class TypeHandlingTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +24,7 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function parseTypeThrowsExceptionOnInvalidType()
     {
-        TypeHandling::parseType('something not a type');
+        TypeHandling::parseType('$something');
     }
 
     /**
@@ -42,19 +41,25 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function types()
     {
-        return array(
-            array('int', array('type' => 'integer', 'elementType' => null)),
-            array('string', array('type' => 'string', 'elementType' => null)),
-            array('DateTime', array('type' => 'DateTime', 'elementType' => null)),
-            array('TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => null)),
-            array('\TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => null)),
-            array('array<integer>', array('type' => 'array', 'elementType' => 'integer')),
-            array('ArrayObject<string>', array('type' => 'ArrayObject', 'elementType' => 'string')),
-            array('SplObjectStorage<TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
-            array('SplObjectStorage<\TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
-            array('Doctrine\Common\Collections\Collection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'TYPO3\Foo\Bar')),
-            array('Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo\Bar>', array('type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo\Bar')),
-        );
+        return [
+            ['int', ['type' => 'integer', 'elementType' => null]],
+            ['string', ['type' => 'string', 'elementType' => null]],
+            ['DateTime', ['type' => 'DateTime', 'elementType' => null]],
+            ['TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
+            ['\TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
+            ['\stdClass', ['type' => 'stdClass', 'elementType' => null]],
+            ['array<integer>', ['type' => 'array', 'elementType' => 'integer']],
+            ['ArrayObject<string>', ['type' => 'ArrayObject', 'elementType' => 'string']],
+            ['SplObjectStorage<TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
+            ['SplObjectStorage<\TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
+            ['Doctrine\Common\Collections\Collection<\TYPO3\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'TYPO3\Foo\Bar']],
+            ['Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo\Bar']],
+            ['\SomeClass with appendix', ['type' => 'SomeClass', 'elementType' => null]],
+
+            // Types might also contain underscores at various points.
+            ['Doctrine\Common\Collections\Special_Class_With_Underscores', ['type' => 'Doctrine\Common\Collections\Special_Class_With_Underscores', 'elementType' => null]],
+            ['Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo_\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo_\Bar']],
+        ];
     }
 
     /**
@@ -75,20 +80,23 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function compositeTypes()
     {
-        return array(
-            array('integer', 'integer'),
-            array('int', 'int'),
-            array('array', 'array'),
-            array('ArrayObject', 'ArrayObject'),
-            array('SplObjectStorage', 'SplObjectStorage'),
-            array('Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\Collection'),
-            array('Doctrine\Common\Collections\ArrayCollection', 'Doctrine\Common\Collections\ArrayCollection'),
-            array('array<\Some\Other\Class>', 'array'),
-            array('ArrayObject<int>', 'ArrayObject'),
-            array('SplObjectStorage<\object>', 'SplObjectStorage'),
-            array('Doctrine\Common\Collections\Collection<ElementType>', 'Doctrine\Common\Collections\Collection'),
-            array('Doctrine\Common\Collections\ArrayCollection<>', 'Doctrine\Common\Collections\ArrayCollection'),
-        );
+        return [
+            ['integer', 'integer'],
+            ['int', 'int'],
+            ['array', 'array'],
+            ['ArrayObject', 'ArrayObject'],
+            ['SplObjectStorage', 'SplObjectStorage'],
+            ['Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\Collection'],
+            ['Doctrine\Common\Collections\ArrayCollection', 'Doctrine\Common\Collections\ArrayCollection'],
+            ['array<\Some\Other\Class>', 'array'],
+            ['ArrayObject<int>', 'ArrayObject'],
+            ['SplObjectStorage<\object>', 'SplObjectStorage'],
+            ['Doctrine\Common\Collections\Collection<ElementType>', 'Doctrine\Common\Collections\Collection'],
+            ['Doctrine\Common\Collections\ArrayCollection<>', 'Doctrine\Common\Collections\ArrayCollection'],
+
+            // Types might also contain underscores at various points.
+            ['Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection'],
+        ];
     }
 
 
@@ -110,12 +118,12 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function normalizeTypes()
     {
-        return array(
-            array('int', 'integer'),
-            array('double', 'float'),
-            array('bool', 'boolean'),
-            array('string', 'string')
-        );
+        return [
+            ['int', 'integer'],
+            ['double', 'float'],
+            ['bool', 'boolean'],
+            ['string', 'string']
+        ];
     }
 
     /**
@@ -132,13 +140,13 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function nonLiteralTypes()
     {
-        return array(
-            array('DateTime'),
-            array('\Foo\Bar'),
-            array('array'),
-            array('ArrayObject'),
-            array('stdClass')
-        );
+        return [
+            ['DateTime'],
+            ['\Foo\Bar'],
+            ['array'],
+            ['ArrayObject'],
+            ['stdClass']
+        ];
     }
 
     /**
@@ -155,15 +163,15 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function literalTypes()
     {
-        return array(
-            array('integer'),
-            array('int'),
-            array('float'),
-            array('double'),
-            array('boolean'),
-            array('bool'),
-            array('string')
-        );
+        return [
+            ['integer'],
+            ['int'],
+            ['float'],
+            ['double'],
+            ['boolean'],
+            ['bool'],
+            ['string']
+        ];
     }
 
     /**
@@ -180,21 +188,21 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function collectionTypes()
     {
-        return array(
-            array('integer', false),
-            array('int', false),
-            array('float', false),
-            array('double', false),
-            array('boolean', false),
-            array('bool', false),
-            array('string', false),
-            array('SomeClassThatIsUnknownToPhpAtThisPoint', false),
-            array('array', true),
-            array('ArrayObject', true),
-            array('SplObjectStorage', true),
-            array('Doctrine\Common\Collections\Collection', true),
-            array('Doctrine\Common\Collections\ArrayCollection', true)
-        );
+        return [
+            ['integer', false],
+            ['int', false],
+            ['float', false],
+            ['double', false],
+            ['boolean', false],
+            ['bool', false],
+            ['string', false],
+            ['SomeClassThatIsUnknownToPhpAtThisPoint', false],
+            ['array', true],
+            ['ArrayObject', true],
+            ['SplObjectStorage', true],
+            ['Doctrine\Common\Collections\Collection', true],
+            ['Doctrine\Common\Collections\ArrayCollection', true]
+        ];
     }
 
     /**

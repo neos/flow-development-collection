@@ -12,6 +12,9 @@ namespace TYPO3\Flow\I18n\Xliff;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Log\LoggerInterface;
 
 /**
  * A model representing data from one XLIFF file.
@@ -32,7 +35,7 @@ use TYPO3\Flow\Annotations as Flow;
 class XliffModel
 {
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $cache;
 
@@ -40,7 +43,7 @@ class XliffModel
      * Concrete XML parser which is set by more specific model extending this
      * class.
      *
-     * @var \TYPO3\Flow\I18n\Xliff\XliffParser
+     * @var XliffParser
      */
     protected $xmlParser;
 
@@ -52,13 +55,13 @@ class XliffModel
     protected $sourcePath;
 
     /**
-     * @var \TYPO3\Flow\I18n\Locale
+     * @var Locale
      */
     protected $locale;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $i18nLogger;
 
@@ -71,9 +74,9 @@ class XliffModel
 
     /**
      * @param string $sourcePath
-     * @param \TYPO3\Flow\I18n\Locale $locale The locale represented by the file
+     * @param Locale $locale The locale represented by the file
      */
-    public function __construct($sourcePath, \TYPO3\Flow\I18n\Locale $locale)
+    public function __construct($sourcePath, Locale $locale)
     {
         $this->sourcePath = $sourcePath;
         $this->locale = $locale;
@@ -82,19 +85,19 @@ class XliffModel
     /**
      * Injects the Flow_I18n_XmlModelCache cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+     * @param VariableFrontend $cache
      * @return void
      */
-    public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache)
+    public function injectCache(VariableFrontend $cache)
     {
         $this->cache = $cache;
     }
 
     /**
-     * @param \TYPO3\Flow\I18n\Xliff\XliffParser $parser
+     * @param XliffParser $parser
      * @return void
      */
-    public function injectParser(\TYPO3\Flow\I18n\Xliff\XliffParser $parser)
+    public function injectParser(XliffParser $parser)
     {
         $this->xmlParser = $parser;
     }

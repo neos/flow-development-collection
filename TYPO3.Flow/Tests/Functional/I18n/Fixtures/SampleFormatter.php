@@ -12,15 +12,21 @@ namespace TYPO3\Flow\Tests\Functional\I18n\Fixtures;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Formatter\FormatterInterface;
+use TYPO3\Flow\I18n;
 
 /**
  * A dummy I18n formatter class
  */
-class SampleFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
+class SampleFormatter implements FormatterInterface
 {
     /**
+     * @param mixed $value
+     * @param I18n\Locale $locale
+     * @param array $styleProperties
+     * @return string
      */
-    public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array())
+    public function format($value, I18n\Locale $locale, array $styleProperties = [])
     {
         return $value . '+Formatted42';
     }

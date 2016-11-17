@@ -33,7 +33,7 @@ abstract class OpcodeCacheHelper
      */
     protected static function initialize()
     {
-        self::$clearCacheCallbacks = array();
+        self::$clearCacheCallbacks = [];
 
         // Zend OpCache (built in by default since PHP 5.5) - http://php.net/manual/de/book.opcache.php
         if (extension_loaded('Zend OPcache') && ini_get('opcache.enable') === '1') {
@@ -50,7 +50,7 @@ abstract class OpcodeCacheHelper
         if (extension_loaded('wincache') && ini_get('wincache.ocenabled') === '1') {
             self::$clearCacheCallbacks[] = function ($absolutePathAndFilename) {
                 if ($absolutePathAndFilename !== null) {
-                    wincache_refresh_if_changed(array($absolutePathAndFilename));
+                    wincache_refresh_if_changed([$absolutePathAndFilename]);
                 } else {
                     // Refresh everything!
                     wincache_refresh_if_changed();

@@ -11,23 +11,26 @@ namespace TYPO3\Flow\Tests\Unit\Log;
  * source code.
  */
 
+use TYPO3\Flow\Log\Backend\BackendInterface;
+use TYPO3\Flow\Log\Logger;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the generic Logger
- *
  */
-class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
+class LoggerTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function logPassesItsArgumentsToTheBackendsAppendMethod()
     {
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
-        $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
+        $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->addBackend($mockBackend);
-        $logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
     }
 
     /**
@@ -35,16 +38,16 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addBackendAllowsForAddingMultipleBackends()
     {
-        $mockBackend1 = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
-        $mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $mockBackend1 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
+        $mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
-        $mockBackend2 = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
-        $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $mockBackend2 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
+        $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->addBackend($mockBackend1);
         $logger->addBackend($mockBackend2);
-        $logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
     }
 
     /**
@@ -52,10 +55,10 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function addBackendRunsTheBackendsOpenMethod()
     {
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend->expects($this->once())->method('open');
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->addBackend($mockBackend);
     }
 
@@ -64,16 +67,16 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger()
     {
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend->expects($this->once())->method('close');
         $mockBackend->expects($this->once())->method('append');
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->addBackend($mockBackend);
-        $logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
         $logger->removeBackend($mockBackend);
-        $logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
+        $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
     }
 
     /**
@@ -82,9 +85,9 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded()
     {
-        $mockBackend = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->removeBackend($mockBackend);
     }
 
@@ -93,13 +96,13 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theShutdownMethodRunsCloseOnAllRegisteredBackends()
     {
-        $mockBackend1 = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
+        $mockBackend1 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend1->expects($this->once())->method('close');
 
-        $mockBackend2 = $this->getMockBuilder(\TYPO3\Flow\Log\Backend\BackendInterface::class)->setMethods(array('open', 'append', 'close'))->getMock();
+        $mockBackend2 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend2->expects($this->once())->method('close');
 
-        $logger = new \TYPO3\Flow\Log\Logger();
+        $logger = new Logger();
         $logger->addBackend($mockBackend1);
         $logger->addBackend($mockBackend2);
         $logger->shutdownObject();

@@ -11,16 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  * source code.
  */
 
-use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Client;
+use TYPO3\Flow\Http;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the Http Cookie class
  */
-class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class BrowserTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Http\Client\Browser
+     * @var Client\Browser
      */
     protected $browser;
 
@@ -30,7 +32,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->browser = new \TYPO3\Flow\Http\Client\Browser();
+        $this->browser = new Client\Browser();
     }
 
     /**
@@ -38,12 +40,12 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function requestingUriQueriesRequestEngine()
     {
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->isInstanceOf(\TYPO3\Flow\Http\Request::class))
-            ->will($this->returnValue(new Response()));
+            ->with($this->isInstanceOf(Http\Request::class))
+            ->will($this->returnValue(new Http\Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
@@ -53,11 +55,11 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function automaticHeadersAreSetOnEachRequest()
     {
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->any())
             ->method('sendRequest')
-            ->will($this->returnValue(new Response()));
+            ->will($this->returnValue(new Http\Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -75,11 +77,11 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function automaticHeadersCanBeRemovedAgain()
     {
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
-            ->will($this->returnValue(new Response()));
+            ->will($this->returnValue(new Http\Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -96,13 +98,13 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
         $initialUri = new Uri('http://localhost/foo');
         $redirectUri = new Uri('http://localhost/goToAnotherFoo');
 
-        $firstResponse = new Response();
+        $firstResponse = new Http\Response();
         $firstResponse->setStatus(301);
         $firstResponse->setHeader('Location', (string)$redirectUri);
-        $secondResponse = new Response();
+        $secondResponse = new Http\Response();
         $secondResponse->setStatus(202);
 
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
@@ -124,11 +126,11 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function browserDoesNotRedirectOnLocationHeaderButNot3xxResponseCode()
     {
-        $twoZeroOneResponse = new Response();
+        $twoZeroOneResponse = new Http\Response();
         $twoZeroOneResponse->setStatus(201);
         $twoZeroOneResponse->setHeader('Location', 'http://localhost/createdResource/isHere');
 
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
@@ -145,22 +147,22 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function browserHaltsOnAttemptedInfiniteRedirectionLoop()
     {
-        $wildResponses = array();
-        $wildResponses[0] = new Response();
+        $wildResponses = [];
+        $wildResponses[0] = new Http\Response();
         $wildResponses[0]->setStatus(301);
         $wildResponses[0]->setHeader('Location', 'http://localhost/pleaseGoThere');
-        $wildResponses[1] = new Response();
+        $wildResponses[1] = new Http\Response();
         $wildResponses[1]->setStatus(301);
         $wildResponses[1]->setHeader('Location', 'http://localhost/ahNoPleaseRatherGoThere');
-        $wildResponses[2] = new Response();
+        $wildResponses[2] = new Http\Response();
         $wildResponses[2]->setStatus(301);
         $wildResponses[2]->setHeader('Location', 'http://localhost/youNoWhatISendYouHere');
-        $wildResponses[3] = new Response();
+        $wildResponses[3] = new Http\Response();
         $wildResponses[3]->setStatus(301);
         $wildResponses[3]->setHeader('Location', 'http://localhost/ahNoPleaseRatherGoThere');
 
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
-        for ($i = 0; $i <= 3; $i++) {
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        for ($i=0; $i<=3; $i++) {
             $requestEngine
                 ->expects($this->at($i))
                 ->method('sendRequest')
@@ -177,9 +179,9 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function browserHaltsOnExceedingMaximumRedirections()
     {
-        $requestEngine = $this->createMock(\TYPO3\Flow\Http\Client\RequestEngineInterface::class);
-        for ($i = 0; $i <= 10; $i++) {
-            $response = new Response();
+        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        for ($i=0; $i<=10; $i++) {
+            $response = new Http\Response();
             $response->setHeader('Location', 'http://localhost/this/willLead/you/knowhere/' . $i);
             $response->setStatus(301);
             $requestEngine

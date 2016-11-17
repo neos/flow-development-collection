@@ -29,15 +29,15 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $object1 = new \stdClass();
         $object2 = new \stdClass();
 
-        $flowQuery = new FlowQuery(array($object1));
+        $flowQuery = new FlowQuery([$object1]);
 
-        $flowQueryArgument = new FlowQuery(array($object2));
-        $arguments = array($flowQueryArgument);
+        $flowQueryArgument = new FlowQuery([$object2]);
+        $arguments = [$flowQueryArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($object1, $object2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -50,15 +50,15 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $object1 = new \stdClass();
         $object2 = new \stdClass();
 
-        $flowQuery = new FlowQuery(array($object1));
+        $flowQuery = new FlowQuery([$object1]);
 
         $nodeArgument = $object2;
-        $arguments = array($nodeArgument);
+        $arguments = [$nodeArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($object1, $object2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -71,14 +71,14 @@ class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $object1 = new \stdClass();
         $object2 = new \stdClass();
 
-        $flowQuery = new FlowQuery(array($object1));
+        $flowQuery = new FlowQuery([$object1]);
 
-        $arrayArgument = array($object2);
-        $arguments = array($arrayArgument);
+        $arrayArgument = [$object2];
+        $arguments = [$arrayArgument];
 
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame(array($object1, $object2), $flowQuery->getContext());
+        $this->assertSame([$object1, $object2], $flowQuery->getContext());
     }
 }

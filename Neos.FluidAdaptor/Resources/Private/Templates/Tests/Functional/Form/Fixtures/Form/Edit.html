@@ -1,0 +1,13 @@
+<h2>My Form</h2>
+
+<f:form action="update" object="{fooPost}" objectName="post">
+  <f:form.textfield id="name" property="name" />
+  <f:form.textfield id="email" property="author.emailAddress" />
+  <f:form.textfield id="city" property="author.location.city" />
+  <f:form.checkbox id="private" property="private" value="true" disabled="true" />
+  <f:for each="{fooPost.tags}" as="tag">
+    <f:form.checkbox property="tags" value="{tag}" />
+    <f:form.checkbox name="tags" multiple="true" value="{tag}" />
+  </f:for>
+  <f:form.submit>Abschicken</f:form.submit>
+</f:form>

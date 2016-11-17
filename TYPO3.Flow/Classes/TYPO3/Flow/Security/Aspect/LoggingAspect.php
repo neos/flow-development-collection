@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\Aspect;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
@@ -27,7 +28,7 @@ use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 class LoggingAspect
 {
     /**
-     * @var \TYPO3\Flow\Log\SecurityLoggerInterface
+     * @var SecurityLoggerInterface
      * @Flow\Inject
      */
     protected $securityLogger;
@@ -80,7 +81,7 @@ class LoggingAspect
         if (!$securityContext->isInitialized()) {
             return;
         }
-        $accountIdentifiers = array();
+        $accountIdentifiers = [];
         foreach ($securityContext->getAuthenticationTokens() as $token) {
             /** @var $account Account */
             $account = $token->getAccount();
@@ -104,14 +105,14 @@ class LoggingAspect
 
         switch ($token->getAuthenticationStatus()) {
             case TokenInterface::AUTHENTICATION_SUCCESSFUL:
-                $this->securityLogger->log(sprintf('Successfully authenticated token: %s', $token), LOG_NOTICE, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
+                $this->securityLogger->log(sprintf('Successfully authenticated token: %s', $token), LOG_NOTICE, [], 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
                 $this->alreadyLoggedAuthenticateCall = true;
             break;
             case TokenInterface::WRONG_CREDENTIALS:
-                $this->securityLogger->log(sprintf('Wrong credentials given for token: %s', $token), LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
+                $this->securityLogger->log(sprintf('Wrong credentials given for token: %s', $token), LOG_WARNING, [], 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
             break;
             case TokenInterface::NO_CREDENTIALS_GIVEN:
-                $this->securityLogger->log(sprintf('No credentials given or no account found for token: %s', $token), LOG_WARNING, array(), 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
+                $this->securityLogger->log(sprintf('No credentials given or no account found for token: %s', $token), LOG_WARNING, [], 'TYPO3.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
             break;
         }
     }

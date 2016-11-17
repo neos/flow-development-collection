@@ -12,22 +12,28 @@ namespace TYPO3\Flow\Security\Authentication\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * An action controller for generic authentication in Flow
  *
  * @Flow\Scope("singleton")
  */
-abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controller\ActionController
+abstract class AbstractAuthenticationController extends ActionController
 {
     /**
-     * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+     * @var AuthenticationManagerInterface
      * @Flow\Inject
      */
     protected $authenticationManager;
 
     /**
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      * @Flow\Inject
      */
     protected $securityContext;
@@ -73,7 +79,7 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
         $authenticationException = null;
         try {
             $this->authenticationManager->authenticate();
-        } catch (\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception) {
+        } catch (AuthenticationRequiredException $exception) {
             $authenticationException = $exception;
         }
 
@@ -85,7 +91,7 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
             return $this->onAuthenticationSuccess($storedRequest);
         } else {
             $this->onAuthenticationFailure($authenticationException);
-            return call_user_func(array($this, $this->errorMethodName));
+            return call_user_func([$this, $this->errorMethodName]);
         }
     }
 
@@ -108,12 +114,12 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
      * custom action for this event. Most likely you would want
      * to redirect to some action showing the login form again.
      *
-     * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception The exception thrown while the authentication process
+     * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
      * @return void
      */
-    protected function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = null)
+    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        $this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error('Authentication failed!', ($exception === null ? 1347016771 : $exception->getCode())));
+        $this->flashMessageContainer->addMessage(new Error('Authentication failed!', ($exception === null ? 1347016771 : $exception->getCode())));
     }
 
     /**
@@ -127,10 +133,10 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
      * }
      * $this->redirect('someDefaultActionAfterLogin');
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+     * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
      * @return string
      */
-    abstract protected function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = null);
+    abstract protected function onAuthenticationSuccess(ActionRequest $originalRequest = null);
 
 
     /**
@@ -141,11 +147,11 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
      * Note: If you implement a nice redirect in the onAuthenticationFailure()
      * method of you login controller, this message should never be displayed.
      *
-     * @return \TYPO3\Flow\Error\Error The flash message
+     * @return Error The flash message
      * @api
      */
     protected function getErrorFlashMessage()
     {
-        return new \TYPO3\Flow\Error\Error('Wrong credentials.', null, array(), $this->actionMethodName);
+        return new Error('Wrong credentials.', null, [], $this->actionMethodName);
     }
 }

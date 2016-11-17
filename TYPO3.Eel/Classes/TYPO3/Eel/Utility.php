@@ -26,13 +26,13 @@ class Utility
      */
     public static function getDefaultContextVariables(array $configuration)
     {
-        $defaultContextVariables = array();
+        $defaultContextVariables = [];
         foreach ($configuration as $variableName => $objectType) {
             $currentPathBase = & $defaultContextVariables;
             $variablePathNames = explode('.', $variableName);
             foreach ($variablePathNames as $pathName) {
                 if (!isset($currentPathBase[$pathName])) {
-                    $currentPathBase[$pathName] = array();
+                    $currentPathBase[$pathName] = [];
                 }
                 $currentPathBase = & $currentPathBase[$pathName];
             }
@@ -52,7 +52,7 @@ class Utility
      * @return mixed
      * @throws Exception
      */
-    public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = array())
+    public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
     {
         $matches = null;
         if (!preg_match(Package::EelExpressionRecognizer, $expression, $matches)) {
@@ -67,7 +67,7 @@ class Utility
         }
 
         $contextVariables['q'] = function ($element) {
-            return new FlowQuery\FlowQuery(is_array($element) || $element instanceof \Traversable ? $element : array($element));
+            return new FlowQuery\FlowQuery(is_array($element) || $element instanceof \Traversable ? $element : [$element]);
         };
 
         $context = new ProtectedContext($contextVariables);

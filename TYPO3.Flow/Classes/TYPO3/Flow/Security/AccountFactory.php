@@ -21,13 +21,13 @@ use TYPO3\Flow\Annotations as Flow;
 class AccountFactory
 {
     /**
-     * @var \TYPO3\Flow\Security\Cryptography\HashService
+     * @var Cryptography\HashService
      * @Flow\Inject
      */
     protected $hashService;
 
     /**
-     * @var \TYPO3\Flow\Security\Policy\PolicyService
+     * @var Policy\PolicyService
      * @Flow\Inject
      */
     protected $policyService;
@@ -40,16 +40,16 @@ class AccountFactory
      * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
      * @param string $authenticationProviderName Optional name of the authentication provider the account is affiliated with
      * @param string $passwordHashingStrategy Optional password hashing strategy to use for the password
-     * @return \TYPO3\Flow\Security\Account A new account, not yet added to the account repository
+     * @return Account A new account, not yet added to the account repository
      */
-    public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider', $passwordHashingStrategy = 'default')
+    public function createAccountWithPassword($identifier, $password, $roleIdentifiers = [], $authenticationProviderName = 'DefaultProvider', $passwordHashingStrategy = 'default')
     {
-        $account = new \TYPO3\Flow\Security\Account();
+        $account = new Account();
         $account->setAccountIdentifier($identifier);
         $account->setCredentialsSource($this->hashService->hashPassword($password, $passwordHashingStrategy));
         $account->setAuthenticationProviderName($authenticationProviderName);
 
-        $roles = array();
+        $roles = [];
         foreach ($roleIdentifiers as $roleIdentifier) {
             $roles[] = $this->policyService->getRole($roleIdentifier);
         }

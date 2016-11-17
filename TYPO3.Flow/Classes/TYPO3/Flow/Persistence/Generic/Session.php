@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Persistence\Generic;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * The persistence session - acts as a UoW and Identity Map for Flow's
@@ -33,7 +35,7 @@ class Session
      *
      * @var array
      */
-    protected $reconstitutedEntitiesData = array();
+    protected $reconstitutedEntitiesData = [];
 
     /**
      * @var \SplObjectStorage
@@ -43,10 +45,10 @@ class Session
     /**
      * @var array
      */
-    protected $identifierMap = array();
+    protected $identifierMap = [];
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -63,10 +65,10 @@ class Session
     /**
      * Injects a Reflection Service instance
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
+     * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -154,10 +156,10 @@ class Session
             return false;
         }
 
-        $currentValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName, true);
+        $currentValue = ObjectAccess::getProperty($object, $propertyName, true);
         $cleanData =& $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
 
-        if ($currentValue instanceof \TYPO3\Flow\Persistence\Generic\LazySplObjectStorage && !$currentValue->isInitialized()
+        if ($currentValue instanceof LazySplObjectStorage && !$currentValue->isInitialized()
                 || ($currentValue === null && $cleanData['value'] === null)) {
             return false;
         }
@@ -180,12 +182,12 @@ class Session
     {
         if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
             if ($currentValue instanceof \SplObjectStorage) {
-                $cleanIdentifiers = array();
+                $cleanIdentifiers = [];
                 foreach ($cleanData['value'] as &$cleanObjectData) {
                     $cleanIdentifiers[] = $cleanObjectData['value']['identifier'];
                 }
                 sort($cleanIdentifiers);
-                $currentIdentifiers = array();
+                $currentIdentifiers = [];
                 foreach ($currentValue as $currentObject) {
                     $currentIdentifier = $this->getIdentifierByObject($currentObject);
                     if ($currentIdentifier !== null) {
@@ -336,9 +338,9 @@ class Session
         $idPropertyNames = $this->reflectionService->getPropertyNamesByTag(get_class($object), 'id');
         if (count($idPropertyNames) === 1) {
             $idPropertyName = $idPropertyNames[0];
-            return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $idPropertyName, true);
+            return ObjectAccess::getProperty($object, $idPropertyName, true);
         } elseif (property_exists($object, 'Persistence_Object_Identifier')) {
-            return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
+            return ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
         }
 
         return null;
@@ -377,9 +379,9 @@ class Session
      */
     public function destroy()
     {
-        $this->identifierMap = array();
+        $this->identifierMap = [];
         $this->objectMap = new \SplObjectStorage();
         $this->reconstitutedEntities = new \SplObjectStorage();
-        $this->reconstitutedEntitiesData = array();
+        $this->reconstitutedEntitiesData = [];
     }
 }

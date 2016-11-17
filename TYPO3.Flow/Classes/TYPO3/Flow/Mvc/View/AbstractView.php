@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Mvc\View;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\Exception;
 
 /**
  * An abstract View
@@ -30,7 +32,7 @@ abstract class AbstractView implements ViewInterface
      *
      * @var array
      */
-    protected $supportedOptions = array();
+    protected $supportedOptions = [];
 
     /**
      * The configuration options of this view
@@ -38,31 +40,42 @@ abstract class AbstractView implements ViewInterface
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * View variables and their values
      * @var array
      * @see assign()
      */
-    protected $variables = array();
+    protected $variables = [];
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var ControllerContext
      */
     protected $controllerContext;
+
+    /**
+     * Factory method to create an instance with given options.
+     *
+     * @param array $options
+     * @return ViewInterface
+     */
+    public static function createWithOptions(array $options)
+    {
+        return new static($options);
+    }
 
     /**
      * Set default options based on the supportedOptions provided
      *
      * @param array $options
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws Exception
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         // check for options given but not supported
-        if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== array()) {
-            throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view options "%s" you\'re trying to set don\'t exist in class "%s".', implode(',', array_keys($unsupportedOptions)), get_class($this)), 1359625876);
+        if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== []) {
+            throw new Exception(sprintf('The view options "%s" you\'re trying to set don\'t exist in class "%s".', implode(',', array_keys($unsupportedOptions)), get_class($this)), 1359625876);
         }
 
         // check for required options being set
@@ -70,7 +83,7 @@ abstract class AbstractView implements ViewInterface
             $this->supportedOptions,
             function ($supportedOptionData, $supportedOptionName, $options) {
                 if (isset($supportedOptionData[3]) && !array_key_exists($supportedOptionName, $options)) {
-                    throw new \TYPO3\Flow\Mvc\Exception('Required view option not set: ' . $supportedOptionName, 1359625876);
+                    throw new Exception('Required view option not set: ' . $supportedOptionName, 1359625876);
                 }
             },
             $options
@@ -93,12 +106,12 @@ abstract class AbstractView implements ViewInterface
      *
      * @param string $optionName
      * @return mixed
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws Exception
      */
     public function getOption($optionName)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
+            throw new Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
         }
 
         return $this->options[$optionName];
@@ -110,12 +123,12 @@ abstract class AbstractView implements ViewInterface
      * @param string $optionName
      * @param mixed $value
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws Exception
      */
     public function setOption($optionName, $value)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
+            throw new Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
         }
 
         $this->options[$optionName] = $value;
@@ -127,7 +140,7 @@ abstract class AbstractView implements ViewInterface
      *
      * @param string $key Key of variable
      * @param mixed $value Value of object
-     * @return \TYPO3\Flow\Mvc\View\AbstractView an instance of $this, to enable chaining
+     * @return AbstractView an instance of $this, to enable chaining
      * @api
      */
     public function assign($key, $value)
@@ -140,7 +153,7 @@ abstract class AbstractView implements ViewInterface
      * Add multiple variables to $this->variables.
      *
      * @param array $values array in the format array(key1 => value1, key2 => value2)
-     * @return \TYPO3\Flow\Mvc\View\AbstractView an instance of $this, to enable chaining
+     * @return AbstractView an instance of $this, to enable chaining
      * @api
      */
     public function assignMultiple(array $values)
@@ -154,11 +167,11 @@ abstract class AbstractView implements ViewInterface
     /**
      * Sets the current controller context
      *
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return void
      * @api
      */
-    public function setControllerContext(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function setControllerContext(ControllerContext $controllerContext)
     {
         $this->controllerContext = $controllerContext;
     }
@@ -169,10 +182,10 @@ abstract class AbstractView implements ViewInterface
      * By default we assume that the view implementation can handle all kinds of
      * contexts. Override this method if that is not the case.
      *
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return boolean TRUE if the view has something useful to display, otherwise FALSE
      */
-    public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function canRender(ControllerContext $controllerContext)
     {
         return true;
     }

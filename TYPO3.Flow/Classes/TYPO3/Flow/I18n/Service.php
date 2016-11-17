@@ -14,6 +14,7 @@ namespace TYPO3\Flow\I18n;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -32,7 +33,7 @@ class Service
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var PackageManagerInterface
      */
     protected $packageManager;
 
@@ -114,7 +115,7 @@ class Service
      * any change.
      *
      * @param string $pathAndFilename Path to the file
-     * @param \TYPO3\Flow\I18n\Locale $locale Desired locale of localized file
+     * @param Locale $locale Desired locale of localized file
      * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
      * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
@@ -139,17 +140,17 @@ class Service
         if ($strict === true) {
             $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . (string)$locale . $extension;
             if (file_exists($possibleLocalizedFilename)) {
-                return array($possibleLocalizedFilename, $locale);
+                return [$possibleLocalizedFilename, $locale];
             }
         } else {
             foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
                 $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . $localeIdentifier . $extension;
                 if (file_exists($possibleLocalizedFilename)) {
-                    return array($possibleLocalizedFilename, $locale);
+                    return [$possibleLocalizedFilename, $locale];
                 }
             }
         }
-        return array($pathAndFilename, $locale);
+        return [$pathAndFilename, $locale];
     }
 
     /**
@@ -168,7 +169,7 @@ class Service
      *
      * @param string $path Base directory to the translation files
      * @param string $sourceName name of the translation source
-     * @param \TYPO3\Flow\I18n\Locale $locale Desired locale of XLIFF file
+     * @param Locale $locale Desired locale of XLIFF file
      * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api
@@ -180,24 +181,24 @@ class Service
         }
 
         foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
-            $possibleXliffFilename = Files::concatenatePaths(array($path, $localeIdentifier, $sourceName . '.xlf'));
+            $possibleXliffFilename = Files::concatenatePaths([$path, $localeIdentifier, $sourceName . '.xlf']);
             if (file_exists($possibleXliffFilename)) {
-                return array($possibleXliffFilename, $locale);
+                return [$possibleXliffFilename, $locale];
             }
         }
-        return array(false, $locale);
+        return [false, $locale];
     }
 
     /**
      * Build a chain of locale objects according to the fallback rule and
      * the available locales.
-     * @param \TYPO3\Flow\I18n\Locale $locale
+     * @param Locale $locale
      * @return array
      */
     public function getLocaleChain(Locale $locale)
     {
         $fallbackRule = $this->configuration->getFallbackRule();
-        $localeChain = array((string)$locale => $locale);
+        $localeChain = [(string)$locale => $locale];
 
         if ($fallbackRule['strict'] === true) {
             foreach ($fallbackRule['order'] as $localeIdentifier) {
@@ -227,11 +228,11 @@ class Service
     /**
      * Returns a parent Locale object of the locale provided.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale The Locale to search parent for
-     * @return \TYPO3\Flow\I18n\Locale Existing \TYPO3\Flow\I18n\Locale instance or NULL on failure
+     * @param Locale $locale The Locale to search parent for
+     * @return Locale Existing Locale instance or NULL on failure
      * @api
      */
-    public function getParentLocaleOf(\TYPO3\Flow\I18n\Locale $locale)
+    public function getParentLocaleOf(Locale $locale)
     {
         return $this->localeCollection->getParentLocaleOf($locale);
     }
@@ -241,13 +242,28 @@ class Service
      * object given as parameter, from the collection of locales available in
      * the current Flow installation.
      *
-     * @param \TYPO3\Flow\I18n\Locale $locale The "template" Locale to be matched
-     * @return mixed Existing \TYPO3\Flow\I18n\Locale instance on success, NULL on failure
+     * @param Locale $locale The "template" Locale to be matched
+     * @return mixed Existing Locale instance on success, NULL on failure
      * @api
      */
-    public function findBestMatchingLocale(\TYPO3\Flow\I18n\Locale $locale)
+    public function findBestMatchingLocale(Locale $locale)
     {
         return $this->localeCollection->findBestMatchingLocale($locale);
+    }
+
+    /**
+     * Returns a regex pattern including enclosing characters, that matches any of the configured
+     * blacklist paths inside "TYPO3.Flow.i18n.scan.excludePatterns".
+     *
+     * @return string The regex pattern matching the configured blacklist
+     */
+    protected function getScanBlacklistPattern()
+    {
+        $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePatterns'])));
+        if ($pattern !== '') {
+            $pattern = '#' . str_replace('#', '\#', $pattern) . '#';
+        }
+        return $pattern;
     }
 
     /**
@@ -268,23 +284,41 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
+        $whitelistPaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
+        if ($whitelistPaths === []) {
+            return;
+        }
+        $blacklistPattern = $this->getScanBlacklistPattern();
+
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
-            $packageResourcesPath = $activePackage->getResourcesPath();
+            $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {
                 continue;
             }
 
-            $directories = array(Files::getNormalizedPath($packageResourcesPath));
-            while ($directories !== array()) {
+            $directories = [];
+            foreach ($whitelistPaths as $path) {
+                $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
+                if (is_dir($scanPath)) {
+                    array_push($directories, Files::getNormalizedPath($scanPath));
+                }
+            }
+
+            while ($directories !== []) {
                 $currentDirectory = array_pop($directories);
+                $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
+                if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                    continue;
+                }
+
                 if ($handle = opendir($currentDirectory)) {
                     while (false !== ($filename = readdir($handle))) {
                         if ($filename[0] === '.') {
                             continue;
                         }
-                        $pathAndFilename = Files::concatenatePaths(array($currentDirectory, $filename));
+                        $pathAndFilename = Files::concatenatePaths([$currentDirectory, $filename]);
                         if (is_dir($pathAndFilename)) {
                             array_push($directories, Files::getNormalizedPath($pathAndFilename));
                         } else {

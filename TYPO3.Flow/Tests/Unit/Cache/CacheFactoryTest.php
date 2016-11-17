@@ -11,21 +11,24 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
  * source code.
  */
 
-require_once('Backend/MockBackend.php');
+use Neos\Cache\EnvironmentConfiguration;
+use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Cache\Backend\FileBackend;
+use TYPO3\Flow\Cache\Backend\NullBackend;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
-use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility;
 
 /**
  * Test case for the Cache Factory
- *
  */
 class CacheFactoryTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Utility\Environment
      */
     protected $mockEnvironment;
 
@@ -35,18 +38,35 @@ class CacheFactoryTest extends UnitTestCase
     protected $mockCacheManager;
 
     /**
+     * @var EnvironmentConfiguration
+     */
+    protected $mockEnvironmentConfiguration;
+
+    /**
      * Creates the mocked filesystem used in the tests
      */
     public function setUp()
     {
         vfsStream::setup('Foo');
 
-        $this->mockEnvironment = $this->getMockBuilder(\TYPO3\Flow\Utility\Environment::class)->disableOriginalConstructor()->getMock();
+        $this->mockEnvironment = $this->createMock(Utility\Environment::class);
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
+        $this->mockEnvironment->expects($this->any())->method('getContext')->will($this->returnValue(new ApplicationContext('Testing')));
 
-        $this->mockCacheManager = $this->getMockBuilder(\TYPO3\Flow\Cache\CacheManager::class)->disableOriginalConstructor()->setMethods(array('registerCache', 'isCachePersistent'))->getMock();
+        $this->mockCacheManager = $this->getMockBuilder(CacheManager::class)
+            ->setMethods(['registerCache', 'isCachePersistent'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
+
+        $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
+            ->setConstructorArgs([
+                __DIR__ . '~Testing',
+                'vfs://Foo/',
+                255
+            ])
+            ->getMock();
     }
 
     /**
@@ -54,10 +74,11 @@ class CacheFactoryTest extends UnitTestCase
      */
     public function createReturnsInstanceOfTheSpecifiedCacheFrontend()
     {
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockCacheManager, $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
-        $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', \TYPO3\Flow\Cache\Frontend\VariableFrontend::class, \TYPO3\Flow\Cache\Backend\NullBackend::class);
-        $this->assertInstanceOf(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class, $cache);
+        $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, NullBackend::class);
+        $this->assertInstanceOf(VariableFrontend::class, $cache);
     }
 
     /**
@@ -65,28 +86,29 @@ class CacheFactoryTest extends UnitTestCase
      */
     public function createInjectsAnInstanceOfTheSpecifiedBackendIntoTheCacheFrontend()
     {
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockCacheManager, $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
-        $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', \TYPO3\Flow\Cache\Frontend\VariableFrontend::class, \TYPO3\Flow\Cache\Backend\FileBackend::class);
-        $this->assertInstanceOf(\TYPO3\Flow\Cache\Backend\FileBackend::class, $cache->getBackend());
+        $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, FileBackend::class);
+        $this->assertInstanceOf(FileBackend::class, $cache->getBackend());
     }
 
     /**
      * @test
      */
-    public function createRegistersTheCacheAtTheCacheManager()
+    public function aDifferentDefaultCacheDirectoryIsUsedForPersistentFileCaches()
     {
         $cacheManager = new CacheManager();
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $cacheManager, $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory->injectCacheManager($cacheManager);
+        $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
-        $this->assertFalse($cacheManager->hasCache('TYPO3_Flow_Cache_FactoryTest_Cache'));
-        $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', \TYPO3\Flow\Cache\Frontend\VariableFrontend::class, \TYPO3\Flow\Cache\Backend\FileBackend::class);
-        $this->assertTrue($cacheManager->hasCache('TYPO3_Flow_Cache_FactoryTest_Cache'));
-        $this->assertFalse($cacheManager->isCachePersistent('TYPO3_Flow_Cache_FactoryTest_Cache'));
+        $cache = $factory->create('Persistent_Cache', VariableFrontend::class, FileBackend::class, [], true);
 
-        $this->assertFalse($cacheManager->hasCache('Persistent_Cache'));
-        $factory->create('Persistent_Cache', \TYPO3\Flow\Cache\Frontend\VariableFrontend::class, \TYPO3\Flow\Cache\Backend\FileBackend::class, array(), true);
-        $this->assertTrue($cacheManager->hasCache('Persistent_Cache'));
-        $this->assertTrue($cacheManager->isCachePersistent('Persistent_Cache'));
+        // We need to create the directory here because vfs doesn't support touch() which is used by
+        // createDirectoryRecursively() in the setCache method.
+        mkdir('vfs://Temporary/Directory/Cache');
+
+        $this->assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/Persistent_Cache/', $cache->getBackend()->getCacheDirectory());
     }
 }

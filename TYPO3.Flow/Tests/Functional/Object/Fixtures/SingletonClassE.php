@@ -21,14 +21,14 @@ use TYPO3\Flow\Annotations as Flow;
 class SingletonClassE
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     * @var SingletonClassB
      */
     protected $objectB;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+     * @param SingletonClassB $objectB
      */
-    public function __construct(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB)
+    public function __construct(SingletonClassB $objectB)
     {
         $this->objectB = $objectB;
     }

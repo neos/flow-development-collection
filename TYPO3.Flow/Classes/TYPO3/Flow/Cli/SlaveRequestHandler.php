@@ -15,6 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Exception as FlowException;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Mvc\Dispatcher;
 
 /**
  * A special request handler which handles "slave" command requests as used by
@@ -26,14 +28,14 @@ use TYPO3\Flow\Exception as FlowException;
 class SlaveRequestHandler implements RequestHandlerInterface
 {
     /**
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+     * @param Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {
@@ -73,7 +75,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $systemLogger = $objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $systemLogger = $objectManager->get(SystemLoggerInterface::class);
 
         $systemLogger->log('Running sub process loop.', LOG_DEBUG);
         echo "\nREADY\n";
@@ -87,12 +89,12 @@ class SlaveRequestHandler implements RequestHandlerInterface
                     break;
                 }
                 /** @var Request $request */
-                $request = $objectManager->get(\TYPO3\Flow\Cli\RequestBuilder::class)->build($trimmedCommandLine);
+                $request = $objectManager->get(RequestBuilder::class)->build($trimmedCommandLine);
                 $response = new Response();
                 if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
                     echo "This command must be executed during compiletime.\n";
                 } else {
-                    $objectManager->get(\TYPO3\Flow\Mvc\Dispatcher::class)->dispatch($request, $response);
+                    $objectManager->get(Dispatcher::class)->dispatch($request, $response);
                     $response->send();
 
                     $this->emitDispatchedCommandLineSlaveRequest();
@@ -116,7 +118,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      */
     protected function emitDispatchedCommandLineSlaveRequest()
     {
-        $this->bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', array());
+        $this->bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', []);
     }
 
     /**

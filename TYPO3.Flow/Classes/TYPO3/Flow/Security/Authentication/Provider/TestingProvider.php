@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Security\Authentication\Provider;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Authentication\Token\TestingToken;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 
 /**
  * A singleton authentication provider for functional tests with
@@ -19,17 +22,17 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider
+class TestingProvider extends AbstractProvider
 {
     /**
-     * @var \TYPO3\Flow\Security\Account
+     * @var Account
      */
     protected $account;
 
     /**
      * @var integer
      */
-    protected $authenticationStatus = \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+    protected $authenticationStatus = TokenInterface::NO_CREDENTIALS_GIVEN;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.
@@ -38,19 +41,19 @@ class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstr
      */
     public function getTokenClassNames()
     {
-        return array(\TYPO3\Flow\Security\Authentication\Token\TestingToken::class);
+        return [TestingToken::class];
     }
 
     /**
      * Sets isAuthenticated to TRUE for all tokens.
      *
-     * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+     * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
      */
-    public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken)
+    public function authenticate(TokenInterface $authenticationToken)
     {
         $authenticationToken->setAuthenticationStatus($this->authenticationStatus);
-        if ($this->authenticationStatus === \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+        if ($this->authenticationStatus === TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAccount($this->account);
         } else {
             $authenticationToken->setAccount(null);
@@ -60,7 +63,7 @@ class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstr
     /**
      * Set the account that will be authenticated
      *
-     * @param \TYPO3\Flow\Security\Account $account
+     * @param Account $account
      * @return void
      */
     public function setAccount($account)
@@ -98,6 +101,6 @@ class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstr
     public function reset()
     {
         $this->account = null;
-        $this->authenticationStatus = \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+        $this->authenticationStatus = TokenInterface::NO_CREDENTIALS_GIVEN;
     }
 }

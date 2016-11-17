@@ -12,9 +12,13 @@ namespace TYPO3\Flow\Monitor;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
+use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -35,29 +39,29 @@ class FileMonitor
     protected $changeDetectionStrategy;
 
     /**
-     * @var \TYPO3\Flow\SignalSlot\Dispatcher
+     * @var Dispatcher
      */
     protected $signalDispatcher;
 
     /**
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      */
     protected $cache;
 
     /**
      * @var array
      */
-    protected $monitoredFiles = array();
+    protected $monitoredFiles = [];
 
     /**
      * @var array
      */
-    protected $monitoredDirectories = array();
+    protected $monitoredDirectories = [];
 
     /**
      * Changed files for this monitor
@@ -100,19 +104,19 @@ class FileMonitor
      */
     public static function createFileMonitorAtBoot($identifier, Bootstrap $bootstrap)
     {
-        $fileMonitorCache = $bootstrap->getEarlyInstance(\TYPO3\Flow\Cache\CacheManager::class)->getCache('Flow_Monitor');
+        $fileMonitorCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Monitor');
 
         // The change detector needs to be instantiated and registered manually because
         // it has a complex dependency (cache) but still needs to be a singleton.
-        $fileChangeDetector = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
+        $fileChangeDetector = new ChangeDetectionStrategy\ModificationTimeStrategy();
         $fileChangeDetector->injectCache($fileMonitorCache);
         $bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');
 
         $fileMonitor = new FileMonitor($identifier);
         $fileMonitor->injectCache($fileMonitorCache);
         $fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
-        $fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(\TYPO3\Flow\SignalSlot\Dispatcher::class));
-        $fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance(\TYPO3\Flow\Log\SystemLoggerInterface::class));
+        $fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(Dispatcher::class));
+        $fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
 
         return $fileMonitor;
     }
@@ -133,10 +137,10 @@ class FileMonitor
      * Injects the Singal Slot Dispatcher because classes of the Monitor subpackage cannot be proxied by the AOP
      * framework because it is not initialized at the time the monitoring is used.
      *
-     * @param \TYPO3\Flow\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
+     * @param Dispatcher $signalDispatcher The Signal Slot Dispatcher
      * @return void
      */
-    public function injectSignalDispatcher(\TYPO3\Flow\SignalSlot\Dispatcher $signalDispatcher)
+    public function injectSignalDispatcher(Dispatcher $signalDispatcher)
     {
         $this->signalDispatcher = $signalDispatcher;
     }
@@ -144,10 +148,10 @@ class FileMonitor
     /**
      * Injects the system logger
      *
-     * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+     * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -155,10 +159,10 @@ class FileMonitor
     /**
      * Injects the Flow_Monitor cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
+     * @param StringFrontend $cache
      * @return void
      */
-    public function injectCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $cache)
+    public function injectCache(StringFrontend $cache)
     {
         $this->cache = $cache;
     }
@@ -248,7 +252,7 @@ class FileMonitor
         if ($this->changedFiles === null || $this->changedPaths === null) {
             $this->loadDetectedDirectoriesAndFiles();
             $changesDetected = false;
-            $this->changedPaths = $this->changedFiles = array();
+            $this->changedPaths = $this->changedFiles = [];
             $this->changedFiles = $this->detectChangedFiles($this->monitoredFiles);
 
             foreach ($this->monitoredDirectories as $path => $filenamePattern) {
@@ -288,13 +292,13 @@ class FileMonitor
         try {
             $currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path, $filenamePattern);
         } catch (\Exception $exception) {
-            $currentSubDirectoriesAndFiles = array();
+            $currentSubDirectoriesAndFiles = [];
             $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_DELETED;
         }
 
-        $nowDetectedFilesAndDirectories = array();
+        $nowDetectedFilesAndDirectories = [];
         if (!isset($this->directoriesAndFiles[$path])) {
-            $this->directoriesAndFiles[$path] = array();
+            $this->directoriesAndFiles[$path] = [];
             $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_CREATED;
         }
 
@@ -311,7 +315,7 @@ class FileMonitor
             $nowDetectedFilesAndDirectories[$pathAndFilename] = 1;
         }
 
-        if ($this->directoriesAndFiles[$path] !== array()) {
+        if ($this->directoriesAndFiles[$path] !== []) {
             foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
                 $this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
                 if ($this->changeDetectionStrategy instanceof StrategyWithMarkDeletedInterface) {
@@ -341,8 +345,8 @@ class FileMonitor
      */
     protected function readMonitoredDirectoryRecursively($path, $filenamePattern)
     {
-        $directories = array(Files::getNormalizedPath($path));
-        while ($directories !== array()) {
+        $directories = [Files::getNormalizedPath($path)];
+        while ($directories !== []) {
             $currentDirectory = array_pop($directories);
             if (is_file($currentDirectory . '.flowFileMonitorIgnore')) {
                 continue;
@@ -374,7 +378,7 @@ class FileMonitor
         if ($this->directoriesAndFiles === null) {
             $this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles'), true);
             if (!is_array($this->directoriesAndFiles)) {
-                $this->directoriesAndFiles = array();
+                $this->directoriesAndFiles = [];
             }
         }
     }
@@ -407,7 +411,7 @@ class FileMonitor
      */
     protected function detectChangedFiles(array $pathAndFilenames)
     {
-        $changedFiles = array();
+        $changedFiles = [];
         foreach ($pathAndFilenames as $pathAndFilename) {
             $status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
             if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
@@ -428,7 +432,7 @@ class FileMonitor
      */
     protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles)
     {
-        $this->signalDispatcher->dispatch(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
+        $this->signalDispatcher->dispatch(FileMonitor::class, 'filesHaveChanged', [$monitorIdentifier, $changedFiles]);
     }
 
     /**
@@ -442,7 +446,7 @@ class FileMonitor
      */
     protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories)
     {
-        $this->signalDispatcher->dispatch(\TYPO3\Flow\Monitor\FileMonitor::class, 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
+        $this->signalDispatcher->dispatch(FileMonitor::class, 'directoriesHaveChanged', [$monitorIdentifier, $changedDirectories]);
     }
 
     /**

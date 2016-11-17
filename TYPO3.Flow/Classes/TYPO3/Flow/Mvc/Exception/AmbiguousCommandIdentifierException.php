@@ -20,7 +20,7 @@ class AmbiguousCommandIdentifierException extends CommandException
     /**
      * @var array<\TYPO3\Flow\Cli\Command>
      */
-    protected $matchingCommands = array();
+    protected $matchingCommands = [];
 
     /**
      * Overwrites parent constructor to be able to inject matching commands.
