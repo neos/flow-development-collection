@@ -18,6 +18,7 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - rm -rf .git
   - cd ..
   - git clone https://github.com/neos/flow-development-distribution.git -b master
   - cd flow-development-distribution
