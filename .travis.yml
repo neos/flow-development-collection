@@ -25,14 +25,15 @@ before_install:
   - cd ..
   - git clone https://github.com/neos/flow-development-distribution.git -b 3.3
   - cd flow-development-distribution
+  - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
+  - export NEOS_TARGET_VERSION=3.3
 install:
   - phpenv config-rm xdebug.ini
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  - composer install --no-progress --no-interaction
   - composer update --no-progress --no-interaction
-  - rm -rf Packages/Framework
-  - mv ../flow-development-collection Packages/Framework
+  - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
+  - composer update --no-progress --no-interaction
 before_script:
   - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
