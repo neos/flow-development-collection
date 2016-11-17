@@ -570,8 +570,9 @@ Using Doctrine's Second Level Cache
 
 Since 2.5, Doctrine provides a second level cache that further improves performance of relation queries
 beyond the result query cache.
+
 See the Doctrine documentation ([#doctrineSecondLevelCache]_) for more information on the second level cache.
-Flow allows you can enable and configure the second level cache through the configuration setting
+Flow allows you to enable and configure the second level cache through the configuration setting
 ``TYPO3.Flow.persistence.doctrine.secondLevelCache``.
 
 *Example: Configuration for Doctrine second level cache*:
