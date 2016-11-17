@@ -19,7 +19,7 @@ cache:
     - $HOME/.composer/cache
 before_install:
   - cd ..
-  - git clone https://github.com/neos/flow-development-distribution.git
+  - git clone https://github.com/neos/flow-development-distribution.git -b master
   - cd flow-development-distribution
 install:
   - phpenv config-rm xdebug.ini
