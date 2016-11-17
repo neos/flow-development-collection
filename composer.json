@@ -26,6 +26,7 @@
     "replace": {
         "neos/cache": "self.version",
         "neos/error-messages": "self.version",
+        "neos/filemonitor": "self.version",
         "neos/fluid-adaptor": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
@@ -56,6 +57,9 @@
             ],
             "TYPO3\\Flow\\Error": [
                 "Neos.Error.Messages/Classes"
+            ],
+            "TYPO3\\Flow\\Monitor": [
+                "Neos.Filemonitor/Classes"
             ],
             "TYPO3\\Flow\\Utility": [
                 "Neos.Utility.Arrays/Classes",
