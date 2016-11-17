@@ -234,7 +234,6 @@ abstract class AbstractMigration
      * The patterns are used as is, no quoting is done. A closure can be given for
      * the $replacement variable. It should return a string and is given an
      * array of matches as parameter.
-
      *
      * @param string $search
      * @param string|\Closure $replacement
@@ -278,7 +277,7 @@ abstract class AbstractMigration
      */
     protected function renameMethod($className, $oldMethodName, $newMethodName, $withInheritance = true)
     {
-        throw new \LogicException('renameClass is not yet implemented, sorry!', 1335525001);
+        throw new \LogicException('renameMethod is not yet implemented, sorry!', 1479293733);
     }
 
     /**
