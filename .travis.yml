@@ -22,15 +22,16 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - phpenv config-rm xdebug.ini
+  - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
+  - export NEOS_TARGET_VERSION=3.3
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
   - sudo apt-get install git -y
   - git checkout -b travis
   - cd ..
-  - git clone https://github.com/neos/flow-development-distribution.git -b 3.3
+  - git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd flow-development-distribution
-  - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
-  - export NEOS_TARGET_VERSION=3.3
 install:
   - phpenv config-rm xdebug.ini
   - composer self-update -q
