@@ -136,6 +136,16 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     }
 
     /**
+     * Returns all configured authentication providers
+     *
+     * @return array Array of \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface
+     */
+    public function getProviders()
+    {
+        return $this->providers;
+    }
+
+    /**
      * Tries to authenticate the tokens in the security context (in the given order)
      * with the available authentication providers, if needed.
      * If the authentication strategy is set to "allTokens", all tokens have to be authenticated.
