@@ -22,7 +22,7 @@ before_install:
   - git clone https://github.com/neos/flow-development-distribution.git -b master
   - cd flow-development-distribution
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
-  - export NEOS_TARGET_VERSION=3.3
+  - export NEOS_TARGET_VERSION=master
 install:
   - phpenv config-rm xdebug.ini
   - composer self-update -q
