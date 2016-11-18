@@ -22,8 +22,8 @@ class HttpBasic extends AbstractEntryPoint
     /**
      * Starts the authentication: Send HTTP header
      *
-     * @param \TYPO3\Flow\Http\Request $request The current request
-     * @param \TYPO3\Flow\Http\Response $response The current response
+     * @param Request $request The current request
+     * @param Response $response The current response
      * @return void
      */
     public function startAuthentication(Request $request, Response $response)

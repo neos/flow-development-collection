@@ -11,16 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Formatter;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
+
 /**
  * Testcase for the DatetimeFormatter
- *
  */
-class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DatetimeFormatterTest extends UnitTestCase
 {
     /**
      * Dummy locale used in methods where locale is needed.
      *
-     * @var \TYPO3\Flow\I18n\Locale
+     * @var I18n\Locale
      */
     protected $sampleLocale;
 
@@ -46,7 +48,7 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en');
+        $this->sampleLocale = new I18n\Locale('en');
         $this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
         $this->sampleDateTime = new \DateTime('@1276192176');
         $this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
@@ -57,18 +59,18 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function formatMethodsAreChoosenCorrectly()
     {
-        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('formatDate', 'formatTime', 'formatDateTime'));
-        $formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
-        $formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
-        $formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->will($this->returnValue('bar3'));
+        $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['formatDate', 'formatTime', 'formatDateTime']);
+        $formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
+        $formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+        $formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->will($this->returnValue('bar3'));
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
         $this->assertEquals('bar1', $result);
 
-        $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE));
+        $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE]);
         $this->assertEquals('bar2', $result);
 
-        $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL));
+        $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL]);
         $this->assertEquals('bar3', $result);
     }
 
@@ -79,15 +81,15 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsedFormatsAndFormattedDatetimes()
     {
-        return array(
-            array(array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G'), '2010.06.10 AD'),
-            array(array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzz'), '18:49:36 BST'),
-            array(array('EEE', array(','), array(' '), 'MMM', array(' '), 'd', array(','), array(' '), array('\''), 'yy'), 'Thu, Jun 10, \'10'),
-            array(array('hh', array(' '), array('o'), array('\''), array('clock'), array(' '), 'a', array(','), array(' '), 'zzzz'), '06 o\'clock p.m., Europe/London'),
-            array(array('QQ', 'yy', 'LLLL', 'D', 'F', 'EEEE'), '0210January1612Thursday'),
-            array(array('QQQ', 'MMMMM', 'EEEEE', 'w', 'k'), 'Q26T2318'),
-            array(array('GGGGG', 'K', 'S', 'W', 'qqqq', 'GGGG', 'V'), 'A6032nd quarterAnno Domini'),
-        );
+        return [
+            [['yyyy', ['.'], 'MM', ['.'], 'dd', [' '], 'G'], '2010.06.10 AD'],
+            [['HH', [':'], 'mm', [':'], 'ss', [' '], 'zzz'], '18:49:36 BST'],
+            [['EEE', [','], [' '], 'MMM', [' '], 'd', [','], [' '], ['\''], 'yy'], 'Thu, Jun 10, \'10'],
+            [['hh', [' '], ['o'], ['\''], ['clock'], [' '], 'a', [','], [' '], 'zzzz'], '06 o\'clock p.m., Europe/London'],
+            [['QQ', 'yy', 'LLLL', 'D', 'F', 'EEEE'], '0210January1612Thursday'],
+            [['QQQ', 'MMMMM', 'EEEEE', 'w', 'k'], 'Q26T2318'],
+            [['GGGGG', 'K', 'S', 'W', 'qqqq', 'GGGG', 'V'], 'A6032nd quarterAnno Domini'],
+        ];
     }
 
     /**
@@ -96,7 +98,7 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsedFormatsAreUsedCorrectly(array $parsedFormat, $expectedResult)
     {
-        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\DatetimeFormatter::class, array('dummy'));
+        $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['dummy']);
 
         $result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->sampleLocalizedLiterals);
         $this->assertEquals($expectedResult, $result);
@@ -110,9 +112,9 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function customFormatsAndFormattedDatetimes()
     {
-        return array(
-            array('yyyy.MM.dd G', array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G'), '2010.06.10 AD'),
-        );
+        return [
+            ['yyyy.MM.dd G', ['yyyy', ['.'], 'MM', ['.'], 'dd', [' '], 'G'], '2010.06.10 AD'],
+        ];
     }
 
     /**
@@ -121,11 +123,11 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function formattingUsingCustomPatternWorks($format, array $parsedFormat, $expectedResult)
     {
-        $mockDatesReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::class);
+        $mockDatesReader = $this->createMock(I18n\Cldr\Reader\DatesReader::class);
         $mockDatesReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
         $mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedLiterals));
 
-        $formatter = new \TYPO3\Flow\I18n\Formatter\DatetimeFormatter();
+        $formatter = new I18n\Formatter\DatetimeFormatter();
         $formatter->injectDatesReader($mockDatesReader);
 
         $result = $formatter->formatDateTimeWithCustomPattern($this->sampleDateTime, $format, $this->sampleLocale);
@@ -139,23 +141,23 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sampleDataForSpecificFormattingMethods()
     {
-        return array(
-            array(
-                array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd'),
+        return [
+            [
+                ['EEEE', [', '], 'y', [' '], 'MMMM', [' '], 'dd'],
                 'Thursday, 2010 January 10',
-                \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE
-            ),
-            array(
-                array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
+                I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE
+            ],
+            [
+                ['HH', [':'], 'mm', [':'], 'ss', [' '], 'zzzz'],
                 '18:49:36 Europe/London',
-                \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME
-            ),
-            array(
-                array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd', array(' '), 'HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
+                I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME
+            ],
+            [
+                ['EEEE', [', '], 'y', [' '], 'MMMM', [' '], 'dd', [' '], 'HH', [':'], 'mm', [':'], 'ss', [' '], 'zzzz'],
                 'Thursday, 2010 January 10 18:49:36 Europe/London',
-                \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME
-            )
-        );
+                I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME
+            ]
+        ];
     }
 
     /**
@@ -164,12 +166,12 @@ class DatetimeFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function specificFormattingMethodsWork(array $parsedFormat, $expectedResult, $formatType)
     {
-        $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL;
-        $mockDatesReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::class);
+        $formatLength = I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL;
+        $mockDatesReader = $this->createMock(I18n\Cldr\Reader\DatesReader::class);
         $mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, $formatLength)->will($this->returnValue($parsedFormat));
         $mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedLiterals));
 
-        $formatter = new \TYPO3\Flow\I18n\Formatter\DatetimeFormatter();
+        $formatter = new I18n\Formatter\DatetimeFormatter();
         $formatter->injectDatesReader($mockDatesReader);
 
         $methodName = 'format' . ucfirst($formatType);

@@ -45,7 +45,7 @@ class ComponentContext
      *
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @param Request $httpRequest
@@ -115,7 +115,7 @@ class ComponentContext
     public function setParameter($componentClassName, $parameterName, $value)
     {
         if (!isset($this->parameters[$componentClassName])) {
-            $this->parameters[$componentClassName] = array();
+            $this->parameters[$componentClassName] = [];
         }
         $this->parameters[$componentClassName][$parameterName] = $value;
     }

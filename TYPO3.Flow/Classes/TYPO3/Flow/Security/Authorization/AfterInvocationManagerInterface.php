@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Security\Authorization;
  * source code.
  */
 
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Security\Context;
+
 /**
  * Contract for an after invocation manager. It is used to check return values of a method against security rules.
  *
@@ -20,13 +23,13 @@ interface AfterInvocationManagerInterface
     /**
      * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
      *
-     * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+     * @param Context $securityContext The current security context
      * @param object $object The return object to be processed
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint of the returning method
+     * @param JoinPointInterface $joinPoint The joinpoint of the returning method
      * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
      * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
      */
-    public function process(\TYPO3\Flow\Security\Context $securityContext, $object, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
+    public function process(Context $securityContext, $object, JoinPointInterface $joinPoint);
 
     /**
      * Returns TRUE if this after invocation processor can process return objects of the given class name

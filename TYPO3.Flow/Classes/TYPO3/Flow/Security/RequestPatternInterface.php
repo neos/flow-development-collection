@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Security;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\RequestInterface;
+
 /**
  * Contract for a request pattern.
  *
@@ -35,8 +37,8 @@ interface RequestPatternInterface
     /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set pattern rules
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
      */
-    public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request);
+    public function matchRequest(RequestInterface $request);
 }

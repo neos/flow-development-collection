@@ -12,18 +12,20 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * An authentication token used for simple username and password authentication.
  */
-class UsernamePassword extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken
+class UsernamePassword extends AbstractToken
 {
     /**
      * The username/password credentials
      * @var array
      * @Flow\Transient
      */
-    protected $credentials = array('username' => '', 'password' => '');
+    protected $credentials = ['username' => '', 'password' => ''];
 
     /**
      * Updates the username and password credentials from the POST vars, if the POST parameters
@@ -33,10 +35,10 @@ class UsernamePassword extends \TYPO3\Flow\Security\Authentication\Token\Abstrac
      *       __authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]
      *   and __authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request
+     * @param ActionRequest $actionRequest The current action request
      * @return void
      */
-    public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest)
+    public function updateCredentials(ActionRequest $actionRequest)
     {
         $httpRequest = $actionRequest->getHttpRequest();
         if ($httpRequest->getMethod() !== 'POST') {
@@ -44,8 +46,8 @@ class UsernamePassword extends \TYPO3\Flow\Security\Authentication\Token\Abstrac
         }
 
         $arguments = $actionRequest->getInternalArguments();
-        $username = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
-        $password = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
+        $username = ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
+        $password = ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
 
         if (!empty($username) && !empty($password)) {
             $this->credentials['username'] = $username;

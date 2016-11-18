@@ -33,7 +33,7 @@ class DoctrineCommandController extends CommandController
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * @Flow\Inject
@@ -97,9 +97,9 @@ class DoctrineCommandController extends CommandController
         } else {
             $this->outputLine('Mapping validation FAILED!');
             foreach ($classesAndErrors as $className => $errors) {
-                $this->outputLine('  %s', array($className));
+                $this->outputLine('  %s', [$className]);
                 foreach ($errors as $errorMessage) {
-                    $this->outputLine('    %s', array($errorMessage));
+                    $this->outputLine('    %s', [$errorMessage]);
                 }
             }
             $this->quit(1);
@@ -183,7 +183,7 @@ class DoctrineCommandController extends CommandController
     {
         $info = $this->doctrineService->getEntityStatus();
 
-        if ($info === array()) {
+        if ($info === []) {
             $this->output('You do not have any mapped Doctrine ORM entities according to the current configuration. ');
             $this->outputLine('If you have entities or mapping files you should check your mapping configuration for errors.');
         } else {
@@ -409,6 +409,7 @@ class DoctrineCommandController extends CommandController
      *
      * If $diffAgainstCurrent is TRUE (the default), it generates a migration file
      * with the diff between current DB structure and the found mapping metadata.
+     *
      * Otherwise an empty migration skeleton is generated.
      *
      * Only includes tables/sequences matching the $filterExpression regexp when
@@ -459,7 +460,7 @@ class DoctrineCommandController extends CommandController
             if ($selectedPackageIndex !== 0) {
                 /** @var Package $selectedPackage */
                 $selectedPackage = $packages[$selectedPackageIndex];
-                $targetPathAndFilename = Files::concatenatePaths(array($selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)));
+                $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
                 $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);

@@ -11,15 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\TextValidator;
+use TYPO3\Flow\Validation;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the text validator
  *
  */
-class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class TextValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\TextValidator::class;
+    protected $validatorClassName = TextValidator::class;
 
     /**
      * @test
@@ -51,11 +54,11 @@ class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
      */
     public function validInput()
     {
-        return array(
-            array('this is a very simple string'),
-            array('Ierd Frot uechter mä get, Kirmesdag Milliounen all en, sinn main Stréi mä och. ' . chr(10) . 'Vu dan durch jéngt gréng, ze rou Monn voll stolz. \nKe kille Minutt d\'Kirmes net. Hir Wand Lann Gaas da, wär hu Heck Gart zënter, Welt Ronn grousse der ke. Wou fond eraus Wisen am. Hu dénen d\'Gaassen eng, eng am virun geplot d\'Lëtzebuerger, get botze rëscht Blieder si. Dat Dauschen schéinste Milliounen fu. Ze riede méngem Keppchen déi, si gét fergiess erwaacht, räich jéngt duerch en nun. Gëtt Gaas d\'Vullen hie hu, laacht Grénge der dé. Gemaacht gehéiert da aus, gutt gudden d\'wäiss mat wa.'),
-            array('3% of most people tend to use semikolae; we need to check & allow that. And hashes (#) are not evil either, nor is the sign called \'quote\'.'),
-        );
+        return [
+            ['this is a very simple string'],
+            ['Ierd Frot uechter mä get, Kirmesdag Milliounen all en, sinn main Stréi mä och. ' . chr(10) . 'Vu dan durch jéngt gréng, ze rou Monn voll stolz. \nKe kille Minutt d\'Kirmes net. Hir Wand Lann Gaas da, wär hu Heck Gart zënter, Welt Ronn grousse der ke. Wou fond eraus Wisen am. Hu dénen d\'Gaassen eng, eng am virun geplot d\'Lëtzebuerger, get botze rëscht Blieder si. Dat Dauschen schéinste Milliounen fu. Ze riede méngem Keppchen déi, si gét fergiess erwaacht, räich jéngt duerch en nun. Gëtt Gaas d\'Vullen hie hu, laacht Grénge der dé. Gemaacht gehéiert da aus, gutt gudden d\'wäiss mat wa.'],
+            ['3% of most people tend to use semikolae; we need to check & allow that. And hashes (#) are not evil either, nor is the sign called \'quote\'.'],
+        ];
     }
 
     /**
@@ -65,7 +68,7 @@ class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
      */
     public function textValidatorAcceptsValidInput($input)
     {
-        $textValidator = new \TYPO3\Flow\Validation\Validator\TextValidator();
+        $textValidator = new TextValidator();
         $this->assertFalse($textValidator->validate($input)->hasErrors());
     }
 
@@ -75,9 +78,9 @@ class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
      */
     public function invalidInput()
     {
-        return array(
-            array('<span style="color: #BBBBBB;">a nice text</span>')
-        );
+        return [
+            ['<span style="color: #BBBBBB;">a nice text</span>']
+        ];
     }
 
     /**
@@ -95,7 +98,7 @@ class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
      */
     public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities()
     {
-        $expected = array(new \TYPO3\Flow\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
+        $expected = [new Validation\Error('Valid text without any XML tags is expected.', 1221565786)];
         $this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
     }
 }

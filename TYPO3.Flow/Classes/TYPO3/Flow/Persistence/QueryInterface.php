@@ -109,7 +109,7 @@ interface QueryInterface
      * Executes the query and returns the result.
      *
      * @param bool $cacheResult If the result cache should be used
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
+     * @return QueryResultInterface The query result
      * @api
      */
     public function execute($cacheResult = false);
@@ -130,7 +130,7 @@ interface QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function setOrderings(array $orderings);
@@ -152,7 +152,7 @@ interface QueryInterface
      * for chaining (fluid interface).
      *
      * @param integer $limit
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function setLimit($limit);
@@ -169,7 +169,7 @@ interface QueryInterface
      * Sets the DISTINCT flag for this query.
      *
      * @param boolean $distinct
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function setDistinct($distinct = true);
@@ -187,7 +187,7 @@ interface QueryInterface
      * allow for chaining (fluid interface).
      *
      * @param integer $offset
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function setOffset($offset);
@@ -205,7 +205,7 @@ interface QueryInterface
      * for chaining (fluid interface).
      *
      * @param object $constraint Some constraint, depending on the backend
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function matching($constraint);
@@ -274,7 +274,7 @@ interface QueryInterface
      * @param string $operand The value to compare with
      * @param boolean $caseSensitive Whether the matching should be done case-sensitive
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a non-string property
+     * @throws Exception\InvalidQueryException if used on a non-string property
      * @api
      */
     public function like($propertyName, $operand, $caseSensitive = true);
@@ -288,7 +288,7 @@ interface QueryInterface
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
+     * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
     public function contains($propertyName, $operand);
@@ -299,7 +299,7 @@ interface QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @return boolean
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
+     * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
     public function isEmpty($propertyName);
@@ -311,7 +311,7 @@ interface QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with, multivalued
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property
+     * @throws Exception\InvalidQueryException if used on a multi-valued property
      * @api
      */
     public function in($propertyName, $operand);
@@ -322,7 +322,7 @@ interface QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+     * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function lessThan($propertyName, $operand);
@@ -333,7 +333,7 @@ interface QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+     * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function lessThanOrEqual($propertyName, $operand);
@@ -344,7 +344,7 @@ interface QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+     * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function greaterThan($propertyName, $operand);
@@ -355,7 +355,7 @@ interface QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+     * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function greaterThanOrEqual($propertyName, $operand);

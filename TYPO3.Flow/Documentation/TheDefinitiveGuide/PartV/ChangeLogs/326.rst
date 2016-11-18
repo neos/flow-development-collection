@@ -1,0 +1,166 @@
+`3.2.6 (2016-09-29) <https://github.com/neos/flow-development-collection/releases/tag/3.2.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent nesting level too deep error in checkbox view helper <https://github.com/neos/flow-development-collection/pull/512>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+To prevent a recursive comparison which can lead to this error, strict comparison is used which only compares the reference.
+
+* Packages: ``Flow`` ``Fluid``
+
+`BUGFIX: TypedArrayConverter correctly returns array in all cases <https://github.com/neos/flow-development-collection/pull/479>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+In some cases the TypedArrayConverter::getSourceChildPropertiesToBeConverted() was not returning an array.
+
+It is somewhat related to https://github.com/neos/neos-development-collection/pull/102 change in Neos 2.3. PropertyMapper is now used for handling all node properties and it calls `getSourceChildPropertiesToBeConverted()` method and supplies its result to `foreach()`, which could result in nasty `Warning: Invalid argument supplied for foreach()`.
+
+* Packages: ``Flow``
+
+`BUGFIX: ObjectAccess supports property bag implementation classes <https://github.com/neos/flow-development-collection/pull/513>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Before any class that would implement any of the methods `get()`, `has()`, `set()` or `is()` would make
+ObjectAccess fail when attempting to get/set empty propertyNames. Those methods are commonly
+used when implementing the propertyBag pattern.
+
+This change fixes that by making sure that the accessor methods are actually longer than the plain prefixes.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / SignalSlot and Utility <https://github.com/neos/flow-development-collection/pull/491>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Validation classes <https://github.com/neos/flow-development-collection/pull/492>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Security classes <https://github.com/neos/flow-development-collection/pull/489>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Reflection classes <https://github.com/neos/flow-development-collection/pull/487>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Remove references to typo3.org <https://github.com/neos/flow-development-collection/pull/498>`_
+------------------------------------------------------------------------------------------------------
+
+Replaces references to typo3.org with matching references to neos.io.
+
+* Packages: ``Flow``
+
+`TASK: Refactor namespaces in Flow / I18n classes <https://github.com/neos/flow-development-collection/pull/480>`_
+------------------------------------------------------------------------------------------------------------------
+
+Additionally refactor legacy array syntax
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Property Classes <https://github.com/neos/flow-development-collection/pull/486>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Persistence <https://github.com/neos/flow-development-collection/pull/485>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Package classes <https://github.com/neos/flow-development-collection/pull/484>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Command classes <https://github.com/neos/flow-development-collection/pull/469>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Additionally refactor legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Log and Monitor <https://github.com/neos/flow-development-collection/pull/482>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Mvc <https://github.com/neos/flow-development-collection/pull/481>`_
+------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Configuration classes <https://github.com/neos/flow-development-collection/pull/470>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Also refactor legacy array syntax
+
+* Packages: ``Flow``
+
+`TASK: Improve StringHelper documentation <https://github.com/neos/flow-development-collection/pull/472>`_
+----------------------------------------------------------------------------------------------------------
+
+Adds missing PHPDoc to StringHelper functions and add more examples.
+
+* Packages: ``Eel``
+
+`TASK: Refactor namespaces in Flow / Cli classes <https://github.com/neos/flow-development-collection/pull/468>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Session classes <https://github.com/neos/flow-development-collection/pull/490>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor absolute namespaces in Flow / Resource Classes <https://github.com/neos/flow-development-collection/pull/488>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also refactored legacy array syntax.
+
+* Packages: ``Flow``
+
+`TASK: Refactor Flow / Cache classes code style <https://github.com/neos/flow-development-collection/pull/467>`_
+----------------------------------------------------------------------------------------------------------------
+
+Remove absolute namespaces and legacy array syntax
+
+* Packages: ``Flow``
+
+`BUGFIX: ArrayFromObjectConverter correctly converts object properties with property name <https://github.com/neos/flow-development-collection/pull/432>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Before the ``ArrayFromObjectConverter`` lost the property name of object properties when converting child properties.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.5...3.2.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

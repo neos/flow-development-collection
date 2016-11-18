@@ -34,7 +34,7 @@ class RoutingComponent implements ComponentInterface
     /**
      * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }
@@ -43,7 +43,7 @@ class RoutingComponent implements ComponentInterface
      * Resolve a route for the request
      *
      * Stores the resolved route values in the ComponentContext to pass them
-     * to other components. They can be accessed via ComponentContext::getParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults');
+     * to other components. They can be accessed via ComponentContext::getParameter(outingComponent::class, 'matchResults');
      *
      * @param ComponentContext $componentContext
      * @return void
@@ -51,6 +51,6 @@ class RoutingComponent implements ComponentInterface
     public function handle(ComponentContext $componentContext)
     {
         $matchResults = $this->router->route($componentContext->getHttpRequest());
-        $componentContext->setParameter(\TYPO3\Flow\Mvc\Routing\RoutingComponent::class, 'matchResults', $matchResults);
+        $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
     }
 }

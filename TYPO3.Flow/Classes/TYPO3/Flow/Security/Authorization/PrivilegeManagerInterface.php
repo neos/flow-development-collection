@@ -48,7 +48,7 @@ interface PrivilegeManagerInterface
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean TRUE if access is granted, FALSE otherwise
      */
-    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array());
+    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = []);
 
     /**
      * Returns TRUE if access is granted on the given privilege target in the current security context
@@ -58,5 +58,5 @@ interface PrivilegeManagerInterface
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean TRUE if access is granted, FALSE otherwise
      */
-    public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = array());
+    public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = []);
 }

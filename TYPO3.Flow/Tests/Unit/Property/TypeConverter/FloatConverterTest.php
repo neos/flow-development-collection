@@ -11,21 +11,26 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use TYPO3\Flow\Property\TypeConverter\FloatConverter;
+use TYPO3\Flow\Property\TypeConverterInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Error;
+
 /**
  * Testcase for the Float converter
  *
  * @covers \TYPO3\Flow\Property\TypeConverter\FloatConverter<extended>
  */
-class FloatConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FloatConverterTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Property\TypeConverterInterface
+     * @var TypeConverterInterface
      */
     protected $converter;
 
     public function setUp()
     {
-        $this->converter = new \TYPO3\Flow\Property\TypeConverter\FloatConverter();
+        $this->converter = new FloatConverter();
     }
 
     /**
@@ -33,7 +38,7 @@ class FloatConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('float', 'integer', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['float', 'integer', 'string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('float', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
@@ -67,7 +72,7 @@ class FloatConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric()
     {
-        $this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $this->converter->convertFrom('not numeric', 'float'));
+        $this->assertInstanceOf(Error\Error::class, $this->converter->convertFrom('not numeric', 'float'));
     }
 
     /**
@@ -99,6 +104,6 @@ class FloatConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        $this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
+        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
 }

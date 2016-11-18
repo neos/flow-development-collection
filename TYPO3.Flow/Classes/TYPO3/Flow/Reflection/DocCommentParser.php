@@ -30,7 +30,7 @@ class DocCommentParser
      * An array of tag names and their values (multiple values are possible)
      * @var array
      */
-    protected $tags = array();
+    protected $tags = [];
 
     /**
      * Parses the given doc comment and saves the result (description and
@@ -43,7 +43,7 @@ class DocCommentParser
     public function parseDocComment($docComment)
     {
         $this->description = '';
-        $this->tags = array();
+        $this->tags = [];
 
         $lines = explode(chr(10), $docComment);
         foreach ($lines as $line) {
@@ -77,12 +77,12 @@ class DocCommentParser
      *
      * @param string $tagName The tag name to retrieve the values for
      * @return array The tag's values
-     * @throws \TYPO3\Flow\Reflection\Exception
+     * @throws Exception
      */
     public function getTagValues($tagName)
     {
         if (!$this->isTaggedWith($tagName)) {
-            throw new \TYPO3\Flow\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
+            throw new Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
         }
         return $this->tags[$tagName];
     }
@@ -117,7 +117,7 @@ class DocCommentParser
      */
     protected function parseTag($line)
     {
-        $tagAndValue = array();
+        $tagAndValue = [];
         if (preg_match('/@[A-Za-z0-9\\\\]+\\\\([A-Za-z0-9]+)(?:\\((.*)\\))?$/', $line, $tagAndValue) === 0) {
             $tagAndValue = preg_split('/\s/', $line, 2);
         } else {
@@ -127,7 +127,7 @@ class DocCommentParser
         if (count($tagAndValue) > 1) {
             $this->tags[$tag][] = trim($tagAndValue[1], ' "');
         } else {
-            $this->tags[$tag] = array();
+            $this->tags[$tag] = [];
         }
     }
 }

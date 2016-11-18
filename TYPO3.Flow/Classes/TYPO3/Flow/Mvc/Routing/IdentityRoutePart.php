@@ -132,7 +132,7 @@ class IdentityRoutePart extends DynamicRoutePart
         if ($identifier === null) {
             return false;
         }
-        $this->value = array('__identity' => $identifier);
+        $this->value = ['__identity' => $identifier];
         return true;
     }
 
@@ -183,7 +183,7 @@ class IdentityRoutePart extends DynamicRoutePart
         if ($this->splitString !== '') {
             $regexPattern .= '(?=' . preg_quote($this->splitString, '/') . ')';
         }
-        $matches = array();
+        $matches = [];
         preg_match('/^' . $regexPattern . '/', trim($routePath, '/'), $matches);
         return isset($matches[0]) ? $matches[0] : '';
     }
@@ -262,7 +262,7 @@ class IdentityRoutePart extends DynamicRoutePart
      */
     protected function createPathSegmentForObject($object)
     {
-        $matches = array();
+        $matches = [];
         preg_match_all('/(?P<dynamic>{?)(?P<content>[^}{]+)}?/', $this->getUriPattern(), $matches, PREG_SET_ORDER);
         $pathSegment = '';
         foreach ($matches as $match) {
@@ -315,7 +315,7 @@ class IdentityRoutePart extends DynamicRoutePart
      */
     protected function rewriteForUri($value)
     {
-        $transliteration = array(
+        $transliteration = [
             'ä' => 'ae',
             'Ä' => 'Ae',
             'ö' => 'oe',
@@ -323,7 +323,7 @@ class IdentityRoutePart extends DynamicRoutePart
             'ü' => 'ue',
             'Ü' => 'Ue',
             'ß' => 'ss',
-        );
+        ];
         $value = strtr($value, $transliteration);
 
         $spaceCharacter = '-';

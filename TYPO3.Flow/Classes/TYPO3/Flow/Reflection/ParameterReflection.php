@@ -28,7 +28,7 @@ class ParameterReflection extends \ReflectionParameter
     /**
      * Returns the declaring class
      *
-     * @return \TYPO3\Flow\Reflection\ClassReflection The declaring class
+     * @return ClassReflection The declaring class
      */
     public function getDeclaringClass()
     {
@@ -38,7 +38,7 @@ class ParameterReflection extends \ReflectionParameter
     /**
      * Returns the parameter class
      *
-     * @return \TYPO3\Flow\Reflection\ClassReflection The parameter class
+     * @return ClassReflection The parameter class
      */
     public function getClass()
     {

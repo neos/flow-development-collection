@@ -13,8 +13,7 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
 
 /**
  * Implementation 1 of dummy interface number 3 for the Reflection tests
- *
  */
-class Implementation1OfDummyInterface3 implements \TYPO3\Flow\Tests\Reflection\Fixture\DummyInterface3
+class Implementation1OfDummyInterface3 implements DummyInterface3
 {
 }

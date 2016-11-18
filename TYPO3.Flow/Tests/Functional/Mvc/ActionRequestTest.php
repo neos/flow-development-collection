@@ -26,7 +26,7 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestStripsParentHttpRequest()
     {
-        $httpRequest = Request::create(new Uri('http://typo3.org'));
+        $httpRequest = Request::create(new Uri('http://neos.io'));
 
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setControllerActionName('foo');
@@ -43,7 +43,7 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestDoesNotStripParentActionRequest()
     {
-        $httpRequest = Request::create(new Uri('http://typo3.org'));
+        $httpRequest = Request::create(new Uri('http://neos.io'));
 
         $parentActionRequest = new ActionRequest($httpRequest);
         $actionRequest = new ActionRequest($parentActionRequest);

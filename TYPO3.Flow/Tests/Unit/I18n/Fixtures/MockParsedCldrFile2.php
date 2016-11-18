@@ -1,35 +1,35 @@
 <?php
-return array(
-    'localeDisplayNames' => array(
-        'measurementSystemNames' => array(
+return [
+    'localeDisplayNames' => [
+        'measurementSystemNames' => [
             'measurementSystemName[@type="metric"]' => 'SI-enheter',
             'measurementSystemName[@type="US"]' => 'engelska enheter',
             'measurementSystemName[@type="US"][@alt="proposed-x1001"]' => 'US-enheter',
-        ),
-        'languages' => array(
+        ],
+        'languages' => [
             'language[@type="pl"]' => 'polska',
-        ),
-        'variants' => array(
+        ],
+        'variants' => [
             'variant[@type="1996"]' => '1996 års reformerad tysk stavning',
             'variant[@type="1996"][@alt="proposed-x1001"]' => '1996 års stavning',
-        ),
-    ),
-    'dates' => array(
-        'calendars' => array(
-            'calendar[@type="gregorian"]' => array(
-                'months' => array(
-                    'monthContext[@type="format"]' => array(
-                        'monthWidth[@type="abbreviated"]' => array(
+        ],
+    ],
+    'dates' => [
+        'calendars' => [
+            'calendar[@type="gregorian"]' => [
+                'months' => [
+                    'monthContext[@type="format"]' => [
+                        'monthWidth[@type="abbreviated"]' => [
                             'month[@type="1"]' => 'jan',
                             'month[@type="2"]' => 'feb',
-                        ),
-                        'monthWidth[@type="wide"]' => array(
+                        ],
+                        'monthWidth[@type="wide"]' => [
                             'month[@type="1"]' => 'januari',
                             'month[@type="2"]' => 'februari',
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

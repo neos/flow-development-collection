@@ -12,11 +12,12 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 
 /**
  * A controller for functional testing
  */
-class RestrictedController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class RestrictedController extends ActionController
 {
     /**
      * This action is not restricted in a policy, everybody can access it

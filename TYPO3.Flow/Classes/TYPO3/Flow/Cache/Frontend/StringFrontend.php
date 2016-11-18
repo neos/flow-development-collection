@@ -11,13 +11,14 @@ namespace TYPO3\Flow\Cache\Frontend;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Exception\InvalidDataException;
 
 /**
  * A cache frontend for strings. Nothing else.
  *
  * @api
  */
-class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
+class StringFrontend extends AbstractFrontend
 {
     /**
      * Saves the value of a PHP variable in the cache.
@@ -27,17 +28,17 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $string, array $tags = array(), $lifetime = null)
+    public function set($entryIdentifier, $string, array $tags = [], $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
         }
         if (!is_string($string)) {
-            throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('Given data is of type "' . gettype($string) . '", but a string is expected for string cache.', 1222808333);
+            throw new InvalidDataException('Given data is of type "' . gettype($string) . '", but a string is expected for string cache.', 1222808333);
         }
         foreach ($tags as $tag) {
             if (!$this->isValidTag($tag)) {
@@ -79,7 +80,7 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend
             throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
         }
 
-        $entries = array();
+        $entries = [];
         $identifiers = $this->backend->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
             $entries[$identifier] = $this->backend->get($identifier);

@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Security\RequestPattern;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
  * This class holds an URI pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
  *
  */
-class Uri implements \TYPO3\Flow\Security\RequestPatternInterface
+class Uri implements RequestPatternInterface
 {
     /**
      * The preg_match() styled URI pattern
@@ -52,10 +54,10 @@ class Uri implements \TYPO3\Flow\Security\RequestPatternInterface
     /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set URL pattern rules
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean TRUE if the pattern matched, FALSE otherwise
      */
-    public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request)
+    public function matchRequest(RequestInterface $request)
     {
         return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getHttpRequest()->getUri()->getPath());
     }
