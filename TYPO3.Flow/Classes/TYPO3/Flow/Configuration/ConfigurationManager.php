@@ -154,11 +154,6 @@ class ConfigurationManager
     protected $configurationSource;
 
     /**
-     * @var string
-     */
-    protected $includeCachedConfigurationsPathAndFilename;
-
-    /**
      * Storage of the raw special configurations
      *
      * @var array
@@ -208,8 +203,6 @@ class ConfigurationManager
             $orderedListOfContextNames[] = (string)$currentContext;
         } while ($currentContext = $currentContext->getParent());
         $this->orderedListOfContextNames = array_reverse($orderedListOfContextNames);
-
-        $this->includeCachedConfigurationsPathAndFilename = FLOW_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php';
     }
 
     /**
@@ -563,8 +556,9 @@ class ConfigurationManager
      */
     public function loadConfigurationCache()
     {
-        if (is_file($this->includeCachedConfigurationsPathAndFilename)) {
-            $this->configurations = require($this->includeCachedConfigurationsPathAndFilename);
+        $cachePathAndFilename = $this->constructConfigurationCachePath();
+        if (is_file($cachePathAndFilename)) {
+            $this->configurations = require($cachePathAndFilename);
             return true;
         }
         return false;
@@ -582,8 +576,8 @@ class ConfigurationManager
         if ($this->temporaryDirectoryPath === null) {
             return;
         }
-        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
-        $cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
+
+        $cachePathAndFilename = $this->constructConfigurationCachePath();
         if (is_file($cachePathAndFilename)) {
             if (unlink($cachePathAndFilename) === false) {
                 throw new Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
@@ -610,33 +604,13 @@ class ConfigurationManager
             return;
         }
 
-        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
-        if (!file_exists($configurationCachePath)) {
-            Files::createDirectoryRecursively($configurationCachePath);
+        $cachePathAndFilename = $this->constructConfigurationCachePath();
+        if (!file_exists(dirname($cachePathAndFilename))) {
+            Files::createDirectoryRecursively(dirname($cachePathAndFilename));
         }
-        $cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
 
-        $flowRootPath = FLOW_PATH_ROOT;
-        $includeCachedConfigurationsCode = <<< "EOD"
-<?php
-if (FLOW_PATH_ROOT !== '$flowRootPath' || !file_exists('$cachePathAndFilename')) {
-	@unlink(__FILE__);
-	return array();
-}
-return require '$cachePathAndFilename';
-EOD;
         file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, true) . ';');
         OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
-
-        if (!is_dir(dirname($this->includeCachedConfigurationsPathAndFilename)) && !is_link(dirname($this->includeCachedConfigurationsPathAndFilename))) {
-            Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
-        }
-        file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
-        if (!is_file($this->includeCachedConfigurationsPathAndFilename)) {
-            throw new Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
-        }
-
-        OpcodeCacheHelper::clearAllActive($this->includeCachedConfigurationsPathAndFilename);
     }
 
     /**
@@ -890,5 +864,17 @@ EOD;
         if ($errors !== []) {
             throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)), 1415717875);
         }
+    }
+
+    /**
+     * Constructs a path to the configuration cache PHP file.
+     * Derived from the temporary path and application context.
+     *
+     * @return string
+     */
+    protected function constructConfigurationCachePath()
+    {
+        $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
+        return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
     }
 }
