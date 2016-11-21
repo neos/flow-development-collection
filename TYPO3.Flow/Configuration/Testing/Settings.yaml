@@ -121,17 +121,26 @@ TYPO3:
             entryPointOptions:
               uri: 'flow/authentication'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Flow\Tests\.*'
+              'TestsPattern':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Flow\Tests\.*'
           HttpBasicTestingProvider:
             provider: 'TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider'
             token: 'TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\HttpBasicTestController'
+              'HttpBasicTestPattern':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\HttpBasicTestController'
           UsernamePasswordTestingProvider:
             provider: 'TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider'
             token: 'TYPO3\Flow\Security\Authentication\Token\UsernamePassword'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\UsernamePasswordTestController'
+              'UsernamePasswordTestControllerPattern':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\UsernamePasswordTestController'
 
     # Setting for functional tests to test global objects in runtime evaluations
     aop:
