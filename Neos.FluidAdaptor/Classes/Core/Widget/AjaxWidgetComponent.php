@@ -53,9 +53,12 @@ class AjaxWidgetComponent extends DispatchComponent
         if ($widgetContext === null) {
             return;
         }
+        $mergedArguments = $this->mergeArguments($componentContext, []);
+
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, array()));
+        $actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $componentContext->getHttpRequest());
+        $actionRequest->setArguments($mergedArguments);
+        unset($mergedArguments);
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);

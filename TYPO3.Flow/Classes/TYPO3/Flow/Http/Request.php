@@ -60,6 +60,15 @@ class Request extends BaseRequest implements ServerRequestInterface
     protected $queryParams = [];
 
     /**
+     * PSR-7
+     *
+     * @var array|object|null
+     */
+    protected $parsedBody;
+
+    protected $uploadedFiles = [];
+
+    /**
      * PSR-7 Attribute containing the resolved trusted client IP address as string
      */
     const ATTRIBUTE_CLIENT_IP = 'clientIpAddress';
@@ -108,6 +117,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
+        $this->queryParams = $get;
         $this->server = $server;
         $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
     }
@@ -576,21 +586,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Tries to detect the base URI of request.
-     *
-     * @return void
-     */
-    protected function detectBaseUri()
-    {
-        if ($this->baseUri === null) {
-            $this->baseUri = clone $this->uri;
-            $this->baseUri->setQuery(null);
-            $this->baseUri->setFragment(null);
-            $this->baseUri->setPath($this->getScriptRequestPath());
-        }
-    }
-
-    /**
      * Takes the raw GET & POST arguments and maps them into the request object.
      * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
      * have been GET, POST or PUT arguments before.
@@ -604,7 +599,9 @@ class Request extends BaseRequest implements ServerRequestInterface
     {
         $arguments = $getArguments;
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
+        $files = static::normalizeFiles($uploadArguments);
+        $this->uploadedFiles = $files;
+        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $files);
         return $arguments;
     }
 
@@ -712,25 +709,6 @@ class Request extends BaseRequest implements ServerRequestInterface
         arsort($flattenedAcceptedTypes);
         $parsedValues = array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
         return $parsedValues;
-    }
-
-    /**
-     * Renders the HTTP headers - including the status header - of this request
-     *
-     * @return string The HTTP headers, one per line, separated by \r\n as required by RFC 2616 sec 5
-     * @api
-     */
-    public function renderHeaders()
-    {
-        $headers = $this->getRequestLine();
-
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $headers .= sprintf("%s: %s\r\n", $name, $value);
-            }
-        }
-
-        return $headers;
     }
 
     /**
@@ -844,7 +822,6 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function getQueryParams()
     {
-        // TODO: Implement getQueryParams() method.
         return $this->queryParams;
     }
 
@@ -871,30 +848,124 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function withQueryParams(array $query)
     {
-        // TODO: Implement withQueryParams() method.
         $newRequest = clone $this;
         $newRequest->queryParams = $query;
-
         return $newRequest;
     }
 
+    /**
+     * @return array
+     */
     public function getUploadedFiles()
     {
-        // TODO: Implement getUploadedFiles() method.
+        $this->uploadedFiles;
     }
 
+    /**
+     * @param array $uploadedFiles
+     * @return ServerRequestInterface
+     */
     public function withUploadedFiles(array $uploadedFiles)
     {
-        // TODO: Implement withUploadedFiles() method.
+        $newRequest = clone $this;
+        $newRequest->uploadedFiles = $uploadedFiles;
+        return $newRequest;
     }
 
+    /**
+     * @return array|null|object
+     */
     public function getParsedBody()
     {
-        // TODO: Implement getParsedBody() method.
+        isset($this->parsedBody) ? $this->parsedBody : $_POST;
     }
 
+    /**
+     * @param array|null|object $data
+     * @return ServerRequestInterface
+     */
     public function withParsedBody($data)
     {
-        // TODO: Implement withParsedBody() method.
+        $newRequest = clone $this;
+        $newRequest->parsedBody = $data;
+        return $newRequest;
+    }
+
+    /**
+     * Return an UploadedFile instance array.
+     *
+     * @param array $files A array which respect $_FILES structure
+     * @throws InvalidArgumentException for unrecognized values
+     * @return array
+     */
+    public static function normalizeFiles(array $files)
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+            } elseif (is_array($value) && isset($value['tmp_name'])) {
+                $normalized[$key] = self::createUploadedFileFromSpec($value);
+            } elseif (is_array($value)) {
+                $normalized[$key] = self::normalizeFiles($value);
+                continue;
+            } else {
+                throw new InvalidArgumentException('Invalid value in files specification');
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Create and return an UploadedFile instance from a $_FILES specification.
+     *
+     * If the specification represents an array of values, this method will
+     * delegate to normalizeNestedFileSpec() and return that return value.
+     *
+     * @param array $value $_FILES struct
+     * @return array|UploadedFileInterface
+     */
+    private static function createUploadedFileFromSpec(array $value)
+    {
+        if (is_array($value['tmp_name'])) {
+            return self::normalizeNestedFileSpec($value);
+        }
+
+        return new UploadedFile(
+            $value['tmp_name'],
+            (int)$value['size'],
+            (int)$value['error'],
+            $value['name'],
+            $value['type']
+        );
+    }
+
+    /**
+     * Normalize an array of file specifications.
+     *
+     * Loops through all nested files and returns a normalized array of
+     * UploadedFileInterface instances.
+     *
+     * @param array $files
+     * @return UploadedFileInterface[]
+     */
+    private static function normalizeNestedFileSpec(array $files = [])
+    {
+        $normalizedFiles = [];
+
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size' => $files['size'][$key],
+                'error' => $files['error'][$key],
+                'name' => $files['name'][$key],
+                'type' => $files['type'][$key],
+            ];
+            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+        }
+
+        return $normalizedFiles;
     }
 }

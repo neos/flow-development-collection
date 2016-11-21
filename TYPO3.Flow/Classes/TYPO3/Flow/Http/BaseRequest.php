@@ -331,11 +331,9 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        \TYPO3\Flow\var_dump((string)$this->uri);
         if ((string)$this->uri === (string)$uri) {
             return $this;
         }
-        \TYPO3\Flow\var_dump((string)$uri);
 
         $newRequest = clone $this;
         $newRequest->uri = $uri;

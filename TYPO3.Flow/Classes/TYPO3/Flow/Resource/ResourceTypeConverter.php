@@ -11,8 +11,10 @@ namespace TYPO3\Flow\Resource;
  * source code.
  */
 
+use Psr\Http\Message\UploadedFileInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error as FlowError;
+use TYPO3\Flow\Http\FlowUploadedFile;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
@@ -80,7 +82,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['string', 'array'];
+    protected $sourceTypes = ['string', 'array', UploadedFileInterface::class];
 
     /**
      * @var string
@@ -143,6 +145,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
             return null;
         }
 
+        if ($source instanceof UploadedFileInterface) {
+            return $this->handleUploadedFile($source, $configuration);
+        }
+
         if (is_string($source)) {
             $source = ['hash' => $source];
         }
@@ -154,6 +160,50 @@ class ResourceTypeConverter extends AbstractTypeConverter
             return $this->handleHashAndData($source, $configuration);
         }
         return null;
+    }
+
+    /**
+     * @param UploadedFileInterface $source
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return Resource|FlowError
+     */
+    protected function handleUploadedFile(UploadedFileInterface $source, PropertyMappingConfigurationInterface $configuration = null)
+    {
+        if ($source->getError() === UPLOAD_ERR_NO_FILE && $source instanceof FlowUploadedFile && $source->getOriginallySubmittedResource() !== null) {
+            $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
+            return $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
+        }
+
+        switch ($source->getError()) {
+            case \UPLOAD_ERR_OK:
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                return null;
+            case \UPLOAD_ERR_INI_SIZE:
+            case \UPLOAD_ERR_FORM_SIZE:
+            case \UPLOAD_ERR_PARTIAL:
+                return new FlowError(Files::getUploadErrorMessage($source->getError()), 1264440823);
+            default:
+                $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+
+                return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+        }
+
+        if (isset($this->convertedResources[spl_object_hash($source)])) {
+            return $this->convertedResources[spl_object_hash($source)];
+        }
+
+        try {
+            $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
+            $resource->setFilename($source->getClientFilename());
+            $this->convertedResources[spl_object_hash($source)] = $resource;
+            return $resource;
+        } catch (\Exception $exception) {
+            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
+            $this->systemLogger->logException($exception);
+
+            return new FlowError('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+        }
     }
 
     /**
@@ -254,7 +304,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is TRUE
      * and __collectionName is in the $source this will finally be the value.
      *
-     * @param array $source
+     * @param array|UploadedFileInterface $source
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
@@ -265,7 +315,12 @@ class ResourceTypeConverter extends AbstractTypeConverter
             return ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
         }
         $collectionName = $configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
-        if (isset($source['__collectionName']) && $source['__collectionName'] !== '') {
+
+        if ($source instanceof FlowUploadedFile && $source->getCollectionName() !== null) {
+            $collectionName = $source->getCollectionName();
+        }
+
+        if (is_array($source) && isset($source['__collectionName']) && $source['__collectionName'] !== '') {
             $collectionName = $source['__collectionName'];
         }
 

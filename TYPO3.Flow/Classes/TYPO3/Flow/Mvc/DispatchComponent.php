@@ -74,14 +74,14 @@ class DispatchComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $httpRequest = $componentContext->getHttpRequest();
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
-        $this->securityContext->setRequest($actionRequest);
-
         $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
+        $mergedArguments = $this->mergeArguments($componentContext, $routingMatchResults);
 
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
+        /** @var $actionRequest ActionRequest */
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $componentContext->getHttpRequest());
+        $this->securityContext->setRequest($actionRequest);
+        $actionRequest->setArguments($mergedArguments);
+        unset($mergedArguments);
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
         $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
@@ -89,16 +89,17 @@ class DispatchComponent implements ComponentInterface
     }
 
     /**
-     * @param HttpRequest $httpRequest
+     * @param ComponentContext $componentContext
      * @param array $routingMatchResults
      * @return array
      */
-    protected function mergeArguments(HttpRequest $httpRequest, array $routingMatchResults = null)
+    protected function mergeArguments(ComponentContext $componentContext, array $routingMatchResults = null)
     {
-        $arguments = $this->parseRequestBody($httpRequest);
+        $arguments = $this->parseRequestBody($componentContext->getHttpRequest());
+        $componentContext->replaceHttpRequest($componentContext->getHttpRequest()->withParsedBody($arguments));
 
         // HTTP arguments (e.g. GET parameters)
-        $arguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $arguments);
+        $arguments = Arrays::arrayMergeRecursiveOverrule($componentContext->getHttpRequest()->getArguments(), $arguments);
 
         // Routing results
         if ($routingMatchResults !== null) {

@@ -66,7 +66,7 @@ class ContentStream implements StreamInterface
             $this->openStream($stream, $mode);
         }
 
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             throw new \InvalidArgumentException('Invalid stream provided; must be a string or stream resource', 1453891861);
         }
     }
@@ -76,7 +76,7 @@ class ContentStream implements StreamInterface
      */
     public function getSize()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             return null;
         }
 
@@ -105,7 +105,7 @@ class ContentStream implements StreamInterface
      */
     public function eof()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             return true;
         }
 
@@ -117,7 +117,7 @@ class ContentStream implements StreamInterface
      */
     public function isSeekable()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             return false;
         }
 
@@ -159,7 +159,7 @@ class ContentStream implements StreamInterface
      */
     public function isWritable()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             return false;
         }
 
@@ -198,7 +198,7 @@ class ContentStream implements StreamInterface
      */
     public function isReadable()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             return false;
         }
 
@@ -281,16 +281,15 @@ class ContentStream implements StreamInterface
      */
     protected function ensureResourceOpen()
     {
-        if (!$this->isValidResource($this->resource)) {
+        if (!$this->hasValidResource()) {
             throw new \RuntimeException('No resource available to apply operation', 1453891806);
         }
     }
 
     /**
-     * @param mixed $resource
      * @return boolean
      */
-    protected function isValidResource($resource)
+    protected function hasValidResource()
     {
         return (is_resource($this->resource) && get_resource_type($this->resource) === 'stream');
     }
