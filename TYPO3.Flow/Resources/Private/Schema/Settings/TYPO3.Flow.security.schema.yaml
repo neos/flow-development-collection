@@ -76,7 +76,6 @@ properties:
         required: TRUE
         properties:
           'default': { type: string, required: TRUE }
-          'fallback': { type: string, required: TRUE }
 
       'Pbkdf2HashingStrategy':
         type: dictionary
