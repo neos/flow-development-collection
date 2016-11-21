@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization\Interceptor;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
-use \TYPO3\Flow\Security;
+use TYPO3\Flow\Security;
 
 /**
  * Testcase for the policy enforcement interceptor

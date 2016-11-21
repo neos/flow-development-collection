@@ -62,7 +62,7 @@ class RepositoryTest extends UnitTestCase
      */
     public function constructSetsObjectTypeFromClassConstant()
     {
-        $repositoryNamespace = 'TYPO3\Flow\Tests\Persistence\Fixture\Repository';
+        $repositoryNamespace = \TYPO3\Flow\Tests\Persistence\Fixture\Repository::class;
         $repositoryClassName = 'NonstandardEntityRepository';
         $modelClassName = Fixture\Model\Entity::class;
         $fullRepositorClassName = $repositoryNamespace . '\\' . $repositoryClassName;
