@@ -61,24 +61,6 @@ interface PackageManagerInterface
     public function getPackage($packageKey);
 
     /**
-     * Finds a package by a given object of that package; if no such package
-     * could be found, NULL is returned.
-     *
-     * @param object $object The object to find the possessing package of
-     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
-     */
-    public function getPackageOfObject($object);
-
-    /**
-     * Finds a package by a given class name of that package
-     *
-     * @param string $className The class name to find the possessing package of
-     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
-     * @see getPackageOfObject()
-     */
-    public function getPackageByClassName($className);
-
-    /**
      * Returns an array of PackageInterface objects of all available packages.
      * A package is available, if the package directory contains valid meta information.
      *
@@ -132,16 +114,12 @@ interface PackageManagerInterface
      * Create a new package, given the package key
      *
      * @param string $packageKey The package key to use for the new package
-     * @param MetaData $packageMetaData Package metadata
+     * @param array $manifest composer manifest data
      * @param string $packagesPath If specified, the package will be created in this path
-     * @param string $packageType If specified, the package type will be set
      * @return Package The newly created package
      * @api
-     * @deprecated This methods signature is deprecated and will change with Flow 4.0
-     *
-     * TODO: Change signature for Flow 4.0 to ($packageKey, $manifest, $packagesPath)
      */
-    public function createPackage($packageKey, MetaData $packageMetaData = null, $packagesPath = null, $packageType = null);
+    public function createPackage($packageKey, array $manifest, $packagesPath = null);
 
     /**
      * Deactivates a package if it is in the list of active packages

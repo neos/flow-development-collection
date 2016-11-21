@@ -21,7 +21,6 @@ use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\OpcodeCacheHelper;
-use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Package\Exception as PackageException;
 
 /**
@@ -199,46 +198,6 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Finds a package by a given object of that package; if no such package
-     * could be found, NULL is returned. This basically works with comparing the package class' namespace
-     * against the fully qualified class name of the given $object.
-     * In order to not being satisfied with a shorter package's namespace, the packages to check are sorted
-     * by the length of their namespace descending.
-     *
-     * @param object $object The object to find the possessing package of
-     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
-     * @deprecated
-     */
-    public function getPackageOfObject($object)
-    {
-        return $this->getPackageByClassName(TypeHandling::getTypeForValue($object));
-    }
-
-    /**
-     * Finds a package by a given class name of that package, @see getPackageOfObject().
-     *
-     * @param string $className The fully qualified class name to find the possessing package of
-     * @return PackageInterface The package the given object belongs to or NULL if it could not be found
-     * @deprecated
-     */
-    public function getPackageByClassName($className)
-    {
-        $sortedAvailablePackages = $this->getAvailablePackages();
-        usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
-            return strlen($packageTwo->getNamespace()) - strlen($packageOne->getNamespace());
-        });
-
-        /** @var $package PackageInterface */
-        foreach ($sortedAvailablePackages as $package) {
-            if (strpos($className, $package->getNamespace()) === 0) {
-                return $package;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Returns an array of PackageInterface objects of all available packages.
      * A package is available, if the package directory contains valid meta information.
      *
@@ -373,31 +332,22 @@ class PackageManager implements PackageManagerInterface
      * Create a package, given the package key
      *
      * @param string $packageKey The package key of the new package
-     * @param MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
-     * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
-     * @param string $packageType
      * @param array $manifest A composer manifest as associative array. This is a preparation for the signature change in Flow 4.0. If you use this argument, then $packageMetaData and $packageType will be ignored.
+     * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
      * @return PackageInterface The newly created package
      *
      * @throws Exception\PackageKeyAlreadyExistsException
      * @throws Exception\InvalidPackageKeyException
      * @throws Exception\PackageKeyAlreadyExistsException
      * @api
-     * @deprecated The method signature of this method will change with Flow 4.0, the method itself will stay.
-     * @see \TYPO3\Flow\Package\PackageManagerInterface::createPackage
      */
-    public function createPackage($packageKey, MetaData $packageMetaData = null, $packagesPath = null, $packageType = 'neos-package', array $manifest = null)
+    public function createPackage($packageKey, array $manifest = [], $packagesPath = null)
     {
         if (!$this->isPackageKeyValid($packageKey)) {
             throw new Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
         }
         if ($this->isPackageAvailable($packageKey)) {
             throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
-        }
-
-        // TODO: This if and the method used can be removed for Flow 4.0 together with the MetaData classes.
-        if ($manifest === null) {
-            $manifest = $this->generateManifestFromMetaDataAndType($packageType, $packageMetaData);
         }
 
         if ($packagesPath === null) {
@@ -417,7 +367,6 @@ class PackageManager implements PackageManagerInterface
             [
                 PackageInterface::DIRECTORY_CLASSES,
                 PackageInterface::DIRECTORY_CONFIGURATION,
-                PackageInterface::DIRECTORY_DOCUMENTATION,
                 PackageInterface::DIRECTORY_RESOURCES,
                 PackageInterface::DIRECTORY_TESTS_UNIT,
                 PackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
@@ -432,72 +381,6 @@ class PackageManager implements PackageManagerInterface
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
 
         return $this->packages[$packageKey];
-    }
-
-    /**
-     * Generates composer manifest data out of a MetaData object.
-     *
-     * @param string $packageType
-     * @param MetaData|null $packageMetaData
-     * @return array manifest data generated from the MetaData object
-     * @deprecated This method will be removed with Flow 4.0 together with the MetaData model
-     */
-    protected function generateManifestFromMetaDataAndType($packageType, \TYPO3\Flow\Package\MetaData $packageMetaData = null)
-    {
-        $manifest = [
-            'type' => $packageType,
-            'description' => 'Add description here',
-            'require' => ['typo3/flow' => '*']
-        ];
-
-        if ($packageMetaData === null) {
-            return $manifest;
-        }
-
-        if ($packageMetaData->getPackageType() !== null) {
-            $manifest['type'] = $packageMetaData->getPackageType();
-        }
-        $manifest['description'] = $packageMetaData->getDescription() ?: $manifest['description'];
-        if ($packageMetaData->getVersion()) {
-            $manifest['version'] = $packageMetaData->getVersion();
-        }
-        $dependsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, $packageMetaData);
-        if ($dependsConstraints !== []) {
-            $manifest['require'] = $dependsConstraints;
-        }
-        $suggestsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_SUGGESTS, $packageMetaData);
-        if ($suggestsConstraints !== []) {
-            $manifest['suggest'] = $suggestsConstraints;
-        }
-        $conflictsConstraints = $this->getComposerManifestConstraints(MetaDataInterface::CONSTRAINT_TYPE_CONFLICTS, $packageMetaData);
-        if ($conflictsConstraints !== []) {
-            $manifest['conflict'] = $conflictsConstraints;
-        }
-
-        return $manifest;
-    }
-
-    /**
-     * Returns the composer manifest constraints ("require", "suggest" or "conflict") from the given package meta data
-     *
-     * @param string $constraintType one of the MetaDataInterface::CONSTRAINT_TYPE_* constants
-     * @param MetaData $packageMetaData
-     * @return array in the format array('<ComposerPackageName>' => '*', ...)
-     * @deprecated This will be removed with Flow 4.0 together with the MetaData model
-     */
-    protected function getComposerManifestConstraints($constraintType, MetaData $packageMetaData)
-    {
-        $composerManifestConstraints = [];
-        $constraints = $packageMetaData->getConstraintsByType($constraintType);
-        foreach ($constraints as $constraint) {
-            if (!$constraint instanceof MetaData\PackageConstraint) {
-                continue;
-            }
-            $composerName = isset($this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName']) ? $this->packageStatesConfiguration['packages'][$constraint->getValue()]['composerName'] : ComposerUtility::getComposerPackageNameFromPackageKey($constraint->getValue());
-            $composerManifestConstraints[$composerName] = '*';
-        }
-
-        return $composerManifestConstraints;
     }
 
     /**

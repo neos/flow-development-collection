@@ -53,14 +53,6 @@ class Package implements PackageInterface
     protected $protected = false;
 
     /**
-     * Meta information about this package
-     *
-     * @var \TYPO3\Flow\Package\MetaData
-     * TODO: Remove after deprecation period (Flow 4.0)
-     */
-    protected $packageMetaData;
-
-    /**
      * The namespace of the classes contained in this package
      *
      * @var string
@@ -126,26 +118,6 @@ class Package implements PackageInterface
     }
 
     /**
-     * Returns the package meta data object of this package.
-     * Note that since Flow 3.1 the MetaData won't contain any constraints,
-     * please use the composer manifest directly if you need this information.
-     *
-     * @return MetaData
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getPackageMetaData()
-    {
-        if ($this->packageMetaData === null) {
-            $this->packageMetaData = new MetaData($this->getPackageKey());
-            $this->packageMetaData->setDescription($this->getComposerManifest('description'));
-            $this->packageMetaData->setVersion($this->getComposerManifest('version'));
-            $this->packageMetaData->setPackageType($this->getComposerManifest('type'));
-        }
-
-        return $this->packageMetaData;
-    }
-
-    /**
      * Returns the array of filenames of the class files
      *
      * @return \Generator A Generator for class names (key) and their filename, including the absolute path.
@@ -170,10 +142,11 @@ class Package implements PackageInterface
      */
     public function getFunctionalTestsClassFiles()
     {
+        $namespaces = $this->getNamespaces()
         if (is_dir($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL)) {
             // TODO REFACTOR replace with usage of "autoload-dev"
             $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths([
-                $this->getNamespace(),
+                reset($namespaces),
                 '\\Tests\\Functional\\'
             ]));
             foreach ($this->getClassesInNormalizedAutoloadPath($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix) as $className => $classPath) {
@@ -197,7 +170,6 @@ class Package implements PackageInterface
      * Returns the packages composer name
      *
      * @return string
-     * TODO: Should be added to the interface in the next major Flow version (4.0)
      */
     public function getComposerName()
     {
@@ -209,7 +181,6 @@ class Package implements PackageInterface
      *
      * @return array
      * @api
-     * TODO: Should be added to the interface in the next major Flow version (4.0)
      */
     public function getNamespaces()
     {
@@ -309,25 +280,6 @@ class Package implements PackageInterface
     }
 
     /**
-     * Returns the full path to this package's Classes directory
-     *
-     * @return string Path to this package's Classes directory
-     * @api
-     * @deprecated
-     */
-    public function getClassesPath()
-    {
-        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
-        $firstAutoload = reset($autoloadConfigurations);
-
-        if ($firstAutoload === false) {
-            return null;
-        }
-
-        return $firstAutoload['classPath'];
-    }
-
-    /**
      * @return array
      */
     public function getAutoloadPaths()
@@ -335,29 +287,6 @@ class Package implements PackageInterface
         return array_map(function ($configuration) {
             return $configuration['classPath'];
         }, $this->getFlattenedAutoloadConfiguration());
-    }
-
-    /**
-     * Returns the full path to the package's classes namespace entry path,
-     * e.g. "My.Package/ClassesPath/My/Package/"
-     *
-     * @return string Path to this package's autoload directory
-     * @api
-     * @deprecated
-     */
-    public function getClassesNamespaceEntryPath()
-    {
-        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
-        $firstAutoload = reset($autoloadConfigurations);
-
-        $basePath = $firstAutoload['classPath'];
-
-        $pathifiedNamespace = '';
-        if ($firstAutoload['mappingType'] === ClassLoader::MAPPING_TYPE_PSR0) {
-            $pathifiedNamespace = str_replace('\\', '/', $firstAutoload['namespace']);
-        }
-
-        return Files::concatenatePaths([$basePath, $pathifiedNamespace]) . '/';
     }
 
     /**
@@ -395,30 +324,6 @@ class Package implements PackageInterface
     }
 
     /**
-     * Returns the full path to the package's meta data directory
-     *
-     * @return string Full path to the package's meta data directory
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getMetaPath()
-    {
-        return $this->packagePath . self::DIRECTORY_METADATA;
-    }
-
-    /**
-     * Returns the full path to the package's documentation directory
-     *
-     * @return string Full path to the package's documentation directory
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getDocumentationPath()
-    {
-        return $this->packagePath . self::DIRECTORY_DOCUMENTATION;
-    }
-
-    /**
      * Get the autoload configuration for this package. Any valid composer "autoload" configuration.
      *
      * @return array
@@ -448,7 +353,6 @@ class Package implements PackageInterface
      * @param string $key Optional. Only return the part of the manifest indexed by 'key'
      * @return array|mixed
      * @api
-     * TODO: Should be added to the interface in the next major Flow version (4.0)
      */
     public function getComposerManifest($key = null)
     {
@@ -460,7 +364,6 @@ class Package implements PackageInterface
      *
      * @return string
      * @api
-     * TODO: Should be added to the interface in the next major Flow version (4.0)
      */
     public function getInstalledVersion()
     {
@@ -571,34 +474,5 @@ class Package implements PackageInterface
                 }
             }
         }
-    }
-
-    /**
-     * Returns the available documentations for this package
-     *
-     * @return array Array of \TYPO3\Flow\Package\Documentation
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getPackageDocumentations()
-    {
-        $documentations = [];
-        $documentationPath = $this->getDocumentationPath();
-        if (is_dir($documentationPath)) {
-            $documentationsDirectoryIterator = new \DirectoryIterator($documentationPath);
-            $documentationsDirectoryIterator->rewind();
-            while ($documentationsDirectoryIterator->valid()) {
-                $filename = $documentationsDirectoryIterator->getFilename();
-                if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
-                    $filename = $documentationsDirectoryIterator->getFilename();
-                    $documentation = new Documentation($this, $filename, $documentationPath . $filename . '/');
-                    $documentations[$filename] = $documentation;
-                }
-
-                $documentationsDirectoryIterator->next();
-            }
-        }
-
-        return $documentations;
     }
 }

@@ -247,9 +247,9 @@ class ClassLoader
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
             }
             // TODO: Replace with "autoload-dev" usage
-            if ($this->considerTestsNamespace) {
-                $this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
-            }
+//            if ($this->considerTestsNamespace) {
+//                $this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
+//            }
         }
     }
 

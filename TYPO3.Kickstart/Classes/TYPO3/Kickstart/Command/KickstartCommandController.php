@@ -12,13 +12,14 @@ namespace TYPO3\Kickstart\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Kickstart\Utility\Validation;
 
 /**
  * Command controller for the Kickstart generator
  *
  */
-class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController
+class KickstartCommandController extends CommandController
 {
     /**
      * @Flow\Inject
