@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\I18n;
 
 use TYPO3\Flow\I18n\FormatResolver;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use \TYPO3\Flow\I18n;
+use TYPO3\Flow\I18n;
 
 /**
  * Testcase for the I18N placeholder replacing

@@ -282,7 +282,6 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest->setFormat('html');
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
-
         $standaloneView->assign('hack', '<h1>HACK</h1>');
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt');
 
@@ -293,6 +292,10 @@ class StandaloneViewTest extends FunctionalTestCase
         $partialCacheIdentifier = $standaloneView->getTemplatePaths()->getPartialIdentifier('Test');
         $templateCache = $this->objectManager->get(CacheManager::class)->getCache('Fluid_TemplateCache');
         $templateCache->remove($partialCacheIdentifier);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->assign('hack', '<h1>HACK</h1>');
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt');
 
         $expected = 'Christian uses &lt;h1&gt;HACK&lt;/h1&gt;';
         $actual = trim($standaloneView->renderSection('test'));

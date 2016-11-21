@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Session;
  * source code.
  */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Session;
@@ -101,9 +102,9 @@ class SessionManagementTest extends FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('TYPO3_Flow_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
     }
 }

@@ -140,8 +140,9 @@ class CacheManager
      * Registers a cache so it can be retrieved at a later point.
      *
      * @param FrontendInterface $cache The cache frontend to be registered
+     * @param bool $persistent
      * @return void
-     * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
+     * @throws Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
     public function registerCache(FrontendInterface $cache, $persistent = false)
@@ -427,6 +428,7 @@ class CacheManager
      * @param string $className The class name
      * @return string Class Tag
      * @api
+     * @deprecated Unused and described functionality does not exist.
      */
     public static function getClassTag($className = '')
     {
@@ -459,6 +461,7 @@ class CacheManager
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
         $backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
         $persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
-        $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
+        $cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
+        $this->registerCache($cache, $persistent);
     }
 }
