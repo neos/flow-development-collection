@@ -94,7 +94,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
         }
 
-        $this->mockPackageManager = $this->getMock(PackageManager::class, ['getActivePackages']);
+        $this->mockPackageManager = $this->createMock(PackageManager::class);
         $this->mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($schemaPackages));
 
         //
