@@ -11,17 +11,19 @@ namespace TYPO3\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
+use TYPO3\Flow\Security\Authentication\EntryPointInterface;
+
 /**
  * An abstract authentication entry point.
  */
-abstract class AbstractEntryPoint implements \TYPO3\Flow\Security\Authentication\EntryPointInterface
+abstract class AbstractEntryPoint implements EntryPointInterface
 {
     /**
      * The configurations options
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Sets the options array

@@ -40,13 +40,13 @@ class ClassToBeSerialized
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+     * @var PrototypeClassAishInterface
      */
     public $interfaceDeclaredSingletonButImplementationIsPrototype;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
+     * @var SingletonClassB
      */
     public $lazyB;
 
@@ -58,7 +58,7 @@ class ClassToBeSerialized
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassB
+     * @var PrototypeClassB
      */
     public $prototypeB;
 }

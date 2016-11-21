@@ -26,14 +26,14 @@ class HostTest extends UnitTestCase
      */
     public function uriAndHostPatterns()
     {
-        return array(
-            array('http://typo3.org/index.php', 'typo3.*', true, 'Assert that wildcard matches.'),
-            array('http://typo3.org/index.php', 'flow.typo3.org', false, 'Assert that subdomains don\'t match.'),
-            array('http://typo3.org/index.php', '*typo3.org', true, 'Assert that prefix wildcard matches.'),
-            array('http://typo3.org/index.php', '*.typo3.org', false, 'Assert that subdomain wildcard doesn\'t match.'),
-            array('http://flow.typo3.org/', '*.typo3.org', true, 'Assert that subdomain wildcard matches.'),
-            array('http://flow.typo3.org/', 'neos.typo3.org', false, 'Assert that different subdomain doesn\'t match.'),
-        );
+        return [
+            ['http://neos.io/index.php', 'neos.*', true, 'Assert that wildcard matches.'],
+            ['http://www.neos.io/index.php', 'flow.neos.io', false, 'Assert that subdomains don\'t match.'],
+            ['http://www.neos.io/index.php', '*www.neos.io', true, 'Assert that prefix wildcard matches.'],
+            ['http://www.neos.io/index.php', '*.www.neos.io', false, 'Assert that subdomain wildcard doesn\'t match.'],
+            ['http://flow.neos.io/', '*.neos.io', true, 'Assert that subdomain wildcard matches.'],
+            ['http://flow.neos.io/', 'www.neos.io', false, 'Assert that different subdomain doesn\'t match.'],
+        ];
     }
 
     /**

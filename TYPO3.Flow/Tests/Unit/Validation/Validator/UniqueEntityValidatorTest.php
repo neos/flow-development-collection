@@ -11,12 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Reflection\ClassSchema;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Validation\Validator\UniqueEntityValidator;
+
 /**
  * Testcase for the unique entity validator
  */
 class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\UniqueEntityValidator::class;
+    protected $validatorClassName = UniqueEntityValidator::class;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,63 +39,69 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->classSchema = $this->getMockBuilder(\TYPO3\Flow\Reflection\ClassSchema::class)->disableOriginalConstructor()->getMock();
+        $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
 
-        $this->reflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $this->reflectionService = $this->createMock(ReflectionService::class);
         $this->reflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454270
      */
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454270);
         $this->validator->validate('a string');
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotReflectedAtAll()
     {
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
 
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotAFlowEntity()
     {
-        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT));
+        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
 
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358454284);
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358960500
      */
     public function validatorThrowsExceptionIfSetupPropertiesAreNotPresentInActualClass()
     {
         $this->prepareMockExpectations();
-        $this->inject($this->validator, 'options', array('identityProperties' => array('propertyWhichDoesntExist')));
+        $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
             ->expects($this->once())
             ->method('hasProperty')
             ->with('propertyWhichDoesntExist')
             ->will($this->returnValue(false));
 
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358960500);
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358459831
      */
     public function validatorThrowsExceptionIfThereIsNoIdentityProperty()
     {
@@ -99,14 +109,15 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->classSchema
             ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358459831);
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358501745
      */
     public function validatorThrowsExceptionOnMultipleOrmIdAnnotations()
     {
@@ -114,14 +125,13 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->classSchema
             ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will($this->returnValue(array('foo')));
+            ->will($this->returnValue(['foo']));
         $this->reflectionService
             ->expects($this->once())
             ->method('getPropertyNamesByAnnotation')
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
-            ->will($this->returnValue(array('dummy array', 'with more than', 'one count')));
+            ->will($this->returnValue(['dummy array', 'with more than', 'one count']));
 
-        $this->setExpectedException(\TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException::class, '', 1358501745);
         $this->validator->validate(new \StdClass());
     }
 
@@ -129,7 +139,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     protected function prepareMockExpectations()
     {
-        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY));
+        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
             ->expects($this->any())
             ->method('getClassName')

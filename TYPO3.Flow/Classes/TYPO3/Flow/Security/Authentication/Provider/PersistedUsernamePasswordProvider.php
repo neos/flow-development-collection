@@ -12,8 +12,13 @@ namespace TYPO3\Flow\Security\Authentication\Provider;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
+use TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
@@ -24,19 +29,19 @@ use TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
-     * @var \TYPO3\Flow\Security\AccountRepository
+     * @var AccountRepository
      * @Flow\Inject
      */
     protected $accountRepository;
 
     /**
-     * @var \TYPO3\Flow\Security\Cryptography\HashService
+     * @var HashService
      * @Flow\Inject
      */
     protected $hashService;
 
     /**
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      * @Flow\Inject
      */
     protected $securityContext;
@@ -54,16 +59,16 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      */
     public function getTokenClassNames()
     {
-        return array(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, \TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic::class);
+        return [UsernamePassword::class, UsernamePasswordHttpBasic::class];
     }
 
     /**
      * Checks the given token for validity and sets the token authentication status
      * accordingly (success, wrong credentials or no credentials given).
      *
-     * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+     * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
+     * @throws UnsupportedAuthenticationTokenException
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
@@ -71,31 +76,39 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
         }
 
-        /** @var $account \TYPO3\Flow\Security\Account */
+        /** @var $account Account */
         $account = null;
         $credentials = $authenticationToken->getCredentials();
 
-        if (is_array($credentials) && isset($credentials['username'])) {
-            $providerName = $this->name;
-            $accountRepository = $this->accountRepository;
-            $this->securityContext->withoutAuthorizationChecks(function () use ($credentials, $providerName, $accountRepository, &$account) {
-                $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
-            });
-        }
-
-        if (is_object($account)) {
-            if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
-                $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $authenticationToken->setAccount($account);
-            } else {
-                $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
-                $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
-            }
-            $this->accountRepository->update($account);
-            $this->persistenceManager->whitelistObject($account);
-        } elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+        if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
+
+        if (!is_array($credentials) || !isset($credentials['username']) || !isset($credentials['password'])) {
+            return;
+        }
+
+        $providerName = $this->name;
+        $accountRepository = $this->accountRepository;
+        $this->securityContext->withoutAuthorizationChecks(function () use ($credentials, $providerName, $accountRepository, &$account) {
+            $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
+        });
+
+        $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
+
+        if ($account === null) {
+            $this->hashService->validatePassword($credentials['password'], 'bcrypt=>$2a$14$DummySaltToPreventTim,.ingAttacksOnThisProvider');
+            return;
+        }
+
+        if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
+            $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+            $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+            $authenticationToken->setAccount($account);
+        } else {
+            $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
+        }
+        $this->accountRepository->update($account);
+        $this->persistenceManager->whitelistObject($account);
     }
 }

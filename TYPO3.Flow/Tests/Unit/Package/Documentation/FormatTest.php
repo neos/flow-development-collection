@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Package\Documentation;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Package\Documentation;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the documentation format class
- *
  */
-class FormatTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FormatTest extends UnitTestCase
 {
     /**
      * Sets up this test case
@@ -35,7 +37,7 @@ class FormatTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $documentationPath = vfsStream::url('testDirectory') . '/';
 
-        $format = new \TYPO3\Flow\Package\Documentation\Format('DocBook', $documentationPath);
+        $format = new Documentation\Format('DocBook', $documentationPath);
 
         $this->assertEquals('DocBook', $format->getFormatName());
         $this->assertEquals($documentationPath, $format->getFormatPath());
@@ -48,11 +50,11 @@ class FormatTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $formatPath = vfsStream::url('testDirectory') . '/';
 
-        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($formatPath . 'en');
+        Files::createDirectoryRecursively($formatPath . 'en');
 
-        $format = new \TYPO3\Flow\Package\Documentation\Format('DocBook', $formatPath);
+        $format = new Documentation\Format('DocBook', $formatPath);
         $availableLanguages = $format->getAvailableLanguages();
 
-        $this->assertEquals(array('en'), $availableLanguages);
+        $this->assertEquals(['en'], $availableLanguages);
     }
 }

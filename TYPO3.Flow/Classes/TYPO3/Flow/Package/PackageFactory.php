@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Package;
  */
 
 use TYPO3\Flow\Composer\ComposerUtility;
-use TYPO3\Flow\Core\ClassLoader;
-use TYPO3\Flow\Package\Exception\InvalidPackagePathException;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
@@ -36,7 +34,7 @@ class PackageFactory
      */
     public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], array $packageClassInformation = null)
     {
-        $absolutePackagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
+        $absolutePackagePath = Files::concatenatePaths([$packagesBasePath, $packagePath]) . '/';
 
         if ($packageClassInformation === null) {
             $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
@@ -64,12 +62,12 @@ class PackageFactory
      * @param string $absolutePackagePath Absolute path to the package
      * @return array The path to the package file and classname for this package or an empty array if none was found.
      * @throws Exception\CorruptPackageException
-     * @throws InvalidPackagePathException
+     * @throws Exception\InvalidPackagePathException
      */
     public function detectFlowPackageFilePath($packageKey, $absolutePackagePath)
     {
         if (!is_dir($absolutePackagePath)) {
-            throw new InvalidPackagePathException(sprintf('The given package path "%s" is not a readable directory.', $absolutePackagePath), 1445904440);
+            throw new Exception\InvalidPackagePathException(sprintf('The given package path "%s" is not a readable directory.', $absolutePackagePath), 1445904440);
         }
 
         $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);

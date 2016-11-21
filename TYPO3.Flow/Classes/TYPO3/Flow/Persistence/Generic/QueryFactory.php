@@ -11,22 +11,24 @@ namespace TYPO3\Flow\Persistence\Generic;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\QueryInterface;
+
 /**
  * The QueryFactory used to create queries against the storage backend
  *
  * @api
  */
-class QueryFactory implements \TYPO3\Flow\Persistence\Generic\QueryFactoryInterface
+class QueryFactory implements QueryFactoryInterface
 {
     /**
      * Creates a query object working on the given class name
      *
      * @param string $className
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function create($className)
     {
-        return new \TYPO3\Flow\Persistence\Generic\Query($className);
+        return new Query($className);
     }
 }

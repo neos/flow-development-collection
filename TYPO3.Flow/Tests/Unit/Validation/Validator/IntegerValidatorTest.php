@@ -11,15 +11,17 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\IntegerValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the integer validator
  *
  */
-class IntegerValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class IntegerValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\IntegerValidator::class;
+    protected $validatorClassName = IntegerValidator::class;
 
     /**
      * @test
@@ -44,12 +46,12 @@ class IntegerValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\A
      */
     public function validIntegers()
     {
-        return array(
-            array(1029437),
-            array('12345'),
-            array('+12345'),
-            array('-12345')
-        );
+        return [
+            [1029437],
+            ['12345'],
+            ['+12345'],
+            ['-12345']
+        ];
     }
 
     /**
@@ -68,11 +70,11 @@ class IntegerValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\A
      */
     public function invalidIntegers()
     {
-        return array(
-            array('not a number'),
-            array(3.1415),
-            array('12345.987')
-        );
+        return [
+            ['not a number'],
+            [3.1415],
+            ['12345.987']
+        ];
     }
 
     /**

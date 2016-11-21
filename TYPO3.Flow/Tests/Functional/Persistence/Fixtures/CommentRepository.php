@@ -11,14 +11,17 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A repository for comments
- * @TYPO3\Flow\Annotations\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class CommentRepository extends \TYPO3\Flow\Persistence\Repository
+class CommentRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment::class;
+    const ENTITY_CLASSNAME = Comment::class;
 }

@@ -1202,8 +1202,8 @@ and configuration options for that backend. Instead of creating and configuring 
 objects on your own, you can use the ``TYPO3\Flow\Log\LoggerFactory`` which provides a
 convenient ``create`` method taking care of all the rest::
 
-	$myCache = $loggerFactory->create('Flow_System', 'TYPO3\Flow\Log\Logger',
-	    'TYPO3\Flow\Log\Backend\FileBackend', array( … ));
+	$myCache = $loggerFactory->create('Flow_System', \TYPO3\Flow\Log\Logger::class,
+	    \TYPO3\Flow\Log\Backend\FileBackend::class, array( … ));
 
 It is possible to specify for each object if it should be created by a custom factory
 rather than the Object Builder. Consider the following configuration:
@@ -1241,7 +1241,7 @@ passed through to the custom factory method:
 
 *Example: PHP code using the custom factory* ::
 
-	$myCache = $objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface');
+	$myCache = $objectManager->get(\TYPO3\Flow\Log\SystemLoggerInterface::class);
 
 ``$objectManager`` is a reference to the ``TYPO3\Flow\Object\ObjectManager``.
 The required arguments are automatically built from the values defined in the
@@ -1321,8 +1321,8 @@ and so on, the performance in production context can be improved::
 	 * @return array Array of method parameters by action name
 	 * @Flow\CompileStatic
 	 */
-	static public function getActionMethodParameters($objectManager) {
-		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+	static protected function getActionMethodParameters($objectManager) {
+		$reflectionService = $objectManager->get\TYPO3\Flow\Reflection\ReflectionService::class);
 		$className = get_called_class();
 		$methodParameters = $reflectionService->getMethodParameters($className, get_class_methods($className));
 		foreach ($methodParameters as $parameterName => $parameterInfo) {

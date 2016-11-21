@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Resource;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 
 /**
  * Model describing a resource pointer
@@ -19,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * This class is deprecated. Please simply use the Resource->getHash() method instead.
  *
  * @deprecated
- * @see \TYPO3\Flow\Resource\Resource
+ * @see PersistentResource
  */
 class ResourcePointer
 {

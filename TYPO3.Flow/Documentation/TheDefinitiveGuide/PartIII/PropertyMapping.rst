@@ -61,7 +61,7 @@ to convert an array of data into a domain model::
 		'name' => 'John Fisher',
 		'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
-	$person = $propertyMapper->convert($inputArray, 'TYPO3\MyPackage\Domain\Model\Person');
+	$person = $propertyMapper->convert($inputArray, \TYPO3\MyPackage\Domain\Model\Person::class);
 
 	// $person is a newly created object of type TYPO3\MyPackage\Domain\Model\Person
 	// $person->name == 'John Fisher'
@@ -74,7 +74,7 @@ We'll first use a simple input array::
 	  'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
 
-After calling ``$propertyMapper->convert($input, 'TYPO3\MyPackage\Domain\Model\Person')``,
+After calling ``$propertyMapper->convert($input, \TYPO3\MyPackage\Domain\Model\Person::class)``,
 we receive an ew object of type ``Person`` which has ``$name`` set to ``John Fisher``,
 and ``$birthDate`` set to a ``DateTime`` object of the specified date. You might
 now wonder how the PropertyMapper knows how to convert ``DateTime`` objects and
@@ -418,6 +418,7 @@ each ``TypeConverter`` which influence the resolving process:
   If two type converters have the same source and target type, precedence
   is given to the one with higher priority. All standard TypeConverters
   have a priority lower than 100.
+  A priority of -1 disables automatic resolution for the given TypeConverter!
 
 ``canConvertFrom($source, $targetType)``
   Is called as last check, when source and target types fit together. Here, the
@@ -430,7 +431,7 @@ When a type converter has to be found, the following algorithm is applied:
 
 2. The inheritance hierarchy of the target type is traversed in reverse order (from
    most specific to generic) until a TypeConverter is found. If two type converters
-   work on the same class, the one with highest priority is used.
+   work on the same class, the one with highest positive priority is used.
 
 3. If no type converter could be found for the direct inheritance hierarchy, it is
    checked if there is a TypeConverter for one of the interfaces the target class
@@ -491,3 +492,9 @@ possibilities what can be returned in ``convertFrom()``:
 	Inside a type converter it is not allowed to use an (injected) instance
 	of ``TYPO3\Flow\Property\PropertyMapper`` because it can lead to an
 	infinite recursive invocation.
+
+.. note::
+
+	With version 4.0 TypeConverters with a negative priority will be skipped by the
+	``PropertyMapper`` by default. The ``PropertyMappingConfiguration`` can be used to
+	explicitly use such converter anyways.

@@ -14,11 +14,14 @@ namespace TYPO3\Flow\Tests\Functional\Security;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Security\AccountFactory;
+use TYPO3\Flow\Security\AccountRepository;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for Authentication
  */
-class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class AuthenticationTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -37,66 +40,66 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $accountRepository = $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class);
-        $accountFactory = $this->objectManager->get(\TYPO3\Flow\Security\AccountFactory::class);
+        $accountRepository = $this->objectManager->get(AccountRepository::class);
+        $accountFactory = $this->objectManager->get(AccountFactory::class);
 
-        $account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'TestingProvider');
+        $account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'TestingProvider');
         $accountRepository->add($account);
-        $account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'HttpBasicTestingProvider');
+        $account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'HttpBasicTestingProvider');
         $accountRepository->add($account2);
-        $account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'UsernamePasswordTestingProvider');
+        $account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'UsernamePasswordTestingProvider');
         $accountRepository->add($account3);
         $this->persistenceManager->persistAll();
 
         $route = new Route();
         $route->setName('Functional Test - Security::Restricted');
         $route->setUriPattern('test/security/restricted(/{@action})');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'Restricted',
             '@action' => 'public',
-            '@format' => 'html'
-        ));
+            '@format' =>'html'
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
 
         $route2 = new Route();
         $route2->setName('Functional Test - Security::Authentication');
         $route2->setUriPattern('test/security/authentication(/{@action})');
-        $route2->setDefaults(array(
+        $route2->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'Authentication',
             '@action' => 'authenticate',
             '@format' => 'html'
-        ));
+        ]);
         $route2->setAppendExceedingArguments(true);
         $this->router->addRoute($route2);
 
         $route3 = new Route();
         $route3->setName('Functional Test - Security::HttpBasicAuthentication');
         $route3->setUriPattern('test/security/authentication/httpbasic(/{@action})');
-        $route3->setDefaults(array(
+        $route3->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'HttpBasicTest',
             '@action' => 'authenticate',
             '@format' => 'html'
-        ));
+        ]);
         $route3->setAppendExceedingArguments(true);
         $this->router->addRoute($route3);
 
         $route4 = new Route();
         $route4->setName('Functional Test - Security::UsernamePasswordAuthentication');
         $route4->setUriPattern('test/security/authentication/usernamepassword(/{@action})');
-        $route4->setDefaults(array(
+        $route4->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'UsernamePasswordTest',
             '@action' => 'authenticate',
             '@format' => 'html'
-        ));
+        ]);
         $route4->setAppendExceedingArguments(true);
         $this->router->addRoute($route4);
     }
@@ -140,7 +143,7 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function successfulAuthenticationCallsOnAuthenticationSuccessMethod()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
@@ -174,7 +177,7 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function successfulAuthenticationDoesStartASessionIfTokenRequiresIt()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 

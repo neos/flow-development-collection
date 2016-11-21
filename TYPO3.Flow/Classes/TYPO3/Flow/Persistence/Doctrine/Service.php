@@ -41,12 +41,12 @@ class Service
     /**
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * @var array
      */
-    public $output = array();
+    public $output = [];
 
     /**
      * @Flow\Inject(lazy = FALSE)
@@ -78,7 +78,7 @@ class Service
             $validator = new SchemaValidator($this->entityManager);
             return $validator->validateMapping();
         } catch (\Exception $exception) {
-            return array(array($exception->getMessage()));
+            return [[$exception->getMessage()]];
         }
     }
 
@@ -128,7 +128,7 @@ class Service
      */
     public function compileProxies()
     {
-        Files::emptyDirectoryRecursively(Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies')));
+        Files::emptyDirectoryRecursively(Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']));
         /** @var \Doctrine\ORM\Proxy\ProxyFactory $proxyFactory */
         $proxyFactory = $this->entityManager->getProxyFactory();
         $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
@@ -175,7 +175,7 @@ class Service
             $query->setMaxResults($maxResult);
         }
 
-        return $query->execute(array(), $hydrationMode);
+        return $query->execute([], $hydrationMode);
     }
 
     /**
@@ -185,7 +185,7 @@ class Service
      */
     protected function getMigrationConfiguration()
     {
-        $this->output = array();
+        $this->output = [];
         $that = $this;
         $outputWriter = new OutputWriter(
             function ($message) use ($that) {
@@ -201,8 +201,8 @@ class Service
         }
 
         $configuration = new Configuration($connection, $outputWriter);
-        $configuration->setMigrationsNamespace('TYPO3\Flow\Persistence\Doctrine\Migrations');
-        $configuration->setMigrationsDirectory(Files::concatenatePaths(array(FLOW_PATH_DATA, 'DoctrineMigrations')));
+        $configuration->setMigrationsNamespace(\TYPO3\Flow\Persistence\Doctrine\Migrations::class);
+        $configuration->setMigrationsDirectory(Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']));
         $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
 
         $configuration->createMigrationTable();
@@ -210,11 +210,11 @@ class Service
         $databasePlatformName = $this->getDatabasePlatformName();
         /** @var PackageInterface $package */
         foreach ($this->packageManager->getActivePackages() as $package) {
-            $path = Files::concatenatePaths(array(
+            $path = Files::concatenatePaths([
                 $package->getPackagePath(),
                 'Migrations',
                 $databasePlatformName
-            ));
+            ]);
             if (is_dir($path)) {
                 $configuration->registerMigrationsFromDirectory($path);
             }
@@ -585,7 +585,7 @@ class Service
         $up = $up === null ? '' : "\n        " . implode("\n        ", explode("\n", $up));
         $down = $down === null ? '' : "\n        " . implode("\n        ", explode("\n", $down));
 
-        $path = Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
+        $path = Files::concatenatePaths([$configuration->getMigrationsDirectory(), $className . '.php']);
         try {
             Files::createDirectoryRecursively(dirname($path));
         } catch (Exception $exception) {
@@ -719,7 +719,7 @@ EOT;
      */
     public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, $tableNames, $search, $replace)
     {
-        $foreignKeyHandlingSql = array('drop' => array(), 'add' => array());
+        $foreignKeyHandlingSql = ['drop' => [], 'add' => []];
         $tables = $schema->getTables();
         foreach ($tables as $table) {
             $foreignKeys = $table->getForeignKeys();

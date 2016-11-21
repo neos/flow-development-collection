@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * This class is a helper that can be used as a
@@ -29,7 +30,7 @@ class RequestMatcher
      * return FALSE. This case is primarily needed
      * if no parentRequest exists.
      *
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var ActionRequest
      */
     protected $request;
 
@@ -40,7 +41,7 @@ class RequestMatcher
      * and mainRequest Matchers through the addWeight
      * method
      *
-     * @var \TYPO3\Flow\Mvc\RequestMatcher
+     * @var RequestMatcher
      */
     protected $parentMatcher;
 
@@ -57,10 +58,10 @@ class RequestMatcher
 
     /**
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest
-     * @param \TYPO3\Flow\Mvc\RequestMatcher $parentMatcher
+     * @param ActionRequest $actionRequest
+     * @param RequestMatcher $parentMatcher
      */
-    public function __construct(\TYPO3\Flow\Mvc\ActionRequest $actionRequest = null, $parentMatcher = null)
+    public function __construct(ActionRequest $actionRequest = null, $parentMatcher = null)
     {
         $this->request = $actionRequest;
         $this->parentMatcher = $parentMatcher;
@@ -141,7 +142,7 @@ class RequestMatcher
             return false;
         }
 
-        $value = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->request, $propertyName);
+        $value = ObjectAccess::getProperty($this->request, $propertyName);
         if ($value === $expectedValue) {
             $this->addWeight($weight);
             return true;
@@ -153,7 +154,7 @@ class RequestMatcher
     /**
      * Get a new RequestMatcher for the Request's ParentRequest
      *
-     * @return \TYPO3\Flow\Mvc\RequestMatcher
+     * @return RequestMatcher
      * @api
      */
     public function getParentRequest()
@@ -168,7 +169,7 @@ class RequestMatcher
     /**
      * Get a new RequestMatcher for the Request's MainRequest
      *
-     * @return \TYPO3\Flow\Mvc\RequestMatcher
+     * @return RequestMatcher
      * @api
      */
     public function getMainRequest()

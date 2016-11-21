@@ -13,11 +13,15 @@ namespace TYPO3\Flow\Property\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Utility\Exception\InvalidTypeException;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.
@@ -48,7 +52,7 @@ class ObjectConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('array');
+    protected $sourceTypes = ['array'];
 
     /**
      * @var string
@@ -62,13 +66,13 @@ class ObjectConverter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -77,7 +81,7 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @var array
      */
-    protected $constructorReflectionFirstLevelCache = array();
+    protected $constructorReflectionFirstLevelCache = [];
 
     /**
      * Only convert non-persistent types
@@ -89,9 +93,9 @@ class ObjectConverter extends AbstractTypeConverter
     public function canConvertFrom($source, $targetType)
     {
         return !(
-            $this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\Entity::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, \TYPO3\Flow\Annotations\ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, 'Doctrine\ORM\Mapping\Entity')
+            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
+            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
+            $this->reflectionService->isClassAnnotatedWith($targetType, \Doctrine\ORM\Mapping\Entity::class)
         );
     }
 
@@ -120,7 +124,7 @@ class ObjectConverter extends AbstractTypeConverter
      */
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
-        $configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, self::CONFIGURATION_TARGET_TYPE);
+        $configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue(ObjectConverter::class, self::CONFIGURATION_TARGET_TYPE);
         if ($configuredTargetType !== null) {
             return $configuredTargetType;
         }
@@ -139,9 +143,18 @@ class ObjectConverter extends AbstractTypeConverter
         } else {
             $targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
             if (in_array($propertyName, $targetPropertyNames)) {
-                $values = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
-                if (count($values) > 0) {
-                    return current($values);
+                $varTagValues = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
+                if (count($varTagValues) > 0) {
+                    // This ensures that FQCNs are returned without leading backslashes. Otherwise, something like @var \DateTime
+                    // would not find a property mapper. It is needed because the ObjectConverter doesn't use class schemata,
+                    // but reads the annotations directly.
+                    $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+                    try {
+                        $parsedType = TypeHandling::parseType($declaredType);
+                    } catch (InvalidTypeException $exception) {
+                        throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $targetType . '" for property "' . $propertyName . '"'), 1467699674);
+                    }
+                    return $parsedType['type'] . ($parsedType['elementType'] !== null ? '<' . $parsedType['elementType'] . '>' : '');
                 } else {
                     throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
                 }
@@ -162,7 +175,7 @@ class ObjectConverter extends AbstractTypeConverter
      * @throws InvalidDataTypeException
      * @throws InvalidPropertyMappingConfigurationException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
@@ -202,7 +215,7 @@ class ObjectConverter extends AbstractTypeConverter
             if ($configuration === null) {
                 throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1326277369);
             }
-            if ($configuration->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
+            if ($configuration->getConfigurationValue(ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
                 throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
             }
 
@@ -228,7 +241,7 @@ class ObjectConverter extends AbstractTypeConverter
      */
     protected function buildObject(array &$possibleConstructorArgumentValues, $objectType)
     {
-        $constructorArguments = array();
+        $constructorArguments = [];
         $className = $this->objectManager->getClassNameByObjectName($objectType);
         $constructorSignature = $this->getConstructorArgumentsForClass($className);
         if (count($constructorSignature)) {
@@ -260,7 +273,7 @@ class ObjectConverter extends AbstractTypeConverter
     protected function getConstructorArgumentsForClass($className)
     {
         if (!isset($this->constructorReflectionFirstLevelCache[$className])) {
-            $constructorSignature = array();
+            $constructorSignature = [];
 
             // TODO: Check if we can get rid of this reflection service usage, directly reflecting doesn't work as the proxy class __construct has no arguments.
             if ($this->reflectionService->hasMethod($className, '__construct')) {

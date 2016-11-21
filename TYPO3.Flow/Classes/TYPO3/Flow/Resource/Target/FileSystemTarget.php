@@ -12,13 +12,19 @@ namespace TYPO3\Flow\Resource\Target;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Publishing\MessageCollector;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceMetaDataInterface;
+use TYPO3\Flow\Resource\ResourceRepository;
+use TYPO3\Flow\Resource\Storage\Object as StorageObject;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\Flow\Utility\Exception as UtilityException;
+use TYPO3\Flow\Resource\Target\Exception as TargetException;
 
 /**
  * A target which publishes resources to a specific directory in a file system.
@@ -28,7 +34,7 @@ class FileSystemTarget implements TargetInterface
     /**
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Name which identifies this publishing target
@@ -86,19 +92,19 @@ class FileSystemTarget implements TargetInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceRepository
+     * @var ResourceRepository
      */
     protected $resourceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -114,7 +120,7 @@ class FileSystemTarget implements TargetInterface
      * @param string $name Name of this target instance, according to the resource settings
      * @param array $options Options for this target
      */
-    public function __construct($name, array $options = array())
+    public function __construct($name, array $options = [])
     {
         $this->name = $name;
         $this->options = $options;
@@ -124,14 +130,14 @@ class FileSystemTarget implements TargetInterface
      * Initializes this resource publishing target
      *
      * @return void
-     * @throws \TYPO3\Flow\Resource\Exception
+     * @throws TargetException
      */
     public function initializeObject()
     {
         foreach ($this->options as $key => $value) {
             $isOptionSet = $this->setOption($key, $value);
             if (!$isOptionSet) {
-                throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
+                throw new TargetException(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemTarget. Please check your settings.', $key), 1361525952);
             }
         }
 
@@ -139,10 +145,10 @@ class FileSystemTarget implements TargetInterface
             @Files::createDirectoryRecursively($this->path);
         }
         if (!is_dir($this->path) && !is_link($this->path)) {
-            throw new Exception('The directory "' . $this->path . '" which was configured as a publishing target does not exist and could not be created.', 1207124538);
+            throw new TargetException('The directory "' . $this->path . '" which was configured as a publishing target does not exist and could not be created.', 1207124538);
         }
         if (!is_writable($this->path)) {
-            throw new Exception('The directory "' . $this->path . '" which was configured as a publishing target is not writable.', 1207124546);
+            throw new TargetException('The directory "' . $this->path . '" which was configured as a publishing target is not writable.', 1207124546);
         }
     }
 
@@ -162,12 +168,11 @@ class FileSystemTarget implements TargetInterface
      * @param CollectionInterface $collection The collection to publish
      * @param callable $callback Function called after each resource publishing
      * @return void
-     * @throws Exception
      */
     public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
         foreach ($collection->getObjects($callback) as $object) {
-            /** @var \TYPO3\Flow\Resource\Storage\Object $object */
+            /** @var StorageObject $object */
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
                 $this->handleMissingData($object, $collection);
@@ -181,12 +186,11 @@ class FileSystemTarget implements TargetInterface
     /**
      * Publishes the given persistent resource from the given storage
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
+     * @param PersistentResource $resource The resource to publish
      * @param CollectionInterface $collection The collection the given resource belongs to
      * @return void
-     * @throws Exception
      */
-    public function publishResource(Resource $resource, CollectionInterface $collection)
+    public function publishResource(PersistentResource $resource, CollectionInterface $collection)
     {
         $sourceStream = $resource->getStream();
         if ($sourceStream === false) {
@@ -212,10 +216,10 @@ class FileSystemTarget implements TargetInterface
     /**
      * Unpublishes the given persistent resource
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource The resource to unpublish
+     * @param PersistentResource $resource The resource to unpublish
      * @return void
      */
-    public function unpublishResource(Resource $resource)
+    public function unpublishResource(PersistentResource $resource)
     {
         $resources = $this->resourceRepository->findSimilarResources($resource);
         if (count($resources) > 1) {
@@ -238,11 +242,11 @@ class FileSystemTarget implements TargetInterface
     /**
      * Returns the web accessible URI pointing to the specified persistent resource
      *
-     * @param \TYPO3\Flow\Resource\Resource $resource Resource object
+     * @param PersistentResource $resource Resource object
      * @return string The URI
      * @throws Exception
      */
-    public function getPublicPersistentResourceUri(Resource $resource)
+    public function getPublicPersistentResourceUri(PersistentResource $resource)
     {
         return $this->getResourcesBaseUri() . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
     }
@@ -264,21 +268,19 @@ class FileSystemTarget implements TargetInterface
      * @param resource $sourceStream Stream of the source to publish
      * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
      * @return void
-     * @throws Exception
-     * @throws \Exception
-     * @throws \TYPO3\Flow\Utility\Exception
+     * @throws TargetException
      */
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
         if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
 
         if (@fstat($sourceStream) === false) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
         }
 
         if (!file_exists(dirname($targetPathAndFilename))) {
@@ -297,7 +299,7 @@ class FileSystemTarget implements TargetInterface
             $result = false;
         }
         if ($result === false) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
         }
 
         $this->systemLogger->log(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
@@ -341,7 +343,7 @@ class FileSystemTarget implements TargetInterface
      * Detects and returns the website's absolute base URI
      *
      * @return string The resolved resource base URI, @see getResourcesBaseUri()
-     * @throws Exception if the baseUri can't be resolved
+     * @throws TargetException if the baseUri can't be resolved
      */
     protected function detectResourcesBaseUri()
     {
@@ -355,7 +357,7 @@ class FileSystemTarget implements TargetInterface
         }
 
         if ($this->httpBaseUri === null) {
-            throw new Exception(sprintf('The base URI for resources could not be detected. Please specify the "TYPO3.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
+            throw new TargetException(sprintf('The base URI for resources could not be detected. Please specify the "TYPO3.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
         }
         return $this->httpBaseUri . $this->baseUri;
     }

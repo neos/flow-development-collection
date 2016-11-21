@@ -23,7 +23,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
     /**
      * Returns the currently processed HTTP request
      *
-     * @return \TYPO3\Flow\Http\Request
+     * @return Request
      * @api
      */
     public function getHttpRequest();
@@ -31,7 +31,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return \TYPO3\Flow\Http\Response
+     * @return Response
      * @api
      */
     public function getHttpResponse();

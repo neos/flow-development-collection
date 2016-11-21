@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Security\Authentication;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException;
 
 /**
  * The authentication provider resolver. It resolves the class name of a authentication provider based on names.
@@ -21,16 +23,16 @@ use TYPO3\Flow\Annotations as Flow;
 class AuthenticationProviderResolver
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
+     * @param ObjectManagerInterface $objectManager The object manager
      */
-    public function __construct(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -40,7 +42,7 @@ class AuthenticationProviderResolver
      *
      * @param string $providerName The (short) name of the provider
      * @return string The object name of the authentication provider
-     * @throws \TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException
+     * @throws NoAuthenticationProviderFoundException
      */
     public function resolveProviderClass($providerName)
     {
@@ -54,6 +56,6 @@ class AuthenticationProviderResolver
             return $resolvedObjectName;
         }
 
-        throw new \TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
+        throw new NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
     }
 }

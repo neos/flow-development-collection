@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Result as ErrorResult;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * A generic collection validator.
@@ -23,12 +25,12 @@ class CollectionValidator extends GenericObjectValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'elementValidator' => array(null, 'The validator type to use for the collection elements', 'string'),
+    protected $supportedOptions = [
+        'elementValidator' => [null, 'The validator type to use for the collection elements', 'string'],
         'elementValidatorOptions' => array([], 'The validator options to use for the collection elements', 'array'),
-        'elementType' => array(null, 'The type of the elements in the collection', 'string'),
-        'validationGroups' => array(null, 'The validation groups to link to', 'string'),
-    );
+        'elementType' => [null, 'The type of the elements in the collection', 'string'],
+        'validationGroups' => [null, 'The validation groups to link to', 'string'],
+    ];
 
     /**
      * @var \TYPO3\Flow\Validation\ValidatorResolver
@@ -41,17 +43,17 @@ class CollectionValidator extends GenericObjectValidator
      * the Error Messages object which occurred.
      *
      * @param mixed $value The value that should be validated
-     * @return \TYPO3\Flow\Error\Result
+     * @return ErrorResult
      * @api
      */
     public function validate($value)
     {
-        $this->result = new \TYPO3\Flow\Error\Result();
+        $this->result = new ErrorResult();
 
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
                 return $this->result;
-            } elseif ((is_object($value) && !\TYPO3\Flow\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+            } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
                 $this->addError('The given subject was not a collection.', 1317204797);
                 return $this->result;
             } elseif (is_object($value) && $this->isValidatedAlready($value)) {

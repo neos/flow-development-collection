@@ -172,6 +172,8 @@ From Evans, the rules we need to enforce include:
   invariants.
 * Root Entities have global identity. Entities inside the boundary have local identity,
   unique only within the Aggregate.
+* Value Objects do not have identity. They are only identified by the combination of their
+  properties and are therefore immutable.
 * Nothing outside the Aggregate boundary can hold a reference to anything inside, except
   to the root Entity. The root Entity can hand references to the internal Entities to
   other objects, but they can only use them transiently (within a single method or
@@ -394,14 +396,55 @@ Doctrine supports many more annotations, for a full reference please consult the
 On Value Object handling with Doctrine
 --------------------------------------
 
-Doctrine 2 does not (yet [#]_) support value objects, thus we treat them as
-entities for the time being, with some differences:
+Doctrine 2.5 supports value objects in the form of embeddable objects [#]_. This means that
+the value object properties will directly be included in the parent entities table schema.
+However, Doctrine doesn't currently support embeddable collections [#]_.
+Therefore, Flow supports two types of value objects: readonly entities and embedded
+
+By default, Flow will use the readonly version, as that is more flexible and also works in
+collections. However, this comes with some architectural drawbacks, because the value object
+thereby is actually treated like an entity with an identifier, which contradicts the very
+definition of a value object.
+
+The behaviour of non-embedded Value Objects is as follows:
 
 * Value Objects are marked immutable as with the ``ReadOnly`` annotation of Doctrine.
-* Unless you override the type using ``Column`` Value Objects will be stored as
-  serialized object in the database.
-* Upon persisting Value Objects already present in the underlying database will be
-  deduplicated.
+* Each Value Object will internally be referenced by an identifier that is automatically
+  generated from it's property values after construction.
+* If the relation to a Value Object is annotated as OneTo* or ManyTo*, the Value Object
+  will be persisted in it's own table. Otherwise, unless you override the type using
+  ``Column`` Value Objects will be stored as serialized object in the database.
+* Upon persisting Value Objects already present in the underlying database they will be
+  deduplicated by being referenced through the identifier.
+
+For cases where a *ToMany relation to a Value Object is not needed, the embedded form is the
+more natural way to persist value objects. You can therefore set the annotation property
+``embedded`` to true, which will cause the Value Object to be embedded inside all Entities
+that reference it.
+
+The behaviour of embedded Value Objects is as follows:
+
+* Every entity having a property of type embedded Value Object will get all the properties
+  of the Value Object included in it's schema.
+* Unless you specify the ``Embedded`` Annotation on the relation property, the schema prefix
+  will be the property name.
+
+.. code-block:: php
+
+  /**
+   * @Flow\ValueObject(embedded=true)
+   */
+  class ValueObject {
+    ...
+  }
+
+  class SomeEntity {
+
+  	/**
+  	 * @var ValueObject
+  	 */
+  	protected $valueObject;
+
 
 Custom Doctrine mapping types
 -----------------------------
@@ -522,6 +565,32 @@ functions.
 
 .. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
 
+Using Doctrine's Second Level Cache
+-----------------------------------
+
+Since 2.5, Doctrine provides a second level cache that further improves performance of relation queries
+beyond the result query cache.
+
+See the Doctrine documentation ([#doctrineSecondLevelCache]_) for more information on the second level cache.
+Flow allows you to enable and configure the second level cache through the configuration setting
+``TYPO3.Flow.persistence.doctrine.secondLevelCache``.
+
+*Example: Configuration for Doctrine second level cache*:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      persistence:
+        doctrine:
+          secondLevelCache:
+            enable: true
+            defaultLifetime: 3600
+            regions:
+              'my_entity_region': 7200
+
+.. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
+
 Differences between Flow and plain Doctrine
 -------------------------------------------
 
@@ -553,7 +622,9 @@ makes a number of things easier, compared to plain Doctrine 2.
     characters in a string property.
 
 ``OneToOne``, ``OneToMany``, ``ManyToOne``, ``ManyToMany``
-  ``targetEntity`` can be omitted, it is read from the ``@var`` annotation on the property
+  ``targetEntity`` can be omitted, it is read from the ``@var`` annotation on the property.
+  Relations to Value Objects will be ``cascade`` ``persist`` by default and relations to non
+  aggregate root entities will be ``cascade`` ``all`` by default.
 
 ``JoinTable``, ``JoinColumn``
   Can usually be left out completely, the needed information is gathered automatically
@@ -1032,7 +1103,7 @@ that connection wrapper by setting the following options in your packages ``Sett
                host: '127.0.0.1'        # adjust to your slave database host
                dbname: 'slave1'         # adjust to your database name
                user: 'user'             # adjust to your database user
-               password: 'user'         # adjust to your database password
+               password: 'pass'         # adjust to your database password
 
 With this setup, Doctrine will use one of the slave connections picked once per request randomly
 for all queries until the first writing query (e.g. insert or update) is executed. From that point
@@ -1241,7 +1312,8 @@ the array of objects being returned.
 
 .. [#] An alternative would have been to do an implicit persist call before a query, but
 	that seemed to be confusing.
-.. [#] See https://github.com/doctrine/doctrine2/pull/265 for one approach in the making.
+.. [#] https://doctrine-orm.readthedocs.org/en/latest/tutorials/embeddables.html
+.. [#] https://github.com/doctrine/doctrine2/issues/3579
 .. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/events.html
 .. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/filters.html#filters
 .. [#] http://www.doctrine-project.org/jira/browse/DDC-3241

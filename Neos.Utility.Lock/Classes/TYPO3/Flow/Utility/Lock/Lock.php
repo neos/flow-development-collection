@@ -57,7 +57,7 @@ class Lock
     }
 
     /**
-     * @return \TYPO3\Flow\Utility\Lock\LockStrategyInterface
+     * @return LockStrategyInterface
      */
     public function getLockStrategy()
     {

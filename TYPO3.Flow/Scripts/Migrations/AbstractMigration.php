@@ -20,12 +20,6 @@ use TYPO3\Flow\Utility\Files;
 abstract class AbstractMigration
 {
     /**
-     * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
-     * @var integer
-     */
-    const MAXIMUM_LINE_LENGTH = 79;
-
-    /**
      * @var Manager
      */
     protected $migrationsManager;
@@ -234,7 +228,6 @@ abstract class AbstractMigration
      * The patterns are used as is, no quoting is done. A closure can be given for
      * the $replacement variable. It should return a string and is given an
      * array of matches as parameter.
-
      *
      * @param string $search
      * @param string|\Closure $replacement
@@ -278,7 +271,7 @@ abstract class AbstractMigration
      */
     protected function renameMethod($className, $oldMethodName, $newMethodName, $withInheritance = true)
     {
-        throw new \LogicException('renameClass is not yet implemented, sorry!', 1335525001);
+        throw new \LogicException('renameMethod is not yet implemented, sorry!', 1479293733);
     }
 
     /**
@@ -419,38 +412,5 @@ abstract class AbstractMigration
                 Git::remove($filename);
             }
         }
-    }
-
-    /**
-     * The given text is word-wrapped and each line after the first one is
-     * prefixed with $prefix.
-     *
-     * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
-     * @param string $text
-     * @param string $prefix
-     * @return string
-     */
-    protected function wrapAndPrefix($text, $prefix = '    ')
-    {
-        $text = explode(chr(10), wordwrap($text, self::MAXIMUM_LINE_LENGTH, chr(10), true));
-        return implode(PHP_EOL . $prefix, $text);
-    }
-
-    /**
-     * Outputs specified text to the console window and appends a line break.
-     *
-     * You can specify arguments that will be passed to the text via sprintf
-     *
-     * @deprecated since 3.0. Migrations must not have any direct output, use addNote() or addWarning() instead
-     * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
-     * @return void
-     */
-    protected function outputLine($text = '', array $arguments = array())
-    {
-        if ($arguments !== array()) {
-            $text = vsprintf($text, $arguments);
-        }
-        echo $text . PHP_EOL;
     }
 }

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Exception;
+use TYPO3\Flow\Error\Exception as ErrorException;
 
 /**
  * File and directory functions
@@ -29,9 +29,9 @@ abstract class Files
     public static function getUnixStylePath($path)
     {
         if (strpos($path, ':') === false) {
-            return str_replace(array('//', '\\'), '/', $path);
+            return str_replace(['//', '\\'], '/', $path);
         } else {
-            return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(array('//', '\\'), '/', $path));
+            return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));
         }
     }
 
@@ -246,7 +246,7 @@ abstract class Files
         if (is_file($path)) {
             throw new Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
         }
-        if (!is_dir($path) && $path !== '') {
+        if (!is_link($path) && !is_dir($path) && $path !== '') {
             $oldMask = umask(000);
             mkdir($path, 0777, true);
             umask($oldMask);
@@ -288,7 +288,7 @@ abstract class Files
         foreach (self::getRecursiveDirectoryGenerator($sourceDirectory, null, false, $copyDotFiles) as $filename) {
             $relativeFilename = str_replace($sourceDirectory, '', $filename);
             self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
-            $targetPathAndFilename = self::concatenatePaths(array($targetDirectory, $relativeFilename));
+            $targetPathAndFilename = self::concatenatePaths([$targetDirectory, $relativeFilename]);
             if ($keepExistingFiles === false || !file_exists($targetPathAndFilename)) {
                 copy($filename, $targetPathAndFilename);
             }
@@ -318,7 +318,7 @@ abstract class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (\Exception $ignoredException) {
+        } catch (ErrorException $ignoredException) {
             $content = false;
         }
         return $content;
@@ -383,9 +383,10 @@ abstract class Files
     /**
      * A version of unlink() that works on Windows regardless on the symlink type (file/directory).
      *
-     * If this method could not unlink the specified file, it will clear the stat cache for its filename and check if
-     * the file still exist. If it does not exist, this method assumes that the file has been deleted by another process
-     * and will return TRUE. If the file still exists though, this method will return FALSE.
+     * If this method could not unlink the specified file or it doesn't exist anymore (e.g. because of a concurrent
+     * deletion), it will clear the stat cache for its filename and check if the file still exist. If it does not exist,
+     * this method assumes that the file has been deleted by another process and will return TRUE. If the file still
+     * exists though, this method will return FALSE.
      *
      * @param string $pathAndFilename Path and name of the file or directory
      * @return boolean TRUE if file/directory was removed successfully
@@ -396,7 +397,11 @@ abstract class Files
         try {
             // if not on Windows, call PHPs own unlink() function
             if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
-                return @\unlink($pathAndFilename);
+                if (!@\unlink($pathAndFilename)) {
+                    clearstatcache();
+                    return !file_exists($pathAndFilename);
+                }
+                return true;
             }
         } catch (\Exception $exception) {
             clearstatcache();
@@ -415,7 +420,7 @@ abstract class Files
      *
      * @var array
      */
-    protected static $sizeUnits = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+    protected static $sizeUnits = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     /**
      * Converts an integer with a byte count into human-readable form

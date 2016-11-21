@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * Converter which transforms to an integer.
@@ -29,7 +30,7 @@ class IntegerConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('integer', 'string', 'DateTime');
+    protected $sourceTypes = ['integer', 'string', 'DateTime'];
 
     /**
      * @var string
@@ -47,11 +48,11 @@ class IntegerConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return integer|\TYPO3\Flow\Error\Error
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return integer|Error
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($source instanceof \DateTimeInterface) {
             return $source->format('U');
@@ -62,7 +63,7 @@ class IntegerConverter extends AbstractTypeConverter
         }
 
         if (!is_numeric($source)) {
-            return new Error('"%s" is not numeric.', 1332933658, array($source));
+            return new Error('"%s" is not numeric.', 1332933658, [$source]);
         }
         return (integer)$source;
     }

@@ -11,12 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Reflection;
  * source code.
  */
 
+use TYPO3\Flow\Reflection;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for MethodReflection
- *
  */
-class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
+class MethodReflectionTest extends UnitTestCase
 {
     /**
      * @var mixed
@@ -28,8 +29,8 @@ class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getDeclaringClassReturnsFlowsClassReflection()
     {
-        $method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-        $this->assertInstanceOf(\TYPO3\Flow\Reflection\ClassReflection::class, $method->getDeclaringClass());
+        $method = new Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+        $this->assertInstanceOf(Reflection\ClassReflection::class, $method->getDeclaringClass());
     }
 
     /**
@@ -37,9 +38,9 @@ class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getParametersReturnsFlowsParameterReflection($dummyArg1 = null, $dummyArg2 = null)
     {
-        $method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+        $method = new Reflection\MethodReflection(__CLASS__, __FUNCTION__);
         foreach ($method->getParameters() as $parameter) {
-            $this->assertInstanceOf(\TYPO3\Flow\Reflection\ParameterReflection::class, $parameter);
+            $this->assertInstanceOf(Reflection\ParameterReflection::class, $parameter);
             $this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
         }
     }

@@ -15,6 +15,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Security\Exception\InvalidRequestPatternException;
 use TYPO3\Flow\Security\RequestPatternInterface;
+use TYPO3\Flow\Utility\Ip as IpUtility;
 
 /**
  * This class holds a CIDR IP pattern an decides, if a \TYPO3\Flow\Mvc\RequestInterface object matches against this pattern,
@@ -61,51 +62,6 @@ class Ip implements RequestPatternInterface
     }
 
     /**
-     * Matches a CIDR range pattern against an IP
-     *
-     * @param string $ip The IP to match
-     * @param string $range The CIDR range pattern to match against
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
-     */
-    protected function cidrMatch($ip, $range)
-    {
-        if (strpos($range, '/') === false) {
-            $bits = null;
-            $subnet = $range;
-        } else {
-            list($subnet, $bits) = explode('/', $range);
-        }
-
-        $ip = inet_pton($ip);
-        $subnet = inet_pton($subnet);
-        if ($ip === false || $subnet === false) {
-            return false;
-        }
-
-        if (strlen($ip) > strlen($subnet)) {
-            $subnet = str_pad($subnet, strlen($ip), chr(0), STR_PAD_LEFT);
-        } elseif (strlen($subnet) > strlen($ip)) {
-            $ip = str_pad($ip, strlen($subnet), chr(0), STR_PAD_LEFT);
-        }
-
-        if ($bits === null) {
-            return ($ip === $subnet);
-        } else {
-            for ($i = 0; $i < strlen($ip); $i++) {
-                $mask = 0;
-                if ($bits > 0) {
-                    $mask = ($bits >= 8) ? 255 : (256 - (1 << (8 - $bits)));
-                    $bits -= 8;
-                }
-                if ((ord($ip[$i]) & $mask) !== (ord($subnet[$i]) & $mask)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Matches a \TYPO3\Flow\Mvc\RequestInterface against the set IP pattern rules
      *
      * @param RequestInterface $request The request that should be matched
@@ -120,6 +76,6 @@ class Ip implements RequestPatternInterface
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        return (boolean)$this->cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->options['cidrPattern']);
+        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->options['cidrPattern']);
     }
 }

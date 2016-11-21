@@ -12,22 +12,24 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\InterceptorInterface;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
 
 /**
  * This security interceptor always denys access.
  *
  * @Flow\Scope("singleton")
  */
-class AccessDeny implements \TYPO3\Flow\Security\Authorization\InterceptorInterface
+class AccessDeny implements InterceptorInterface
 {
     /**
      * Invokes nothing, always throws an AccessDenied Exception.
      *
      * @return boolean Always returns FALSE
-     * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
+     * @throws AccessDeniedException
      */
     public function invoke()
     {
-        throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
+        throw new AccessDeniedException('You are not allowed to perform this action.', 1216919280);
     }
 }

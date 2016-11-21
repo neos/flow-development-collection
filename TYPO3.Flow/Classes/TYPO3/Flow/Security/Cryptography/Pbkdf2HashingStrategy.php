@@ -11,14 +11,14 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Algorithms as UtilityAlgorithms;
+use TYPO3\Flow\Utility;
+use TYPO3\Flow\Security\Cryptography\Algorithms as CryptographyAlgorithms;
 
 /**
  * A PBKDF2 based password hashing strategy
  *
  */
-class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface
+class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
 {
     /**
      * Length of the dynamic random salt to generate in bytes
@@ -70,8 +70,8 @@ class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
      */
     public function hashPassword($password, $staticSalt = null)
     {
-        $dynamicSalt = UtilityAlgorithms::generateRandomString($this->dynamicSaltLength);
-        $result = Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
+        $dynamicSalt = Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
+        $result = CryptographyAlgorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
         return base64_encode($dynamicSalt) . ',' . base64_encode($result);
     }
 
@@ -94,6 +94,6 @@ class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
         $dynamicSalt = base64_decode($parts[0]);
         $derivedKey = base64_decode($parts[1]);
         $derivedKeyLength = strlen($derivedKey);
-        return $derivedKey === Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, $this->algorithm);
+        return $derivedKey === CryptographyAlgorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, $this->algorithm);
     }
 }

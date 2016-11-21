@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * A type converter for converting URI strings to Http Uri objects.
@@ -20,17 +23,17 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class UriTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter
+class UriTypeConverter extends AbstractTypeConverter
 {
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = \TYPO3\Flow\Http\Uri::class;
+    protected $targetType = Uri::class;
 
     /**
      * @var integer
@@ -43,15 +46,15 @@ class UriTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeCo
      * @param string $source The URI to be converted
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return \TYPO3\Flow\Http\Uri|\TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return Uri|Error if the input format is not supported or could not be converted for other reasons
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         try {
-            return new \TYPO3\Flow\Http\Uri($source);
+            return new Uri($source);
         } catch (\InvalidArgumentException $exception) {
-            return new \TYPO3\Flow\Error\Error('The given URI "%s" could not be converted', 1351594881, array($source));
+            return new Error('The given URI "%s" could not be converted', 1351594881, [$source]);
         }
     }
 }

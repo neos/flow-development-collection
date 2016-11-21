@@ -55,7 +55,7 @@ class TestingPrivilegeManager extends PrivilegeManager
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean TRUE if access is granted, FALSE otherwise
      */
-    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = array())
+    public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = [])
     {
         if ($this->overrideDecision === false) {
             return false;
