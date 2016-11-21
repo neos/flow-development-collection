@@ -46,7 +46,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @var array<string>
      */
-    protected $configurationPackageKeys = ['TYPO3.Flow', 'TYPO3.Fluid', 'TYPO3.Eel', 'TYPO3.Kickstart'];
+    protected $configurationPackageKeys = ['TYPO3.Flow', 'Neos.FluidAdaptor', 'TYPO3.Eel', 'TYPO3.Kickstart'];
 
     /**
      *
