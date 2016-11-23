@@ -2,7 +2,7 @@
     "name": "neos/filemonitor",
     "type": "neos-framework",
     "description": "Neos Filemonitoring",
-    "homepage": "http://www.flowframework.io",
+    "homepage": "https://flow.neos.io",
     "license": "MIT",
     "require": {
         "php": "~5.5||~7.0",
