@@ -26,7 +26,7 @@ class ControllerObjectName implements RequestPatternInterface
     protected $options;
 
     /**
-     * Expects options in the form array('controllerObjectNamePatterns' => '<regularExpression>')
+     * Expects options in the form array('controllerObjectNamePattern' => '<regularExpression>')
      *
      * @param array $options
      */

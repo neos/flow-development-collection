@@ -45,6 +45,7 @@ properties:
             'token': { type: string }
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
+            'token': { type: string, format: class-name }
       'authenticationStrategy':
         type: string
         required: TRUE
@@ -75,7 +76,6 @@ properties:
         required: TRUE
         properties:
           'default': { type: string, required: TRUE }
-          'fallback': { type: string, required: TRUE }
 
       'Pbkdf2HashingStrategy':
         type: dictionary

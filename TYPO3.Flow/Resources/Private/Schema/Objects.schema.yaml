@@ -19,7 +19,7 @@ additionalProperties:
           type: dictionary
           additionalProperties: FALSE
           properties:
-            'value': {type: string}
+            'value': {type: any}
             'setting': {type: string}
             'object':
               type: [dictionary, string]
@@ -45,6 +45,7 @@ additionalProperties:
           additionalProperties: FALSE
           properties:
             'setting': {type: string}
+            'value': {type: any}
             'object':
               type: [dictionary, string]
               # if string, require string to be a class name
