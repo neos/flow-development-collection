@@ -73,7 +73,7 @@ class Arguments extends \ArrayObject
      */
     public function offsetUnset($offset)
     {
-        $translatedOffset = $this->translateToLongArgumentName($offset);
+        $translatedOffset = $this->validateArgumentExistence($offset);
         parent::offsetUnset($translatedOffset);
 
         unset($this->argumentNames[$translatedOffset]);
@@ -91,7 +91,7 @@ class Arguments extends \ArrayObject
      */
     public function offsetExists($offset)
     {
-        $translatedOffset = $this->translateToLongArgumentName($offset);
+        $translatedOffset = $this->validateArgumentExistence($offset);
         return parent::offsetExists($translatedOffset);
     }
 
@@ -105,9 +105,9 @@ class Arguments extends \ArrayObject
      */
     public function offsetGet($offset)
     {
-        $translatedOffset = $this->translateToLongArgumentName($offset);
-        if ($translatedOffset === '') {
-            throw new NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
+        $translatedOffset = $this->validateArgumentExistence($offset);
+        if ($translatedOffset === false) {
+            throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
         }
         return parent::offsetGet($translatedOffset);
     }
@@ -188,21 +188,6 @@ class Arguments extends \ArrayObject
     }
 
     /**
-     * Returns the short names of all arguments contained in this object that have one.
-     *
-     * @return array Argument short names
-     * @api
-     */
-    public function getArgumentShortNames()
-    {
-        $argumentShortNames = [];
-        foreach ($this as $argument) {
-            $argumentShortNames[$argument->getShortName()] = true;
-        }
-        return array_keys($argumentShortNames);
-    }
-
-    /**
      * Magic setter method for the argument values. Each argument
      * value can be set by just calling the setArgumentName() method.
      *
@@ -216,8 +201,8 @@ class Arguments extends \ArrayObject
         if (substr($methodName, 0, 3) !== 'set') {
             throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
         }
-        $firstLowerCaseArgumentName = $this->translateToLongArgumentName(strtolower($methodName[3]) . substr($methodName, 4));
-        $firstUpperCaseArgumentName = $this->translateToLongArgumentName(ucfirst(substr($methodName, 3)));
+        $firstLowerCaseArgumentName = $this->validateArgumentExistence(strtolower($methodName[3]) . substr($methodName, 4));
+        $firstUpperCaseArgumentName = $this->validateArgumentExistence(ucfirst(substr($methodName, 3)));
 
         if (in_array($firstLowerCaseArgumentName, $this->getArgumentNames())) {
             $argument = parent::offsetGet($firstLowerCaseArgumentName);
@@ -238,17 +223,13 @@ class Arguments extends \ArrayObject
      * @param string $argumentName argument name
      * @return string long argument name or empty string
      */
-    protected function translateToLongArgumentName($argumentName)
+    protected function validateArgumentExistence($argumentName)
     {
         if (in_array($argumentName, $this->getArgumentNames())) {
             return $argumentName;
         }
-        foreach ($this as $argument) {
-            if ($argumentName === $argument->getShortName()) {
-                return $argument->getName();
-            }
-        }
-        return '';
+
+        return false;
     }
 
     /**
