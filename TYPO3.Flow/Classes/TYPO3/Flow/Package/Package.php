@@ -142,7 +142,7 @@ class Package implements PackageInterface
      */
     public function getFunctionalTestsClassFiles()
     {
-        $namespaces = $this->getNamespaces()
+        $namespaces = $this->getNamespaces();
         if (is_dir($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL)) {
             // TODO REFACTOR replace with usage of "autoload-dev"
             $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths([
