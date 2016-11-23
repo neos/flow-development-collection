@@ -215,11 +215,11 @@ class Account
         if ($this->accountIdentifier === null || $this->accountIdentifier === '') {
             throw new SecurityException('The account identifier for the account where the party is tried to be got is not yet set. Make sure that you set the account identifier prior to calling getParty().', 1397747246);
         }
-        if (!$this->objectManager->isRegistered('TYPO3\Party\Domain\Service\PartyService')) {
-            throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747288);
+        if (!$this->objectManager->isRegistered(PartyService::class)) {
+            throw new SecurityException('The ' . PartyService::class . ' is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747288);
         }
         /** @var PartyService $partyService */
-        $partyService = $this->objectManager->get('TYPO3\Party\Domain\Service\PartyService');
+        $partyService = $this->objectManager->get(PartyService::class);
         return $partyService->getAssignedPartyOfAccount($this);
     }
 
@@ -235,8 +235,8 @@ class Account
         if ($this->accountIdentifier === null || $this->accountIdentifier === '') {
             throw new SecurityException('The account identifier for the account where the party is tried to be set is not yet set. Make sure that you set the account identifier prior to calling setParty().', 1397745354);
         }
-        if (!$this->objectManager->isRegistered(\TYPO3\Party\Domain\Service\PartyService::class)) {
-            throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747413);
+        if (!$this->objectManager->isRegistered(PartyService::class)) {
+            throw new SecurityException('The ' . PartyService::class . ' is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747413);
         }
         /** @var PartyService $partyService */
         $partyService = $this->objectManager->get(PartyService::class);

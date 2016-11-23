@@ -376,9 +376,9 @@ class FilesTest extends \PHPUnit_Framework_TestCase
      * @outputBuffering enabled
      *     ... because the chmod call in ResourceManager emits a warning making this fail in strict mode
      */
-    public function unlinkReturnsFalseIfSpecifiedPathDoesNotExist()
+    public function unlinkReturnsTrueIfSpecifiedPathDoesNotExist()
     {
-        $this->assertFalse(Files::unlink('NonExistingPath'));
+        $this->assertTrue(Files::unlink('NonExistingPath'));
     }
 
     /**

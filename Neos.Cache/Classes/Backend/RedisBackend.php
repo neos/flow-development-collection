@@ -132,6 +132,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (!$result instanceof \Redis) {
             $this->verifyRedisVersionIsSupported();
         }
+        $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
         $this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
         foreach ($tags as $tag) {
             $this->redis->sAdd($this->buildKey('tag:' . $tag), $entryIdentifier);
@@ -260,7 +261,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         }
 
         $script = "
-		local entries = redis.call('SMEMBERS',KEYS[1])
+		local entries = redis.call('SMEMBERS', KEYS[1])
 		for k1,entryIdentifier in ipairs(entries) do
 			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
 			local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
@@ -268,11 +269,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 				redis.call('SREM', ARGV[1]..'tag:'..tagName, entryIdentifier)
 			end
 			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
+			redis.call('LREM', KEYS[2], 0, entryIdentifier)
 		end
 		return #entries
 		";
-        $count = $this->redis->eval($script, [$this->buildKey('tag:' . $tag), $this->buildKey('')], 1);
-
+        $count = $this->redis->eval($script, [$this->buildKey('tag:' . $tag), $this->buildKey('entries'), $this->buildKey('')], 2);
         return $count;
     }
 
@@ -310,7 +311,13 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function key()
     {
-        return $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
+        $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
+        if ($entryIdentifier !== false) {
+            if (!$this->has($entryIdentifier)) {
+                return false;
+            }
+        }
+        return $entryIdentifier;
     }
 
     /**
