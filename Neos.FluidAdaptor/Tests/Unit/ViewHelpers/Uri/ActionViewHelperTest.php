@@ -141,7 +141,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBase
         $this->request->expects($this->atLeastOnce())->method('isMainRequest')->will($this->returnValue(false));
         $this->request->expects($this->atLeastOnce())->method('getMainRequest')->will($this->returnValue($mainRequest));
 
-        $this->controllerContext = $this->getMock(\TYPO3\Flow\Mvc\Controller\ControllerContext::class, array(), array(), '', false);
+        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 
