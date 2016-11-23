@@ -24,7 +24,7 @@ use PHPUnit_Framework_Assert as Assert;
  *
  * Note that this trait requires that the following members are available:
  *
- * - $this->objectManager (TYPO3\Flow\Object\ObjectManagerInterface)
+ * - $this->objectManager (TYPO3\Flow\ObjectManagement\ObjectManagerInterface)
  * - $this->environment (TYPO3\Flow\Utility\Environment)
  *
  * Note: This trait expects the IsolatedBehatStepsTrait to be available!

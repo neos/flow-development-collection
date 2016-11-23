@@ -20,7 +20,7 @@ interface JoinPointInterface
     /**
      * Returns the reference to the proxy class instance
      *
-     * @return \TYPO3\Flow\Object\Proxy\ProxyInterface
+     * @return \TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface
      */
     public function getProxy();
 

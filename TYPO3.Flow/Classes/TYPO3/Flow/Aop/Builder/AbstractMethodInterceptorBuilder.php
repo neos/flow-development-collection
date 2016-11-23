@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Aop\Builder;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\ObjectManagement\Proxy\Compiler;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

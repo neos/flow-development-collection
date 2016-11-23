@@ -12,7 +12,7 @@ namespace TYPO3\Flow\SignalSlot;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A dispatcher which dispatches signals by calling its registered slot methods

@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Mvc;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Object\Exception\UnknownObjectException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\Exception\UnknownObjectException;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;

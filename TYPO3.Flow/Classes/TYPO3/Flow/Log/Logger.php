@@ -15,7 +15,7 @@ use TYPO3\Flow\Error\Debugger;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Log\Exception\NoSuchBackendException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The default logger of the Flow framework

@@ -289,7 +289,7 @@ Localizing resources
 Resources can be localized easily in Flow. The only thing you need to do is to put a
 locale identifier just before the extension. For example, *foobar.png* can be localized as
 *foobar.en.png*, *foobar.de_DE.png*, and so on. This works with any resource type when
-working with the Flow Resource Framework.
+working with the Flow ResourceManagement.
 
 Just use the ``getLocalizedFilename()`` of the i18n ``Service`` singleton to obtain a
 localized resource path by providing a path to the non-localized file and a ``Locale``

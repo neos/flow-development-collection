@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cli;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * An interface which allows a CommandController to tweak command descriptions before they are displayed to the user.

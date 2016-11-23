@@ -16,7 +16,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;

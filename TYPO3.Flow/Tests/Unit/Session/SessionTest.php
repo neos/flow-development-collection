@@ -16,7 +16,7 @@ use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\Exception\SessionNotStartedException;
 use TYPO3\Flow\Session\Session;

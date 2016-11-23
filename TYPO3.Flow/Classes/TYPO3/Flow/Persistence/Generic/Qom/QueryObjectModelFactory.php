@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The Query Object Model Factory

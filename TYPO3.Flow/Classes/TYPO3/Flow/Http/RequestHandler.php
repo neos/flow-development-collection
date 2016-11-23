@@ -97,7 +97,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function handleRequest()
     {
-        // Create the request very early so the Resource Management has a chance to grab it:
+        // Create the request very early so the ResourceManagement has a chance to grab it:
         $request = Request::createFromEnvironment();
         $response = new Response();
         $this->componentContext = new ComponentContext($request, $response);

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Persistence\Generic;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Exception\InvalidQueryException;
 use TYPO3\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException;
 use TYPO3\Flow\Persistence\Generic\Qom\QueryObjectModelFactory;

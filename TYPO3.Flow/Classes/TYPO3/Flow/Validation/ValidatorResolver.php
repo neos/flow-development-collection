@@ -12,8 +12,8 @@ namespace TYPO3\Flow\Validation;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\Configuration\Configuration;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Exception\InvalidTypeException;
 use TYPO3\Flow\Utility\TypeHandling;
