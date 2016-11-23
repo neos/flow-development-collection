@@ -303,7 +303,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageWritesAComposerManifestUsingTheGivenMetaObject()
     {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', null, null, null, [
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [
             'name' => 'acme/yetanothertestpackage',
             'type' => 'typo3-flow-package',
             'description' => 'Yet Another Test Package',
@@ -337,7 +337,7 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', null, null, null, $metaData);
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', $metaData);
 
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
@@ -552,7 +552,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
 
-        $this->packageManager->createPackage('Some.Package', null, null, null, [
+        $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package'
         ]);
 
@@ -567,7 +567,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
 
-        $this->packageManager->createPackage('Some.Package', null, null, null, [
+        $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package',
             'type' => 'typo3-flow-package'
         ]);

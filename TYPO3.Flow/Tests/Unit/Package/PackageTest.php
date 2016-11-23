@@ -109,8 +109,8 @@ class PackageTest extends UnitTestCase
 
         $package = new Package('Acme.MyPackage', 'acme/mypackage', $packagePath, ['psr-0' => ['acme\\MyPackage' => 'Classes/']]);
 
-        $metaData = $package->getPackageMetaData();
-        $this->assertEquals('flow-test', $metaData->getPackageType());
+        $packageType = $package->getComposerManifest('type');
+        $this->assertEquals('flow-test', $packageType);
     }
 
     /**

@@ -95,7 +95,7 @@ class PackageCommandController extends CommandController
             $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageType]);
             $this->quit(1);
         }
-        $package = $this->packageManager->createPackage($packageKey, null, null, null, ['type' => $packageType]);
+        $package = $this->packageManager->createPackage($packageKey, ['type' => $packageType], null);
         $this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
     }
 
