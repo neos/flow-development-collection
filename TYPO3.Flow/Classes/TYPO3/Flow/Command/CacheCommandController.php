@@ -20,6 +20,7 @@ use TYPO3\Flow\Core\LockManager;
 use TYPO3\Flow\Object\ObjectManager;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Flow\Utility\Environment;
 
 /**
@@ -60,6 +61,11 @@ class CacheCommandController extends CommandController
      * @var Environment
      */
     protected $environment;
+
+    /**
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
 
     /**
      * @param CacheManager $cacheManager
@@ -113,6 +119,15 @@ class CacheCommandController extends CommandController
     public function injectEnvironment(Environment $environment)
     {
         $this->environment = $environment;
+    }
+
+    /**
+     * @param SessionManagerInterface $sessionManager
+     * @return void
+     */
+    public function injectSessionManager(SessionManagerInterface $sessionManager)
+    {
+        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -226,6 +241,22 @@ class CacheCommandController extends CommandController
     {
         $this->emitWarmupCaches();
         $this->outputLine('Warmed up caches.');
+    }
+
+    /**
+     * Collects the garbage sessions that have expired
+     *
+     * This is intended for big applications, as running garbage collection over
+     * potentially hundreds of thousands of sessions every few requests isn't
+     * something you want to do in a production environment. Setup a cronjob
+     * instead that calls this command at night (or once every few hours).
+     *
+     * @return void
+     */
+    public function collectGarbageSessionsCommand()
+    {
+        $count = $this->sessionManager->getCurrentSession()->collectGarbage();
+        $this->outputLine('Removed %d expired sessions.', [$count]);
     }
 
     /**
