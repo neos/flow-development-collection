@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;

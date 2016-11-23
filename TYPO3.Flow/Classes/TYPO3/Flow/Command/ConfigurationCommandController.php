@@ -17,8 +17,8 @@ use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
 use TYPO3\Flow\Configuration\Exception\SchemaValidationException;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Notice;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
 use Neos\Utility\Arrays;
 use Neos\Utility\SchemaGenerator;
 

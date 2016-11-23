@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 
 /**
  * A validator which will not validate Aggregates that are lazy loaded and uninitialized.
@@ -27,7 +27,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      * an uninitialized lazy loading proxy.
      *
      * @param mixed $value The value that should be validated
-     * @return \TYPO3\Flow\Error\Result
+     * @return \Neos\Error\Messages\Result
      * @api
      */
     public function validate($value)

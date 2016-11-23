@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Authentication\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Error as FlowError;
+use Neos\Error\Messages as FlowError;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Mvc;
 

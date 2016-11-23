@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Property;
  * source code.
  */
 
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 
 /**
  * Interface for type converters, which can convert from a simple type to an object or another simple type.
@@ -99,7 +99,7 @@ interface TypeConverterInterface
      * - an arbitrary object, or a simple type (which has been created while mapping).
      *   This is the normal case.
      * - NULL, indicating that this object should *not* be mapped (i.e. a "File Upload" Converter could return NULL if no file has been uploaded, and a silent failure should occur.
-     * - An instance of \TYPO3\Flow\Error\Error -- This will be a user-visible error message later on.
+     * - An instance of \Neos\Error\Messages\Error -- This will be a user-visible error message later on.
      * Furthermore, it should throw an Exception if an unexpected failure (like a security error) occurred or a configuration issue happened.
      *
      * @param mixed $source

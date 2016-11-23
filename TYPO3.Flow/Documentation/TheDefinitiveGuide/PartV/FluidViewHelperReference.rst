@@ -371,7 +371,7 @@ Arguments
 
 * ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
 
-* ``severity`` (string, *optional*): severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
+* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 

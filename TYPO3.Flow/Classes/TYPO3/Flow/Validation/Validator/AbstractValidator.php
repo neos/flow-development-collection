@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
-use TYPO3\Flow\Error\Result as ErrorResult;
+use Neos\Error\Messages\Result as ErrorResult;
 use TYPO3\Flow\Validation\Error as ValidationError;
 
 /**

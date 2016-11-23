@@ -16,7 +16,7 @@ use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Mvc;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
-use TYPO3\Flow\Error as FLowError;
+use Neos\Error\Messages as FLowError;
 
 /**
  * Testcase for the MVC Controller Argument

@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Validation;
  * This object holds a validation error.
  *
  */
-class Error extends \TYPO3\Flow\Error\Error
+class Error extends \Neos\Error\Messages\Error
 {
     /**
      * @var string

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Property\TypeConverter\Error;
  * source code.
  */
 
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 
 /**
  * A "target not found" error that is issued when a referenced object/value could not be fetched

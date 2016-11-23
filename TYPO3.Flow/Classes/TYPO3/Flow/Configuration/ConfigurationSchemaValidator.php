@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Configuration;
 
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Notice;
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Result;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -60,7 +60,7 @@ class ConfigurationSchemaValidator
      * @param string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
      * @param string $path (optional) configuration path to validate
      * @param array $loadedSchemaFiles (optional). if given, will be filled with a list of loaded schema files
-     * @return \TYPO3\Flow\Error\Result the result of the validation
+     * @return \Neos\Error\Messages\Result the result of the validation
      * @throws Exception\SchemaValidationException
      */
     public function validate($configurationType = null, $path = null, &$loadedSchemaFiles = [])
@@ -85,7 +85,7 @@ class ConfigurationSchemaValidator
      * @param string $configurationType the configuration typr to validate
      * @param string $path configuration path to validate, or NULL.
      * @param array $loadedSchemaFiles will be filled with a list of loaded schema files
-     * @return \TYPO3\Flow\Error\Result
+     * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
     protected function validateSingleType($configurationType, $path, &$loadedSchemaFiles)

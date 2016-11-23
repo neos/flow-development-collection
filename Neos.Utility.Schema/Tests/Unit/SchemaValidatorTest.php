@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use Neos\Utility\SchemaValidator;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 
 /**
  * Testcase for the configuration validator

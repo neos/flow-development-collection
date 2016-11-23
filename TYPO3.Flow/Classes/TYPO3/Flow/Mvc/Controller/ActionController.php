@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\InvalidActionVisibilityException;
@@ -707,7 +707,7 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \TYPO3\Flow\Error\Message The flash message or FALSE if no flash message should be set
+     * @return \Neos\Error\Messages\Message The flash message or FALSE if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()

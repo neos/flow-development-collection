@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Error\Result as ErrorResult;
+use Neos\Error\Messages\Result as ErrorResult;
 
 /**
  * A generic object validator which allows for specifying property validators.

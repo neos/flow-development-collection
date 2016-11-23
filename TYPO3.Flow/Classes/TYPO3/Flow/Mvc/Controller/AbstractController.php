@@ -21,11 +21,10 @@ use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\ResponseInterface;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\MediaTypes;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 use TYPO3\Flow\Validation\ValidatorResolver;
 
 /**
@@ -153,26 +152,26 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $messageCode
      * @return void
      * @throws \InvalidArgumentException if the message body is no string
-     * @see Message
+     * @see Error\Message
      * @api
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (!is_string($messageBody)) {
             throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
         }
         switch ($severity) {
-            case Message::SEVERITY_NOTICE:
+            case Error\Message::SEVERITY_NOTICE:
                 $message = new Error\Notice($messageBody, $messageCode, $messageArguments, $messageTitle);
                 break;
-            case Message::SEVERITY_WARNING:
+            case Error\Message::SEVERITY_WARNING:
                 $message = new Error\Warning($messageBody, $messageCode, $messageArguments, $messageTitle);
                 break;
-            case Message::SEVERITY_ERROR:
+            case Error\Message::SEVERITY_ERROR:
                 $message = new Error\Error($messageBody, $messageCode, $messageArguments, $messageTitle);
                 break;
             default:
-                $message = new Message($messageBody, $messageCode, $messageArguments, $messageTitle);
+                $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
             break;
         }
         $this->flashMessageContainer->addMessage($message);

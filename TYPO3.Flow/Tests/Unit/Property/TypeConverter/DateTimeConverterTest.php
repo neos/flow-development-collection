@@ -15,7 +15,7 @@ use TYPO3\Flow\Property\TypeConverter\DateTimeConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Error\Error as FlowError;
+use Neos\Error\Messages\Error as FlowError;
 
 /**
  * Testcase for the DateTime converter

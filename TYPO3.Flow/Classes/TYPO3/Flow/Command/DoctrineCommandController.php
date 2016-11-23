@@ -16,7 +16,7 @@ use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Migrations\MigrationException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Error\Debugger;
+use Neos\Error\Messages\Debugger;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package;
 use TYPO3\Flow\Package\PackageManagerInterface;

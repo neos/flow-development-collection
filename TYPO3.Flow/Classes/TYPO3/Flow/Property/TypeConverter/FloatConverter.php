@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
@@ -126,7 +126,7 @@ class FloatConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return float|\TYPO3\Flow\Error\Error
+     * @return float|\Neos\Error\Messages\Error
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Result as ErrorResult;
+use Neos\Error\Messages\Result as ErrorResult;
 use Neos\Utility\TypeHandling;
 
 /**

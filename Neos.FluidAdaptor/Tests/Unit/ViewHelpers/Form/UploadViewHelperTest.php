@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\ResourceManagement\PersistentResource;

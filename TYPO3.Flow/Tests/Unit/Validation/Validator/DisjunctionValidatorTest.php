@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Validation\Validator\DisjunctionValidator;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 
 /**
  * Testcase for the Disjunction Validator

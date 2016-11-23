@@ -18,7 +18,7 @@ use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\ResourceManagement\ResourceTypeConverter;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Error as FlowError;
+use Neos\Error\Messages as FlowError;
 
 /**
  * Test case for the ResourceTypeConverter class

@@ -476,7 +476,7 @@ possibilities what can be returned in ``convertFrom()``:
   this.
 
 * If the error is recoverable, and the user should re-submit his data, return a
-  ``TYPO3\Flow\Error\Error`` object (or a subclass thereof), containing information
+  ``Neos\Error\Messages\Error`` object (or a subclass thereof), containing information
   about the error. In this case, the property is not mapped at all (``NULL`` is
   returned, like above).
 

@@ -17,8 +17,8 @@ use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Core\ApplicationContext;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 

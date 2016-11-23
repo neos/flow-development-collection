@@ -73,6 +73,6 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithInternalArgumentsContainingObjects()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=fourth&passSomeObjectArguments=1&arguments[nonObject1]=First&arguments[nonObject2]=42');
-        $this->assertEquals('fourthAction-First-42-TYPO3\Flow\Error\Message', $response->getContent());
+        $this->assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getContent());
     }
 }

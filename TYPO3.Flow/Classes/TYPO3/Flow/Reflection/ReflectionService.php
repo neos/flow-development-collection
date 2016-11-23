@@ -1977,7 +1977,7 @@ class ReflectionService
 
             $data = ($useIgBinary ? igbinary_unserialize(file_get_contents($pathAndFilename)) : unserialize(file_get_contents($pathAndFilename)));
             foreach ($data as $propertyName => $propertyValue) {
-                $this->$propertyName = \Neos\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
+                $this->$propertyName = Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
             }
         }
 

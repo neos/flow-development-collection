@@ -15,7 +15,7 @@ use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\FloatConverter;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Error\Error as FlowError;
+use Neos\Error\Messages\Error as FlowError;
 
 /**
  * Testcase for the Float converter

@@ -85,7 +85,7 @@ the API of every validator is demonstrated in the following code example::
 		'maximum' => 20
 	));
 
-		// $result is of type TYPO3\Flow\Error\Result
+		// $result is of type Neos\Error\Messages\Result
 	$result = $validator->validate('myExampleString');
 	$result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
 
@@ -100,7 +100,7 @@ for a detailed description.
 
 .. note::
 
-	The ``TYPO3\Flow\Error\Result`` object has been introduced in order to
+	The ``Neos\Error\Messages\Result`` object has been introduced in order to
 	make more structured error output possible -- which is especially needed when
 	objects with sub-properties should be validated recursively.
 

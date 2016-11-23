@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
@@ -82,7 +82,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
      * Renders flash messages that have been added to the FlashMessageContainer in previous request(s).
      *
      * @param string $as The name of the current flashMessage variable for rendering inside
-     * @param string $severity severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
+     * @param string $severity severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
      * @return string rendered Flash Messages, if there are any.
      * @api
      */

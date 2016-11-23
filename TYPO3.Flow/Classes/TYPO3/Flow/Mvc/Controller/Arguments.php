@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use TYPO3\Flow\Mvc\Exception\NoSuchArgumentException;
 
 /**

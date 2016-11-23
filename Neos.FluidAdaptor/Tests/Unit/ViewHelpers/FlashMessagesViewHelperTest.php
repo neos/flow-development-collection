@@ -69,23 +69,23 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
         return array(
             array(
                 '<li class="flashmessages-ok">Some Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Message('Some Flash Message'))
+                array(new \Neos\Error\Messages\Message('Some Flash Message'))
             ),
             array(
                 '<li class="flashmessages-error">Error &quot;dynamic&quot; Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Error('Error %s Flash Message', null, array('"dynamic"')))
+                array(new \Neos\Error\Messages\Error('Error %s Flash Message', null, array('"dynamic"')))
             ),
             array(
                 '<li class="flashmessages-error">Error Flash &quot;Message&quot;</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Error('Error Flash "Message"'), new \TYPO3\Flow\Error\Notice('Notice Flash Message'))
+                array(new \Neos\Error\Messages\Error('Error Flash "Message"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
             ),
             array(
                 '<li class="flashmessages-warning"><h3>Some &quot;Warning&quot;</h3>Warning message body</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Warning('Warning message body', null, array(), 'Some "Warning"'), new \TYPO3\Flow\Error\Notice('Notice Flash Message'))
+                array(new \Neos\Error\Messages\Warning('Warning message body', null, array(), 'Some "Warning"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
             ),
             array(
                 '<li class="customClass-ok">Message 01</li><li class="customClass-notice">Message 02</li>',
-                array(new \TYPO3\Flow\Error\Message('Message 01'), new \TYPO3\Flow\Error\Notice('Message 02')),
+                array(new \Neos\Error\Messages\Message('Message 01'), new \Neos\Error\Messages\Notice('Message 02')),
                 'customClass'
             ),
         );

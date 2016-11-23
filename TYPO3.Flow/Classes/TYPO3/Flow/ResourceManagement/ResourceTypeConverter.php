@@ -12,7 +12,7 @@ namespace TYPO3\Flow\ResourceManagement;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error as FlowError;
+use Neos\Error\Messages\Error as FlowError;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;

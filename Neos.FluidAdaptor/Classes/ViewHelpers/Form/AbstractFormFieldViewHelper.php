@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Reflection\ObjectAccess;
 

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 use TYPO3\Flow\Property\TypeConverter\FloatConverter;
 use TYPO3\Flow\Property\TypeConverterInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 
 /**
  * Testcase for the Float converter

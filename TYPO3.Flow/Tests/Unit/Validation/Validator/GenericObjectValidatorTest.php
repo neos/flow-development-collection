@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  */
 
 use TYPO3\Flow\Validation\Validator\GenericObjectValidator;
-use TYPO3\Flow\Error;
+use Neos\Error\Messages as Error;
 use TYPO3\Flow\Validation\Validator\IntegerValidator;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 

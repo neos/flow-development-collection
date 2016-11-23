@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;

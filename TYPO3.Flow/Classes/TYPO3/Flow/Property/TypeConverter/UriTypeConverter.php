@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 

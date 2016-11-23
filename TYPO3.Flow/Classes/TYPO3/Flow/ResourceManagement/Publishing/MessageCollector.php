@@ -12,10 +12,10 @@ namespace TYPO3\Flow\ResourceManagement\Publishing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\Error\Notice;
-use TYPO3\Flow\Error\Warning;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Warning;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 

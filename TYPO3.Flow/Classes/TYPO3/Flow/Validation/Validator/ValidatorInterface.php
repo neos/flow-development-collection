@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result as ErrorResult;
+use Neos\Error\Messages\Result as ErrorResult;
 
 /**
  * Contract for a validator

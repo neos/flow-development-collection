@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 
 /**
  * A controller fixture for testing the AbstractController functionality.

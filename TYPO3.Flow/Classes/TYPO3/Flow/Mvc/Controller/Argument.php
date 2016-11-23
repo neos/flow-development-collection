@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use TYPO3\Flow\Property\PropertyMapper;
 use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
@@ -253,7 +253,7 @@ class Argument
     }
 
     /**
-     * @return array<TYPO3\Flow\Error\Result> Validation errors which have occured.
+     * @return array<Neos\Error\Messages\Result> Validation errors which have occured.
      * @api
      */
     public function getValidationResults()

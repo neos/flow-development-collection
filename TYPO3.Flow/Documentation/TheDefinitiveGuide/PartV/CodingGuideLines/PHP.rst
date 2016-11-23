@@ -384,7 +384,7 @@ These are the rules for naming files:
   of the package *TYPO3.TemplateEngine*
 
 ``TYPO3.Flow/Classes/TYPO3/Flow/Error/RuntimeException.php``
-  Contains the ``\TYPO3\Flow\Error\RuntimeException`` being a part of the package
+  Contains the ``\Neos\Error\Messages\RuntimeException`` being a part of the package
   *TYPO3.Flow*
 
 ``Acme.DataAccess/Classes/Acme/DataAccess/CustomQuery.php``

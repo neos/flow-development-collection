@@ -25,7 +25,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Cli;
-use TYPO3\Flow\Error as FlowError;
+use Neos\Error\Messages as FlowError;
 
 /**
  * Testcase for the MVC Abstract Controller

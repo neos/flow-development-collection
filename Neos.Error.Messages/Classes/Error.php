@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Error;
+namespace Neos\Error\Messages;
 
 /*
  * This file is part of the Neos.Error.Messages package.

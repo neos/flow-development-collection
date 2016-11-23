@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Http;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error as FlowError;
+use Neos\Error\Messages as FlowError;
 use Neos\Utility\Unicode;
 
 /**

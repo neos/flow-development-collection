@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Mvc;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 
 /**
  * This is a container for all Flash Messages.

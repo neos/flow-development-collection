@@ -872,7 +872,7 @@ which expects the following arguments:
 * ``$messageBody`` (required): The message which should be shown
 * ``$messageTitle``: The title of the message
 * ``$severity``: The severity of the message; by default "OK" is used. Needs to be one
-  of TYPO3\Flow\Error\Message::SEVERITY_* constants (OK, NOTICE, WARNING, ERROR)
+  of Neos\Error\Messages\Message::SEVERITY_* constants (OK, NOTICE, WARNING, ERROR)
 * ``$messageArguments`` (array): If the message contains any placeholders, these can be
   filled here. See the PHP function ``printf`` for details on the placeholder format.
 * ``$messageCode`` (integer): unique code of this message, can be used f.e. for localization.
@@ -882,7 +882,7 @@ which expects the following arguments:
 Creating a Flash Messages is a matter of a single line of code::
 
 	$this->addFlashMessage('Everything is all right.');
-	$this->addFlashMessage('Sorry, I messed it all up!', 'My Fault', \TYPO3\Flow\Error\Message::SEVERITY_ERROR);
+	$this->addFlashMessage('Sorry, I messed it all up!', 'My Fault', \Neos\Error\Messages\Message::SEVERITY_ERROR);
 
 The flash messages can be rendered inside the template using the ``<f:flashMessages />``
 ViewHelper. Please consult the ViewHelper for a full reference.

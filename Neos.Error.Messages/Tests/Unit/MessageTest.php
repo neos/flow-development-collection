@@ -11,7 +11,7 @@ namespace Neos\Error\Messages\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Error;
+use Neos\Error\Messages\Message;
 
 /**
  * Testcase for the Message object
@@ -25,7 +25,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
-        $message = new Error\Message($someMessage, $someMessageCode);
+        $message = new Message($someMessage, $someMessageCode);
         $this->assertEquals($someMessage, $message->getMessage());
     }
 
@@ -36,7 +36,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $someArguments = ['Foo', 'Bar'];
         $someMessageCode = 12345;
-        $message = new Error\Message('', $someMessageCode, $someArguments);
+        $message = new Message('', $someMessageCode, $someArguments);
         $this->assertEquals($someArguments, $message->getArguments());
     }
 
@@ -47,7 +47,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
-        $message = new Error\Message($someMessage, $someMessageCode);
+        $message = new Message($someMessage, $someMessageCode);
         $this->assertEquals($someMessageCode, $message->getCode());
     }
 
@@ -58,7 +58,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
-        $message = new Error\Message($someMessage, $someMessageCode);
+        $message = new Message($someMessage, $someMessageCode);
         $this->assertEquals($someMessage, $message->render());
     }
 
@@ -70,7 +70,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $someMessage = 'The message with %2$s and %1$s';
         $someArguments = ['Foo', 'Bar'];
         $someMessageCode = 12345;
-        $message = new Error\Message($someMessage, $someMessageCode, $someArguments);
+        $message = new Message($someMessage, $someMessageCode, $someArguments);
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = $message->render();
@@ -85,7 +85,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $someMessage = 'The message with %2$s and %1$s';
         $someArguments = ['Foo', 'Bar'];
         $someMessageCode = 12345;
-        $message = new Error\Message($someMessage, $someMessageCode, $someArguments);
+        $message = new Message($someMessage, $someMessageCode, $someArguments);
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = (string)$message;

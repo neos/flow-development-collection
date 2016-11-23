@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Error\Error as FlowError;
+use Neos\Error\Messages\Error as FlowError;
 
 /**
  * Testcase for the Error object
