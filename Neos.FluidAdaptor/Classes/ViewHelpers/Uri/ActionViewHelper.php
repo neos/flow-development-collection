@@ -53,12 +53,13 @@ class ActionViewHelper extends AbstractViewHelper
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one
+     * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
+     * @param boolean $useMainRequest If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
      * @return string The rendered link
      * @throws ViewHelper\Exception
      * @api
      */
-    public function render($action, array $arguments = array(), $controller = null, $package = null, $subpackage = null, $section = '', $format = '', array $additionalParams = array(), $absolute = false, $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = false)
+    public function render($action, array $arguments = array(), $controller = null, $package = null, $subpackage = null, $section = '', $format = '', array $additionalParams = array(), $absolute = false, $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = false, $useMainRequest = false)
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
         if ($useParentRequest === true) {
@@ -68,7 +69,14 @@ class ActionViewHelper extends AbstractViewHelper
             }
             $uriBuilder = clone $uriBuilder;
             $uriBuilder->setRequest($request->getParentRequest());
+        } elseif ($useMainRequest === true) {
+            $request = $this->controllerContext->getRequest();
+            if (!$request->isMainRequest()) {
+                $uriBuilder = clone $uriBuilder;
+                $uriBuilder->setRequest($request->getMainRequest());
+            }
         }
+
         $uriBuilder
             ->reset()
             ->setSection($section)

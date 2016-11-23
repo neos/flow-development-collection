@@ -177,4 +177,29 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBase
 
         $viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), false, false);
     }
+
+    /**
+     * @test
+     */
+    public function renderUsesParentRequestIfUseMainRequestIsSet()
+    {
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+
+        $mainRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+
+        $this->request = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->request->expects($this->atLeastOnce())->method('isMainRequest')->will($this->returnValue(false));
+        $this->request->expects($this->atLeastOnce())->method('getMainRequest')->will($this->returnValue($mainRequest));
+
+        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
+        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
+
+        $this->uriBuilder->expects($this->atLeastOnce())->method('setRequest')->with($mainRequest);
+
+        $this->renderingContext->setControllerContext($this->controllerContext);
+        $this->injectDependenciesIntoViewHelper($viewHelper);
+
+        $viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), false, false, true);
+    }
 }
