@@ -673,6 +673,12 @@ will be increased by a certain value.
 
 If the package is "My.Foo" and the Format is "html" the result will be 10001
 
+.. note::
+
+	Previously the configuration of all matching ``Views.yaml`` filters was merged.
+	From version 4.0 on only the matching filter with the highest weight is respected
+	in order to reduce ambiguity.
+
 Controller Context
 ~~~~~~~~~~~~~~~~~~
 
