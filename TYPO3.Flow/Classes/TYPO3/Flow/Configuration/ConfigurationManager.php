@@ -608,7 +608,7 @@ class ConfigurationManager
     }
 
     /**
-     * Replaces variables (in the format %CONSTANT% or %ENV::ENVIRONMENT_VARIABLE)
+     * Replaces variables (in the format %CONSTANT% or %env:ENVIRONMENT_VARIABLE%)
      * in the given php exported configuration string.
      *
      * @param string $phpString
