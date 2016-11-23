@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\Builder\ClassNameIndex;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
-use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\ObjectManagement\Proxy\Compiler;
 use TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException;
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Reflection\ReflectionService;

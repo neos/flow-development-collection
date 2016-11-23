@@ -12,8 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Session\Aspect;
  */
 
 use TYPO3\Flow\Aop\Builder\ClassNameIndex;
-use TYPO3\Flow\Object\CompileTimeObjectManager;
-use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
 use TYPO3\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter;
 use TYPO3\Flow\Tests\UnitTestCase;
 

@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  */
 
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;

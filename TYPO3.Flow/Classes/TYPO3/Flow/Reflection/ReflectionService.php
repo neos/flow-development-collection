@@ -21,7 +21,7 @@ use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Core\ClassLoader;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\Proxy\ProxyInterface;
+use TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface;
 use TYPO3\Flow\Package;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;

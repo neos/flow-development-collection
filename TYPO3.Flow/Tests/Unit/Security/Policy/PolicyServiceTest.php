@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Policy;
  */
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use TYPO3\Flow\Security\Policy\PolicyService;

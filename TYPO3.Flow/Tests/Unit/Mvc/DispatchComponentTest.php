@@ -18,7 +18,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\DispatchComponent;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Mvc\Routing\RoutingComponent;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;

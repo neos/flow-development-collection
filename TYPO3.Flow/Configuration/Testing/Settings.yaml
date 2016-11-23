@@ -67,13 +67,13 @@ TYPO3:
 
         #
         defaultPersistentResourcesStorage:
-          storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+          storage: 'TYPO3\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
           storageOptions:
             path: '%FLOW_PATH_DATA%Persistent/TestResources/'
 
         #
         defaultStaticResourcesStorage:
-          storage: 'TYPO3\Flow\Resource\Storage\PackageStorage'
+          storage: 'TYPO3\Flow\ResourceManagement\Storage\PackageStorage'
 
       # Definition of the default resource collections.
       # Collections are used to bundle / group static or persistent resources
@@ -96,14 +96,14 @@ TYPO3:
       targets:
         # Target for publishing static resources to the local web directory
         localWebDirectoryStaticResourcesTarget:
-          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Testing/Static/Packages/'
             baseUri: '_Resources/Testing/Static/Packages/'
 
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
-          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Testing/Persistent/'
             baseUri: '_Resources/Testing/Persistent/'

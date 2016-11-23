@@ -12,8 +12,11 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\Resource\Exception;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\I18n\Service;
+use TYPO3\Flow\ResourceManagement\Exception;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
+use TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
@@ -40,8 +43,8 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
     public function setUp()
     {
         parent::setUp();
-        $this->mockResourceManager = $this->createMock(\TYPO3\Flow\Resource\ResourceManager::class);
-        $this->mockI18nService = $this->createMock(\TYPO3\Flow\I18n\Service::class);
+        $this->mockResourceManager = $this->createMock(ResourceManager::class);
+        $this->mockI18nService = $this->createMock(Service::class);
 
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper::class, array('renderChildren'), array(), '', false);
         $this->inject($this->viewHelper, 'resourceManager', $this->mockResourceManager);
@@ -74,9 +77,9 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
     /**
      * @test
      */
-    public function renderUsesProvidedResourceObjectInsteadOfPackageAndPath()
+    public function renderUsesProvidedPersistentResourceInsteadOfPackageAndPath()
     {
-        $resource = new Resource();
+        $resource = new PersistentResource();
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->will($this->returnValue('TheCorrectResourceUri'));
         $resourceUri = $this->viewHelper->render(null, null, $resource, false);
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
@@ -87,7 +90,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
      */
     public function renderCreatesASpecialBrokenResourceUriIfTheResourceCouldNotBePublished()
     {
-        $resource = new Resource();
+        $resource = new PersistentResource();
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->will($this->returnValue(false));
         $resourceUri = $this->viewHelper->render(null, null, $resource, false);
         $this->assertEquals('404-Resource-Not-Found', $resourceUri);

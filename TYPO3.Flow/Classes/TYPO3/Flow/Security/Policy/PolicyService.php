@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Security\Policy;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Http\Component;
  */
 
 use TYPO3\Flow\Http;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**

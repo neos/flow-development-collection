@@ -16,7 +16,7 @@ use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Exception;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * An evaluator for AOP runtime expressions

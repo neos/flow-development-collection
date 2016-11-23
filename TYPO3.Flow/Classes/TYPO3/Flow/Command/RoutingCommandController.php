@@ -18,7 +18,7 @@ use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Mvc\Routing\Router;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * Command controller for tasks related to routing

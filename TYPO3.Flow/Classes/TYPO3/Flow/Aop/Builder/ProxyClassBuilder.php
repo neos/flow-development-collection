@@ -17,12 +17,12 @@ use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\CompileTimeObjectManager;
+use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
 use TYPO3\Flow\Aop\TraitIntroduction;
 use TYPO3\Flow\Aop;
-use TYPO3\Flow\Object\Proxy;
+use TYPO3\Flow\ObjectManagement\Proxy;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

@@ -673,6 +673,12 @@ will be increased by a certain value.
 
 If the package is "My.Foo" and the Format is "html" the result will be 10001
 
+.. note::
+
+	Previously the configuration of all matching ``Views.yaml`` filters was merged.
+	From version 4.0 on only the matching filter with the highest weight is respected
+	in order to reduce ambiguity.
+
 Controller Context
 ~~~~~~~~~~~~~~~~~~
 
@@ -780,8 +786,8 @@ Upload Handling
 ---------------
 
 The handling of file uploads is pretty straight forward. Files are handled
-internally as ``Resource`` objects and thus, storing an uploaded file is just a
-matter of declaring a property of type ``Resource`` in the respective model.
+internally as ``PersistentResource`` objects and thus, storing an uploaded file is just a
+matter of declaring a property of type ``PersistentResource`` in the respective model.
 
 There is a full example explaining file uploads in the
 :doc:`chapter about resource management <ResourceManagement>`.

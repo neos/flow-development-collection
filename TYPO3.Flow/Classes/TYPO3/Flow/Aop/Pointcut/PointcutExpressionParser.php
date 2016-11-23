@@ -17,7 +17,7 @@ use TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use TYPO3\Flow\Aop\Exception as AopException;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

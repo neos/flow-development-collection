@@ -5,7 +5,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\TypeHandling;

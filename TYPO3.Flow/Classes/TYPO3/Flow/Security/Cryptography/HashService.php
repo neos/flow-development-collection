@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Security\Cryptography;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use TYPO3\Flow\Security\Exception\InvalidHashException;
 use TYPO3\Flow\Security\Exception\MissingConfigurationException;
