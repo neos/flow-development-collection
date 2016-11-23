@@ -1,6 +1,6 @@
 {
     "name": "typo3/eel",
-    "type": "typo3-flow-framework",
+    "type": "neos-framework",
     "license": ["MIT"],
     "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {

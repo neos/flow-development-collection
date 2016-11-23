@@ -1,6 +1,6 @@
 {
     "name": "typo3/flow",
-    "type": "typo3-flow-framework",
+    "type": "neos-framework",
     "description": "Flow Application Framework",
     "homepage": "http://flow.typo3.org",
     "license": ["MIT"],
