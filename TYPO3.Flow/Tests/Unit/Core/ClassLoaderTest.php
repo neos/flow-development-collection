@@ -67,7 +67,7 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader = new ClassLoader();
 
         $this->mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyApp'));
+        $this->mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['Acme\\MyApp']));
         $this->mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
         $this->mockPackage1->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
@@ -78,7 +78,7 @@ class ClassLoaderTest extends UnitTestCase
         ]));
 
         $this->mockPackage2 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyAppAddon'));
+        $this->mockPackage2->expects($this->any())->method('getNamespaces')->will($this->returnValue(['Acme\\MyAppAddon']));
         $this->mockPackage2->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/'));
         $this->mockPackage2->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
@@ -227,7 +227,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesFromPsr4PackagesAreLoaded()
     {
         $this->mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyApp'));
+        $this->mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['Acme\\MyApp']));
         $this->mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
         $this->mockPackage1->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
@@ -254,7 +254,7 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader = new ClassLoader();
 
         $mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Subscriber\\Log'));
+        $mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['TestPackage\\Subscriber\\Log']));
         $mockPackage1->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
                 'namespace' => 'TestPackage\Subscriber\Log',
@@ -297,7 +297,7 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader = new ClassLoader();
 
         $mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage\\Foo'));
+        $mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['TestPackage\\Foo']));
         $mockPackage1->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
                 'namespace' => 'TestPackage\Foo',
@@ -307,7 +307,7 @@ class ClassLoaderTest extends UnitTestCase
         ]));
 
         $mockPackage2 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('TestPackage'));
+        $mockPackage2->expects($this->any())->method('getNamespaces')->will($this->returnValue(['TestPackage']));
         $mockPackage2->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
                 'namespace' => 'TestPackage',
