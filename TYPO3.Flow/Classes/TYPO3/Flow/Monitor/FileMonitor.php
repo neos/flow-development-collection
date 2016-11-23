@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Monitor;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;

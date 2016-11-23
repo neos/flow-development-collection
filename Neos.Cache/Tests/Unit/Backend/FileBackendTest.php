@@ -17,9 +17,9 @@ use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Cache\Frontend\AbstractFrontend;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\AbstractFrontend;
+use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 
 /**
  * Test case for the cache to file backend
@@ -35,7 +35,7 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
@@ -115,7 +115,7 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsExceptionIfDataIsNotAString()
     {
@@ -195,7 +195,7 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      * @expectedExceptionCode 1248710426
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()

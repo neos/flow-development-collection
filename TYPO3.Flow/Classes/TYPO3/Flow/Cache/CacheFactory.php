@@ -17,7 +17,7 @@ use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
 use TYPO3\Flow\Cache\Backend\FlowSpecificBackendInterface;
-use TYPO3\Flow\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Environment;

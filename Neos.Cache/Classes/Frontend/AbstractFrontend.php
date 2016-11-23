@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Frontend;
+namespace Neos\Cache\Frontend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Cache\Frontend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\BackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Backend\BackendInterface;
+use Neos\Cache\Backend\TaggableBackendInterface;
 
 /**
  * An abstract cache
@@ -28,7 +28,7 @@ abstract class AbstractFrontend implements FrontendInterface
     protected $identifier;
 
     /**
-     * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
+     * @var \Neos\Cache\Backend\AbstractBackend
      */
     protected $backend;
 

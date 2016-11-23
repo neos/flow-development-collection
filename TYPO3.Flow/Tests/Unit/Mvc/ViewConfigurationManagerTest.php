@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Mvc\ViewConfigurationManager;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Eel\CompilingEvaluator;
 
 /**

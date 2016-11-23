@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\CacheAwareInterface;
+use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;

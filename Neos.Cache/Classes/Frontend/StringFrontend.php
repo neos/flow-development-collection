@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Frontend;
+namespace Neos\Cache\Frontend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Frontend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
+use Neos\Cache\Exception\InvalidDataException;
 
 /**
  * A cache frontend for strings. Nothing else.

@@ -1163,13 +1163,13 @@ structure:
 	  properties:
 	    cache:
 	      object:
-	        name: 'TYPO3\Flow\Cache\VariableCache'
+	        name: 'Neos\Cache\VariableCache'
 	        arguments:
 	          1:
 	            value: MyCache
 	          2:
 	            object:
-	              name: 'TYPO3\Flow\Cache\Backend\File'
+	              name: 'Neos\Cache\Backend\File'
 	              properties:
 	                cacheDirectory:
 	                  value: /tmp/

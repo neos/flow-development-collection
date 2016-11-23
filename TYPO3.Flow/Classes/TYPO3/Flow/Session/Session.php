@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Session;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Exception\InvalidBackendException;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Backend\IterableBackendInterface;
+use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
@@ -25,7 +25,7 @@ use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * A modular session implementation based on the caching framework.

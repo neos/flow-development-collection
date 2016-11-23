@@ -12,7 +12,8 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Cache;
+use Neos\Cache;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
@@ -47,7 +48,7 @@ class CacheManagerTest extends UnitTestCase
     public function setUp()
     {
         vfsStream::setup('Foo');
-        $this->cacheManager = new Cache\CacheManager();
+        $this->cacheManager = new CacheManager();
 
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -76,7 +77,7 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException
+     * @expectedException \Neos\Cache\Exception\DuplicateIdentifierException
      */
     public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier()
     {
@@ -109,7 +110,7 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception\NoSuchCacheException
+     * @expectedException \Neos\Cache\Exception\NoSuchCacheException
      */
     public function getCacheThrowsExceptionForNonExistingIdentifier()
     {

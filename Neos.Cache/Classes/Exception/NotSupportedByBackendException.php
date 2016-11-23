@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache;
+namespace Neos\Cache\Exception;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Cache;
  */
 
 /**
- * A generic Cache exception
+ * A "Not Supported by Backend" exception
  *
  * @api
  */
-class Exception extends \Exception
+class NotSupportedByBackendException extends \Neos\Cache\Exception
 {
 }

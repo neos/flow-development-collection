@@ -12,7 +12,7 @@ namespace TYPO3\Flow\I18n\Cldr\Reader;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\I18n\Cldr\CldrModel;
 use TYPO3\Flow\I18n\Cldr\CldrRepository;
 use TYPO3\Flow\I18n\Locale;

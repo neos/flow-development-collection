@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Exception;
+namespace Neos\Cache\Exception;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Cache\Exception;
  */
 
 /**
- * An "Invalid Data" exception
+ * A "Duplicate Identifier" exception
  *
  * @api
  */
-class InvalidDataException extends \TYPO3\Flow\Cache\Exception
+class DuplicateIdentifierException extends \Neos\Cache\Exception
 {
 }

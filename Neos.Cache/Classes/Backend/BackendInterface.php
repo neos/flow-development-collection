@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Backend;
+namespace Neos\Cache\Backend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * A contract for a Cache Backend
@@ -51,9 +51,9 @@ interface BackendInterface
      * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
-     * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
+     * @throws \Neos\Cache\Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if $data is not a string
+     * @throws \Neos\Cache\Exception\InvalidDataException if $data is not a string
      * @api
      */
     public function set($entryIdentifier, $data, array $tags = [], $lifetime = null);

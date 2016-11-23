@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Core;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Package;
 use Neos\Utility\Files;
 

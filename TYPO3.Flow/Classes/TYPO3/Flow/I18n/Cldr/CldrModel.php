@@ -11,7 +11,7 @@ namespace TYPO3\Flow\I18n\Cldr;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 
 /**
  * A model representing data from one or few CLDR files.

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Property;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;

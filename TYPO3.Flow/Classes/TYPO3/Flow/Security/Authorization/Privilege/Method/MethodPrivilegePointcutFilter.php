@@ -17,7 +17,7 @@ use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
 use TYPO3\Flow\Aop\Pointcut\RuntimeExpressionEvaluator;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Policy\PolicyService;
 

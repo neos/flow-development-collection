@@ -13,11 +13,11 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
 
 use Neos\Cache\EnvironmentConfiguration;
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Cache\Backend\FileBackend;
-use TYPO3\Flow\Cache\Backend\NullBackend;
+use Neos\Cache\Backend\FileBackend;
+use Neos\Cache\Backend\NullBackend;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility;

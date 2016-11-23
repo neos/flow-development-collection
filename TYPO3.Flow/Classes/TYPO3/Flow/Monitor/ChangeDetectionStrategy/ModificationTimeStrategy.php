@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -26,7 +26,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     protected $fileMonitor;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var \Neos\Cache\Frontend\StringFrontend
      */
     protected $cache;
 
@@ -44,7 +44,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     /**
      * Injects the Flow_Monitor cache
      *
-     * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
+     * @param \Neos\Cache\Frontend\StringFrontend $cache
      * @return void
      */
     public function injectCache(StringFrontend $cache)

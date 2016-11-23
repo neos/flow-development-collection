@@ -310,9 +310,9 @@ and the method ``resolveValue()`` needs to return an URL segment when being pass
  .. code-block:: yaml
 
   Flow_Mvc_Routing_FindMatchResults:
-    backend: TYPO3\Flow\Cache\Backend\NullBackend
+    backend: Neos\Cache\Backend\NullBackend
   Flow_Mvc_Routing_Resolve:
-    backend: TYPO3\Flow\Cache\Backend\NullBackend
+    backend: Neos\Cache\Backend\NullBackend
 
 .. warning:: Some examples are missing here, which should explain the API better.
 

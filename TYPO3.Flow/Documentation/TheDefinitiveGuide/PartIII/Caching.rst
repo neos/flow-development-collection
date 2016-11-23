@@ -104,11 +104,11 @@ The caching framework architecture is based on these classes:
 	Returns the cache frontend of a specific cache. Implements methods to handle cache
 	instances.
 
-``TYPO3\Flow\Cache\Frontend\FrontendInterface``
+``Neos\Cache\Frontend\FrontendInterface``
 	Interface to handle cache entries of a specific cache. Different frontends exist to
 	handle different data types.
 
-``TYPO3\Flow\Cache\Backend\BackendInterface``
+``Neos\Cache\Backend\BackendInterface``
 	Interface for different storage strategies. A set of implementations exist with
 	different characteristics.
 
@@ -146,8 +146,8 @@ any cache unless overridden:
 	# If no frontend, backend or options are specified for a cache, these values
 	# will be taken to create the cache.
 	Default:
-	  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-	  backend: TYPO3\Flow\Cache\Backend\FileBackend
+	  frontend: Neos\Cache\Frontend\VariableFrontend
+	  backend: Neos\Cache\Backend\FileBackend
 	  backendOptions:
 	    defaultLifetime: 0
 
@@ -159,7 +159,7 @@ or package *Configuration* directory.
 *Example: Configuration to use RedisBackend for FooCache* ::
 
 	FooCache:
-	  backend: TYPO3\Flow\Cache\Backend\RedisBackend
+	  backend: Neos\Cache\Backend\RedisBackend
 	  backendOptions:
 	    database: 3
 
@@ -180,7 +180,7 @@ this cache looks like this:
 	# If no frontend, backend or options are specified for a cache, these values
 	# will be taken to create the cache.
 	Flow_Security_Cryptography_HashService:
-	  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+	  backend: Neos\Cache\Backend\SimpleFileBackend
 	  persistent: true
 
 Note that, because the cache has been configured as "persistent", the *SimpleFileBackend* will store its data in
@@ -195,7 +195,7 @@ Frontend API
 ------------
 
 All frontends must implement the API defined in the interface
-``TYPO3\Flow\Cache\Frontend\FrontendInterface``. All cache operations must be done
+``Neos\Cache\Frontend\FrontendInterface``. All cache operations must be done
 with these methods.
 
 ``getIdentifier()``
@@ -243,10 +243,10 @@ Available Frontends
 Currently three different frontends are implemented, the main difference is the data types
 which can be stored using a specific frontend.
 
-``TYPO3\Flow\Cache\Frontend\StringFrontend``
+``Neos\Cache\Frontend\StringFrontend``
 	The string frontend accepts strings as data to be cached.
 
-``TYPO3\Flow\Cache\Frontend\VariableFrontend``
+``Neos\Cache\Frontend\VariableFrontend``
 	Strings, arrays and objects are accepted by this frontend. Data is serialized before
 	it is given to the backend. The igbinary serializer is used transparently (if
 	available in the system) which speeds up the serialization and unserialization and
@@ -255,7 +255,7 @@ which can be stored using a specific frontend.
 	string frontend should be used in this case to avoid the additional serialization done
 	by the variable frontend.
 
-``TYPO3\Flow\Cache\Frontend\PhpFrontend``
+``Neos\Cache\Frontend\PhpFrontend``
 	This is a special frontend to cache PHP files. It extends the string frontend with the
 	method ``requireOnce()`` and allows PHP files to be ``require()``'d if a cache entry
 	exists.
@@ -264,7 +264,7 @@ which can be stored using a specific frontend.
 	if a lot of reflection and dynamic PHP class construction is done. A backend to be used
 	with the PHP frontend must implement the
 
-``TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface``
+``Neos\Cache\Backend\PhpCapableBackendInterface``
 	Currently the file backend is the only backend which fulfills this requirement.
 
 .. note::
@@ -659,9 +659,9 @@ Register a Cache
 To register a cache it must be configured in *Caches.yaml* of a package::
 
 	MyPackage_FooCache:
-	  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+	  frontend: Neos\Cache\Frontend\StringFrontend
 
-In this case ``\TYPO3\Flow\Cache\Frontend\StringFrontend`` was chosen, but that depends
+In this case ``\Neos\Cache\Frontend\StringFrontend`` was chosen, but that depends
 on individual needs. This setting is usually not changed by users. Any option not given is
 inherited from the configuration of the "Default" cache. The name (``MyPackage_FooCache``
 in this case) can be chosen freely, but keep possible name clashes in mind and adopt a
@@ -694,10 +694,10 @@ This configures what will be injected into the following setter::
 	/**
 	 * Sets the foo cache
 	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache Cache for foo data
+	 * @param \Neos\Cache\Frontend\StringFrontend $cache Cache for foo data
 	 * @return void
 	 */
-	public function setFooCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $cache) {
+	public function setFooCache(\Neos\Cache\Frontend\StringFrontend $cache) {
 		$this->fooCache = $cache;
 	}
 

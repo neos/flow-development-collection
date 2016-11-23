@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Neos\Cache\CacheFactoryInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
@@ -288,7 +289,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'TYPO3\Flow\Cache\CacheFactoryInterface');
+        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, CacheFactoryInterface::class);
         $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
 
         /** @var CacheFactory $cacheFactory */

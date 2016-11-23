@@ -26,7 +26,7 @@ class ModificationTimeStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $strategy;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var \Neos\Cache\Frontend\StringFrontend
      */
     protected $cache;
 
@@ -36,7 +36,7 @@ class ModificationTimeStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         vfsStream::setup('testDirectory');
 
-        $this->cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $this->cache = $this->getMockBuilder(\Neos\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
 
         $this->strategy = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
         $this->strategy->injectCache($this->cache);

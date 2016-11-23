@@ -13,7 +13,7 @@ namespace TYPO3\Flow\ResourceManagement;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
+use Neos\Cache\CacheAwareInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Environment;

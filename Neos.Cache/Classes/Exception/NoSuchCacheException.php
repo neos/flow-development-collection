@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Exception;
+namespace Neos\Cache\Exception;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Cache\Exception;
  */
 
 /**
- * A "Class Already Loaded" exception
+ * A "No Such Cache" exception
  *
  * @api
  */
-class ClassAlreadyLoadedException extends \TYPO3\Flow\Cache\Exception
+class NoSuchCacheException extends \Neos\Cache\Exception
 {
 }

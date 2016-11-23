@@ -167,7 +167,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function prepareArgumentsRegistersAnnotationBasedArgumentsWithDescriptionIfDebugModeIsEnabled()
     {
-        $dataCacheMock = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
         $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 
@@ -191,7 +191,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function prepareArgumentsRegistersAnnotationBasedArgumentsWithoutDescriptionIfDebugModeIsDisabled()
     {
-        $dataCacheMock = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
         $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 

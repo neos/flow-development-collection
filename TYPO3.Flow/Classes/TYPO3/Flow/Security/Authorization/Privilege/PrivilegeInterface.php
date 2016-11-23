@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Authorization\Privilege;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
+use Neos\Cache\CacheAwareInterface;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;

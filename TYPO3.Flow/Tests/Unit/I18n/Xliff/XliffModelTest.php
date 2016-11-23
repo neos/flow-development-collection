@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Xliff;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Log\LoggerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\I18n;

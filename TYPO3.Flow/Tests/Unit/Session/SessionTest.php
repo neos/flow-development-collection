@@ -21,7 +21,7 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Session\Exception\SessionNotStartedException;
 use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Session\SessionManager;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;

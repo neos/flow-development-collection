@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Cache\Cache;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\FrontendInterface;
 use TYPO3\Flow\Security\Context;
 
 /**

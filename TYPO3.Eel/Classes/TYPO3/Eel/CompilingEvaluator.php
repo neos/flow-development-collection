@@ -12,7 +12,7 @@ namespace TYPO3\Eel;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\PhpFrontend;
 
 /**
  * An evaluator that compiles expressions down to PHP code

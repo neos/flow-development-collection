@@ -112,7 +112,7 @@ Caches.yaml file, placed in a package or the global configuration directory:
 .. code-block:: yaml
 
 	Flow_Session_Storage:
-	  backend: TYPO3\Flow\Cache\Backend\ApcBackend
+	  backend: Neos\Cache\Backend\ApcBackend
 
 The built-in session implementation provides a few more configuration options, related to
 the session cookie and the automatic garbage collection. Please refer to the

@@ -17,7 +17,7 @@ use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
-use TYPO3\Flow\Cache;
+use Neos\Cache;
 
 /**
  * Testcase for the File Monitor class

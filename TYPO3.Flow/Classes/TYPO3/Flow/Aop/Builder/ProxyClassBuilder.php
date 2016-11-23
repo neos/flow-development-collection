@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\AdvicesTrait;
 use TYPO3\Flow\Aop\AspectContainer;
 use TYPO3\Flow\Aop\PropertyIntroduction;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
 use TYPO3\Flow\Reflection\ClassReflection;

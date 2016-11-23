@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Session;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 
 /**
  * Session Manager

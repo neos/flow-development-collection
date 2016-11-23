@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Exception;
+namespace Neos\Cache\Backend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Cache\Exception;
  */
 
 /**
- * An "Invalid Backend" exception
+ * A contract for a cache backend which provides Iterator functionality.
  *
  * @api
  */
-class InvalidBackendException extends \TYPO3\Flow\Cache\Exception
+interface IterableBackendInterface extends BackendInterface, \Iterator
 {
 }

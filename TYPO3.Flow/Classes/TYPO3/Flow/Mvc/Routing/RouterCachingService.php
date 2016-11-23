@@ -12,9 +12,9 @@ namespace TYPO3\Flow\Mvc\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\CacheAwareInterface;
+use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;

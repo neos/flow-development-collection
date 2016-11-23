@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Utility\Environment;

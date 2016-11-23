@@ -14,12 +14,10 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Utility\Files;
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Lock\Lock;
 use Neos\Utility\OpcodeCacheHelper;
@@ -98,7 +96,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Sets a reference to the cache frontend which uses this backend and
      * initializes the default cache directory.
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The cache frontend
+     * @param \Neos\Cache\Frontend\FrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */

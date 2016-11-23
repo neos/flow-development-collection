@@ -11,7 +11,7 @@ namespace TYPO3\Flow\ObjectManagement;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Composer\ComposerUtility as ComposerUtility;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException;

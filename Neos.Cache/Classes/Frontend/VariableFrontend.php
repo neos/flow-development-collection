@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Frontend;
+namespace Neos\Cache\Frontend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Cache\Frontend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Exception\NotSupportedByBackendException;
+use Neos\Cache\Backend\IterableBackendInterface;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 
 /**
  * A cache frontend for any kinds of PHP variables
@@ -120,7 +120,7 @@ class VariableFrontend extends AbstractFrontend
      * Returns an iterator over the entries of this cache
      *
      * @param integer $chunkSize Determines the number of entries fetched by the backend at once (not supported yet, for future use)
-     * @return \TYPO3\Flow\Cache\Frontend\CacheEntryIterator
+     * @return \Neos\Cache\Frontend\CacheEntryIterator
      * @throws NotSupportedByBackendException
      */
     public function getIterator($chunkSize = null)

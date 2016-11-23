@@ -11,6 +11,6 @@
 # Uncomment the following lines to disable the routing cache when you are developing
 # something with the routing itself.
 #Flow_Mvc_Routing_FindMatchResults:
-#  backend: TYPO3\Flow\Cache\Backend\NullBackend
+#  backend: Neos\Cache\Backend\NullBackend
 #Flow_Mvc_Routing_Resolve:
-#  backend: TYPO3\Flow\Cache\Backend\NullBackend
+#  backend: Neos\Cache\Backend\NullBackend

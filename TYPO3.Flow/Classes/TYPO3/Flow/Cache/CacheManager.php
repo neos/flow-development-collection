@@ -13,10 +13,10 @@ namespace TYPO3\Flow\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Backend\FileBackend;
-use TYPO3\Flow\Cache\Exception\DuplicateIdentifierException;
-use TYPO3\Flow\Cache\Exception\NoSuchCacheException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Exception\DuplicateIdentifierException;
+use Neos\Cache\Exception\NoSuchCacheException;
+use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Utility\Environment;
@@ -161,7 +161,7 @@ class CacheManager
      * Returns the cache specified by $identifier
      *
      * @param string $identifier Identifies which cache to return
-     * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface The specified cache frontend
+     * @return \Neos\Cache\Frontend\FrontendInterface The specified cache frontend
      * @throws NoSuchCacheException
      * @api
      */

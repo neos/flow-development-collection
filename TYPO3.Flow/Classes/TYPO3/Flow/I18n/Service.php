@@ -12,7 +12,7 @@ namespace TYPO3\Flow\I18n;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;

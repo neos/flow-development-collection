@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Frontend;
+namespace Neos\Cache\Frontend;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -49,7 +49,7 @@ interface FrontendInterface
     /**
      * Returns the backend used by this cache
      *
-     * @return \TYPO3\Flow\Cache\Backend\BackendInterface The backend used by this cache
+     * @return \Neos\Cache\Backend\BackendInterface The backend used by this cache
      * @api
      */
     public function getBackend();

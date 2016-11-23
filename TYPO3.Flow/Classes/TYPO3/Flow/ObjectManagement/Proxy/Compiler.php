@@ -13,7 +13,7 @@ namespace TYPO3\Flow\ObjectManagement\Proxy;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\BaseTestCase;

@@ -11,12 +11,9 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Files;
 use Neos\Utility\PdoHelper;
 

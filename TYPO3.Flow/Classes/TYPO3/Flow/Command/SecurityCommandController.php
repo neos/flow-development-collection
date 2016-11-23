@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Mvc\Controller\AbstractController;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;

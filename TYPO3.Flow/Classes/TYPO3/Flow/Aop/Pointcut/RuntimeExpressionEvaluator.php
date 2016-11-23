@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Aop\Pointcut;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\I18n;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;

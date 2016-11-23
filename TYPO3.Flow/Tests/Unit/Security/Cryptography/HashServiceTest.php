@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
