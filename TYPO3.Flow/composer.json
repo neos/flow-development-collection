@@ -2,7 +2,7 @@
     "name": "typo3/flow",
     "type": "neos-framework",
     "description": "Flow Application Framework",
-    "homepage": "http://flow.typo3.org",
+    "homepage": "https://flow.neos.io/",
     "license": ["MIT"],
 
     "require": {
