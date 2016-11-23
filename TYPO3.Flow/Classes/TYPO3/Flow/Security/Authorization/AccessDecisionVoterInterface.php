@@ -17,10 +17,9 @@ namespace TYPO3\Flow\Security\Authorization;
  */
 interface AccessDecisionVoterInterface
 {
-    const
-        VOTE_GRANT = 1,
-        VOTE_ABSTAIN = 2,
-        VOTE_DENY = 3;
+    const VOTE_GRANT = 1;
+    const VOTE_ABSTAIN = 2;
+    const VOTE_DENY = 3;
 
     /**
      * Votes if access should be granted for the given object in the current security context
