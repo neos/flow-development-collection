@@ -20,6 +20,6 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
  * we also introduce it here.
  *
  */
-class FormFieldViewHelperBaseTestcase extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class FormFieldViewHelperBaseTestcase extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
 }

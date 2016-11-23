@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use TYPO3\Flow\Http\Uri;
 use Neos\FluidAdaptor\ViewHelpers\Format\UrlencodeViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\UrlencodeViewHelper

@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
  * Test for the Validation Results view helper
  *
  */
-class ResultsViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper
