@@ -62,7 +62,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
     {
         $packagePath = 'vfs://Packages/Vendor.TestPackage/';
         mkdir($packagePath . 'Classes/', 0777, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "typo3-flow-package"}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/testpackage", "type": "neos-package"}');
         file_put_contents($packagePath . 'Classes/Test.php', '<?php ?>');
 
         $testPackage = new Package('Vendor.TestPackage', 'vendor/testpackage', $packagePath, ['psr-4' => ['Vendor\\TestPackage' => 'Classes/']]);

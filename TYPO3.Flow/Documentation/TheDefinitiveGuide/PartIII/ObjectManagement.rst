@@ -11,8 +11,13 @@ convenient support for Dependency Injection and provides some additional feature
 a caching mechanism for objects. Because all packages are built on this foundation it is
 important to understand the general concept of objects in Flow.
 Note, the object management features of Flow are by default only enabled for classes in
-packages belonging to one of the `typo3-flow-*`` package types. All other classes are not
+packages belonging to one of the `neos-*`` package types. All other classes are not
 considered by default. If you need that (see :ref:`sect-enabling-non-flow-packages`).
+
+.. note::
+
+   Older versions also used `typo3-flow-*` as package types. This has been deprecated with
+   Flow 4.0 and while still supported should no longer be used.
 
 .. tip::
 
@@ -853,7 +858,7 @@ stick to Flow's general rules for YAML-based configuration.
 	    1:
 	      object: 'MyCompany\MyPackage\Baz'
 	    2:
-	      value: "some string"
+	      value: "some string"
 	    3:
 	      value: false
 	  properties:
@@ -1340,7 +1345,7 @@ will be executed during each run.
 Enabling Other Package Classes For Object Management
 ====================================================
 
-As stated in the beginning of this part, all classes in packages not in one of the ``typo3-flow-*``
+As stated in the beginning of this part, all classes in packages not in one of the ``neos-*``
 types is not recognized for object management by default. If you still want that you can include
 those classes via configuration in settings. The configuration consists of a map of package keys to
 arrays of expressions which match classes to be included. In the following example we include all
