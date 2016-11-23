@@ -23,7 +23,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 /**
  * Test case for the resource uri view helper
  */
-class ResourceViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper

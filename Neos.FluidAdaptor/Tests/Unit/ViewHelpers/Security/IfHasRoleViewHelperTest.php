@@ -19,7 +19,7 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test case for IfHasRoleViewHelper

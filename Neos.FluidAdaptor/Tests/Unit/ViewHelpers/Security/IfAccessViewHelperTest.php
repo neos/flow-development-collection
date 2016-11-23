@@ -15,7 +15,7 @@ use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Testcase for IfAccessViewHelper

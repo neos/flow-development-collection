@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
  * Testcase for the action uri view helper
  *
  */
-class ActionViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * var \Neos\FluidAdaptor\ViewHelpers\Uri\ActionViewHelper

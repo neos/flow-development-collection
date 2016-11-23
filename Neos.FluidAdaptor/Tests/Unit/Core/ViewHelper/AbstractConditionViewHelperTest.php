@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\ViewHelpers\ElseViewHelper;
 use TYPO3Fluid\Fluid\ViewHelpers\ThenViewHelper;

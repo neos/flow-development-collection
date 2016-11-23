@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithoutToString;
 use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithToString;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesDecodeViewHelper
