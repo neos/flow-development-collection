@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
 
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\SchemaValidator;
+use Neos\Utility\SchemaValidator;
 use TYPO3\Flow\Error;
 
 /**

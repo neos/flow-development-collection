@@ -22,7 +22,7 @@ use TYPO3\Flow\Exception as FlowException;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * General purpose central core hyper Flow bootstrap class

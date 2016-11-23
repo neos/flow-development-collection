@@ -16,8 +16,8 @@ use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\ResourceManagement\Exception as ResourceException;
 use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Unicode\Functions;
+use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions;
 
 /**
  * A stream wrapper for resources.

@@ -15,8 +15,8 @@ use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Arrays;
+use Neos\Utility\Files;
 
 /**
  * A validator for all configuration entries using Schema
@@ -50,7 +50,7 @@ class ConfigurationSchemaValidator
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\SchemaValidator
+     * @var \Neos\Utility\SchemaValidator
      */
     protected $schemaValidator;
 

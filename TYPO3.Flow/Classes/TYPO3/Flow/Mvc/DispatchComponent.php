@@ -20,7 +20,7 @@ use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * A dispatch component

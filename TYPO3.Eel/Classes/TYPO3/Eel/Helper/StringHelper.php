@@ -14,8 +14,8 @@ namespace TYPO3\Eel\Helper;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\EvaluationException;
 use TYPO3\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
-use TYPO3\Flow\Utility\Unicode\TextIterator;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\TextIterator;
 
 /**
  * String helpers for Eel contexts

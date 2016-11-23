@@ -28,11 +28,11 @@ use TYPO3\Flow\Persistence\RepositoryInterface;
 use TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use TYPO3\Flow\Reflection\Exception\InvalidValueObjectException;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Exception\InvalidTypeException;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\Files;
+use Neos\Utility\TypeHandling;
 
 /**
  * A service for acquiring reflection based information in a performant way. This
@@ -514,7 +514,7 @@ class ReflectionService
      *
      * @param object $object
      * @return string The class name of the given object
-     * @deprecated since 3.0 use \TYPO3\Flow\Utility\TypeHandling::getTypeForValue() instead
+     * @deprecated since 3.0 use \Neos\Utility\TypeHandling::getTypeForValue() instead
      */
     public function getClassNameByObject($object)
     {
@@ -1977,7 +1977,7 @@ class ReflectionService
 
             $data = ($useIgBinary ? igbinary_unserialize(file_get_contents($pathAndFilename)) : unserialize(file_get_contents($pathAndFilename)));
             foreach ($data as $propertyName => $propertyValue) {
-                $this->$propertyName = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
+                $this->$propertyName = \Neos\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
             }
         }
 

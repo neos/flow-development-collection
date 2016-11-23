@@ -24,7 +24,7 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\InvalidPolicyException;
 use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 use TYPO3\Flow\Security\Policy\PolicyService;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * A sql generator to create a sql condition for an entity property.

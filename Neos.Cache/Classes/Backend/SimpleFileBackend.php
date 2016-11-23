@@ -13,15 +13,16 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Utility\Files;
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
 use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Lock\Lock;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use Neos\Utility\Exception\FilesException;
+use Neos\Utility\Lock\Lock;
+use Neos\Utility\OpcodeCacheHelper;
 
 /**
  * A caching backend which stores cache entries in files, but does not support or
@@ -455,7 +456,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if (!is_writable($cacheDirectory)) {
             try {
                 Files::createDirectoryRecursively($cacheDirectory);
-            } catch (\TYPO3\Flow\Utility\Exception $exception) {
+            } catch (FilesException $exception) {
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }

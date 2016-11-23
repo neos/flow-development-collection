@@ -27,7 +27,7 @@ use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Reflection\DocCommentParser;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Exception;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Service class for tasks related to Doctrine

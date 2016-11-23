@@ -26,7 +26,7 @@ use TYPO3\Flow\ObjectManagement\Proxy\ObjectSerializationTrait;
 use TYPO3\Flow\ObjectManagement\Proxy\ProxyClass;
 use TYPO3\Flow\Reflection\MethodReflection;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.

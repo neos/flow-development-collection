@@ -2,7 +2,7 @@
   "name": "neos/utility-objecthandling",
   "description": "Flow array/object property and type utilities",
   "type": "library",
-  "homepage": "http://flow.typo3.org",
+  "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
     "php": ">=5.5.0"
@@ -12,8 +12,10 @@
   },
   "autoload": {
     "psr-0": {
-      "TYPO3\\Flow\\Reflection": "Classes",
-      "TYPO3\\Flow\\Utility": "Classes"
+      "TYPO3\\Flow\\Reflection": "Classes"
+    },
+    "psr-4": {
+      "Neos\\Utility\\": "Classes"
     }
   },
   "autoload-dev": {

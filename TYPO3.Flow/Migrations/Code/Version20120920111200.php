@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Move all code to PSR-0 compatible directory structure, remove Package.xml,

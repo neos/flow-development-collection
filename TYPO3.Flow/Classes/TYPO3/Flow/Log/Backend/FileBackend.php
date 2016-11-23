@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Log\Backend;
  */
 
 use TYPO3\Flow\Log\Exception\CouldNotOpenResourceException;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * A log backend which writes log entries into a file

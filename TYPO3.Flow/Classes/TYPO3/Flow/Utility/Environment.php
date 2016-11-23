@@ -17,6 +17,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Error\Exception as ErrorException;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Utility\Files;
 
 /**
  * Abstraction methods which return system environment variables.

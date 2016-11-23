@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Utility\SchemaGenerator;
+use Neos\Utility\SchemaGenerator;
 
 /**
  * Testcase for the Schema Generator

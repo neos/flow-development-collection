@@ -22,7 +22,7 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverterInterface;
 use TYPO3\Flow\Security\Exception;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
 

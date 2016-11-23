@@ -24,7 +24,7 @@ use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use TYPO3\Flow\Security\Policy\Role;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Command controller for tasks related to security

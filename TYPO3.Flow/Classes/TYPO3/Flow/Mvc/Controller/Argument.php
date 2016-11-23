@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Mvc\Controller;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 
 /**

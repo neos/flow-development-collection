@@ -19,7 +19,7 @@ use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Flow\Utility\Algorithms;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * This is the default implementation of a security context, which holds current

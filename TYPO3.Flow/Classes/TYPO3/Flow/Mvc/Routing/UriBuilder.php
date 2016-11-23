@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Mvc\Routing;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\RequestInterface;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Flow\Annotations as Flow;
 
 /**

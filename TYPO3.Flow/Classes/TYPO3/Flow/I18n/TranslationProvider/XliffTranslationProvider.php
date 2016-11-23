@@ -16,7 +16,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\PluralsReader;
 use TYPO3\Flow\I18n;
 use TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException;
 use TYPO3\Flow\I18n\Xliff\XliffModel;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * The concrete implementation of TranslationProviderInterface which uses XLIFF

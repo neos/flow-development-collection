@@ -14,7 +14,7 @@ namespace TYPO3\Flow\ResourceManagement\Storage;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\ResourceManagement\Storage\Exception as StorageException;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * A resource storage based on the (local) file system

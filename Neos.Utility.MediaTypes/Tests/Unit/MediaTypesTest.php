@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Utility\MediaTypes;
 
 /**
  * Testcase for the Utility Media Types class

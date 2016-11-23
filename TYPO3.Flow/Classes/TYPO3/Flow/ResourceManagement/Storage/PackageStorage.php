@@ -15,8 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A resource storage which stores and retrieves resources from active Flow packages.

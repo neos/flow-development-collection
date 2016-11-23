@@ -21,8 +21,8 @@ use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\ResourceManagement\ResourceMetaDataInterface;
 use TYPO3\Flow\ResourceManagement\ResourceRepository;
 use TYPO3\Flow\ResourceManagement\Storage\StorageObject;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\ResourceManagement\Target\Exception as TargetException;
 

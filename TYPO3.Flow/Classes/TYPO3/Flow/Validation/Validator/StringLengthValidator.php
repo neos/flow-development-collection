@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  */
 
 use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
-use TYPO3\Flow\Utility\Unicode;
+use Neos\Utility\Unicode;
 
 /**
  * Validator for string length.

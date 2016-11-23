@@ -22,7 +22,7 @@ use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * This converter transforms arrays or strings to persistent objects. It does the following:

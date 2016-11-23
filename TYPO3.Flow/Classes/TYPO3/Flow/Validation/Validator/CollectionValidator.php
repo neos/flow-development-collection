@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Validation\Validator;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Result as ErrorResult;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * A generic collection validator.

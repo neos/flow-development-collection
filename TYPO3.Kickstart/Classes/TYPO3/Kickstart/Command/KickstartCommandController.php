@@ -108,7 +108,7 @@ class KickstartCommandController extends CommandController
         $generatedFiles = array();
         $generatedModels = false;
 
-        $controllerNames = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $controllerName);
+        $controllerNames = \Neos\Utility\Arrays::trimExplode(',', $controllerName);
         if ($generateActions === true) {
             foreach ($controllerNames as $currentControllerName) {
                 $modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $currentControllerName;
@@ -182,7 +182,7 @@ class KickstartCommandController extends CommandController
             exit(2);
         }
         $generatedFiles = array();
-        $controllerNames = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $controllerName);
+        $controllerNames = \Neos\Utility\Arrays::trimExplode(',', $controllerName);
         foreach ($controllerNames as $currentControllerName) {
             $generatedFiles += $this->generatorService->generateCommandController($packageKey, $currentControllerName, $force);
         }

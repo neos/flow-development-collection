@@ -16,7 +16,7 @@ use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
 use TYPO3\Flow\Package\PackageManager;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Class for Composer install scripts

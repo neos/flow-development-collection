@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Reflection;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Exception\InvalidTypeException;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\Exception\InvalidTypeException;
+use Neos\Utility\TypeHandling;
 
 /**
  * A class schema

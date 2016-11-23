@@ -21,7 +21,7 @@ use TYPO3\Flow\Mvc\Routing\Router;
 use TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Functional tests for the Router

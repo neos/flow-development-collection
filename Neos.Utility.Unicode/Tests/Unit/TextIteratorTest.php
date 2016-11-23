@@ -11,8 +11,8 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Unicode\TextIterator;
-use TYPO3\Flow\Utility\Unicode;
+use Neos\Utility\Unicode\TextIterator;
+use Neos\Utility\Unicode;
 
 /**
  * Testcase for the TextIterator port

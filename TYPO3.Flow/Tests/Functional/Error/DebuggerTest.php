@@ -16,7 +16,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Error\Debugger;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Functional tests for the Debugger

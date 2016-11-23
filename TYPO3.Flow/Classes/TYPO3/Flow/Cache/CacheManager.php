@@ -20,7 +20,7 @@ use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 
 /**

@@ -19,7 +19,7 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 
 /**

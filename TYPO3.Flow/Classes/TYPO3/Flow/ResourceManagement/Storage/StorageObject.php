@@ -14,8 +14,8 @@ namespace TYPO3\Flow\ResourceManagement\Storage;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ResourceManagement\ResourceMetaDataInterface;
-use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * An Object which is stored in a Storage

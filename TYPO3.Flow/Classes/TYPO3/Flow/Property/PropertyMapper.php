@@ -18,7 +18,7 @@ use TYPO3\Flow\Error\Result;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Property\Exception\DuplicateTypeConverterException;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\Flow\Property\Exception as PropertyException;
 

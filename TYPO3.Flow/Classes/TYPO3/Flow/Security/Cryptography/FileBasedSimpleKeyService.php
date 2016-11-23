@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility;
+use Neos\Utility;
 use TYPO3\Flow\Security\Exception as SecurityException;
 
 /**

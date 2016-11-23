@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Http\Component;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Creates a new ComponentChain according to the specified settings

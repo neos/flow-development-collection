@@ -13,7 +13,7 @@ namespace TYPO3\Flow\I18n\Cldr;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * The CldrRepository class

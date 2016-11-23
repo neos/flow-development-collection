@@ -19,8 +19,9 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Exception as UtilityException;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use Neos\Utility\Files;
+use Neos\Utility\OpcodeCacheHelper;
+use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Package\Exception as PackageException;
 
 /**

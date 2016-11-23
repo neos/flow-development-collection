@@ -23,7 +23,7 @@ use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the default package manager

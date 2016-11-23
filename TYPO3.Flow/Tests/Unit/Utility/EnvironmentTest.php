@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the Utility Environment class

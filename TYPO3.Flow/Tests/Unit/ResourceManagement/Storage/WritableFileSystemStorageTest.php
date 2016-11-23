@@ -16,7 +16,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use TYPO3\Flow\ResourceManagement\Storage\WritableFileSystemStorage;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Test case for the WritableFileSystemStorage class

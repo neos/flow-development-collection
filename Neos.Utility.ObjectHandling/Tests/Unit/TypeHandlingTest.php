@@ -11,7 +11,7 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * Testcase for the Utility\TypeHandling class
@@ -20,7 +20,7 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
+     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidType()
     {
@@ -29,7 +29,7 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
+     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidElementTypeHint()
     {

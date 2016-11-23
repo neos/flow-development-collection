@@ -678,7 +678,7 @@ TYPO3:
         domain: NULL
 
     utility:
-      lockStrategyClassName: 'TYPO3\Flow\Utility\Lock\FlockLockStrategy'
+      lockStrategyClassName: 'Neos\Utility\Lock\FlockLockStrategy'
 
   # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.

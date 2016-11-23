@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Http;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Utility\Arrays;
+use Neos\Utility\MediaTypes;
 
 /**
  * Represents an HTTP request
@@ -844,7 +844,7 @@ class Request extends AbstractMessage
      *
      * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
      * @return array An associative array with parsed information
-     * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::parseMediaType() instead
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::parseMediaType() instead
      */
     public static function parseMediaType($rawMediaType)
     {
@@ -858,7 +858,7 @@ class Request extends AbstractMessage
      * @param string $mediaRange The media range, for example "text/*"
      * @param string $mediaType The media type to match against, for example "text/html"
      * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
-     * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::mediaRangeMatches() instead
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::mediaRangeMatches() instead
      */
     public static function mediaRangeMatches($mediaRange, $mediaType)
     {
@@ -868,11 +868,11 @@ class Request extends AbstractMessage
     /**
      * Strips off any parameters from the given media type and returns just the type
      * and subtype in the format "type/subtype".
-     * @see \TYPO3\Flow\Utility\MediaTypes::trimMediaType()
+     * @see \Neos\Utility\MediaTypes::trimMediaType()
      *
      * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
      * @return string Just the type and subtype, for example "application/json"
-     * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::trimMediaType() instead
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::trimMediaType() instead
      */
     public static function trimMediaType($rawMediaType)
     {

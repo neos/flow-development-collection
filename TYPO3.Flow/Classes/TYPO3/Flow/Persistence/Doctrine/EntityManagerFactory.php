@@ -27,7 +27,7 @@ use TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * EntityManager factory for Doctrine integration

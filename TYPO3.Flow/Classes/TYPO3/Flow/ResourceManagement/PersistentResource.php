@@ -16,8 +16,9 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Utility;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\Flow\Utility\Environment;
+use Neos\Utility;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Flow\ResourceManagement\Exception as ResourceException;
 
 /**
@@ -120,7 +121,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
 
     /**
      * @Flow\Inject
-     * @var Utility\Environment
+     * @var Environment
      */
     protected $environment;
 

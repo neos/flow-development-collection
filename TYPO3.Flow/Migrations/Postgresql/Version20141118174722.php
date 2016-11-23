@@ -3,8 +3,8 @@ namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Utility\Files;
+use Neos\Utility\MediaTypes;
 
 /**
  * New Resource Management

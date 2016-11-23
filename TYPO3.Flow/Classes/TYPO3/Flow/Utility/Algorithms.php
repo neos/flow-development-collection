@@ -70,10 +70,10 @@ class Algorithms
      */
     public static function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     {
-        $characterCount = \TYPO3\Flow\Utility\Unicode\Functions::strlen($characters);
+        $characterCount = \Neos\Utility\Unicode\Functions::strlen($characters);
         $string = '';
         for ($i = 0; $i < $count; $i++) {
-            $string .= \TYPO3\Flow\Utility\Unicode\Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
+            $string .= \Neos\Utility\Unicode\Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
         }
 
         return $string;

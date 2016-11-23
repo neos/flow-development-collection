@@ -21,7 +21,7 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\Service as DoctrineService;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Command controller for tasks related to Doctrine

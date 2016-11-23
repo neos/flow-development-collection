@@ -859,7 +859,7 @@ Cross Platform Coding
 ---------------------
 
 * When concatenating paths, always use
-  ``\TYPO3\Flow\Utility\Files::concatenatePaths()`` to avoid trouble.
+  ``\Neos\Utility\Files::concatenatePaths()`` to avoid trouble.
 
 PHP in General
 --------------

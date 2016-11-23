@@ -422,7 +422,7 @@ class GeneratorService
     protected function generateFile($targetPathAndFilename, $fileContent, $force = false)
     {
         if (!is_dir(dirname($targetPathAndFilename))) {
-            \TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+            \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
         }
 
         if (substr($targetPathAndFilename, 0, 11) === 'resource://') {

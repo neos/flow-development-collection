@@ -38,10 +38,10 @@ use TYPO3\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Lock\Lock;
-use TYPO3\Flow\Utility\Lock\LockManager;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use Neos\Utility\Files;
+use Neos\Utility\Lock\Lock;
+use Neos\Utility\Lock\LockManager;
+use Neos\Utility\OpcodeCacheHelper;
 use TYPO3\Flow\Exception as FlowException;
 
 /**

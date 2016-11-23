@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Utility;
+use TYPO3\Flow\Utility\Algorithms as UtilityAlgorithms;
 use TYPO3\Flow\Security\Cryptography\Algorithms as CryptographyAlgorithms;
 
 /**
@@ -70,7 +70,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      */
     public function hashPassword($password, $staticSalt = null)
     {
-        $dynamicSalt = Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
+        $dynamicSalt = UtilityAlgorithms::generateRandomBytes($this->dynamicSaltLength);
         $result = CryptographyAlgorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
         return base64_encode($dynamicSalt) . ',' . base64_encode($result);
     }

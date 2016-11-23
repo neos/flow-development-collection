@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Package;
 use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\ClassLoader;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * A Package

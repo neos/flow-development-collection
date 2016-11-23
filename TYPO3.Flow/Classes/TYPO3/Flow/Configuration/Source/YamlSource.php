@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\ParseErrorException;
 use TYPO3\Flow\Error\Exception;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Configuration source based on YAML files

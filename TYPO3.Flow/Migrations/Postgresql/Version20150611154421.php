@@ -3,7 +3,7 @@ namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Move persistent resource files from abcde/fghij/../abcdefghij  to  a/b/c/d/abcdefghij

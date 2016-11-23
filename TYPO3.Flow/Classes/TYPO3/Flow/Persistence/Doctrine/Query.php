@@ -18,7 +18,7 @@ use TYPO3\Flow\Persistence\Exception\InvalidQueryException;
 use TYPO3\Flow\Persistence\Generic\Qom\Constraint;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * A Query class for Doctrine 2

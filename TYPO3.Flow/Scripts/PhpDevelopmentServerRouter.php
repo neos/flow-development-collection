@@ -1,5 +1,5 @@
 <?php
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Entry Point (Router) for PHP's embedded HTTP server. Use ./flow server:run to execute.

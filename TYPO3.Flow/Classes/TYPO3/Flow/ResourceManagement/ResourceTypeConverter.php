@@ -18,7 +18,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * A type converter for converting strings, array and uploaded files to PersistentResource objects.

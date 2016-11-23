@@ -15,7 +15,7 @@ use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 
 /**

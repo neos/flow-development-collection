@@ -15,8 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ResourceManagement\Collection;
 use TYPO3\Flow\ResourceManagement\CollectionInterface;
 use TYPO3\Flow\ResourceManagement\Storage\PackageStorage;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Flow\ResourceManagement\Target\Exception as TargetException;
 
 /**

@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Object Manager

@@ -19,7 +19,7 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * A monitor which detects changes in directories or files

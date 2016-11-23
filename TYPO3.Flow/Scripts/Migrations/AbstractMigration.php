@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Core\Migrations;
  */
 
 use TYPO3\Flow\Configuration\Source\YamlSource;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * The base class for code migrations.

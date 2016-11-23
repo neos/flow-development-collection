@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Reflection;
  */
 
 use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the

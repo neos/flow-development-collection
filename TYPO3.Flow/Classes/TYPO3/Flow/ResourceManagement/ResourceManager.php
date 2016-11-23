@@ -21,7 +21,7 @@ use TYPO3\Flow\ResourceManagement\Storage\StorageInterface;
 use TYPO3\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use TYPO3\Flow\ResourceManagement\Target\TargetInterface;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The ResourceManager

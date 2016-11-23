@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Functional\I18n\Cldr;
 use TYPO3\Flow\I18n;
 use TYPO3\Flow\I18n\Cldr\CldrRepository;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the I18N CLDR Repository

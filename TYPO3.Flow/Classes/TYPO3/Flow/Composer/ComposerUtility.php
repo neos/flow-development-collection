@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Composer;
 
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.

@@ -17,8 +17,8 @@ use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\PdoHelper;
+use Neos\Utility\Files;
+use Neos\Utility\PdoHelper;
 
 /**
  * A PDO database cache backend

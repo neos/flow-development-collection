@@ -24,7 +24,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Utility\MediaTypes;
 use TYPO3\Flow\Error;
 use TYPO3\Flow\Validation\ValidatorResolver;
 

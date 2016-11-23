@@ -16,7 +16,7 @@ use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Exception\InvalidTypeException;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Validation\Validator\AggregateBoundaryValidator;
 use TYPO3\Flow\Validation\Validator\ValidatorInterface;
 use TYPO3\Flow\Validation\Validator\GenericObjectValidator;

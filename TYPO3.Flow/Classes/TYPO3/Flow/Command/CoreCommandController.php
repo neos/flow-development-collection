@@ -28,7 +28,7 @@ use TYPO3\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
 use TYPO3\Flow\ObjectManagement\Proxy\Compiler;
 use TYPO3\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use TYPO3\Flow\Utility\Environment;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Command controller for core commands

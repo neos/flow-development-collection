@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Http;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error as FlowError;
-use TYPO3\Flow\Utility\Unicode;
+use Neos\Utility\Unicode;
 
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Core;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Package;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Class Loader implementation which loads .php files found in the classes

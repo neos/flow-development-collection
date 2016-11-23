@@ -391,6 +391,6 @@ TYPO3\Flow\Session\SessionManager:
 # Utility                                                                  #
 #                                                                          #
 
-TYPO3\Flow\Utility\PdoHelper:
+Neos\Utility\PdoHelper:
   autowiring: off
   scope: prototype

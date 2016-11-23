@@ -8,7 +8,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * A datatype that replaces references to entities in arrays with a type/identifier tuple

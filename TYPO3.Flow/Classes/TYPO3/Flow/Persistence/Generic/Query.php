@@ -18,7 +18,7 @@ use TYPO3\Flow\Persistence\Generic\Qom\QueryObjectModelFactory;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * The Query class used to run queries like

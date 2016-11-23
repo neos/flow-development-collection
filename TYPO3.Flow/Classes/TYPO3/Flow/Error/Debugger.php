@@ -18,7 +18,7 @@ use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface;
 use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * A debugging utility class

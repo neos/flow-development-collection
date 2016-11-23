@@ -16,7 +16,7 @@ use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\Flow\Cache;
 
 /**

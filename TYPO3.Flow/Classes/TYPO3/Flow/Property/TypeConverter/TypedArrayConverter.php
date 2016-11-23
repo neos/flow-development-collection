@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * Converter which recursively transforms typed arrays (array<T>).

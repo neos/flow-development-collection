@@ -418,7 +418,7 @@ Action Request.
 	a specific media type. For example, the format for ``text/html`` is "html" and
 	the format corresponding to the media type ``application/json`` would be "json".
 	For a complete list of supported media types and their corresponding formats
-	please refer to the class ``TYPO3\Flow\Utility\MediaTypes``.
+	please refer to the class ``Neos\Utility\MediaTypes``.
 
 The controller implementation must take care of the actual media type support by
 supplying a corresponding view or template.
