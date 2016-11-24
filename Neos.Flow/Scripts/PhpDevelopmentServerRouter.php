@@ -10,7 +10,7 @@ if (strpos($_SERVER['REQUEST_URI'], '_Resources/') !== false) {
     return false;
 }
 
-require(__DIR__. '/../Classes/TYPO3/Flow/Core/Bootstrap.php');
+require(__DIR__. '/../Classes/Core/Bootstrap.php');
 
 define('FLOW_PATH_ROOT', Files::getUnixStylePath(realpath(__DIR__ . '/../../../../')) . '/');
 
