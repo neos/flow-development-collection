@@ -240,7 +240,7 @@ Whitelisted objects
 
 There are rare cases which still justify persisting objects during safe requests. For example,
 your application might want to generate thumbnails of images during a GET request and persist
-the resulting Resource objects.
+the resulting PersistentResource instances.
 
 For these cases it is possible to whitelist specific objects via the Persistence Manager::
 

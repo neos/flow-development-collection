@@ -17,8 +17,8 @@ use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\Response;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\LockManager;
-use TYPO3\Flow\Object\ObjectManager;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Environment;
 

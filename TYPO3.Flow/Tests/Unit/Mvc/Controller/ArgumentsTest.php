@@ -114,20 +114,6 @@ class ArgumentsTest extends UnitTestCase
     /**
      * @test
      */
-    public function getArgumentShortNamesReturnsShortNamesOfAddedArguments()
-    {
-        $arguments = new Arguments();
-        $arguments->addNewArgument('first')->setShortName('a');
-        $arguments->addNewArgument('second')->setShortName('b');
-        $arguments->addNewArgument('third')->setShortName('c');
-
-        $expectedShortNames = ['a', 'b', 'c'];
-        $this->assertEquals($expectedShortNames, $arguments->getArgumentShortNames(), 'Returned argument short names were not as expected.');
-    }
-
-    /**
-     * @test
-     */
     public function addNewArgumentCreatesAndAddsNewArgument()
     {
         $arguments = new Arguments();

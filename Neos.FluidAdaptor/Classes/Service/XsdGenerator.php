@@ -22,7 +22,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition;
 class XsdGenerator extends AbstractGenerator
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      * @Flow\Inject
      */
     protected $objectManager;

@@ -97,7 +97,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
                 ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\Logger')->setMethods(['log'])->getMock();
+        $mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\Logger::class)->setMethods(['log'])->getMock();
         $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));

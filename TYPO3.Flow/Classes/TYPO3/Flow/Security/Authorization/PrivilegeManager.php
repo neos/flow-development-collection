@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Authorization;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\Role;

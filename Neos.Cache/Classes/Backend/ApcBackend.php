@@ -14,6 +14,7 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -48,8 +49,10 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class ApcBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class ApcBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * A prefix to seperate stored data from other data possible stored in the APC
      * @var string

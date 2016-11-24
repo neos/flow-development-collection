@@ -327,6 +327,10 @@ production systems, so get and set performance is much more important in this sc
 	wait in top, the file backend has reached this bound. A different storage strategy
 	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
 
+.. note::
+	The FileBackend is the only cache-backend that is capable of storing the
+	``FLOW_Object_Classes`` Cache.
+
 Options
 ~~~~~~~
 
@@ -355,6 +359,15 @@ to clean up hard disk space or memory.
 	There is currently very little production experience with this  backend, especially
 	not with a capable database like Oracle. We appreciate any feedback for real life use
 	cases of this cache.
+
+.. warning::
+
+	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+	This can be usefull in certain situations to avoid file operations on production
+	environments. If you want to use this backend for code-caching make sure that
+	``allow_url_include`` is enabled in php.ini
 
 Options
 ~~~~~~~
@@ -417,6 +430,15 @@ system. It is recommended to build this from the git repository. Currently redis
 	The redis implementation is pretty young and should be considered as experimental. The
 	redis project itself has a very high development speed and it might happen that the
 	Flow implementation changes to adapt to new versions.
+
+.. warning::
+
+	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+	This can be usefull in certain situations to avoid file operations on production
+	environments. If you want to use this backend for code-caching make sure that
+	``allow_url_include`` is enabled in php.ini
 
 Options
 ~~~~~~~
@@ -506,6 +528,15 @@ all.
 	memcache is cheap (but could be read by third parties) and access to databases is
 	expensive.
 
+.. warning::
+
+	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+	This can be usefull in certain situations to avoid file operations on production
+	environments. If you want to use this backend for code-caching make sure that
+	``allow_url_include`` is enabled in php.ini
+
 Options
 ~~~~~~~
 
@@ -569,6 +600,15 @@ heavy memory fragmentation.
 	shared cache, given data is not encapsulated or namespaced in any way. Only use the
 	APC backend in environments which are completely under your control and where no third
 	party can read or tamper your data.
+
+.. warning::
+
+	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+	This can be usefull in certain situations to avoid file operations on production
+	environments. If you want to use this backend for code-caching make sure that
+	``allow_url_include`` is enabled in php.ini
 
 Options
 ~~~~~~~

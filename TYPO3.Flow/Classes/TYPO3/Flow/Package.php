@@ -12,7 +12,7 @@ namespace TYPO3\Flow;
  */
 
 use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 
 /**
  * The Flow Package
@@ -83,14 +83,14 @@ class Package extends BasePackage
                 return;
             }
             $objectManager = $bootstrap->getObjectManager();
-            $resourceManager = $objectManager->get(\TYPO3\Flow\Resource\ResourceManager::class);
+            $resourceManager = $objectManager->get(\TYPO3\Flow\ResourceManagement\ResourceManager::class);
             $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
         };
 
         $dispatcher->connect(\TYPO3\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
 
         $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Configuration\ConfigurationManager::class, 'shutdown');
-        $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Object\ObjectManagerInterface::class, 'shutdown');
+        $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class, 'shutdown');
 
         $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Reflection\ReflectionService::class, 'saveToCache');
 

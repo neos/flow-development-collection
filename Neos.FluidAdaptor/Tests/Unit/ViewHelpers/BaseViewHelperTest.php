@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use Neos\FluidAdaptor\ViewHelpers\BaseViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 

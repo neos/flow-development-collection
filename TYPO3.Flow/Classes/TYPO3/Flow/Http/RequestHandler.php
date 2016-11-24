@@ -17,6 +17,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Package\Package;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -96,7 +97,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function handleRequest()
     {
-        // Create the request very early so the Resource Management has a chance to grab it:
+        // Create the request very early so the ResourceManagement has a chance to grab it:
         $request = Request::createFromEnvironment();
         $response = new Response();
         $this->componentContext = new ComponentContext($request, $response);
@@ -190,8 +191,8 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         /** @var Package $applicationPackage */
         /** @var Package $flowPackage */
-        $flowPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Flow');
-        $applicationPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage($this->settings['core']['applicationPackageKey']);
+        $flowPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage('TYPO3.Flow');
+        $applicationPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage($this->settings['core']['applicationPackageKey']);
 
         if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
             $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());

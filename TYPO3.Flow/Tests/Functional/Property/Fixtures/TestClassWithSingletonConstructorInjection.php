@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA;
+use TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceA;
 
 /**
  * A simple class for PropertyMapper test

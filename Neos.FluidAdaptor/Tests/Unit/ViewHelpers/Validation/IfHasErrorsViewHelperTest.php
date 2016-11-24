@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Result;
 use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 

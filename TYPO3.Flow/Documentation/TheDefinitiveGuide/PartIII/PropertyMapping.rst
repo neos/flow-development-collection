@@ -61,7 +61,7 @@ to convert an array of data into a domain model::
 		'name' => 'John Fisher',
 		'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
-	$person = $propertyMapper->convert($inputArray, 'TYPO3\MyPackage\Domain\Model\Person');
+	$person = $propertyMapper->convert($inputArray, \TYPO3\MyPackage\Domain\Model\Person::class);
 
 	// $person is a newly created object of type TYPO3\MyPackage\Domain\Model\Person
 	// $person->name == 'John Fisher'
@@ -74,7 +74,7 @@ We'll first use a simple input array::
 	  'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
 
-After calling ``$propertyMapper->convert($input, 'TYPO3\MyPackage\Domain\Model\Person')``,
+After calling ``$propertyMapper->convert($input, \TYPO3\MyPackage\Domain\Model\Person::class)``,
 we receive an ew object of type ``Person`` which has ``$name`` set to ``John Fisher``,
 and ``$birthDate`` set to a ``DateTime`` object of the specified date. You might
 now wonder how the PropertyMapper knows how to convert ``DateTime`` objects and

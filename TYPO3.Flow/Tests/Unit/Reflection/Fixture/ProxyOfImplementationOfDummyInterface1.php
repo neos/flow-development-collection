@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  * source code.
  */
 
-use TYPO3\Flow\Object\Proxy\ProxyInterface;
+use TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface;
 
 /**
  * Proxy of the implementation of dummy interface number 1 for the Reflection tests
