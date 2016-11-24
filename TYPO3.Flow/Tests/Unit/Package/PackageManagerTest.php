@@ -307,7 +307,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [
             'name' => 'acme/yetanothertestpackage',
-            'type' => 'typo3-flow-package',
+            'type' => 'neos-package',
             'description' => 'Yet Another Test Package',
             'autoload' => [
                 'psr-0' => [
@@ -570,7 +570,7 @@ class PackageManagerTest extends UnitTestCase
 
         $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package',
-            'type' => 'typo3-flow-package'
+            'type' => 'neos-package'
         ]);
         $this->packageManager->freezePackage('Some.Package');
 
