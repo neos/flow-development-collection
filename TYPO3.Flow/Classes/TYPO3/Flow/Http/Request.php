@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Http;
  * source code.
  */
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
@@ -22,23 +24,8 @@ use TYPO3\Flow\Utility\MediaTypes;
  * @api
  * @Flow\Proxy(false)
  */
-class Request extends AbstractMessage
+class Request extends BaseRequest implements ServerRequestInterface
 {
-    /**
-     * @var string
-     */
-    protected $method = 'GET';
-
-    /**
-     * @var Uri
-     */
-    protected $uri;
-
-    /**
-     * @var Uri
-     */
-    protected $baseUri;
-
     /**
      * @var array
      */
@@ -64,6 +51,22 @@ class Request extends AbstractMessage
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * PSR-7
+     *
+     * @var array
+     */
+    protected $queryParams = [];
+
+    /**
+     * PSR-7
+     *
+     * @var array|object|null
+     */
+    protected $parsedBody;
+
+    protected $uploadedFiles = [];
 
     /**
      * PSR-7 Attribute containing the resolved trusted client IP address as string
@@ -114,6 +117,7 @@ class Request extends AbstractMessage
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
+        $this->queryParams = $get;
         $this->server = $server;
         $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
     }
@@ -211,14 +215,14 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Returns the request URI
+     * Returns the port used for this request
      *
-     * @return Uri
+     * @return integer
      * @api
      */
-    public function getUri()
+    public function getPort()
     {
-        return $this->uri;
+        return $this->uri->getPort();
     }
 
     /**
@@ -254,39 +258,6 @@ class Request extends AbstractMessage
         return $this->uri->getScheme() === 'https';
     }
 
-    /**
-     * Sets the request method
-     *
-     * @param string $method The request method, for example "GET".
-     * @return void
-     * @api
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    /**
-     * Returns the request method
-     *
-     * @return string The request method
-     * @api
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * Returns the port used for this request
-     *
-     * @return integer
-     * @api
-     */
-    public function getPort()
-    {
-        return $this->uri->getPort();
-    }
 
     /**
      * Tells if the request method is "safe", that is, it is expected to not take any
@@ -337,61 +308,6 @@ class Request extends AbstractMessage
     public function getArgument($name)
     {
         return (isset($this->arguments[$name]) ? $this->arguments[$name] : null);
-    }
-
-    /**
-     * Explicitly sets the content of the request body
-     *
-     * In most cases, content is just a string representation of the request body.
-     * In order to reduce memory consumption for uploads and other big data, it is
-     * also possible to pass a stream resource. The easies way to convert a local file
-     * into a stream resource is probably: $resource = fopen('file://path/to/file', 'rb');
-     *
-     * @param string|resource $content The body content, for example arguments of a PUT request, or a stream resource
-     * @return void
-     * @api
-     */
-    public function setContent($content)
-    {
-        if (is_resource($content) && get_resource_type($content) === 'stream' && stream_is_local($content)) {
-            $streamMetaData = stream_get_meta_data($content);
-            $this->headers->set('Content-Length', filesize($streamMetaData['uri']));
-            $this->headers->set('Content-Type', MediaTypes::getMediaTypeFromFilename($streamMetaData['uri']));
-        }
-
-        parent::setContent($content);
-    }
-
-    /**
-     * Returns the content of the request body
-     *
-     * If the request body has not been set with setContent() previously, this method
-     * will try to retrieve it from the input stream. If $asResource was set to TRUE,
-     * the stream resource will be returned instead of a string.
-     *
-     * If the content which has been set by setContent() originally was a stream
-     * resource, that resource will be returned, no matter if $asResource is set.
-     *
-     *
-     * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
-     * @return string|resource
-     * @api
-     * @throws Exception
-     */
-    public function getContent($asResource = false)
-    {
-        if ($asResource === true) {
-            if ($this->content !== null) {
-                throw new Exception('Cannot return request content as resource because it has already been retrieved.', 1332942478);
-            }
-            $this->content = '';
-            return fopen($this->inputStreamUri, 'rb');
-        }
-
-        if ($this->content === null) {
-            $this->content = file_get_contents($this->inputStreamUri);
-        }
-        return $this->content;
     }
 
     /**
@@ -670,21 +586,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Tries to detect the base URI of request.
-     *
-     * @return void
-     */
-    protected function detectBaseUri()
-    {
-        if ($this->baseUri === null) {
-            $this->baseUri = clone $this->uri;
-            $this->baseUri->setQuery(null);
-            $this->baseUri->setFragment(null);
-            $this->baseUri->setPath($this->getScriptRequestPath());
-        }
-    }
-
-    /**
      * Takes the raw GET & POST arguments and maps them into the request object.
      * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
      * have been GET, POST or PUT arguments before.
@@ -698,7 +599,9 @@ class Request extends AbstractMessage
     {
         $arguments = $getArguments;
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
+        $files = static::normalizeFiles($uploadArguments);
+        $this->uploadedFiles = $files;
+        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $files);
         return $arguments;
     }
 
@@ -809,25 +712,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Renders the HTTP headers - including the status header - of this request
-     *
-     * @return string The HTTP headers, one per line, separated by \r\n as required by RFC 2616 sec 5
-     * @api
-     */
-    public function renderHeaders()
-    {
-        $headers = $this->getRequestLine();
-
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $headers .= sprintf("%s: %s\r\n", $name, $value);
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
      * Cast the request to a string: return the content part of this response
      *
      * @return string The same as getContent()
@@ -877,5 +761,211 @@ class Request extends AbstractMessage
     public static function trimMediaType($rawMediaType)
     {
         return MediaTypes::trimMediaType($rawMediaType);
+    }
+
+    /**
+     * Retrieve cookies.
+     *
+     * Retrieves cookies sent by the client to the server.
+     *
+     * The data MUST be compatible with the structure of the $_COOKIE
+     * superglobal.
+     *
+     * @return array
+     */
+    public function getCookieParams()
+    {
+        $cookies = [];
+        foreach ($this->headers->getCookies() as $cookie) {
+            $cookies[$cookie->getName()] = $cookie->getValue();
+        };
+        return $cookies;
+    }
+
+    /**
+     * Return an instance with the specified cookies.
+     *
+     * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
+     * be compatible with the structure of $_COOKIE. Typically, this data will
+     * be injected at instantiation.
+     *
+     * This method MUST NOT update the related Cookie header of the request
+     * instance, nor related values in the server params.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated cookie values.
+     *
+     * @param array $cookies Array of key/value pairs representing cookies.
+     * @return static
+     */
+    public function withCookieParams(array $cookies)
+    {
+        $newRequest = clone $this;
+        foreach ($cookies as $name => $value) {
+            $newRequest->headers->setCookie(new Cookie($name, $value));
+        }
+        return $newRequest;
+    }
+
+    /**
+     * Retrieve query string arguments.
+     *
+     * Retrieves the deserialized query string arguments, if any.
+     *
+     * Note: the query params might not be in sync with the URI or server
+     * params. If you need to ensure you are only getting the original
+     * values, you may need to parse the query string from `getUri()->getQuery()`
+     * or from the `QUERY_STRING` server param.
+     *
+     * @return array
+     */
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
+
+    /**
+     * Return an instance with the specified query string arguments.
+     *
+     * These values SHOULD remain immutable over the course of the incoming
+     * request. They MAY be injected during instantiation, such as from PHP's
+     * $_GET superglobal, or MAY be derived from some other value such as the
+     * URI. In cases where the arguments are parsed from the URI, the data
+     * MUST be compatible with what PHP's parse_str() would return for
+     * purposes of how duplicate query parameters are handled, and how nested
+     * sets are handled.
+     *
+     * Setting query string arguments MUST NOT change the URI stored by the
+     * request, nor the values in the server params.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated query string arguments.
+     *
+     * @param array $query Array of query string arguments, typically from $_GET.
+     * @return static
+     */
+    public function withQueryParams(array $query)
+    {
+        $newRequest = clone $this;
+        $newRequest->queryParams = $query;
+        return $newRequest;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        $this->uploadedFiles;
+    }
+
+    /**
+     * @param array $uploadedFiles
+     * @return ServerRequestInterface
+     */
+    public function withUploadedFiles(array $uploadedFiles)
+    {
+        $newRequest = clone $this;
+        $newRequest->uploadedFiles = $uploadedFiles;
+        return $newRequest;
+    }
+
+    /**
+     * @return array|null|object
+     */
+    public function getParsedBody()
+    {
+        isset($this->parsedBody) ? $this->parsedBody : $_POST;
+    }
+
+    /**
+     * @param array|null|object $data
+     * @return ServerRequestInterface
+     */
+    public function withParsedBody($data)
+    {
+        $newRequest = clone $this;
+        $newRequest->parsedBody = $data;
+        return $newRequest;
+    }
+
+    /**
+     * Return an UploadedFile instance array.
+     *
+     * @param array $files A array which respect $_FILES structure
+     * @throws InvalidArgumentException for unrecognized values
+     * @return array
+     */
+    public static function normalizeFiles(array $files)
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+            } elseif (is_array($value) && isset($value['tmp_name'])) {
+                $normalized[$key] = self::createUploadedFileFromSpec($value);
+            } elseif (is_array($value)) {
+                $normalized[$key] = self::normalizeFiles($value);
+                continue;
+            } else {
+                throw new InvalidArgumentException('Invalid value in files specification');
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Create and return an UploadedFile instance from a $_FILES specification.
+     *
+     * If the specification represents an array of values, this method will
+     * delegate to normalizeNestedFileSpec() and return that return value.
+     *
+     * @param array $value $_FILES struct
+     * @return array|UploadedFileInterface
+     */
+    private static function createUploadedFileFromSpec(array $value)
+    {
+        if (is_array($value['tmp_name'])) {
+            return self::normalizeNestedFileSpec($value);
+        }
+
+        return new UploadedFile(
+            $value['tmp_name'],
+            (int)$value['size'],
+            (int)$value['error'],
+            $value['name'],
+            $value['type']
+        );
+    }
+
+    /**
+     * Normalize an array of file specifications.
+     *
+     * Loops through all nested files and returns a normalized array of
+     * UploadedFileInterface instances.
+     *
+     * @param array $files
+     * @return UploadedFileInterface[]
+     */
+    private static function normalizeNestedFileSpec(array $files = [])
+    {
+        $normalizedFiles = [];
+
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size' => $files['size'][$key],
+                'error' => $files['error'][$key],
+                'name' => $files['name'][$key],
+                'type' => $files['type'][$key],
+            ];
+            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+        }
+
+        return $normalizedFiles;
     }
 }

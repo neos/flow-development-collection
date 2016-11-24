@@ -13,6 +13,8 @@
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
+        "psr/http-message": "~1.0.0",
+
         "neos/utility-lock": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
