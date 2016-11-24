@@ -1,5 +1,5 @@
 {
-    "name": "typo3/flow",
+    "name": "neos/flow",
     "type": "neos-framework",
     "description": "Flow Application Framework",
     "homepage": "http://flow.neos.io",
@@ -26,7 +26,7 @@
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
 
-        "typo3/eel": "*",
+        "neos/eel": "*",
 
         "ramsey/uuid": "^3.0.0",
 
@@ -39,6 +39,9 @@
         "symfony/console": "~2.8",
 
         "neos/composer-plugin": "^2.0.0"
+    },
+    "replace": {
+        "typo3/flow": "self.version"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
