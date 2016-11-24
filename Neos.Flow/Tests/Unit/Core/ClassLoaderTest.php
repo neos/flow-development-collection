@@ -67,13 +67,18 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader = new ClassLoader();
 
         $this->mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['Acme\\MyApp']));
+        $this->mockPackage1->expects($this->any())->method('getNamespaces')->will($this->returnValue(['Acme\\MyApp','Acme\\MyApp\\Tests']));
         $this->mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
         $this->mockPackage1->expects($this->any())->method('getFlattenedAutoloadConfiguration')->will($this->returnValue([
             [
                 'namespace' => 'Acme\\MyApp',
                 'classPath' => 'vfs://Test/Packages/Application/Acme.MyApp/Classes/',
                 'mappingType' => ClassLoader::MAPPING_TYPE_PSR0
+            ],
+            [
+                'namespace' => 'Acme\\MyApp\\Tests',
+                'classPath' => 'vfs://Test/Packages/Application/Acme.MyApp/Tests/',
+                'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
             ]
         ]));
 
@@ -117,7 +122,6 @@ class ClassLoaderTest extends UnitTestCase
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, true);
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-        $this->classLoader->setConsiderTestsNamespace(true);
         $this->classLoader->setPackages($this->mockPackages);
 
         $this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');

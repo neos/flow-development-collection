@@ -115,6 +115,9 @@
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
             ],
+            "Neos\\FluidAdaptor\\Tests\\": [
+                "Neos.FluidAdaptor/Tests"
+            ],
             "Neos\\Kickstarter\\Tests\\": [
                 "Neos.Kickstarter/Tests"
             ],
@@ -133,7 +136,7 @@
             "Neos\\Utility\\ObjectHandling\\Tests\\": [
                 "Neos.Utility.ObjectHandling/Tests"
             ],
-            "TYPO3\\Flow\\Utility\\Schema\\Tests\\": [
+            "Neos\\Flow\\Utility\\Schema\\Tests\\": [
                 "Neos.Utility.Schema/Tests"
             ],
             "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": [

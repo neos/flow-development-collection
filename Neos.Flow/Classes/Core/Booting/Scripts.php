@@ -84,7 +84,6 @@ class Scripts
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             self::requireAutoloaderForPhpUnit();
-            $classLoader->setConsiderTestsNamespace(true);
             require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
             require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
         }
