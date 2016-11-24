@@ -13,6 +13,9 @@ namespace TYPO3\Kickstart\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\View\StandaloneView;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Service for the Kickstart generator
@@ -60,6 +63,7 @@ class GeneratorService
      */
     public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = false)
     {
+        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
         $controllerClassName = $controllerName . 'Controller';
 
@@ -67,7 +71,7 @@ class GeneratorService
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
+        $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['subpackage'] = $subpackage;
         $contextVariables['isInSubpackage'] = ($subpackage != '');
         $contextVariables['controllerClassName'] = $controllerClassName;
@@ -77,7 +81,7 @@ class GeneratorService
 
         $subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
         $controllerFilename = $controllerClassName . '.php';
-        $controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . $subpackagePath . 'Controller/';
+        $controllerPath = Files::concatenatePaths([$namespaceEntryPath, $subpackagePath, 'Controller']) . '/';
         $targetPathAndFilename = $controllerPath . $controllerFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -96,6 +100,7 @@ class GeneratorService
      */
     public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = false)
     {
+        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
         $controllerClassName = $controllerName . 'Controller';
 
@@ -103,21 +108,21 @@ class GeneratorService
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
+        $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['subpackage'] = $subpackage;
         $contextVariables['isInSubpackage'] = ($subpackage != '');
         $contextVariables['controllerClassName'] = $controllerClassName;
         $contextVariables['controllerName'] = $controllerName;
         $contextVariables['modelName'] = strtolower($controllerName[0]) . substr($controllerName, 1);
-        $contextVariables['repositoryClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
-        $contextVariables['modelFullClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
+        $contextVariables['repositoryClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
+        $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
         $controllerFilename = $controllerClassName . '.php';
-        $controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . $subpackagePath . 'Controller/';
+        $controllerPath = Files::concatenatePaths([$namespaceEntryPath, $subpackagePath, 'Controller']) . '/';
         $targetPathAndFilename = $controllerPath . $controllerFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -135,6 +140,7 @@ class GeneratorService
      */
     public function generateCommandController($packageKey, $controllerName, $overwrite = false)
     {
+        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName) . 'Command';
         $controllerClassName = $controllerName . 'Controller';
 
@@ -142,14 +148,14 @@ class GeneratorService
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
+        $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['controllerClassName'] = $controllerClassName;
         $contextVariables['controllerName'] = $controllerName;
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $controllerFilename = $controllerClassName . '.php';
-        $controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Command/';
+        $controllerPath = Files::concatenatePaths([$namespaceEntryPath, 'Command']) . '/';
         $targetPathAndFilename = $controllerPath . $controllerFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -170,6 +176,7 @@ class GeneratorService
      */
     public function generateView($packageKey, $subpackage, $controllerName, $viewName, $templateName, $overwrite = false)
     {
+        list($baseNamespace) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $viewName = ucfirst($viewName);
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/View/' . $templateName . 'Template.html';
@@ -181,8 +188,8 @@ class GeneratorService
         $contextVariables['controllerName'] = $controllerName;
         $contextVariables['viewName'] = $viewName;
         $contextVariables['modelName'] = strtolower($controllerName[0]) . substr($controllerName, 1);
-        $contextVariables['repositoryClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
-        $contextVariables['modelFullClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
+        $contextVariables['repositoryClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
+        $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
 
         $modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
@@ -248,8 +255,9 @@ class GeneratorService
      */
     public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = false)
     {
+        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $modelName = ucfirst($modelName);
-        $namespace = str_replace('.', '\\', $packageKey) . '\\Domain\\Model';
+        $namespace = trim($baseNamespace, '\\') . '\\Domain\\Model';
         $fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
@@ -263,7 +271,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $modelFilename = $modelName . '.php';
-        $modelPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Domain/Model/';
+        $modelPath = $namespaceEntryPath . '/Domain/Model/';
         $targetPathAndFilename = $modelPath . $modelFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -283,8 +291,9 @@ class GeneratorService
      */
     public function generateTestsForModel($packageKey, $modelName, $overwrite = false)
     {
+        list($baseNamespace) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $testName = ucfirst($modelName) . 'Test';
-        $namespace = str_replace('.', '\\', $packageKey) . '\\Tests\\Unit\\Domain\\Model';
+        $namespace = trim($baseNamespace, '\\') . '\\Tests\\Unit\\Domain\\Model';
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Tests/Unit/Model/EntityTestTemplate.php.tmpl';
 
@@ -297,7 +306,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $testFilename = $testName . '.php';
-        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . \TYPO3\Flow\Package\PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
         $targetPathAndFilename = $testPath . $testFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -315,9 +324,10 @@ class GeneratorService
      */
     public function generateRepository($packageKey, $modelName, $overwrite = false)
     {
+        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $modelName = ucfirst($modelName);
         $repositoryClassName = $modelName . 'Repository';
-        $namespace = str_replace('.', '\\', $packageKey) . '\\Domain\\Repository';
+        $namespace = trim($baseNamespace, '\\') . '\\Domain\\Repository';
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
@@ -330,7 +340,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $repositoryFilename = $repositoryClassName . '.php';
-        $repositoryPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Domain/Repository/';
+        $repositoryPath = Files::concatenatePaths([$namespaceEntryPath, 'Domain/Repository']) . '/';
         $targetPathAndFilename = $repositoryPath . $repositoryFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -346,29 +356,30 @@ class GeneratorService
      */
     public function generateDocumentation($packageKey)
     {
+        $documentationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Documentation']);
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/conf.py';
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'conf.py';
+        $targetPathAndFilename = $documentationPath . '/conf.py';
         $this->generateFile($targetPathAndFilename, $fileContent);
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/Makefile';
         $fileContent = file_get_contents($templatePathAndFilename);
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'Makefile';
+        $targetPathAndFilename = $documentationPath . '/Makefile';
         $this->generateFile($targetPathAndFilename, $fileContent);
 
         $templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Documentation/index.rst';
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . 'index.rst';
+        $targetPathAndFilename = $documentationPath . '/index.rst';
         $this->generateFile($targetPathAndFilename, $fileContent);
 
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_build/.gitignore';
+        $targetPathAndFilename = $documentationPath . '/_build/.gitignore';
         $this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_static/.gitignore';
+        $targetPathAndFilename = $documentationPath . '/_static/.gitignore';
         $this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
-        $targetPathAndFilename = $this->packageManager->getPackage($packageKey)->getDocumentationPath() . '_templates/.gitignore';
+        $targetPathAndFilename = $documentationPath . '/_templates/.gitignore';
         $this->generateFile($targetPathAndFilename, '*' . chr(10) . '!.gitignore' . chr(10));
 
         return $this->generatedFiles;
@@ -445,5 +456,38 @@ class GeneratorService
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
         $standaloneView->assignMultiple($contextVariables);
         return $standaloneView->render();
+    }
+
+    /**
+     * @param PackageInterface $package
+     * @return array
+     */
+    protected function getPrimaryNamespaceAndEntryPath(PackageInterface $package)
+    {
+        $autoloadConfigurations = $package->getComposerManifest('autoload');
+
+        $firstAutoloadType = null;
+        $firstAutoloadConfiguration = null;
+        foreach ($autoloadConfigurations as $autoloadType => $autoloadConfiguration) {
+            if (ClassLoader::isAutoloadTypeWithPredictableClassPath($autoloadType)) {
+                $firstAutoloadType = $autoloadType;
+                $firstAutoloadConfiguration = $autoloadConfiguration;
+                break;
+            }
+        }
+
+        $autoloadPaths = reset($firstAutoloadConfiguration);
+        $firstAutoloadPath = is_array($autoloadPaths) ? reset($autoloadPaths) : $autoloadPaths;
+        $namespace = key($firstAutoloadConfiguration);
+        $autoloadPathPostfix = '';
+        if ($firstAutoloadType === ClassLoader::MAPPING_TYPE_PSR0) {
+            $autoloadPathPostfix = str_replace('\\', '/', trim($namespace, '\\'));
+        }
+
+        return [
+            $namespace,
+            Files::concatenatePaths([$package->getPackagePath(), $firstAutoloadPath, $autoloadPathPostfix]),
+            $firstAutoloadType,
+        ];
     }
 }

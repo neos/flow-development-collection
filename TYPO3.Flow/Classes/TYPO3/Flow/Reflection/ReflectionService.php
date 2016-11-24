@@ -1856,9 +1856,10 @@ class ReflectionService
         /** @var $package Package */
         foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
-                $frozenNamespaces[] = $package->getNamespace();
+                $frozenNamespaces = array_merge($frozenNamespaces, $package->getNamespaces());
             }
         }
+        $frozenNamespaces = array_unique($frozenNamespaces);
 
         $classNames = array_keys($this->classReflectionData);
         foreach ($frozenNamespaces as $namespace) {

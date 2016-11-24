@@ -115,58 +115,6 @@ class PackageManagerTest extends UnitTestCase
     }
 
     /**
-     * @test
-     */
-    public function getPackageOfObjectGetsPackageByGivenObject()
-    {
-        $package = $this->packageManager->createPackage('Acme.Foobar');
-        $dummyObject = $this->createDummyObjectForPackage($package);
-        $actual = $this->packageManager->getPackageOfObject($dummyObject);
-        $this->assertSame($package, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function getPackageOfObjectAssumesParentClassIfDoctrineProxyClassGiven()
-    {
-        $package = $this->packageManager->createPackage('Acme.Foobar');
-        $dummyObject = $this->createDummyObjectForPackage($package);
-
-        mkdir('vfs://Test/Somewhere/For/DoctrineProxies', 0700, true);
-        $dummyProxyClassName = 'Proxy_' . str_replace('\\', '_', get_class($dummyObject));
-        $dummyProxyClassPath = 'vfs://Test/Somewhere/For/DoctrineProxies/' . $dummyProxyClassName . '.php';
-        file_put_contents($dummyProxyClassPath, '<?php class ' . $dummyProxyClassName . ' extends ' . get_class($dummyObject) . ' implements \Doctrine\ORM\Proxy\Proxy {
-            public function __setInitialized($initialized) {}
-            public function __setInitializer(Closure $initializer = null) {}
-            public function __getInitializer() {}
-            public function __setCloner(Closure $cloner = null) {}
-            public function __getCloner() {}
-            public function __getLazyProperties() {}
-            public function __load() {}
-            public function __isInitialized() {}
-        } ?>');
-        require $dummyProxyClassPath;
-        $dummyProxy = new $dummyProxyClassName();
-
-        $actual = $this->packageManager->getPackageOfObject($dummyProxy);
-        $this->assertSame($package, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function getPackageOfObjectDoesNotGivePackageWithShorterPathPrematurely()
-    {
-        $package1 = $this->packageManager->createPackage('Acme.Foo');
-        $package2 = $this->packageManager->createPackage('Acme.Foobaz');
-        $dummy1Object = $this->createDummyObjectForPackage($package1);
-        $dummy2Object = $this->createDummyObjectForPackage($package2);
-        $this->assertSame($package1, $this->packageManager->getPackageOfObject($dummy1Object));
-        $this->assertSame($package2, $this->packageManager->getPackageOfObject($dummy2Object));
-    }
-
-    /**
      * Creates a dummy class file inside $package's path
      * and requires it for propagation
      *
@@ -175,25 +123,19 @@ class PackageManagerTest extends UnitTestCase
      */
     protected function createDummyObjectForPackage(PackageInterface $package)
     {
-        $namespace = trim($package->getNamespace(), '\\');
+        $namespaces = $package->getNamespaces();
         $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
-        $fullyQualifiedClassName = '\\' . $namespace . '\\' . $dummyClassName;
+
+        $fullyQualifiedClassName = '\\' . reset($namespaces) . '\\' . $dummyClassName;
+
         $dummyClassFilePath = Files::concatenatePaths([
             $package->getPackagePath(),
             PackageInterface::DIRECTORY_CLASSES,
             $dummyClassName . '.php'
         ]);
-        file_put_contents($dummyClassFilePath, '<?php namespace ' . $namespace . '; class ' . $dummyClassName . ' {}');
+        file_put_contents($dummyClassFilePath, '<?php namespace ' . reset($namespaces) . '; class ' . $dummyClassName . ' {}');
         require $dummyClassFilePath;
         return new $fullyQualifiedClassName();
-    }
-
-    /**
-     * @test
-     */
-    public function getPackageOfObjectReturnsNullIfPackageCouldNotBeResolved()
-    {
-        $this->assertNull($this->packageManager->getPackageOfObject(new \ArrayObject()));
     }
 
     /**
@@ -363,7 +305,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageWritesAComposerManifestUsingTheGivenMetaObject()
     {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', null, null, null, [
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [
             'name' => 'acme/yetanothertestpackage',
             'type' => 'typo3-flow-package',
             'description' => 'Yet Another Test Package',
@@ -397,7 +339,7 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', null, null, null, $metaData);
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', $metaData);
 
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
@@ -417,7 +359,6 @@ class PackageManagerTest extends UnitTestCase
 
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_DOCUMENTATION), 'Documentation directory was not created');
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
@@ -612,7 +553,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
 
-        $this->packageManager->createPackage('Some.Package', null, null, null, [
+        $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package'
         ]);
 
@@ -627,7 +568,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->will($this->returnValue(true));
 
-        $this->packageManager->createPackage('Some.Package', null, null, null, [
+        $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package',
             'type' => 'typo3-flow-package'
         ]);

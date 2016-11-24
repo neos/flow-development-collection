@@ -23,8 +23,6 @@ interface PackageInterface
 
     const DIRECTORY_CLASSES = 'Classes/';
     const DIRECTORY_CONFIGURATION = 'Configuration/';
-    const DIRECTORY_DOCUMENTATION = 'Documentation/';
-    const DIRECTORY_METADATA = 'Meta/';
     const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
     const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
     const DIRECTORY_RESOURCES = 'Resources/';
@@ -38,13 +36,6 @@ interface PackageInterface
      * @return void
      */
     public function boot(Bootstrap $bootstrap);
-
-    /**
-     * Returns the package meta object of this package.
-     *
-     * @return MetaData
-     */
-    public function getPackageMetaData();
 
     /**
      * Returns the array of filenames of the class files
@@ -63,13 +54,20 @@ interface PackageInterface
     public function getPackageKey();
 
     /**
-     * Returns the PHP namespace of classes in this package.
+     * Returns the composer name of this package.
      *
      * @return string
      * @api
-     * @deprecated Use getNamespaces() - To be removed in Flow 4.0
      */
-    public function getNamespace();
+    public function getComposerName();
+
+    /**
+     * Returns an array of all namespaces declared for this package.
+     *
+     * @return array
+     * @api
+     */
+    public function getNamespaces();
 
     /**
      * Tells if this package is protected and therefore cannot be deactivated or deleted
@@ -104,25 +102,6 @@ interface PackageInterface
     public function getPackagePath();
 
     /**
-     * Returns the full path to this package's Classes directory
-     *
-     * @return string Path to this package's Classes directory
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getClassesPath();
-
-    /**
-     * Returns the full path to the package's classes namespace entry path,
-     * e.g. "My.Package/ClassesPath/My/Package/"
-     *
-     * @return string Path to this package's Classes directory
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getClassesNamespaceEntryPath();
-
-    /**
      * Returns the full path to this package's Resources directory
      *
      * @return string Path to this package's Resources directory
@@ -139,29 +118,20 @@ interface PackageInterface
     public function getConfigurationPath();
 
     /**
-     * Returns the full path to this package's Package.xml file
+     * Returns the currently installed version of this package.
      *
-     * @return string Path to this package's Package.xml file
+     * @return string
      * @api
-     * @deprecated To be removed in Flow 4.0
      */
-    public function getMetaPath();
+    public function getInstalledVersion();
 
     /**
-     * Returns the full path to the package's documentation directory
+     * Returns the composer manifest of this package or
+     * just contents of a specific key of the full configuration.
      *
-     * @return string Full path to the package's documentation directory
+     * @param string $key
+     * @return mixed
      * @api
-     * @deprecated To be removed in Flow 4.0
      */
-    public function getDocumentationPath();
-
-    /**
-     * Returns the available documentations for this package
-     *
-     * @return array<Documentation>
-     * @api
-     * @deprecated To be removed in Flow 4.0
-     */
-    public function getPackageDocumentations();
+    public function getComposerManifest($key = null);
 }
