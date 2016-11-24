@@ -13,6 +13,7 @@ namespace Neos\Flow\Security\Cryptography;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility;
+use Neos\Flow\Utility\Algorithms as UtilityAlgorithms;
 use Neos\Flow\Security\Exception as SecurityException;
 
 /**
@@ -69,7 +70,7 @@ class FileBasedSimpleKeyService
         if (strlen($name) === 0) {
             throw new SecurityException('Required name argument was empty', 1334215474);
         }
-        $password = Utility\Algorithms::generateRandomString($this->passwordGenerationLength);
+        $password = UtilityAlgorithms::generateRandomString($this->passwordGenerationLength);
         $this->persistKey($name, $password);
         return $password;
     }
