@@ -23,6 +23,12 @@ use Neos\Flow\Security\RequestPattern\Uri;
  */
 class Version20151113161300 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Flow-20151113161300';
+    }
+
     /**
      * @return void
      */

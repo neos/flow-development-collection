@@ -18,6 +18,11 @@ use Neos\Utility\Files;
  */
 class Version20141121091700 extends AbstractMigration
 {
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20141121091700';
+    }
+
     public function up()
     {
         $affectedFiles = array();

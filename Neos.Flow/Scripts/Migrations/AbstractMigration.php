@@ -88,10 +88,7 @@ abstract class AbstractMigration
      *
      * @return string
      */
-    public function getIdentifier()
-    {
-        return $this->sourcePackageKey . '-' . $this->getVersionNumber();
-    }
+    abstract public function getIdentifier();
 
     /**
      * Returns the version of this migration, e.g. '20120126163610'.

@@ -22,6 +22,12 @@ use Neos\Flow\Utility\PhpAnalyzer;
  */
 class Version20150214130800 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20150214130800';
+    }
+
     /**
      * @return void
      */

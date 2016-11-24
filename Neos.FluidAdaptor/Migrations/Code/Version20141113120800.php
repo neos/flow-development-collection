@@ -16,6 +16,12 @@ namespace Neos\Flow\Core\Migrations;
  */
 class Version20141113120800 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20141113120800';
+    }
+
     public function up()
     {
         $this->searchAndReplaceRegex('/\<f\:security\.ifAccess\s+(resource=)/', '<f:security.ifAccess privilegeTarget=', array('html'));

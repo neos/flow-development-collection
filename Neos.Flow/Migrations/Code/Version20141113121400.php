@@ -18,6 +18,12 @@ use Neos\Flow\Configuration\ConfigurationManager;
  */
 class Version20141113121400 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Flow-20141113121400';
+    }
+
     /**
      * @return void
      */
