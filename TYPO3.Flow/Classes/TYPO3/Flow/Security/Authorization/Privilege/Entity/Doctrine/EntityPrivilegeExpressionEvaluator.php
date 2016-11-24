@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\Context;
-use TYPO3\Eel\ParserException;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Context;
+use Neos\Eel\ParserException;
 use TYPO3\Flow\Annotations as Flow;
 
 /**

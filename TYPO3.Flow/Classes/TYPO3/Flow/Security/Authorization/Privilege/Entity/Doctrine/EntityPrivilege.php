@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use TYPO3\Eel\Context as EelContext;
+use Neos\Eel\Context as EelContext;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface;

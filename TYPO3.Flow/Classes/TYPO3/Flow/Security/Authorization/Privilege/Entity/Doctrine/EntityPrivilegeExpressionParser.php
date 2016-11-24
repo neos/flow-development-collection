@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use TYPO3\Eel\CompilingEelParser;
-use TYPO3\Eel\ParserException;
+use Neos\Eel\CompilingEelParser;
+use Neos\Eel\ParserException;
 
 /**
  * A compiling expression parser

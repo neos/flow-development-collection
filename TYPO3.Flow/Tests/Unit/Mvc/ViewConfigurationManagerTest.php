@@ -15,7 +15,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Mvc\ViewConfigurationManager;
 use TYPO3\Flow\Mvc\ActionRequest;
 use Neos\Cache\Frontend\VariableFrontend;
-use TYPO3\Eel\CompilingEvaluator;
+use Neos\Eel\CompilingEvaluator;
 
 /**
  * Testcase for the MVC ViewConfigurationManager

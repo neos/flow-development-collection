@@ -16,7 +16,7 @@ use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
 use TYPO3\Flow\Exception as FlowException;
-use TYPO3\Eel\ProtectedContextAwareInterface;
+use Neos\Eel\ProtectedContextAwareInterface;
 
 /**
  * Provides a chainable interface to collect all arguments needed to

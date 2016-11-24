@@ -70,7 +70,7 @@ Two context types are available.
 to explicitly whitelist methods::
 
     $context = new ProtectedContext([
-        'String' => new \TYPO3\Eel\Helper\StringHelper,
+        'String' => new \Neos\Eel\Helper\StringHelper,
     ]);
     $context->whitelist('String.*');
     $result = (new CompilingEvaluator)->evaluate(
@@ -81,7 +81,7 @@ to explicitly whitelist methods::
 In the above example, all methods for ``String`` are whitelisted and therefore the result will be
 ``"World"``.
 
-In case a non whitelisted method is called, a ``\TYPO3\Eel\NotAllowedException`` is thrown.
+In case a non whitelisted method is called, a ``\Neos\Eel\NotAllowedException`` is thrown.
 
 .. _eel-evaluators:
 
@@ -105,7 +105,7 @@ is implemented as a class. No helpers are available out of the box while parsing
 include helpers add them to the context, e.g. ::
 
     $context = new Context([
-        'String' => new \TYPO3\Eel\Helper\StringHelper,
+        'String' => new \Neos\Eel\Helper\StringHelper,
     ]);
     $result = (new CompilingEvaluator)->evaluate(
         'String.substr("Hello World", 6, 5)',

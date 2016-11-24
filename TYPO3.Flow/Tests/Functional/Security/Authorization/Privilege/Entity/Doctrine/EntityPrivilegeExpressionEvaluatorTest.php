@@ -17,7 +17,7 @@ use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerat
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Eel;
+use Neos\Eel;
 use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase

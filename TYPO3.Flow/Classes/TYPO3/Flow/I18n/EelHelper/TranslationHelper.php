@@ -12,7 +12,7 @@ namespace TYPO3\Flow\I18n\EelHelper;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Eel\ProtectedContextAwareInterface;
+use Neos\Eel\ProtectedContextAwareInterface;
 
 /**
  * Translation helpers for Eel contexts

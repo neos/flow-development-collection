@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Mvc;
  * source code.
  */
 
-use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\Context;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Context;
 use TYPO3\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
