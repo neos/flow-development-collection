@@ -1,0 +1,15 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>{viewName} view of {controllerName} controller<![CDATA[</f:section>
+
+<f:section name="Content">]]>
+    <h1>A freshly created Fluid template!</h1>
+    <p>Some data set by the controller:</p>
+    <ul>
+        <![CDATA[
+        <f:for each="{foos}" as="foo">
+            <li>{foo}</li>
+        </f:for>
+        ]]>
+    </ul>
+<![CDATA[</f:section>]]>

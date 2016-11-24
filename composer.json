@@ -31,7 +31,7 @@
         "neos/error-messages": "self.version",
         "neos/flow": "self.version",
         "neos/fluid-adaptor": "self.version",
-        "neos/kickstart": "self.version",
+        "neos/kickstarter": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
         "neos/utility-lock": "self.version",
@@ -71,8 +71,8 @@
             "Neos\\FluidAdaptor\\": [
                 "Neos.FluidAdaptor/Classes/"
             ],
-            "Neos\\Kickstart\\": [
-                "Neos.Kickstart/Classes"
+            "Neos\\Kickstarter\\": [
+                "Neos.Kickstarter/Classes"
             ],
             "Neos\\Utility\\": [
                 "Neos.Utility.Arrays/Classes",
@@ -115,8 +115,8 @@
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
             ],
-            "Neos\\Kickstart\\Tests\\": [
-                "Neos.Kickstart/Tests"
+            "Neos\\Kickstarter\\Tests\\": [
+                "Neos.Kickstarter/Tests"
             ],
             "Neos\\Utility\\Arrays\\Tests\\": [
                 "Neos.Utility.Arrays/Tests"

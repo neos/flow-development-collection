@@ -1,0 +1,87 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<?php
+namespace {packageNamespace}<f:if condition="{isInSubpackage}">\{subpackage}</f:if>\Controller;
+
+/*
+ * This file is part of the {packageKey} package.
+ */
+
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\ActionController;
+use {modelFullClassName -> k:format.ltrim(charlist: '\')};
+
+class {controllerClassName} extends ActionController
+{
+
+    /**
+     * @Flow\Inject
+     * @var {repositoryClassName}
+     */
+    protected ${modelName}Repository;
+
+    /**
+     * @return void
+     */
+    public function indexAction()
+    {
+        $this->view->assign('{modelName -> k:inflect.pluralize()}', $this->{modelName}Repository->findAll());
+    }
+
+    /**
+     * @param {modelFullClassName} ${modelName}
+     * @return void
+     */
+    public function showAction({modelClassName} ${modelName})
+    {
+        $this->view->assign('{modelName}', ${modelName});
+    }
+
+    /**
+     * @return void
+     */
+    public function newAction()
+    <![CDATA[{
+    }]]>
+
+    /**
+     * @param {modelFullClassName} $new{modelName -> k:format.ucfirst()}
+     * @return void
+     */
+    public function createAction({modelClassName} $new{modelName -> k:format.ucfirst()})
+    {
+        $this->{modelName}Repository->add($new{modelName -> k:format.ucfirst()});
+        $this->addFlashMessage('Created a new {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}.');
+        $this->redirect('index');
+    }
+
+    /**
+     * @param {modelFullClassName} ${modelName}
+     * @return void
+     */
+    public function editAction({modelClassName} ${modelName})
+    {
+        $this->view->assign('{modelName}', ${modelName});
+    }
+
+    /**
+     * @param {modelFullClassName} ${modelName}
+     * @return void
+     */
+    public function updateAction({modelClassName} ${modelName})
+    {
+        $this->{modelName}Repository->update(${modelName});
+        $this->addFlashMessage('Updated the {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}.');
+        $this->redirect('index');
+    }
+
+    /**
+     * @param {modelFullClassName} ${modelName}
+     * @return void
+     */
+    public function deleteAction({modelClassName} ${modelName})
+    {
+        $this->{modelName}Repository->remove(${modelName});
+        $this->addFlashMessage('Deleted a {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}.');
+        $this->redirect('index');
+    }
+
+}
