@@ -11,6 +11,7 @@ namespace Neos\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\CacheFactoryInterface;
 use Neos\Cache\EnvironmentConfiguration;
@@ -161,7 +162,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
     {
         $backend = new $backendObjectName($this->context, $backendOptions);
 
-        if (!$backend instanceof Backend\BackendInterface) {
+        if (!$backend instanceof BackendInterface) {
             throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
         }
 

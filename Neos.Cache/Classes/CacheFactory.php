@@ -72,7 +72,7 @@ class CacheFactory implements CacheFactoryInterface
     {
         $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
         if (!$backend instanceof BackendInterface) {
-            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304302);
         }
 
         return $backend;
