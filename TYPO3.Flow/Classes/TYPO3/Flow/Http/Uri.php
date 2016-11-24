@@ -392,8 +392,17 @@ class Uri
                     $uriString .= (isset($this->port) ? ':' . $this->port : '');
             }
         }
-        $uriString .= isset($this->path) ? $this->path : '';
-        $uriString .= isset($this->query) ? '?' . $this->query : '';
+
+        if (isset($this->path)) {
+            $pathSegments = explode('/', $this->path);
+            $pathSegments = array_map('rawurlencode', $pathSegments);
+            $uriString .= implode('/', $pathSegments);
+        }
+
+        if (isset($this->arguments) && $this->arguments !== array()) {
+            $uriString .= '?' . http_build_query($this->arguments, null, '&', PHP_QUERY_RFC3986);
+        }
+
         $uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
         return $uriString;
     }
