@@ -119,7 +119,7 @@ class EntityManagerFactory
         $proxyDirectory = Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']);
         Files::createDirectoryRecursively($proxyDirectory);
         $config->setProxyDir($proxyDirectory);
-        $config->setProxyNamespace(Proxies::class);
+        $config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(false);
 
         // Set default host to 127.0.0.1 if there is no host configured but a dbname
