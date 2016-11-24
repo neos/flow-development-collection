@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper
@@ -89,7 +89,7 @@ class CurrencyViewHelperTest extends UnitTestCase
      */
     public function viewHelperUsesNumberFormatterOnGivenLocale()
     {
-        $mockNumberFormatter = $this->getMockBuilder(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
         $mockNumberFormatter->expects($this->once())->method('formatCurrencyNumber');
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
@@ -102,13 +102,13 @@ class CurrencyViewHelperTest extends UnitTestCase
      */
     public function viewHelperFetchesCurrentLocaleViaI18nService()
     {
-        $localizationConfiguration = new \TYPO3\Flow\I18n\Configuration('de_DE');
+        $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockNumberFormatter = $this->getMockBuilder(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
         $mockNumberFormatter->expects($this->once())->method('formatCurrencyNumber');
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
@@ -124,9 +124,9 @@ class CurrencyViewHelperTest extends UnitTestCase
      */
     public function viewHelperThrowsExceptionIfLocaleIsUsedWithoutExplicitCurrencySign()
     {
-        $localizationConfiguration = new \TYPO3\Flow\I18n\Configuration('de_DE');
+        $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
@@ -141,14 +141,14 @@ class CurrencyViewHelperTest extends UnitTestCase
      */
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
-        $localizationConfiguration = new \TYPO3\Flow\I18n\Configuration('de_DE');
+        $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\TYPO3\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockNumberFormatter = $this->getMockBuilder(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
-        $mockNumberFormatter->expects($this->once())->method('formatCurrencyNumber')->will($this->throwException(new \TYPO3\Flow\I18n\Exception()));
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatCurrencyNumber'))->getMock();
+        $mockNumberFormatter->expects($this->once())->method('formatCurrencyNumber')->will($this->throwException(new \Neos\Flow\I18n\Exception()));
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));

@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the CsrfTokenViewHelper
@@ -23,7 +23,7 @@ class CsrfTokenViewHelperTest extends UnitTestCase
      */
     public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\CsrfTokenViewHelper::class, array('dummy'));

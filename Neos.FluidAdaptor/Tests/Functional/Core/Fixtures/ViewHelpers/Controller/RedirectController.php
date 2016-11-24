@@ -71,7 +71,7 @@ class RedirectController extends AbstractWidgetController
         }
         $action = $otherController ? 'index' : 'target';
         $controller = $otherController ? 'Standard' : null;
-        $package = $otherController ? 'TYPO3.Flow\Mvc' : null;
+        $package = $otherController ? 'Neos.Flow\Mvc' : null;
         $this->forward($action, $controller, $package, $arguments);
     }
 }

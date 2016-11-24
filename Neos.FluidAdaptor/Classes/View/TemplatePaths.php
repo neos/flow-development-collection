@@ -12,10 +12,10 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\Files;
 
 /**
  * Class TemplatePaths

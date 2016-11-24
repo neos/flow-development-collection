@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Parser\Interceptor;
 
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;

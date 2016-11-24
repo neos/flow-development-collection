@@ -14,7 +14,7 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
@@ -80,7 +80,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function getPropertyReturnsPropertyNotAccessibleExceptionForNotExistingPropertyIfForceDirectAccessIsTrue()
     {
@@ -89,7 +89,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function getPropertyReturnsThrowsExceptionIfPropertyDoesNotExist()
     {
@@ -98,7 +98,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function getPropertyReturnsThrowsExceptionIfArrayKeyDoesNotExist()
     {
@@ -249,7 +249,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function getPropertyThrowsExceptionIfArrayObjectDoesNotContainMatchingKeyNorGetter()
     {
@@ -259,7 +259,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function getPropertyDoesNotTryArrayAccessOnSplObjectStorageSubject()
     {
@@ -523,7 +523,7 @@ class ObjectAccessTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @expectedException \Neos\Utility\Exception\PropertyNotAccessibleException
      */
     public function accessorCacheIsNotUsedForStdClass()
     {

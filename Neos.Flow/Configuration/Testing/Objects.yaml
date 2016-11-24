@@ -1,0 +1,87 @@
+#                                                                        #
+# Object Configuration for the Flow Framework                            #
+#                                                                        #
+# This file contains additions to the base configuration for the         #
+# Flow Framework when it runs in Testing context.                        #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
+#                                                                        #
+
+#
+# For functional tests we are going to use the InternalRequestEngine by default:
+#
+Neos\Flow\Http\Client\Browser:
+  properties:
+    requestEngine:
+      object: Neos\Flow\Http\Client\InternalRequestEngine
+
+#
+# Security and PersistentResource handling need specialized testing classes:
+#
+Neos\Flow\Security\Authorization\PrivilegeManagerInterface:
+  className: Neos\Flow\Security\Authorization\TestingPrivilegeManager
+
+#
+# Configuration of fixture classes:
+#
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC:
+  properties:
+    protectedStringPropertySetViaObjectsYaml:
+      value: 'a defined string'
+    protectedFloatPropertySetViaObjectsYaml:
+      value: 42.101010
+    protectedArrayPropertySetViaObjectsYaml:
+      value: { 'iAm': { 'aConfigured': 'arrayValue' } }
+    protectedBooleanTruePropertySetViaObjectsYaml:
+      value: TRUE
+    protectedBooleanFalsePropertySetViaObjectsYaml:
+      value: FALSE
+    protectedArrayPropertyWithSetterSetViaObjectsYaml:
+      value: {'and': 'something from Objects.yaml'}
+  arguments:
+    1:
+      value: 'this is required'
+    3:
+      setting: Neos.Flow.tests.functional.dependencyInjection.singletonConstructorArgument
+    6:
+      value: { 'thisIs': { 'anArray': 'asProperty' } }
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface:
+  factoryObjectName: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAFactory
+  arguments:
+    1:
+      value: 'value defined in Objects.yaml'
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassC:
+  arguments:
+    1:
+      setting: Neos.Flow.tests.functional.dependencyInjection.prototypeConstructorArgument
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassD:
+  properties:
+    'objectE':
+      object:
+        arguments:
+          1:
+            value: 'The constructor set value'
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassF:
+  arguments:
+    1:
+      value: ~
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassG:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAFactory
+        arguments:
+          1:
+            value: 'Constructor injection with factory'
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype:
+  arguments:
+    1:
+      object:
+        name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\Greeter

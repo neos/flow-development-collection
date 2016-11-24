@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
 /**

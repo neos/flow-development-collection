@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Utility\MediaTypes;
 
 /**
  * Testcase for the Utility Media Types class

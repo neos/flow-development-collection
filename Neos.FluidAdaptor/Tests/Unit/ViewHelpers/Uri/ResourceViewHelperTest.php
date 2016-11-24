@@ -11,12 +11,12 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\ResourceManagement\Exception;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Fluid\ViewHelpers\Uri\ResourceViewHelper;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\ResourceManagement\Exception;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper
+     * @var ResourceViewHelper
      */
     protected $viewHelper;
 
@@ -46,7 +46,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->mockResourceManager = $this->createMock(ResourceManager::class);
         $this->mockI18nService = $this->createMock(Service::class);
 
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper::class, array('renderChildren'), array(), '', false);
+        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, array('renderChildren'), array(), '', false);
         $this->inject($this->viewHelper, 'resourceManager', $this->mockResourceManager);
         $this->inject($this->viewHelper, 'i18nService', $this->mockI18nService);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);

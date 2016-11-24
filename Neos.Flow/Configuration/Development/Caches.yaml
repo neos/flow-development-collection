@@ -1,0 +1,3 @@
+Flow_PropertyMapper:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\NullBackend

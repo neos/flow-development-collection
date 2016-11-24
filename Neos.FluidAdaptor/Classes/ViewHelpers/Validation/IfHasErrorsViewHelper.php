@@ -12,9 +12,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
  */
 
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Flow\Annotations as Flow;
+use Neos\Error\Messages\Result;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**

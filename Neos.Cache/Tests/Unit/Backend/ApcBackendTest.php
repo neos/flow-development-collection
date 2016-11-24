@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Cache\Tests\Unit\Backend;
+namespace Neos\Flow\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -16,8 +16,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\ApcBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\VariableFrontend;
 
 /**
  * Testcase for the APC cache backend
@@ -44,7 +44,7 @@ class ApcBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {

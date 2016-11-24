@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
  * This file is part of the TYPO3.Flow package.
@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
@@ -247,7 +247,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
@@ -256,7 +256,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
@@ -327,7 +327,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
@@ -635,7 +635,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {

@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Security\Authentication\TokenInterface;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 

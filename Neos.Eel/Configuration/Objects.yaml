@@ -1,0 +1,26 @@
+#                                                                          #
+# Object Configuration for the Neos.Eel package                           #
+#                                                                          #
+# This file contains the default object configuration for the Flow         #
+# Framework. Because it is loaded at a very early stage during ini-        #
+# tialization, this configuration cannot be overriden by other con-        #
+# figuration files.                                                        #
+#                                                                          #
+
+
+Neos\Eel\CompilingEvaluator:
+  properties:
+    expressionCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Eel_Expression_Code
+
+
+Neos\Eel\EelEvaluatorInterface:
+  className: Neos\Eel\CompilingEvaluator
+
+Neos\Eel\FlowQuery\OperationResolverInterface:
+  className: Neos\Eel\FlowQuery\OperationResolver

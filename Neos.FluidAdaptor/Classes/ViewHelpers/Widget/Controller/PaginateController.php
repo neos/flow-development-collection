@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 
 /**

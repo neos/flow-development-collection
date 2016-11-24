@@ -11,14 +11,14 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Error\Messages\Result;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
-use TYPO3\Fluid\ViewHelpers\Fixtures\EmptySyntaxTreeNode;
-use TYPO3\Fluid\ViewHelpers\Form\UploadViewHelper;
-use TYPO3\Fluid\ViewHelpers\FormViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode;
+use Neos\FluidAdaptor\ViewHelpers\Form\UploadViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
@@ -30,7 +30,7 @@ require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
 class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Form\UploadViewHelper
+     * @var UploadViewHelper
      */
     protected $viewHelper;
 
@@ -47,8 +47,8 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\UploadViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration', 'getMappingResultsForProperty'));
-        $this->mockPropertyMapper = $this->createMock(\TYPO3\Flow\Property\PropertyMapper::class);
+        $this->viewHelper = $this->getAccessibleMock(UploadViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration', 'getMappingResultsForProperty'));
+        $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $this->viewHelper->_set('propertyMapper', $this->mockPropertyMapper);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -83,7 +83,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         );
 
         $this->viewHelper->setArguments($arguments);
-        $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
+        $this->viewHelper->setViewHelperNode(new EmptySyntaxTreeNode());
         $this->viewHelper->initialize();
         $this->viewHelper->render();
     }
@@ -187,7 +187,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockFormObject = array(
             'foo' => $mockPropertyResource
         );
-        $this->viewHelperVariableContainerData[\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class] = array(
+        $this->viewHelperVariableContainerData[FormViewHelper::class] = array(
             'formObjectName' => 'someObject',
             'formObject' => $mockFormObject
         );
@@ -221,7 +221,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockFormObject = array(
             'foo' => $mockPropertyResource
         );
-        $this->viewHelperVariableContainerData[\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class] = array(
+        $this->viewHelperVariableContainerData[FormViewHelper::class] = array(
             'formObjectName' => 'someObject',
             'formObject' => $mockFormObject
         );

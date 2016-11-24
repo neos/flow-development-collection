@@ -20,17 +20,17 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * = Examples =
  *
  * <code>
- * <f:uri.external uri="http://www.typo3.org" />
+ * <f:uri.external uri="https://www.neos.io" />
  * </code>
  * <output>
- * http://www.typo3.org
+ * https://www.neos.io
  * </output>
  *
  * <code title="custom default scheme">
- * <f:uri.external uri="typo3.org" defaultScheme="ftp" />
+ * <f:uri.external uri="neos.io" defaultScheme="sftp" />
  * </code>
  * <output>
- * ftp://typo3.org
+ * sftp://neos.io
  * </output>
  *
  * @api

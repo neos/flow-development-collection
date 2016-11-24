@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Controller\ActionController;
 
 /**
  * This is a regular action controller which serves as the starting point for testing

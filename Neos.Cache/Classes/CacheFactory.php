@@ -11,10 +11,10 @@ namespace Neos\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\BackendInterface;
-use TYPO3\Flow\Cache\Exception\InvalidBackendException;
-use TYPO3\Flow\Cache\Exception\InvalidCacheException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Backend\BackendInterface;
+use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidCacheException;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting

@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**

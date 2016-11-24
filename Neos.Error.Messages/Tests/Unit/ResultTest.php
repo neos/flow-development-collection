@@ -11,7 +11,7 @@ namespace Neos\Error\Messages\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Error;
+use Neos\Error\Messages\Result;
 
 /**
  * Testcase for the Error Container object
@@ -20,13 +20,13 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 {
     /**
      *
-     * @var Error\Result
+     * @var Result
      */
     protected $result;
 
     public function setUp()
     {
-        $this->result = new Error\Result();
+        $this->result = new Result();
     }
 
     public function dataTypes()
@@ -40,7 +40,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 
     protected function getMockMessage($type)
     {
-        return $this->getMockBuilder('TYPO3\Flow\Error\\' . $type)->disableOriginalConstructor()->getMock();
+        return $this->getMockBuilder('Neos\Error\Messages\\' . $type)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -93,7 +93,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     public function forPropertyShouldReturnSubResult()
     {
         $container2 = $this->result->forProperty('foo.bar');
-        $this->assertInstanceOf(Error\Result::class, $container2);
+        $this->assertInstanceOf(Result::class, $container2);
         $this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
     }
 
@@ -223,7 +223,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $error2 = $this->getMockMessage('Error');
         $error3 = $this->getMockMessage('Error');
 
-        $otherResult = new Error\Result();
+        $otherResult = new Result();
 
         $otherResult->addNotice($notice1);
         $otherResult->forProperty('foo.bar')->addNotice($notice2);

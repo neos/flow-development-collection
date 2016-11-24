@@ -11,7 +11,7 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Testcase for the Utility Array class

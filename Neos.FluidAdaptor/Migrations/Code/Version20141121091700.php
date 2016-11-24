@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Warn about removed ReflectionService dependency from AbstractViewHelper

@@ -10,8 +10,8 @@ namespace Neos\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Cache\Exception\InvalidCacheException;
-use TYPO3\Flow\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidCacheException;
+use Neos\Cache\Exception\InvalidBackendException;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -30,7 +30,7 @@ interface CacheFactoryInterface
      * @param string $cacheObjectName Object name of the cache frontend
      * @param string $backendObjectName Object name of the cache backend
      * @param array $backendOptions (optional) Array of backend options
-     * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface The created cache frontend
+     * @return \Neos\Cache\Frontend\FrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
      * @api
