@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
  * Testcase for the Inflector
  *
  */
-class InflectorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class InflectorTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

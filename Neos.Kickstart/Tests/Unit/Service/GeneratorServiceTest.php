@@ -15,7 +15,7 @@ namespace Neos\Kickstart\Tests\Unit\Service;
  * Testcase for the generator service
  *
  */
-class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
+class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

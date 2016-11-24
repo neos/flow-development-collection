@@ -10,14 +10,14 @@ use Neos\Eel\Helper\SecurityHelper;
 /**
  * Eel SecurityHelper test
  */
-class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test
      */
     public function getAccountReturnsNullIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
@@ -31,7 +31,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getAccountDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
         $mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
 
@@ -55,7 +55,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasRoleReturnsFalseIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
@@ -69,7 +69,7 @@ class SecurityHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasRoleDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->any())->method('canBeInitialized')->willReturn(true);
         $mockSecurityContext->expects($this->atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(true);
 

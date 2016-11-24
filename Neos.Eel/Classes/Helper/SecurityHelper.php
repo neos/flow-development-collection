@@ -11,10 +11,10 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Context as SecurityContext;
 
 /**
  * Helper for security related information

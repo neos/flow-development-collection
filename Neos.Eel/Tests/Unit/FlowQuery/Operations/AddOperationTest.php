@@ -17,7 +17,7 @@ use Neos\Eel\FlowQuery\Operations\AddOperation;
 /**
  * AddOperation test
  */
-class AddOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * This corresponds to ${q(node).add(q(someOtherNode))}

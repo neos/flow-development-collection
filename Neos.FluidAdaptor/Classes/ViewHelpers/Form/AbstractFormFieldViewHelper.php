@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  */
 
 use Neos\Error\Messages\Result;
-use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Utility\ObjectAccess;
 
 /**

@@ -12,11 +12,11 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  */
 
 use Neos\FluidAdaptor\View\TemplatePaths;
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
 
 /**

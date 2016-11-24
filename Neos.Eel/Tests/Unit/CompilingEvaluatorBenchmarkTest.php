@@ -19,7 +19,7 @@ use Neos\Eel\CompilingEvaluator;
  *
  * @group benchmark
  */
-class CompilingEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase
+class CompilingEvaluatorBenchmarkTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

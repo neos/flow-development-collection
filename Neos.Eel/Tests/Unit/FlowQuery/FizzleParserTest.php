@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/php-peg/tests/ParserTest
 /**
  * Fizzle parser test
  */
-class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

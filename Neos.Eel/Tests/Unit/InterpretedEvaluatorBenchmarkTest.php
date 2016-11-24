@@ -19,7 +19,7 @@ use Neos\Eel\InterpretedEvaluator;
  *
  * @group benchmark
  */
-class InterpretedEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase
+class InterpretedEvaluatorBenchmarkTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

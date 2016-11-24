@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Mvc\View\ViewInterface;
 
 /**
  * A standard Flow view based on Fluid.

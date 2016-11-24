@@ -16,7 +16,7 @@ use Neos\Eel\Helper\JsonHelper;
 /**
  * Tests for JsonHelper
  */
-class JsonHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class JsonHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     public function stringifyExamples()
     {

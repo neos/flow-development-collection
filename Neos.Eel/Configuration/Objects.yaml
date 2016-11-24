@@ -12,7 +12,7 @@ Neos\Eel\CompilingEvaluator:
   properties:
     expressionCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:

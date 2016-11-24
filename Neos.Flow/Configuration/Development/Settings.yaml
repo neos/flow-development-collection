@@ -1,0 +1,45 @@
+#                                                                        #
+# Configuration for the Flow Framework                                   #
+#                                                                        #
+# This file contains additions to the base configuration for the         #
+# Flow Framework when it runs in Testing context.                        #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
+#                                                                        #
+
+Neos:
+
+  Flow:
+
+    core:
+      subRequestEnvironmentVariables:
+        XDEBUG_CONFIG: 'idekey=FLOW_SUBREQUEST remote_port=9001'
+
+    error:
+      exceptionHandler:
+        className: 'Neos\Flow\Error\DebugExceptionHandler'
+
+        defaultRenderingOptions:
+          renderTechnicalDetails: TRUE
+
+      errorHandler:
+        exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%', '%E_WARNING%', '%E_NOTICE%', '%E_USER_WARNING%', '%E_USER_NOTICE%', '%E_STRICT%']
+
+    log:
+      systemLogger:
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/System_Development.log'
+          severityThreshold: '%LOG_DEBUG%'
+      securityLogger:
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/Security_Development.log'
+          severityThreshold: '%LOG_DEBUG%'
+      sqlLogger:
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/Query_Development.log'
+          severityThreshold: '%LOG_DEBUG%'
+      i18nLogger:
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/I18n_Development.log'
+          severityThreshold: '%LOG_DEBUG%'

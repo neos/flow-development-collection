@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
-use TYPO3\Flow\I18n\Exception as I18nException;
-use TYPO3\Flow\I18n\Formatter\NumberFormatter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Exception as I18nException;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 
@@ -71,7 +71,7 @@ class NumberViewHelper extends AbstractLocaleAwareViewHelper
      * @param int $decimals The number of digits after the decimal point
      * @param string $decimalSeparator The decimal point character
      * @param string $thousandsSeparator The character for grouping the thousand digits
-     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
+     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
      * @return string The formatted number
      * @api
      * @throws ViewHelperException

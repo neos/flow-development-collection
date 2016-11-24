@@ -11,11 +11,11 @@ namespace Neos\Kickstart\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\View\StandaloneView;
-use TYPO3\Flow\Core\ClassLoader;
-use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Core\ClassLoader;
+use Neos\Flow\Package\PackageInterface;
+use Neos\Utility\Files;
 
 /**
  * Service for the Kickstart generator
@@ -24,13 +24,13 @@ use TYPO3\Flow\Utility\Files;
 class GeneratorService
 {
     /**
-     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      * @Flow\Inject
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var \Neos\Flow\Package\PackageManagerInterface
      * @Flow\Inject
      */
     protected $packageManager;
@@ -42,7 +42,7 @@ class GeneratorService
     protected $inflector;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var \Neos\Flow\Reflection\ReflectionService
      * @Flow\Inject
      */
     protected $reflectionService;

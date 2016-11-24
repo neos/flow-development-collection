@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
  * This file is part of the Neos.Utility.Schema package.

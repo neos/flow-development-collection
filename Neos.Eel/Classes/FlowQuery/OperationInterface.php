@@ -11,7 +11,7 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Contract for a *FlowQuery operation* which is applied onto a set of objects.

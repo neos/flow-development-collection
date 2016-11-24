@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
@@ -70,7 +70,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      * @param object $object Object to create the identity field for
      * @param string $name Name
      * @return string A hidden field containing the Identity (UUID in Flow) of the given object or NULL if the object is unknown to the persistence framework
-     * @see \TYPO3\Flow\Mvc\Controller\Argument::setValue()
+     * @see \Neos\Flow\Mvc\Controller\Argument::setValue()
      */
     protected function renderHiddenIdentityField($object, $name)
     {

@@ -14,7 +14,7 @@ namespace Neos\Eel\Tests\Unit;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Untrusted context test

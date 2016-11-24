@@ -11,7 +11,7 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\Eel\EvaluationException;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;

@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Translator;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Translator;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -48,7 +48,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->dummyLocale = new Locale('de_DE');
 
-        $this->mockTranslator = $this->getMockBuilder(\TYPO3\Flow\I18n\Translator::class)->disableOriginalConstructor()->getMock();
+        $this->mockTranslator = $this->getMockBuilder(\Neos\Flow\I18n\Translator::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->translateViewHelper, 'translator', $this->mockTranslator);
 
         $this->injectDependenciesIntoViewHelper($this->translateViewHelper);
@@ -128,10 +128,10 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfNoPackageCouldBeResolved()
     {
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue(null));
 
-        $mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
         $this->renderingContext->setControllerContext($mockControllerContext);

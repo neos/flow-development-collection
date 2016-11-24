@@ -13,7 +13,7 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Abstract evaluator test

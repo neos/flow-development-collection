@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
 /**
  * ChildrenOperation test
  */
-class ChildrenOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
 {
     public function childrenExamples()
     {

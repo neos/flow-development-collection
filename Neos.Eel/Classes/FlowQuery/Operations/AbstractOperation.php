@@ -13,7 +13,7 @@ namespace Neos\Eel\FlowQuery\Operations;
 
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\OperationInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Convenience base class for FlowQuery Operations. You should set

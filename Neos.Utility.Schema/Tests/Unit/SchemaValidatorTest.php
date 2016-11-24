@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
  * This file is part of the Neos.Utility.Schema package.
@@ -11,8 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Package\PackageManager;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\SchemaValidator;
 use Neos\Error\Messages as Error;
 
@@ -673,7 +673,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [PackageManager::class, true],
-            ['TYPO3\Flow\UnknownClass', false],
+            ['Neos\Flow\UnknownClass', false],
             ['foobar', false],
             ['foo bar', false],
             ['foo/bar', false],
@@ -702,7 +702,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [PackageManagerInterface::class, true],
-            ['\TYPO3\Flow\UnknownClass', false],
+            ['\Neos\Flow\UnknownClass', false],
             ['foobar', false],
             ['foo bar', false],
             ['foo/bar', false],

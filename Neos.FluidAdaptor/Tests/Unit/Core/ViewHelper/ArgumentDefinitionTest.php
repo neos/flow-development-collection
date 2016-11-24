@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
 /**
  * Testcase for \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition
  */
-class ArgumentDefinitionTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArgumentDefinitionTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

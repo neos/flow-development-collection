@@ -16,7 +16,7 @@ use Neos\Eel\Helper\DateHelper;
 /**
  * Tests for DateHelper
  */
-class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @return array

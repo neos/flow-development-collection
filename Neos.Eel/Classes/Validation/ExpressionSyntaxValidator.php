@@ -2,8 +2,8 @@
 namespace Neos\Eel\Validation;
 
 use Neos\Eel\EelParser;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
  * A validator which checks for the correct syntax of an eel expression (without the wrapping ${…}).

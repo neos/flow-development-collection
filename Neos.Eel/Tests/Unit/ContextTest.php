@@ -16,7 +16,7 @@ use Neos\Eel\Context;
 /**
  * Eel context test
  */
-class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ContextTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * Data provider with simple values

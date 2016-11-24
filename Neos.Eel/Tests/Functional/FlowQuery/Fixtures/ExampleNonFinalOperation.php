@@ -11,7 +11,7 @@ namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 class ExampleNonFinalOperation extends \Neos\Eel\FlowQuery\Operations\AbstractOperation
 {

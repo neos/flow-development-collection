@@ -13,7 +13,7 @@ namespace Neos\Eel\FlowQuery;
 
 use Neos\Eel\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * FlowQuery is jQuery for PHP, a selector and traversal engine for object sets.

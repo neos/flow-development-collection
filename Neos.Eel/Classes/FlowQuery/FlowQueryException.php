@@ -11,7 +11,7 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use TYPO3\Flow\Exception;
+use Neos\Flow\Exception;
 
 class FlowQueryException extends Exception
 {

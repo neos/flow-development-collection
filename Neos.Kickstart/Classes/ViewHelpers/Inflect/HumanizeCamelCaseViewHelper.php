@@ -11,7 +11,7 @@ namespace Neos\Kickstart\ViewHelpers\Inflect;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Humanize a camel cased value

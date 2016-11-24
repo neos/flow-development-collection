@@ -12,7 +12,7 @@ namespace Neos\Kickstart\Command;
  */
 
 use Neos\Utility\Arrays;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use Neos\Kickstart\Utility\Validation;
 
@@ -24,7 +24,7 @@ class KickstartCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var \Neos\Flow\Package\PackageManagerInterface
      */
     protected $packageManager;
 

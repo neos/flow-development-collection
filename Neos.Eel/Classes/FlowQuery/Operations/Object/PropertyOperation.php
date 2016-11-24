@@ -14,7 +14,7 @@ namespace Neos\Eel\FlowQuery\Operations\Object;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 
 /**

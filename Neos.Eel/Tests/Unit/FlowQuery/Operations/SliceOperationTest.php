@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\Operations\SliceOperation;
 /**
  * SliceOperation test
  */
-class SliceOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SliceOperationTest extends \Neos\Flow\Tests\UnitTestCase
 {
     public function sliceExamples()
     {

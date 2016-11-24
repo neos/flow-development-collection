@@ -11,9 +11,9 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
  * Configuration helpers for Eel contexts

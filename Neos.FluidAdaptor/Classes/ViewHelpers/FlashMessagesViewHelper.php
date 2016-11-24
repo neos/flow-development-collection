@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 

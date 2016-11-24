@@ -2,8 +2,8 @@
 namespace Neos\Eel\Tests\Unit\Validation;
 
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
 
 /**
  * Tests for the ExpressionSyntaxValidator

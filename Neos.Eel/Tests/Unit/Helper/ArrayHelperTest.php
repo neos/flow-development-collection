@@ -16,7 +16,7 @@ use Neos\Eel\Helper\ArrayHelper;
 /**
  * Tests for ArrayHelper
  */
-class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     public function concatExamples()
     {
