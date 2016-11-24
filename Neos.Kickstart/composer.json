@@ -1,0 +1,25 @@
+{
+    "name": "typo3/kickstart",
+    "type": "neos-framework",
+    "description": "A simple generator for controller and views.",
+    "license": "MIT",
+    "require": {
+        "typo3/flow": "*",
+        "neos/utility-arrays": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Kickstart\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Kickstart\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Kickstart"
+        }
+    }
+}
