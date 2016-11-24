@@ -51,4 +51,21 @@ class ObjectManagerTest extends FunctionalTestCase
 
         $this->assertSame($objectByInterface, $objectByClassName);
     }
+
+    /**
+     * @test
+     */
+    public function shutdownObjectMethodIsCalledAfterRegistrationViaConstructor()
+    {
+        $entity = new Fixtures\PrototypeClassG();
+        $entity->setName('Shutdown');
+
+        /**
+         * When shutting down the ObjectManager shutdownObject() on Fixtures\TestEntityWithShutdown is called
+         * and sets $destructed property to TRUE
+         */
+        \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
+
+        $this->assertTrue($entity->isDestructed());
+    }
 }
