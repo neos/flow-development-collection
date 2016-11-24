@@ -257,7 +257,7 @@ class EntityManagerFactory
      * @param Configuration $config
      * @param EventManager $eventManager
      */
-    public function emitConfigureEntityManager($connection, $config, $eventManager)
+    public function emitConfigureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager)
     {
     }
 }
