@@ -26,12 +26,12 @@ class LazyLoadingTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var Fixtures\TestEntityRepository;
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
 
     /**
-     * @var Fixtures\PostRepository;
+     * @var Fixtures\PostRepository
      */
     protected $postRepository;
 
@@ -125,14 +125,14 @@ class LazyLoadingTest extends FunctionalTestCase
          */
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, Fixtures\Post::class);
 
-        /**
+        /*
          * The CleanupObject is just a helper object to test that shutdownObject() on the Fixtures\Image is called
          */
         $cleanupObject = new Fixtures\CleanupObject();
         $this->assertFalse($cleanupObject->getState());
         $post->getImage()->setRelatedObject($cleanupObject);
 
-        /**
+        /*
          * When shutting down the ObjectManager shutdownObject() on Fixtures\Image is called
          * and toggles the state on the cleanupObject
          */

@@ -27,7 +27,7 @@ class PrototypeClassG
     protected $name = '';
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $destructed = false;
 
@@ -41,7 +41,6 @@ class PrototypeClassG
 
     /**
      * @param string $name
-     * @return void
      */
     public function setName($name)
     {
@@ -49,7 +48,7 @@ class PrototypeClassG
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isDestructed()
     {
@@ -57,7 +56,7 @@ class PrototypeClassG
     }
 
     /**
-     * @param boolean $destructed
+     * @param bool $destructed
      */
     public function setDestructed($destructed)
     {

@@ -666,7 +666,7 @@ class ProxyClassBuilder
      * Builds code which calls the lifecycle initialization method, if any.
      *
      * @param Configuration $objectConfiguration
-     * @param integer $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
+     * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
      * @return string
      */
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, $cause)
@@ -694,7 +694,7 @@ class ProxyClassBuilder
      * Builds code which registers the lifecycle shutdown method, if any.
      *
      * @param Configuration $objectConfiguration
-     * @param integer $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
+     * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
      * @return string
      */
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, $cause)
