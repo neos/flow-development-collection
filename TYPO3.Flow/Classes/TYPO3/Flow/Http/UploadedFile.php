@@ -54,7 +54,8 @@ class UploadedFile implements UploadedFileInterface
      * @param string|null $clientFilename
      * @param string|null $clientMediaType
      */
-    public function __construct($streamOrFile, $size, $errorStatus, $clientFilename = null, $clientMediaType = null) {
+    public function __construct($streamOrFile, $size, $errorStatus, $clientFilename = null, $clientMediaType = null)
+    {
         $this->error = $errorStatus;
         $this->size = $size;
         $this->clientFilename = $clientFilename;

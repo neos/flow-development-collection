@@ -29,7 +29,6 @@ class FlowUploadedFile extends UploadedFile
      */
     public function setOriginallySubmittedResource($originallySubmittedResource)
     {
-
         $this->originallySubmittedResource = $originallySubmittedResource;
     }
 
