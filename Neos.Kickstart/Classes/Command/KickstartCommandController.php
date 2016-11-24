@@ -13,7 +13,7 @@ namespace Neos\Kickstart\Command;
 
 use Neos\Utility\Arrays;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
+use Neos\Flow\Cli\CommandController;
 use Neos\Kickstart\Utility\Validation;
 
 /**
