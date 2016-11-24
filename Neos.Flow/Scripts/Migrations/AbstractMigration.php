@@ -11,7 +11,9 @@ namespace Neos\Flow\Core\Migrations;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
+use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
 /**
@@ -336,6 +338,54 @@ abstract class AbstractMigration
                 $yamlSource->save(substr($pathAndFilename, 0, -5), $configuration);
             }
         }
+    }
+
+    /**
+     * Move a settings path from "source" to "destination"; best to be used when package names change.
+     *
+     * @param string $sourcePath
+     * @param string $destinationPath
+     */
+    protected function moveSettingsPaths($sourcePath, $destinationPath)
+    {
+        $this->processConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            function (array &$configuration) use ($sourcePath, $destinationPath) {
+                $sourceConfigurationValue = Arrays::getValueByPath($configuration, $sourcePath);
+                $destinationConfigurationValue = Arrays::getValueByPath($configuration, $destinationPath);
+
+                if ($sourceConfigurationValue !== null) {
+                    // source exists, so we need to move source to destination.
+
+                    if ($destinationConfigurationValue !== null) {
+                        // target exists as well; we need to MERGE source and target.
+                        $destinationConfigurationValue = Arrays::arrayMergeRecursiveOverrule($sourceConfigurationValue, $destinationConfigurationValue);
+                    } else {
+                        // target does NOT exist; we directly set target = source
+                        $destinationConfigurationValue = $sourceConfigurationValue;
+                    }
+
+                    // set the config on the new path
+                    $configuration = Arrays::setValueByPath($configuration, $destinationPath, $destinationConfigurationValue);
+
+                    // Unset the old configuration
+                    $configuration = Arrays::unsetValueByPath($configuration, $sourcePath);
+
+                    // remove empty keys before our removed key (if it exists)
+                    $sourcePathExploded = explode('.', $sourcePath);
+                    for ($length = count($sourcePathExploded) - 1; $length > 0; $length--) {
+                        $temporaryPath = array_slice($sourcePathExploded, 0, $length);
+                        $valueAtPath = Arrays::getValueByPath($configuration, $temporaryPath);
+                        if (empty($valueAtPath)) {
+                            $configuration = Arrays::unsetValueByPath($configuration, $temporaryPath);
+                        } else {
+                            break;
+                        }
+
+                    }
+                }
+            },
+            true
+        );
     }
 
     /**
