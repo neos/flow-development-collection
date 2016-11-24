@@ -41,7 +41,7 @@ and ``pdo_mysql`` are enabled, especially if you compiled PHP yourself.
 
 .. note::
 
-  Make sure the PHP functions ``system()``, ``shell_exec()``,
+  Make sure the PHP functions ``exec()``, ``system()``, ``shell_exec()``,
   ``escapeshellcmd()`` and ``escapeshellarg()`` are not disabled in you PHP
   installation. They are required for the system to run.
 
