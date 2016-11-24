@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Cli;
 
 use TYPO3\Flow\Command\HelpCommandController;
 use TYPO3\Flow\Mvc\Exception\NoSuchCommandException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Cli;

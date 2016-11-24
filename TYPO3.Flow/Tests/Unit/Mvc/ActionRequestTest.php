@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
@@ -238,7 +238,7 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @expectedException \TYPO3\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function setControllerObjectNameThrowsExceptionOnUnknownObjectName()
     {

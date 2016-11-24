@@ -308,7 +308,7 @@ TYPO3:
       # Each regular expression will be tested against the list of fully qualified
       # class names in the package and classes will be included if matching.
       #
-      # For Flow packages (type = "typo3-flow-*") this setting is not required as they're
+      # For Flow packages (type = "neos-*") this setting is not required as they're
       # reflected by default. You can however exclude specific (or all) classes from Flow packages
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
@@ -362,6 +362,8 @@ TYPO3:
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
         eventListeners: []
+
+        secondLevelCache: []
 
         # List of regular expressions table names are matched against in the doctrine service
         # to prevent them from creating corresponding migrations.
@@ -439,13 +441,13 @@ TYPO3:
 
         #
         defaultPersistentResourcesStorage:
-          storage: 'TYPO3\Flow\Resource\Storage\WritableFileSystemStorage'
+          storage: 'TYPO3\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
           storageOptions:
             path: '%FLOW_PATH_DATA%Persistent/Resources/'
 
         #
         defaultStaticResourcesStorage:
-          storage: 'TYPO3\Flow\Resource\Storage\PackageStorage'
+          storage: 'TYPO3\Flow\ResourceManagement\Storage\PackageStorage'
 
       # Definition of the default resource collections.
       # Collections are used to bundle / group static or persistent resources
@@ -469,7 +471,7 @@ TYPO3:
 
         # Target for publishing static resources to the local web directory
         localWebDirectoryStaticResourcesTarget:
-          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
             baseUri: '_Resources/Static/Packages/'
@@ -480,7 +482,7 @@ TYPO3:
 
         # Target for publishing persistent resources to the local web directory
         localWebDirectoryPersistentResourcesTarget:
-          target: 'TYPO3\Flow\Resource\Target\FileSystemSymlinkTarget'
+          target: 'TYPO3\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Persistent/'
             baseUri: '_Resources/Persistent/'

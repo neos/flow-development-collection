@@ -134,7 +134,7 @@ class FileMonitorTest extends UnitTestCase
      */
     public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus()
     {
-        $mockStrategy = $this->createMock('TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
+        $mockStrategy = $this->createMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
         $mockStrategy->expects($this->exactly(2))->method('getFileStatus')->will($this->onConsecutiveCalls(ChangeDetectionStrategyInterface::STATUS_CREATED, ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
 
         $mockMonitor = $this->getAccessibleMock(FileMonitor::class, ['dummy'], ['Flow_Test'], '', true, true);

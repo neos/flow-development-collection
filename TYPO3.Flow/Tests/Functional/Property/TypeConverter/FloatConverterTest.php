@@ -31,7 +31,7 @@ class FloatConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->converter = $this->objectManager->get('TYPO3\Flow\Property\TypeConverter\FloatConverter');
+        $this->converter = $this->objectManager->get(\TYPO3\Flow\Property\TypeConverter\FloatConverter::class);
     }
 
     /**

@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  */
-class EmailViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * var \Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper

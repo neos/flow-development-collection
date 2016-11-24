@@ -16,7 +16,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Mapping\QuoteStrategy;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Persistence\Doctrine\Query;
 use TYPO3\Flow\Reflection\ObjectAccess;

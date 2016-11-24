@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\SignalSlot;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Tests\UnitTestCase;
 

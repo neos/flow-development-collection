@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;

@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Session\Aspect;
 
 use TYPO3\Flow\Aop\Builder\ClassNameIndex;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
-use TYPO3\Flow\Object\CompileTimeObjectManager;
-use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -25,7 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
 class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
 

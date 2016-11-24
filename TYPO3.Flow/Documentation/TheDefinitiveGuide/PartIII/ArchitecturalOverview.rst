@@ -32,14 +32,14 @@ The Flow framework is composed of the following submodules:
 * The *Package* Manager allows you to download, install, configure and
   uninstall packages.
 
-* The *Object* Manager is in charge of building, caching and combining
+* The *ObjectManagement* is in charge of building, caching and combining
   objects.
 
 * The *Configuration* framework reads and cascades various kinds of
   configuration from different sources and provides access to it.
 
-* The *Resource* module contains functions for publishing, caching,
-  securing and retrieving resources.
+* The *ResourceManagement* module contains functions for publishing,
+  caching, securing and retrieving resources.
 
 * The *HTTP* component is a standards-compliant implementation of a
   number of RFCs around HTTP, Cookies, content negotiation and more.

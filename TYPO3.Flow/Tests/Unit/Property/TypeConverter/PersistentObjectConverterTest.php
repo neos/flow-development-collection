@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 
 use TYPO3\Flow\Fixtures\ClassWithSetters;
 use TYPO3\Flow\Fixtures\ClassWithSettersAndConstructor;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;

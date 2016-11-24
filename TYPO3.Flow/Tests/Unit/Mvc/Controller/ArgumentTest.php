@@ -84,66 +84,11 @@ class ArgumentTest extends UnitTestCase
     /**
      * @test
      */
-    public function setShortNameProvidesFluentInterface()
-    {
-        $returnedArgument = $this->simpleValueArgument->setShortName('x');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-    }
-
-    public function invalidShortNames()
-    {
-        return [
-            [''],
-            ['as'],
-            [5]
-        ];
-    }
-    /**
-     * @test
-     * @dataProvider invalidShortNames
-     * @expectedException \InvalidArgumentException
-     */
-    public function shortNameShouldThrowExceptionIfInvalid($invalidShortName)
-    {
-        $this->simpleValueArgument->setShortName($invalidShortName);
-    }
-
-    /**
-     * @test
-     */
-    public function shortNameCanBeRetrievedAgain()
-    {
-        $this->simpleValueArgument->setShortName('x');
-        $this->assertEquals('x', $this->simpleValueArgument->getShortName());
-    }
-
-    /**
-     * @test
-     */
     public function setRequiredShouldProvideFluentInterfaceAndReallySetRequiredState()
     {
         $returnedArgument = $this->simpleValueArgument->setRequired(true);
         $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         $this->assertTrue($this->simpleValueArgument->isRequired());
-    }
-
-    /**
-     * @test
-     */
-    public function setShortHelpMessageShouldProvideFluentInterfaceAndReallySetShortHelpMessage()
-    {
-        $returnedArgument = $this->simpleValueArgument->setShortHelpMessage('Some Help Message');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('Some Help Message', $this->simpleValueArgument->getShortHelpMessage());
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function setShortHelpMessageShouldThrowExceptionIfMessageIsNoString()
-    {
-        $this->simpleValueArgument->setShortHelpMessage(null);
     }
 
     /**
@@ -246,15 +191,5 @@ class ArgumentTest extends UnitTestCase
     {
         $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
         $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-    }
-
-    /**
-     * @test
-     */
-    public function setDataTypeProvidesFluentInterfaceAndReallySetsDataType()
-    {
-        $returnedArgument = $this->simpleValueArgument->setDataType('integer');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('integer', $this->simpleValueArgument->getDataType(), 'The got dataType is not the set dataType.');
     }
 }

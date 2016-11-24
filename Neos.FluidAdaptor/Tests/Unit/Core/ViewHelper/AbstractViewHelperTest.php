@@ -33,7 +33,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $mockReflectionService;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $mockObjectManager;
 
@@ -77,7 +77,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Reflection\ReflectionService::class)->will($this->returnValue($this->mockReflectionService));
     }
 

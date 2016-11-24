@@ -13,9 +13,9 @@ namespace TYPO3\Flow\Error;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Object\Configuration\Configuration;
-use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Object\Proxy\ProxyInterface;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface;
 use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;

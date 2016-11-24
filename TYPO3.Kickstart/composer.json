@@ -1,6 +1,6 @@
 {
     "name": "typo3/kickstart",
-    "type": "typo3-flow-framework",
+    "type": "neos-framework",
     "description": "A simple generator for controller and views.",
     "license": "MIT",
     "require": {

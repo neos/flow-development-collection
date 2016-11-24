@@ -21,7 +21,7 @@ use TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Authorization\FirewallInterface;

@@ -240,7 +240,7 @@ Whitelisted objects
 
 There are rare cases which still justify persisting objects during safe requests. For example,
 your application might want to generate thumbnails of images during a GET request and persist
-the resulting Resource objects.
+the resulting PersistentResource instances.
 
 For these cases it is possible to whitelist specific objects via the Persistence Manager::
 
@@ -564,6 +564,32 @@ See the Doctrine documentation ([#doctrineDqlFunctions]_) for more information o
 functions.
 
 .. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
+
+Using Doctrine's Second Level Cache
+-----------------------------------
+
+Since 2.5, Doctrine provides a second level cache that further improves performance of relation queries
+beyond the result query cache.
+
+See the Doctrine documentation ([#doctrineSecondLevelCache]_) for more information on the second level cache.
+Flow allows you to enable and configure the second level cache through the configuration setting
+``TYPO3.Flow.persistence.doctrine.secondLevelCache``.
+
+*Example: Configuration for Doctrine second level cache*:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      persistence:
+        doctrine:
+          secondLevelCache:
+            enable: true
+            defaultLifetime: 3600
+            regions:
+              'my_entity_region': 7200
+
+.. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
 
 Differences between Flow and plain Doctrine
 -------------------------------------------

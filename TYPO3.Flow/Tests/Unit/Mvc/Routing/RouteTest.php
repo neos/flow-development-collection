@@ -15,7 +15,7 @@ use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
 use TYPO3\Flow\Mvc\Routing;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 

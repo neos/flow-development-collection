@@ -16,7 +16,7 @@ use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidSourceException;
 use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 
 /**
  * Converter which transforms various types to arrays.
@@ -25,7 +25,7 @@ use TYPO3\Flow\Resource\Resource as FlowResource;
  * * If the source is a string, is is converted depending on CONFIGURATION_STRING_FORMAT,
  *   which can be STRING_FORMAT_CSV or STRING_FORMAT_JSON. For CSV the delimiter can be
  *   set via CONFIGURATION_STRING_DELIMITER.
- * * If the source is a Resource object, it is converted to an array. The actual resource
+ * * If the source is a PersistentResource object, it is converted to an array. The actual resource
  *   content is either embedded as base64-encoded data or saved to a file, depending on
  *   CONFIGURATION_RESOURCE_EXPORT_TYPE. For RESOURCE_EXPORT_TYPE_FILE the setting
  *   CONFIGURATION_RESOURCE_SAVE_PATH must be set as well.
@@ -93,7 +93,7 @@ class ArrayConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['array', 'string', FlowResource::class];
+    protected $sourceTypes = ['array', 'string', PersistentResource::class];
 
     /**
      * @var string
@@ -142,7 +142,7 @@ class ArrayConverter extends AbstractTypeConverter
             }
         }
 
-        if ($source instanceof FlowResource) {
+        if ($source instanceof PersistentResource) {
             $exportType = $this->getResourceExportType($configuration);
             switch ($exportType) {
                 case self::RESOURCE_EXPORT_TYPE_BASE64:
@@ -172,7 +172,7 @@ class ArrayConverter extends AbstractTypeConverter
                         'hash' => $source->getSha1()
                     ];
                 default:
-                    throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from Resource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);
+                    throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from PersistentResource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);
 
             }
         }

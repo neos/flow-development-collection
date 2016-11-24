@@ -22,7 +22,7 @@ use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -88,6 +88,7 @@ class EntityManagerFactory
     {
         $config = new Configuration();
         $config->setClassMetadataFactoryName(Mapping\ClassMetadataFactory::class);
+        $this->applySecondLevelCacheSettingsToConfiguration($this->settings['doctrine']['secondLevelCache'], $config);
 
         $cache = new CacheAdapter();
         // must use ObjectManager in compile phase...
@@ -210,5 +211,41 @@ class EntityManagerFactory
         if (isset($configuredSettings['customDatetimeFunctions'])) {
             $doctrineConfiguration->setCustomDatetimeFunctions($configuredSettings['customDatetimeFunctions']);
         }
+    }
+
+    /**
+     * Apply configured settings regarding Doctrine's second level cache.
+     *
+     * @param array $configuredSettings
+     * @param Configuration $doctrineConfiguration
+     * @return void
+     */
+    protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
+    {
+        if (!isset($configuredSettings['enable']) || $configuredSettings['enable'] !== true) {
+            return;
+        }
+
+        $doctrineConfiguration->setSecondLevelCacheEnabled();
+        $regionsConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration()->getRegionsConfiguration();
+        if (isset($configuredSettings['defaultLifetime'])) {
+            $regionsConfiguration->setDefaultLifetime($configuredSettings['defaultLifetime']);
+        }
+        if (isset($configuredSettings['defaultLockLifetime'])) {
+            $regionsConfiguration->setDefaultLockLifetime($configuredSettings['defaultLockLifetime']);
+        }
+
+        if (isset($configuredSettings['regions']) && is_array($configuredSettings['regions'])) {
+            foreach ($configuredSettings['regions'] as $regionName => $regionLifetime) {
+                $regionsConfiguration->setLifetime($regionName, $regionLifetime);
+            }
+        }
+
+        $cache = new CacheAdapter();
+        // must use ObjectManager in compile phase...
+        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
+
+        $factory = new \Doctrine\ORM\Cache\DefaultCacheFactory($regionsConfiguration, $cache);
+        $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
     }
 }

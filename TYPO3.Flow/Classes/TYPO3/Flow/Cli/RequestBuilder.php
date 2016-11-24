@@ -16,7 +16,7 @@ use TYPO3\Flow\Command\HelpCommandController;
 use TYPO3\Flow\Mvc\Exception\CommandException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Environment;
 

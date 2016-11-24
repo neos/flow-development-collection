@@ -602,7 +602,7 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists()
     {
-        vfsStream::setup('Flow');
+        vfsStream::setup('Flow/Cache');
 
         $configurationsCode = <<< "EOD"
 <?php
@@ -610,17 +610,15 @@ return array('bar' => 'touched');
 ?>
 EOD;
 
-        $includeCachedConfigurationsPathAndFilename = vfsStream::url('Flow/IncludeCachedConfigurations.php');
-        file_put_contents($includeCachedConfigurationsPathAndFilename, $configurationsCode);
+        $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
+        file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [], '', false);
-
-        $configurationManager->_set('includeCachedConfigurationsPathAndFilename', 'notfound.php');
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath'], [], '', false);
+        $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
         $configurationManager->_call('loadConfigurationCache');
         $this->assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
-        $configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
         $configurationManager->_call('loadConfigurationCache');
         $this->assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
@@ -656,10 +654,10 @@ EOD;
     public function saveConfigurationCacheSavesTheCurrentConfigurationAsPhpCode()
     {
         vfsStream::setup('Flow');
-        mkdir(vfsStream::url('Flow/Configuration'));
+        mkdir(vfsStream::url('Flow/Cache'));
 
-        $temporaryDirectoryPath = vfsStream::url('Flow/TemporaryDirectory') . '/';
-        $includeCachedConfigurationsPathAndFilename = vfsStream::url('Flow/Configuration/IncludeCachedConfigurations.php');
+        $temporaryDirectoryPath = 'vfs://Flow/Cache/';
+        $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
 
         $mockConfigurations = [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => ['routes'],
@@ -667,11 +665,9 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => ['settings' => ['foo' => 'bar']]
         ];
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, array('postProcessConfiguration'), array(), '', false);
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath'], [], '', false);
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
-        $configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
-        $this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
-        $configurationManager->_set('context', $this->mockContext);
+        $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
@@ -690,19 +686,8 @@ EOD;
 
         $configurationManager->_call('saveConfigurationCache');
 
-        $expectedInclusionCode = <<< "EOD"
-<?php
-if (FLOW_PATH_ROOT !== 'XXX' || !file_exists('vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
-	@unlink(__FILE__);
-	return array();
-}
-return require 'vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php';
-EOD;
-        $expectedInclusionCode = str_replace('XXX', FLOW_PATH_ROOT, $expectedInclusionCode);
-        $this->assertTrue(file_exists($temporaryDirectoryPath . 'Configuration'));
-        $this->assertStringEqualsFile($includeCachedConfigurationsPathAndFilename, $expectedInclusionCode);
-        $this->assertFileExists($temporaryDirectoryPath . 'Configuration/FooContextConfigurations.php');
-        $this->assertSame($mockConfigurations, require($temporaryDirectoryPath . 'Configuration/FooContextConfigurations.php'));
+        $expectedInclusionCode = '<?php return ' . var_export($mockConfigurations, true) . ';';
+        $this->assertStringEqualsFile($cachedConfigurationsPathAndFilename, $expectedInclusionCode);
     }
 
     /**

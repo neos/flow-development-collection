@@ -15,10 +15,12 @@ properties:
         -
           type: string
           format: ip-address
+        -
+          type: null
       'charset': { type: string }
-      'dbname': { type: string }
-      'user': { type: string }
-      'password':  { type: string }
+      'dbname': { type: ['string','null'] }
+      'user': { type: ['string','null'] }
+      'password':  { type: ['string','null'] }
       'path': { type: string }
       'wrapperClass': { type: string, format: class-name }
       'master':
@@ -60,7 +62,9 @@ properties:
     properties:
       'enable': { type: boolean, required: TRUE }
       'sqlLogger': { type: [string, 'null'], required: TRUE }
-      'eventSubscribers': { type: array, items: { type: string, format: class-name } }
+      'eventSubscribers':
+        type: dictionary
+        additionalProperties: { type: string, format: class-name }
       'eventListeners':
         type: dictionary
         additionalProperties:
@@ -91,6 +95,18 @@ properties:
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
             additionalProperties: FALSE
+      'secondLevelCache':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          'enabled': { type: boolean }
+          'defaultLifetime': { type: number }
+          'defaultLockLifetime': { type: number }
+          'regions':
+            type: dictionary
+            required: FALSE
+            patternProperties: { '/.*/': { type: number } }
       'dbal':
         type: dictionary
         required: FALSE
@@ -112,6 +128,21 @@ properties:
             type: dictionary
             required: TRUE
             patternProperties: { '/.*/': { type: boolean } }
+      'cacheImplementation':
+        type:
+          - { type: 'null' }
+          - { type: string, format: class-name }
+      'migrations':
+        type: dictionary
+        properties:
+          'generate':
+            type: dictionary
+            properties:
+              'defaultFilterExpression':
+                type:
+                  - { type: 'null' }
+                  - { type: string }
+
   'cacheAllQueryResults':
     type: boolean
     required: TRUE

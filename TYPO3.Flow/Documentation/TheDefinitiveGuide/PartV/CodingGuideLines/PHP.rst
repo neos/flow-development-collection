@@ -138,8 +138,8 @@ Vendor namespaces
 The base for namespaces as well as package keys is the vendor namespace. Since Flow started
 as part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
 namespace (at some point this will change). The Object Manager for example is known under
-the class name ``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme``
-vendor namespace.
+the class name ``TYPO3\Flow\ObjectManagement\ObjectManager``. In our examples you will find
+the ``Acme`` vendor namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
 central package key registry and secondly, it allows anyone to seamlessly integrate third-party
@@ -243,8 +243,8 @@ characters.
 All interface names are written in ``UpperCamelCase``. Interface names must be adjectives
 or nouns and have the Interface suffix. A few examples follow:
 
-* ``\TYPO3\Flow\Object\ObjectInterface``
-* ``\TYPO3\Flow\Object\ObjectManagerInterface``
+* ``\TYPO3\Flow\ObjectManagement\ObjectInterface``
+* ``\TYPO3\Flow\ObjectManagement\ObjectManagerInterface``
 * ``\MyCompany\MyPackage\MyObject\MySubObjectInterface``
 * ``\MyCompany\MyPackage\MyObject\MyHtmlParserInterface``
 
@@ -256,8 +256,8 @@ types of exceptions: generic exceptions and specific exceptions. Generic excepti
 be named "Exception" preceded by their namespace. Specific exceptions should reside in
 their own sub-namespace end with the word ``Exception``.
 
-* ``\TYPO3\Flow\Object\Exception``
-* ``\TYPO3\Flow\Object\Exception\InvalidClassNameException``
+* ``\TYPO3\Flow\ObjectManagement\Exception``
+* ``\TYPO3\Flow\ObjectManagement\Exception\InvalidClassNameException``
 * ``\MyCompany\MyPackage\MyObject\Exception``
 * ``\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException``
 
@@ -834,8 +834,8 @@ exception). This all works because we have the following hierarchy:
 .. code-block:: text
 
  + \TYPO3\Flow\Exception
- + \TYPO3\Flow\Object\Exception
- + \TYPO3\Flow\Object\Exception\InvalidObjectNameException
+ + \TYPO3\Flow\ObjectManagement\Exception
+ + \TYPO3\Flow\ObjectManagement\Exception\InvalidObjectNameException
 
 Throwing an exception
 ---------------------
