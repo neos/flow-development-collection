@@ -8,7 +8,7 @@
 # possible configuration options.                                        #
 #                                                                        #
 
-TYPO3:
+Neos:
   Flow:
     persistence:
       backendOptions:

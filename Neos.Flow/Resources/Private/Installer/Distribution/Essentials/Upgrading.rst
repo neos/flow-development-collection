@@ -1,14 +1,13 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 3.2 based
-applications to TYPO3 Flow 3.3.
+This file contains instructions for upgrading your Flow 3.3 based
+applications to Neos Flow 4.0
 
 What has changed
 ----------------
 
-The most important change relevant for upgrading is https://github.com/neos/flow-development-collection/pull/130
-Make sure to run code migrations and check the changed provider patterns.
+...
 
 Upgrading your Packages
 -----------------------
@@ -24,7 +23,7 @@ anything by hand::
  ./flow core:migrate --package-key Acme.Demo
 
 The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
-prefixed with "TYPO3.*") - for the first run you might want to limit things a little to keep the overview, though.
+prefixed with "Neos.*") - for the first run you might want to limit things a little to keep the overview, though.
 
 Make sure to run::
 
@@ -79,5 +78,5 @@ in *Development Context*, padded with some manual checking and adjustments needs
 That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
-with us. The `support page <http://flow.typo3.org/support/>`_ provides more
+with us. The `support page <https://www.neos.io/support/>`_ provides more
 information.

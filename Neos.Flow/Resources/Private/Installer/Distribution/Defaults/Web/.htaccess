@@ -1,0 +1,59 @@
+#
+# Flow context setting
+#
+
+# You can specify a default context by activating this option:
+# SetEnv FLOW_CONTEXT Production
+
+# If the root path is not the parent of the Web directory,
+# Flow's root path must be specified manually:
+# SetEnv FLOW_ROOTPATH /var/www/myapp/
+
+#
+# mod_rewrite configuration
+#
+<IfModule mod_rewrite.c>
+
+	# Enable URL rewriting
+	RewriteEngine On
+
+	# Set flag so we know URL rewriting is available
+	SetEnv FLOW_REWRITEURLS 1
+
+	# You will have to change the path in the following option if you
+	# experience problems while your installation is located in a subdirectory
+	# of the website root.
+	RewriteBase /
+
+	# Stop rewrite processing no matter if a package resource, robots.txt etc. exists or not
+	RewriteRule ^(_Resources/Packages/|robots\.txt|favicon\.ico) - [L]
+
+	# Stop rewrite process if the path points to a static file anyway
+	RewriteCond %{REQUEST_FILENAME} -f [OR]
+	RewriteCond %{REQUEST_FILENAME} -l [OR]
+	RewriteCond %{REQUEST_FILENAME} -d
+	RewriteRule .* - [L]
+
+	# Make sure that not existing resources don't execute Flow
+	RewriteRule ^_Resources/.* - [L]
+
+	# Continue only if the file/symlink/directory does not exist
+	RewriteRule (.*) index.php
+
+</IfModule>
+
+<IfModule mod_negotiation.c>
+
+	# prevents Apache's automatic file negotiation, it breaks resource URLs
+	Options -MultiViews
+
+</IfModule>
+
+<IfModule mod_setenvif.c>
+
+	# Redirect authorization header when PHP is running as CGI
+	SetEnvIfNoCase Authorization "Basic ([a-zA-Z0-9\+/=]+)" REMOTE_AUTHORIZATION=$0
+
+</IfModule>
+
+ErrorDocument 500 "<h1>Application Error</h1><p>The Flow application could not be launched.</p>"
