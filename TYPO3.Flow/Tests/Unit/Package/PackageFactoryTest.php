@@ -16,7 +16,7 @@ use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Package\Package;
 use TYPO3\Flow\Package\PackageFactory;
 use TYPO3\Flow\Package\PackageManager;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**

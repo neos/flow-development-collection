@@ -25,7 +25,7 @@ use Doctrine\ORM\Tools\SchemaValidator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Reflection\DocCommentParser;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Utility\Exception;
 use Neos\Utility\Files;
 

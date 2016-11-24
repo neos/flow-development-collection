@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Mvc\View;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 /**

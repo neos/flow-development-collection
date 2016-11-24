@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Validation;
  * source code.
  */
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use TYPO3\Flow\Tests\FunctionalTestCase;

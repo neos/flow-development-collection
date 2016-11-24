@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Reflection\Exception;
+namespace Neos\Utility\Exception;
 
 /*
  * This file is part of the Neos.Utility.ObjectHandling package.

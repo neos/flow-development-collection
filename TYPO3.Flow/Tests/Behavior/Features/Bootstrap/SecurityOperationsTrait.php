@@ -6,7 +6,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\RequestHandler;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Security;
 use TYPO3\Flow\Security\Authentication\AuthenticationProviderManager;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;

@@ -17,7 +17,7 @@ use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * TypeConverter which converts generic objects to arrays by converting and returning

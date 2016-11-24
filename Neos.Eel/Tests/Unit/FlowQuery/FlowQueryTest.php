@@ -15,7 +15,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationResolver;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 use Neos\Eel\FlowQuery\Operations;
 

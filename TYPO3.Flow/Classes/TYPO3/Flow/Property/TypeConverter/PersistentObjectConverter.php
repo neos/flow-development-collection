@@ -21,7 +21,7 @@ use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\Error\TargetNotFoundError;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 /**

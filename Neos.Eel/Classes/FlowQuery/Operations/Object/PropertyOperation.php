@@ -15,7 +15,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Access properties of an object using ObjectAccess.

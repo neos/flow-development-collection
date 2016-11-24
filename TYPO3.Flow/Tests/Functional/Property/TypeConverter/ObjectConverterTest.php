@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Functional\Property\TypeConverter;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Tests\Functional\Property\Fixtures;
 

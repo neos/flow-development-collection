@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Validation\Validator\CollectionValidator;
 use TYPO3\Flow\Validation\Validator\EmailAddressValidator;
 use TYPO3\Flow\Validation\Validator\GenericObjectValidator;

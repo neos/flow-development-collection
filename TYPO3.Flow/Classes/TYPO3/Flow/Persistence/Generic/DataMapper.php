@@ -17,7 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Exception\UnknownObjectException;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ClassSchema;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Persistence\Exception as PersistenceException;
 

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Persistence\Generic;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

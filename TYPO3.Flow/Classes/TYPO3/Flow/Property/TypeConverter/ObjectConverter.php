@@ -18,7 +18,7 @@ use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
 use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;

@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Composer;
  *                                                                        */
 
 use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
 /**

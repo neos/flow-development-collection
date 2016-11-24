@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 use TYPO3\Flow\Utility\PhpAnalyzer;
 

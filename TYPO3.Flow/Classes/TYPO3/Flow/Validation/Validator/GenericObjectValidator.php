@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Error\Messages\Result as ErrorResult;
 
 /**

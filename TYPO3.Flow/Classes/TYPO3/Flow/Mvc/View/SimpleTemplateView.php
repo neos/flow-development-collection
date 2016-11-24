@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Mvc\View;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * An abstract View

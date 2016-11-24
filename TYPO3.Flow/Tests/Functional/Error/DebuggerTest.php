@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Error;
 
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\ApplicationContext;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Error\Debugger;
 use Neos\Utility\Arrays;

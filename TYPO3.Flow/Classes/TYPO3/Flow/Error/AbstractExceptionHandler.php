@@ -22,7 +22,7 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 
 /**

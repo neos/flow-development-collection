@@ -11,7 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Flexible array sorter that sorts an array according to a "position" meta data.

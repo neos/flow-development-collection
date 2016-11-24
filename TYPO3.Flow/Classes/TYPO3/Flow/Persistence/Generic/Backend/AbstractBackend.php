@@ -23,7 +23,7 @@ use TYPO3\Flow\Persistence\Generic\LazySplObjectStorage;
 use TYPO3\Flow\Persistence\Generic\Session;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ClassSchema;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use TYPO3\Flow\Validation\ValidatorResolver;

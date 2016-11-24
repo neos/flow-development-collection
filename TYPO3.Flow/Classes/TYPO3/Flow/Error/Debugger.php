@@ -16,8 +16,8 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\ObjectManagement\Configuration\Configuration;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\ObjectManagement\Proxy\ProxyInterface;
-use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 
 /**
@@ -185,7 +185,7 @@ class Debugger
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
         try {
             $objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
-        } catch (PropertyNotAccessibleException $exception) {
+        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException $exception) {
             $objectIdentifier = spl_object_hash($object);
         }
         $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);

@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Persistence\Doctrine\Query;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\InvalidPolicyException;
 use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
@@ -501,7 +501,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * Redirects directly to \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
+     * Redirects directly to \Neos\Utility\ObjectAccess::getPropertyPath($result, $propertyPath)
      * This is only needed for unit tests!
      *
      * @param mixed $object The object to fetch the property from

@@ -366,7 +366,7 @@ class ProxyClassBuilder
                     } else {
                         $preparedSetterArgument = $propertyValue;
                     }
-                    $commands[] = 'if (\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === FALSE) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
+                    $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === FALSE) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
                     break;
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
                     $configurationType = $propertyValue['type'];

@@ -202,7 +202,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             $this->securityContext->clearContext();
             $this->securityContext->setRequest($actionRequest);
         } else {
-            \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->securityContext, 'authorizationChecksDisabled', true, true);
+            \Neos\Utility\ObjectAccess::setProperty($this->securityContext, 'authorizationChecksDisabled', true, true);
         }
     }
 
@@ -281,7 +281,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             $this->securityContext->clearContext();
         }
         if ($this->authenticationManager !== null) {
-            \TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', null, true);
+            \Neos\Utility\ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', null, true);
         }
     }
 

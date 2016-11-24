@@ -266,7 +266,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
                                 "\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
                                 "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'Flow', 'aop', 'globalObjects'));\n" .
                                 "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
-                                "\t\t\t\t\t\t\treturn (((\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
+                                "\t\t\t\t\t\t\treturn (((\Neos\Utility\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \Neos\Utility\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
                                 "\t\t\t\t\t\t}";
 
         $pointcutFilterComposite = $this->getAccessibleMock(Pointcut\PointcutFilterComposite::class, ['dummy'], [], '', false);
@@ -316,7 +316,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
                                 "\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
                                 "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'Flow', 'aop', 'globalObjects'));\n" .
                                 "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
-                                "\t\t\t\t\t\t\treturn (((\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
+                                "\t\t\t\t\t\t\treturn (((\Neos\Utility\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \Neos\Utility\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
                                 "\t\t\t\t\t\t}";
 
         $pointcutFilterComposite = $this->getAccessibleMock(Pointcut\PointcutFilterComposite::class, ['dummy'], [], '', false);
@@ -401,7 +401,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-        $expectedResult = '($joinPoint->getMethodArgument(\'identifier\') == \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'bar.baz\') && $joinPoint->getMethodArgument(\'identifier\') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'bar.baz\') && \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'some\'), \'object.property\') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'object.with.another.property\'))';
+        $expectedResult = '($joinPoint->getMethodArgument(\'identifier\') == \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'bar.baz\') && $joinPoint->getMethodArgument(\'identifier\') != \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'bar.baz\') && \Neos\Utility\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'some\'), \'object.property\') != \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'object.with.another.property\'))';
 
         $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
@@ -453,7 +453,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-        $expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
+        $expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
 
         $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
@@ -480,7 +480,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-        $expectedResult = '(\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') != \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\') && \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'account.accountIdentifier\') == "admin")';
+        $expectedResult = '(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') != \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\') && \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'account.accountIdentifier\') == "admin")';
 
         $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
@@ -502,7 +502,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-        $expectedResult = '((array("foo", \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage || array("foo", \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \Doctrine\Common\Collections\Collection ? \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
+        $expectedResult = '((array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage || array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \Doctrine\Common\Collections\Collection ? \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
 
         $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
@@ -529,7 +529,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-        $expectedResult = '((!empty(array_intersect(\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)))) && (!empty(array_intersect(\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'accounts\')))))';
+        $expectedResult = '((!empty(array_intersect(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)))) && (!empty(array_intersect(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'accounts\')))))';
 
         $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }

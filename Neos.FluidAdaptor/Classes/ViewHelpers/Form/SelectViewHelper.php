@@ -16,7 +16,7 @@ use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\I18n\Translator;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\FluidAdaptor;
 use Neos\FluidAdaptor\Core\ViewHelper;
 

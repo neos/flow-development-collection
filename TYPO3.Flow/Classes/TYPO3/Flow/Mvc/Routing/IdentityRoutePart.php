@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
 use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

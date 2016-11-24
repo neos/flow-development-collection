@@ -303,7 +303,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
         foreach ($conditions as $argumentName => $argumentConstraint) {
             $objectAccess = explode('.', $argumentName, 2);
             if (count($objectAccess) === 2) {
-                $leftValue = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
+                $leftValue = '\Neos\Utility\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
             } else {
                 $leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
             }
@@ -382,12 +382,12 @@ class PointcutFilterComposite implements PointcutFilterInterface
                 if (count($objectAccess) === 1) {
                     $argumentAccessCode = '$globalObjects[\'' . $objectAccess[0] . '\']';
                 } else {
-                    $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
+                    $argumentAccessCode = '\Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
                 }
 
                 $useGlobalObjects = true;
             } elseif (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
-                $argumentAccessCode = '\TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+                $argumentAccessCode = '\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
             } else {
                 $argumentAccessCode = $argumentAccess;
             }

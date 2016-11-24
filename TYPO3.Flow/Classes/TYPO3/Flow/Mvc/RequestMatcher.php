@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Mvc;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * This class is a helper that can be used as a

@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Persistence;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Persistence\Exception as PersistenceException;
 
 /**

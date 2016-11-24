@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\View;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
 /**

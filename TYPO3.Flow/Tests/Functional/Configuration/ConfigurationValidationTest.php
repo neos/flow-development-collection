@@ -19,7 +19,7 @@ use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**

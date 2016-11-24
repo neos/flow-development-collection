@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Reflection;
+namespace Neos\Utility;
 
 /*
  * This file is part of the Neos.Utility.ObjectHandling package.
@@ -11,8 +11,7 @@ namespace TYPO3\Flow\Reflection;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
-use Neos\Utility\TypeHandling;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -113,7 +112,8 @@ abstract class ObjectAccess
 
         if ($forceDirectAccess === true) {
             if (property_exists($className, $propertyName)) {
-                $propertyReflection = new PropertyReflection($className, $propertyName);
+                $propertyReflection = new \ReflectionProperty($className, $propertyName);
+                $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             } elseif (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
@@ -241,7 +241,8 @@ abstract class ObjectAccess
         if ($forceDirectAccess === true) {
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
-                $propertyReflection = new PropertyReflection($className, $propertyName);
+                $propertyReflection = new \ReflectionProperty($className, $propertyName);
+                $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;

@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\ResourceManagement\Storage\StorageInterface;
 use TYPO3\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use TYPO3\Flow\ResourceManagement\Target\TargetInterface;

@@ -627,9 +627,9 @@ The username/password token is implemented in the class
 from the HTTP POST data, look at the following program listing for details::
 
   $postArguments = $this->environment->getRawPostArguments();
-  $username = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
+  $username = \Neos\Utility\ObjectAccess::getPropertyPath($postArguments,
       '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
-  $password = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
+  $password = \Neos\Utility\ObjectAccess::getPropertyPath($postArguments,
       '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
 
 .. note::

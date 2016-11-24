@@ -12,8 +12,8 @@ namespace Neos\Eel;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A Eel evaluation context

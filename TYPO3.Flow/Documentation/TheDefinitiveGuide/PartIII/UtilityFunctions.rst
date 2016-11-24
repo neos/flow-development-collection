@@ -5,7 +5,7 @@ Utility Functions
 This chapter contains short introductions to helpful utility functions available
 in Flow. Please see the API documentation for a full reference:
 
-* ``TYPO3\Flow\Reflection\ObjectAccess`` should be used to get/set properties on
+* ``Neos\Utility\ObjectAccess`` should be used to get/set properties on
   objects, arrays and similar structures.
 
 * ``Neos\Utility\Arrays`` contains some array helper functions for merging

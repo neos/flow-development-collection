@@ -15,7 +15,7 @@ use TYPO3\Flow\Aop\Pointcut\PointcutExpressionParser;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Aop;
