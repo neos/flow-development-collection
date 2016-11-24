@@ -12,8 +12,13 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  */
 
 use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+use TYPO3\Fluid\ViewHelpers\Fixtures\EmptySyntaxTreeNode;
+use TYPO3\Fluid\ViewHelpers\Form\UploadViewHelper;
+use TYPO3\Fluid\ViewHelpers\FormViewHelper;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
 require_once(__DIR__ . '/Fixtures/Fixture_UserDomainClass.php');
@@ -30,12 +35,12 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     protected $viewHelper;
 
     /**
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $mockPropertyMapper;
 
     /**
-     * @var \TYPO3\Flow\Error\Result
+     * @var Result
      */
     protected $mockMappingResult;
 
@@ -108,9 +113,9 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function hiddenFieldsContainDataOfTheSpecifiedResource()
     {
-        $resource = new Resource();
+        $resource = new PersistentResource();
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($resource)->will($this->returnValue('79ecda60-1a27-69ca-17bf-a5d9e80e6c39'));
 
         $this->viewHelper->_set('persistenceManager', $mockPersistenceManager);
@@ -143,21 +148,21 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         );
 
         /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
-        $mockValidationResults = $this->getMockBuilder(\TYPO3\Flow\Error\Result::class)->disableOriginalConstructor()->getMock();
+        $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
         $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(true));
         $this->request->expects($this->at(0))->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
         $this->request->expects($this->at(1))->method('getInternalArgument')->with('__submittedArguments')->will($this->returnValue($submittedData));
 
-        /** @var Resource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
-        $mockResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
+        $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockResource)->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
 
-        $this->mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->with($submittedData['foo']['bar'], \TYPO3\Flow\Resource\Resource::class)->will($this->returnValue($mockResource));
+        $this->mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->with($submittedData['foo']['bar'], PersistentResource::class)->will($this->returnValue($mockResource));
 
-        $mockValueResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
+        $mockValueResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $this->viewHelper->setArguments(array('name' => 'foo[bar]', 'value' => $mockValueResource));
         $expectedResult = '<input type="hidden" name="foo[bar][originallySubmittedResource][__identity]" value="' . $mockResourceUuid . '" />';
         $this->viewHelper->initialize();
@@ -173,12 +178,12 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockValueResourceUuid = '79ecda60-1a27-69ca-17bf-a5d9e80e6c39';
 
         /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
-        $mockValidationResults = $this->getMockBuilder(\TYPO3\Flow\Error\Result::class)->disableOriginalConstructor()->getMock();
+        $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
         $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(false));
         $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
 
-        /** @var Resource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
-        $mockPropertyResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
+        $mockPropertyResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $mockFormObject = array(
             'foo' => $mockPropertyResource
         );
@@ -186,9 +191,9 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
             'formObjectName' => 'someObject',
             'formObject' => $mockFormObject
         );
-        $mockValueResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
+        $mockValueResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockValueResource))->will($this->returnValue($mockValueResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
@@ -207,12 +212,12 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockResourceUuid = '79ecda60-1a27-69ca-17bf-a5d9e80e6c39';
 
         /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
-        $mockValidationResults = $this->getMockBuilder(\TYPO3\Flow\Error\Result::class)->disableOriginalConstructor()->getMock();
+        $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
         $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(false));
         $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
 
-        /** @var Resource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
-        $mockPropertyResource = $this->getMockBuilder(\TYPO3\Flow\Resource\Resource::class)->disableOriginalConstructor()->getMock();
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
+        $mockPropertyResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $mockFormObject = array(
             'foo' => $mockPropertyResource
         );
@@ -221,7 +226,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
             'formObject' => $mockFormObject
         );
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockPropertyResource))->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 

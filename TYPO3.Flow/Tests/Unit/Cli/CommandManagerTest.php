@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Cli;
 use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Cli;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
 

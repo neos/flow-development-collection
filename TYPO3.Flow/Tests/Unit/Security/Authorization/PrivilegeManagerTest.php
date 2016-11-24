@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
 
 use TYPO3\Flow\Aop\JoinPoint;
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;

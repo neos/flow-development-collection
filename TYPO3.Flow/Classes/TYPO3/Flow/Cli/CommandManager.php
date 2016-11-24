@@ -18,7 +18,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use TYPO3\Flow\Mvc\Exception\CommandException;
 use TYPO3\Flow\Mvc\Exception\NoSuchCommandException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**

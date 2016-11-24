@@ -1,5 +1,5 @@
 <?php
-namespace Neos\FluidAdaptor\ViewHelpers;
+namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -23,7 +23,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\ViewHelperVariableContainer
+     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer
      */
     protected $viewHelperVariableContainer;
 

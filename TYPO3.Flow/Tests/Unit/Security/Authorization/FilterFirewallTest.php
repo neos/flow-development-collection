@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization;
  */
 
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authorization\FilterFirewall;
 use TYPO3\Flow\Security\Authorization\InterceptorResolver;
 use TYPO3\Flow\Security\Authorization\RequestFilter;

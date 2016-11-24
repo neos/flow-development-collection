@@ -15,20 +15,20 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Exception;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Resource\CollectionInterface;
-use TYPO3\Flow\Resource\Publishing\MessageCollector;
-use TYPO3\Flow\Resource\Resource;
-use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\Resource\ResourceRepository;
+use TYPO3\Flow\ResourceManagement\CollectionInterface;
+use TYPO3\Flow\ResourceManagement\Publishing\MessageCollector;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceRepository;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
- * Resource command controller for the TYPO3.Flow package
+ * PersistentResource command controller for the TYPO3.Flow package
  *
  * @Flow\Scope("singleton")
  */
@@ -125,7 +125,7 @@ class ResourceCommandController extends CommandController
      * The target storage must be empty and must not be identical to the current storage of the collection.
      *
      * This command merely copies the binary data from one storage to another, it does not change the related
-     * Resource objects in the database in any way. Since the Resource objects in the database refer to a
+     * PersistentResource objects in the database in any way. Since the PersistentResource objects in the database refer to a
      * collection name, you can use this command for migrating from one storage to another my configuring
      * the new storage with the name of the old storage collection after the resources have been copied.
      *
@@ -161,7 +161,7 @@ class ResourceCommandController extends CommandController
 
         $this->output->progressStart(count($sourceObjects));
         foreach ($sourceCollection->getObjects() as $resource) {
-            /** @var \TYPO3\Flow\Resource\Storage\Object $resource */
+            /** @var \TYPO3\Flow\ResourceManagement\Storage\StorageObject $resource */
             $this->output->progressAdvance();
             $targetCollection->importResource($resource->getStream());
         }
@@ -182,7 +182,7 @@ class ResourceCommandController extends CommandController
      *
      * This command checks the resource registry (that is the database tables) for orphaned resource objects which don't
      * seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
-     * without removing the related Resource object).
+     * without removing the related PersistentResource object).
      *
      * If the TYPO3.Media package is active, this command will also detect any assets referring to broken resources
      * and will remove the respective Asset object from the database when the broken resource is removed.
@@ -209,7 +209,7 @@ class ResourceCommandController extends CommandController
             $this->clearState($iteration);
         }) as $resource) {
             $this->output->progressAdvance(1);
-            /* @var Resource $resource */
+            /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
                 $brokenResources[] = $resource->getSha1();

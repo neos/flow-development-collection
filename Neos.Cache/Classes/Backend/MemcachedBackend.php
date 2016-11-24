@@ -13,6 +13,7 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -45,8 +46,10 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class MemcachedBackend extends IndependentAbstractBackend implements TaggableBackendInterface
+class MemcachedBackend extends IndependentAbstractBackend implements TaggableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * Max bucket size, (1024*1024)-42 bytes
      * @var int

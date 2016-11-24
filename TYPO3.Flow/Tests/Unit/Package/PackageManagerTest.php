@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Package;
 use TYPO3\Flow\Composer\ComposerUtility;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageKeyException;
 use TYPO3\Flow\Package\PackageFactory;
 use TYPO3\Flow\Package\PackageInterface;
@@ -175,14 +175,15 @@ class PackageManagerTest extends UnitTestCase
      */
     protected function createDummyObjectForPackage(PackageInterface $package)
     {
+        $namespace = trim($package->getNamespace(), '\\');
         $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
-        $fullyQualifiedClassName = '\\' . $package->getNamespace() . '\\' . $dummyClassName;
+        $fullyQualifiedClassName = '\\' . $namespace . '\\' . $dummyClassName;
         $dummyClassFilePath = Files::concatenatePaths([
             $package->getPackagePath(),
             PackageInterface::DIRECTORY_CLASSES,
             $dummyClassName . '.php'
         ]);
-        file_put_contents($dummyClassFilePath, '<?php namespace ' . $package->getNamespace() . '; class ' . $dummyClassName . ' {}');
+        file_put_contents($dummyClassFilePath, '<?php namespace ' . $namespace . '; class ' . $dummyClassName . ' {}');
         require $dummyClassFilePath;
         return new $fullyQualifiedClassName();
     }

@@ -20,7 +20,6 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\TypeHandling;
-use TYPO3\Party\Domain\Model\AbstractParty;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -473,55 +472,7 @@ class Context
     }
 
     /**
-     * Returns the party of the first authenticated authentication token.
-     * Note: There might be a different party authenticated in one of the later tokens,
-     * if you need it you'll have to fetch it directly from the token.
-     * (@see getAuthenticationTokens())
-     *
-     * @return AbstractParty The authenticated party
-     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.neos.io/browse/FLOW-5)
-     */
-    public function getParty()
-    {
-        if ($this->initialized === false) {
-            $this->initialize();
-        }
 
-        /** @var $token TokenInterface */
-        foreach ($this->getAuthenticationTokens() as $token) {
-            if ($token->isAuthenticated() === true) {
-                /** @noinspection PhpDeprecationInspection */
-                return $token->getAccount() !== null ? $token->getAccount()->getParty() : null;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the first authenticated party of the given type.
-     *
-     * @param string $className Class name of the party to find
-     * @return AbstractParty The authenticated party
-     * @deprecated since 3.0 Use appropriate (Domain) Services directly (see https://jira.neos.io/browse/FLOW-5)
-     */
-    public function getPartyByType($className)
-    {
-        if ($this->initialized === false) {
-            $this->initialize();
-        }
-
-        /** @var $token TokenInterface */
-        foreach ($this->getAuthenticationTokens() as $token) {
-            /** @noinspection PhpDeprecationInspection */
-            if ($token->isAuthenticated() === true && $token->getAccount() instanceof Account && $token->getAccount()->getParty() instanceof $className) {
-                /** @noinspection PhpDeprecationInspection */
-                return $token->getAccount()->getParty();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the account of the first authenticated authentication token.
      * Note: There might be a more currently authenticated account in the
      * remaining tokens. If you need them you'll have to fetch them directly

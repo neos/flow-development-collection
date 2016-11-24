@@ -12,6 +12,7 @@ namespace Neos\Cache\Backend;
  */
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception;
 use TYPO3\Flow\Cache\Exception\InvalidDataException;
@@ -24,8 +25,10 @@ use TYPO3\Flow\Utility\PdoHelper;
  *
  * @api
  */
-class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface
+class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     /**
      * @var string
      */

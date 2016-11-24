@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;
@@ -203,68 +203,5 @@ class AccountTest extends UnitTestCase
 
         $this->account->setExpirationDate(new \DateTime('yesterday'));
         $this->assertFalse($this->account->isActive());
-    }
-
-
-    /**
-     * @expectedException \TYPO3\Flow\Security\Exception
-     * @expectedExceptionCode 1397747246
-     * @test
-     */
-    public function callingGetPartyWithoutIdentifierThrowsException()
-    {
-        $account = new Account();
-        $account->getParty();
-    }
-
-    /**
-     * @test
-     */
-    public function callingGetPartyInvokesPartyDomainServiceWithAccountAndReturnsItsValue()
-    {
-        $account = new Account();
-        $partyService = $this->createMock(Fixture\PartyService::class);
-        $partyService->expects($this->once())->method('getAssignedPartyOfAccount')->with($account)->will($this->returnValue('ReturnedValue'));
-
-        $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $objectManager->expects($this->once())->method('isRegistered')->with(PartyService::class)->will($this->returnValue(true));
-        $objectManager->expects($this->once())->method('get')->with(PartyService::class)->will($this->returnValue($partyService));
-
-        $this->inject($account, 'objectManager', $objectManager);
-
-        $account->setAccountIdentifier('AccountIdentifierToCheck');
-        $this->assertEquals('ReturnedValue', $account->getParty());
-    }
-
-    /**
-     * @expectedException \TYPO3\Flow\Security\Exception
-     * @expectedExceptionCode 1397745354
-     * @test
-     */
-    public function callingSetPartyWithoutIdentifierThrowsException()
-    {
-        $account = new Account();
-
-        $account->setParty(new \stdClass());
-    }
-
-    /**
-     * @test
-     */
-    public function callingSetPartyInvokesPartyDomainServiceWithAccountIdentifier()
-    {
-        $partyMock = new \stdClass();
-        $account = new Account();
-        $partyService = $this->createMock(Fixture\PartyService::class);
-        $partyService->expects($this->once())->method('assignAccountToParty')->with($account, $partyMock);
-
-        $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $objectManager->expects($this->once())->method('isRegistered')->with(PartyService::class)->will($this->returnValue(true));
-        $objectManager->expects($this->once())->method('get')->with(PartyService::class)->will($this->returnValue($partyService));
-
-        $this->inject($account, 'objectManager', $objectManager);
-
-        $account->setAccountIdentifier('AccountIdentifierToCheck');
-        $account->setParty($partyMock);
     }
 }

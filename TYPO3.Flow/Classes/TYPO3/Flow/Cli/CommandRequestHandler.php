@@ -16,7 +16,7 @@ use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\LockManager;
 use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Mvc\Dispatcher;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Context;
 
 /**

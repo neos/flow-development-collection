@@ -15,6 +15,7 @@ use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
 use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
 use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\Exception as CacheException;
 
@@ -48,8 +49,10 @@ use TYPO3\Flow\Cache\Exception as CacheException;
  *
  * @api
  */
-class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface
+class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface
 {
+    use RequireOnceFromValueTrait;
+
     const MIN_REDIS_VERSION = '2.6.0';
 
     /**

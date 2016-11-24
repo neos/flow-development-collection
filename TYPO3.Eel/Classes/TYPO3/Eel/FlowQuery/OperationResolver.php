@@ -11,9 +11,8 @@ namespace TYPO3\Eel\FlowQuery;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\OperationInterface;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
@@ -125,6 +124,7 @@ class OperationResolver implements OperationResolverInterface
         }
 
         foreach ($this->operations[$operationName] as $operationClassName) {
+            /** @var OperationInterface $operation */
             $operation = $this->objectManager->get($operationClassName);
             if ($operation->canEvaluate($context)) {
                 return $operation;

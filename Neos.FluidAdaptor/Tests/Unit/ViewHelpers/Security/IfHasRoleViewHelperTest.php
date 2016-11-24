@@ -14,12 +14,12 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test case for IfHasRoleViewHelper
@@ -35,12 +35,12 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
     /**
      * @var Context|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityContext;
+    protected $mockSecurityContext;
 
     /**
      * @var PolicyService|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $policyService;
+    protected $mockPolicyService;
 
     public function setUp()
     {

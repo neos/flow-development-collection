@@ -135,7 +135,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'irrelevant',
             \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection::class
         );
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
+        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
     }
 
     /**

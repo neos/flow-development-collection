@@ -10,9 +10,10 @@
   options:
     templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnControllerLevel.html
 
-# Completely change the viewObjectName
+# Completely change the viewObjectName, the mainRequest is added to add specifity for not being overwritten from
+# the following filters
 -
-  requestFilter: 'isPackage("TYPO3.Flow") && isController("ViewsConfigurationTestC")'
+  requestFilter: 'mainRequest.isPackage("TYPO3.Flow") && isController("ViewsConfigurationTestC")'
   viewObjectName: '\TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView'
 
 # Reset Widget Template because it's changed by the second change

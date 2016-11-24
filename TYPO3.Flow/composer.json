@@ -25,6 +25,7 @@
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
         "neos/error-messages": "*",
+        "neos/fluid-adaptor": "*",
         "neos/cache": "*",
 
         "typo3/eel": "*",

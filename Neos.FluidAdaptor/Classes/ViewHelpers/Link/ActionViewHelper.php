@@ -72,13 +72,14 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
      * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one
+     * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
      * @param boolean $absolute By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
+     * @param boolean $useMainRequest If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
      * @return string The rendered link
      * @throws ViewHelper\Exception
      * @api
      */
-    public function render($action, $arguments = array(), $controller = null, $package = null, $subpackage = null, $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = false, $absolute = true)
+    public function render($action, $arguments = array(), $controller = null, $package = null, $subpackage = null, $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = false, $absolute = true, $useMainRequest = false)
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
         if ($useParentRequest) {
@@ -88,6 +89,12 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
             }
             $uriBuilder = clone $uriBuilder;
             $uriBuilder->setRequest($request->getParentRequest());
+        } elseif ($useMainRequest === true) {
+            $request = $this->controllerContext->getRequest();
+            if (!$request->isMainRequest()) {
+                $uriBuilder = clone $uriBuilder;
+                $uriBuilder->setRequest($request->getMainRequest());
+            }
         }
 
         $uriBuilder

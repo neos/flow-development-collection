@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Session\Aspect;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Session\SessionInterface;
 
 /**
@@ -55,7 +55,7 @@ class LazyLoadingAspect
      * @param string $objectName
      * @param object $object
      * @return void
-     * @see \TYPO3\Flow\Object\ObjectManager
+     * @see \TYPO3\Flow\ObjectManagement\ObjectManager
      */
     public function registerSessionInstance($objectName, $object)
     {

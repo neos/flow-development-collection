@@ -31,20 +31,6 @@ class Argument
     protected $name = '';
 
     /**
-     * Short name of this argument
-     * @var string
-     * @deprecated Will be removed for next major Flow version.
-     */
-    protected $shortName = null;
-
-    /**
-     * Short help message for this argument
-     * @var string
-     * @deprecated Will be removed for next major Flow version.
-     */
-    protected $shortHelpMessage = null;
-
-    /**
      * Data type of this argument's value
      * @var string
      */
@@ -108,7 +94,7 @@ class Argument
             throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
         }
         $this->name = $name;
-        $this->setDataType($dataType);
+        $this->dataType = TypeHandling::normalizeType($dataType);
     }
 
     /**
@@ -120,48 +106,6 @@ class Argument
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Sets the short name of this argument.
-     *
-     * @param string $shortName A "short name" - a single character
-     * @return Argument $this
-     * @throws \InvalidArgumentException if $shortName is not a character
-     * @api
-     * @deprecated Will be removed for next major Flow version.
-     */
-    public function setShortName($shortName)
-    {
-        if ($shortName !== null && (!is_string($shortName) || strlen($shortName) !== 1)) {
-            throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
-        }
-        $this->shortName = $shortName;
-        return $this;
-    }
-
-    /**
-     * Returns the short name of this argument
-     *
-     * @return string This argument's short name
-     * @api
-     * @deprecated Will be removed for next major Flow version.
-     */
-    public function getShortName()
-    {
-        return $this->shortName;
-    }
-
-    /**
-     * Sets the data type of this argument that is also used for property mapping.
-     * @param string $dataType
-     * @return Argument $this
-     * @deprecated Will be removed for next major Flow version. Set the DataType via constructor.
-     */
-    public function setDataType($dataType)
-    {
-        $this->dataType = TypeHandling::normalizeType($dataType);
-        return $this;
     }
 
     /**
@@ -197,37 +141,6 @@ class Argument
     public function isRequired()
     {
         return $this->isRequired;
-    }
-
-    /**
-     * Sets a short help message for this argument. Mainly used at the command line, but maybe
-     * used elsewhere, too.
-     *
-     * @param string $message A short help message
-     * @return Argument $this
-     * @throws \InvalidArgumentException
-     * @api
-     * @deprecated Will be removed for next major Flow version.
-     */
-    public function setShortHelpMessage($message)
-    {
-        if (!is_string($message)) {
-            throw new \InvalidArgumentException('The help message must be of type string, ' . gettype($message) . 'given.', 1187958170);
-        }
-        $this->shortHelpMessage = $message;
-        return $this;
-    }
-
-    /**
-     * Returns the short help message
-     *
-     * @return string The short help message
-     * @api
-     * @deprecated Will be removed for next major Flow version.
-     */
-    public function getShortHelpMessage()
-    {
-        return $this->shortHelpMessage;
     }
 
     /**

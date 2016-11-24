@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Aop\Advice;
  * source code.
  */
 
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\SignalSlot;
 use TYPO3\Flow\Aop;

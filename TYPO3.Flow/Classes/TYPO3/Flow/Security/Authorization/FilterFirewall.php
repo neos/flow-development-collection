@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Security\Authorization;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
 use TYPO3\Flow\Security\RequestPatternInterface;
 use TYPO3\Flow\Security\RequestPatternResolver;

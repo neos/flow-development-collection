@@ -16,7 +16,7 @@ use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Mvc\Controller\AbstractController;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
@@ -335,7 +335,7 @@ class SecurityCommandController extends CommandController
         }
 
         if (count($matchedClassesAndMethods) === 0) {
-            $this->outputLine('The given Resource did not match any method or is unknown.');
+            $this->outputLine('The given privilegeTarget did not match any method.');
             $this->quit(1);
         }
 
